@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.util.net;
 
-import com.plotsquared.core.PlotSquared;
 import com.google.common.base.Charsets;
+import com.plotsquared.core.PlotSquared;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -44,7 +44,8 @@ import java.util.Locale;
 /**
  * Single class paster for the Incendo paste service
  */
-@SuppressWarnings({"unused", "WeakerAccess"}) public final class IncendoPaster {
+@SuppressWarnings({"unused", "WeakerAccess"})
+public final class IncendoPaster {
 
     /**
      * Upload service URL

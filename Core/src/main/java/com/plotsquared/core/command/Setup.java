@@ -27,17 +27,17 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.ConfigurationNode;
+import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.GeneratorWrapper;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.message.PlotMessage;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.SetupObject;
-import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
@@ -152,7 +152,8 @@ public class Setup extends SubCommand {
                 types.add("augmented");
                 types.add("partial");
                 Optional<PlotAreaType> plotAreaType;
-                if (args.length != 1 || !(plotAreaType = PlotAreaType.fromString(args[0])).isPresent()) {
+                if (args.length != 1 || !(plotAreaType = PlotAreaType.fromString(args[0]))
+                    .isPresent()) {
                     MainUtil.sendMessage(player, "&cYou must choose a world type!");
                     for (String type : types) {
                         int i = allTypes.indexOf(type);
@@ -272,7 +273,8 @@ public class Setup extends SubCommand {
                 break;
             case 5: { // Choose terrain
                 Optional<PlotAreaTerrainType> optTerrain;
-                if (args.length != 1 || !(optTerrain = PlotAreaTerrainType.fromString(args[0])).isPresent()) {
+                if (args.length != 1 || !(optTerrain = PlotAreaTerrainType.fromString(args[0]))
+                    .isPresent()) {
                     MainUtil.sendMessage(player,
                         "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all"
                             + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"

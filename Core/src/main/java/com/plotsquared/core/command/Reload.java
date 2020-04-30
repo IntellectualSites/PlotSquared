@@ -25,13 +25,13 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.util.MainUtil;
 
 import java.io.IOException;
@@ -52,8 +52,8 @@ public class Reload extends SubCommand {
             PlotSquared.get().setupConfigs();
             Captions.load(PlotSquared.get().translationFile);
             PlotSquared.get().forEachPlotArea(area -> {
-                ConfigurationSection worldSection =
-                    PlotSquared.get().worlds.getConfigurationSection("worlds." + area.getWorldName());
+                ConfigurationSection worldSection = PlotSquared.get().worlds
+                    .getConfigurationSection("worlds." + area.getWorldName());
                 if (worldSection == null) {
                     return;
                 }

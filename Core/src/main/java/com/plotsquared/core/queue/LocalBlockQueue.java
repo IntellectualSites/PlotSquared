@@ -27,11 +27,11 @@ package com.plotsquared.core.queue;
 
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.util.PatternUtil;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -131,7 +131,8 @@ public abstract class LocalBlockQueue {
                 .equals(loc)) {
                 continue;
             }
-            pLoc.setY(WorldUtil.IMP.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ()));
+            pLoc.setY(
+                WorldUtil.IMP.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ()));
             pp.teleport(pLoc);
         }
     }

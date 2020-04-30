@@ -25,13 +25,10 @@
  */
 package com.plotsquared.core.plot;
 
-import com.plotsquared.core.events.TeleportCause;
-import com.plotsquared.core.location.BlockLoc;
-import com.plotsquared.core.location.Direction;
-import com.plotsquared.core.location.Location;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.location.PlotLoc;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
@@ -40,32 +37,35 @@ import com.plotsquared.core.events.PlotComponentSetEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.generator.SquarePlotWorld;
+import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.location.BlockLoc;
+import com.plotsquared.core.location.Direction;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.location.PlotLoc;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.comment.PlotComment;
+import com.plotsquared.core.plot.expiration.ExpireManager;
+import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
-import com.plotsquared.core.generator.SquarePlotWorld;
-import com.plotsquared.core.listener.PlotListener;
-import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.schematic.Schematic;
+import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringWrapper;
+import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.plot.expiration.ExpireManager;
-import com.plotsquared.core.plot.expiration.PlotAnalysis;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -103,7 +103,12 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.plotsquared.core.command.SubCommand.sendMessage;
-import static com.plotsquared.core.util.entity.EntityCategories.*;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_MISC;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
+import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
 
 /**
@@ -1285,12 +1290,12 @@ public class Plot {
         int[] count = new int[6];
         for (Plot current : this.getConnectedPlots()) {
             int[] result = ChunkManager.manager.countEntities(current);
-            count[CAP_ENTITY]   += result[CAP_ENTITY];
-            count[CAP_ANIMAL]   += result[CAP_ANIMAL];
-            count[CAP_MONSTER]  += result[CAP_MONSTER];
-            count[CAP_MOB]      += result[CAP_MOB];
-            count[CAP_VEHICLE]  += result[CAP_VEHICLE];
-            count[CAP_MISC]     += result[CAP_MISC];
+            count[CAP_ENTITY] += result[CAP_ENTITY];
+            count[CAP_ANIMAL] += result[CAP_ANIMAL];
+            count[CAP_MONSTER] += result[CAP_MONSTER];
+            count[CAP_MOB] += result[CAP_MOB];
+            count[CAP_VEHICLE] += result[CAP_VEHICLE];
+            count[CAP_MISC] += result[CAP_MISC];
         }
         return count;
     }
@@ -3058,8 +3063,8 @@ public class Plot {
     /**
      * Teleport a player to a plot and send them the teleport message.
      *
-     * @param player the player
-     * @param cause  the cause of the teleport
+     * @param player         the player
+     * @param cause          the cause of the teleport
      * @param resultConsumer Called with the result of the teleportation
      */
     public void teleportPlayer(final PlotPlayer player, TeleportCause cause,

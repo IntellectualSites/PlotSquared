@@ -25,10 +25,10 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.player.PlotPlayer;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;

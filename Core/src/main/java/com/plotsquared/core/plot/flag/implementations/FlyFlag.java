@@ -88,9 +88,7 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
     }
 
     public enum FlyStatus {
-        ENABLED,
-        DISABLED,
-        DEFAULT
+        ENABLED, DISABLED, DEFAULT
     }
 
 }

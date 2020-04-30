@@ -29,9 +29,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.plot.flag.GlobalFlagContainer;
-import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.listener.WEExtent;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
@@ -39,18 +36,21 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.SchematicHandler;
-import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.plot.expiration.PlotAnalysis;
+import com.plotsquared.core.plot.flag.GlobalFlagContainer;
+import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.queue.ChunkBlockQueue;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.plot.expiration.PlotAnalysis;
+import com.plotsquared.core.util.ChunkManager;
+import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionUtil;
+import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -469,14 +469,15 @@ public abstract class HybridUtils {
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
                             PlotSquared.debug(
-                                "[ERROR] Could not update '" + area.getWorldName() + "/region/r." + loc
-                                    .getX() + "." + loc.getZ() + ".mca' (Corrupt chunk?)");
+                                "[ERROR] Could not update '" + area.getWorldName() + "/region/r."
+                                    + loc.getX() + "." + loc.getZ() + ".mca' (Corrupt chunk?)");
                             int sx = loc.getX() << 5;
                             int sz = loc.getZ() << 5;
                             for (int x = sx; x < sx + 32; x++) {
                                 for (int z = sz; z < sz + 32; z++) {
                                     ChunkManager.manager
-                                        .unloadChunk(area.getWorldName(), BlockVector2.at(x, z), true);
+                                        .unloadChunk(area.getWorldName(), BlockVector2.at(x, z),
+                                            true);
                                 }
                             }
                             PlotSquared.debug(" - Potentially skipping 1024 chunks");

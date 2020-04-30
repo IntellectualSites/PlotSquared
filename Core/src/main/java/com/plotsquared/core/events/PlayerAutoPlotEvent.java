@@ -26,8 +26,8 @@
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.command.Claim;
-import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.PlotArea;
 import lombok.Getter;
 import lombok.Setter;
 

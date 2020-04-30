@@ -25,12 +25,12 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.plot.BlockBucket;
+import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.NonNull;
 
@@ -42,7 +42,8 @@ import java.util.Map;
 /**
  * Converts legacy configurations into the new (BlockBucket) format
  */
-@SuppressWarnings("unused") public final class LegacyConverter {
+@SuppressWarnings("unused")
+public final class LegacyConverter {
 
     public static final String CONFIGURATION_VERSION = "post_flattening";
     private static final HashMap<String, ConfigurationType> TYPE_MAP = new HashMap<>();
@@ -109,7 +110,8 @@ import java.util.Map;
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
         PlotSquared.log(CaptionUtility
-            .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(), block, bucket.toString()));
+            .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(),
+                block, bucket.toString()));
     }
 
     private void convertBlockList(@NonNull final ConfigurationSection section,
@@ -118,8 +120,8 @@ import java.util.Map;
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
         PlotSquared.log(CaptionUtility
-            .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(), plotBlockArrayString(blocks),
-                bucket.toString()));
+            .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(),
+                plotBlockArrayString(blocks), bucket.toString()));
     }
 
     private String plotBlockArrayString(@NonNull final BlockState[] blocks) {

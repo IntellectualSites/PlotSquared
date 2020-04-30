@@ -26,10 +26,10 @@
 package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
-import com.plotsquared.core.configuration.ConfigurationSection;
-import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationNode;
+import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
@@ -88,7 +88,7 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         World dw = Bukkit.getWorlds().get(0);
         for (Player player : world.getPlayers()) {
-            PaperLib.teleportAsync(player,dw.getSpawnLocation());
+            PaperLib.teleportAsync(player, dw.getSpawnLocation());
         }
         if (save) {
             for (Chunk chunk : world.getLoadedChunks()) {

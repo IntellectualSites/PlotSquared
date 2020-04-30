@@ -28,12 +28,12 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.StringWrapper;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 
 @CommandDeclaration(command = "setalias",

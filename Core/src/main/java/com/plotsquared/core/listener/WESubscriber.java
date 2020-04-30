@@ -28,8 +28,8 @@ package com.plotsquared.core.listener;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.WEManager;
@@ -67,9 +67,8 @@ public class WESubscriber {
                 Player player = (Player) actor;
                 Location location = player.getLocation();
                 com.plotsquared.core.location.Location pLoc =
-                    new com.plotsquared.core.location.Location(
-                        player.getWorld().getName(), location.getBlockX(), location.getBlockX(),
-                        location.getBlockZ());
+                    new com.plotsquared.core.location.Location(player.getWorld().getName(),
+                        location.getBlockX(), location.getBlockX(), location.getBlockZ());
                 Plot plot = pLoc.getPlot();
                 if (plot == null) {
                     event.setExtent(new NullExtent());

@@ -25,7 +25,11 @@
  */
 package com.plotsquared.core.util;
 
+import com.google.common.eventbus.EventBus;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlayerEnterPlotEvent;
@@ -46,10 +50,15 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
+import com.plotsquared.core.listener.PlayerBlockEventType;
+import com.plotsquared.core.location.Direction;
+import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.configuration.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.Rating;
+import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DeviceInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscPlaceFlag;
@@ -58,17 +67,8 @@ import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.UseFlag;
 import com.plotsquared.core.plot.flag.implementations.VehiclePlaceFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
-import com.plotsquared.core.listener.PlayerBlockEventType;
-import com.plotsquared.core.location.Direction;
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.world.SinglePlotArea;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.util.task.TaskManager;
-import com.google.common.eventbus.EventBus;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -241,7 +241,8 @@ public class EventDispatcher {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_LOGIN && plot != null && !(plot
             .getArea() instanceof SinglePlotArea)) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {}));
+            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
+            }));
             MainUtil.sendMessage(player,
                 CaptionUtility.format(player, Captions.TELEPORTED_TO_ROAD.getTranslated())
                     + " (on-login) " + "(" + plot.getId().x + ";" + plot.getId().y + ")");
@@ -251,7 +252,8 @@ public class EventDispatcher {
     public void doRespawnTask(final PlotPlayer player) {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_DEATH && plot != null) {
-            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {}));
+            TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
+            }));
             MainUtil.sendMessage(player, Captions.TELEPORTED_TO_ROAD);
         }
     }

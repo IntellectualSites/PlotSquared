@@ -25,25 +25,25 @@
  */
 package com.plotsquared.core.plot.world;
 
-import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.ConfigurationNode;
-import com.plotsquared.core.generator.SingleWorldGenerator;
-import com.plotsquared.core.plot.flag.FlagContainer;
+import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.generator.GridPlotWorld;
+import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.PlotSettings;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.plot.SetupObject;
+import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.util.SetupUtils;
-import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.util.task.TaskManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -197,8 +197,9 @@ public class SinglePlotArea extends GridPlotWorld {
         PlotSettings s = p.getSettings();
 
         final FlagContainer oldContainer = p.getFlagContainer();
-        p = new SinglePlot(p.getId(), p.getOwnerAbs(), p.getTrusted(), p.getMembers(), p.getDenied(),
-            s.getAlias(), s.getPosition(), null, this, s.getMerged(), p.getTimestamp(), p.temp);
+        p = new SinglePlot(p.getId(), p.getOwnerAbs(), p.getTrusted(), p.getMembers(),
+            p.getDenied(), s.getAlias(), s.getPosition(), null, this, s.getMerged(),
+            p.getTimestamp(), p.temp);
         p.getFlagContainer().addAll(oldContainer);
 
         return p;

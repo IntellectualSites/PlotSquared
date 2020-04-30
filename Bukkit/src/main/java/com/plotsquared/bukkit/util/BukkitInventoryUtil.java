@@ -26,9 +26,9 @@
 package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.player.BukkitPlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.InventoryUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import org.bukkit.Bukkit;

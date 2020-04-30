@@ -233,7 +233,7 @@ public interface IPlotMain extends ILogger {
      * Gets the generator wrapper for a world (world) and generator (name).
      *
      * @param world the world to get the generator from
-     * @param name the name of the generator
+     * @param name  the name of the generator
      * @return the generator being used for the provided world
      */
     GeneratorWrapper<?> getGenerator(String world, String name);

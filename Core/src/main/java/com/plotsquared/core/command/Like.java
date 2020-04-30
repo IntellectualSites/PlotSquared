@@ -30,11 +30,11 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotRateEvent;
-import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.Rating;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
@@ -71,7 +71,8 @@ public class Like extends SubCommand {
                     for (final Plot plot : plots) {
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(plot)) && plot
                             .isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
-                            plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {});
+                            plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+                            });
                             MainUtil.sendMessage(player, Captions.RATE_THIS);
                             return true;
                         }
@@ -123,8 +124,8 @@ public class Like extends SubCommand {
                 rating = 1;
             }
             plot.addRating(uuid, new Rating(rating));
-            final PlotRateEvent
-                event = PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
+            final PlotRateEvent event =
+                PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
             if (event.getRating() != null) {
                 plot.addRating(uuid, event.getRating());
                 if (like) {

@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -34,16 +34,16 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.google.common.primitives.Ints;
 import com.plotsquared.core.location.Direction;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.Expression;
+import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.util.task.TaskManager;
 
 @CommandDeclaration(command = "claim",
     aliases = "c",
@@ -64,8 +64,8 @@ public class Claim extends SubCommand {
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        PlayerClaimPlotEvent
-            event = PlotSquared.get().getEventDispatcher().callClaim(player, plot, schematic);
+        PlayerClaimPlotEvent event =
+            PlotSquared.get().getEventDispatcher().callClaim(player, plot, schematic);
         schematic = event.getSchematic();
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Claim");
@@ -133,8 +133,8 @@ public class Claim extends SubCommand {
         DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 if (!plot.claim(player, true, finalSchematic, false)) {
-                    PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() +
-                        String.format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
+                    PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() + String
+                        .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
                     sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                     plot.setOwnerAbs(null);
                 } else if (area.isAutoMerge()) {
@@ -148,8 +148,9 @@ public class Claim extends SubCommand {
                 }
             }
         }), () -> {
-            PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() +
-                String.format("Failed to add plot %s to the database", plot.getId().toCommaSeparatedString()));
+            PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() + String
+                .format("Failed to add plot %s to the database",
+                    plot.getId().toCommaSeparatedString()));
             sendMessage(player, Captions.PLOT_NOT_CLAIMED);
             plot.setOwnerAbs(null);
         });

@@ -27,8 +27,8 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.IntTag;
@@ -70,8 +70,7 @@ public abstract class WorldUtil {
     /**
      * @deprecated May result in synchronous chunk loading
      */
-    @Deprecated
-    public abstract String[] getSignSynchronous(Location location);
+    @Deprecated public abstract String[] getSignSynchronous(Location location);
 
     public abstract Location getSpawn(String world);
 
@@ -90,24 +89,21 @@ public abstract class WorldUtil {
     /**
      * @deprecated May result in synchronous chunk loading
      */
-    @Deprecated
-    public abstract BiomeType getBiomeSynchronous(String world, int x, int z);
+    @Deprecated public abstract BiomeType getBiomeSynchronous(String world, int x, int z);
 
     public abstract void getBlock(Location location, Consumer<BlockState> result);
 
     /**
      * @deprecated May result in synchronous chunk loading
      */
-    @Deprecated
-    public abstract BlockState getBlockSynchronous(Location location);
+    @Deprecated public abstract BlockState getBlockSynchronous(Location location);
 
     public abstract void getHighestBlock(String world, int x, int z, final IntConsumer result);
 
     /**
      * @deprecated May result in synchronous chunk loading
      */
-    @Deprecated
-    public abstract int getHighestBlockSynchronous(String world, int x, int z);
+    @Deprecated public abstract int getHighestBlockSynchronous(String world, int x, int z);
 
     public abstract void setSign(String world, int x, int y, int z, String[] lines);
 
@@ -115,7 +111,8 @@ public abstract class WorldUtil {
 
     public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
 
-    public void upload(@NotNull final Plot plot, UUID uuid, String file, RunnableVal<URL> whenDone) {
+    public void upload(@NotNull final Plot plot, UUID uuid, String file,
+        RunnableVal<URL> whenDone) {
         plot.getHome(home -> MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {

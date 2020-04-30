@@ -25,17 +25,17 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.common.base.Charsets;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.util.WorldUtil;
-import com.google.common.base.Charsets;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.io.File;
 import java.util.UUID;
@@ -51,7 +51,8 @@ public class DebugImportWorlds extends Command {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         // UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8))

@@ -25,31 +25,31 @@
  */
 package com.plotsquared.core.player;
 
-import com.plotsquared.core.command.CommandCaller;
+import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.plot.PlotWeather;
+import com.plotsquared.core.plot.expiration.ExpireManager;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.plot.PlotWeather;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.plotsquared.core.plot.expiration.ExpireManager;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -652,25 +652,25 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                             TaskManager.runTask(() -> {
                                 if (getMeta("teleportOnLogin", true)) {
                                     teleport(location);
-                                    sendMessage(
-                                        CaptionUtility.format(PlotPlayer.this, Captions.TELEPORTED_TO_PLOT.getTranslated())
-                                            + " (quitLoc) (" + plotX
-                                            + "," + plotZ + ")");
+                                    sendMessage(CaptionUtility.format(PlotPlayer.this,
+                                        Captions.TELEPORTED_TO_PLOT.getTranslated())
+                                        + " (quitLoc) (" + plotX + "," + plotZ + ")");
                                 }
                             });
                         } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
                             if (getMeta("teleportOnLogin", true)) {
-                                plot.teleportPlayer(PlotPlayer.this, result -> TaskManager.runTask(() -> {
-                                    if (getMeta("teleportOnLogin", true)) {
-                                        if (plot.isLoaded()) {
-                                            teleport(location);
-                                            sendMessage(CaptionUtility.format(PlotPlayer.this,
-                                                Captions.TELEPORTED_TO_PLOT.getTranslated())
-                                                + " (quitLoc-unloaded) (" + plotX + "," + plotZ
-                                                + ")");
+                                plot.teleportPlayer(PlotPlayer.this,
+                                    result -> TaskManager.runTask(() -> {
+                                        if (getMeta("teleportOnLogin", true)) {
+                                            if (plot.isLoaded()) {
+                                                teleport(location);
+                                                sendMessage(CaptionUtility.format(PlotPlayer.this,
+                                                    Captions.TELEPORTED_TO_PLOT.getTranslated())
+                                                    + " (quitLoc-unloaded) (" + plotX + "," + plotZ
+                                                    + ")");
+                                            }
                                         }
-                                    }
-                                }));
+                                    }));
                             }
                         }
                     } catch (Throwable e) {
@@ -727,7 +727,8 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
         }
     }
 
-    @FunctionalInterface public interface PlotPlayerConverter<BaseObject> {
+    @FunctionalInterface
+    public interface PlotPlayerConverter<BaseObject> {
         PlotPlayer convert(BaseObject object);
     }
 }

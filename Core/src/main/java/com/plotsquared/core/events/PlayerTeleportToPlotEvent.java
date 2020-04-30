@@ -26,8 +26,8 @@
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 
 /**
  * Called when a player teleports to a plot
@@ -58,13 +58,11 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
         return this.from;
     }
 
-    @Override
-    public Result getEventResult() {
+    @Override public Result getEventResult() {
         return eventResult;
     }
 
-    @Override
-    public void setEventResult(Result e) {
+    @Override public void setEventResult(Result e) {
         this.eventResult = e;
     }
 }

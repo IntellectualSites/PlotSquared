@@ -31,10 +31,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class PlotId {
 
-    @Deprecated
-    public int x;
-    @Deprecated
-    public int y;
+    @Deprecated public int x;
+    @Deprecated public int y;
     private int hash;
 
     /**

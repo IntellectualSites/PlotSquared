@@ -131,8 +131,8 @@ public abstract class TaskManager {
             return function.value;
         }
         final AtomicBoolean running = new AtomicBoolean(true);
-        final RuntimeExceptionRunnableVal<T>
-            run = new RuntimeExceptionRunnableVal<>(function, running);
+        final RuntimeExceptionRunnableVal<T> run =
+            new RuntimeExceptionRunnableVal<>(function, running);
         TaskManager.IMP.task(run);
         try {
             synchronized (function) {

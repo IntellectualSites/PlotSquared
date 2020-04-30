@@ -25,14 +25,14 @@
  */
 package com.plotsquared.core.util.uuid;
 
+import com.google.common.collect.BiMap;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.StringWrapper;
-import com.google.common.collect.BiMap;
+import com.plotsquared.core.util.task.RunnableVal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

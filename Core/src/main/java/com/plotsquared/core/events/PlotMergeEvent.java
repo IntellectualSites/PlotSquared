@@ -26,8 +26,8 @@
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.location.Direction;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;

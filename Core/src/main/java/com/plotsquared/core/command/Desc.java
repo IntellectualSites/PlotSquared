@@ -30,9 +30,9 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.util.MainUtil;
 
 @CommandDeclaration(command = "setdescription",

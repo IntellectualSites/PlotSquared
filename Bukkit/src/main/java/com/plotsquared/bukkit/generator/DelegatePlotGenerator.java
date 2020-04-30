@@ -31,16 +31,17 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import java.util.Random;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
+
+import java.util.Random;
 
 final class DelegatePlotGenerator extends IndependentPlotGenerator {
 
@@ -71,7 +72,8 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
         Random random = new Random(MathMan.pair((short) chunkX, (short) chunkZ));
         try {
             ChunkGenerator.BiomeGrid grid = new ChunkGenerator.BiomeGrid() {
-                @Override public void setBiome(@Range(from = 0, to = 15) int x,
+                @Override
+                public void setBiome(@Range(from = 0, to = 15) int x,
                     @Range(from = 0, to = 15) int z, @NotNull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
                 }
@@ -86,8 +88,7 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
                     return Biome.FOREST;
                 }
 
-                @Override
-                public @NotNull Biome getBiome(int x, int y, int z) {
+                @Override public @NotNull Biome getBiome(int x, int y, int z) {
                     return Biome.FOREST;
                 }
             };

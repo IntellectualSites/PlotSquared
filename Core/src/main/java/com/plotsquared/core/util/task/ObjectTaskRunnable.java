@@ -29,7 +29,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Iterator;
 
-@RequiredArgsConstructor public class ObjectTaskRunnable<T> implements Runnable {
+@RequiredArgsConstructor
+public class ObjectTaskRunnable<T> implements Runnable {
 
     private final Iterator<T> iterator;
     private final RunnableVal<T> task;

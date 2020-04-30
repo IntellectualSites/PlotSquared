@@ -27,12 +27,12 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.helpmenu.HelpMenu;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -51,7 +51,8 @@ public class Help extends Command {
         return true;
     }
 
-    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         switch (args.length) {

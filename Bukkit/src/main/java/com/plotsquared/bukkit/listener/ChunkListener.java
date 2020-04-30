@@ -57,7 +57,8 @@ import java.util.HashSet;
 
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
-@SuppressWarnings("unused") public class ChunkListener implements Listener {
+@SuppressWarnings("unused")
+public class ChunkListener implements Listener {
 
     private RefMethod methodGetHandleChunk;
     private RefField mustSave;
@@ -291,11 +292,15 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                     ent.remove();
                 }
             }
-            PlotSquared.debug("PlotSquared detected unsafe chunk and processed: " + (chunk.getX() << 4) + "," + (chunk.getX() << 4));
+            PlotSquared.debug(
+                "PlotSquared detected unsafe chunk and processed: " + (chunk.getX() << 4) + "," + (
+                    chunk.getX() << 4));
         }
         if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
-                PlotSquared.debug("PlotSquared detected unsafe chunk: " + (chunk.getX()<< 4) + "," + (chunk.getX() << 4));
+                PlotSquared.debug(
+                    "PlotSquared detected unsafe chunk: " + (chunk.getX() << 4) + "," + (
+                        chunk.getX() << 4));
                 cleanChunk(chunk);
                 return true;
             }

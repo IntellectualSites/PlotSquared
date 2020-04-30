@@ -83,9 +83,7 @@ public class TitlesFlag extends PlotFlag<TitlesFlag.TitlesFlagValue, TitlesFlag>
     }
 
     public enum TitlesFlagValue {
-        NONE,
-        TRUE,
-        FALSE;
+        NONE, TRUE, FALSE;
 
         @Nullable public static TitlesFlagValue fromString(final String value) {
             if (value.equalsIgnoreCase("true")) {

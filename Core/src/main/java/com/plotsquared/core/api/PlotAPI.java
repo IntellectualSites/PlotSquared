@@ -25,14 +25,14 @@
  */
 package com.plotsquared.core.api;
 
-import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EventDispatcher;
@@ -60,7 +60,9 @@ import java.util.UUID;
  *
  * @version 5
  */
-@SuppressWarnings({"unused", "WeakerAccess"}) @NoArgsConstructor public class PlotAPI {
+@SuppressWarnings({"unused", "WeakerAccess"})
+@NoArgsConstructor
+public class PlotAPI {
 
     /**
      * Gets all plots.

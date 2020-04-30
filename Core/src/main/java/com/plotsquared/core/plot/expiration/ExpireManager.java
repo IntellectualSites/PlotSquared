@@ -32,21 +32,21 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.generator.HybridUtils;
+import com.plotsquared.core.player.OfflinePlotPlayer;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
-import com.plotsquared.core.generator.HybridUtils;
-import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.message.PlotMessage;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 
@@ -337,8 +337,10 @@ public class ExpireManager {
                                     }
                                 }, () -> {
                                     PlotFlag<?, ?> plotFlag = GlobalFlagContainer.getInstance()
-                                        .getFlag(AnalysisFlag.class).createFlagInstance(changed.asList());
-                                    PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, newPlot);
+                                        .getFlag(AnalysisFlag.class)
+                                        .createFlagInstance(changed.asList());
+                                    PlotFlagAddEvent event =
+                                        new PlotFlagAddEvent(plotFlag, newPlot);
                                     if (event.getEventResult() == Result.DENY) {
                                         return;
                                     }

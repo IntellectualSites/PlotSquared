@@ -26,8 +26,8 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.PlotWeather;
+import com.plotsquared.core.plot.flag.PlotFlag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -35,12 +35,9 @@ import java.util.Collection;
 
 public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
 
-    public static final WeatherFlag PLOT_WEATHER_FLAG_RAIN =
-        new WeatherFlag(PlotWeather.RAIN);
-    public static final WeatherFlag PLOT_WEATHER_FLAG_CLEAR =
-        new WeatherFlag(PlotWeather.CLEAR);
-    public static final WeatherFlag PLOT_WEATHER_FLAG_OFF =
-        new WeatherFlag(PlotWeather.RESET);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_RAIN = new WeatherFlag(PlotWeather.RAIN);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_CLEAR = new WeatherFlag(PlotWeather.CLEAR);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_OFF = new WeatherFlag(PlotWeather.RESET);
 
     /**
      * Construct a new flag instance.
@@ -92,7 +89,8 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
     }
 
     @Override public Collection<String> getTabCompletions() {
-        return Arrays.asList("rain", "storm", "on", "lightning", "thunder", "clear", "off", "sun", "reset");
+        return Arrays
+            .asList("rain", "storm", "on", "lightning", "thunder", "clear", "off", "sun", "reset");
     }
 
 }

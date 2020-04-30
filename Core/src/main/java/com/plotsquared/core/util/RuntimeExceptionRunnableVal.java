@@ -30,7 +30,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@RequiredArgsConstructor public class RuntimeExceptionRunnableVal<T> extends RunnableVal<RuntimeException> {
+@RequiredArgsConstructor
+public class RuntimeExceptionRunnableVal<T> extends RunnableVal<RuntimeException> {
 
     private final RunnableVal<T> function;
     private final AtomicBoolean running;

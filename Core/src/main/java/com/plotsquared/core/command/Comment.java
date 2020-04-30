@@ -26,11 +26,11 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.comment.CommentInbox;
-import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.comment.CommentManager;
+import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.uuid.UUIDHandler;
@@ -87,8 +87,8 @@ public class Comment extends SubCommand {
 
         String message = StringMan.join(Arrays.copyOfRange(args, index, args.length), " ");
         PlotComment comment =
-            new PlotComment(player.getLocation().getWorld(), plot.getId(), message, player.getName(), inbox.toString(),
-                System.currentTimeMillis());
+            new PlotComment(player.getLocation().getWorld(), plot.getId(), message,
+                player.getName(), inbox.toString(), System.currentTimeMillis());
         boolean result = inbox.addComment(plot, comment);
         if (!result) {
             sendMessage(player, Captions.NO_PLOT_INBOX, "");

@@ -30,13 +30,13 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotRateEvent;
-import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Rating;
-import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -84,7 +84,8 @@ public class Rate extends SubCommand {
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(p)) && p
                             .isBasePlot() && (!p.getRatings().containsKey(uuid)) && !p
                             .isAdded(uuid)) {
-                            p.teleportPlayer(player, TeleportCause.COMMAND, result -> {});
+                            p.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+                            });
                             MainUtil.sendMessage(player, Captions.RATE_THIS);
                             return true;
                         }
@@ -140,8 +141,8 @@ public class Rate extends SubCommand {
                             index.increment();
                             if (index.getValue() >= Settings.Ratings.CATEGORIES.size()) {
                                 int rV = rating.getValue();
-                                PlotRateEvent event =
-                                    PlotSquared.get().getEventDispatcher().callRating(this.player, plot, new Rating(rV));
+                                PlotRateEvent event = PlotSquared.get().getEventDispatcher()
+                                    .callRating(this.player, plot, new Rating(rV));
                                 if (event.getRating() != null) {
                                     plot.addRating(this.player.getUUID(), event.getRating());
                                     sendMessage(this.player, Captions.RATING_APPLIED,
@@ -209,7 +210,8 @@ public class Rate extends SubCommand {
                 sendMessage(player, Captions.RATING_ALREADY_EXISTS, plot.getId().toString());
                 return;
             }
-            PlotRateEvent event = PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
+            PlotRateEvent event =
+                PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
             if (event.getRating() != null) {
                 plot.addRating(uuid, event.getRating());
                 sendMessage(player, Captions.RATING_APPLIED, plot.getId().toString());

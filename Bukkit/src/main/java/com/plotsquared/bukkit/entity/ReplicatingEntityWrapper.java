@@ -329,7 +329,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 }
                 storeLiving((LivingEntity) entity);
                 return;
-                // END LIVING //
+            // END LIVING //
             default:
                 PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
         }

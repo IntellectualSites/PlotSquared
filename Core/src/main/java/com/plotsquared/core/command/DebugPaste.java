@@ -25,17 +25,17 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.PremiumVerification;
+import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.plotsquared.core.util.PremiumVerification;
 import lombok.NonNull;
 
 import java.io.BufferedReader;
@@ -83,7 +83,8 @@ public class DebugPaste extends SubCommand {
                 b.append("# PlotSquared Information\n");
                 b.append("Resource ID: ").append(PremiumVerification.getResourceID()).append("\n");
                 b.append("Download ID: ").append(PremiumVerification.getDownloadID()).append("\n");
-                b.append("This PlotSquared version is licensed to the spigot user ").append(PremiumVerification.getUserID()).append("\n\n");
+                b.append("This PlotSquared version is licensed to the spigot user ")
+                    .append(PremiumVerification.getUserID()).append("\n\n");
                 b.append("# Server Information\n");
                 b.append("Server Version: ").append(PlotSquared.get().IMP.getServerImplementation())
                     .append("\n");

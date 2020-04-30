@@ -38,7 +38,8 @@ import java.util.Set;
  */
 public class EntityCategory extends Category<EntityType> implements Keyed {
 
-    public static final NamespacedRegistry<EntityCategory> REGISTRY = new NamespacedRegistry<>("entity type");
+    public static final NamespacedRegistry<EntityCategory> REGISTRY =
+        new NamespacedRegistry<>("entity type");
 
     private final String key;
 

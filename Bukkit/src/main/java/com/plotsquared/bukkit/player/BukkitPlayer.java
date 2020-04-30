@@ -28,12 +28,12 @@ package com.plotsquared.bukkit.player;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -167,7 +167,7 @@ public class BukkitPlayer extends PlotPlayer {
         if (CHECK_EFFECTIVE) {
             boolean hasAny = false;
             String stubPlus = stub + ".";
-        final Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
+            final Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
             if (!effective.isEmpty()) {
                 for (PermissionAttachmentInfo attach : effective) {
                     String permStr = attach.getPermission();
@@ -211,8 +211,7 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @Override public void sendMessage(String message) {
-        message = message.replace('\u2010', '%')
-            .replace('\u2020', '&').replace('\u2030', '&');
+        message = message.replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&');
         if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
             System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
@@ -221,12 +220,14 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void teleport(@NotNull final Location location, @NotNull final TeleportCause cause) {
+    @Override
+    public void teleport(@NotNull final Location location, @NotNull final TeleportCause cause) {
         if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
             return;
         }
-        final org.bukkit.Location bukkitLocation = new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX() + 0.5,
-            location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch());
+        final org.bukkit.Location bukkitLocation =
+            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX() + 0.5,
+                location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch());
         PaperLib.teleportAsync(player, bukkitLocation, getTeleportCause(cause));
     }
 
@@ -280,7 +281,8 @@ public class BukkitPlayer extends PlotPlayer {
         }
     }
 
-    @Override public void setGameMode(@NotNull final com.sk89q.worldedit.world.gamemode.GameMode gameMode) {
+    @Override
+    public void setGameMode(@NotNull final com.sk89q.worldedit.world.gamemode.GameMode gameMode) {
         if (ADVENTURE.equals(gameMode)) {
             this.player.setGameMode(GameMode.ADVENTURE);
         } else if (CREATIVE.equals(gameMode)) {
@@ -344,7 +346,8 @@ public class BukkitPlayer extends PlotPlayer {
                 return PlayerTeleportEvent.TeleportCause.COMMAND;
             case PLUGIN:
                 return PlayerTeleportEvent.TeleportCause.PLUGIN;
-            default: return PlayerTeleportEvent.TeleportCause.UNKNOWN;
+            default:
+                return PlayerTeleportEvent.TeleportCause.UNKNOWN;
         }
     }
 }

@@ -42,7 +42,8 @@ public class Storage extends Config {
         load(file, Storage.class);
     }
 
-    @Comment("MySQL section") public static final class MySQL {
+    @Comment("MySQL section")
+    public static final class MySQL {
         @Comment("Should MySQL be used?") public static boolean USE = false;
         public static String HOST = "localhost";
         public static String PORT = "3306";
@@ -55,7 +56,8 @@ public class Storage extends Config {
     }
 
 
-    @Comment("SQLite section") public static final class SQLite {
+    @Comment("SQLite section")
+    public static final class SQLite {
         @Comment("Should SQLite be used?") public static boolean USE = true;
         @Comment("The file to use") public static String DB = "storage";
     }

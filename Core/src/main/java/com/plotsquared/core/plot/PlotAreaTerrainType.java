@@ -54,14 +54,13 @@ public enum PlotAreaTerrainType {
     ALL;
 
     private static final Map<String, PlotAreaTerrainType> types = Stream.of(values())
-            .collect(Collectors.toMap(e -> e.toString().toLowerCase(), Function.identity()));
+        .collect(Collectors.toMap(e -> e.toString().toLowerCase(), Function.identity()));
 
     public static Optional<PlotAreaTerrainType> fromString(String typeString) {
         return Optional.ofNullable(types.get(typeString.toLowerCase()));
     }
 
-    @Deprecated
-    public static Optional<PlotAreaTerrainType> fromLegacyInt(int typeId) {
+    @Deprecated public static Optional<PlotAreaTerrainType> fromLegacyInt(int typeId) {
         if (typeId < 0 || typeId >= values().length) {
             return Optional.empty();
         }

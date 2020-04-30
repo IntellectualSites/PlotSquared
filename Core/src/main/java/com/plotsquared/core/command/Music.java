@@ -25,17 +25,17 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.plot.flag.implementations.MusicFlag;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
+import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.MusicFlag;
 import com.sk89q.worldedit.world.item.ItemTypes;
 
 import java.util.Arrays;

@@ -25,9 +25,9 @@
  */
 package com.plotsquared.core.events;
 
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.player.PlotPlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;

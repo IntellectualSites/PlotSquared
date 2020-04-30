@@ -26,9 +26,6 @@
 package com.plotsquared.bukkit.listener;
 
 import com.destroystokyo.paper.MaterialTags;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.UpdateUtility;
@@ -36,6 +33,15 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.listener.PlayerBlockEventType;
+import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotHandler;
+import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.flag.implementations.AnimalAttackFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalCapFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalInteractFlag;
@@ -88,23 +94,14 @@ import com.plotsquared.core.plot.flag.implementations.VehicleUseFlag;
 import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
-import com.plotsquared.core.listener.PlayerBlockEventType;
-import com.plotsquared.core.listener.PlotListener;
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotHandler;
-import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.message.PlotMessage;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.PremiumVerification;
-import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.EntityUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.RegExUtil;
+import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
@@ -209,12 +206,7 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -275,31 +267,32 @@ public class PlayerEvents extends PlotListener implements Listener {
             return false;
         }
 
-        final com.sk89q.worldedit.world.entity.EntityType entityType = BukkitAdapter.adapt(entity.getType());
+        final com.sk89q.worldedit.world.entity.EntityType entityType =
+            BukkitAdapter.adapt(entity.getType());
 
         if (EntityCategories.PLAYER.contains(entityType)) {
             return false;
         }
 
-        if (EntityCategories.PROJECTILE.contains(entityType) ||
-            EntityCategories.OTHER.contains(entityType) ||
-            EntityCategories.HANGING.contains(entityType)) {
+        if (EntityCategories.PROJECTILE.contains(entityType) || EntityCategories.OTHER
+            .contains(entityType) || EntityCategories.HANGING.contains(entityType)) {
             return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                 MiscCapFlag.MISC_CAP_UNLIMITED);
         }
 
         // Has to go go before vehicle as horses are both
         // animals and vehicles
-        if (EntityCategories.ANIMAL.contains(entityType) ||
-            EntityCategories.VILLAGER.contains(entityType) ||
-            EntityCategories.TAMEABLE.contains(entityType)) {
-            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                MobCapFlag.MOB_CAP_UNLIMITED, AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
+        if (EntityCategories.ANIMAL.contains(entityType) || EntityCategories.VILLAGER
+            .contains(entityType) || EntityCategories.TAMEABLE.contains(entityType)) {
+            return EntityUtil
+                .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
+                    AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
         }
 
         if (EntityCategories.HOSTILE.contains(entityType)) {
-            return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                MobCapFlag.MOB_CAP_UNLIMITED, HostileCapFlag.HOSTILE_CAP_UNLIMITED);
+            return EntityUtil
+                .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
+                    HostileCapFlag.HOSTILE_CAP_UNLIMITED);
         }
 
         if (EntityCategories.VEHICLE.contains(entityType)) {
@@ -763,10 +756,12 @@ public class PlayerEvents extends PlotListener implements Listener {
                     }
                 }
                 if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-                    final com.sk89q.worldedit.world.entity.EntityType entityType = BukkitAdapter.adapt(vehicle.getType());
+                    final com.sk89q.worldedit.world.entity.EntityType entityType =
+                        BukkitAdapter.adapt(vehicle.getType());
                     // Horses etc are vehicles, but they're also animals
                     // so this filters out all living entities
-                    if (EntityCategories.VEHICLE.contains(entityType) && !EntityCategories.ANIMAL.contains(entityType)) {
+                    if (EntityCategories.VEHICLE.contains(entityType) && !EntityCategories.ANIMAL
+                        .contains(entityType)) {
                         List<MetadataValue> meta = vehicle.getMetadata("plot");
                         Plot toPlot = BukkitUtil.getLocation(to).getPlot();
                         if (!meta.isEmpty()) {
@@ -930,7 +925,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             || area.isForcingPlotChat())) {
             return;
         }
-        if (plot.isDenied(plotPlayer.getUUID()) && !Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_CHAT_BYPASS)) {
+        if (plot.isDenied(plotPlayer.getUUID()) && !Permissions
+            .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_CHAT_BYPASS)) {
             return;
         }
         event.setCancelled(true);
@@ -990,10 +986,9 @@ public class PlayerEvents extends PlotListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-            } else if (
-                (location.getY() > area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight())
-                    && !Permissions
-                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            } else if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area
+                .getMinBuildHeight()) && !Permissions
+                .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(plotPlayer, Captions.HEIGHT_LIMIT.getTranslated()
                     .replace("{limit}", String.valueOf(area.getMaxBuildHeight())));
@@ -2501,13 +2496,16 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         } else if (!plot.isAdded(pp.getUUID())) {
             final Entity entity = event.getRightClicked();
-            final com.sk89q.worldedit.world.entity.EntityType entityType = BukkitAdapter.adapt(entity.getType());
+            final com.sk89q.worldedit.world.entity.EntityType entityType =
+                BukkitAdapter.adapt(entity.getType());
 
-            if (EntityCategories.HOSTILE.contains(entityType) && plot.getFlag(HostileInteractFlag.class)) {
+            if (EntityCategories.HOSTILE.contains(entityType) && plot
+                .getFlag(HostileInteractFlag.class)) {
                 return;
             }
 
-            if (EntityCategories.ANIMAL.contains(entityType) && plot.getFlag(AnimalInteractFlag.class)) {
+            if (EntityCategories.ANIMAL.contains(entityType) && plot
+                .getFlag(AnimalInteractFlag.class)) {
                 return;
             }
 
@@ -2518,20 +2516,23 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
 
-            if (EntityCategories.VEHICLE.contains(entityType) && plot.getFlag(VehicleUseFlag.class)) {
+            if (EntityCategories.VEHICLE.contains(entityType) && plot
+                .getFlag(VehicleUseFlag.class)) {
                 return;
             }
 
-            if (EntityCategories.PLAYER.contains(entityType) && plot.getFlag(PlayerInteractFlag.class)) {
+            if (EntityCategories.PLAYER.contains(entityType) && plot
+                .getFlag(PlayerInteractFlag.class)) {
                 return;
             }
 
-            if (EntityCategories.VILLAGER.contains(entityType) && plot.getFlag(VillagerInteractFlag.class)) {
+            if (EntityCategories.VILLAGER.contains(entityType) && plot
+                .getFlag(VillagerInteractFlag.class)) {
                 return;
             }
 
-            if ((EntityCategories.HANGING.contains(entityType) ||
-                EntityCategories.OTHER.contains(entityType)) && plot.getFlag(MiscInteractFlag.class)) {
+            if ((EntityCategories.HANGING.contains(entityType) || EntityCategories.OTHER
+                .contains(entityType)) && plot.getFlag(MiscInteractFlag.class)) {
                 return;
             }
 
@@ -2813,7 +2814,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                         "plots.admin.pve." + stub);
                     return false;
                 }
-            } else if (EntityCategories.VEHICLE.contains(entityType)) { // Vehicles are managed in vehicle destroy event
+            } else if (EntityCategories.VEHICLE
+                .contains(entityType)) { // Vehicles are managed in vehicle destroy event
                 return true;
             } else { // victim is something else
                 if (plot != null && (plot.getFlag(PveFlag.class) || plot
@@ -2884,8 +2886,9 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = area.getPlot(location);
         if (plot != null) {
-            if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area.getMinBuildHeight())
-                && !Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+            if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area
+                .getMinBuildHeight()) && !Permissions
+                .hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.getTranslated()
                     .replace("{limit}", String.valueOf(area.getMaxBuildHeight())));

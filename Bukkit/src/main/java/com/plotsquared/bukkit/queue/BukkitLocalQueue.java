@@ -28,9 +28,9 @@ package com.plotsquared.bukkit.queue;
 import com.plotsquared.bukkit.schematic.StateWrapper;
 import com.plotsquared.bukkit.util.BukkitBlockUtil;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.queue.BasicLocalBlockQueue;
 import com.plotsquared.core.util.BlockUtil;
+import com.plotsquared.core.util.MainUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -139,7 +139,8 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
                             BlockData blockData = BukkitAdapter.adapt(block);
 
                             Block existing = chunk.getBlock(x, y, z);
-                            final BlockState existingBaseBlock = BukkitAdapter.adapt(existing.getBlockData());
+                            final BlockState existingBaseBlock =
+                                BukkitAdapter.adapt(existing.getBlockData());
                             if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing
                                 .getBlockData().matches(blockData)) {
                                 continue;
@@ -151,8 +152,8 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
                                 CompoundTag tag = block.getNbtData();
                                 StateWrapper sw = new StateWrapper(tag);
 
-                                sw.restoreTag(worldObj.getName(), existing.getX(),
-                                    existing.getY(), existing.getZ());
+                                sw.restoreTag(worldObj.getName(), existing.getX(), existing.getY(),
+                                    existing.getZ());
                             }
                         }
                     }
@@ -162,7 +163,8 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
         if (isForceSync()) {
             chunkConsumer.accept(getChunk(worldObj, localChunk));
         } else {
-            PaperLib.getChunkAtAsync(worldObj, localChunk.getX(), localChunk.getZ(), true).thenAccept(chunkConsumer);
+            PaperLib.getChunkAtAsync(worldObj, localChunk.getX(), localChunk.getZ(), true)
+                .thenAccept(chunkConsumer);
         }
     }
 
@@ -206,8 +208,8 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
                             BiomeType biomeType = biomeZ[z];
 
                             Biome biome = BukkitAdapter.adapt(biomeType);
-                            worldObj.setBiome((chunk.getX() << 4) + x, (chunk.getZ() << 4) + z,
-                                biome);
+                            worldObj
+                                .setBiome((chunk.getX() << 4) + x, (chunk.getZ() << 4) + z, biome);
                         }
                     }
                 }
@@ -216,7 +218,8 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
         if (this.isForceSync()) {
             chunkConsumer.accept(getChunk(worldObj, lc));
         } else {
-            PaperLib.getChunkAtAsync(worldObj, lc.getX(), lc.getZ(), true).thenAccept(chunkConsumer);
+            PaperLib.getChunkAtAsync(worldObj, lc.getX(), lc.getZ(), true)
+                .thenAccept(chunkConsumer);
         }
     }
 

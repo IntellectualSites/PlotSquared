@@ -55,8 +55,8 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(@Nullable Object chunkObject, @NotNull final String world, final int chunkX, final int chunkZ,
-        LocalBlockQueue queue) {
+    public static boolean generate(@Nullable Object chunkObject, @NotNull final String world,
+        final int chunkX, final int chunkZ, LocalBlockQueue queue) {
         if (!enabled) {
             return false;
         }
@@ -134,8 +134,8 @@ public class AugmentedUtils {
                     continue;
                 }
                 generationResult = true;
-                secondaryMask = new LocationOffsetDelegateLocalBlockQueue(canPlace, blockX,
-                    blockZ, primaryMask);
+                secondaryMask = new LocationOffsetDelegateLocalBlockQueue(canPlace, blockX, blockZ,
+                    primaryMask);
             } else {
                 secondaryMask = primaryMask;
                 for (int x = relativeBottomX; x <= relativeTopX; x++) {
@@ -152,8 +152,9 @@ public class AugmentedUtils {
             secondaryMask.setChunkObject(chunkObject);
             secondaryMask.setForceSync(true);
 
-            ScopedLocalBlockQueue scoped = new ScopedLocalBlockQueue(secondaryMask, new Location(world, blockX, 0, blockZ),
-                new Location(world, blockX + 15, 255, blockZ + 15));
+            ScopedLocalBlockQueue scoped =
+                new ScopedLocalBlockQueue(secondaryMask, new Location(world, blockX, 0, blockZ),
+                    new Location(world, blockX + 15, 255, blockZ + 15));
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
         }

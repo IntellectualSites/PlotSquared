@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.message.PlotMessage;
 
 public abstract class ChatManager<T> {
     public static ChatManager<?> manager;

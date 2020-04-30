@@ -25,9 +25,9 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
-import com.plotsquared.core.player.PlotPlayer;
 
 /**
  * This class is only used by internal functions, for most cases use the PlotInventory class

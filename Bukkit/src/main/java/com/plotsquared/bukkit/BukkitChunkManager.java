@@ -82,7 +82,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 public class BukkitChunkManager extends ChunkManager {
 
     public static boolean isIn(CuboidRegion region, int x, int z) {
-        return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX() && z >= region.getMinimumPoint().getZ() && z <= region.getMaximumPoint().getZ();
+        return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX()
+            && z >= region.getMinimumPoint().getZ() && z <= region.getMaximumPoint().getZ();
     }
 
     public static ContentMap swapChunk(World world1, World world2, Chunk pos1, Chunk pos2,
@@ -106,8 +107,10 @@ public class BukkitChunkManager extends ChunkManager {
         LocalBlockQueue queue1 = GlobalBlockQueue.IMP.getNewQueue(worldName1, false);
         LocalBlockQueue queue2 = GlobalBlockQueue.IMP.getNewQueue(worldName2, false);
 
-        for (int x = Math.max(r1.getMinimumPoint().getX(), sx); x <= Math.min(r1.getMaximumPoint().getX(), sx + 15); x++) {
-            for (int z = Math.max(r1.getMinimumPoint().getZ(), sz); z <= Math.min(r1.getMaximumPoint().getZ(), sz + 15); z++) {
+        for (int x = Math.max(r1.getMinimumPoint().getX(), sx);
+             x <= Math.min(r1.getMaximumPoint().getX(), sx + 15); x++) {
+            for (int z = Math.max(r1.getMinimumPoint().getZ(), sz);
+                 z <= Math.min(r1.getMaximumPoint().getZ(), sz + 15); z++) {
                 for (int y = 0; y < 256; y++) {
                     Block block1 = world1.getBlockAt(x, y, z);
                     BaseBlock baseBlock1 = bukkitWorld1.getFullBlock(BlockVector3.at(x, y, z));
@@ -159,7 +162,8 @@ public class BukkitChunkManager extends ChunkManager {
                     + " Will halt the calling thread until completed.");
                 semaphore.acquire();
                 Bukkit.getScheduler().runTask(BukkitMain.getPlugin(BukkitMain.class), () -> {
-                    for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
+                    for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))
+                        .getLoadedChunks()) {
                         BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
                         chunks.add(loc);
                     }
@@ -214,7 +218,7 @@ public class BukkitChunkManager extends ChunkManager {
         if (doWhole) {
             for (Entity entity : entities) {
                 org.bukkit.Location location = entity.getLocation();
-                PaperLib.getChunkAtAsync(location).thenAccept( chunk -> {
+                PaperLib.getChunkAtAsync(location).thenAccept(chunk -> {
                     if (chunks.contains(chunk)) {
                         int X = chunk.getX();
                         int Z = chunk.getZ();
@@ -249,7 +253,8 @@ public class BukkitChunkManager extends ChunkManager {
         return count;
     }
 
-    @Override public boolean copyRegion(Location pos1, Location pos2, Location newPos,
+    @Override
+    public boolean copyRegion(Location pos1, Location pos2, Location newPos,
         final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
@@ -303,7 +308,8 @@ public class BukkitChunkManager extends ChunkManager {
         return true;
     }
 
-    @Override public boolean regenerateRegion(final Location pos1, final Location pos2,
+    @Override
+    public boolean regenerateRegion(final Location pos1, final Location pos2,
         final boolean ignoreAugment, final Runnable whenDone) {
         final String world = pos1.getWorld();
 
@@ -341,7 +347,8 @@ public class BukkitChunkManager extends ChunkManager {
                         if (chunkObj == null) {
                             return;
                         }
-                        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+                        final LocalBlockQueue queue =
+                            GlobalBlockQueue.IMP.getNewQueue(world, false);
                         if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
                             AugmentedUtils.bypass(ignoreAugment,
                                 () -> queue.regenChunkSafe(chunk.getX(), chunk.getZ()));
@@ -406,11 +413,11 @@ public class BukkitChunkManager extends ChunkManager {
                         if (checkX2 && checkZ2) {
                             map.saveRegion(bukkitWorldObj, xxt2, xxt, zzt2, zzt); //
                         }
-                        CuboidRegion currentPlotClear =
-                            RegionUtil.createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
+                        CuboidRegion currentPlotClear = RegionUtil
+                            .createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
                         map.saveEntitiesOut(chunkObj, currentPlotClear);
-                        AugmentedUtils.bypass(ignoreAugment,
-                            () -> setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
+                        AugmentedUtils.bypass(ignoreAugment, () -> setChunkInPlotArea(null,
+                            new RunnableVal<ScopedLocalBlockQueue>() {
                                 @Override public void run(ScopedLocalBlockQueue value) {
                                     Location min = value.getMin();
                                     int bx = min.getX();
@@ -420,12 +427,14 @@ public class BukkitChunkManager extends ChunkManager {
                                             PlotLoc plotLoc = new PlotLoc(bx + x1, bz + z1);
                                             BaseBlock[] ids = map.allBlocks.get(plotLoc);
                                             if (ids != null) {
-                                                for (int y = 0; y < Math.min(128, ids.length); y++) {
+                                                for (int y = 0;
+                                                     y < Math.min(128, ids.length); y++) {
                                                     BaseBlock id = ids[y];
                                                     if (id != null) {
                                                         value.setBlock(x1, y, z1, id);
                                                     } else {
-                                                        value.setBlock(x1, y, z1, BlockTypes.AIR.getDefaultState());
+                                                        value.setBlock(x1, y, z1,
+                                                            BlockTypes.AIR.getDefaultState());
                                                     }
                                                 }
                                                 for (int y = Math.min(128, ids.length);
@@ -454,15 +463,17 @@ public class BukkitChunkManager extends ChunkManager {
         return true;
     }
 
-    @Override public CompletableFuture<?> loadChunk(String world, BlockVector2 chunkLoc, boolean force) {
-        return PaperLib.getChunkAtAsync(BukkitUtil.getWorld(world),chunkLoc.getX(), chunkLoc.getZ(), force);
+    @Override
+    public CompletableFuture<?> loadChunk(String world, BlockVector2 chunkLoc, boolean force) {
+        return PaperLib
+            .getChunkAtAsync(BukkitUtil.getWorld(world), chunkLoc.getX(), chunkLoc.getZ(), force);
     }
 
     @Override
     public void unloadChunk(final String world, final BlockVector2 chunkLoc, final boolean save) {
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager.runTask(
-                () -> BukkitUtil.getWorld(world).unloadChunk(chunkLoc.getX(), chunkLoc.getZ(), save));
+            TaskManager.runTask(() -> BukkitUtil.getWorld(world)
+                .unloadChunk(chunkLoc.getX(), chunkLoc.getZ(), save));
         } else {
             BukkitUtil.getWorld(world).unloadChunk(chunkLoc.getX(), chunkLoc.getZ(), save);
         }
@@ -489,7 +500,8 @@ public class BukkitChunkManager extends ChunkManager {
         }
     }
 
-    @Override public void swap(Location bot1, Location top1, Location bot2, Location top2,
+    @Override
+    public void swap(Location bot1, Location top1, Location bot2, Location top2,
         final Runnable whenDone) {
         CuboidRegion region1 =
             RegionUtil.createRegion(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
@@ -497,8 +509,8 @@ public class BukkitChunkManager extends ChunkManager {
             RegionUtil.createRegion(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
         final World world1 = Bukkit.getWorld(bot1.getWorld());
         final World world2 = Bukkit.getWorld(bot2.getWorld());
-        checkNotNull(world1,"Critical error during swap.");
-        checkNotNull(world2,"Critical error during swap.");
+        checkNotNull(world1, "Critical error during swap.");
+        checkNotNull(world2, "Critical error during swap.");
         int relX = bot2.getX() - bot1.getX();
         int relZ = bot2.getZ() - bot1.getZ();
 
@@ -525,13 +537,11 @@ public class BukkitChunkManager extends ChunkManager {
 
         if (EntityCategories.PLAYER.contains(entityType)) {
             return;
-        } else if (EntityCategories.PROJECTILE.contains(entityType) ||
-            EntityCategories.OTHER.contains(entityType) ||
-            EntityCategories.HANGING.contains(entityType)) {
+        } else if (EntityCategories.PROJECTILE.contains(entityType) || EntityCategories.OTHER
+            .contains(entityType) || EntityCategories.HANGING.contains(entityType)) {
             count[CAP_MISC]++;
-        } else if (EntityCategories.ANIMAL.contains(entityType) ||
-            EntityCategories.VILLAGER.contains(entityType) ||
-            EntityCategories.TAMEABLE.contains(entityType)) {
+        } else if (EntityCategories.ANIMAL.contains(entityType) || EntityCategories.VILLAGER
+            .contains(entityType) || EntityCategories.TAMEABLE.contains(entityType)) {
             count[CAP_MOB]++;
             count[CAP_ANIMAL]++;
         } else if (EntityCategories.VEHICLE.contains(entityType)) {

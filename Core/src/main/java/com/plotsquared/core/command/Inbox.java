@@ -26,14 +26,14 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.comment.CommentInbox;
-import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.comment.CommentManager;
+import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.task.RunnableVal;
 
 import java.util.List;
 

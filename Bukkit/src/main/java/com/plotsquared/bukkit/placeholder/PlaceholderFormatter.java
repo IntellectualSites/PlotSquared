@@ -42,7 +42,7 @@ public class PlaceholderFormatter implements ChatFormatter {
                 final Player player = ((BukkitPlayer) recipient).player;
                 context.setMessage(PlaceholderAPI.setPlaceholders(player, context.getMessage()));
             }
-         }
+        }
     }
 
 }

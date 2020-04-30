@@ -25,10 +25,10 @@
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.ConfigurationNode;
+import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.PlotId;
@@ -38,7 +38,8 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.util.Locale;
 
-@SuppressWarnings("WeakerAccess") public abstract class ClassicPlotWorld extends SquarePlotWorld {
+@SuppressWarnings("WeakerAccess")
+public abstract class ClassicPlotWorld extends SquarePlotWorld {
 
     public int ROAD_HEIGHT = 62;
     public int PLOT_HEIGHT = 62;
@@ -116,8 +117,8 @@ import java.util.Locale;
 
         // Dump world settings
         if (Settings.DEBUG) {
-            PlotSquared.debug(String
-                .format("- Dumping settings for ClassicPlotWorld with name %s", this.getWorldName()));
+            PlotSquared.debug(String.format("- Dumping settings for ClassicPlotWorld with name %s",
+                this.getWorldName()));
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);
