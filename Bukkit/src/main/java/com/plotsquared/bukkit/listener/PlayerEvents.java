@@ -1386,11 +1386,15 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = area.getOwnedPlot(tLocation);
         if (plot != null) {
-            if (plot.getFlag(DisablePhysicsFlag.class)) {
+            if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects
+                .equals(plot, area.getOwnedPlot(fLocation))) {
                 event.setCancelled(true);
                 return;
-            } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects
-                .equals(plot, area.getOwnedPlot(fLocation))) {
+            }
+            if (plot.getFlag(LiquidFlowFlag.class) && event.getBlock().isLiquid()) {
+                return;
+            }
+            if (plot.getFlag(DisablePhysicsFlag.class)) {
                 event.setCancelled(true);
                 return;
             }
