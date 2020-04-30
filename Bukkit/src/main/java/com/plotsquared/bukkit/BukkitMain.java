@@ -29,6 +29,7 @@ import com.plotsquared.bukkit.generator.BukkitHybridUtils;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
+import com.plotsquared.bukkit.listener.PaperListener;
 import com.plotsquared.bukkit.listener.PlayerEvents;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
@@ -93,6 +94,7 @@ import com.plotsquared.core.util.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
+import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bstats.bukkit.Metrics;
@@ -635,6 +637,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         final PlayerEvents main = new PlayerEvents();
         getServer().getPluginManager().registerEvents(main, this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
+        if (PaperLib.isPaper() && Settings.Paper_Components.ENTITY_PATHING
+            || Settings.Paper_Components.PRE_SPAWN_LISTENER) {
+            getServer().getPluginManager().registerEvents(new PaperListener(), this);
+        }
         PlotListener.startRunnable();
     }
 
