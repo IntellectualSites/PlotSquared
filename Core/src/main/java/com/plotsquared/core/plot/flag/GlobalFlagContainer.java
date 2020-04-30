@@ -147,7 +147,6 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(IceFormFlag.ICE_FORM_FALSE);
         this.addFlag(IceMeltFlag.ICE_MELT_FALSE);
         this.addFlag(KelpGrowFlag.KELP_GROW_TRUE);
-        this.addFlag(LiquidFlowFlag.LIQUID_FLOW_TRUE);
         this.addFlag(RedstoneFlag.REDSTONE_TRUE);
         this.addFlag(ServerPlotFlag.SERVER_PLOT_FALSE);
         this.addFlag(MiscBreakFlag.MISC_BREAK_FALSE);
@@ -183,6 +182,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(DenyTeleportFlag.DENY_TELEPORT_FLAG_NONE);
         this.addFlag(TitlesFlag.TITLES_NONE);
         this.addFlag(FlyFlag.FLIGHT_FLAG_DEFAULT);
+        this.addFlag(LiquidFlowFlag.LIQUID_FLOW_DEFAULT);
 
         // Integer flags
         this.addFlag(AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
