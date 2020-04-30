@@ -337,15 +337,16 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override public void getBiome(String world, int x, int z, final Consumer<BiomeType> result) {
-        ensureLoaded(world, x, z, chunk ->
-            result.accept(BukkitAdapter.adapt(getWorld(world).getBiome(x, z))));
+        ensureLoaded(world, x, z,
+            chunk -> result.accept(BukkitAdapter.adapt(getWorld(world).getBiome(x, z))));
     }
 
     @Override public BiomeType getBiomeSynchronous(String world, int x, int z) {
         return BukkitAdapter.adapt(getWorld(world).getBiome(x, z));
     }
 
-    @Override public void getHighestBlock(@NonNull final String world, final int x, final int z,
+    @Override
+    public void getHighestBlock(@NonNull final String world, final int x, final int z,
         final IntConsumer result) {
         ensureLoaded(world, x, z, chunk -> {
             final World bukkitWorld = getWorld(world);
@@ -394,7 +395,8 @@ public class BukkitUtil extends WorldUtil {
         return bukkitWorld.getMaxHeight() - 1;
     }
 
-    @Override public void getSign(@NonNull final Location location, final Consumer<String[]> result) {
+    @Override
+    public void getSign(@NonNull final Location location, final Consumer<String[]> result) {
         ensureLoaded(location, chunk -> {
             final Block block = chunk.getWorld().getBlockAt(getLocation(location));
             if (block.getState() instanceof Sign) {
@@ -519,7 +521,8 @@ public class BukkitUtil extends WorldUtil {
         return new BukkitWorld(Bukkit.getWorld(world));
     }
 
-    @Override public void getBlock(@NonNull final Location location, final Consumer<BlockState> result) {
+    @Override
+    public void getBlock(@NonNull final Location location, final Consumer<BlockState> result) {
         ensureLoaded(location, chunk -> {
             final World world = getWorld(location.getWorld());
             final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
@@ -554,7 +557,8 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final String category) {
+    public Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(
+        final String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
         switch (category) {
             case "animal": {
@@ -563,13 +567,16 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Animals.class);
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
-            } break;
+            }
+            break;
             case "tameable": {
                 allowedInterfaces.add(Tameable.class);
-            } break;
+            }
+            break;
             case "vehicle": {
                 allowedInterfaces.add(Vehicle.class);
-            } break;
+            }
+            break;
             case "hostile": {
                 allowedInterfaces.add(Shulker.class);
                 allowedInterfaces.add(Monster.class);
@@ -578,16 +585,20 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Ghast.class);
                 allowedInterfaces.add(Phantom.class);
                 allowedInterfaces.add(EnderCrystal.class);
-            } break;
+            }
+            break;
             case "hanging": {
                 allowedInterfaces.add(Hanging.class);
-            } break;
+            }
+            break;
             case "villager": {
                 allowedInterfaces.add(NPC.class);
-            } break;
+            }
+            break;
             case "projectile": {
                 allowedInterfaces.add(Projectile.class);
-            } break;
+            }
+            break;
             case "other": {
                 allowedInterfaces.add(ArmorStand.class);
                 allowedInterfaces.add(FallingBlock.class);
@@ -599,16 +610,20 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(ExperienceOrb.class);
                 allowedInterfaces.add(EnderSignal.class);
                 allowedInterfaces.add(Firework.class);
-            } break;
+            }
+            break;
             case "player": {
                 allowedInterfaces.add(Player.class);
-            } break;
+            }
+            break;
             default: {
                 PlotSquared.log(Captions.PREFIX + "Unknown entity category requested: " + category);
-            } break;
+            }
+            break;
         }
         final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();
-        outer: for (final EntityType bukkitType : EntityType.values()) {
+        outer:
+        for (final EntityType bukkitType : EntityType.values()) {
             final Class<? extends Entity> entityClass = bukkitType.getEntityClass();
             if (entityClass == null) {
                 continue;
@@ -623,22 +638,23 @@ public class BukkitUtil extends WorldUtil {
         return types;
     }
 
-    private static void ensureLoaded(final String world, final int x, final int z, final Consumer<Chunk> chunkConsumer) {
-        PaperLib.getChunkAtAsync(getWorld(world), x >> 4, z >> 4, true).thenAccept(chunk ->
-            ensureMainThread(chunkConsumer, chunk));
+    private static void ensureLoaded(final String world, final int x, final int z,
+        final Consumer<Chunk> chunkConsumer) {
+        PaperLib.getChunkAtAsync(getWorld(world), x >> 4, z >> 4, true)
+            .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
     private static void ensureLoaded(final Location location, final Consumer<Chunk> chunkConsumer) {
-        PaperLib.getChunkAtAsync(getLocation(location), true).thenAccept(chunk ->
-            ensureMainThread(chunkConsumer, chunk));
+        PaperLib.getChunkAtAsync(getLocation(location), true)
+            .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
     private static <T> void ensureMainThread(final Consumer<T> consumer, final T value) {
         if (Bukkit.isPrimaryThread()) {
             consumer.accept(value);
         } else {
-            Bukkit.getScheduler().runTask(BukkitMain.getPlugin(BukkitMain.class), () ->
-                consumer.accept(value));
+            Bukkit.getScheduler()
+                .runTask(BukkitMain.getPlugin(BukkitMain.class), () -> consumer.accept(value));
         }
     }
 

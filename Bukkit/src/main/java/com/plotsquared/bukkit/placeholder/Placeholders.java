@@ -41,33 +41,27 @@ public class Placeholders extends PlaceholderExpansion {
     public Placeholders() {
     }
 
-    @Override
-    public boolean persist() {
+    @Override public boolean persist() {
         return true;
     }
 
-    @Override
-    public boolean canRegister() {
+    @Override public boolean canRegister() {
         return true;
     }
 
-    @Override
-    public String getAuthor() {
+    @Override public String getAuthor() {
         return "NotMyFault";
     }
 
-    @Override
-    public String getIdentifier() {
+    @Override public String getIdentifier() {
         return "plotsquared";
     }
 
-    @Override
-    public String getVersion() {
+    @Override public String getVersion() {
         return "2.4";
     }
 
-    @Override
-    public String onPlaceholderRequest(Player p, String identifier) {
+    @Override public String onPlaceholderRequest(Player p, String identifier) {
         final PlotPlayer pl = PlotPlayer.get(p.getName());
 
         if (pl == null) {

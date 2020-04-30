@@ -32,7 +32,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-@Getter public abstract class EntityWrapper {
+@Getter
+public abstract class EntityWrapper {
 
     protected final float yaw;
     protected final float pitch;

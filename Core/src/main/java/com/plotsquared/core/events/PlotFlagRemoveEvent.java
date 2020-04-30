@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.events;
 
-import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.flag.PlotFlag;
 
 /**
  * Called when a flag is removed from a plot
@@ -45,13 +45,11 @@ public class PlotFlagRemoveEvent extends PlotFlagEvent implements CancellablePlo
         super(plot, flag);
     }
 
-    @Override
-    public Result getEventResult() {
+    @Override public Result getEventResult() {
         return eventResult;
     }
 
-    @Override
-    public void setEventResult(Result e) {
+    @Override public void setEventResult(Result e) {
         this.eventResult = e;
     }
 }

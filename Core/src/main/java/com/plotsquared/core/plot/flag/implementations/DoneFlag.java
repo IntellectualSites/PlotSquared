@@ -26,9 +26,9 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.plot.Plot;
 import org.jetbrains.annotations.NotNull;
 
 public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag {

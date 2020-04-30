@@ -25,18 +25,18 @@
  */
 package com.plotsquared.bukkit.util.uuid;
 
+import com.google.common.collect.HashBiMap;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.SQLite;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.StringWrapper;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.util.uuid.UUIDHandlerImplementation;
 import com.plotsquared.core.util.uuid.UUIDWrapper;
-import com.google.common.collect.HashBiMap;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

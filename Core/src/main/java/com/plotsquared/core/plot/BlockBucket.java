@@ -25,13 +25,13 @@
  */
 package com.plotsquared.core.plot;
 
-import com.plotsquared.core.configuration.serialization.ConfigurationSerializable;
-import com.plotsquared.core.configuration.ConfigurationUtil;
-import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.BlockUtil;
-import com.plotsquared.core.util.PatternUtil;
 import com.google.common.collect.ImmutableMap;
+import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.serialization.ConfigurationSerializable;
+import com.plotsquared.core.util.BlockUtil;
+import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.PatternUtil;
+import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.function.pattern.BlockPattern;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -49,7 +49,8 @@ import java.util.regex.Matcher;
  * A block bucket is a container of block types, where each block
  * has a specified chance of being randomly picked
  */
-@EqualsAndHashCode(of = {"input"}) @SuppressWarnings({"unused", "WeakerAccess"})
+@EqualsAndHashCode(of = {"input"})
+@SuppressWarnings({"unused", "WeakerAccess"})
 public final class BlockBucket implements ConfigurationSerializable {
     private static java.util.regex.Pattern regex = java.util.regex.Pattern.compile(
         "((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
@@ -134,7 +135,8 @@ public final class BlockBucket implements ConfigurationSerializable {
                     String chanceStr = matcher.group("chance");
                     String block = matcher.group("block");
                     //noinspection PointlessNullCheck
-                    if (chanceStr != null && block != null && !MathMan.isInteger(block) && MathMan.isInteger(chanceStr)) {
+                    if (chanceStr != null && block != null && !MathMan.isInteger(block) && MathMan
+                        .isInteger(chanceStr)) {
                         String namespace = matcher.group("namespace");
                         string = (namespace == null ? "" : namespace + ":") + block;
                     }
@@ -191,7 +193,10 @@ public final class BlockBucket implements ConfigurationSerializable {
         return ImmutableMap.of("blocks", this.toString());
     }
 
-    @Getter @EqualsAndHashCode @RequiredArgsConstructor private static final class Range {
+    @Getter
+    @EqualsAndHashCode
+    @RequiredArgsConstructor
+    private static final class Range {
 
         private final int min;
         private final int max;

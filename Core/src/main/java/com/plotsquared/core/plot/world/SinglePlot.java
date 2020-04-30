@@ -25,12 +25,12 @@
  */
 package com.plotsquared.core.plot.world;
 
-import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;

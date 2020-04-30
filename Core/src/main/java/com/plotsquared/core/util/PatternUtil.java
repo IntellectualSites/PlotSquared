@@ -25,10 +25,10 @@
  */
 package com.plotsquared.core.util;
 
+import com.google.common.base.Preconditions;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
-import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.extension.input.InputParseException;
@@ -47,10 +47,8 @@ public class PatternUtil {
 
     public static BaseBlock apply(@NotNull Pattern pattern, int x, int y, int z) {
         Preconditions.checkNotNull(pattern, "Pattern may not be null");
-        if (pattern instanceof BlockPattern
-            || pattern instanceof RandomPattern
-            || pattern instanceof BlockState
-            || pattern instanceof BlockType
+        if (pattern instanceof BlockPattern || pattern instanceof RandomPattern
+            || pattern instanceof BlockState || pattern instanceof BlockType
             || pattern instanceof BaseBlock) {
             return pattern.apply(BlockVector3.ZERO);
         }

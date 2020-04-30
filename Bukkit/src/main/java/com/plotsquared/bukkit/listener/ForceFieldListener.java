@@ -25,15 +25,15 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.common.collect.Iterables;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.plot.flag.implementations.ForcefieldFlag;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.flag.implementations.ForcefieldFlag;
 import com.plotsquared.core.util.Permissions;
-import com.google.common.collect.Iterables;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -41,7 +41,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@SuppressWarnings("unused") public class ForceFieldListener {
+@SuppressWarnings("unused")
+public class ForceFieldListener {
 
     private static Set<PlotPlayer> getNearbyPlayers(Player player, Plot plot) {
         Set<PlotPlayer> players = new HashSet<>();

@@ -37,7 +37,7 @@ public interface PlotAreaManager {
      * method assumes that the caller already knows that
      * the location belongs to a plot area, in which
      * case it will return the appropriate plot area.
-     *
+     * <p>
      * If the location does not belong to a plot area,
      * it may still return an area.
      *

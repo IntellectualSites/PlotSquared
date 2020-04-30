@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit;
 
+import com.plotsquared.bukkit.generator.BukkitHybridUtils;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
@@ -33,42 +34,46 @@ import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.Placeholders;
+import com.plotsquared.bukkit.queue.BukkitLocalQueue;
+import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitEconHandler;
-import com.plotsquared.bukkit.generator.BukkitHybridUtils;
 import com.plotsquared.bukkit.util.BukkitInventoryUtil;
-import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
-import com.plotsquared.bukkit.queue.BukkitLocalQueue;
 import com.plotsquared.bukkit.util.uuid.DefaultUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.util.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.SQLUUIDHandler;
-import com.plotsquared.core.configuration.*;
 import com.plotsquared.core.IPlotMain;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.ChatFormatter;
+import com.plotsquared.core.configuration.ConfigurationNode;
+import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridGen;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.plot.message.PlainChatManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.queue.QueueProvider;
 import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.ConsoleColors;
@@ -80,11 +85,10 @@ import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.util.uuid.UUIDHandlerImplementation;
-import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.queue.QueueProvider;
 import com.plotsquared.core.util.uuid.UUIDWrapper;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -123,7 +127,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.plotsquared.core.util.PremiumVerification.*;
+import static com.plotsquared.core.util.PremiumVerification.getDownloadID;
+import static com.plotsquared.core.util.PremiumVerification.getResourceID;
+import static com.plotsquared.core.util.PremiumVerification.getUserID;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
@@ -191,8 +197,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
 
         if (PremiumVerification.isPremium()) {
-            PlotSquared.log(Captions.PREFIX + "&6PlotSquared version licensed to Spigot user " + getUserID());
-            PlotSquared.log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/" + getResourceID());
+            PlotSquared.log(
+                Captions.PREFIX + "&6PlotSquared version licensed to Spigot user " + getUserID());
+            PlotSquared
+                .log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/" + getResourceID());
             PlotSquared.log(Captions.PREFIX + "&6Download ID: " + getDownloadID());
             PlotSquared.log(Captions.PREFIX + "&6Thanks for supporting us :)");
         } else {
@@ -206,7 +214,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             }
             PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into PlaceholderAPI");
         } else {
-            PlotSquared.debug(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
+            PlotSquared
+                .debug(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
         }
 
         this.startMetrics();
@@ -409,8 +418,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                         case MINECART_TNT:
                         case BOAT:
                             if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-                                com.plotsquared.core.location.Location
-                                    location = BukkitUtil.getLocation(entity.getLocation());
+                                com.plotsquared.core.location.Location location =
+                                    BukkitUtil.getLocation(entity.getLocation());
                                 Plot plot = location.getPlot();
                                 if (plot == null) {
                                     if (location.isPlotArea()) {
@@ -466,8 +475,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
                                     PlotId originalPlotId = (PlotId) meta.get(0).value();
                                     if (originalPlotId != null) {
-                                        com.plotsquared.core.location.Location
-                                            pLoc = BukkitUtil.getLocation(entity.getLocation());
+                                        com.plotsquared.core.location.Location pLoc =
+                                            BukkitUtil.getLocation(entity.getLocation());
                                         PlotArea area = pLoc.getPlotArea();
                                         if (area != null) {
                                             PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
@@ -485,14 +494,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                                     }
                                 } else {
                                     //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
-                                    com.plotsquared.core.location.Location
-                                        pLoc = BukkitUtil.getLocation(entity.getLocation());
+                                    com.plotsquared.core.location.Location pLoc =
+                                        BukkitUtil.getLocation(entity.getLocation());
                                     PlotArea area = pLoc.getPlotArea();
                                     if (area != null) {
                                         PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
                                         if (currentPlotId != null) {
-                                            entity.setMetadata("shulkerPlot", new FixedMetadataValue(
-                                                (Plugin) PlotSquared.get().IMP, currentPlotId));
+                                            entity.setMetadata("shulkerPlot",
+                                                new FixedMetadataValue(
+                                                    (Plugin) PlotSquared.get().IMP, currentPlotId));
                                         }
                                     }
                                 }
@@ -668,7 +678,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitUtil();
     }
 
-    @Override @Nullable public GeneratorWrapper<?> getGenerator(@NonNull final String world,
+    @Override @Nullable
+    public GeneratorWrapper<?> getGenerator(@NonNull final String world,
         @Nullable final String name) {
         if (name == null) {
             return null;
@@ -709,7 +720,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 map.put(plotAreaType.name().toLowerCase(), terrainTypes);
             }
             for (final PlotArea plotArea : PlotSquared.get().getPlotAreas()) {
-                final Map<String, Integer> terrainTypeMap = map.get(plotArea.getType().name().toLowerCase());
+                final Map<String, Integer> terrainTypeMap =
+                    map.get(plotArea.getType().name().toLowerCase());
                 terrainTypeMap.put(plotArea.getTerrain().name().toLowerCase(),
                     terrainTypeMap.get(plotArea.getTerrain().name().toLowerCase()) + 1);
             }
@@ -847,7 +859,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }
     }
 
-    @Override public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world,
+    @Override
+    public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world,
         @NonNull final IndependentPlotGenerator generator) {
         return new BukkitPlotGenerator(world, generator);
     }
@@ -855,7 +868,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds() {
         List<Map.Entry<Map.Entry<String, String>, Boolean>> names = new ArrayList<>();
         for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            Map.Entry<String, String> id = new AbstractMap.SimpleEntry<>(plugin.getName(), plugin.getDescription().getVersion());
+            Map.Entry<String, String> id = new AbstractMap.SimpleEntry<>(plugin.getName(),
+                plugin.getDescription().getVersion());
             names.add(new AbstractMap.SimpleEntry<>(id, plugin.isEnabled()));
         }
         return names;
@@ -863,7 +877,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public Actor getConsole() {
         @NotNull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-        WorldEditPlugin wePlugin = ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
+        WorldEditPlugin wePlugin =
+            ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
         return wePlugin.wrapCommandSender(console);
     }
 }

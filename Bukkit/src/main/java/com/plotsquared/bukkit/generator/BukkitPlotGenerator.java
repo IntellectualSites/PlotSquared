@@ -25,17 +25,17 @@
  */
 package com.plotsquared.bukkit.generator;
 
-import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.queue.GenChunk;
+import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.math.BlockVector2;
 import lombok.Getter;
 import org.bukkit.World;
@@ -103,9 +103,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return this.platformGenerator;
     }
 
-    @Override
-    @NotNull
-    public List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
+    @Override @NotNull public List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
         try {
             if (!this.loaded) {
                 String name = world.getName();
@@ -149,8 +147,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return toAdd;
     }
 
-    @Override
-    @NotNull
+    @Override @NotNull
     public ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z,
         @NotNull BiomeGrid biome) {
 
@@ -203,8 +200,9 @@ public class BukkitPlotGenerator extends ChunkGenerator
         }
         PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
         if (area == null && (area = PlotSquared.get().getPlotArea(this.levelName, null)) == null) {
-            throw new IllegalStateException("Cannot regenerate chunk that does not belong to a plot area."
-                + " Location: " + loc + ", world: " + world);
+            throw new IllegalStateException(
+                "Cannot regenerate chunk that does not belong to a plot area." + " Location: " + loc
+                    + ", world: " + world);
         }
         try {
             this.plotGenerator.generateChunk(result, area);
@@ -215,8 +213,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         ChunkManager.postProcessChunk(loc, result);
     }
 
-    @Override
-    public boolean canSpawn(@NotNull final World world, final int x, final int z) {
+    @Override public boolean canSpawn(@NotNull final World world, final int x, final int z) {
         return true;
     }
 

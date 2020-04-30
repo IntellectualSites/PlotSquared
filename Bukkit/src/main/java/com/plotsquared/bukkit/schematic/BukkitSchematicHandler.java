@@ -27,12 +27,19 @@ package com.plotsquared.bukkit.schematic;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.queue.LocalBlockQueue;
-import com.sk89q.jnbt.*;
+import com.sk89q.jnbt.ByteArrayTag;
+import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.jnbt.IntArrayTag;
+import com.sk89q.jnbt.IntTag;
+import com.sk89q.jnbt.ListTag;
+import com.sk89q.jnbt.ShortTag;
+import com.sk89q.jnbt.StringTag;
+import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.platform.Capability;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -42,7 +49,13 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.io.ByteArrayOutputStream;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -50,7 +63,8 @@ import java.util.stream.IntStream;
  */
 public class BukkitSchematicHandler extends SchematicHandler {
 
-    @Override public void getCompoundTag(final String world, final Set<CuboidRegion> regions,
+    @Override
+    public void getCompoundTag(final String world, final Set<CuboidRegion> regions,
         final RunnableVal<CompoundTag> whenDone) {
         // async
         TaskManager.runTaskAsync(new Runnable() {
@@ -112,10 +126,12 @@ public class BukkitSchematicHandler extends SchematicHandler {
                                 schematic.put("BiomePaletteMax", new IntTag(biomePalette.size()));
 
                                 Map<String, Tag> biomePaletteTag = new HashMap<>();
-                                biomePalette.forEach((key, value) -> biomePaletteTag.put(key, new IntTag(value)));
+                                biomePalette.forEach(
+                                    (key, value) -> biomePaletteTag.put(key, new IntTag(value)));
 
                                 schematic.put("BiomePalette", new CompoundTag(biomePaletteTag));
-                                schematic.put("BiomeData", new ByteArrayTag(biomeBuffer.toByteArray()));
+                                schematic
+                                    .put("BiomeData", new ByteArrayTag(biomeBuffer.toByteArray()));
                                 whenDone.value = new CompoundTag(schematic);
                                 TaskManager.runTask(whenDone);
                             });
@@ -123,8 +139,10 @@ public class BukkitSchematicHandler extends SchematicHandler {
                         }
                         final Runnable regionTask = this;
                         CuboidRegion region = queue.poll();
-                        Location pos1 = new Location(world, region.getMinimumPoint().getX(), region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
-                        Location pos2 = new Location(world, region.getMaximumPoint().getX(), region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
+                        Location pos1 = new Location(world, region.getMinimumPoint().getX(),
+                            region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
+                        Location pos2 = new Location(world, region.getMaximumPoint().getX(),
+                            region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
                         final int p1x = pos1.getX();
                         final int sy = pos1.getY();
                         final int p1z = pos1.getZ();

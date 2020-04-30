@@ -25,14 +25,14 @@
  */
 package com.plotsquared.bukkit.queue;
 
+import com.google.common.base.Preconditions;
 import com.plotsquared.bukkit.util.BukkitBlockUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PatternUtil;
-import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
@@ -119,7 +119,8 @@ public class GenChunk extends ScopedLocalBlockQueue {
         int maxX = Math.max(pos1.getX(), pos2.getX());
         int maxY = Math.max(pos1.getY(), pos2.getY());
         int maxZ = Math.max(pos1.getZ(), pos2.getZ());
-        chunkData.setRegion(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, BukkitAdapter.adapt(block));
+        chunkData
+            .setRegion(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, BukkitAdapter.adapt(block));
     }
 
     @Override public boolean setBiome(int x, int z, BiomeType biomeType) {
@@ -135,7 +136,8 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     @Override public boolean setBlock(int x, int y, int z, @NotNull Pattern pattern) {
-        return setBlock(x, y, z, PatternUtil.apply(Preconditions.checkNotNull(pattern, "Pattern may not be null"), x, y, z));
+        return setBlock(x, y, z, PatternUtil
+            .apply(Preconditions.checkNotNull(pattern, "Pattern may not be null"), x, y, z));
     }
 
     @Override public boolean setBlock(int x, int y, int z, BlockState id) {

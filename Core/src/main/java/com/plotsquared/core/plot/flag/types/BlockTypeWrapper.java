@@ -40,7 +40,8 @@ import java.util.Map;
  * Container that class either contains a {@link BlockType}
  * or a {@link BlockCategory}
  */
-@EqualsAndHashCode public class BlockTypeWrapper {
+@EqualsAndHashCode
+public class BlockTypeWrapper {
 
     @Nullable @Getter private final BlockType blockType;
     @Nullable @Getter private final BlockCategory blockCategory;
@@ -63,7 +64,7 @@ import java.util.Map;
             } else {
                 return key;
             }
-        } else if(this.blockCategory != null) {
+        } else if (this.blockCategory != null) {
             final String key = this.blockCategory.toString();
             if (key.startsWith("minecraft:")) {
                 return '#' + key.substring(10);

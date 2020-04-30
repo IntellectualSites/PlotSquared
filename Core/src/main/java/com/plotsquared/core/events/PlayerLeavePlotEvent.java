@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.events;
 
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 
 /**
  *

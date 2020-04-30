@@ -25,9 +25,9 @@
  */
 package com.plotsquared.core.plot;
 
+import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -154,12 +154,13 @@ public class PlotCluster {
     public void getHome(Consumer<Location> result) {
         BlockLoc home = this.settings.getPosition();
         Consumer<Location> locationConsumer = toReturn -> {
-            MainUtil.getHighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(), max -> {
-                if (max > toReturn.getY()) {
-                    toReturn.setY(1 + max);
-                }
-                result.accept(toReturn);
-            });
+            MainUtil.getHighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(),
+                max -> {
+                    if (max > toReturn.getY()) {
+                        toReturn.setY(1 + max);
+                    }
+                    result.accept(toReturn);
+                });
         };
         if (home.getY() == 0) {
             // default pos

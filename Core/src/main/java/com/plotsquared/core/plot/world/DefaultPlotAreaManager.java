@@ -25,10 +25,10 @@
  */
 package com.plotsquared.core.plot.world;
 
+import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.collection.QuadMap;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
 

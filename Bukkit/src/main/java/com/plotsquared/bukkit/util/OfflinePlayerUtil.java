@@ -99,7 +99,8 @@ public class OfflinePlayerUtil {
         Class<?> minecraftServerClass = getNmsClass("MinecraftServer");
         Class<?> dimensionManager = getNmsClass("DimensionManager");
         Object overworld = getField(makeField(dimensionManager, "OVERWORLD"), null);
-        Method getWorldServer = makeMethod(minecraftServerClass, "getWorldServer", dimensionManager);
+        Method getWorldServer =
+            makeMethod(minecraftServerClass, "getWorldServer", dimensionManager);
         return callMethod(getWorldServer, server, overworld);
     }
 

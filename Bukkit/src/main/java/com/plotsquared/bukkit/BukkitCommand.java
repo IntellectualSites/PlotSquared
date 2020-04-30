@@ -74,7 +74,8 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (args.length == 0) {
             return Collections.singletonList("plots");
         }
-        Collection<com.plotsquared.core.command.Command> objects = MainCommand.getInstance().tab(player, args, s.endsWith(" "));
+        Collection<com.plotsquared.core.command.Command> objects =
+            MainCommand.getInstance().tab(player, args, s.endsWith(" "));
         if (objects == null) {
             return null;
         }

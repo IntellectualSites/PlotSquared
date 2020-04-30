@@ -51,8 +51,8 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
             input = "music_disc_" + input;
         }
         final ItemType itemType = ItemUtil.get(input);
-        if (itemType != null && itemType.getId() != null &&
-            (itemType == ItemTypes.AIR || itemType.getId().contains("music_disc_"))) {
+        if (itemType != null && itemType.getId() != null && (itemType == ItemTypes.AIR || itemType
+            .getId().contains("music_disc_"))) {
             return new MusicFlag(ItemUtil.get(input));
         } else {
             throw new FlagParseException(this, input, Captions.FLAG_ERROR_MUSIC);

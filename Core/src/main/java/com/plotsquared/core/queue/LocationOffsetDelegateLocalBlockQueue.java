@@ -40,9 +40,8 @@ public class LocationOffsetDelegateLocalBlockQueue extends DelegateLocalBlockQue
     private final int blockX;
     private final int blockZ;
 
-    public LocationOffsetDelegateLocalBlockQueue(final boolean[][] canPlace,
-        final int blockX, final int blockZ,
-        @Nullable LocalBlockQueue parent) {
+    public LocationOffsetDelegateLocalBlockQueue(final boolean[][] canPlace, final int blockX,
+        final int blockZ, @Nullable LocalBlockQueue parent) {
         super(parent);
         this.canPlace = canPlace;
         this.blockX = blockX;
@@ -62,8 +61,10 @@ public class LocationOffsetDelegateLocalBlockQueue extends DelegateLocalBlockQue
                 return super.setBlock(x, y, z, id);
             }
         } catch (final Exception e) {
-            PlotSquared.debug(String.format("Failed to set block at: %d;%d;%d (to = %s) with offset %d;%d."
-                + " Translated to: %d;%d", x, y, z, id, blockX, blockZ, x - blockX, z - blockZ));
+            PlotSquared.debug(String.format(
+                "Failed to set block at: %d;%d;%d (to = %s) with offset %d;%d."
+                    + " Translated to: %d;%d", x, y, z, id, blockX, blockZ, x - blockX,
+                z - blockZ));
             throw e;
         }
         return false;

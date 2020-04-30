@@ -25,6 +25,8 @@
  */
 package com.plotsquared.bukkit.util.uuid;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.BiMap;
 import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.OfflinePlotPlayer;
@@ -32,8 +34,6 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.util.uuid.UUIDWrapper;
-import com.google.common.base.Charsets;
-import com.google.common.collect.BiMap;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
@@ -60,7 +60,8 @@ public class OfflineUUIDWrapper extends UUIDWrapper {
     }
 
     @NotNull @Override public UUID getUUID(PlotPlayer player) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
+        return UUID
+            .nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8));
     }
 
     @Override public UUID getUUID(OfflinePlotPlayer player) {

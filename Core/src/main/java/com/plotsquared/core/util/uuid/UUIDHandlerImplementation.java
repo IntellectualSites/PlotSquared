@@ -25,20 +25,20 @@
  */
 package com.plotsquared.core.util.uuid;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.StringWrapper;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.google.common.base.Charsets;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

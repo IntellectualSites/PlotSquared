@@ -31,10 +31,10 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.ConfigurationNode;
-import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.location.Direction;
@@ -217,8 +217,8 @@ public abstract class PlotArea {
             return false;
         }
         PlotArea plotarea = (PlotArea) obj;
-        return this.getWorldHash() == plotarea.getWorldHash() && this.getWorldName().equals(plotarea.getWorldName())
-            && StringMan.isEqual(this.getId(), plotarea.getId());
+        return this.getWorldHash() == plotarea.getWorldHash() && this.getWorldName()
+            .equals(plotarea.getWorldName()) && StringMan.isEqual(this.getId(), plotarea.getId());
     }
 
     public Set<PlotCluster> getClusters() {
@@ -359,8 +359,9 @@ public abstract class PlotArea {
             String prefix = " ";
             for (final PlotFlag<?, ?> flag : flagCollection) {
                 Object value = flag.toString();
-                flagBuilder.append(prefix).append(CaptionUtility.format(null, Captions.PLOT_FLAG_LIST.getTranslated(),
-                    flag.getName(), CaptionUtility.formatRaw(null, value.toString(), "")));
+                flagBuilder.append(prefix).append(CaptionUtility
+                    .format(null, Captions.PLOT_FLAG_LIST.getTranslated(), flag.getName(),
+                        CaptionUtility.formatRaw(null, value.toString(), "")));
                 prefix = ", ";
             }
         }
@@ -543,8 +544,8 @@ public abstract class PlotArea {
     }
 
     public boolean contains(@NotNull final Location location) {
-        return StringMan.isEqual(location.getWorld(), this.getWorldName()) && (getRegionAbs() == null
-            || this.region.contains(location.getBlockVector3()));
+        return StringMan.isEqual(location.getWorld(), this.getWorldName()) && (
+            getRegionAbs() == null || this.region.contains(location.getBlockVector3()));
     }
 
     @NotNull public Set<Plot> getPlotsAbs(final UUID uuid) {
@@ -599,6 +600,7 @@ public abstract class PlotArea {
     public int getPlotCount(@Nullable final PlotPlayer player) {
         return player != null ? getPlotCount(player.getUUID()) : 0;
     }
+
     @Nullable public Plot getPlotAbs(@NotNull final PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
@@ -640,7 +642,8 @@ public abstract class PlotArea {
         return this.clusters != null ? this.clusters.get(plot.getId().x, plot.getId().y) : null;
     }
 
-    @Nullable public PlotCluster getFirstIntersectingCluster(@NotNull final PlotId pos1,
+    @Nullable
+    public PlotCluster getFirstIntersectingCluster(@NotNull final PlotId pos1,
         @NotNull final PlotId pos2) {
         if (this.clusters == null) {
             return null;
@@ -1051,15 +1054,16 @@ public abstract class PlotArea {
             } else {
                 split = key.split(":");
             }
-            final PlotFlag<?, ?> flagInstance = GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
+            final PlotFlag<?, ?> flagInstance =
+                GlobalFlagContainer.getInstance().getFlagFromString(split[0]);
             if (flagInstance != null) {
                 try {
                     flags.add(flagInstance.parse(split[1]));
                 } catch (final FlagParseException e) {
-                    PlotSquared.log(Captions.PREFIX.getTranslated() +
-                        String.format("§cFailed to parse default flag with key §6'%s'§c and value: §6'%s'§c."
-                                + " Reason: %s. This flag will not be added as a default flag.",
-                            e.getFlag().getName(), e.getValue(), e.getErrorMessage()));
+                    PlotSquared.log(Captions.PREFIX.getTranslated() + String.format(
+                        "§cFailed to parse default flag with key §6'%s'§c and value: §6'%s'§c."
+                            + " Reason: %s. This flag will not be added as a default flag.",
+                        e.getFlag().getName(), e.getValue(), e.getErrorMessage()));
                 }
             }
         }

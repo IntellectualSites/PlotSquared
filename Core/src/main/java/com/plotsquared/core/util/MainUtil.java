@@ -26,28 +26,27 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.util.net.AbstractDelegateOutputStream;
-import com.plotsquared.core.configuration.ConfigurationSection;
-import com.plotsquared.core.player.ConsolePlayer;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.command.Like;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.plot.expiration.ExpireManager;
-import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
-import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
-import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-
+import com.plotsquared.core.plot.expiration.ExpireManager;
+import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
+import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
+import com.plotsquared.core.plot.flag.types.DoubleFlag;
+import com.plotsquared.core.util.net.AbstractDelegateOutputStream;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
@@ -59,11 +58,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -97,6 +94,7 @@ import java.util.stream.IntStream;
 public class MainUtil {
 
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
+
     static {
         FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
     }
@@ -252,10 +250,12 @@ public class MainUtil {
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
         BiomeType biome = area.getPlotBiome();
-        if (!Objects.equals(WorldUtil.IMP.getBiomeSynchronous(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
-            (pos1.getZ() + pos2.getZ()) / 2), biome)) {
-            MainUtil.setBiome(area.getWorldName(), pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
-                biome);
+        if (!Objects.equals(WorldUtil.IMP
+            .getBiomeSynchronous(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
+                (pos1.getZ() + pos2.getZ()) / 2), biome)) {
+            MainUtil
+                .setBiome(area.getWorldName(), pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
+                    biome);
             return true;
         }
         return false;
@@ -656,8 +656,8 @@ public class MainUtil {
                     .format(null, (prefix ? Captions.PREFIX.getTranslated() : "") + msg);
                 PlotSquared.log(message);
             } else {
-                player.sendMessage(
-                    CaptionUtility.format(player, (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg)));
+                player.sendMessage(CaptionUtility.format(player,
+                    (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg)));
             }
         }
         return true;
@@ -776,8 +776,8 @@ public class MainUtil {
      * @param full
      * @param whenDone
      */
-    public static void format(final String iInfo, final Plot plot, PlotPlayer player, final boolean full,
-        final RunnableVal<String> whenDone) {
+    public static void format(final String iInfo, final Plot plot, PlotPlayer player,
+        final boolean full, final RunnableVal<String> whenDone) {
         int num = plot.getConnectedPlots().size();
         String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.getTranslated();
         Location bot = plot.getCorners()[0];
@@ -820,16 +820,19 @@ public class MainUtil {
                     } else {
                         value = flag.toString();
                     }
-                    flags.append(prefix).append(CaptionUtility.format(player, Captions.PLOT_FLAG_LIST.getTranslated(),
-                        flag.getName(), CaptionUtility.formatRaw(player, value.toString(), "")));
+                    flags.append(prefix).append(CaptionUtility
+                        .format(player, Captions.PLOT_FLAG_LIST.getTranslated(), flag.getName(),
+                            CaptionUtility.formatRaw(player, value.toString(), "")));
                     prefix = ", ";
                 }
             }
             boolean build = plot.isAdded(player.getUUID());
             String owner = plot.getOwners().isEmpty() ? "unowned" : getPlayerList(plot.getOwners());
             if (plot.getArea() != null) {
-                info = info.replace("%area%", plot.getArea().getWorldName() +
-                    (plot.getArea().getId() == null ? "" : "(" + plot.getArea().getId() + ")"));
+                info = info.replace("%area%",
+                    plot.getArea().getWorldName() + (plot.getArea().getId() == null ?
+                        "" :
+                        "(" + plot.getArea().getId() + ")"));
             } else {
                 info = info.replace("%area%", Captions.NONE.getTranslated());
             }
@@ -941,9 +944,8 @@ public class MainUtil {
     }
 
     private static <T> T getValueFromConfig(ConfigurationSection config, String path,
-                                            IntFunction<Optional<T>> intParser,
-                                            Function<String, Optional<T>> textualParser,
-                                            Supplier<T> defaultValue) {
+        IntFunction<Optional<T>> intParser, Function<String, Optional<T>> textualParser,
+        Supplier<T> defaultValue) {
         String value = config.getString(path);
         if (value == null) {
             return defaultValue.get();
@@ -955,16 +957,12 @@ public class MainUtil {
     }
 
     public static PlotAreaType getType(ConfigurationSection config) {
-        return getValueFromConfig(config, "generator.type",
-                PlotAreaType::fromLegacyInt,
-                PlotAreaType::fromString,
-                () -> PlotAreaType.NORMAL);
+        return getValueFromConfig(config, "generator.type", PlotAreaType::fromLegacyInt,
+            PlotAreaType::fromString, () -> PlotAreaType.NORMAL);
     }
 
     public static PlotAreaTerrainType getTerrain(ConfigurationSection config) {
-        return getValueFromConfig(config, "generator.terrain",
-                PlotAreaTerrainType::fromLegacyInt,
-                PlotAreaTerrainType::fromString,
-                () -> PlotAreaTerrainType.NONE);
+        return getValueFromConfig(config, "generator.terrain", PlotAreaTerrainType::fromLegacyInt,
+            PlotAreaTerrainType::fromString, () -> PlotAreaTerrainType.NONE);
     }
 }

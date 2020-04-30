@@ -25,10 +25,10 @@
  */
 package com.plotsquared.core.plot.world;
 
+import com.plotsquared.core.collection.ArrayUtil;
 import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.collection.ArrayUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;

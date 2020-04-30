@@ -25,10 +25,10 @@
  */
 package com.plotsquared.core.plot;
 
+import com.google.common.collect.ImmutableList;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.plot.comment.PlotComment;
-import com.google.common.collect.ImmutableList;
 import lombok.Getter;
 import lombok.Setter;
 

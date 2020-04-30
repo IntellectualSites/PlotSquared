@@ -31,11 +31,11 @@ import com.plotsquared.core.generator.ClassicPlotWorld;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
@@ -205,7 +205,8 @@ public abstract class SchematicHandler {
                         if (pw instanceof ClassicPlotWorld) {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
-                            y_offset_actual = yOffset + 1 + WorldUtil.IMP.getHighestBlockSynchronous(plot.getWorldName(),
+                            y_offset_actual = yOffset + 1 + WorldUtil.IMP
+                                .getHighestBlockSynchronous(plot.getWorldName(),
                                     region.getMinimumPoint().getX() + 1,
                                     region.getMinimumPoint().getZ() + 1);
                         }

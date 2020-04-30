@@ -26,9 +26,9 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.plot.Plot;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
@@ -42,7 +42,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 /**
  * Entity related general utility methods
  */
-@UtilityClass public final class EntityUtil {
+@UtilityClass
+public final class EntityUtil {
 
     private static int capNumeral(@NonNull final String flagName) {
         int i;

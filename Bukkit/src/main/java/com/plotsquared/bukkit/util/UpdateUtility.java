@@ -75,8 +75,9 @@ public class UpdateUtility implements Listener {
             if (internalVersion.isLaterVersion(spigotVersion)) {
                 PlotSquared
                     .log(Captions.PREFIX + "&6There appears to be a PlotSquared update available!");
-                PlotSquared.log(Captions.PREFIX + "&6You are running version " + internalVersion.versionString()
-                    + ", &6latest version is " + spigotVersion);
+                PlotSquared.log(
+                    Captions.PREFIX + "&6You are running version " + internalVersion.versionString()
+                        + ", &6latest version is " + spigotVersion);
                 PlotSquared
                     .log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/77506/updates");
                 hasUpdate = true;

@@ -25,29 +25,29 @@
  */
 package com.plotsquared.bukkit.command;
 
+import com.google.common.collect.Sets;
 import com.plotsquared.bukkit.util.uuid.DatFileFilter;
 import com.plotsquared.bukkit.util.uuid.DefaultUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.OfflineUUIDWrapper;
-import com.plotsquared.core.command.Argument;
-import com.plotsquared.core.command.CommandDeclaration;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.command.Argument;
 import com.plotsquared.core.command.CommandCategory;
+import com.plotsquared.core.command.CommandDeclaration;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.command.SubCommand;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.StringWrapper;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.StringWrapper;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.uuid.UUIDWrapper;
-import com.google.common.collect.Sets;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,10 +60,13 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-@CommandDeclaration(command = "uuidconvert", permission = "plots.admin",
-    description = "Debug UUID conversion", usage = "/plot uuidconvert <lower|offline|online>",
-    requiredType = RequiredType.CONSOLE, category = CommandCategory.DEBUG) public class DebugUUID
-    extends SubCommand {
+@CommandDeclaration(command = "uuidconvert",
+    permission = "plots.admin",
+    description = "Debug UUID conversion",
+    usage = "/plot uuidconvert <lower|offline|online>",
+    requiredType = RequiredType.CONSOLE,
+    category = CommandCategory.DEBUG)
+public class DebugUUID extends SubCommand {
 
     public DebugUUID() {
         super(Argument.String);
