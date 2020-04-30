@@ -244,6 +244,11 @@ public class Settings extends Config {
         @Comment("Replace wall when merging") public static boolean MERGE_REPLACE_WALL = true;
     }
 
+    @Comment("Update checker settings") public static final class UpdateChecker {
+        @Comment("How often to poll for updates (in minutes)") public static int POLL_RATE = 360;
+        @Comment("Only notify console once after an update is found") public static boolean NOTIFY_ONCE = true;
+    }
+
 
     @Comment("Schematic Settings") public static final class Schematics {
         @Comment("Whether schematic based generation should paste schematic on top of plots, or from Y=1")

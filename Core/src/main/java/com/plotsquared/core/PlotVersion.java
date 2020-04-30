@@ -26,19 +26,31 @@
 package com.plotsquared.core;
 
 public class PlotVersion {
-    public final int year, month, day, hash, build;
+    public final int year, month, day, hash;
+    public final String versionString;
+    public final int[] version;
 
-    public PlotVersion(int year, int month, int day, int hash, int build) {
+    public PlotVersion(int year, int month, int day, int hash, String versionString) {
         this.year = year;
         this.month = month;
         this.day = day;
         this.hash = hash;
-        this.build = build;
+        this.versionString = versionString.substring(versionString.indexOf('=') + 1);
+        version = new int[3];
+        String[] verArray = versionString.substring(versionString.indexOf('=') + 1).split("\\.");
+        version[0] = verArray.length > 0 ? Integer.parseInt(verArray[0]) : 0;
+        version[1] = verArray.length > 1 ? Integer.parseInt(verArray[1]) : 0;
+        version[2] = verArray.length > 2 ? Integer.parseInt(verArray[2]) : 0;
     }
 
-    public PlotVersion(String version, String commit, String date) {
-        String[] split = version.substring(version.indexOf('=') + 1).split("\\.");
-        this.build = Integer.parseInt(split[1]);
+    public PlotVersion(String versionString, String commit, String date) {
+        this.versionString = versionString.substring(versionString.indexOf('=') + 1);
+        version = new int[3];
+        String[] verArray = this.versionString.split("\\.");
+        version[0] = verArray.length > 0 ? Integer.parseInt(verArray[0]) : 0;
+        version[1] = verArray.length > 1 ? Integer.parseInt(verArray[1]) : 0;
+        version[2] = verArray.length > 2 ? Integer.parseInt(verArray[2]) : 0;
+
         this.hash = Integer.parseInt(commit.substring(commit.indexOf('=') + 1), 16);
         String[] split1 = date.substring(date.indexOf('=') + 1).split("\\.");
         this.year = Integer.parseInt(split1[0]);
@@ -46,27 +58,68 @@ public class PlotVersion {
         this.day = Integer.parseInt(split1[2]);
     }
 
-    public static PlotVersion tryParse(String version, String commit, String date) {
+    public static PlotVersion tryParse(String versionString, String commit, String date) {
         try {
-            return new PlotVersion(version, commit, date);
+            return new PlotVersion(versionString, commit, date);
         } catch (Exception e) {
             e.printStackTrace();
-            return new PlotVersion(0, 0, 0, 0, 0);
+            return new PlotVersion(0, 0, 0, 0, "0");
         }
     }
 
     public String versionString() {
-        if (hash == 0 && build == 0) {
+        if (hash == 0 && versionString == null) {
             return "NoVer-SNAPSHOT";
         } else {
-            return "5." + build;
+            return versionString;
         }
     }
-    @Override public String toString() {
-        if (hash == 0 && build == 0) {
+
+    @Override
+    public String toString() {
+        if (hash == 0 && versionString == null) {
             return "PlotSquared-NoVer-SNAPSHOT";
         } else {
-            return "PlotSquared-5." + build;
+            return "PlotSquared-" + versionString;
         }
     }
+
+    /**
+     * Compare a given version string with the one cached here.
+     *
+     * @param versionString the version to compare
+     * @return true if the given version is a "later" version
+     */
+    public boolean isLaterVersion(String versionString) {
+        String[] verArray = versionString.split("\\.");
+        int one = Integer.parseInt(verArray[0]);
+        int two = Integer.parseInt(verArray[1]);
+        int three = Integer.parseInt(verArray[2]);
+        if (one > version[0]) {
+            return true;
+        } else if (one == version[0] && two > version[1]) {
+            return true;
+        } else {
+            return one == version[0] && two == version[1] && three > version[2];
+        }
+    }
+
+    /**
+     * Compare a given version with the one cached here.
+     *
+     * @param verArray the version to compare
+     * @return true if the given version is a "later" version
+     */
+    public boolean isLaterVersion(int[] verArray) {
+        if (verArray[0] > version[0]) {
+            return true;
+        } else if (verArray[0] == version[0] && verArray[1] > version[1]) {
+            return true;
+        } else {
+            return verArray[0] == version[0] && verArray[1] == version[1]
+                && verArray[2] > version[2];
+        }
+    }
+
+
 }
