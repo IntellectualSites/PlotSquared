@@ -146,8 +146,9 @@ public class FlagContainer {
             this.updateSubscribers
                 .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
         } catch (IllegalStateException e) {
-            PlotSquared.log(
-                "yo look at this dumb fuck trying to add this thicc flag lol, nah mate, ain't having none of that");
+            PlotSquared.log(String.format("Flag '%s' (class: '%s') could not be added to the container"
+                + " because the flag name exceeded the allowed limit of 64 characters."
+                + " Please tell the developer of that flag to fix this.", flag.getName(), flag.getClass().getName()));
             e.printStackTrace();
         }
     }
