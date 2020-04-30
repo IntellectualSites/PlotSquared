@@ -2038,6 +2038,16 @@ public class PlayerEvents extends PlotListener implements Listener {
                 break;
             case REINFORCEMENTS:
             case NATURAL:
+            case MOUNT:
+            case PATROL:
+            case RAID:
+            case SHEARED:
+            case SHOULDER_ENTITY:
+            case SILVERFISH_BLOCK:
+            case TRAP:
+            case VILLAGE_DEFENSE:
+            case VILLAGE_INVASION:
+            case BEEHIVE:
             case CHUNK_GEN:
                 if (!area.isMobSpawning()) {
                     event.setCancelled(true);
