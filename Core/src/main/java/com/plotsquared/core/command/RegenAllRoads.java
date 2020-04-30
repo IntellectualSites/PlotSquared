@@ -29,9 +29,9 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.generator.HybridPlotManager;
 import com.plotsquared.core.generator.HybridUtils;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 
 @CommandDeclaration(command = "regenallroads",

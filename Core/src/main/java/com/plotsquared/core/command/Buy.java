@@ -29,14 +29,14 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.Set;
@@ -54,7 +54,8 @@ public class Buy extends Command {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
 
@@ -82,15 +83,16 @@ public class Buy extends Command {
         confirm.run(this, () -> {
             Captions.REMOVED_BALANCE.send(player, price);
             EconHandler.manager
-                .depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.getOwnerAbs()), price);
+                .depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.getOwnerAbs()),
+                    price);
             PlotPlayer owner = UUIDHandler.getPlayer(plot.getOwnerAbs());
             if (owner != null) {
                 Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }
             PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(PriceFlag.class);
-            PlotFlagRemoveEvent
-                event = PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
-            if(event.getEventResult() != Result.DENY) {
+            PlotFlagRemoveEvent event =
+                PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+            if (event.getEventResult() != Result.DENY) {
                 plot.removeFlag(event.getFlag());
             }
             plot.setOwner(player.getUUID());

@@ -28,12 +28,12 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -52,7 +52,8 @@ public class Add extends Command {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);

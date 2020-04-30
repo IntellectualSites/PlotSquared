@@ -27,12 +27,12 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -44,13 +44,15 @@ import java.util.concurrent.CompletableFuture;
     requiredType = RequiredType.PLAYER)
 public class Swap extends SubCommand {
 
-    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
-            return CompletableFuture.completedFuture(!MainUtil.sendMessage(player, Captions.NOT_IN_PLOT));
+            return CompletableFuture
+                .completedFuture(!MainUtil.sendMessage(player, Captions.NOT_IN_PLOT));
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
@@ -79,16 +81,16 @@ public class Swap extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
-        return plot1.move(plot2, () -> {}, true)
-            .thenApply(result -> {
-                if (result) {
-                    MainUtil.sendMessage(player, Captions.SWAP_SUCCESS);
-                    return true;
-                } else {
-                    MainUtil.sendMessage(player, Captions.SWAP_OVERLAP);
-                    return false;
-                }
-            });
+        return plot1.move(plot2, () -> {
+        }, true).thenApply(result -> {
+            if (result) {
+                MainUtil.sendMessage(player, Captions.SWAP_SUCCESS);
+                return true;
+            } else {
+                MainUtil.sendMessage(player, Captions.SWAP_OVERLAP);
+                return false;
+            }
+        });
     }
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

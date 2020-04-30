@@ -25,17 +25,17 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.common.primitives.Ints;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.google.common.primitives.Ints;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -51,7 +51,8 @@ public class Grant extends Command {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length >= 1 && args.length <= 2, Captions.COMMAND_SYNTAX, getUsage());

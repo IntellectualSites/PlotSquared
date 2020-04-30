@@ -30,7 +30,8 @@ import com.plotsquared.core.player.PlotPlayer;
 public class CaptionUtility {
 
     public static String formatRaw(PlotPlayer recipient, String message, Object... args) {
-        final ChatFormatter.ChatContext chatContext = new ChatFormatter.ChatContext(recipient, message, args, true);
+        final ChatFormatter.ChatContext chatContext =
+            new ChatFormatter.ChatContext(recipient, message, args, true);
         for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
             chatFormatter.format(chatContext);
         }
@@ -38,7 +39,8 @@ public class CaptionUtility {
     }
 
     public static String format(PlotPlayer recipient, String message, Object... args) {
-        final ChatFormatter.ChatContext chatContext = new ChatFormatter.ChatContext(recipient, message, args, false);
+        final ChatFormatter.ChatContext chatContext =
+            new ChatFormatter.ChatContext(recipient, message, args, false);
         for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
             chatFormatter.format(chatContext);
         }
@@ -47,7 +49,8 @@ public class CaptionUtility {
 
     public static String format(PlotPlayer recipient, Caption caption, Object... args) {
         if (caption.usePrefix() && caption.getTranslated().length() > 0) {
-            return Captions.PREFIX.getTranslated() + format(recipient, caption.getTranslated(), args);
+            return Captions.PREFIX.getTranslated() + format(recipient, caption.getTranslated(),
+                args);
         } else {
             return format(recipient, caption.getTranslated(), args);
         }

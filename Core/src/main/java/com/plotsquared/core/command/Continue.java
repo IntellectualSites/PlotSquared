@@ -30,10 +30,10 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 

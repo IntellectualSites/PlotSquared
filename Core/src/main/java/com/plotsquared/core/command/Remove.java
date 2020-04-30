@@ -29,8 +29,8 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.uuid.UUIDHandler;
@@ -95,29 +95,34 @@ public class Remove extends SubCommand {
                     for (UUID uuid : uuids) {
                         if (plot.getTrusted().contains(uuid)) {
                             if (plot.removeTrusted(uuid)) {
-                                PlotSquared
-                                    .get().getEventDispatcher().callTrusted(player, plot, uuid, false);
+                                PlotSquared.get().getEventDispatcher()
+                                    .callTrusted(player, plot, uuid, false);
                                 count++;
                             }
                         } else if (plot.getMembers().contains(uuid)) {
                             if (plot.removeMember(uuid)) {
-                                PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, false);
+                                PlotSquared.get().getEventDispatcher()
+                                    .callMember(player, plot, uuid, false);
                                 count++;
                             }
                         } else if (plot.getDenied().contains(uuid)) {
                             if (plot.removeDenied(uuid)) {
-                                PlotSquared.get().getEventDispatcher().callDenied(player, plot, uuid, false);
+                                PlotSquared.get().getEventDispatcher()
+                                    .callDenied(player, plot, uuid, false);
                                 count++;
                             }
                         } else if (uuid == DBFunc.EVERYONE) {
                             if (plot.removeTrusted(uuid)) {
-                                PlotSquared.get().getEventDispatcher().callTrusted(player, plot, uuid, false);
+                                PlotSquared.get().getEventDispatcher()
+                                    .callTrusted(player, plot, uuid, false);
                                 count++;
                             } else if (plot.removeMember(uuid)) {
-                                PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, false);
+                                PlotSquared.get().getEventDispatcher()
+                                    .callMember(player, plot, uuid, false);
                                 count++;
                             } else if (plot.removeDenied(uuid)) {
-                                PlotSquared.get().getEventDispatcher().callDenied(player, plot, uuid, false);
+                                PlotSquared.get().getEventDispatcher()
+                                    .callDenied(player, plot, uuid, false);
                                 count++;
                             }
                         }

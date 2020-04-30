@@ -58,34 +58,35 @@ public class Debug extends SubCommand {
         if (args.length > 0 && "loadedchunks".equalsIgnoreCase(args[0])) {
             final long start = System.currentTimeMillis();
             MainUtil.sendMessage(player, "Fetching loaded chunks...");
-            TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,"Loaded chunks: " +
-                ChunkManager.manager.getChunkChunks(player.getLocation().getWorld()).size() + "(" + (System.currentTimeMillis() - start) + "ms) using thread: " +
-                Thread.currentThread().getName()));
+            TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,
+                "Loaded chunks: " + ChunkManager.manager
+                    .getChunkChunks(player.getLocation().getWorld()).size() + "(" + (
+                    System.currentTimeMillis() - start) + "ms) using thread: " + Thread
+                    .currentThread().getName()));
             return true;
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {
             EntityCategories.init();
             player.sendMessage(Captions.PREFIX.getTranslated() + "§cEntity Categories: ");
             EntityCategory.REGISTRY.forEach(category -> {
-                final StringBuilder builder = new StringBuilder("§7- §6")
-                    .append(category.getId()).append("§7: §6");
+                final StringBuilder builder =
+                    new StringBuilder("§7- §6").append(category.getId()).append("§7: §6");
                 for (final EntityType entityType : category.getAll()) {
                     builder.append(entityType.getId()).append(" ");
                 }
                 player.sendMessage(Captions.PREFIX.getTranslated() + builder.toString());
             });
-            EntityType.REGISTRY.values().stream()
-                    .sorted(Comparator.comparing(EntityType::getId))
-                    .forEach(entityType -> {
-                long categoryCount = EntityCategory.REGISTRY.values()
-                        .stream()
-                        .filter(category -> category.contains(entityType))
-                        .count();
-                if (categoryCount > 0) {
-                    return;
-                }
-                player.sendMessage(Captions.PREFIX.getTranslated() + entityType.getName() + " is in " + categoryCount + " categories");
-            });
+            EntityType.REGISTRY.values().stream().sorted(Comparator.comparing(EntityType::getId))
+                .forEach(entityType -> {
+                    long categoryCount = EntityCategory.REGISTRY.values().stream()
+                        .filter(category -> category.contains(entityType)).count();
+                    if (categoryCount > 0) {
+                        return;
+                    }
+                    player.sendMessage(
+                        Captions.PREFIX.getTranslated() + entityType.getName() + " is in "
+                            + categoryCount + " categories");
+                });
             return true;
         }
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {

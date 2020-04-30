@@ -29,12 +29,12 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.HashSet;
 import java.util.Set;

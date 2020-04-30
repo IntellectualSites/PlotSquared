@@ -32,24 +32,24 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.types.IntegerFlag;
 import com.plotsquared.core.plot.flag.types.ListFlag;
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.message.PlotMessage;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.helpmenu.HelpMenu;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -206,7 +206,8 @@ public final class FlagCommand extends Command {
         return null;
     }
 
-    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 0 || !Arrays
@@ -220,7 +221,8 @@ public final class FlagCommand extends Command {
         return super.execute(player, args, confirm, whenDone);
     }
 
-    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args,
+    @Override
+    public Collection<Command> tab(final PlotPlayer player, final String[] args,
         final boolean space) {
         if (args.length == 1) {
             return Stream
@@ -356,7 +358,8 @@ public final class FlagCommand extends Command {
                     return;
                 }
             }
-        } final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
+        }
+        final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
         final PlotFlag parsed;
         try {
             parsed = event.getFlag().parse(value);
@@ -448,7 +451,8 @@ public final class FlagCommand extends Command {
                     PlotFlag plotFlag = parsedFlag.createFlagInstance(list);
                     PlotFlagAddEvent addEvent = new PlotFlagAddEvent(plotFlag, plot);
                     if (addEvent.getEventResult() == Result.DENY) {
-                        sendMessage(player, Captions.EVENT_DENIED, "Re-addition of " + plotFlag.getName());
+                        sendMessage(player, Captions.EVENT_DENIED,
+                            "Re-addition of " + plotFlag.getName());
                         return;
                     }
                     if (plot.setFlag(addEvent.getFlag())) {

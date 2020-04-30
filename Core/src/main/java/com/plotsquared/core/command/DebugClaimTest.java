@@ -25,20 +25,20 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.common.collect.BiMap;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.uuid.UUIDHandler;
+import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.WorldUtil;
-import com.google.common.collect.BiMap;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.math.BlockVector2;
 
 import java.util.ArrayList;

@@ -53,7 +53,8 @@ public abstract class SubCommand extends Command {
         return true;
     }
 
-    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         return CompletableFuture.completedFuture(onCommand(player, args));

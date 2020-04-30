@@ -26,10 +26,10 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 
 /**
  * @author manuelgu, altered by Citymonstret

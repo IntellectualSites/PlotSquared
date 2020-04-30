@@ -26,11 +26,18 @@
 package com.plotsquared.core.listener;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.plot.PlotWeather;
+import com.plotsquared.core.collection.ByteArrayUtilities;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotWeather;
+import com.plotsquared.core.plot.comment.CommentManager;
+import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyExitFlag;
@@ -48,20 +55,13 @@ import com.plotsquared.core.plot.flag.implementations.TimeFlag;
 import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.comment.CommentManager;
-import com.plotsquared.core.collection.ByteArrayUtilities;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -94,7 +94,8 @@ public class PlotListener {
                         }
                         double level = WorldUtil.IMP.getHealth(player);
                         if (level != value.max) {
-                            WorldUtil.IMP.setHealth(player, Math.min(level + value.amount, value.max));
+                            WorldUtil.IMP
+                                .setHealth(player, Math.min(level + value.amount, value.max));
                         }
                     }
                 }
@@ -114,7 +115,8 @@ public class PlotListener {
                         }
                         int level = WorldUtil.IMP.getFoodLevel(player);
                         if (level != value.max) {
-                            WorldUtil.IMP.setFoodLevel(player, Math.min(level + value.amount, value.max));
+                            WorldUtil.IMP
+                                .setFoodLevel(player, Math.min(level + value.amount, value.max));
                         }
                     }
                 }
@@ -148,13 +150,12 @@ public class PlotListener {
 
             final String greeting = plot.getFlag(GreetingFlag.class);
             if (!greeting.isEmpty()) {
-                MainUtil
-                    .format(Captions.PREFIX_GREETING.getTranslated() + greeting, plot, player,
-                        false, new RunnableVal<String>() {
-                            @Override public void run(String value) {
-                                MainUtil.sendMessage(player, value);
-                            }
-                        });
+                MainUtil.format(Captions.PREFIX_GREETING.getTranslated() + greeting, plot, player,
+                    false, new RunnableVal<String>() {
+                        @Override public void run(String value) {
+                            MainUtil.sendMessage(player, value);
+                        }
+                    });
             }
 
             if (plot.getFlag(NotifyEnterFlag.class)) {
@@ -174,8 +175,7 @@ public class PlotListener {
             if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
                 boolean flight = player.getFlight();
                 GameMode gamemode = player.getGameMode();
-                if (flight != (gamemode == GameModes.CREATIVE
-                    || gamemode == GameModes.SPECTATOR)) {
+                if (flight != (gamemode == GameModes.CREATIVE || gamemode == GameModes.SPECTATOR)) {
                     player.setPersistentMeta("flight",
                         ByteArrayUtilities.booleanToBytes(player.getFlight()));
                 }
@@ -189,8 +189,8 @@ public class PlotListener {
                         player.setGameMode(gameMode);
                     } else {
                         MainUtil.sendMessage(player, StringMan
-                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
-                                "{plot}", plot.getId(), "{gamemode}", gameMode));
+                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(), "{plot}",
+                                plot.getId(), "{gamemode}", gameMode));
                     }
                 }
             }
@@ -202,15 +202,14 @@ public class PlotListener {
                         player.setGameMode(guestGameMode);
                     } else {
                         MainUtil.sendMessage(player, StringMan
-                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(),
-                                "{plot}", plot.getId(), "{gamemode}", guestGameMode));
+                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(), "{plot}",
+                                plot.getId(), "{gamemode}", guestGameMode));
                     }
                 }
             }
 
             long time = plot.getFlag(TimeFlag.class);
-            if (time != TimeFlag.TIME_DISABLED.getValue() && !player
-                .getAttribute("disabletime")) {
+            if (time != TimeFlag.TIME_DISABLED.getValue() && !player.getAttribute("disabletime")) {
                 try {
                     player.setTime(time);
                 } catch (Exception ignored) {
@@ -282,11 +281,13 @@ public class PlotListener {
 
             TimedFlag.Timed<Integer> feed = plot.getFlag(FeedFlag.class);
             if (feed != null && feed.getInterval() != 0 && feed.getValue() != 0) {
-                feedRunnable.put(player.getUUID(), new Interval(feed.getInterval(), feed.getValue(), 20));
+                feedRunnable
+                    .put(player.getUUID(), new Interval(feed.getInterval(), feed.getValue(), 20));
             }
             TimedFlag.Timed<Integer> heal = plot.getFlag(HealFlag.class);
             if (heal != null && heal.getInterval() != 0 && heal.getValue() != 0) {
-                healRunnable.put(player.getUUID(), new Interval(heal.getInterval(), heal.getValue(), 20));
+                healRunnable
+                    .put(player.getUUID(), new Interval(heal.getInterval(), heal.getValue(), 20));
             }
             return true;
         }

@@ -25,27 +25,27 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.common.io.Files;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.plot.flag.GlobalFlagContainer;
-import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.generator.HybridUtils;
-import com.plotsquared.core.util.WEManager;
-import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.expiration.ExpireManager;
+import com.plotsquared.core.plot.expiration.PlotAnalysis;
+import com.plotsquared.core.plot.flag.GlobalFlagContainer;
+import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.message.PlotMessage;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MainUtil;
@@ -53,13 +53,13 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.WEManager;
+import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.plot.expiration.ExpireManager;
-import com.plotsquared.core.plot.expiration.PlotAnalysis;
-import com.google.common.io.Files;
 import com.sk89q.worldedit.world.block.BlockState;
 
 import javax.script.Bindings;
@@ -72,7 +72,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugexec",
@@ -267,8 +272,8 @@ public class DebugExec extends SubCommand {
                     }
                     boolean result;
                     if (HybridUtils.regions != null) {
-                        result =
-                            HybridUtils.manager.scheduleRoadUpdate(area, HybridUtils.regions, 0, new HashSet<>());
+                        result = HybridUtils.manager
+                            .scheduleRoadUpdate(area, HybridUtils.regions, 0, new HashSet<>());
                     } else {
                         result = HybridUtils.manager.scheduleRoadUpdate(area, 0);
                     }
@@ -333,7 +338,8 @@ public class DebugExec extends SubCommand {
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
                             RequiredType.NONE, CommandCategory.DEBUG) {
-                            @Override public CompletableFuture<Boolean> execute(PlotPlayer player,
+                            @Override
+                            public CompletableFuture<Boolean> execute(PlotPlayer player,
                                 String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
                                 RunnableVal2<Command, CommandResult> whenDone) {
                                 try {

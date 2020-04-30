@@ -25,31 +25,31 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.message.PlotMessage;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.plot.SetupObject;
-import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.util.RegionUtil;
+import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.util.task.RunnableVal3;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 
@@ -170,15 +170,16 @@ public class Area extends SubCommand {
                                             ChunkManager.largeRegionTask(world, region,
                                                 new RunnableVal<BlockVector2>() {
                                                     @Override public void run(BlockVector2 value) {
-                                                        AugmentedUtils.generate(null, world, value.getX(),
-                                                            value.getZ(), null);
+                                                        AugmentedUtils
+                                                            .generate(null, world, value.getX(),
+                                                                value.getZ(), null);
                                                     }
                                                 }, null);
                                         }
                                     } else {
                                         MainUtil.sendMessage(player,
-                                            "An error occurred while creating the world: "
-                                                + area.getWorldName());
+                                            "An error occurred while creating the world: " + area
+                                                .getWorldName());
                                     }
                                 };
                                 if (hasConfirmation(player)) {
@@ -239,11 +240,13 @@ public class Area extends SubCommand {
                                     break;
                                 case "f":
                                 case "floor":
-                                    pa.TOP_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.TOP_BLOCK =
+                                        ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "m":
                                 case "main":
-                                    pa.MAIN_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.MAIN_BLOCK =
+                                        ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "w":
                                 case "wall":
@@ -252,14 +255,19 @@ public class Area extends SubCommand {
                                     break;
                                 case "b":
                                 case "border":
-                                    pa.WALL_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.WALL_BLOCK =
+                                        ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "terrain":
-                                    pa.setTerrain(PlotAreaTerrainType.fromString(pair[1]).orElseThrow(() -> new IllegalArgumentException(pair[1] + " is not a valid terrain.")));
+                                    pa.setTerrain(PlotAreaTerrainType.fromString(pair[1])
+                                        .orElseThrow(() -> new IllegalArgumentException(
+                                            pair[1] + " is not a valid terrain.")));
                                     object.terrain = pa.getTerrain();
                                     break;
                                 case "type":
-                                    pa.setType(PlotAreaType.fromString(pair[1]).orElseThrow(() -> new IllegalArgumentException(pair[1] + " is not a valid type.")));
+                                    pa.setType(PlotAreaType.fromString(pair[1]).orElseThrow(
+                                        () -> new IllegalArgumentException(
+                                            pair[1] + " is not a valid type.")));
                                     object.type = pa.getType();
                                     break;
                                 default:
@@ -291,8 +299,8 @@ public class Area extends SubCommand {
                                         TeleportCause.COMMAND);
                                 } else {
                                     MainUtil.sendMessage(player,
-                                        "An error occurred while creating the world: "
-                                            + pa.getWorldName());
+                                        "An error occurred while creating the world: " + pa
+                                            .getWorldName());
                                 }
                                 try {
                                     PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
@@ -376,10 +384,11 @@ public class Area extends SubCommand {
                     percent = claimed == 0 ? 0 : 100d * claimed / Integer.MAX_VALUE;
                     region = "N/A";
                 }
-                String value = "&r$1NAME: " + name + "\n$1Type: $2" + area.getType() + "\n$1Terrain: $2"
-                    + area.getTerrain() + "\n$1Usage: $2" + String.format("%.2f", percent) + '%'
-                    + "\n$1Claimed: $2" + claimed + "\n$1Clusters: $2" + clusters + "\n$1Region: $2"
-                    + region + "\n$1Generator: $2" + generator;
+                String value =
+                    "&r$1NAME: " + name + "\n$1Type: $2" + area.getType() + "\n$1Terrain: $2" + area
+                        .getTerrain() + "\n$1Usage: $2" + String.format("%.2f", percent) + '%'
+                        + "\n$1Claimed: $2" + claimed + "\n$1Clusters: $2" + clusters
+                        + "\n$1Region: $2" + region + "\n$1Generator: $2" + generator;
                 MainUtil.sendMessage(player,
                     Captions.PLOT_INFO_HEADER.getTranslated() + '\n' + value + '\n'
                         + Captions.PLOT_INFO_FOOTER.getTranslated(), false);
@@ -418,7 +427,8 @@ public class Area extends SubCommand {
                             if (area.getType() == PlotAreaType.PARTIAL) {
                                 PlotId min = area.getMin();
                                 PlotId max = area.getMax();
-                                name = area.getWorldName() + ';' + area.getId() + ';' + min + ';' + max;
+                                name = area.getWorldName() + ';' + area.getId() + ';' + min + ';'
+                                    + max;
                                 int size = (max.x - min.x + 1) * (max.y - min.y + 1);
                                 percent = claimed == 0 ? 0 : size / (double) claimed;
                                 region = area.getRegion().toString();
@@ -468,7 +478,8 @@ public class Area extends SubCommand {
                     new RunnableVal<BlockVector2>() {
                         @Override public void run(BlockVector2 value) {
                             AugmentedUtils
-                                .generate(null, area.getWorldName(), value.getX(), value.getZ(), null);
+                                .generate(null, area.getWorldName(), value.getX(), value.getZ(),
+                                    null);
                         }
                     }, () -> player.sendMessage("Regen complete"));
                 return true;
@@ -501,10 +512,11 @@ public class Area extends SubCommand {
                         + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
                         0, region.getMinimumPoint().getZ()
                         + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
-                    WorldUtil.IMP.getHighestBlock(area.getWorldName(), center.getX(), center.getZ(), y -> {
-                        center.setY(1 + y);
-                        player.teleport(center, TeleportCause.COMMAND);
-                    });
+                    WorldUtil.IMP
+                        .getHighestBlock(area.getWorldName(), center.getX(), center.getZ(), y -> {
+                            center.setY(1 + y);
+                            player.teleport(center, TeleportCause.COMMAND);
+                        });
                 }
                 return true;
             case "delete":

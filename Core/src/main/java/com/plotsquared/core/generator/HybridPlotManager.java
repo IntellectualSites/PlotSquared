@@ -67,8 +67,9 @@ public class HybridPlotManager extends ClassicPlotManager {
         HashSet<FileBytes> files = Sets.newHashSet(
             new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml",
                 Template.getBytes(hybridPlotWorld)));
-        String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
-            + hybridPlotWorld.getWorldName() + File.separator;
+        String dir =
+            "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld
+                .getWorldName() + File.separator;
         try {
             File sideRoad =
                 MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "sideroad.schem");
@@ -100,10 +101,10 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x + 1, id.y);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
-        Location pos1 = new Location(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
-        Location pos2 =
-            new Location(hybridPlotWorld.getWorldName(), bot.getX(), Math.min(getWorldHeight(), 255),
-                top.getZ() + 1);
+        Location pos1 =
+            new Location(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
+        Location pos2 = new Location(hybridPlotWorld.getWorldName(), bot.getX(),
+            Math.min(getWorldHeight(), 255), top.getZ() + 1);
         MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
@@ -160,10 +161,10 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x, id.y + 1);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
-        Location pos1 = new Location(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
-        Location pos2 =
-            new Location(hybridPlotWorld.getWorldName(), top.getX() + 1, Math.min(getWorldHeight(), 255),
-                bot.getZ());
+        Location pos1 =
+            new Location(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
+        Location pos2 = new Location(hybridPlotWorld.getWorldName(), top.getX() + 1,
+            Math.min(getWorldHeight(), 255), bot.getZ());
         MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
@@ -203,8 +204,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         Location pos2 = plot.getExtendedTopAbs();
         // If augmented
         final boolean canRegen =
-            (hybridPlotWorld.getType() == PlotAreaType.AUGMENTED)
-                    && (hybridPlotWorld.getTerrain() != PlotAreaTerrainType.NONE) && REGENERATIVE_CLEAR;
+            (hybridPlotWorld.getType() == PlotAreaType.AUGMENTED) && (hybridPlotWorld.getTerrain()
+                != PlotAreaTerrainType.NONE) && REGENERATIVE_CLEAR;
         // The component blocks
         final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK.toPattern();
         final Pattern filling = hybridPlotWorld.MAIN_BLOCK.toPattern();

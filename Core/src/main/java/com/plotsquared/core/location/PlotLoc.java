@@ -30,10 +30,13 @@ import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
 //todo better description needed
+
+
 /**
  * (x,y,z) or (x,z) representation for PlotSquared (hence the "Plot" prefix)
  */
-@AllArgsConstructor public final class PlotLoc {
+@AllArgsConstructor
+public final class PlotLoc {
 
     private final int x;
     private final int y;

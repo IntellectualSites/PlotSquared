@@ -28,13 +28,13 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -46,7 +46,8 @@ import java.util.concurrent.CompletableFuture;
     requiredType = RequiredType.PLAYER)
 public class Move extends SubCommand {
 
-    @Override public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         Location location = player.getLocation();
@@ -94,16 +95,16 @@ public class Move extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
-        return plot1.move(plot2, () -> {}, false)
-            .thenApply(result -> {
-                if (result) {
-                    MainUtil.sendMessage(player, Captions.MOVE_SUCCESS);
-                    return true;
-                } else {
-                    MainUtil.sendMessage(player, Captions.REQUIRES_UNOWNED);
-                    return false;
-                }
-            });
+        return plot1.move(plot2, () -> {
+        }, false).thenApply(result -> {
+            if (result) {
+                MainUtil.sendMessage(player, Captions.MOVE_SUCCESS);
+                return true;
+            } else {
+                MainUtil.sendMessage(player, Captions.REQUIRES_UNOWNED);
+                return false;
+            }
+        });
     }
 
     @Override public boolean onCommand(final PlotPlayer player, String[] args) {

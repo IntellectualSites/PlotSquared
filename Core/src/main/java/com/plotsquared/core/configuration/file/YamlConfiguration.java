@@ -25,10 +25,10 @@
  */
 package com.plotsquared.core.configuration.file;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Configuration;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.InvalidConfigurationException;
-import com.plotsquared.core.PlotSquared;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;

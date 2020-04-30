@@ -25,9 +25,9 @@
  */
 package com.plotsquared.core.configuration;
 
-import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings.Enabled_Components;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.StringMan;
 
 import java.io.File;
@@ -394,21 +394,26 @@ public class Config {
     /**
      * Indicates that a field should be instantiated / created.
      */
-    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD}) public @interface Create {
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    public @interface Create {
     }
 
 
     /**
      * Indicates that a field cannot be modified.
      */
-    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD}) public @interface Final {
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD})
+    public @interface Final {
     }
 
 
     /**
      * Creates a comment.
      */
-    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD, ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface Comment {
         String[] value();
     }
@@ -417,7 +422,8 @@ public class Config {
     /**
      * The names of any default blocks.
      */
-    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD, ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface BlockName {
         String[] value();
     }
@@ -426,7 +432,8 @@ public class Config {
     /**
      * Any field or class with is not part of the config.
      */
-    @Retention(RetentionPolicy.RUNTIME) @Target({ElementType.FIELD, ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface Ignore {
     }
 

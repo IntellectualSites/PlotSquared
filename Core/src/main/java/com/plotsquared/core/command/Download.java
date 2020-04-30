@@ -28,15 +28,15 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.jnbt.CompoundTag;
 
 import java.net.URL;

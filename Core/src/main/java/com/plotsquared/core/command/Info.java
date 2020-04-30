@@ -28,11 +28,11 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.task.RunnableVal;
 
 @CommandDeclaration(command = "info",
     aliases = "i",

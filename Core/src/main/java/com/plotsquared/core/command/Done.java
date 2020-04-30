@@ -31,17 +31,17 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotDoneEvent;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
+import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.task.RunnableVal;
 
 @CommandDeclaration(command = "done",
     aliases = {"submit"},

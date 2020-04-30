@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -33,20 +34,19 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.util.Expression;
+import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.events.TeleportCause;
-import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.task.AutoClaimFinishTask;
+import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.google.common.primitives.Ints;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -117,7 +117,8 @@ public class Auto extends SubCommand {
         final String schematic) {
         Set<Plot> plots = player.getPlots();
         if (!plots.isEmpty()) {
-            plots.iterator().next().teleportPlayer(player, TeleportCause.COMMAND, result -> {});
+            plots.iterator().next().teleportPlayer(player, TeleportCause.COMMAND, result -> {
+            });
         } else {
             autoClaimSafe(player, area, start, schematic);
         }
@@ -149,7 +150,8 @@ public class Auto extends SubCommand {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
-                TaskManager.IMP.sync(new AutoClaimFinishTask(player, plot, area, allowedPlots, schematic));
+                TaskManager.IMP
+                    .sync(new AutoClaimFinishTask(player, plot, area, allowedPlots, schematic));
             }
         });
     }
@@ -243,8 +245,8 @@ public class Auto extends SubCommand {
             return false;
         }
         final int allowed_plots = player.getAllowedPlots();
-        if (!force && (player.getMeta(Auto.class.getName(), false) || !checkAllowedPlots(player, plotarea,
-            allowed_plots, size_x, size_z))) {
+        if (!force && (player.getMeta(Auto.class.getName(), false) || !checkAllowedPlots(player,
+            plotarea, allowed_plots, size_x, size_z))) {
             return false;
         }
 

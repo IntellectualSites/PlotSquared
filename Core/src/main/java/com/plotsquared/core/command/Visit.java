@@ -28,16 +28,16 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
+import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.ArrayList;
@@ -64,7 +64,8 @@ public class Visit extends Command {
         return tabOf(player, args, space, getUsage());
     }
 
-    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 1 && args[0].contains(":")) {
@@ -170,14 +171,13 @@ public class Visit extends Command {
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
                 return CompletableFuture.completedFuture(false);
             }
-            if (!plot.getFlag(UntrustedVisitFlag.class) &&
-                       !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+            if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions
+                .hasPermission(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
                 Captions.NO_PERMISSION.send(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED);
                 return CompletableFuture.completedFuture(false);
             }
         }
-        confirm.run(this, () ->
-            plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+        confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
             if (result) {
                 whenDone.run(Visit.this, CommandResult.SUCCESS);
             } else {

@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.plot.PlotId;
 import org.jetbrains.annotations.NotNull;
 

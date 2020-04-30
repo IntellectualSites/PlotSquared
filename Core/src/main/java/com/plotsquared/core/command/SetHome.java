@@ -28,8 +28,8 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 
 @CommandDeclaration(command = "sethome",

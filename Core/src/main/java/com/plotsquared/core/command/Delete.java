@@ -29,12 +29,12 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
@@ -62,7 +62,8 @@ public class Delete extends SubCommand {
         if (!plot.hasOwner()) {
             return !sendMessage(player, Captions.PLOT_UNOWNED);
         }
-        Result eventResult = PlotSquared.get().getEventDispatcher().callDelete(plot).getEventResult();
+        Result eventResult =
+            PlotSquared.get().getEventDispatcher().callDelete(plot).getEventResult();
         if (eventResult == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Delete");
             return true;

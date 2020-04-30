@@ -27,7 +27,8 @@ package com.plotsquared.core.configuration;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor public final class StaticCaption implements Caption {
+@RequiredArgsConstructor
+public final class StaticCaption implements Caption {
 
     private final String value;
     private final boolean usePrefix;

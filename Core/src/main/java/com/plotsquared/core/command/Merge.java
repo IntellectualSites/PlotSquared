@@ -31,12 +31,12 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
@@ -182,7 +182,8 @@ public class Merge extends SubCommand {
         } else {
             terrain = true;
         }
-        if (!force && !terrain && !Permissions.hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
+        if (!force && !terrain && !Permissions
+            .hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
             MainUtil.sendMessage(player, Captions.NO_PERMISSION,
                 Captions.PERMISSION_MERGE_KEEP_ROAD.getTranslated());
             return true;

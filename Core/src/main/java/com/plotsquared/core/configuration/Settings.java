@@ -150,7 +150,8 @@ public class Settings extends Config {
         TITLES = config.getBoolean("titles", TITLES);
 
         // Update Notifications
-        Enabled_Components.UPDATE_NOTIFICATIONS = config.getBoolean("update-notifications", Enabled_Components.UPDATE_NOTIFICATIONS);
+        Enabled_Components.UPDATE_NOTIFICATIONS =
+            config.getBoolean("update-notifications", Enabled_Components.UPDATE_NOTIFICATIONS);
 
         // Teleportation
         Teleport.DELAY = config.getInt("teleport.delay", Teleport.DELAY);
@@ -191,7 +192,8 @@ public class Settings extends Config {
         return true;
     }
 
-    @Comment("This is an auto clearing task called `task1`") @BlockName("task1")
+    @Comment("This is an auto clearing task called `task1`")
+    @BlockName("task1")
     // The name for the default block
     public static final class Auto_Clear extends ConfigBlock {
         @Create // This value has to be generated since an instance isn't static
@@ -239,24 +241,31 @@ public class Settings extends Config {
     }
 
 
-    @Comment("General settings") public static final class General {
+    @Comment("General settings")
+    public static final class General {
         @Comment("Display scientific numbers (4.2E8)") public static boolean SCIENTIFIC = false;
         @Comment("Replace wall when merging") public static boolean MERGE_REPLACE_WALL = true;
     }
 
-    @Comment("Update checker settings") public static final class UpdateChecker {
+
+    @Comment("Update checker settings")
+    public static final class UpdateChecker {
         @Comment("How often to poll for updates (in minutes)") public static int POLL_RATE = 360;
-        @Comment("Only notify console once after an update is found") public static boolean NOTIFY_ONCE = true;
+        @Comment("Only notify console once after an update is found") public static boolean
+            NOTIFY_ONCE = true;
     }
 
 
-    @Comment("Schematic Settings") public static final class Schematics {
-        @Comment("Whether schematic based generation should paste schematic on top of plots, or from Y=1")
+    @Comment("Schematic Settings")
+    public static final class Schematics {
+        @Comment(
+            "Whether schematic based generation should paste schematic on top of plots, or from Y=1")
         public static boolean PASTE_ON_TOP = true;
     }
 
 
-    @Comment("Configure the paths that will be used") public static final class Paths {
+    @Comment("Configure the paths that will be used")
+    public static final class Paths {
         public static String SCHEMATICS = "schematics";
         public static String SCRIPTS = "scripts";
         public static String TEMPLATES = "templates";
@@ -295,7 +304,8 @@ public class Settings extends Config {
     }
 
 
-    @Comment("Relating to how many plots someone can claim  ") public static final class Limit {
+    @Comment("Relating to how many plots someone can claim  ")
+    public static final class Limit {
         @Comment("Should the limit be global (over multiple worlds)") public static boolean GLOBAL =
             false;
         @Comment({"The max. range of permissions to check e.g. plots.plot.127",
@@ -328,7 +338,8 @@ public class Settings extends Config {
             false;
         @Comment("Disable redstone when all owners/trusted/members are offline")
         public static boolean DISABLE_OFFLINE = false;
-        @Comment("Detect and cancel invalid pistons on the edge of plots (e.g. placed with WorldEdit)")
+        @Comment(
+            "Detect and cancel invalid pistons on the edge of plots (e.g. placed with WorldEdit)")
         public static boolean DETECT_INVALID_EDGE_PISTONS = false;
     }
 
@@ -355,7 +366,8 @@ public class Settings extends Config {
             true;
         @Comment("The UUID cacher is used to resolve player names") public static boolean
             UUID_CACHE = true;
-        @Comment("Whether we should notify you about updates or not.") public static boolean UPDATE_NOTIFICATIONS = true;
+        @Comment("Whether we should notify you about updates or not.") public static boolean
+            UPDATE_NOTIFICATIONS = true;
         @Comment("Stores user metadata in a database") public static boolean PERSISTENT_META = true;
         @Comment("Optimizes permission checks") public static boolean PERMISSION_CACHE = true;
         @Comment("Optimizes block changing code") public static boolean BLOCK_CACHE = true;

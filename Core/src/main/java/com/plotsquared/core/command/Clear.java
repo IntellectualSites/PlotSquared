@@ -30,16 +30,16 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.util.task.RunnableVal2;
+import com.plotsquared.core.util.task.RunnableVal3;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -62,7 +62,8 @@ public class Clear extends Command {
         super(MainCommand.getInstance(), true);
     }
 
-    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());

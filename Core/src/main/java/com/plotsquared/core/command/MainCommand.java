@@ -27,16 +27,16 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.player.ConsolePlayer;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.Expression;
+import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.Permissions;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -167,7 +167,8 @@ public class MainCommand extends Command {
                             if (EconHandler.manager != null) {
                                 PlotArea area = player.getApplicablePlotArea();
                                 if (area != null) {
-                                    Expression<Double> priceEval = area.getPrices().get(cmd.getFullId());
+                                    Expression<Double> priceEval =
+                                        area.getPrices().get(cmd.getFullId());
                                     Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                     if (price != null
                                         && EconHandler.manager.getMoney(player) < price) {
@@ -215,7 +216,8 @@ public class MainCommand extends Command {
         return true;
     }
 
-    @Override public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    @Override
+    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         // Clear perm caching //
@@ -253,7 +255,8 @@ public class MainCommand extends Command {
                             if (EconHandler.manager != null) {
                                 PlotArea area = player.getApplicablePlotArea();
                                 if (area != null) {
-                                    Expression<Double> priceEval = area.getPrices().get(cmd.getFullId());
+                                    Expression<Double> priceEval =
+                                        area.getPrices().get(cmd.getFullId());
                                     Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                     if (price != 0d
                                         && EconHandler.manager.getMoney(player) < price) {
