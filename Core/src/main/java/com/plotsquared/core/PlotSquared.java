@@ -29,11 +29,11 @@ import com.plotsquared.core.command.WE_Anywhere;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
-import com.plotsquared.core.configuration.ConfigurationSection;
-import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
 import com.plotsquared.core.database.DBFunc;
@@ -130,7 +130,8 @@ import java.util.zip.ZipInputStream;
 /**
  * An implementation of the core, with a static getter for easy access.
  */
-@SuppressWarnings({"unused", "WeakerAccess"}) public class PlotSquared {
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class PlotSquared {
     private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
     private static PlotSquared instance;
     // Implementation
@@ -360,7 +361,8 @@ import java.util.zip.ZipInputStream;
         }
 
         PlotSquared.log(Captions.PREFIX + CaptionUtility
-            .format(ConsolePlayer.getConsole(), Captions.ENABLED.getTranslated(), IMP.getPluginName()));
+            .format(ConsolePlayer.getConsole(), Captions.ENABLED.getTranslated(),
+                IMP.getPluginName()));
     }
 
     /**
@@ -518,8 +520,9 @@ import java.util.zip.ZipInputStream;
         Set<PlotCluster> clusters;
         if (clusters_tmp == null || (clusters = clusters_tmp.remove(plotArea.toString())) == null) {
             if (plotArea.getType() == PlotAreaType.PARTIAL) {
-                clusters =
-                    this.clusters_tmp != null ? this.clusters_tmp.get(plotArea.getWorldName()) : null;
+                clusters = this.clusters_tmp != null ?
+                    this.clusters_tmp.get(plotArea.getWorldName()) :
+                    null;
                 if (clusters != null) {
                     Iterator<PlotCluster> iterator = clusters.iterator();
                     while (iterator.hasNext()) {
@@ -542,8 +545,8 @@ import java.util.zip.ZipInputStream;
             return;
         }
         File file = new File(
-            this.IMP.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.getId() + "_"
-                + plotArea.getWorldName());
+            this.IMP.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.getId()
+                + "_" + plotArea.getWorldName());
         if (!file.exists()) {
             return;
         }
@@ -1301,7 +1304,8 @@ import java.util.zip.ZipInputStream;
             }
             if (type == PlotAreaType.AUGMENTED) {
                 throw new IllegalArgumentException(
-                    "Invalid type for multi-area world. Expected `PARTIAL`, got `" + PlotAreaType.AUGMENTED + "`");
+                    "Invalid type for multi-area world. Expected `PARTIAL`, got `"
+                        + PlotAreaType.AUGMENTED + "`");
             }
             for (String areaId : areasSection.getKeys(false)) {
                 PlotSquared.log(Captions.PREFIX + " - " + areaId);
@@ -1523,7 +1527,7 @@ import java.util.zip.ZipInputStream;
     /**
      * Copies a file from inside the jar to a location
      *
-     * @param file Name of the file inside PlotSquared.jar
+     * @param file   Name of the file inside PlotSquared.jar
      * @param folder The output location relative to /plugins/PlotSquared/
      */
     public void copyFile(String file, String folder) {
@@ -1636,8 +1640,9 @@ import java.util.zip.ZipInputStream;
         list.add(regions);
         list.add(chunks);
         list.add(HybridUtils.height);
-        File file = new File(this.IMP.getDirectory() + File.separator + "persistent_regen_data_"
-            + HybridUtils.area.getId() + "_" + HybridUtils.area.getWorldName());
+        File file = new File(
+            this.IMP.getDirectory() + File.separator + "persistent_regen_data_" + HybridUtils.area
+                .getId() + "_" + HybridUtils.area.getWorldName());
         if (file.exists() && !file.delete()) {
             PlotSquared.log(Captions.PREFIX
                 + "persistent_regen_data file already exists and could not be deleted.");
@@ -1712,13 +1717,13 @@ import java.util.zip.ZipInputStream;
         String lastVersionString = this.getConfig().getString("version");
         if (lastVersionString != null) {
             String[] split = lastVersionString.split("\\.");
-            int[] lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]),
-                    Integer.parseInt(split[2])};
-            if (checkVersion(new int[]{3, 4, 0}, lastVersion)) {
+            int[] lastVersion = new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+                Integer.parseInt(split[2])};
+            if (checkVersion(new int[] {3, 4, 0}, lastVersion)) {
                 Settings.convertLegacy(configFile);
                 if (getConfig().contains("worlds")) {
                     ConfigurationSection worldSection =
-                            getConfig().getConfigurationSection("worlds");
+                        getConfig().getConfigurationSection("worlds");
                     worlds.set("worlds", worldSection);
                     try {
                         worlds.save(worldsFile);
@@ -1768,10 +1773,10 @@ import java.util.zip.ZipInputStream;
             this.worlds = YamlConfiguration.loadConfiguration(this.worldsFile);
 
             if (this.worlds.contains("worlds")) {
-                if (!this.worlds.contains("configuration_version") ||
-                    (!this.worlds.getString("configuration_version").equalsIgnoreCase(
-                        LegacyConverter.CONFIGURATION_VERSION) &&
-                    !this.worlds.getString("configuration_version").equalsIgnoreCase("v5"))) {
+                if (!this.worlds.contains("configuration_version") || (
+                    !this.worlds.getString("configuration_version")
+                        .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION) && !this.worlds
+                        .getString("configuration_version").equalsIgnoreCase("v5"))) {
                     // Conversion needed
                     log(Captions.LEGACY_CONFIG_FOUND.getTranslated());
                     try {
@@ -1860,7 +1865,8 @@ import java.util.zip.ZipInputStream;
     }
 
     public String getConfigurationVersion() {
-        return this.worlds.get("configuration_version", LegacyConverter.CONFIGURATION_VERSION).toString();
+        return this.worlds.get("configuration_version", LegacyConverter.CONFIGURATION_VERSION)
+            .toString();
     }
 
     public void setConfigurationVersion(final String newVersion) throws IOException {

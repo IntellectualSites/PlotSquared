@@ -75,8 +75,7 @@ public class PlotVersion {
         }
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         if (hash == 0 && versionString == null) {
             return "PlotSquared-NoVer-SNAPSHOT";
         } else {

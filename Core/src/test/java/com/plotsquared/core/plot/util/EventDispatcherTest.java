@@ -44,14 +44,14 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.Rating;
+import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
@@ -110,7 +110,8 @@ public class EventDispatcherTest extends EventDispatcher {
         return null;
     }
 
-    @Override public PlotUnlinkEvent callUnlink(PlotArea area, Plot plot, boolean createRoad,
+    @Override
+    public PlotUnlinkEvent callUnlink(PlotArea area, Plot plot, boolean createRoad,
         boolean createSign, PlotUnlinkEvent.REASON reason) {
         return null;
     }
@@ -123,7 +124,8 @@ public class EventDispatcherTest extends EventDispatcher {
         return null;
     }
 
-    @Override public PlayerPlotDeniedEvent callDenied(PlotPlayer initiator, Plot plot, UUID player,
+    @Override
+    public PlayerPlotDeniedEvent callDenied(PlotPlayer initiator, Plot plot, UUID player,
         boolean added) {
         return null;
     }
@@ -134,7 +136,8 @@ public class EventDispatcherTest extends EventDispatcher {
         return null;
     }
 
-    @Override public PlayerPlotHelperEvent callMember(PlotPlayer initiator, Plot plot, UUID player,
+    @Override
+    public PlayerPlotHelperEvent callMember(PlotPlayer initiator, Plot plot, UUID player,
         boolean added) {
         return null;
     }

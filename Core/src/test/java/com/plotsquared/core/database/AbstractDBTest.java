@@ -25,13 +25,13 @@
  */
 package com.plotsquared.core.database;
 
-import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.plot.comment.PlotComment;
+import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.util.task.RunnableVal;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -191,7 +191,8 @@ public class AbstractDBTest implements AbstractDB {
     @Override public void setComment(Plot plot, PlotComment comment) {
     }
 
-    @Override public void getComments(@NotNull Plot plot, String inbox,
+    @Override
+    public void getComments(@NotNull Plot plot, String inbox,
         RunnableVal<List<PlotComment>> whenDone) {
     }
 
