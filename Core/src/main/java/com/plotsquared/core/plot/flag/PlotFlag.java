@@ -75,6 +75,8 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
                 flagName.append(chars[i]);
             }
         }
+        Preconditions.checkState(flagName.length() <= 64,
+            "flag name may not be more than 64 characters. Check: " + flagName.toString());
         this.flagName = flagName.toString();
     }
 

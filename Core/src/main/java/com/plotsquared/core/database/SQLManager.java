@@ -1211,7 +1211,7 @@ public class SQLManager implements AbstractDB {
                     + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
                 stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_flags`("
                     + "`id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,"
-                    + "`plot_id` INT(11) NOT NULL," + " `flag` VARCHAR(256),"
+                    + "`plot_id` INT(11) NOT NULL," + " `flag` VARCHAR(64),"
                     + " `value` VARCHAR(512)," + "FOREIGN KEY (plot_id) REFERENCES `" + this.prefix
                     + "plot` (id) ON DELETE CASCADE, " + "UNIQUE (plot_id, flag)"
                     + ") ENGINE=InnoDB DEFAULT CHARSET=utf8");
@@ -1270,7 +1270,7 @@ public class SQLManager implements AbstractDB {
                     + " `value` blob NOT NULL" + ')');
                 stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot_flags`("
                     + "`id` INTEGER PRIMARY KEY AUTOINCREMENT," + "`plot_id` INTEGER NOT NULL,"
-                    + " `flag` VARCHAR(256)," + " `value` VARCHAR(512),"
+                    + " `flag` VARCHAR(64)," + " `value` VARCHAR(512),"
                     + "FOREIGN KEY (plot_id) REFERENCES `" + this.prefix
                     + "plot` (id) ON DELETE CASCADE, " + "UNIQUE (plot_id, flag))");
             }
