@@ -357,7 +357,7 @@ public class Settings extends Config {
     }
 
 
-    @Comment("Enable or disable parts of the plugin specific to using PaperSpigot")
+    @Comment("Enable or disable parts of the plugin specific to using Paper")
     public static final class Paper_Components {
         @Comment("Prevent entities from leaving plots") public static boolean ENTITY_PATHING = true;
         @Comment("Use paper's PreCreatureSpawnEvent") public static boolean PRE_SPAWN_LISTENER = true;
