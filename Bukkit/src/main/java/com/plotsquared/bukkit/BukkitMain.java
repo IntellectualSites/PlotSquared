@@ -637,8 +637,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         final PlayerEvents main = new PlayerEvents();
         getServer().getPluginManager().registerEvents(main, this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
-        if (PaperLib.isPaper() && Settings.Paper_Components.ENTITY_PATHING
-            || Settings.Paper_Components.PRE_SPAWN_LISTENER) {
+        if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
             getServer().getPluginManager().registerEvents(new PaperListener(), this);
         }
         PlotListener.startRunnable();

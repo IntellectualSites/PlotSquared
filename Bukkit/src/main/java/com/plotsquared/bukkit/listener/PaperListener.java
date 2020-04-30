@@ -27,20 +27,29 @@ package com.plotsquared.bukkit.listener;
 
 import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
+import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
+import com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent;
 import com.destroystokyo.paper.event.entity.SlimePathfindEvent;
+import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 /**
  * Events specific to Paper. Some toit nups here
@@ -132,9 +141,6 @@ public class PaperListener implements Listener {
     }
 
     @EventHandler public void onPreCreatureSpawnEvent(PreCreatureSpawnEvent event) {
-        if (!Settings.Paper_Components.PRE_SPAWN_LISTENER) {
-            return;
-        }
         Location location = BukkitUtil.getLocation(event.getSpawnLocation());
         PlotArea area = location.getPlotArea();
         if (!location.isPlotArea()) {
@@ -143,6 +149,7 @@ public class PaperListener implements Listener {
         //If entities are spawning... the chunk should be loaded?
         Entity[] entities = event.getSpawnLocation().getChunk().getEntities();
         if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
+            event.setShouldAbortSpawn(true);
             event.setCancelled(true);
             return;
         }
@@ -153,6 +160,7 @@ public class PaperListener implements Listener {
             case OCELOT_BABY:
             case SPAWNER_EGG:
                 if (!area.isSpawnEggs()) {
+                    event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
@@ -171,11 +179,13 @@ public class PaperListener implements Listener {
             case BEEHIVE:
             case CHUNK_GEN:
                 if (!area.isMobSpawning()) {
+                    event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
             case BREEDING:
                 if (!area.isSpawnBreeding()) {
+                    event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
@@ -185,12 +195,14 @@ public class PaperListener implements Listener {
             case BUILD_WITHER:
             case CUSTOM:
                 if (!area.isSpawnCustom() && event.getType() != EntityType.ARMOR_STAND) {
+                    event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
                 break;
             case SPAWNER:
                 if (!area.isMobSpawnerSpawning()) {
+                    event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                     return;
                 }
@@ -203,17 +215,67 @@ public class PaperListener implements Listener {
                 switch (type) {
                     case DROPPED_ITEM:
                         if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                            event.setShouldAbortSpawn(true);
                             event.setCancelled(true);
                             break;
                         }
                     case PLAYER:
                         return;
                 }
+                event.setShouldAbortSpawn(true);
                 event.setCancelled(true);
             }
             return;
         }
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
+            event.setShouldAbortSpawn(true);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerNaturallySpawnCreaturesEvent(PlayerNaturallySpawnCreaturesEvent event) {
+        if (Settings.Paper_Components.CANCEL_CHUNK_SPAWN) {
+            Location location = BukkitUtil.getLocation(event.getPlayer().getLocation());
+            PlotArea area = location.getPlotArea();
+            if (area != null && !area.isMobSpawning()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler public void onPreSpawnerSpawnEvent(PreSpawnerSpawnEvent event) {
+        Location location = BukkitUtil.getLocation(event.getSpawnerLocation());
+        PlotArea area = location.getPlotArea();
+        if (area != null && !area.isMobSpawnerSpawning()) {
+            event.setCancelled(true);
+            event.setShouldAbortSpawn(true);
+        }
+    }
+
+    /**
+     * Unsure if this will be any performance improvement over the spigot version,
+     * but here it is anyway :)
+     *
+     * @param event Paper's PlayerLaunchProjectileEvent
+     */
+    @EventHandler public void onProjectileLaunch(PlayerLaunchProjectileEvent event) {
+        Projectile entity = event.getProjectile();
+        if (!(entity instanceof ThrownPotion)) {
+            return;
+        }
+        ProjectileSource shooter = entity.getShooter();
+        if (!(shooter instanceof Player)) {
+            return;
+        }
+        Location location = BukkitUtil.getLocation(entity);
+        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+            return;
+        }
+        PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
+        Plot plot = location.getOwnedPlot();
+        if (plot != null && !plot.isAdded(pp.getUUID())) {
+            entity.remove();
             event.setCancelled(true);
         }
     }
