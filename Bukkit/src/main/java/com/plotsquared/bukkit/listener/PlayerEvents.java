@@ -2024,8 +2024,6 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
-        //TODO needs an overhaul for the increased number of spawn reasons added to this event.
-        //I can't believe they waited so damn long to expand this API set.
         switch (reason) {
             case DISPENSE_EGG:
             case EGG:
@@ -2038,6 +2036,16 @@ public class PlayerEvents extends PlotListener implements Listener {
                 break;
             case REINFORCEMENTS:
             case NATURAL:
+            case MOUNT:
+            case PATROL:
+            case RAID:
+            case SHEARED:
+            case SHOULDER_ENTITY:
+            case SILVERFISH_BLOCK:
+            case TRAP:
+            case VILLAGE_DEFENSE:
+            case VILLAGE_INVASION:
+            case BEEHIVE:
             case CHUNK_GEN:
                 if (!area.isMobSpawning()) {
                     event.setCancelled(true);
