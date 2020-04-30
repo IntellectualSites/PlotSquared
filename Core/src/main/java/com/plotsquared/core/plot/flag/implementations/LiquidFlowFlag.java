@@ -26,20 +26,70 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import com.plotsquared.core.plot.flag.PlotFlag;
 import org.jetbrains.annotations.NotNull;
 
-public class LiquidFlowFlag extends BooleanFlag<LiquidFlowFlag> {
+import java.util.Arrays;
+import java.util.Collection;
 
-    public static final LiquidFlowFlag LIQUID_FLOW_TRUE = new LiquidFlowFlag(true);
-    public static final LiquidFlowFlag LIQUID_FLOW_FALSE = new LiquidFlowFlag(false);
+public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFlowFlag> {
 
-    private LiquidFlowFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_LIQUID_FLOW);
+    public static final LiquidFlowFlag LIQUID_FLOW_ENABLED = new LiquidFlowFlag(FlowStatus.ENABLED);
+    public static final LiquidFlowFlag LIQUID_FLOW_DISABLED =
+        new LiquidFlowFlag(FlowStatus.DISABLED);
+    public static final LiquidFlowFlag LIQUID_FLOW_DEFAULT = new LiquidFlowFlag(FlowStatus.DEFAULT);
+
+    private LiquidFlowFlag(FlowStatus value) {
+        super(value, Captions.FLAG_CATEGORY_BOOLEAN, Captions.FLAG_DESCRIPTION_LIQUID_FLOW);
     }
 
-    @Override protected LiquidFlowFlag flagOf(@NotNull Boolean value) {
-        return value ? LIQUID_FLOW_TRUE : LIQUID_FLOW_FALSE;
+    @Override public LiquidFlowFlag parse(@NotNull final String input) {
+        switch (input.toLowerCase()) {
+            case "true":
+            case "enabled":
+            case "allow":
+                return LIQUID_FLOW_ENABLED;
+            case "false":
+            case "disabled":
+            case "disallow":
+                return LIQUID_FLOW_DISABLED;
+            default:
+                return LIQUID_FLOW_DEFAULT;
+        }
+    }
+
+    @Override public LiquidFlowFlag merge(@NotNull final FlowStatus newValue) {
+        if (newValue == FlowStatus.ENABLED || this.getValue() == FlowStatus.ENABLED) {
+            return LIQUID_FLOW_ENABLED;
+        }
+        return flagOf(newValue);
+    }
+
+    @Override public String toString() {
+        return this.getValue().name().toLowerCase();
+    }
+
+    @Override public String getExample() {
+        return "true";
+    }
+
+    @Override protected LiquidFlowFlag flagOf(@NotNull final FlowStatus value) {
+        switch (value) {
+            case ENABLED:
+                return LIQUID_FLOW_ENABLED;
+            case DISABLED:
+                return LIQUID_FLOW_DISABLED;
+            default:
+                return LIQUID_FLOW_DEFAULT;
+        }
+    }
+
+    @Override public Collection<String> getTabCompletions() {
+        return Arrays.asList("true", "false", "default");
+    }
+
+    public enum FlowStatus {
+        ENABLED, DISABLED, DEFAULT
     }
 
 }

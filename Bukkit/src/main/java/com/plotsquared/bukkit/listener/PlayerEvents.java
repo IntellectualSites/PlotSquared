@@ -1372,7 +1372,9 @@ public class PlayerEvents extends PlotListener implements Listener {
         final PlotArea fromArea = fLocation.getPlotArea();
         if (fromArea != null) {
             final Plot plot = fromArea.getOwnedPlot(fLocation);
-            if (plot != null && !plot.getFlag(LiquidFlowFlag.class) && event.getBlock().isLiquid()) {
+            if (plot != null
+                && plot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event
+                .getBlock().isLiquid()) {
                 event.setCancelled(true);
                 return;
             }
@@ -1391,14 +1393,16 @@ public class PlayerEvents extends PlotListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (plot.getFlag(LiquidFlowFlag.class) && event.getBlock().isLiquid()) {
+            if (plot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.ENABLED && event
+                .getBlock().isLiquid()) {
                 return;
             }
             if (plot.getFlag(DisablePhysicsFlag.class)) {
                 event.setCancelled(true);
                 return;
             }
-            if (!plot.getFlag(LiquidFlowFlag.class) && event.getBlock().isLiquid()) {
+            if (plot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event
+                .getBlock().isLiquid()) {
                 event.setCancelled(true);
             }
         } else if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects
