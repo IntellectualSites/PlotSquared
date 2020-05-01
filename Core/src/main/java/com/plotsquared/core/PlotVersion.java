@@ -86,7 +86,7 @@ public class PlotVersion {
         if (hash == 0 && versionString == null) {
             return "NoVer-SNAPSHOT";
         } else {
-            return versionString;
+            return versionString + suffix;
         }
     }
 
