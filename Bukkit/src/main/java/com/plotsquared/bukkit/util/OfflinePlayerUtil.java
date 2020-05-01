@@ -90,7 +90,10 @@ public class OfflinePlayerUtil {
         Object worldServer = getWorldServer();
         Class<?> playerInteractClass = getNmsClass("PlayerInteractManager");
         Class<?> worldClass = getNmsClass("World");
-        Constructor c = makeConstructor(playerInteractClass, worldClass);
+        Constructor<?> c = makeConstructor(playerInteractClass, worldClass);
+        if (c == null) {
+            c = makeConstructor(playerInteractClass, getNmsClass("WorldServer"));
+        }
         return callConstructor(c, worldServer);
     }
 
