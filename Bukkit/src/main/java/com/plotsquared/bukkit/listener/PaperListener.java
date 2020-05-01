@@ -141,6 +141,9 @@ public class PaperListener implements Listener {
     }
 
     @EventHandler public void onPreCreatureSpawnEvent(PreCreatureSpawnEvent event) {
+        if (!Settings.Paper_Components.CREATURE_SPAWN) {
+            return;
+        }
         Location location = BukkitUtil.getLocation(event.getSpawnLocation());
         PlotArea area = location.getPlotArea();
         if (!location.isPlotArea()) {
@@ -245,11 +248,13 @@ public class PaperListener implements Listener {
     }
 
     @EventHandler public void onPreSpawnerSpawnEvent(PreSpawnerSpawnEvent event) {
-        Location location = BukkitUtil.getLocation(event.getSpawnerLocation());
-        PlotArea area = location.getPlotArea();
-        if (area != null && !area.isMobSpawnerSpawning()) {
-            event.setCancelled(true);
-            event.setShouldAbortSpawn(true);
+        if (Settings.Paper_Components.SPAWNER_SPAWN) {
+            Location location = BukkitUtil.getLocation(event.getSpawnerLocation());
+            PlotArea area = location.getPlotArea();
+            if (area != null && !area.isMobSpawnerSpawning()) {
+                event.setCancelled(true);
+                event.setShouldAbortSpawn(true);
+            }
         }
     }
 
@@ -260,6 +265,9 @@ public class PaperListener implements Listener {
      * @param event Paper's PlayerLaunchProjectileEvent
      */
     @EventHandler public void onProjectileLaunch(PlayerLaunchProjectileEvent event) {
+        if (!Settings.Paper_Components.PLAYER_PROJECTILE) {
+            return;
+        }
         Projectile entity = event.getProjectile();
         if (!(entity instanceof ThrownPotion)) {
             return;
