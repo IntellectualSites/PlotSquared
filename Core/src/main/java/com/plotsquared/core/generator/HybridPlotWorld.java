@@ -28,6 +28,7 @@ package com.plotsquared.core.generator;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -52,7 +53,9 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
@@ -156,6 +159,29 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         } catch (Exception event) {
             event.printStackTrace();
             PlotSquared.debug("&c - road schematics are disabled for this world.");
+        }
+
+        // Dump world settings
+        if (Settings.DEBUG) {
+            PlotSquared.debug(String.format("- Dumping settings for ClassicPlotWorld with name %s",
+                this.getWorldName()));
+            final Field[] fields = this.getClass().getFields();
+            for (final Field field : fields) {
+                final String name = field.getName().toLowerCase(Locale.ENGLISH);
+                if (name.contains("g_sch")) {
+                    continue;
+                }
+                Object value;
+                try {
+                    final boolean accessible = field.isAccessible();
+                    field.setAccessible(true);
+                    value = field.get(this);
+                    field.setAccessible(accessible);
+                } catch (final IllegalAccessException e) {
+                    value = String.format("Failed to parse: %s", e.getMessage());
+                }
+                PlotSquared.debug(String.format("-- %s = %s", name, value));
+            }
         }
     }
 

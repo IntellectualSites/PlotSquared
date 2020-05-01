@@ -114,28 +114,5 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         this.WALL_FILLING = new BlockBucket(config.getString("wall.filling"));
         this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
         this.CLAIMED_WALL_BLOCK = new BlockBucket(config.getString("wall.block_claimed"));
-
-        // Dump world settings
-        if (Settings.DEBUG) {
-            PlotSquared.debug(String.format("- Dumping settings for ClassicPlotWorld with name %s",
-                this.getWorldName()));
-            final Field[] fields = this.getClass().getFields();
-            for (final Field field : fields) {
-                final String name = field.getName().toLowerCase(Locale.ENGLISH);
-                if (name.contains("g_sch")) {
-                    continue;
-                }
-                Object value;
-                try {
-                    final boolean accessible = field.isAccessible();
-                    field.setAccessible(true);
-                    value = field.get(this);
-                    field.setAccessible(accessible);
-                } catch (final IllegalAccessException e) {
-                    value = String.format("Failed to parse: %s", e.getMessage());
-                }
-                PlotSquared.debug(String.format("-- %s = %s", name, value));
-            }
-        }
     }
 }
