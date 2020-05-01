@@ -110,7 +110,7 @@ public class HybridGen extends IndependentPlotGenerator {
         boolean[] insideWallX = new boolean[16];
         for (short i = 0; i < 16; i++) {
             short v = (short) (relativeOffsetX + i);
-            if (v >= hybridPlotWorld.SIZE) {
+            while (v >= hybridPlotWorld.SIZE) {
                 v -= hybridPlotWorld.SIZE;
             }
             relativeX[i] = v;
@@ -131,7 +131,7 @@ public class HybridGen extends IndependentPlotGenerator {
         boolean[] insideWallZ = new boolean[16];
         for (short i = 0; i < 16; i++) {
             short v = (short) (relativeOffsetZ + i);
-            if (v >= hybridPlotWorld.SIZE) {
+            while (v >= hybridPlotWorld.SIZE) {
                 v -= hybridPlotWorld.SIZE;
             }
             relativeZ[i] = v;
