@@ -29,12 +29,20 @@ public class PlotVersion {
     public final int year, month, day, hash;
     public final String versionString;
     public final int[] version;
+    public final String suffix;
 
     public PlotVersion(int year, int month, int day, int hash, String versionString) {
         this.year = year;
         this.month = month;
         this.day = day;
         this.hash = hash;
+        int dash = versionString.indexOf('-');
+        if (dash != -1) {
+            suffix = versionString.substring(dash);
+            versionString = versionString.substring(0, dash);
+        } else {
+            suffix = "";
+        }
         this.versionString = versionString.substring(versionString.indexOf('=') + 1);
         version = new int[3];
         String[] verArray = versionString.substring(versionString.indexOf('=') + 1).split("\\.");
@@ -44,6 +52,13 @@ public class PlotVersion {
     }
 
     public PlotVersion(String versionString, String commit, String date) {
+        int dash = versionString.indexOf('-');
+        if (dash != -1) {
+            suffix = versionString.substring(dash);
+            versionString = versionString.substring(0, dash);
+        } else {
+            suffix = "";
+        }
         this.versionString = versionString.substring(versionString.indexOf('=') + 1);
         version = new int[3];
         String[] verArray = this.versionString.split("\\.");
@@ -79,7 +94,7 @@ public class PlotVersion {
         if (hash == 0 && versionString == null) {
             return "PlotSquared-NoVer-SNAPSHOT";
         } else {
-            return "PlotSquared-" + versionString;
+            return "PlotSquared-" + versionString + suffix;
         }
     }
 
@@ -90,7 +105,9 @@ public class PlotVersion {
      * @return true if the given version is a "later" version
      */
     public boolean isLaterVersion(String versionString) {
-        String[] verArray = versionString.split("\\.");
+        int dash = versionString.indexOf('-');
+        String[] verArray =
+            versionString.substring(0, dash == -1 ? versionString.length() : dash).split("\\.");
         int one = Integer.parseInt(verArray[0]);
         int two = Integer.parseInt(verArray[1]);
         int three = Integer.parseInt(verArray[2]);

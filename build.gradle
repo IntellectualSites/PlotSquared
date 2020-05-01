@@ -29,7 +29,14 @@ ext {
     git = Grgit.open(dir: new File(rootDir.toString() + "/.git"))
 }
 
-version = "5.10.4"
+def ver = "5.10.4"
+def versuffix = ""
+ext {
+    if (project.hasProperty("versionsuffix")) {
+        versuffix = "-$versionsuffix"
+    }
+}
+version = ver + versuffix
 
 description = rootProject.name
 
