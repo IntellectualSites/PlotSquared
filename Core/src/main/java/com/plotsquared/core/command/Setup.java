@@ -135,10 +135,10 @@ public class Setup extends SubCommand {
                 }
                 object.setupGenerator = args[0];
                 object.current++;
-                String partial = "\n&8 - &7PARTIAL&8 - &7Vanilla with clusters of plots";
-                MainUtil.sendMessage(player,
-                    "&6What world type do you want?\n&8 - &2DEFAULT&8 - &7Standard plot generation"
-                        + "\n&8 - &7AUGMENTED&8 - &7Plot generation with terrain" + partial);
+                MainUtil.sendMessage(player, "&6What world type do you want?"
+                    + "\n&8 - &2normal&8 - &7Standard plot generation"
+                    + "\n&8 - &7augmented&8 - &7Plot generation with terrain"
+                    + "\n&8 - &7partial&8 - &7Vanilla with clusters of plots");
                 break;
             case 1:  // choose world type
                 List<String> allTypes = Arrays.asList("normal", "augmented", "partial");
