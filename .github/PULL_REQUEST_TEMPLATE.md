@@ -14,4 +14,4 @@ You can do so here: https://github.com/IntellectualSites/PlotSquared/issues/new/
 - [] I included all information required in the sections above
 - [] I tested my changes and approved their functionality
 - [] I ensured my changes do not break other parts of the code
-- [] I read and followed the [contribution guidelines](https://github.com/IntellectualSites/PlotSquared/blob/breaking/CONTRIBUTING.md)
+- [] I read and followed the [contribution guidelines](https://github.com/IntellectualSites/PlotSquared/blob/v5/CONTRIBUTING.md)
