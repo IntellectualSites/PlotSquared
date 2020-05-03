@@ -69,6 +69,7 @@ subprojects {
     }
 
     dependencies {
+        compile "co.aikar:taskchain-core:3.7.2"
         compile group: 'org.json', name: 'json', version: '20190722'
 
         implementation("com.sk89q.worldedit:worldedit-core:7.0.0") {
@@ -106,6 +107,8 @@ subprojects {
         maven { url = "https://maven.enginehub.org/repo/" }
         maven { url = "https://repo.maven.apache.org/maven2" }
         maven { url = "https://jitpack.io" }
+        maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+        maven { url = "https://hub.spigotmc.org/nexus/content/groups/public/" }
     }
 
     shadowJar {

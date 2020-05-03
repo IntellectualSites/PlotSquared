@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.plot;
 
+import co.aikar.taskchain.TaskChain;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -3494,6 +3495,23 @@ public class Plot {
         final Class<?> flagClass = flag.getClass();
         final PlotFlag<?, ?> flagInstance = this.flagContainer.getFlagErased(flagClass);
         return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
+    }
+
+
+    /**
+     * Get a new task chain associated with this plot. Actions queued on this chain
+     * will be executed in sequence. This chain is uniquely tied to this plot.
+     * <p>
+     * This chain is also synchronized against the main game loop, and so this
+     * can safely be used to perform actions on the main thread that are not
+     * thread safe.
+     * </p>
+     *
+     * @return Shared task chain associated with the plot
+     */
+    public <T> TaskChain<T> newPlotTaskChain() {
+        return PlotSquared.imp().newSharedTaskChain(String.format("__PLOT__%s__%s",
+            this.getArea().toString(), this.getId().toString()));
     }
 
 }

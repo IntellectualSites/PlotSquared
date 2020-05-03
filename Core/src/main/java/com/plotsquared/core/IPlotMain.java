@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core;
 
+import co.aikar.taskchain.TaskChain;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
@@ -262,4 +263,20 @@ public interface IPlotMain extends ILogger {
     List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds();
 
     Actor getConsole();
+
+    /**
+     * Create a new (un-shared) task chain
+     *
+     * @return New task chain
+     */
+    <T> TaskChain<T> newTaskChain();
+
+    /**
+     * Create a new shared task chain
+     *
+     * @param name Chain name
+     * @return A new shared task chain
+     */
+    <T> TaskChain<T> newSharedTaskChain(@NotNull final String name);
+
 }

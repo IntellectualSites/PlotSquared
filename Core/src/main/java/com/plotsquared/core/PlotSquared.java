@@ -132,6 +132,7 @@ import java.util.zip.ZipInputStream;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class PlotSquared {
+
     private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
     private static PlotSquared instance;
     // Implementation

@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
     implementation(project(":Core"))
+    compile "co.aikar:taskchain-bukkit:3.7.2"
     compile("org.bstats:bstats-bukkit:1.7")
     compile(project(":Core"))
     compile("com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT")

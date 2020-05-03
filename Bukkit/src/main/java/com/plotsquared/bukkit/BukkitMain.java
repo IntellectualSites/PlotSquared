@@ -25,6 +25,9 @@
  */
 package com.plotsquared.bukkit;
 
+import co.aikar.taskchain.BukkitTaskChainFactory;
+import co.aikar.taskchain.TaskChain;
+import co.aikar.taskchain.TaskChainFactory;
 import com.plotsquared.bukkit.generator.BukkitHybridUtils;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.listener.ChunkListener;
@@ -151,6 +154,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     private Method methodUnloadChunk0;
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
+    private TaskChainFactory taskChainFactory;
     private static final int BSTATS_ID = 1404;
 
     @Override public int[] getServerVersion() {
@@ -181,6 +185,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     @Override public void onEnable() {
         this.pluginName = getDescription().getName();
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
+
+        this.taskChainFactory = BukkitTaskChainFactory.create(this);
 
         new PlotSquared(this, "Bukkit");
 
@@ -886,4 +892,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
         return wePlugin.wrapCommandSender(console);
     }
+
+    @Override public <T> TaskChain<T> newTaskChain() {
+        return this.taskChainFactory.newChain();
+    }
+
+    @Override public <T> TaskChain<T> newSharedTaskChain(@NotNull final String name) {
+        return this.taskChainFactory.newSharedChain(name);
+    }
+
 }
