@@ -54,8 +54,8 @@ import java.util.UUID;
     confirmation = true)
 public class Merge extends SubCommand {
 
-    public static final String[] values = new String[] {"north", "east", "south", "west", "auto"};
-    public static final String[] aliases = new String[] {"n", "e", "s", "w", "all"};
+    public static final String[] values = new String[] {"north", "east", "south", "west"};
+    public static final String[] aliases = new String[] {"n", "e", "s", "w"};
 
     public static String direction(float yaw) {
         yaw = yaw / 90;
@@ -111,6 +111,10 @@ public class Merge extends SubCommand {
                     direction = Direction.getFromIndex(i);
                     break;
                 }
+            }
+            if (direction == null && (args[0].equalsIgnoreCase("all") || args[1]
+                .equalsIgnoreCase("auto"))) {
+                direction = Direction.ALL;
             }
         }
         if (direction == null) {
