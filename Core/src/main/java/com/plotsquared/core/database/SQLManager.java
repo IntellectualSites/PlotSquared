@@ -42,6 +42,7 @@ import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -1962,6 +1963,7 @@ public class SQLManager implements AbstractDB {
 
                 try (final ResultSet resultSet = statement
                     .executeQuery("SELECT * FROM `" + this.prefix + "plot_flags`")) {
+                    BlockTypeListFlag.skipCategoryVerification = true; // allow invalid tags, as initialized lazily
                     final ArrayList<Integer> toDelete = new ArrayList<>();
                     final Map<Plot, Collection<PlotFlag<?, ?>>> invalidFlags = new HashMap<>();
                     while (resultSet.next()) {
@@ -1979,6 +1981,7 @@ public class SQLManager implements AbstractDB {
                                 try {
                                     plot.getFlagContainer().addFlag(plotFlag.parse(value));
                                 } catch (final FlagParseException e) {
+                                    e.printStackTrace();
                                     PlotSquared
                                         .debug("Plot with ID " + id + " has an invalid value:");
                                     PlotSquared.debug(Captions.FLAG_PARSE_ERROR.getTranslated()
@@ -1998,6 +2001,7 @@ public class SQLManager implements AbstractDB {
                                 + " in `plot_flags` does not exist. Create this plot or set `database-purger: true` in the settings.yml.");
                         }
                     }
+                    BlockTypeListFlag.skipCategoryVerification = false; // don't allow invalid tags anymore
                     if (Settings.Enabled_Components.DATABASE_PURGER) {
                         for (final Map.Entry<Plot, Collection<PlotFlag<?, ?>>> plotFlagEntry : invalidFlags
                             .entrySet()) {

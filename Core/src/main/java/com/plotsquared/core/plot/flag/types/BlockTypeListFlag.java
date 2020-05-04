@@ -42,6 +42,8 @@ import java.util.stream.Collectors;
 public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
     extends ListFlag<BlockTypeWrapper, F> {
 
+    public static boolean skipCategoryVerification = false;
+
     protected BlockTypeListFlag(List<BlockTypeWrapper> blockTypeList, Caption description) {
         super(blockTypeList, Captions.FLAG_CATEGORY_BLOCK_LIST, description);
     }
@@ -57,15 +59,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
             final BlockState blockState = BlockUtil.get(blockString);
             if (blockState == null) {
                 // If it's not a block state, we assume it's a block category
-                final BlockCategory blockCategory;
-                if (!blockString.startsWith("#")
-                    || (blockCategory = BlockCategory.REGISTRY.get(blockString.substring(1)))
-                    == null) {
-                    throw new FlagParseException(this, blockString,
-                        Captions.FLAG_ERROR_INVALID_BLOCK);
-                } else {
-                    blockTypeWrapper = BlockTypeWrapper.get(blockCategory);
-                }
+                blockTypeWrapper = getCategory(blockString);
             } else {
                 blockTypeWrapper = BlockTypeWrapper.get(blockState.getBlockType());
             }
@@ -89,6 +83,26 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
             BlockCategory.REGISTRY.keySet().stream().map(val -> "#" + val.replace("minecraft:", ""))
                 .collect(Collectors.toList()));
         return tabCompletions;
+    }
+
+    private BlockTypeWrapper getCategory(final String blockString) throws FlagParseException {
+        if (!blockString.startsWith("#")) {
+            throw new FlagParseException(this, blockString,
+                    Captions.FLAG_ERROR_INVALID_BLOCK);
+        }
+        String categoryId = blockString.substring(1);
+        BlockTypeWrapper blockTypeWrapper;
+        if (skipCategoryVerification) {
+            blockTypeWrapper = BlockTypeWrapper.get(categoryId);
+        } else {
+            BlockCategory blockCategory = BlockCategory.REGISTRY.get(categoryId);
+            if (blockCategory == null) {
+                throw new FlagParseException(this, blockString,
+                        Captions.FLAG_ERROR_INVALID_BLOCK);
+            }
+            blockTypeWrapper = BlockTypeWrapper.get(blockCategory);
+        }
+        return blockTypeWrapper;
     }
 
 }
