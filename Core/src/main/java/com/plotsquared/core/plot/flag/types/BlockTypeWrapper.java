@@ -44,16 +44,25 @@ import java.util.Map;
 public class BlockTypeWrapper {
 
     @Nullable @Getter private final BlockType blockType;
-    @Nullable @Getter private final BlockCategory blockCategory;
+    @Nullable private BlockCategory blockCategory;
+    @Nullable private final String blockCategoryId;
 
     private BlockTypeWrapper(@NotNull final BlockType blockType) {
         this.blockType = Preconditions.checkNotNull(blockType);
         this.blockCategory = null;
+        this.blockCategoryId = null;
     }
 
     private BlockTypeWrapper(@NotNull final BlockCategory blockCategory) {
         this.blockType = null;
         this.blockCategory = Preconditions.checkNotNull(blockCategory);
+        this.blockCategoryId = null;
+    }
+
+    public BlockTypeWrapper(@Nullable String blockCategoryId) {
+        this.blockType = null;
+        this.blockCategoryId = blockCategoryId;
+        this.blockCategory = null;
     }
 
     @Override public String toString() {
@@ -64,8 +73,8 @@ public class BlockTypeWrapper {
             } else {
                 return key;
             }
-        } else if (this.blockCategory != null) {
-            final String key = this.blockCategory.toString();
+        } else if (this.getBlockCategory() != null) { // calling the method will initialize it lazily
+            final String key = this.getBlockCategory().toString();
             if (key.startsWith("minecraft:")) {
                 return '#' + key.substring(10);
             } else {
@@ -86,15 +95,26 @@ public class BlockTypeWrapper {
         }
     }
 
+    public BlockCategory getBlockCategory() {
+        if (this.blockCategory == null && this.blockCategoryId != null) { // only if name is available
+            this.blockCategory = Preconditions.checkNotNull(BlockCategory.REGISTRY.get(this.blockCategoryId));
+        }
+        return this.blockCategory;
+    }
+
     private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
-    private static final Map<BlockCategory, BlockTypeWrapper> blockCategories = new HashMap<>();
+    private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();
 
     public static BlockTypeWrapper get(final BlockType blockType) {
         return blockTypes.computeIfAbsent(blockType, BlockTypeWrapper::new);
     }
 
     public static BlockTypeWrapper get(final BlockCategory blockCategory) {
-        return blockCategories.computeIfAbsent(blockCategory, BlockTypeWrapper::new);
+        return blockCategories.computeIfAbsent(blockCategory.getId(), id -> new BlockTypeWrapper(blockCategory));
+    }
+
+    public static BlockTypeWrapper get(final String blockCategoryId) {
+        return blockCategories.computeIfAbsent(blockCategoryId, BlockTypeWrapper::new);
     }
 
 }
