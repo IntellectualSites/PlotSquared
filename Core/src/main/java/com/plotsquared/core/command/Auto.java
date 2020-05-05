@@ -94,8 +94,8 @@ public class Auto extends SubCommand {
                     } else {
                         player.setPersistentMeta("grantedPlots", Ints.toByteArray(left));
                     }
-                    MainUtil.sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "" + left,
-                        "" + (grantedPlots - left));
+                    MainUtil.sendMessage(player, Captions.REMOVED_GRANTED_PLOT,
+                        "" + (grantedPlots - left), "" + left);
                 }
             } else {
                 MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
