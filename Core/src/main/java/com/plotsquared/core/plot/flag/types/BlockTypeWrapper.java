@@ -26,7 +26,9 @@
 package com.plotsquared.core.plot.flag.types;
 
 import com.google.common.base.Preconditions;
+import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.block.BlockCategory;
+import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -97,7 +99,11 @@ public class BlockTypeWrapper {
 
     public BlockCategory getBlockCategory() {
         if (this.blockCategory == null && this.blockCategoryId != null) { // only if name is available
-            this.blockCategory = Preconditions.checkNotNull(BlockCategory.REGISTRY.get(this.blockCategoryId));
+            this.blockCategory = BlockCategory.REGISTRY.get(this.blockCategoryId);
+            if (this.blockCategory == null) {
+                PlotSquared.debug("- Block category #" + this.blockCategoryId + " does not exist");
+                this.blockCategory = new NullBlockCategory(this.blockCategoryId);
+            }
         }
         return this.blockCategory;
     }
@@ -115,6 +121,21 @@ public class BlockTypeWrapper {
 
     public static BlockTypeWrapper get(final String blockCategoryId) {
         return blockCategories.computeIfAbsent(blockCategoryId, BlockTypeWrapper::new);
+    }
+
+    /**
+     * Prevents exceptions when loading/saving block categories
+     */
+    private static class NullBlockCategory extends BlockCategory {
+
+        public NullBlockCategory(String id) {
+            super(id);
+        }
+
+        @Override
+        public <B extends BlockStateHolder<B>> boolean contains(B blockStateHolder) {
+            return false;
+        }
     }
 
 }
