@@ -61,9 +61,9 @@ public class BlockTypeWrapper {
         this.blockCategoryId = null;
     }
 
-    public BlockTypeWrapper(@Nullable String blockCategoryId) {
+    private BlockTypeWrapper(@NotNull final String blockCategoryId) {
         this.blockType = null;
-        this.blockCategoryId = blockCategoryId;
+        this.blockCategoryId = Preconditions.checkNotNull(blockCategoryId);
         this.blockCategory = null;
     }
 
