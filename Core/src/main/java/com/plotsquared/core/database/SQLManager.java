@@ -1973,6 +1973,7 @@ public class SQLManager implements AbstractDB {
                             final PlotFlag<?, ?> plotFlag =
                                 GlobalFlagContainer.getInstance().getFlagFromString(flag);
                             if (plotFlag == null) {
+                                PlotSquared.debug("Adding unknown flag to plot with ID " + id);
                                 plot.getFlagContainer().addUnknownFlag(flag, value);
                             } else {
                                 try {
