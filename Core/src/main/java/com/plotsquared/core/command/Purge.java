@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.player.PlotPlayer;
@@ -192,16 +193,25 @@ public class Purge extends SubCommand {
                         cleared.set(false);
                         Plot plot = iterator.next();
                         if (plot.temp != Integer.MAX_VALUE) {
-                            ids.add(plot.temp);
-                            if (finalClear) {
-                                plot.clear(false, true, () -> PlotSquared
-                                    .debug("Plot " + plot.getId() + " cleared by purge."));
-                            } else {
-                                plot.removeSign();
-                            }
-                            plot.getArea().removePlot(plot.getId());
-                            for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                                PlotListener.plotEntry(pp, plot);
+                            try {
+                                ids.add(plot.temp);
+                                if (finalClear) {
+                                    plot.clear(false, true, () -> PlotSquared
+                                        .debug("Plot " + plot.getId() + " cleared by purge."));
+                                } else {
+                                    plot.removeSign();
+                                }
+                                plot.getArea().removePlot(plot.getId());
+                                for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                                    PlotListener.plotEntry(pp, plot);
+                                }
+                            } catch (NullPointerException e) {
+                                PlotSquared.log(
+                                    "NullPointer during purge detected. This is likely because you are "
+                                        + "deleting a world that has been removed.");
+                                if (Settings.DEBUG) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                         cleared.set(true);
