@@ -122,7 +122,7 @@ public class Claim extends SubCommand {
             } else {
                 player.setPersistentMeta("grantedPlots", Ints.toByteArray(grants - 1));
             }
-            sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "1", "" + (grants - 1));
+            sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "1", (grants - 1));
         }
         int border = area.getBorder();
         if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {

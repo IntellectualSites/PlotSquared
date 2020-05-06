@@ -76,19 +76,18 @@ public class Auto extends SubCommand {
         } else {
             currentPlots = player.getPlotCount(plotarea.getWorldName());
         }
-        int diff = currentPlots - allowedPlots;
-        if (diff + sizeX * sizeZ > 0) {
-            if (diff < 0) {
-                MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS_NUM, -diff + "");
-                return false;
-            } else if (player.hasPersistentMeta("grantedPlots")) {
+        int diff = allowedPlots - currentPlots;
+        if (diff - sizeX * sizeZ < 0) {
+            if (player.hasPersistentMeta("grantedPlots")) {
                 int grantedPlots = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
-                if (grantedPlots - diff < sizeX * sizeZ) {
-                    player.removePersistentMeta("grantedPlots");
+                if (diff < 0 && grantedPlots < sizeX * sizeZ) {
+                    MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                    return false;
+                } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
                     MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
                     return false;
                 } else {
-                    int left = grantedPlots - diff - sizeX * sizeZ;
+                    int left = grantedPlots + diff < 0 ? 0 : diff - sizeX * sizeZ;
                     if (left == 0) {
                         player.removePersistentMeta("grantedPlots");
                     } else {
@@ -134,24 +133,10 @@ public class Auto extends SubCommand {
      */
     public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start,
         final String schematic) {
-        autoClaimSafe(player, area, start, schematic, null);
-    }
-
-    /**
-     * Claim a new plot for a player
-     *
-     * @param player
-     * @param area
-     * @param start
-     * @param schematic
-     */
-    public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start,
-        final String schematic, @Nullable final Integer allowedPlots) {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
-                TaskManager.IMP
-                    .sync(new AutoClaimFinishTask(player, plot, area, allowedPlots, schematic));
+                TaskManager.IMP.sync(new AutoClaimFinishTask(player, plot, area, schematic));
             }
         });
     }
@@ -282,7 +267,7 @@ public class Auto extends SubCommand {
         }
         // TODO handle type 2 (partial) the same as normal worlds!
         if (size_x == 1 && size_z == 1) {
-            autoClaimSafe(player, plotarea, null, schematic, allowed_plots);
+            autoClaimSafe(player, plotarea, null, schematic);
             return true;
         } else {
             if (plotarea.getType() == PlotAreaType.PARTIAL) {

@@ -45,7 +45,6 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
     private final PlotPlayer player;
     private final Plot plot;
     private final PlotArea area;
-    private final int allowedPlots;
     private final String schematic;
 
     @Override public void run(Object value) {
@@ -54,21 +53,15 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
             sendMessage(player, Captions.NO_FREE_PLOTS);
             return;
         }
-
-        if (Auto.checkAllowedPlots(player, area, allowedPlots, 1, 1)) {
-            plot.claim(player, true, schematic, false);
-            if (area.isAutoMerge()) {
-                PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
-                    .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
-                if (event.getEventResult() == Result.DENY) {
-                    sendMessage(player, Captions.EVENT_DENIED, "Auto merge");
-                } else {
-                    plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
-                }
+        plot.claim(player, true, schematic, false);
+        if (area.isAutoMerge()) {
+            PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
+                .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
+            if (event.getEventResult() == Result.DENY) {
+                sendMessage(player, Captions.EVENT_DENIED, "Auto merge");
+            } else {
+                plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
             }
-        } else {
-            DBFunc.delete(plot);
         }
     }
-
 }
