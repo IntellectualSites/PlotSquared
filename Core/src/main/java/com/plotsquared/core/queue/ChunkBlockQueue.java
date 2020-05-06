@@ -26,6 +26,7 @@
 package com.plotsquared.core.queue;
 
 import com.plotsquared.core.location.Location;
+import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -76,6 +77,11 @@ public class ChunkBlockQueue extends ScopedLocalBlockQueue {
 
     @Override public boolean setBlock(int x, int y, int z, BlockState id) {
         this.storeCache(x, y, z, id);
+        return true;
+    }
+
+    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+        this.storeCache(x, y, z, pattern.apply(BlockVector3.at(x, y, z)).toImmutableState());
         return true;
     }
 
