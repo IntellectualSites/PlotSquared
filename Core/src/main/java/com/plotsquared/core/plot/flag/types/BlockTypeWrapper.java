@@ -25,12 +25,12 @@
  */
 package com.plotsquared.core.plot.flag.types;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,12 +42,11 @@ import java.util.Map;
  * Container that class either contains a {@link BlockType}
  * or a {@link BlockCategory}
  */
-@EqualsAndHashCode
 public class BlockTypeWrapper {
 
     @Nullable @Getter private final BlockType blockType;
-    @Nullable private BlockCategory blockCategory;
     @Nullable private final String blockCategoryId;
+    @Nullable private BlockCategory blockCategory;
 
     private BlockTypeWrapper(@NotNull final BlockType blockType) {
         this.blockType = Preconditions.checkNotNull(blockType);
@@ -58,13 +57,13 @@ public class BlockTypeWrapper {
     private BlockTypeWrapper(@NotNull final BlockCategory blockCategory) {
         this.blockType = null;
         this.blockCategory = Preconditions.checkNotNull(blockCategory);
-        this.blockCategoryId = null;
+        this.blockCategoryId = blockCategory.getId(); // used in toString()/equals()/hashCode()
     }
 
     private BlockTypeWrapper(@NotNull final String blockCategoryId) {
         this.blockType = null;
-        this.blockCategoryId = Preconditions.checkNotNull(blockCategoryId);
         this.blockCategory = null;
+        this.blockCategoryId = Preconditions.checkNotNull(blockCategoryId);
     }
 
     @Override public String toString() {
@@ -75,8 +74,8 @@ public class BlockTypeWrapper {
             } else {
                 return key;
             }
-        } else if (this.getBlockCategory() != null) { // calling the method will initialize it lazily
-            final String key = this.getBlockCategory().toString();
+        } else if (this.blockCategoryId != null) {
+            final String key = this.blockCategoryId;
             if (key.startsWith("minecraft:")) {
                 return '#' + key.substring(10);
             } else {
@@ -97,15 +96,43 @@ public class BlockTypeWrapper {
         }
     }
 
+    /**
+     * Returns the block category associated with this wrapper.
+     * <br/>
+     * Invocation will try to lazily initialize the block category if it's not
+     * set yet but the category id is present. If {@link BlockCategory#REGISTRY} is already populated
+     * but does not contain a category with the given name, a BLockCategory containing no items
+     * is returned.
+     * If this wrapper does not wrap a BlockCategory, null is returned.
+     * <br/>
+     * <b>If {@link BlockCategory#REGISTRY} isn't populated yet, null is returned.</b>
+     *
+     * @return the block category represented by this wrapper.
+     */
+    @Nullable
     public BlockCategory getBlockCategory() {
         if (this.blockCategory == null && this.blockCategoryId != null) { // only if name is available
             this.blockCategory = BlockCategory.REGISTRY.get(this.blockCategoryId);
-            if (this.blockCategory == null) {
+            if (this.blockCategory == null && !BlockCategory.REGISTRY.values().isEmpty()) {
                 PlotSquared.debug("- Block category #" + this.blockCategoryId + " does not exist");
                 this.blockCategory = new NullBlockCategory(this.blockCategoryId);
             }
         }
         return this.blockCategory;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BlockTypeWrapper that = (BlockTypeWrapper) o;
+        return Objects.equal(this.blockType, that.blockType) &&
+                Objects.equal(this.blockCategoryId, that.blockCategoryId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.blockType, this.blockCategoryId);
     }
 
     private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
