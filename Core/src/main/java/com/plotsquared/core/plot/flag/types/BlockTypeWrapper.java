@@ -101,7 +101,7 @@ public class BlockTypeWrapper {
      * <br/>
      * Invocation will try to lazily initialize the block category if it's not
      * set yet but the category id is present. If {@link BlockCategory#REGISTRY} is already populated
-     * but does not contain a category with the given name, a BLockCategory containing no items
+     * but does not contain a category with the given name, a BlockCategory containing no items
      * is returned.
      * If this wrapper does not wrap a BlockCategory, null is returned.
      * <br/>
