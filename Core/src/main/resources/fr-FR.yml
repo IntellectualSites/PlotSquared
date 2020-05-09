@@ -1,5 +1,5 @@
 # Translated by Bobbber#5545 and updated by Aurelien30000
-# Latest update 05/2020
+# Latest update 09/05/2020
 confirm:
   expired_confirm: $2La confirmation a expiré, veuillez réitérer votre commande !
   failed_confirm: '$2Vous n''avez aucune action en attente de confirmation !'
