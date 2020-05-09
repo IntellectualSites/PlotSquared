@@ -67,8 +67,6 @@ records:
   notify_leave: $2%player $2est sorti(e) de votre parcelle ($1%plot$2)
 swap:
   swap_overlap: '$2La zone proposée n''est pas éligible à l''échange !'
-  swap_dimensions: $2Les zones proposées doivent être de taille identique !
-  swap_syntax: $2/plot swap <id>
   swap_success: $4Parcelles échangées avec succès !
   swap_merged: '$2Des parcelles fusionnées ne devraient pas être échangées. Veuillez délier celles-ci
     avant d''envisager un échange.'
@@ -84,7 +82,6 @@ comment:
   comment_removed_success: $4Commentaire supprimé avec succès ! /s:n$2 - '$3%s$2'
   comment_removed_failure: $4Impossible de supprimer ce commentaire !
   comment_added: $4Un commentaire vous a été laissé.
-  comment_header: $2&m---------&r $1Commentaires $2&m---------&r
   inbox_empty: $2Aucun commentaire.
 console:
   not_console: $2Pour des raisons de sécurité, cette commande est uniquement utilisable depuis la console !
@@ -135,20 +132,34 @@ setup:
   setup_finished: '$4Vous devriez avoir été téléporté(e) sur le monde créé. Si ce n''est
     pas le cas, vous allez devoir régler le générateur manuellement dans le fichier
     `bukkit.yml` ou choisir un plugin de gestion de mondes.'
-  setup_world_taken: $2%s est déjà un monde !
-  setup_missing_world: $2Vous devez spécifier un nom de monde ($1/plot setup &l<monde>$1
-    <générateur>$2)&-$1Commandes additionnelles :&-$2 - $1/plot setup <valeur>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
-  setup_missing_generator: $2Vous devez spécifier un générateur ($1/plot setup &l<monde>$1
-    <générateur>$2)&-$1Commandes additionnelles :&-$2 - $1/plot setup <valeur>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
-  setup_invalid_generator: '$2Générateur invalide. Valeurs possibles : %s'
+  setup_world_taken: $2%s est déjà un monde utilisé !
+  setup_cancelled: $7Setup annulé !
+  setup_world_name: $1Comment souhaiteriez-vous nommer ce monde ?
+  setup_world_name_error: $7Vous devez spécifier un nom de monde !
+  setup_world_name_taken: $7Ce nom de monde est déjà utilisé !
+  setup_world_generator_error: $7Vous devez spécifier un nom générateur !
+  setup_world_type: '$1Quel type de monde souhaiteriez-vous ?&-$3 - $6normal$3 - $2Génération de parcelles standard&-$3 - $6augmented$3 - $2Génération de parcelles avec du terrain&-$3 - $6partial$3 - $2Génération Vanilla avec des groupes de parcelles'
+  setup_world_type_error: $7Vous devez spécifier un type de monde !
+  setup_wrong_generator: '$7Le générateur spécifié ne peut pas être identifié en tant que BukkitPlotGenerator.
+    $3 - $6Vous pourriez avoir besoin de configurer le plugin manuellement !'
+  setup_world_name_format: '$7Caractères non [a-z0-9_.-] détectés dans le nom du monde :$1'
+  setup_world_apply_plotsquared: '$7Le monde spécifié existe déjà. Après redémarrage, le nouveau terrain sera basé sur
+    $1PlotSquared. $7Cependant, vous devriez le remettre à zéro afin qu''il se régénère correctement et entièrement !'
+  setup_partial_area: '$1Quel terrain souhaiteriez-vous au sein des parcelles ?&-$3 - $6NONE$3 - $2Aucun terrain&-$3 - $6ORE$3 - $2Uniquement quelques arbres et filons de minerais&-$3 - $6ROAD$3 - $2Terrain séparé par des routes&-$3 - $6ALL$3 - $2Génération entièrement Vanilla'
+  setup_partial_area_error: $7Vous devez spécifier un type de terrain !
+  setup_area_name: $1Comment souhaiteriez-vous nommer cette zone de parcelles ?
+  setup_area_non_alphanumerical: '$7L''identifiant de cette zone de parcelles doit être alphanumérique !'
+  setup_area_invalid_id: '$7Vous devez spécifier un identifiant de zone de parcelles inutilisé !'
+  setup_area_min_plot_id: '$1Quel devrait être l''identifiant minimum pour les parcelles ?'
+  setup_area_min_plot_id_error: '$7Vous devez spécifier un identifiant minimum correct pour les parcelles !'
+  setup_area_max_plot_id: '$1Quel devrait être l''identifiant maximum pour les parcelles ?'
+  setup_area_max_plot_id_error: '$7Vous devez spécifier un identifiant maximum correct pour les parcelles !'
+  setup_area_plot_id_greater_than_minimum: '$7L''identifiant maximum pour les parcelleq doit être supérieur à l''identifiant minimum !'
 schematics:
   schematic_too_large: $2Ce schéma est trop vaste pour cette être placé ici !
   schematic_missing_arg: '$2Vous devez spécifier un argument manquant. Valeurs possibles : $1save$2,
     $1paste $2, $1exportall$2, $1list'
   schematic_invalid: '$2Schéma invalide. Raison : $2%s'
-  schematic_valid: $2Schéma valide :D
   schematic_paste_merged: '$2Des schémas ne devraient pas être collés sur des parcelles fusionnées.
     Veuillez délier celles-ci avant d''envisager de coller un schéma.'
   schematic_paste_failed: $2Impossible de coller le schéma !
@@ -205,7 +216,6 @@ merge:
   merge_accepted: $2La requête de fusion a été acceptée !
   success_merge: $2Les parcelles ont été fusionnées !
   merge_requested: $2Requête de fusion envoyée avec succès !
-  no_perm_merge: '$2Vous n''êtes pas le propriétaire de la parcelle : $1%plot%'
   no_available_automerge: '$2Vous ne possédez aucune parcelle adjacente dans cette direction
     ou n''êtes pas autorisé(e) à fusionner jusqu''à la taille requise !'
   unlink_impossible: $2Vous pouvez uniquement délier une parcelle fusionnée.
@@ -225,10 +235,9 @@ errors:
   command_went_wrong: '$2Quelque chose s''est mal passé lors de l''exécution de cette commande, nous en sommes navrés :/'
   no_free_plots: '$2Aucune parcelle libre n''est disponible :/'
   not_in_plot: '$2Vous n''êtes actuellement pas dans une parcelle.'
-  not_loaded: $2La parcelle ne peut pas être chargée !
   not_in_cluster: $2Vous devez être dans un groupe pour effectuer cette action !
   not_in_plot_world: '$2Vous n''êtes pas dans une zone de parcelles !'
-  plotworld_incompatible: $2Les deux mondes doivent être compatibles.
+  plotworld_incompatible: $2Les deux mondes doivent être compatibles entre eux.
   not_valid_world: $2Monde invalide (sensible aux minuscules et majuscules) !
   not_valid_plot_world: $2Zone de parcelles invalide (sensible aux minuscules et majuscules) !
   no_plots: $2Vous ne possédez aucune parcelle !
@@ -311,22 +320,15 @@ working:
 list:
   comment_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% commentaire(s) :'
   clickable: ' (interactif)'
-  area_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% zone(s) :'
+  area_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% zone(s) de parcelles :'
   plot_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% parcelle(s) :'
   plot_list_header: '$1Liste de %word% parcelle(s) :'
-  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
-  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
 chat:
   plot_chat_spy_format: '$2[$1Espionnage$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_format: '$2[$1Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_forced: $2Ce monde force tous les joueurs à utiliser le chat de parcelle.
-  plot_chat_on: $4Chat de parcelle activé !
-  plot_chat_off: $4Chat de parcelle désactivé !
 deny:
   denied_added: $4Joueur interdit au sein de cette parcelle avec succès !
-  denied_need_argument: $2Des arguments sont manquants. $1/plot denied add <nom> $2ou $1/plot
-    denied remove <nom>
-  was_not_denied: '$2Ce joueur n''est pas interdit au sein de cette parcelle.'
   you_got_denied: $4Vous avez été interdit(e) d''accès au sein de la parcelle sur laquelle vous vous situiez,
     vous avez été téléporté(e) au spawn !
   cant_remove_owner: $2Vous ne pouvez pas retirer le propriétaire de la parcelle !
@@ -334,7 +336,6 @@ kick:
   you_got_kicked: $4Vous avez été expulsé(e) !
 flag:
   flag_key: '$2Clé : %s'
-  flag_type: '$2Type : %s'
   flag_desc: '$2Description : %s'
   not_valid_flag: $2Paramètre invalide !
   not_valid_flag_suggested: '$2Paramètre invalide. Vouliez-vous écrire : $1%s $2?'
@@ -482,7 +483,6 @@ flags:
   flag_error_music: La valeur de ce paramètre doit être un identifiant de disque de musique valide.
 trusted:
   trusted_added: $4Vous faites maintenant confiance à ce joueur au sein de cette parcelle !
-  was_not_added: '$2Ce joueur n''est pas de confiance au sein de cette parcelle !'
   plot_removed_user: '$1La parcelle %s, dont vous étiez un joueur de confiance, a été supprimée en
     raison de l''inactivité du propriétaire.'
 member:
@@ -506,7 +506,7 @@ signs:
   owner_sign_line_4: $3| Protégé |
 help:
   help_header: $3&m---------&r $1Plot² Aide $3&m---------
-  help_page_header: '$1Caégorie : $2%category%$2,$1 Page : $2%current%$3/$2%max%$2'
+  help_page_header: '$1Catégorie : $2%category%$2,$1 Page : $2%current%$3/$2%max%$2'
   help_footer: $3&m---------&r $1Plot² Aide $3&m---------
   help_info_item: $1/plot help %category% $3- $2%category_desc%
   help_item: $1%usage% [%alias%]&- $3- $2%desc%&-
@@ -527,7 +527,6 @@ category:
 grants:
   granted_plots: '$1Résultat : $2%s $1protection(s) restante(s).'
   granted_plot: $1Vous avez octroyé %s0 protection(s) de parcelles à $2%s1
-  granted_plot_failed: '$1Impossible d''octroyer des protections de parcelles : $2%s'
 events:
   event_denied: $1%s $2Annulé par un plugin externe.
 legacyconfig:
