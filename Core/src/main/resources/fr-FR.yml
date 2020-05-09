@@ -3,7 +3,7 @@
 confirm:
   expired_confirm: $2La confirmation a expiré, veuillez réitérer votre commande !
   failed_confirm: '$2Vous n''avez aucune action en attente de confirmation !'
-  requires_confirm: '$2Êtes-vous sûr de vouloir exécuter $1%s$2?&-$2Cette action est 
+  requires_confirm: '$2Êtes-vous sûr de vouloir exécuter $1%s$2?&-$2Cette action est
     irréversible ! Si c''est le cas, utilisez : $1/plot confirm'
 move:
   move_success: $4Parcelle déplacée avec succès.
@@ -295,7 +295,7 @@ info:
   plot_info_alias: '$1Alias : $2%alias%'
   plot_info_size: '$1Taille : $2%size%'
   plot_info_seen: '$1Dernière vue : $2%seen%'
-  plot_user_list: ' $1%user%$2,' 
+  plot_user_list: ' $1%user%$2,'
   plot_flag_list: '$2%s0:%s1$3'
   plot_no_description: Aucune description.
   info_syntax_console: $2/plot info X;Z
@@ -371,7 +371,7 @@ flags:
   flag_category_gamemode: Paramètres -> Mode de jeu
   flag_category_enum: Paramètres -> Énumérations de valeurs
   flag_category_decimal: Paramètres -> Nombres décimaux
-  flag_category_boolean: Paramètres -> Booléens 
+  flag_category_boolean: Paramètres -> Booléens
   flag_category_fly: Paramètres -> Vol
   flag_category_mixed: Paramètres -> Valeurs mixtes
   flag_description_entity_cap: 'Fixez ce paramètre à un nombre entier afin de limiter le nombre d''entités
@@ -400,7 +400,7 @@ flags:
   flag_description_break: Définit une liste de matériaux que les visiteurs devraient être en mesure de casser au sein de la parcelle.
   flag_description_device_interact: 'Fixez ce paramètre à `true` afin d''autoriser l''interaction avec les objets au sein de la parcelle.'
   flag_description_disable_physics: 'Fixez ce paramètre à `true` afin d''empêcher l''application de la physique au sein de la parcelle.'
-  flag_description_drop_protection: 'Fixez ce paramètre à `true` afin d''empêcher les visiteurs de récupérer des articles 
+  flag_description_drop_protection: 'Fixez ce paramètre à `true` afin d''empêcher les visiteurs de récupérer des articles
     au sol au sein de la parcelle.'
   flag_description_feed: Indique un intervalle (en s) et une quantité (optionnelle, 1 par défaut) selon lesquels les joueurs seront nourris.
   flag_description_forcefield: Set to `true` to enable member forcefield in the plot. # Not translated, I don't understand :/
