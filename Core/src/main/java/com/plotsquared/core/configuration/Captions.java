@@ -321,6 +321,35 @@ public enum Captions implements Caption {
         "$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or "
             + "your chosen world management plugin.", "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a world", "Setup"),
+    SETUP_CANCELLED("$7Cancelled setup.", "Setup"),
+    SETUP_WORLD_NAME("$1What do you want your world to be called?", "Setup"),
+    SETUP_WORLD_NAME_ERROR("$7You need to choose a world name!", "Setup"),
+    SETUP_WORLD_NAME_TAKEN("$7That world name is already taken!", "Setup"),
+    SETUP_WORLD_GENERATOR_ERROR("$7You must choose a generator!", "Setup"),
+    SETUP_WORLD_TYPE("$1What world type do you want?&-"
+            + "$3 - $6normal$3 - $2Standard plot generation&-"
+            + "$3 - $6augmented$3 - $2Plot generation with terrain&-"
+            + "$3 - $6partial$3 - $2Vanilla with clusters of plots", "Setup"),
+    SETUP_WORLD_TYPE_ERROR("$7You must choose a world type!", "Setup"),
+    SETUP_WRONG_GENERATOR("$7The specified generator does not identify as BukkitPlotGenerator"
+            + "$3 - $6You may need to manually configure the other plugin", "Setup"),
+    SETUP_WORLD_NAME_FORMAT("$7Non [a-z0-9_.-] character in the world name:$1 ", "Setup"),
+    SETUP_WORLD_APPLY_PLOTSQUARED("$7The world you specified already exists. After restarting, new terrain will use "
+            + "$1PlotSquared$7, however you may need to reset the world for it to generate correctly!", "Setup"),
+    SETUP_PARTIAL_AREA("$1What terrain would you like in plots?&-"
+            + "$3 - $6NONE$3 - $2No terrain at all&-"
+            + "$3 - $6ORE$3 - $2Just some ore veins and trees&-"
+            + "$3 - $6ROAD$3 - $2Terrain separated by roads&-"
+            + "$3 - $6ALL$3 - $2Entirely vanilla generation", "Setup"),
+    SETUP_PARTIAL_AREA_ERROR("$7You must choose the terrain!", "Setup"),
+    SETUP_AREA_NAME("$1What would you like this area called?", "Setup"),
+    SETUP_AREA_NON_ALPHANUMERICAL("$7The area id must be alphanumerical!", "Setup"),
+    SETUP_AREA_INVALID_ID("$7You must choose an area id that is not in use!", "Setup"),
+    SETUP_AREA_MIN_PLOT_ID("$1What should be the minimum Plot Id?", "Setup"),
+    SETUP_AREA_MIN_PLOT_ID_ERROR("$7You must choose a valid minimum Plot Id!", "Setup"),
+    SETUP_AREA_MAX_PLOT_ID("$1What should be the maximum Plot Id?", "Setup"),
+    SETUP_AREA_MAX_PLOT_ID_ERROR("$7You must choose a valid maximum Plot Id!", "Setup"),
+    SETUP_AREA_PLOT_ID_GREATER_THAN_MINIMUM("$7The max PlotId must be greater than the minimum!", "Setup"),
     //</editor-fold>
     //<editor-fold desc="Schematic">
     SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!", "Schematics"),
@@ -360,7 +389,6 @@ public enum Captions implements Caption {
     //<editor-fold desc="Alias">
     ALIAS_SET_TO("$2Plot alias set to $1%alias%", "Alias"),
     ALIAS_REMOVED("$2Plot alias removed", "Alias"),
-
     ALIAS_TOO_LONG("$2The alias must be < 50 characters in length", "Alias"),
     ALIAS_IS_TAKEN("$2That alias is already taken", "Alias"),
     //</editor-fold>
