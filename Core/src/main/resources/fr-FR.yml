@@ -71,8 +71,6 @@ records:
   notify_leave: $2%Joueur $2quitté votre plot ($1%plot$2)
 swap:
   swap_overlap: $2Les zones proposées ne peuvent pas se chevaucher
-  swap_dimensions: $2Les zones proposées doivent avoir des dimensions comparables
-  swap_syntax: $2/plot swap <id>
   swap_success: $4Parcelles échangées avec succès
   started_swap: '$2La tâche d''échange de parcelle est commencé. Vous serez averti quand elle sera terminée'
 comment:
@@ -86,7 +84,6 @@ comment:
   no_plot_inbox: $2Vous devez être présent ou fournir un argument de plot
   comment_removed: $4Commentaire supprimé avec succès/s:n$2 - '$3%s$2'
   comment_added: $4Un commentaire a été laissé
-  comment_header: $2&m---------&r $1Commentaires $2&m---------&r
   inbox_empty: $2Sans commentaires
 console:
   not_console: $2Pour des raisons de sécurité, cette commande ne peut être exécutée que par la console.
@@ -140,17 +137,10 @@ setup:
   setup_valid_arg: $2valeur $1%s0 $2mis à %s1
   setup_finished: '$4Vous auriez dû être téléporté dans le monde créé. Sinon, vous devrez configurer le générateur manuellement à l''aide du fichier bukkit.yml ou du plug-in de gestion de monde votre choix.'
   setup_world_taken: $2%s est déjà un monde
-  setup_missing_world: $2Vous devez spécifier un nom de monde ($1/plot setup &l<monde>$1
-    <generateur>$2)&-$1Commandes supplémentaires:&-$2 - $1/plot setup <valeur>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
-  setup_missing_generator: $2Vous devez spécifier un générateur ($1/plot setup <monde> $l<generateur>&r$2)&-$1Commandes supplémentaires:&-$2 - $1/plot setup <valeur>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
-  setup_invalid_generator: '$2Générateur invalide. Options possibles: %s'
 schematics:
   schematic_too_large: $2Ce plot est trop grand pour cette action!
   schematic_missing_arg: '$2Vous devez spécifier un argument. Valeurs possibles: $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2Ce n''est pas un schématic valide. Raison: $2%s'
-  schematic_valid: '$2C''est un schématic valide'
   schematic_paste_failed: $2Impossible de coller le schématic
   schematic_paste_success: $4Le schématic a été collé avec succès
 titles:
@@ -201,7 +191,6 @@ merge:
   merge_accepted: $2La demande de fusion a été acceptée.
   success_merge: $2Les plots ont été fusionnés!
   merge_requested: $2Envoyé avec succès une demande de fusion
-  no_perm_merge: '$2Vous n''êtes pas propriétaire du plot: $1%plot%'
   no_available_automerge: '$2Vous ne possédez aucun plot adjacent dans la direction spécifiée ou vous n''êtes pas autorisé à fusionner à la taille requise.'
   unlink_required: $2Une dissociation est nécessaire pour faire ceci.
   unlink_impossible: $2Vous pouvez seulement dissocier un méga-plot
@@ -223,7 +212,6 @@ errors:
   command_went_wrong: '$2Quelque chose s''est mal passé lors de l''exécution de cette commande...'
   no_free_plots: '$2Il n''y a plus de plots gratuits disponibles'
   not_in_plot: '$2Vous n''êtes pas dans un plot'
-  not_loaded: '$2Le plot n''a pas pu être chargée'
   not_in_cluster: $2Vous devez être dans un cluster de plot pour effectuer cette action.
   not_in_plot_world: '$2Vous n''êtes pas dans un plot'
   plotworld_incompatible: $2Les deux mondes doivent être compatibles
@@ -321,23 +309,15 @@ list:
   area_list_header_paged: $2(Page $1%cur$2/$1%max$2) $1Liste de  %amount% zones
   plot_list_header_paged: $2(Page $1%cur$2/$1%max$2) $1Liste de  %amount% plots
   plot_list_header: $1Liste de  %word% plots
-  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
-  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
-  plot_list_footer: $2>> $1%word% un total de $2%num% %plot% $1réclamé.
 left:
   left_plot: $2Tu as quitté le plot
 chat:
   plot_chat_spy_format: '$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_format: '$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_forced: $2Ce monde oblige tout le monde à utiliser le chat de plot.
-  plot_chat_on: $4Chat du plot activé.
-  plot_chat_off: $4Chat du plot désactivé.
 deny:
   denied_removed: $4Vous avez réussi à retirer ce joueur de la liste des joueurs interdits
   denied_added: $4Vous avez réussi à ajouter ce joueur à la liste des joueurs interdits
-  denied_need_argument: $2Arguments manquants. $1/plot denied add <nom du joueur> $2or $1/plot
-    denied remove <nom du joueur>
-  was_not_denied: '$2Ce joueur n''est pas interdit sur ce plot'
   you_got_denied: $4Le plot sur lequel vous étiez précédemmment vous a été refusé et vous avez été téléporté au spawn
 kick:
   you_got_kicked: $4Vous avez été expulsé!
@@ -346,7 +326,6 @@ rain:
   setting_updated: $4Vous avez mis à jour les paramètres avec succès
 flag:
   flag_key: '$2Key: %s'
-  flag_type: '$2Type: %s'
   flag_desc: '$2Desc: %s'
   not_valid_flag: '$2Ceci n''est pas un flag valide'
   not_valid_flag_suggested: '$2Ce n''est pas un flag valide. Vouliez-vous dire: $1%s'
@@ -359,7 +338,6 @@ flag:
 trusted:
   trusted_added: $4Vous avez réussi à ajouter ce joueur à la liste des joueurs fiables pour ce plot
   trusted_removed: $4Vous avez réussi à retirer ce joueur de la liste des joueurs fiables pour ce plot
-  was_not_added: $2Ce joueur fait partie de la liste des joueurs non-fiables
   plot_removed_user: 'Le $1Plot %s dont vous avez été ajouté a été supprimé en raison de l''inactivité du propriétaire'
 member:
   removed_players: $2Suppression du joueur %s de ce plot.
@@ -388,6 +366,5 @@ help:
 grants:
   granted_plots: '$1Résultat: $2%s $1Ajout retiré'
   granted_plot: $1Vous avez été ajouté %s0 au plot $2%s1
-  granted_plot_failed: '$1L''ajout a échoué: $2%s'
 '-':
   custom_string: '-'

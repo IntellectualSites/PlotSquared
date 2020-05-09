@@ -63,8 +63,6 @@ records:
   notify_leave: $2%player $2verließ deinen Plot ($1%plot$2)
 swap:
   swap_overlap: $2Der geplante Bereich darf nicht überlappen.
-  swap_dimensions: $2Die geplanten Bereiche müssen vergleichbare Dimensionen aufweisen.
-  swap_syntax: $2/plot swap <plot id>
   swap_success: $4Plots erfolgreich getauscht.
   started_swap: $2Plot swap Aufgabe gestartet. Du erhälst eine Meldung wenn sie beendet
     ist.
@@ -78,7 +76,6 @@ comment:
   no_plot_inbox: $2Du musst an einem Plot stehen oder einen solchen angeben.
   comment_removed: $4Kommentar/e n$2 - '$3%s$2' erfolgreich gelöscht.
   comment_added: $4Ein Kommentar wurde hinterlassen.
-  comment_header: $2------ Kommentare ------
   inbox_notification: '%s ungelesene Nachrichten. Öffne sie mit /plot inbox'
   inbox_empty: $2Keine Kommentare.
 console:
@@ -122,17 +119,11 @@ setup:
   setup_finished: $3Falls du MULTIVERSE oder MULTIWORLD verwendest, sollte die Welt
     generiert worden sein. Andernfalls musst du die Welt manuell über bukkit.yml hinzufügen.
   setup_world_taken: $2%s ist bereits eine bekannte Plotwelt.
-  setup_missing_world: $2Du musst einen Namen für die Welt vergeben ($1/plot setup
-    &l<world>$1 <generator>$2)&-$1Zusätzliche Befehle:&-$2 - $1/plot setup <value>&-$2
-    - $1/plot setup backn$2 - $1/plot setup cancel
-  setup_missing_generator: $2Du musst einen Generator angeben ($1/plot setup <world>
     &l<generator>&r$2)&-$1Zusätzliche Befehle:&-$2 - $1/plot setup <value>&-$2 - $1/plot
     setup backn$2 - $1/plot setup cancel
-  setup_invalid_generator: '$2Ungültiger Generarator. Mögliche Optionen: %s'
 schematics:
   schematic_missing_arg: '$2Du musst einen Wert angeben. Gültige Werte: $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2Diese Schematic ist ungültig: $2%s'
-  schematic_valid: $2Diese Schematic ist gültig.
   schematic_paste_failed: $2Einfügen der Schematic fehlgeschlagen.
   schematic_paste_success: $4Einfügen der Schematic erfolgreich.
   schematic_too_large: $2Der Plot ist zu groß für diese Aktion.
@@ -175,7 +166,6 @@ permission:
   no_permission_event: '$2Dir fehlt folgende Berechtigung: $1%s'
   cant_claim_more_clusters: $2Du kannst nicht mehr Cluster besitzen.
 merge:
-  no_perm_merge: $2Du bist nicht Besitzer des Plots $1%plot%
   unlink_required: $2Die Plots müssen vorher getrennt (unlink) werden.
   unlink_impossible: $2Die Trennung (unlink) funktioniert nur auf Megaplots.
   unlink_success: $2Trennung erfolgreich.
@@ -211,7 +201,6 @@ errors:
   invalid_player_offline: '$2Der Spieler muss online sein: $1%s.'
   invalid_command_flag: '$2Ungültige Flag: %s0'
   error: '$2Ein Fehler ist aufgetreten: %s'
-  not_loaded: $2Der Plot konnte nicht geladen werden.
 purge:
   purge_success: $4%s Plots erfolgreich gelöscht.
 trim:
@@ -293,9 +282,6 @@ working:
 list:
   plot_list_header_paged: $2(Seite $1%von$2/$1%max$2) $1Liste Plots nach %word%
   plot_list_header: $1Liste aller %word% Plots.
-  plot_list_item: $2>> $1%id$2:$1%Welt $2- $1%owner
-  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%Welt $2- $1%owner
-  plot_list_footer: $2>> $1%word% umfasst insgesamt $2%num% $1Plots %plot%.
   comment_list_header_paged: $2(Seite $1%cur$2/$1%max$2) $1Liste %amount% Kommentare auf.
   clickable: ' (interactive)'
   area_list_header_paged: $2(Seite $1%cur$2/$1%max$2) $1Liste %amount% of Plot-Areas auf.
@@ -305,21 +291,15 @@ chat:
   plot_chat_format: '$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_spy_format: '$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_forced: $2Diese Welt zwingt jeden Spieler dazu den Plot Chat zu benutzen.
-  plot_chat_on: $4Plot Chat aktiviert.
-  plot_chat_off: $4Plot Chat deaktiviert.
 deny:
   denied_removed: $4Der Spieler darf diesen Plot wieder betreten.
   denied_added: $4Der Spieler darf diesen Plot nicht mehr betreten.
-  denied_need_argument: $2Argumente fehlen. $1/plot denied add <name> $2oder $1/plot
-    helpers remove <name>
-  was_not_denied: $2Der Spieler durfte diesen Plot bereits betreten.
   you_got_denied: $4Du wurdest von dem Plot gebannt auf dem du dich befunden hast und wurdest zum Spawn teleportiert.
 rain:
   need_on_off: '$2Du musst einen Wert angeben. Mögliche Werte: $1on$2, $1off'
   setting_updated: $4Einstellungen erfolgreich aktualisiert.
 flag:
   flag_key: '$2Schlüssel: %s'
-  flag_type: '$2Typ: %s'
   flag_desc: '$2Beschreibung: %s'
   not_valid_flag: $2Ungültige Flag
   not_valid_value: $2Wert der Flag muss alphanumerisch angegeben werden.
@@ -330,7 +310,6 @@ flag:
   flag_added: $4Flag erfolreich hinzugefügt
   not_valid_flag_suggested: '$2Ungültige Flag. Meintest du: $1%s'
 trusted:
-  was_not_added: $2Dieser Spieler war bisher kein Helfer auf diesem Plot.
   trusted_added: $4Spieler erfolgreich in diesem Plot vertraut.
   trusted_removed: $1Diesem Spieler wird auf diesem Plot nicht mehr vertraut.
   plot_removed_user: $1Plot %s wurde wegen Inaktivität des Plot Besitzers gelöscht.
@@ -410,4 +389,3 @@ kick:
 grants:
   granted_plots: '$Ergebnis: $2%s $1Zuschuss übrig'
   granted_plot: $1Du gewährst %s0 Plot an $2%s1
-  granted_plot_failed: '$1Gewährung gescheitert: $2%s'
