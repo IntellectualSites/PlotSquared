@@ -316,7 +316,6 @@ list:
   plot_list_header: '$1Liste de %word% parcelle(s) :'
   plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
   plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
-  plot_list_footer: $2>> $1%word% a total of $2%num% $1claimed %plot%. # Not translated, I don't understand :/
 chat:
   plot_chat_spy_format: '$2[$1Espionnage$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_format: '$2[$1Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
@@ -403,7 +402,7 @@ flags:
   flag_description_drop_protection: 'Fixez ce paramètre à `true` afin d''empêcher les visiteurs de récupérer des articles
     au sol au sein de la parcelle.'
   flag_description_feed: Indique un intervalle (en s) et une quantité (optionnelle, 1 par défaut) selon lesquels les joueurs seront nourris.
-  flag_description_forcefield: Set to `true` to enable member forcefield in the plot. # Not translated, I don't understand :/
+  flag_description_forcefield: 'Fixez ce paramètre à `true` afin de mettre en place un champ de force entre les joueurs au sein de la parcelle.'
   flag_description_grass_grow: 'Fixez ce paramètre à `false` afin d''empêcher la propagation de l''herbe au sein de la parcelle.'
   flag_description_hanging_break: 'Fixez ce paramètre à `true` afin d''empêcher les visiteurs de casser des objets suspendus au sein de la parcelle.'
   flag_description_hanging_place: 'Fixez ce paramètre à `true` afin d''empêcher les visiteurs d''accrocher des objets suspendus au sein de la parcelle.'
