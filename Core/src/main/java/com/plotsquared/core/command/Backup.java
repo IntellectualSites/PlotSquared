@@ -36,6 +36,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -127,9 +128,9 @@ public final class Backup extends Command {
             } else {
                 backupProfile.createBackup().whenComplete((backup, throwable) -> {
                     if (throwable != null) {
-                        sendMessage(player, Captions.BACKUP_FAILED, throwable.getMessage());
+                        sendMessage(player, Captions.BACKUP_SAVE_FAILED, throwable.getMessage());
                     } else {
-                        sendMessage(player, Captions.BACKUP_SAVED);
+                        sendMessage(player, Captions.BACKUP_SAVE_SUCCESS);
                     }
                 });
             }
@@ -200,7 +201,27 @@ public final class Backup extends Command {
                 sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_OTHER.getTranslated());
             } else {
                 backupProfile.listBackups().whenComplete((backups, throwable) -> {
-                    // TODO: Load backups
+                    if (throwable != null) {
+                        sendMessage(player, Captions.BACKUP_LOAD_FAILURE, throwable.getMessage());
+                    } else {
+                        if (number < 1 || number > backups.size()) {
+                            sendMessage(player, Captions.BACKUP_LOAD_FAILURE, Captions.GENERIC_INVALID_CHOICE.getTranslated());
+                        } else {
+                            final com.plotsquared.core.backup.Backup backup = backups.get(number - 1);
+                            if (backup == null || backup.getFile() == null || !Files.exists(backup.getFile())) {
+                                sendMessage(player, Captions.BACKUP_LOAD_FAILURE, Captions.GENERIC_INVALID_CHOICE.getTranslated());
+                            } else {
+                                CmdConfirm.addPending(player, "/plot backup load " + number, () ->
+                                    backupProfile.restoreBackup(backup).whenComplete((n, error) -> {
+                                   if (error != null) {
+                                       sendMessage(player, Captions.BACKUP_LOAD_FAILURE, error.getMessage());
+                                   } else {
+                                       sendMessage(player, Captions.BACKUP_LOAD_SUCCESS);
+                                   }
+                                }));
+                            }
+                        }
+                    }
                 });
             }
         }

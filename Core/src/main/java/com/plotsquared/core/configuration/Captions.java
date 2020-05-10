@@ -765,8 +765,10 @@ public enum Captions implements Caption {
     //<editor-fold desc="Backups">
     BACKUP_USAGE("$1Usage: $2/plot backup save/list/load", "Backups"),
     BACKUP_IMPOSSIBLE("$2Backups are not enabled for this plot: %s", "Backups"),
-    BACKUP_SAVED("$1The backup was created successfully", "Backups"),
-    BACKUP_FAILED("$2The backup could not be created: %s", "Backups"),
+    BACKUP_SAVE_SUCCESS("$1The backup was created successfully", "Backups"),
+    BACKUP_SAVE_FAILED("$2The backup could not be created: %s", "Backups"),
+    BACKUP_LOAD_SUCCESS("$1The backup was restored successfully", "Backups"),
+    BACKUP_LOAD_FAILURE("$2The backup could not be restored: %s", "Backups"),
     BACKUP_LOAD_USAGE("$1Usage: $2/plot backup load [#]", "Backups"),
     //</editor-fold>
 
@@ -774,6 +776,7 @@ public enum Captions implements Caption {
     GENERIC_OTHER("other", "Generic"),
     GENERIC_MERGED("merged", "Generic"),
     GENERIC_UNOWNED("unowned", "Generic"),
+    GENERIC_INVALID_CHOICE("invalid choice", "Generic"),
     //</editor-fold>
 
     /**
