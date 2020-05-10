@@ -756,6 +756,9 @@ public enum Captions implements Caption {
     BACKUP_LOAD_SUCCESS("$1The backup was restored successfully", "Backups"),
     BACKUP_LOAD_FAILURE("$2The backup could not be restored: %s", "Backups"),
     BACKUP_LOAD_USAGE("$1Usage: $2/plot backup load [#]", "Backups"),
+    BACKUP_LIST_HEADER("$1Available backups for plot $2%s", "Backups"),
+    BACKUP_LIST_ENTRY("$3- $1#%s0 $2%s1", "Backups"),
+    BACKUP_LIST_FAILED("$2Backup listing failed: %s", "Backups"),
     //</editor-fold>
 
     //<editor-fold desc="Generic">

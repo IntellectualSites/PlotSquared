@@ -37,6 +37,10 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,11 +81,11 @@ public final class Backup extends Command {
 
     @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         if (args.length == 1) {
-            return Stream.of("save", "list", "save")
+            return Stream.of("save", "list", "load")
                           .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
                           .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {})
                           .collect(Collectors.toList());
-        } else if (args[0].equalsIgnoreCase("load") && args.length == 2) {
+        } else if (args[0].equalsIgnoreCase("load")) {
 
             final Plot plot = player.getCurrentPlot();
             if (plot != null) {
@@ -129,6 +133,7 @@ public final class Backup extends Command {
                 backupProfile.createBackup().whenComplete((backup, throwable) -> {
                     if (throwable != null) {
                         sendMessage(player, Captions.BACKUP_SAVE_FAILED, throwable.getMessage());
+                        throwable.printStackTrace();
                     } else {
                         sendMessage(player, Captions.BACKUP_SAVE_SUCCESS);
                     }
@@ -161,7 +166,22 @@ public final class Backup extends Command {
                     sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_OTHER.getTranslated());
                 } else {
                     backupProfile.listBackups().whenComplete((backups, throwable) -> {
-                        // TODO: List backups
+                        if (throwable != null) {
+                            sendMessage(player, Captions.BACKUP_LIST_FAILED, throwable.getMessage());
+                            throwable.printStackTrace();
+                        } else {
+                            sendMessage(player, Captions.BACKUP_LIST_HEADER, plot.getId().toCommaSeparatedString());
+                            try {
+                                for (int i = 0; i < backups.size(); i++) {
+                                    sendMessage(player, Captions.BACKUP_LIST_ENTRY, Integer.toString(i + 1),
+                                        DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime
+                                                .ofInstant(Instant.ofEpochMilli(backups.get(i).getCreationTime()), ZoneId
+                                                .systemDefault())));
+                                }
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     });
                 }
             }
@@ -203,6 +223,7 @@ public final class Backup extends Command {
                 backupProfile.listBackups().whenComplete((backups, throwable) -> {
                     if (throwable != null) {
                         sendMessage(player, Captions.BACKUP_LOAD_FAILURE, throwable.getMessage());
+                        throwable.printStackTrace();
                     } else {
                         if (number < 1 || number > backups.size()) {
                             sendMessage(player, Captions.BACKUP_LOAD_FAILURE, Captions.GENERIC_INVALID_CHOICE.getTranslated());

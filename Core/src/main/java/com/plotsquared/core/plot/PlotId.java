@@ -198,6 +198,9 @@ public class PlotId {
         return this.x + "," + this.y;
     }
 
+    public String toDashSeparatedString() {
+        return this.x + "-" + this.y;
+    }
 
 
     /**

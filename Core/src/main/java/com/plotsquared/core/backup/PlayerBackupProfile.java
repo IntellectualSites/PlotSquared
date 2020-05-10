@@ -41,6 +41,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -106,8 +107,24 @@ public class PlayerBackupProfile implements BackupProfile {
     }
 
     @NotNull public Path getBackupDirectory() {
-        return backupManager.getBackupPath().resolve(plot.getArea().getId())
-            .resolve(plot.getId().toCommaSeparatedString()).resolve(owner.toString());
+        return resolve(resolve(resolve(backupManager.getBackupPath(), Objects.requireNonNull(plot.getArea().toString(), "plot area id")),
+            Objects.requireNonNull(plot.getId().toDashSeparatedString(), "plot id")), Objects.requireNonNull(owner.toString(), "owner"));
+    }
+
+    private static Path resolve(@NotNull final Path parent, final String child) {
+        Path path = parent;
+        try {
+            if (!Files.exists(parent)) {
+                Files.createDirectory(parent);
+            }
+            path = parent.resolve(child);
+            if (!Files.exists(path)) {
+                Files.createDirectory(path);
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        return path;
     }
 
     @Override @NotNull public CompletableFuture<Backup> createBackup() {
@@ -118,7 +135,8 @@ public class PlayerBackupProfile implements BackupProfile {
                     backups.get(backups.size() - 1).delete();
                 }
                 final List<Plot> plots = Collections.singletonList(plot);
-                final boolean result = SchematicHandler.manager.exportAll(plots, null, null, () ->
+                final boolean result = SchematicHandler.manager.exportAll(plots, getBackupDirectory().toFile(),
+                    "%world%-%id%-%owner%-" + System.currentTimeMillis(), () ->
                     future.complete(new Backup(this, System.currentTimeMillis(), null)));
                 if (!result) {
                     future.completeExceptionally(new RuntimeException("Failed to complete the backup"));
