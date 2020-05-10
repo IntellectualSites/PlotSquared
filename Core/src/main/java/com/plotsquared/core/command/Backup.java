@@ -115,15 +115,15 @@ public final class Backup extends Command {
         if (plot == null) {
             sendMessage(player, Captions.NOT_IN_PLOT);
         } else if (!plot.hasOwner()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "unowned");
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_UNOWNED);
         } else if (plot.isMerged()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "merged");
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_MERGED.getTranslated());
         } else if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
             sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
         } else {
             final BackupProfile backupProfile = Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
             if (backupProfile instanceof NullBackupProfile) {
-                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "other");
+                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_OTHER.getTranslated());
             } else {
                 backupProfile.createBackup().whenComplete((backup, throwable) -> {
                     if (throwable != null) {
@@ -149,15 +149,15 @@ public final class Backup extends Command {
             if (plot == null) {
                 sendMessage(player, Captions.NOT_IN_PLOT);
             } else if (!plot.hasOwner()) {
-                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "unowned");
+                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_UNOWNED);
             } else if (plot.isMerged()) {
-                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "merged");
+                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_MERGED.getTranslated());
             } else if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
                 sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
             } else {
                 final BackupProfile backupProfile = Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
                 if (backupProfile instanceof NullBackupProfile) {
-                    sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "other");
+                    sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_OTHER.getTranslated());
                 } else {
                     backupProfile.listBackups().whenComplete((backups, throwable) -> {
                         // TODO: List backups
@@ -179,8 +179,9 @@ public final class Backup extends Command {
         if (plot == null) {
             sendMessage(player, Captions.NOT_IN_PLOT);
         } else if (!plot.hasOwner()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "unowned");
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_UNOWNED);
         } else if (plot.isMerged()) {
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_MERGED.getTranslated());
             sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "merged");
         } else if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
             sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
@@ -196,7 +197,7 @@ public final class Backup extends Command {
             }
             final BackupProfile backupProfile = Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
             if (backupProfile instanceof NullBackupProfile) {
-                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "other");
+                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_OTHER.getTranslated());
             } else {
                 backupProfile.listBackups().whenComplete((backups, throwable) -> {
                     // TODO: Load backups

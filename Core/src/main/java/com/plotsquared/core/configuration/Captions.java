@@ -770,6 +770,12 @@ public enum Captions implements Caption {
     BACKUP_LOAD_USAGE("$1Usage: $2/plot backup load [#]", "Backups"),
     //</editor-fold>
 
+    //<editor-fold desc="Generic">
+    GENERIC_OTHER("other", "Generic"),
+    GENERIC_MERGED("merged", "Generic"),
+    GENERIC_UNOWNED("unowned", "Generic"),
+    //</editor-fold>
+
     /**
      * Legacy Configuration Conversion
      */
