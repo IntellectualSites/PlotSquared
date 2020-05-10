@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -95,6 +96,7 @@ public class PlayerBackupProfile implements BackupProfile {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                backups.sort(Comparator.comparingLong(Backup::getCreationTime).reversed());
                 return (this.backupCache = backups);
             });
         }

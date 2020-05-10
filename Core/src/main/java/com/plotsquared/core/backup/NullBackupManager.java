@@ -26,12 +26,13 @@
 package com.plotsquared.core.backup;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * {@inheritDoc}
@@ -42,8 +43,9 @@ public class NullBackupManager implements BackupManager {
         return new NullBackupProfile();
     }
 
-    @Override @NotNull public CompletableFuture<?> automaticBackup(@NotNull Plot plot) {
-        return CompletableFuture.completedFuture(null);
+    @Override public void automaticBackup(@Nullable PlotPlayer plotPlayer,
+        @NotNull Plot plot, @NotNull Runnable whenDone) {
+        whenDone.run();
     }
 
     @Override @NotNull public Path getBackupPath() {

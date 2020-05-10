@@ -28,17 +28,20 @@ package com.plotsquared.core.backup;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.util.task.TaskManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -75,12 +78,28 @@ import java.util.concurrent.TimeUnit;
         return new NullBackupProfile();
     }
 
-    @Override @NotNull public CompletableFuture<?> automaticBackup(@NotNull final Plot plot) {
+    @Override public void automaticBackup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone) {
         final BackupProfile profile;
         if (!this.shouldAutomaticallyBackup() || (profile = getProfile(plot)) instanceof NullBackupProfile) {
-            return CompletableFuture.completedFuture(null);
+            whenDone.run();
+        } else {
+            if (player != null) {
+                Captions.BACKUP_AUTOMATIC_STARTED.send(player);
+            }
+            profile.createBackup().whenComplete((backup, throwable) -> {
+               if (throwable != null) {
+                   if (player != null) {
+                       Captions.BACKUP_AUTOMATIC_FAILURE.send(player, throwable.getMessage());
+                   }
+                   throwable.printStackTrace();
+               } else {
+                   if (player != null) {
+                       Captions.BACKUP_AUTOMATIC_FINISHED.send(player);
+                       TaskManager.runTaskAsync(whenDone);
+                   }
+               }
+            });
         }
-        return profile.createBackup();
     }
 
     @Override public boolean shouldAutomaticallyBackup() {

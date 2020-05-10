@@ -25,13 +25,29 @@
  */
 package com.plotsquared.core.backup;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 
 public interface BackupManager {
+
+    /**
+     * This will perform an automatic backup of the plot iff the plot has an owner,
+     * automatic backups are enabled and the plot is not merged.
+     * Otherwise it will complete immediately.
+     *
+     * @param player   Player that triggered the backup
+     * @param plot     Plot to perform the automatic backup on
+     * @param whenDone Action that runs when the automatic backup has been completed
+     */
+    static void backup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone) {
+        Objects.requireNonNull(PlotSquared.imp()).getBackupManager().automaticBackup(player, plot, whenDone);
+    }
 
     /**
      * Get the backup profile for a plot based on its
@@ -47,10 +63,11 @@ public interface BackupManager {
      * automatic backups are enabled and the plot is not merged.
      * Otherwise it will complete immediately.
      *
-     * @param plot Plot to perform the automatic backup on
-     * @return Future that completes when the backup is finished
+     * @param player   Player that triggered the backup
+     * @param plot     Plot to perform the automatic backup on
+     * @param whenDone Action that runs when the automatic backup has been completed
      */
-    @NotNull CompletableFuture<?> automaticBackup(@NotNull final Plot plot);
+    void automaticBackup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone);
 
     /**
      * Get the directory in which backups are stored

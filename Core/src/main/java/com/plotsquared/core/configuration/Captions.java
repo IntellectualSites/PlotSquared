@@ -759,6 +759,9 @@ public enum Captions implements Caption {
     BACKUP_LIST_HEADER("$1Available backups for plot $2%s", "Backups"),
     BACKUP_LIST_ENTRY("$3- $1#%s0 $2%s1", "Backups"),
     BACKUP_LIST_FAILED("$2Backup listing failed: %s", "Backups"),
+    BACKUP_AUTOMATIC_STARTED("$1Backing up the plot...", "Backups"),
+    BACKUP_AUTOMATIC_FINISHED("$1The automatic backup process finished successfully!", "Backups"),
+    BACKUP_AUTOMATIC_FAILURE("$2The automatic backup process failed. Your pending action has been canceled. Reason: %s", "Backups"),
     //</editor-fold>
 
     //<editor-fold desc="Generic">
