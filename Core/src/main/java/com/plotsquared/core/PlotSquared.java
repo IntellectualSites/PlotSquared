@@ -1831,7 +1831,7 @@ public class PlotSquared {
             setupStyle();
         } catch (IOException err) {
             err.printStackTrace();
-            PlotSquared.log("failed to save style.yml");
+            PlotSquared.log("Failed to save style.yml");
         }
         try {
             this.storageFile = new File(folder, "storage.yml");

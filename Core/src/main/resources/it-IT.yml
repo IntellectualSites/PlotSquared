@@ -68,8 +68,6 @@ records:
   notify_leave: $2%player $2è uscito dal tuo lotto ($1%plot$2)
 swap:
   swap_overlap: $2Le aree proposte non possono sovrapporsi
-  swap_dimensions: $2Le aree proposte devono avere le stesse dimensioni
-  swap_syntax: $2/plot swap <id lotto>
   swap_success: $4Lotti scambiati con successo
   started_swap: $2Scambio lotti avviato. Sarai avvisato al termine
 comment:
@@ -83,7 +81,6 @@ comment:
   no_plot_inbox: $2Devi stare in un lotto o fornirlo nell'argomento
   comment_removed: $4Cancellato con successo il commento/i:n$2 - '$3%s$2'
   comment_added: $4È stato lasciato un commento
-  comment_header: $2&m---------&r $1Commenti $2&m---------&r
   inbox_empty: $2Nessun commento
 console:
   not_console: $2Per ragioni di sicurezza, questo commando può essere eseguito solo dalla console.
@@ -139,18 +136,10 @@ setup:
     sarà necessario impostare manualmente il generatore usando il file bukkit.yml
     o il tuo plugin di gestione dei mondi scelto.
   setup_world_taken: $2%s è già un mondo lotti
-  setup_missing_world: $2Devi specificare un nome per il mondo ($1/plot setup &l<mondo>$1
-    <generatore>$2)&-$1Comandi aggiuntivi:&-$2 - $1/plot setup <valore>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
-  setup_missing_generator: $2Devi specificare un generatore ($1/plot setup <mondo>
-    &l<generatore>&r$2)&-$1Comandi aggiuntivi:&-$2 - $1/plot setup <valore>&-$2 -
-    $1/plot setup back&-$2 - $1/plot setup cancel
-  setup_invalid_generator: '$2Generatore non valido. Opzioni possibili: %s'
 schematics:
   schematic_too_large: $2Il lotto è troppo grande per questa azione!
   schematic_missing_arg: '$2Devi specificare un argomento. Valori possibili: $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2Quella non è una schematica valida. Motivo: $2%s'
-  schematic_valid: $2Quella è una schematica valida
   schematic_paste_failed: $2L'incollaggio della schematica è fallito
   schematic_paste_success: $4Schematica incollata con successo
 titles:
@@ -201,7 +190,6 @@ merge:
   merge_accepted: $2La richiesta di fusione dei lotti è stata accettata
   success_merge: $2I lotti sono stati uniti!
   merge_requested: $2Richiesta di fusione dei lotti inviata
-  no_perm_merge: '$2Non sei il proprietario del lotto: $1%plot%'
   no_available_automerge: $2Non possiedi alcun lotto adiacente nella direzione specificata o non puoi unire i lotti alla dimensione richiesta.
   unlink_required: $2Per fare questo è necessario uno scollegamento dei lotti.
   unlink_impossible: $2Puoi scollegare solo un mega-lotto
@@ -223,7 +211,6 @@ errors:
   command_went_wrong: $2Qualcosa è andato storto durante l'esecuzione di quel comando...
   no_free_plots: $2Non ci sono lotti liberi disponibili
   not_in_plot: $2Non sei in un lotto
-  not_loaded: $2Non è stato possibile caricare il lotto
   not_in_cluster: $2Devi essere dentro un cluster di lotti per eseguire questa azione
   not_in_plot_world: $2Non sei in un mondo lotti
   plotworld_incompatible: $2I due mondi devono essere compatibili
@@ -322,22 +309,15 @@ list:
   area_list_header_paged: $2(Pagina $1%cur$2/$1%max$2) $1Elenco di %amount% aree
   plot_list_header_paged: $2(Pagina $1%cur$2/$1%max$2) $1Elenco di %amount% lotti
   plot_list_header: $1Elenco dei lotti di %word%
-  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
-  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
-  plot_list_footer: $2>> $1%word% con un totale di $2%num% $1%plot% claimati.
 left:
   left_plot: $2Hai lasciato il lotto
 chat:
   plot_chat_spy_format: '$2[$1Spia Chat Lotti$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_format: '$2[$1Chat Lotti$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_forced: $2Questo mondo costringe tutti a usare la chat dei lotti.
-  plot_chat_on: $4Chat lotti abilitata.
-  plot_chat_off: $4Chat lotti disabilitata.
 deny:
   denied_removed: $4Hai sbloccato con successo il giocatore da questo lotto
   denied_added: $4Hai bloccato con successo il giocatore da questo lotto
-  denied_need_argument: $2Gli argomenti sono mancanti. $1/plot denied add <nome> $2o $1/plot denied remove <nome>
-  was_not_denied: $2Quel giocatore non è bloccato in questo lotto
   you_got_denied: $4Sei stato bloccato dal lotto dove eri prima, e sei stato teletrasportato allo spawn
 kick:
   you_got_kicked: $4Sei stato cacciato!
@@ -346,7 +326,6 @@ rain:
   setting_updated: $4Hai aggiornato l'impostazione con successo
 flag:
   flag_key: '$2Key: %s'
-  flag_type: '$2Tipo: %s'
   flag_desc: '$2Desc: %s'
   not_valid_flag: $2Quella non è una flag valida
   not_valid_flag_suggested: '$2Quella non è una flag valida. Forse intendevi: $1%s'
@@ -359,7 +338,6 @@ flag:
 trusted:
   trusted_added: $4Quell'utente ora può costruire nel tuo lotto
   trusted_removed: $4Hai rimosso con successo un amico dal lotto
-  was_not_added: $2Quel giocatore non è aggiunto come amico in questo lotto
   plot_removed_user: $1Il lotto %s in cui eri aggiunto è stato eliminato a causa dell'inattività del proprietario
 member:
   removed_players: $2Rimossi %s giocatori dal lotto.
@@ -388,6 +366,5 @@ help:
 grants:
   granted_plots: '$1Risultato: $2%s $1concessioni rimanenti'
   granted_plot: $1Hai concesso il lotto %s0 a $2%s1
-  granted_plot_failed: '$1Concessione fallita: $2%s'
 '-':
   custom_string: '-'

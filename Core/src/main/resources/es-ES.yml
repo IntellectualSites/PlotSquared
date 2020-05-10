@@ -67,8 +67,6 @@ records:
   notify_leave: $2%player $2abandona tu parcela ($1%plot$2)
 swap:
   swap_overlap: $2Las áreas propuestas no pueden superponerse.
-  swap_dimensions: $2El area propuesta debe tener dimensiones comparables.
-  swap_syntax: $2/plot swap <plot id>
   swap_success: $4Intercambio de parcelas completado
   started_swap: $2 Intercambiando las tareas de las parcelas. Serás notificado cuando el proceso haya terminado.
 comment:
@@ -82,7 +80,6 @@ comment:
   no_plot_inbox: $2Debes permanecer en la parcela para poder escribir el comentario.
   comment_removed: $4Comentario eliminado satisfactoriamente/s:n$2 - '$3%s$2'
   comment_added: $4Te han dejado un comentario.
-  comment_header: $2&m---------&r $1Comentarios $2&m---------&r
   inbox_empty: $2No hay comentarios.
 console:
   not_console: $2Por razones de seguridad, este comando solo se puede ejecutar desde la consola.
@@ -136,18 +133,12 @@ setup:
   setup_valid_arg: $2Valor $1%s0 $2ajustado a %s1
   setup_finished: $4Deberias haber sido teletransportado al mundo creado, sino tendras que generarlo manualmente usando el bukkit.yml
   setup_world_taken: $2%s este mundo ya esta registrado.
-  setup_missing_world: $2 Necesitas especificar el nombre del mundo ($1/plot setup
-    &l<world>$1 <generator>$2)&-$1Comandos adicionales:&-$2 - $1/plot setup <value>&-$2
-    - $1/plot setup back&-$2 - $1/plot setup cancel
-  setup_missing_generator: $2Tienes que especificar un generador ($1/plot setup <world>
     &l<generator>&r$2)&-$1Comandos adicionales:&-$2 - $1/plot setup <value>&-$2 - $1/plot
     setup back&-$2 - $1/plot setup cancel
-  setup_invalid_generator: '$2Generador inválido. Opciones posibles: %s'
 schematics:
   schematic_missing_arg: '$2Necesitas especificar un argumento. Valores posibles:
     $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2Este no es un schematic valido. Razon: $2%s'
-  schematic_valid: $2Este es un schematic valido.
   schematic_paste_failed: $2Fallo al pegar el schematic.
   schematic_paste_success: $4El schematic ha sido copiado correctamente.
   schematic_too_large: $2¡La trama es demasiado grande para esta acción!
@@ -197,7 +188,6 @@ merge:
   merge_accepted: $2La peticion de agrupacion ha sido aceptada.
   success_merge: $2¡Las parcelas se han agrupado!
   merge_requested: $2Se ha enviado con exito la peticion de agrupar.
-  no_perm_merge: '$2No eres el dueño de la parcela: $1%plot%'
   no_available_automerge: $2 No eres propietario de ninguna parcela adyacente en la direccion especificada o no tienes permitido agrupar el tamaño requerido.
   unlink_required: $2Se requiere una desconexion para hacer esto.
   unlink_impossible: $2Solo puedes desconectar una mega-parcela.
@@ -218,7 +208,6 @@ errors:
   wait_for_timer: $2El temporizador del selector de bloque esta ligado a ti o a la parcela actual. Por favor espere a que termine.
   invalid_command_flag: '$2Indicador de comando no válido: %s0'
   error: '$2Ocurrió un error: %s'
-  not_loaded: $2No se pudo cargar la trama
 paste:
   debug_report_created: '$1Se ha enviado una depuracion a: $1%url%'
 purge:
@@ -307,30 +296,22 @@ list:
   clickable: ' (interactive)'
   plot_list_header_paged: $2(Page $1%cur$2/$1%max$2) $1Lista de %amount% parcelas.
   plot_list_header: $1Lista de %word% parcelas.
-  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner.
-  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner.
-  plot_list_footer: $2>> $1%word% un total $2%num% $1claimeado %plot%.
   area_list_header_paged: $2(Página $1%cur$2/$1%max$2) $1lista de %amount% areas
 left:
   left_plot: $2Has abandonado una parcela.
 chat:
   plot_chat_format: '$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_forced: $2Este mundo obliga a usar el chat de parcela.
-  plot_chat_on: $4Chat de parcela activado.
-  plot_chat_off: $4Chat de parcela desactivado.
   plot_chat_spy_format: '$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
 deny:
   denied_removed: $4Este usuario ya no esta denegado en esta parcela.
   denied_added: $4Has denegado este usuario de tu parcela.
-  denied_need_argument: $2Faltan argumentos. $1/plot denied add <name> $2o $1/plot denied remove <name>
-  was_not_denied: $2Ese usuario no ha sido denegado de este plot.
   you_got_denied: $4Has sido denegado de la parcela, se te ha teletransportado al spawn.
 rain:
   need_on_off: '$2Necesitas un valor especifico. Posible valores: $1on$2, $1off'
   setting_updated: $4Has actualizado las opciones.
 flag:
   flag_key: '$2Llave: %s'
-  flag_type: '$2Tipo: %s'
   flag_desc: '$2Desc: %s'
   not_valid_flag: $2No es una flag valida.
   not_valid_value: $2El valor de la flag tiene que ser alfanumerico.
@@ -343,7 +324,6 @@ flag:
 trusted:
   trusted_added: $4Has añadido un usuario de confianza en esta parcela.
   trusted_removed: $4Has removido un usuario de confianza en esta parcela.
-  was_not_added: $2Ese usuario no es de confianza en esta parcela.
   plot_removed_user: $1La parcela %s en la que estabas añadido fue removida por inactividad.
 member:
   removed_players: $2Removido %s jugadores de esta parcela.
@@ -391,4 +371,3 @@ kick:
 grants:
   granted_plots: '$1Resultado: $2%s $1grants left'
   granted_plot: $1You granted %s0 plot to $2%s1
-  granted_plot_failed: '$1Subvención fallida: $2%s'

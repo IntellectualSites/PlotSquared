@@ -79,8 +79,6 @@ records:
   notify_leave: $2%player $2已离开阁下的地皮（$1%plot$2）
 swap:
   swap_overlap: $2计划的区域不允许重叠
-  swap_dimensions: $2计划的区域必须有可对比的维度
-  swap_syntax: $2/plot swap <编号>
   swap_success: $4已成功交换地皮
   started_swap: $2已开始地皮交换任务。阁下将会在完成时收到提醒
 comment:
@@ -94,7 +92,6 @@ comment:
   no_plot_inbox: $2阁下必须站在地皮内或提供地皮参数
   comment_removed: $4已成功删除评论$2 - '$3%s$2'
   comment_added: $4有玩家留下了一条评论
-  comment_header: $2&m---------&r $1评论 $2&m---------&r
   inbox_empty: $2无评论
 console:
   not_console: $2由于安全考虑，此命令只可由控制台执行。
@@ -151,18 +148,10 @@ setup:
   setup_finished: $4阁下应已被传送至新建的世界。否则阁下将需
     在 bukkit.yml 或世界管理插件中手动设置生成器。
   setup_world_taken: $2%s 已是一个世界
-  setup_missing_world: $2阁下需要指定世界名（$1/plot setup &l<世界名>$1
-    <生成器>$2）&-$1附加指令：&-$2 - $1/plot setup <值>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
-  setup_missing_generator: $2阁下需要指定生成器（$1/plot setup <世界名>
-    &l<生成器>&r$2)&-$1附加指令&-$2 - $1/plot setup <值>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
-  setup_invalid_generator: '$2无效的生成器。可能选项：%s'
 schematics:
   schematic_too_large: $2此地皮过大无法进行此操作！
   schematic_missing_arg: '$2阁下需要指定参数。可能的值：$1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2布局无效。理由：$2%s'
-  schematic_valid: $2布局无效
   schematic_paste_failed: $2粘贴布局失败
   schematic_paste_success: $4已成功粘贴布局
 titles:
@@ -214,7 +203,6 @@ merge:
   merge_accepted: $2此合并请求已被接受
   success_merge: $2已合并地皮！
   merge_requested: $2已成功发送合并请求
-  no_perm_merge: '$2阁下不是地皮 $1%plot% $2的所有者'
   no_available_automerge: $2阁下在指定方向不拥有任何相邻的地皮
     或阁下被禁止合并所需的大小。
   unlink_required: $2需要解除关联才能执行此操作。
@@ -237,7 +225,6 @@ errors:
   command_went_wrong: $2执行此命令时发生错误···
   no_free_plots: $2无可用的免费地皮
   not_in_plot: $2阁下不在地皮上
-  not_loaded: $2无法加载地皮
   not_in_cluster: $2阁下必须在地皮群集上以进行此操作
   not_in_plot_world: $2阁下不在地皮区域上
   plotworld_incompatible: $2两个世界必须相互兼容
@@ -335,23 +322,15 @@ list:
   area_list_header_paged: $2（页面 $1%cur$2/$1%max$2） $1共计 %amount% 块区域
   plot_list_header_paged: $2（页面 $1%cur$2/$1%max$2） $1共计 %amount% 块地皮
   plot_list_header: $1共计 %word% 块地皮
-  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
-  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
-  plot_list_footer: $2>> $1%word% 共计 $2%num% $1领取了地皮 %plot%。
 left:
   left_plot: $2阁下已离开地皮
 chat:
   plot_chat_spy_format: '$2[$1地皮间谍$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_format: '$2[$1地皮老铁$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_forced: $2此世界强制所有人使用地皮聊天。
-  plot_chat_on: $4已启用地皮聊天。
-  plot_chat_off: $4已禁用地皮聊天。
 deny:
   denied_removed: $4阁下已成功解禁此玩家进入地皮
   denied_added: $4阁下已成功禁止此玩家进入地皮
-  denied_need_argument: $2缺少参数。$1/plot denied add <名称> $2或 $1/plot
-    denied remove <名称>
-  was_not_denied: $2此玩家未被此地皮封禁
   you_got_denied: $4阁下已被禁止进入先前所在的地皮并已被传送至出生点
 kick:
   you_got_kicked: $4阁下已被踢出！
@@ -360,7 +339,6 @@ rain:
   setting_updated: $4阁下已成功更新设置
 flag:
   flag_key: '$2关键词：%s'
-  flag_type: '$2类型：%s'
   flag_desc: '$2描述：%s'
   not_valid_flag: $2标记无效
   not_valid_flag_suggested: '$2标记无效。阁下的意思是否是：$1%s'
@@ -373,7 +351,6 @@ flag:
 trusted:
   trusted_added: $4阁下已成功将用户添加到地皮受信列表
   trusted_removed: $4阁下已成功将用户从地皮受信列表中移除
-  was_not_added: $2此用户在此地皮上不受信任
   plot_removed_user: $1阁下所添加至的地皮 %s 由于所有者不活跃已被删除
 member:
   removed_players: $2已从此地皮中移除了 %s 位玩家。
@@ -401,6 +378,5 @@ help:
 grants:
   granted_plots: '$1结果：剩余 $2%s $1次授权'
   granted_plot: $1阁下授权了 %s0 地皮至 $2%s1
-  granted_plot_failed: '$1授权失败：$2%s'
 '-':
   custom_string: '-'

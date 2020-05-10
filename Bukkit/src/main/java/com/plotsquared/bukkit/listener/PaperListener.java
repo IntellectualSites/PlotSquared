@@ -25,7 +25,6 @@
  */
 package com.plotsquared.bukkit.listener;
 
-import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.destroystokyo.paper.event.entity.PlayerNaturallySpawnCreaturesEvent;
 import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
@@ -41,10 +40,12 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import org.bukkit.Chunk;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Slime;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -83,7 +84,7 @@ public class PaperListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (tplot == null || tplot == fplot) {
+        if (tplot == null || tplot.getId().hashCode() == fplot.getId().hashCode()) {
             return;
         }
         if (fplot.isMerged() && fplot.getConnectedPlots().contains(fplot)) {
@@ -96,22 +97,14 @@ public class PaperListener implements Listener {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
         }
-        Pathfinder.PathResult path = event.getEntity().getPathfinder().getCurrentPath();
+        Slime slime = event.getEntity();
 
-        // Unsure why it would be null, but best to cancel just in case ?
-        if (path == null) {
-            event.setCancelled(true);
-            return;
-        }
-        org.bukkit.Location bukkitToLocation = path.getNextPoint();
-
-        // Unsure why it would be null, but best to cancel just in case ?
-        if (bukkitToLocation == null) {
-            event.setCancelled(true);
+        Block b = slime.getTargetBlock(4);
+        if (b == null) {
             return;
         }
 
-        Location toLoc = BukkitUtil.getLocation(bukkitToLocation);
+        Location toLoc = BukkitUtil.getLocation(b.getLocation());
         Location fromLoc = BukkitUtil.getLocation(event.getEntity().getLocation());
         PlotArea tarea = toLoc.getPlotArea();
         if (tarea == null) {
@@ -121,6 +114,7 @@ public class PaperListener implements Listener {
         if (farea == null) {
             return;
         }
+
         if (tarea != farea) {
             event.setCancelled(true);
             return;
@@ -131,7 +125,7 @@ public class PaperListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (tplot == null || tplot == fplot) {
+        if (tplot == null || tplot.getId().hashCode() == fplot.getId().hashCode()) {
             return;
         }
         if (fplot.isMerged() && fplot.getConnectedPlots().contains(fplot)) {

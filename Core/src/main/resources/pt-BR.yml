@@ -68,8 +68,6 @@ records:
   notify_leave: $2%player $2deixou seu terreno ($1%plot$2)
 swap:
   swap_overlap: $2As areas propostas nao podem se sobrepor.
-  swap_dimensions: $2As areas propostas devem ter dimensoes comparaveis.
-  swap_syntax: $2/plot swap <id>
   swap_success: $4Terrenos trocados com sucesso.
   started_swap: $2Troca de terrenos iniciada. Voce sera notificado quando terminar.
 comment:
@@ -83,7 +81,6 @@ comment:
   no_plot_inbox: $2Voce deve permanecer ou fornecer um argumento de terreno.
   comment_removed: $4Comentario deletado com sucesso/s:n$2 - '$3%s$2'
   comment_added: $4Um comentario foi deixado.
-  comment_header: $2&m---------&r $1Comentarios $2&m---------&r
   inbox_empty: $2Nenhum comentario.
 console:
   not_console: $2Por reacoes de seguranca, este comando so pode ser executado por console.
@@ -138,15 +135,11 @@ setup:
   setup_valid_arg: $2Valor $1%s0 $2alterado para %s1
   setup_finished: $4Voce deve se teleportar para o mundo para cria-lo. Caso contrario, voce precisara configurar o gerador manualmente usando o bukkit.yml ou o plug-in de gerenciamento mundial escolhido.
   setup_world_taken: $2%s foi registrado como plotworld
-  setup_missing_world: $2Voce precisa especificar um nome de mundo ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel
-  setup_missing_generator: $2Voce precisa especificar um gerador ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup cancel
-  setup_invalid_generator: '$2Gerador invalido. Possiveis opcoes: %s'
 schematics:
   schematic_too_large: $2O terreno e muito grande para esta acao!
   schematic_missing_arg: '$2Voce precisa especificar um argumento. Possiveis valores: $1test
     <nome>$2 , $1save$2 , $1paste $2, $1exportall'
   schematic_invalid: '$2Este nao e um schematic valido. Causa: $2%s'
-  schematic_valid: $2Este nao e um schematic valido.
   schematic_paste_failed: $2Falha ao colar o schematic.
   schematic_paste_success: $4O schamatic foi colado com sucesso!
 titles:
@@ -195,7 +188,6 @@ merge:
   merge_accepted: $2O pedido de mesclagem de terrenos foi aceito.
   success_merge: $2Terrenos mesclados!
   merge_requested: $2Pedido de mesclagem foi enviado com sucesso.
-  no_perm_merge: '$2Voce nao e proprietario deste terreno: $1%plot%'
   no_available_automerge: $2Voce nao possui terrenos adjacentes na direcao especificada ou nao pode mesclar com o tamanho necessario.
   unlink_required: $2Um desvinculo e requirido para fazer isso..
   unlink_impossible: $2Voce so pode desvincular um mega-terreno
@@ -308,21 +300,14 @@ list:
   area_list_header_paged: $2(Pagina $1%cur$2/$1%max$2) $1Lista de %amount% areas
   plot_list_header_paged: $2(Pagina $1%cur$2/$1%max$2) $1Lista de %amount% terrenos
   plot_list_header: $1Lista de %word% terrenos
-  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
-  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
-  plot_list_footer: $2>> $1%word% um total de $2%num% $1reinvindicados %plot%.
 left:
   left_plot: $2Voce saiu do terreno
 chat:
   plot_chat_format: '$2[$1Terreno Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_forced: $2Este mundo forca todos usarem o chat do terreno.
-  plot_chat_on: $4Plot chat enabled.
-  plot_chat_off: $4Chat do terreno desativado.
 deny:
   denied_removed: $4Voce removeu este jogador dos jogadores negados.
   denied_added: $4Voce negou este jogador com sucesso.
-  denied_need_argument: $2Faltam argumentos. $1/plot negar add <nome> $2ou $1/plot denied remove <nome>
-  was_not_denied: $2Este jogador foi negado do terreno.
   you_got_denied: $4Voce foi negado do terreno em que estava, e foi teleportado para o spawn.
 kick:
   you_got_kicked: $4Voce foi chutado!
@@ -331,7 +316,6 @@ rain:
   setting_updated: $4Voce atualizou as configuracoes com sucesso.
 flag:
   flag_key: '$2Chave: %s'
-  flag_type: '$2Tipo: %s'
   flag_desc: '$2Desc: %s'
   not_valid_flag: $2Esta nao e uma flag valida.
   not_valid_flag_suggested: '$2Esta nao e uma flag valida. Voce quis dizer: $1%s'
@@ -344,7 +328,6 @@ flag:
 trusted:
   trusted_added: $4Voce confiou com sucesso neste jogador.
   trusted_removed: $4Voce removeu com sucesso a confianca deste jogador.
-  was_not_added: $2Este jogador nao recebeu confianca neste terreno.
   plot_removed_user: $1Terreno %s o qual voce foi adicionado foi deletado pela inatividade do proprietario.
 member:
   removed_players: $2Foi/foram removido(s) %s jogador(es) deste terreno.
@@ -372,6 +355,5 @@ help:
 grants:
   granted_plots: '$1Resultado: $2%s $1concecoes restantes'
   granted_plot: $1Voce concedeu %s0 terreno(s) para $2%s1
-  granted_plot_failed: '$1A concessao falhou: $2%s'
 '-':
   custom_string: '-'

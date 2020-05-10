@@ -72,8 +72,6 @@ records:
   notify_leave: $2%player가 $2당신의 plot를 떠납니다 ($1%plot$2)
 swap:
   swap_overlap: $2해당 구역은 덮어쓰기가 허용되지 않습니다.
-  swap_dimensions: $2해당 지역은 반드시 비교 가능한 차원이 있어야 합니다.
-  swap_syntax: $2/plot swap <plot id>
   swap_success: $4성공적으로 땅이 교환되었습니다
   started_swap: $2땅 교환이 시작되었습니다. 작업 완료시 장신에게 통보 될 예정입니다.
 comment:
@@ -87,7 +85,6 @@ comment:
   no_plot_inbox: $2당신은 서 있거나 줄거리를 제공해야합니다
   comment_removed: $4comment가 성공적으로 삭제되었습니다/s:n$2 - '$3%s$2'
   comment_added: $4A comment가 남아있습니다
-  comment_header: $2&m---------&r $1댓글 $2&m---------&r
   inbox_empty: $2comment가 없습니다
 console:
   not_console: $2보안상의 이유로, 이 명령어는 Console에서만 입력 가능합니다.
@@ -143,17 +140,9 @@ setup:
   setup_finished: $4당신은 만들어진 World로 이동되있어야 합니다. 그렇지 않으면 당신은 bukkit.yml를 통하여 워드를 설정하거나
     다중월드 플러그인을 사용하여 월드를 생성하여야 합니다.
   setup_world_taken: $2%s 는 이미 등록된 Plot World 입니다
-  setup_missing_world: $2당신은 월드의 이름을 지정해야 합니다 ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional
-    commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup
-    cancel
-  setup_missing_generator: $2당신은 생성기를 지정해야 합니다 ($1/plot setup <world> &l<generator>&r$2)&-$1Additional
-    commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot setup back&-$2 - $1/plot setup
-    cancel
-  setup_invalid_generator: '$2올바르지 않은 생성기 입니다. 가능한 옵션: %s'
 schematics:
   schematic_missing_arg: '$2당신은 인수를 지정해야 합니다. 가능한 값: $1save$2, $1paste $2, $1exportall'
   schematic_invalid: '$2이것은 올바르지 않은 schematic파일 입니다. 사유: $2%s'
-  schematic_valid: $2이것은 올바른 schematic파일 입니다
   schematic_paste_failed: $2schematic 적용에 실패하엿습니다
   schematic_paste_success: $4schematic이 성공적으로 적용되었습니다
   schematic_too_large: $2플롯이 너무 커서이 작업을 수행 할 수 없습니다!
@@ -203,7 +192,6 @@ merge:
   merge_accepted: $2병합 요청이 수락되었습니다
   success_merge: $2땅이 병합되었습니다
   merge_requested: $2병합요청이 성공적으로 전송되었습니다
-  no_perm_merge: '$2당신은 이 땅의 소유자가 아닙니다: $1%plot%'
   no_available_automerge: $2당신은 지정한 방향으로 인접한 plots를 소유하지 않았거나 plots를 필요한 크기로 합병 할
     수 없습니다.
   unlink_required: $2An unlink는 이것을 하는데 요구 됩니다.
@@ -225,7 +213,6 @@ errors:
   wait_for_timer: $2A setblock 타이머는 현재의 땅 또는 당신에게 묶여있습니다. 완료까지 잠시 기다려주시기 바랍니다
   invalid_command_flag: '$2잘못된 명령 플래그: %s0'
   error: '$2오류가 발생했습니다: %s'
-  not_loaded: $2플롯을로드 할 수 없습니다
 paste:
   debug_report_created: '$1전체 디버그를에 업로드했습니다.: $1%url%'
 purge:
@@ -313,31 +300,22 @@ list:
   clickable: ' (상호 작용하는)'
   plot_list_header_paged: $2(페이지 $1%cur$2/$1%max$2) $1목록 %amount% plots
   plot_list_header: $1목록 %word% plots
-  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
-  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
-  plot_list_footer: $2>> $1%word% 총 $2%num% $1claimed %plot%.
   area_list_header_paged: $2(페이지 $1%cur$2/$1%max$2) $1목록f %amount% areas
 left:
   left_plot: $2당신은 땅을 떠났습니다.
 chat:
   plot_chat_format: '$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_forced: $이 월드는 모두가 plot chat을 쓰도록 강제합니다
-  plot_chat_on: $4플롯 채팅 사용 설정 됨.
-  plot_chat_off: $4플롯 채팅 사용 중지됨.
   plot_chat_spy_format: '$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
 deny:
   denied_removed: $4당신은 이 땅으로부터 플레이어를 차단 해제 했습니다.
   denied_added: $4당신은 이 땅으로부터 플레이어를 성공적으로 차단 했습니다.
-  denied_need_argument: $2변수가 빠졌습니다. $1/plot denied add <name> $2or $1/plot denied
-    remove <name>
-  was_not_denied: $2해당 플레이어는 이 땅에서 차단되지 않았습니다.
   you_got_denied: $4당신은 해당 땅으로부터 차단되었습니다 따라서 spawn으로 자동 이동 되었습니다.
 rain:
   need_on_off: '$2당신은 올바른 값을 선택하여야 합니다. 가능한 값: $1on$2, $1off'
   setting_updated: $4당신은 설정을 성공적으로 업데이트 했습니다
 flag:
   flag_key: '$2Key: %s'
-  flag_type: '$2Type: %s'
   flag_desc: '$2Desc: %s'
   not_valid_flag: $2그것은 유효한 깃발이 아닙니다
   not_valid_value: $2깃발 값은 무조건 문자 숫자여야만 한다
@@ -350,7 +328,6 @@ flag:
 trusted:
   trusted_added: $4당신은 그 땅에 유저를 성공적으로 위탁했습니다
   trusted_removed: $4당신은 그 땅으로부터 신용(위탁)받은 유저를 성공적으로 제거했습니다.
-  was_not_added: $2그 플레이어는 이 땅에서 신용(위탁)받지 못했습니다.
   plot_removed_user: $1당신이 추가되었던 땅 %s가 소유자의 비활성의 이유로 삭제되었습니다.
 member:
   removed_players: $2이 땅으로부터 %s 플레이어가 제거되었습니다
@@ -398,4 +375,3 @@ kick:
 grants:
   granted_plots: '$1결과: $2%s $1grants left'
   granted_plot: $1You granted %s0 plot to $2%s1
-  granted_plot_failed: '$1Grant failed: $2%s'
