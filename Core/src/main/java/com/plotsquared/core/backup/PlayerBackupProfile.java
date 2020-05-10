@@ -102,10 +102,14 @@ public class PlayerBackupProfile implements BackupProfile {
         }
     }
 
-    @Override public void destroy() throws IOException {
-        Files.delete(this.getBackupDirectory());
-        // Invalidate backup cache
-        this.backupCache = null;
+    @Override public void destroy() {
+        this.listBackups().whenCompleteAsync((backups, error) -> {
+           if (error != null) {
+               error.printStackTrace();
+           }
+           backups.forEach(Backup::delete);
+           this.backupCache = null;
+        });
     }
 
     @NotNull public Path getBackupDirectory() {

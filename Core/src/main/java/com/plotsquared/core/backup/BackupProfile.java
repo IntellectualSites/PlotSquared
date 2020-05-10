@@ -27,7 +27,6 @@ package com.plotsquared.core.backup;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -44,7 +43,7 @@ public interface BackupProfile {
     /**
      * Remove all backups stored for this profile
      */
-    void destroy() throws IOException;
+    void destroy();
 
     /**
      * Get the directory containing the backups for this profile.
