@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture;
 public interface BackupManager {
 
     /**
-     * Get  the backup profile for a plot based on its
+     * Get the backup profile for a plot based on its
      * current owner (if there is one)
      *
      * @param plot Plot to get the backup profile for
