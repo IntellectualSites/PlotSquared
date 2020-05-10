@@ -25,53 +25,37 @@
  */
 package com.plotsquared.core.backup;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-public interface BackupManager {
+/**
+ * {@inheritDoc}
+ */
+public class NullBackupManager implements BackupManager {
 
-    /**
-     * Get  the backup profile for a plot based on its
-     * current owner (if there is one)
-     *
-     * @param plot Plot to get the backup profile for
-     * @return Backup profile
-     */
-    @NotNull BackupProfile getProfile(@NotNull final Plot plot);
+    @Override @NotNull public BackupProfile getProfile(@NotNull Plot plot) {
+        return new NullBackupProfile();
+    }
 
-    /**
-     * This will perform an automatic backup of the plot iff the plot has an owner
-     * and automatic backups are enabled. Otherwise it will complete immediately.
-     *
-     * @param plot Plot to perform the automatic backup on
-     * @return Future that completes when the backup is finished
-     */
-    @NotNull CompletableFuture<?> automaticBackup(@NotNull final Plot plot);
+    @Override @NotNull public CompletableFuture<?> automaticBackup(@NotNull Plot plot) {
+        return CompletableFuture.completedFuture(null);
+    }
 
-    /**
-     * Get the directory in which backups are stored
-     *
-     * @return Backup directory path
-     */
-    @NotNull Path getBackupPath();
+    @Override @NotNull public Path getBackupPath() {
+        return Objects.requireNonNull(PlotSquared.imp()).getDirectory().toPath();
+    }
 
-    /**
-     * Get the maximum amount of backups that may be stored for
-     * a plot-owner combo
-     *
-     * @return Backup limit
-     */
-    int getBackupLimit();
+    @Override public int getBackupLimit() {
+        return 0;
+    }
 
-    /**
-     * Returns true if (potentially) destructive actions should cause
-     * PlotSquared to create automatic plot backups
-     *
-     * @return True if automatic backups are enabled
-     */
-    boolean shouldAutomaticallyBackup();
+    @Override public boolean shouldAutomaticallyBackup() {
+        return false;
+    }
 
 }

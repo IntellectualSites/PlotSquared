@@ -54,4 +54,12 @@ public interface BackupProfile {
      */
     @NotNull Path getBackupDirectory();
 
+    /**
+     * Create a backup of the plot. If the profile is at the
+     * maximum backup capacity, the oldest backup will be deleted.
+     *
+     * @return Future that completes with the created backup.
+     */
+    @NotNull CompletableFuture<Backup> createBackup();
+
 }

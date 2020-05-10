@@ -26,18 +26,35 @@
 package com.plotsquared.core.backup;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
  * Object representing a plot backup. This does not actually contain the
  * backup itself, it is just a pointer to an available backup
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE) public class Backup {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE) @Getter public class Backup {
 
     private final BackupProfile owner;
     private final long creationTime;
-    private final Path file;
+    @Nullable private final Path file;
+
+    /**
+     * Delete the backup
+     */
+    public void delete() {
+        if (file != null) {
+            try {
+                Files.deleteIfExists(file);
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

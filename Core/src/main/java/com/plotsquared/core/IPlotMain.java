@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core;
 
+import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
@@ -262,4 +263,12 @@ public interface IPlotMain extends ILogger {
     List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds();
 
     Actor getConsole();
+
+    /**
+     * Get the backup manager instance
+     *
+     * @return Backup manager
+     */
+    BackupManager getBackupManager();
+
 }

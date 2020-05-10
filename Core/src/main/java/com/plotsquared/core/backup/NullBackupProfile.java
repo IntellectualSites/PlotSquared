@@ -35,6 +35,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Backup profile for a plot without an owner
+ * {@inheritDoc}
  */
 public class NullBackupProfile implements BackupProfile {
 
@@ -47,6 +48,10 @@ public class NullBackupProfile implements BackupProfile {
 
     @Override @NotNull public Path getBackupDirectory() {
         return new File(".").toPath();
+    }
+
+    @Override @NotNull public CompletableFuture<Backup> createBackup() {
+        throw new UnsupportedOperationException("Cannot create backup of an unowned plot");
     }
 
 }

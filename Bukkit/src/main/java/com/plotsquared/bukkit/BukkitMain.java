@@ -52,6 +52,9 @@ import com.plotsquared.bukkit.util.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.SQLUUIDHandler;
 import com.plotsquared.core.IPlotMain;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.backup.BackupManager;
+import com.plotsquared.core.backup.NullBackupManager;
+import com.plotsquared.core.backup.SimpleBackupManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -136,6 +139,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
 
+    private static final int BSTATS_ID = 1404;
     @Getter private static WorldEdit worldEdit;
 
     static {
@@ -151,7 +155,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     private Method methodUnloadChunk0;
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
-    private static final int BSTATS_ID = 1404;
+    @Getter private BackupManager backupManager;
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -228,6 +232,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        try {
+            this.backupManager = new SimpleBackupManager();
+        } catch (final Exception e) {
+            PlotSquared.log(Captions.PREFIX + "&6Failed to initialize backup manager");
+            e.printStackTrace();
+            PlotSquared.log(Captions.PREFIX + "&6Backup features will be disabled");
+            this.backupManager = new NullBackupManager();
         }
     }
 
@@ -886,4 +899,5 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
         return wePlugin.wrapCommandSender(console);
     }
+
 }

@@ -413,4 +413,13 @@ public class Settings extends Config {
         @Comment("Try to guess plot owners from sign data. This may decrease server performance")
         public static boolean GUESS_PLOT_OWNER = false;
     }
+
+    @Comment("Backup related settings")
+    public static final class Backup {
+        @Comment("Automatically backup plots when destructive commands are performed")
+        public static boolean AUTOMATIC_BACKUPS = true;
+        @Comment("Maximum amount of backups associated with a plot")
+        public static int BACKUP_LIMIT = 3;
+    }
+
 }

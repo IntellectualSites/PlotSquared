@@ -26,6 +26,7 @@
 package com.plotsquared.core.backup;
 
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.util.SchematicHandler;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +57,7 @@ public class PlayerBackupProfile implements BackupProfile {
         return name.endsWith(".schem") || name.endsWith(".schematic");
     }
 
-    @NotNull public CompletableFuture<List<Backup>> listBackups() {
+    @Override @NotNull public CompletableFuture<List<Backup>> listBackups() {
         return CompletableFuture.supplyAsync(() -> {
             final Path path = this.getBackupDirectory();
             if (!Files.exists(path)) {
@@ -85,13 +86,29 @@ public class PlayerBackupProfile implements BackupProfile {
         });
     }
 
-    public void destroy() throws IOException {
+    @Override public void destroy() throws IOException {
         Files.delete(this.getBackupDirectory());
     }
 
     @NotNull public Path getBackupDirectory() {
         return backupManager.getBackupPath().resolve(plot.getArea().getId())
             .resolve(plot.getId().toCommaSeparatedString()).resolve(owner.toString());
+    }
+
+    @Override @NotNull public CompletableFuture<Backup> createBackup() {
+        final CompletableFuture<Backup> future = new CompletableFuture<>();
+        this.listBackups().thenAcceptAsync(backups -> {
+            if (backups.size() == backupManager.getBackupLimit()) {
+                backups.get(backups.size() - 1).delete();
+            }
+            final List<Plot> plots = Collections.singletonList(plot);
+            final boolean result = SchematicHandler.manager.exportAll(plots, null, null, () ->
+                future.complete(new Backup(this, System.currentTimeMillis(), null)));
+            if (!result) {
+                future.completeExceptionally(new RuntimeException("Failed to complete the backup"));
+            }
+        });
+        return future;
     }
 
 }
