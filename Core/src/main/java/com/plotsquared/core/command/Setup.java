@@ -104,7 +104,7 @@ public class Setup extends SubCommand {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("cancel")) {
                 player.deleteMeta("setup");
-                MainUtil.sendMessage(player, "&aCancelled setup");
+                MainUtil.sendMessage(player, Captions.SETUP_CANCELLED);
                 return false;
             }
             if (args[0].equalsIgnoreCase("back")) {
@@ -125,8 +125,7 @@ public class Setup extends SubCommand {
             case 0:  // choose generator
                 if (args.length != 1 || !SetupUtils.generators.containsKey(args[0])) {
                     String prefix = "\n&8 - &7";
-                    MainUtil.sendMessage(player,
-                        "&cYou must choose a generator!" + prefix + StringMan
+                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_GENERATOR_ERROR + prefix + StringMan
                             .join(SetupUtils.generators.keySet(), prefix)
                             .replaceAll(PlotSquared.imp().getPluginName(),
                                 "&2" + PlotSquared.imp().getPluginName()));
@@ -135,10 +134,7 @@ public class Setup extends SubCommand {
                 }
                 object.setupGenerator = args[0];
                 object.current++;
-                MainUtil.sendMessage(player, "&6What world type do you want?"
-                    + "\n&8 - &2normal&8 - &7Standard plot generation"
-                    + "\n&8 - &7augmented&8 - &7Plot generation with terrain"
-                    + "\n&8 - &7partial&8 - &7Vanilla with clusters of plots");
+                MainUtil.sendMessage(player, Captions.SETUP_WORLD_TYPE);
                 break;
             case 1:  // choose world type
                 List<String> allTypes = Arrays.asList("normal", "augmented", "partial");
@@ -154,7 +150,7 @@ public class Setup extends SubCommand {
                 Optional<PlotAreaType> plotAreaType;
                 if (args.length != 1 || !(plotAreaType = PlotAreaType.fromString(args[0]))
                     .isPresent()) {
-                    MainUtil.sendMessage(player, "&cYou must choose a world type!");
+                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_TYPE_ERROR);
                     for (String type : types) {
                         int i = allTypes.indexOf(type);
                         if (type.equals("normal")) {
@@ -181,7 +177,7 @@ public class Setup extends SubCommand {
                             .processSetup(object);
                     }
                     if (object.step.length == 0) {
-                        MainUtil.sendMessage(player, "&6What do you want your world to be called?");
+                        MainUtil.sendMessage(player, Captions.SETUP_WORLD_NAME);
                         object.setup_index = 0;
                         return true;
                     }
@@ -201,53 +197,45 @@ public class Setup extends SubCommand {
                             .processSetup(object);
                     } else {
                         object.plotManager = PlotSquared.imp().getPluginName();
-                        MainUtil.sendMessage(player,
-                            "&c[WARNING] The specified generator does not identify as BukkitPlotGenerator");
-                        MainUtil.sendMessage(player,
-                            "&7 - You may need to manually configure the other plugin");
+                        MainUtil.sendMessage(player, Captions.SETUP_WRONG_GENERATOR);
                         object.step =
                             SetupUtils.generators.get(object.plotManager).getPlotGenerator()
                                 .getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null)
                                 .getSettingNodes();
                     }
                     if (object.type == PlotAreaType.PARTIAL) {
-                        MainUtil.sendMessage(player, "What would you like this area called?");
+                        MainUtil.sendMessage(player, Captions.SETUP_AREA_NAME);
                         object.current++;
                     } else {
-                        MainUtil.sendMessage(player, "&6What terrain would you like in plots?"
-                            + "\n&8 - &2NONE&8 - &7No terrain at all"
-                            + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
-                            + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
-                            + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                        MainUtil.sendMessage(player, Captions.SETUP_PARTIAL_AREA);
                         object.current = 5;
                     }
                 }
                 break;
             case 2:  // area id
                 if (!StringMan.isAlphanumericUnd(args[0])) {
-                    MainUtil.sendMessage(player, "&cThe area id must be alphanumerical!");
+                    MainUtil.sendMessage(player, Captions.SETUP_AREA_NON_ALPHANUMERICAL);
                     return false;
                 }
                 for (PlotArea area : PlotSquared.get().getPlotAreas()) {
                     if (area.getId() != null && area.getId().equalsIgnoreCase(args[0])) {
-                        MainUtil.sendMessage(player,
-                            "&cYou must choose an area id that is not in use!");
+                        MainUtil.sendMessage(player, Captions.SETUP_AREA_INVALID_ID);
                         return false;
                     }
                 }
                 object.id = args[0];
                 object.current++;
-                MainUtil.sendMessage(player, "&6What should be the minimum Plot Id?");
+                MainUtil.sendMessage(player, Captions.SETUP_AREA_MIN_PLOT_ID);
                 break;
             case 3:  // min
                 try {
                     object.min = PlotId.fromString(args[0]);
                 } catch (IllegalArgumentException ignored) {
-                    MainUtil.sendMessage(player, "&cYou must choose a valid minimum PlotId!");
+                    MainUtil.sendMessage(player, Captions.SETUP_AREA_MIN_PLOT_ID_ERROR);
                     return false;
                 }
                 object.current++;
-                MainUtil.sendMessage(player, "&6What should be the maximum Plot Id?");
+                MainUtil.sendMessage(player, Captions.SETUP_AREA_MAX_PLOT_ID);
                 break;
             case 4:
                 // max
@@ -255,31 +243,23 @@ public class Setup extends SubCommand {
                 try {
                     id = PlotId.fromString(args[0]);
                 } catch (IllegalArgumentException ignored) {
-                    MainUtil.sendMessage(player, "&cYou must choose a valid maximum PlotId!");
+                    MainUtil.sendMessage(player, Captions.SETUP_AREA_MAX_PLOT_ID_ERROR);
                     return false;
                 }
                 if (id.x <= object.min.x || id.y <= object.min.y) {
                     MainUtil
-                        .sendMessage(player, "&cThe max PlotId must be greater than the minimum!");
+                        .sendMessage(player, Captions.SETUP_AREA_PLOT_ID_GREATER_THAN_MINIMUM);
                     return false;
                 }
                 object.max = id;
                 object.current++;
-                MainUtil.sendMessage(player, "&6What terrain would you like in plots?"
-                    + "\n&8 - &2NONE&8 - &7No terrain at all"
-                    + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
-                    + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
-                    + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                MainUtil.sendMessage(player, Captions.SETUP_PARTIAL_AREA);
                 break;
             case 5: { // Choose terrain
                 Optional<PlotAreaTerrainType> optTerrain;
                 if (args.length != 1 || !(optTerrain = PlotAreaTerrainType.fromString(args[0]))
                     .isPresent()) {
-                    MainUtil.sendMessage(player,
-                        "&cYou must choose the terrain!" + "\n&8 - &2NONE&8 - &7No terrain at all"
-                            + "\n&8 - &7ORE&8 - &7Just some ore veins and trees"
-                            + "\n&8 - &7ROAD&8 - &7Terrain separated by roads"
-                            + "\n&8 - &7ALL&8 - &7Entirely vanilla generation");
+                    MainUtil.sendMessage(player, Captions.SETUP_PARTIAL_AREA_ERROR, Captions.SETUP_PARTIAL_AREA);
                     return false;
                 }
                 object.terrain = optTerrain.get();
@@ -297,7 +277,7 @@ public class Setup extends SubCommand {
             }
             case 6:  // world setup
                 if (object.setup_index == object.step.length) {
-                    MainUtil.sendMessage(player, "&6What do you want your world to be called?");
+                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_NAME);
                     object.setup_index = 0;
                     object.current++;
                     return true;
@@ -339,23 +319,19 @@ public class Setup extends SubCommand {
                 }
             case 7:
                 if (args.length != 1) {
-                    MainUtil.sendMessage(player, "&cYou need to choose a world name!");
+                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_NAME_ERROR);
                     return false;
                 }
                 if (!d(args[0])) {
-                    MainUtil.sendMessage(player,
-                        "Non [a-z0-9_.-] character in the world name: " + args[0]);
+                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_NAME_FORMAT + args[0]);
                     return false;
                 }
                 if (WorldUtil.IMP.isWorld(args[0])) {
                     if (PlotSquared.get().hasPlotArea(args[0])) {
-                        MainUtil.sendMessage(player, "&cThat world name is already taken!");
+                        MainUtil.sendMessage(player, Captions.SETUP_WORLD_NAME_TAKEN);
                         return false;
                     }
-                    MainUtil.sendMessage(player,
-                        "&cThe world you specified already exists. After restarting, new terrain will use "
-                            + PlotSquared.imp().getPluginName() + ", however you may need to "
-                            + "reset the world for it to generate correctly!");
+                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_APPLY_PLOTSQUARED);
                 }
                 object.world = args[0];
                 player.deleteMeta("setup");

@@ -63,8 +63,6 @@ records:
   notify_leave: $2%player $2elhagyta a telked ($1%plot$2)
 swap:
   swap_overlap: $2A tervezett terület nem engedélyezi az átfedést
-  swap_dimensions: $2A tervezett területnek hasonlónak kell lennie
-  swap_syntax: $2/plot swap <id>
   swap_success: $4Sikeresen megváltoztatva
 comment:
   inbox_notification: '%s olvasatlan levél. Használd a /plot inbox parancsot'
@@ -78,7 +76,6 @@ comment:
   comment_removed_success: $4Sikeresen törölted a hozzászólást/s:n$2 - '$3%s$2'
   comment_removed_failure: $4Nem sikerült törölni a hozzászólást!
   comment_added: $4Hozzászóltál
-  comment_header: $2&m---------&r $1Hozzászólások $2&m---------&r
   inbox_empty: $2Nincs hozzászólás
 console:
   not_console: $2Csak konzolról lehet végrehajtani.
@@ -127,19 +124,11 @@ setup:
   setup_valid_arg: $2Érték $1%s0 $2változik %s1
   setup_finished: $4Teleportálva a megalkotott világba.
   setup_world_taken: $2%s már egy világ
-  setup_missing_world: $2Meg kell adnod egy világnevet ($1/plot setup &l<world>$1
-    <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
-  setup_missing_generator: $2Meg kell adnod egy generátort ($1/plot setup <world>
-    &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - $1/plot
-    setup back&-$2 - $1/plot setup cancel
-  setup_invalid_generator: '$2Érvénytelen generátor. Lehetséges lehetőségek: %s'
 schematics:
   schematic_too_large: $2Túl nagy a telek ehhez!
   schematic_missing_arg: '$2Meg kell adnia egy argumentumot. Lehetséges értékek: $1save$2,
     $1paste $2, $1exportall$2, $1list'
   schematic_invalid: '$2Nem érvényes. Ok: $2%s'
-  schematic_valid: $2Érvényes
   schematic_paste_failed: $2Sikertelen másolás
   schematic_paste_success: $4Sikeresen másoltad
   schematic_list: '$4Elmentve: $1%s'
@@ -147,9 +136,6 @@ schematics:
   mca_file_size: "$1Jegyzet: .mca fileok mérete 512x512"
   schematic_exportall_started: "$1Exportálás indul..."
   schematic_exportall_world_args: "$1Szükség van világ érvre. Használd: $3/plot sch exportall <area>"
-  schematic_exportall_mass_started: $1Megkezdődött az exportálás. Ez
-    eltarthat egy ideig
-  schematic_exportall_count: $1Talált $3%s $1telkek..
   schematic_exportall_finished: $1Kész az export
   schematic_exportall_single_finished: $1Kész az export
 schematic:
@@ -195,7 +181,6 @@ merge:
   merge_accepted: $2Összeolvasztás elfogadva
   success_merge: $2Osszeolvsztva!
   merge_requested: $2Sikeresen elküldted az összeolvasztási kérelmet
-  no_perm_merge: '$2Nem vagy ennek tuladonosa: $1%plot%'
   no_available_automerge: $2Nem rendelkezel a szomszédos telkekkel a megadott irányban
     vagy nem megengedett a kívánt méret.
   unlink_impossible: $2You can only unlink a mega-plot
@@ -215,7 +200,6 @@ errors:
   command_went_wrong: $2Probléma merült fel...
   no_free_plots: $2Nincsenek szabad telkek
   not_in_plot: $2Nem egy telken vagy
-  not_loaded: $2A telek nem tudott betölteni
   not_in_cluster: $2Ehez egy telekcsoporton kell legyél
   not_in_plot_world: $2Nem vagy a telek területén
   plotworld_incompatible: $2A két világnak kompatibilisnek kell lennie
@@ -299,20 +283,12 @@ list:
   area_list_header_paged: $2(Oldal $1%cur$2/$1%max$2) $1Lista %amount% területek
   plot_list_header_paged: $2(Oldal $1%cur$2/$1%max$2) $1Lista%amount% telkek
   plot_list_header: $1Lista %word% telkek
-  plot_list_item: $2>> $1%id$2:$1%world $2- $1%owner
-  plot_list_item_ordered: $2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner
-  plot_list_footer: $2>> $1%word% összesen $2%num% $1azzal %plot%.
 chat:
   plot_chat_spy_format: '$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_format: '$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
   plot_chat_forced: $2This world forces everyone to use plot chat.
-  plot_chat_on: $4A csevegési csevegés engedélyezve van.
-  plot_chat_off: $4A csevegési csevegés letiltva.
 deny:
   denied_added: $4Sikeresen elutasította a játékost ebből a telekből
-  denied_need_argument: $2Az érvek hiányoznak. $1/plot denied add <név> $2or $1/plot
-    denied remove <név>
-  was_not_denied: $2Ezt a játékost nem tagadták meg ezen a teleken
   you_got_denied: $4Elutasítják attól a cselekménytől, amelyen korábban volt, és teleportállak
     spawnra
   cant_remove_owner: $2Nem távolíthatja el a telek tulajdonosát
@@ -320,7 +296,6 @@ kick:
   you_got_kicked: $4Ki rúgtak!
 flag:
   flag_key: '$2Kúlcs: %s'
-  flag_type: '$2típus: %s'
   flag_desc: '$2leírás: %s'
   not_valid_flag: $2Ez nem érvényes érték
   not_valid_flag_suggested: '$2Ez nem érvényes érték. Úgy értetted: $1%s'
@@ -329,7 +304,6 @@ flag:
   flag_not_added: $2Az érték hozzáadása nem sikerült
   flag_removed: $4Az érték sikeresen eltávolítva
   flag_added: $4Az érték sikeresen hozzáadva
-  flag_list_entry: '$2%s: $1%s'
 flags:
   flag_category_string: String Flags
   flag_category_integers: Integer Flags
@@ -362,7 +336,6 @@ flags:
   flag_error_weather: 'Flag must be a weather: ''rain'' or ''sun'''
 trusted:
   trusted_added: $4Sikeresen megbízott egy játékosban a telekben
-  was_not_added: $2A játékos nem volt megbízható ebben a telekben
   plot_removed_user: $1Plot %s of which you were added to has been deleted due to
     owner inactivity
 member:
@@ -390,9 +363,6 @@ help:
   help_item: $1%usage% [%alias%]&- $3- $2%desc%&-
   help_display_all_commands: Az összes parancs megjelenítése
   direction: '$1Jelenlegi irány: %dir%'
-generator_bucket:
-  bucket_entries_ignored: $2A teljes vödörérték legalább 1 vagy annál nagyobb. Blokkok nélkül
-    egy meghatározott esélyt figyelmen kívül hagynak
 category:
   command_category_claiming: Elfoglalás
   command_category_teleport: Teleportálás
@@ -406,7 +376,6 @@ category:
 grants:
   granted_plots: '$1Eredmény: $2%s $1támogatások maradtak'
   granted_plot: $1Ön megadta %s0 telek $2%s1
-  granted_plot_failed: '$1A támogatás nem sikerült: $2%s'
 legacyconfig:
   legacy_config_found: Régi konfigurációs fájlt észleltünk. A konverzió lesz
     kísérletet.

@@ -185,15 +185,6 @@ public enum Captions implements Caption {
     PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
     PERMISSION_ADMIN_CHAT_BYPASS("plots.admin.chat.bypass", "static.permissions"),
     //</editor-fold>
-    //<editor-fold desc="Static Console">
-    CONSOLE_JAVA_OUTDATED(
-        "&cYour version of java is outdated. It is highly recommended that you update to Java 8 as it increases performance "
-            + "and security. %s0 will require Java 8 in a future update.",
-        "static.console"),
-    CONSOLE_PLEASE_ENABLE_METRICS(
-        "&dPlease enable metrics for %s0. Using metrics improves plugin stability, performance, and features. "
-            + "Bug fixes and new features are influenced on metrics.", "static.console"),
-    //</editor-fold>
     //<editor-fold desc="Confirm">
     EXPIRED_CONFIRM("$2Confirmation has expired, please run the command again!", "Confirm"),
     FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),
@@ -259,8 +250,6 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="Swap">
     SWAP_OVERLAP("$2The proposed areas are not allowed to overlap", "Swap"),
-    SWAP_DIMENSIONS("$2The proposed areas must have comparable dimensions", "Swap"),
-    SWAP_SYNTAX("$2/plot swap <id>", "Swap"),
     SWAP_SUCCESS("$4Successfully swapped plots", "Swap"),
     SWAP_MERGED("$2Merged plots may not be swapped. Please unmerge the plot before performing the swap.", "Swap"),
     //</editor-fold>
@@ -276,7 +265,6 @@ public enum Captions implements Caption {
     COMMENT_REMOVED_SUCCESS("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"),
     COMMENT_REMOVED_FAILURE("$4Failed to delete comment!", "Comment"),
     COMMENT_ADDED("$4A comment has been left", "Comment"),
-    COMMENT_HEADER("$2&m---------&r $1Comments $2&m---------&r", "Comment"),
     INBOX_EMPTY("$2No comments", "Comment"),
     //</editor-fold>
     //<editor-fold desc="Console">
@@ -333,20 +321,40 @@ public enum Captions implements Caption {
         "$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or "
             + "your chosen world management plugin.", "Setup"),
     SETUP_WORLD_TAKEN("$2%s is already a world", "Setup"),
-    SETUP_MISSING_WORLD(
-        "$2You need to specify a world name ($1/plot setup &l<world>$1 <generator>$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 -"
-            + " $1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
-    SETUP_MISSING_GENERATOR(
-        "$2You need to specify a generator ($1/plot setup <world> &l<generator>&r$2)&-$1Additional commands:&-$2 - $1/plot setup <value>&-$2 - "
-            + "$1/plot setup back&-$2 - $1/plot setup cancel", "Setup"),
-
-    SETUP_INVALID_GENERATOR("$2Invalid generator. Possible options: %s", "Setup"),
+    SETUP_CANCELLED("$7Cancelled setup.", "Setup"),
+    SETUP_WORLD_NAME("$1What do you want your world to be called?", "Setup"),
+    SETUP_WORLD_NAME_ERROR("$7You need to choose a world name!", "Setup"),
+    SETUP_WORLD_NAME_TAKEN("$7That world name is already taken!", "Setup"),
+    SETUP_WORLD_GENERATOR_ERROR("$7You must choose a generator!", "Setup"),
+    SETUP_WORLD_TYPE("$1What world type do you want?&-"
+            + "$3 - $6normal$3 - $2Standard plot generation&-"
+            + "$3 - $6augmented$3 - $2Plot generation with terrain&-"
+            + "$3 - $6partial$3 - $2Vanilla with clusters of plots", "Setup"),
+    SETUP_WORLD_TYPE_ERROR("$7You must choose a world type!", "Setup"),
+    SETUP_WRONG_GENERATOR("$7The specified generator does not identify as BukkitPlotGenerator"
+            + "$3 - $6You may need to manually configure the other plugin", "Setup"),
+    SETUP_WORLD_NAME_FORMAT("$7Non [a-z0-9_.-] character in the world name:$1 ", "Setup"),
+    SETUP_WORLD_APPLY_PLOTSQUARED("$7The world you specified already exists. After restarting, new terrain will use "
+            + "$1PlotSquared$7, however you may need to reset the world for it to generate correctly!", "Setup"),
+    SETUP_PARTIAL_AREA("$1What terrain would you like in plots?&-"
+            + "$3 - $6NONE$3 - $2No terrain at all&-"
+            + "$3 - $6ORE$3 - $2Just some ore veins and trees&-"
+            + "$3 - $6ROAD$3 - $2Terrain separated by roads&-"
+            + "$3 - $6ALL$3 - $2Entirely vanilla generation", "Setup"),
+    SETUP_PARTIAL_AREA_ERROR("$7You must choose the terrain!", "Setup"),
+    SETUP_AREA_NAME("$1What would you like this area called?", "Setup"),
+    SETUP_AREA_NON_ALPHANUMERICAL("$7The area id must be alphanumerical!", "Setup"),
+    SETUP_AREA_INVALID_ID("$7You must choose an area id that is not in use!", "Setup"),
+    SETUP_AREA_MIN_PLOT_ID("$1What should be the minimum Plot Id?", "Setup"),
+    SETUP_AREA_MIN_PLOT_ID_ERROR("$7You must choose a valid minimum Plot Id!", "Setup"),
+    SETUP_AREA_MAX_PLOT_ID("$1What should be the maximum Plot Id?", "Setup"),
+    SETUP_AREA_MAX_PLOT_ID_ERROR("$7You must choose a valid maximum Plot Id!", "Setup"),
+    SETUP_AREA_PLOT_ID_GREATER_THAN_MINIMUM("$7The max PlotId must be greater than the minimum!", "Setup"),
     //</editor-fold>
     //<editor-fold desc="Schematic">
     SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!", "Schematics"),
     SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1save$2, $1paste $2, $1exportall$2, $1list", "Schematics"),
     SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s", "Schematics"),
-    SCHEMATIC_VALID("$2That is a valid schematic", "Schematics"),
     SCHEMATIC_PASTE_MERGED("$2Schematics cannot be pasted onto merged plots. Please unmerge the plot before performing the paste.", "Schematics"),
     SCHEMATIC_PASTE_FAILED("$2Failed to paste the schematic", "Schematics"),
     SCHEMATIC_PASTE_SUCCESS("$4The schematic pasted successfully", "Schematics"),
@@ -356,8 +364,6 @@ public enum Captions implements Caption {
     SCHEMATIC_EXPORTALL_STARTED("$1Starting export...", "Schematics"),
     SCHEMATIC_EXPORTALL_WORLD_ARGS("$1Need world argument. Use $3/plot sch exportall <area>", "Schematics"),
     SCHEMATIC_EXPORTALL_WORLD("$1Invalid world. Use &3/plot sch exportall <area>", "Schematic"),
-    SCHEMATIC_EXPORTALL_MASS_STARTED("$1Schematic mass export has been started. This may take a while", "Schematics"),
-    SCHEMATIC_EXPORTALL_COUNT("$1Found $3%s $1plots...", "Schematics"),
     SCHEMATIC_EXPORTALL_FINISHED("$1Finished mass export", "Schematics"),
     SCHEMATIC_EXPORTALL_SINGLE_FINISHED("$1Finished export", "Schematics"),
     TASK_IN_PROCESS("$1Task is already running.", "Error"),
@@ -383,7 +389,6 @@ public enum Captions implements Caption {
     //<editor-fold desc="Alias">
     ALIAS_SET_TO("$2Plot alias set to $1%alias%", "Alias"),
     ALIAS_REMOVED("$2Plot alias removed", "Alias"),
-
     ALIAS_TOO_LONG("$2The alias must be < 50 characters in length", "Alias"),
     ALIAS_IS_TAKEN("$2That alias is already taken", "Alias"),
     //</editor-fold>
@@ -399,7 +404,6 @@ public enum Captions implements Caption {
     NO_PLOT_PERMS("$2You must be the plot owner to perform this action", "Permission"),
     CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots.", "Permission"),
     CANT_CLAIM_MORE_CLUSTERS("$2You can't claim more clusters.", "Permission"),
-
     CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user", "Permission"),
     CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once", "Permission"),
     //</editor-fold>
@@ -409,7 +413,6 @@ public enum Captions implements Caption {
     SUCCESS_MERGE("$2Plots have been merged!", "Merge"),
     MERGE_REQUESTED("$2Successfully sent a merge request", "Merge"),
     MERGE_REQUEST_CONFIRM("Merge request from %s", "Permission"),
-    NO_PERM_MERGE("$2You are not the owner of the plot: $1%plot%", "Merge"),
     NO_AVAILABLE_AUTOMERGE("$2You do not own any adjacent plots in the specified direction or are not allowed to merge to the required size.", "Merge"),
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Merge"),
     UNMERGE_CANCELLED("$1Unlink has been cancelled", "Merge"),
@@ -429,7 +432,6 @@ public enum Captions implements Caption {
     COMMAND_WENT_WRONG("$2Something went wrong when executing that command...", "Errors"),
     NO_FREE_PLOTS("$2There are no free plots available", "Errors"),
     NOT_IN_PLOT("$2You're not in a plot", "Errors"),
-    NOT_LOADED("$2The plot could not be loaded", "Errors"),
     NOT_IN_CLUSTER("$2You must be within a plot cluster to perform that action", "Errors"),
     NOT_IN_PLOT_WORLD("$2You're not in a plot area", "Errors"),
     PLOTWORLD_INCOMPATIBLE("$2The two worlds must be compatible", "Errors"),
@@ -532,28 +534,20 @@ public enum Captions implements Caption {
     AREA_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% areas", "List"),
     PLOT_LIST_HEADER_PAGED("$2(Page $1%cur$2/$1%max$2) $1List of %amount% plots", "List"),
     PLOT_LIST_HEADER("$1List of %word% plots", "List"),
-    PLOT_LIST_ITEM("$2>> $1%id$2:$1%world $2- $1%owner", "List"),
-    PLOT_LIST_ITEM_ORDERED("$2[$1%in$2] >> $1%id$2:$1%world $2- $1%owner", "List"),
-    PLOT_LIST_FOOTER("$2>> $1%word% a total of $2%num% $1claimed %plot%.", "List"),
     //</editor-fold>
     //<editor-fold desc="Chat">
     PLOT_CHAT_SPY_FORMAT("$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%", "Chat"),
     PLOT_CHAT_FORMAT("$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%", "Chat"),
     PLOT_CHAT_FORCED("$2This world forces everyone to use plot chat.", "Chat"),
-    PLOT_CHAT_ON("$4Plot chat enabled.", "Chat"),
-    PLOT_CHAT_OFF("$4Plot chat disabled.", "Chat"),
     //</editor-fold>
     //<editor-fold desc="Deny">
     DENIED_ADDED("$4You successfully denied the player from this plot", "Deny"),
-    DENIED_NEED_ARGUMENT("$2Arguments are missing. $1/plot denied add <name> $2or $1/plot denied remove <name>", "Deny"),
-    WAS_NOT_DENIED("$2That player was not denied on this plot", "Deny"),
     YOU_GOT_DENIED("$4You are denied from the plot you were previously on, and got teleported to spawn", "Deny"),
     CANT_REMOVE_OWNER("$2You can't remove the plot owner", "Deny"),
     //</editor-fold>
     YOU_GOT_KICKED("$4You got kicked!", "Kick"),
     //<editor-fold desc="Flag">
     FLAG_KEY("$2Key: %s", "Flag"),
-    FLAG_TYPE("$2Type: %s", "Flag"),
     FLAG_DESC("$2Desc: %s", "Flag"),
     NOT_VALID_FLAG("$2That is not a valid flag", "Flag"),
     NOT_VALID_FLAG_SUGGESTED("$2That is not a valid flag. Did you mean: $1%s", "Flag"),
@@ -564,7 +558,6 @@ public enum Captions implements Caption {
     FLAG_PARTIALLY_REMOVED("$4Successfully removed flag value(s)", "Flag"),
     FLAG_ADDED("$4Successfully added flag", "Flag"),
     FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig"),
-    FLAG_LIST_ENTRY("$2%s: $1%s", "Flag"),
     FLAG_LIST_SEE_INFO("Click to view information about the flag", "Flag"),
     FLAG_PARSE_ERROR("$2Failed to parse flag '%flag_name%', value '%flag_value%': %error%", "Flag"),
     //</editor-fold>
@@ -694,7 +687,6 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
-    WAS_NOT_ADDED("$2That player was not trusted on this plot", "Trusted"),
     PLOT_REMOVED_USER("$1Plot %s of which you were added to has been deleted due to owner inactivity", "Trusted"),
     //</editor-fold>
     //<editor-fold desc="Member">
@@ -727,8 +719,6 @@ public enum Captions implements Caption {
     HELP_DISPLAY_ALL_COMMANDS("Display all commands", "Help"),
     DIRECTION("$1Current direction: %dir%", "Help"),
     //</editor-fold>
-    BUCKET_ENTRIES_IGNORED("$2Total bucket values add up to 1 or more. Blocks without a specified chance will be ignored","Generator_Bucket"),
-
     //<editor-fold desc="Command Categories">
     COMMAND_CATEGORY_CLAIMING("Claiming", "Category"),
     COMMAND_CATEGORY_TELEPORT("Teleport", "Category"),
@@ -740,17 +730,13 @@ public enum Captions implements Caption {
     COMMAND_CATEGORY_DEBUG("Debug", "Category"),
     COMMAND_CATEGORY_ADMINISTRATION("Admin", "Category"),
     //</editor-fold>
-
     //<editor-fold desc="Grants">
     GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants"),
     GRANTED_PLOT("$1You granted %s0 plot to $2%s1", "Grants"),
-    GRANTED_PLOT_FAILED("$1Grant failed: $2%s", "Grants"),
     //</editor-fold>
-
     //<editor-fold desc="Events">
     EVENT_DENIED("$1%s $2Cancelled by external plugin.", "Events"),
     //</editor-fold>
-
     //<editor-fold desc="Caps">
     PLOT_CAPS_HEADER("$3&m---------&r $1CAPS $3&m---------", false, "Info"),
     PLOT_CAPS_FORMAT("$2- Cap Type: $1%cap% $2| Status: $1%current%$2/$1%limit% $2($1%percentage%%$2)",
