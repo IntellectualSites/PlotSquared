@@ -112,7 +112,7 @@ public class Merge extends SubCommand {
                     break;
                 }
             }
-            if (direction == null && (args[0].equalsIgnoreCase("all") || args[1]
+            if (direction == null && (args[0].equalsIgnoreCase("all") || args[0]
                 .equalsIgnoreCase("auto"))) {
                 direction = Direction.ALL;
             }
