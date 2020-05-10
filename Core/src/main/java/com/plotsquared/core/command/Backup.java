@@ -115,7 +115,7 @@ public final class Backup extends Command {
         if (plot == null) {
             sendMessage(player, Captions.NOT_IN_PLOT);
         } else if (!plot.hasOwner()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_UNOWNED);
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_UNOWNED.getTranslated());
         } else if (plot.isMerged()) {
             sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_MERGED.getTranslated());
         } else if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
@@ -149,7 +149,7 @@ public final class Backup extends Command {
             if (plot == null) {
                 sendMessage(player, Captions.NOT_IN_PLOT);
             } else if (!plot.hasOwner()) {
-                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_UNOWNED);
+                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_UNOWNED.getTranslated());
             } else if (plot.isMerged()) {
                 sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_MERGED.getTranslated());
             } else if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
@@ -179,7 +179,7 @@ public final class Backup extends Command {
         if (plot == null) {
             sendMessage(player, Captions.NOT_IN_PLOT);
         } else if (!plot.hasOwner()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_UNOWNED);
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_UNOWNED.getTranslated());
         } else if (plot.isMerged()) {
             sendMessage(player, Captions.BACKUP_IMPOSSIBLE, Captions.GENERIC_MERGED.getTranslated());
             sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "merged");
