@@ -95,7 +95,7 @@ public class PlayerBackupProfile implements BackupProfile {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                return backups;
+                return (this.backupCache = backups);
             });
         }
     }

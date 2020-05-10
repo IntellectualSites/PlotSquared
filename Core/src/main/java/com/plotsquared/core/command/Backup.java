@@ -90,7 +90,7 @@ public final class Backup extends Command {
             final Plot plot = player.getCurrentPlot();
             if (plot != null) {
                 final BackupProfile backupProfile = Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
-                if (!(backupProfile instanceof PlayerBackupProfile)) {
+                if (backupProfile instanceof PlayerBackupProfile) {
                     final CompletableFuture<List<com.plotsquared.core.backup.Backup>> backupList = backupProfile.listBackups();
                     if (backupList.isDone()) {
                         final List<com.plotsquared.core.backup.Backup> backups = backupList.getNow(new ArrayList<>());
