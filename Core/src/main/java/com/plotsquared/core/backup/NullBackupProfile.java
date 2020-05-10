@@ -54,4 +54,8 @@ public class NullBackupProfile implements BackupProfile {
         throw new UnsupportedOperationException("Cannot create backup of an unowned plot");
     }
 
+    @Override @NotNull public CompletableFuture<Void> restoreBackup(@NotNull final Backup backup) {
+        return CompletableFuture.completedFuture(null);
+    }
+
 }

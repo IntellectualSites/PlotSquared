@@ -25,8 +25,12 @@
  */
 package com.plotsquared.core.backup;
 
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.util.task.TaskManager;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,6 +112,36 @@ public class PlayerBackupProfile implements BackupProfile {
                 future.completeExceptionally(new RuntimeException("Failed to complete the backup"));
             }
         });
+        return future;
+    }
+
+    @Override @NotNull public CompletableFuture<Void> restoreBackup(@NotNull final Backup backup) {
+        final CompletableFuture<Void> future = new CompletableFuture<>();
+        if (backup.getFile() == null || !Files.exists(backup.getFile())) {
+            future.completeExceptionally(new IllegalArgumentException("The specific backup does not exist"));
+        } else {
+            TaskManager.runTaskAsync(() -> {
+                Schematic schematic = null;
+                try {
+                    schematic = SchematicHandler.manager.getSchematic(backup.getFile().toFile());
+                } catch (SchematicHandler.UnsupportedFormatException e) {
+                    e.printStackTrace();
+                }
+                if (schematic == null) {
+                    future.completeExceptionally(new IllegalArgumentException("The backup is non-existent or not in the correct format"));
+                } else {
+                    SchematicHandler.manager.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
+                        @Override public void run(Boolean value) {
+                            if (value) {
+                                future.complete(null);
+                            } else {
+                                future.completeExceptionally(new RuntimeException(Captions.SCHEMATIC_PASTE_FAILED.toString()));
+                            }
+                        }
+                    });
+                }
+            });
+        }
         return future;
     }
 

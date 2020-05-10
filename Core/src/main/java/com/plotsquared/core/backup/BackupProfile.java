@@ -62,4 +62,11 @@ public interface BackupProfile {
      */
     @NotNull CompletableFuture<Backup> createBackup();
 
+    /**
+     * Restore a backup
+     *
+     * @return Backup to restore
+     */
+    @NotNull CompletableFuture<Void> restoreBackup(@NotNull final Backup backup);
+
 }
