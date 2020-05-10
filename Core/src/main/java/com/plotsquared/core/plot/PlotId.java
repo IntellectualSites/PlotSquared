@@ -202,7 +202,6 @@ public class PlotId {
         return this.x + "-" + this.y;
     }
 
-
     /**
      * The PlotId object caches the hashcode for faster mapping/fetching/sorting<br>
      * - Recalculation is required if the x/y values change
