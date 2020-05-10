@@ -757,6 +757,10 @@ public enum Captions implements Caption {
         false, "Info"),
     //</editor-fold>
 
+    //<editor-fold desc="Backups">
+    BACKUP_USAGE("$1Usage: $2/plot backup save/list/load", "Backups"),
+    //</editor-fold>
+
     /**
      * Legacy Configuration Conversion
      */

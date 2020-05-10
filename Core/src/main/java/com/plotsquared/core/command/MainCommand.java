@@ -127,6 +127,7 @@ public class MainCommand extends Command {
             new SetHome();
             new Cluster();
             new DebugImportWorlds();
+            new Backup();
 
             if (Settings.Ratings.USE_LIKES) {
                 new Like();
