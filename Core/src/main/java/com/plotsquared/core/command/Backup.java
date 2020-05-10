@@ -27,10 +27,12 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupProfile;
+import com.plotsquared.core.backup.NullBackupProfile;
 import com.plotsquared.core.backup.PlayerBackupProfile;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
@@ -109,6 +111,29 @@ public final class Backup extends Command {
     public void save(final Command command, final PlotPlayer player, final String[] args,
         final RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
+        final Plot plot = player.getCurrentPlot();
+        if (plot == null) {
+            sendMessage(player, Captions.NOT_IN_PLOT);
+        } else if (!plot.hasOwner()) {
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "unowned");
+        } else if (plot.isMerged()) {
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "merged");
+        } else if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
+            sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
+        } else {
+            final BackupProfile backupProfile = Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+            if (backupProfile instanceof NullBackupProfile) {
+                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "other");
+            } else {
+                backupProfile.createBackup().whenComplete((backup, throwable) -> {
+                    if (throwable != null) {
+                        sendMessage(player, Captions.BACKUP_FAILED, throwable.getMessage());
+                    } else {
+                        sendMessage(player, Captions.BACKUP_SAVED);
+                    }
+                });
+            }
+        }
     }
 
     @CommandDeclaration(command = "list",
@@ -120,6 +145,25 @@ public final class Backup extends Command {
     public void list(final Command command, final PlotPlayer player, final String[] args,
         final RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
+            final Plot plot = player.getCurrentPlot();
+            if (plot == null) {
+                sendMessage(player, Captions.NOT_IN_PLOT);
+            } else if (!plot.hasOwner()) {
+                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "unowned");
+            } else if (plot.isMerged()) {
+                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "merged");
+            } else if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
+                sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
+            } else {
+                final BackupProfile backupProfile = Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+                if (backupProfile instanceof NullBackupProfile) {
+                    sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "other");
+                } else {
+                    backupProfile.listBackups().whenComplete((backups, throwable) -> {
+                        // TODO: List backups
+                    });
+                }
+            }
     }
 
     @CommandDeclaration(command = "load",
@@ -131,6 +175,34 @@ public final class Backup extends Command {
     public void load(final Command command, final PlotPlayer player, final String[] args,
         final RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
+        final Plot plot = player.getCurrentPlot();
+        if (plot == null) {
+            sendMessage(player, Captions.NOT_IN_PLOT);
+        } else if (!plot.hasOwner()) {
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "unowned");
+        } else if (plot.isMerged()) {
+            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "merged");
+        } else if (!plot.isOwner(player.getUUID()) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
+            sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
+        } else if (args.length == 0) {
+            sendMessage(player, Captions.BACKUP_LOAD_USAGE);
+        } else {
+            final int number;
+            try {
+                number = Integer.parseInt(args[0]);
+            } catch (final Exception e) {
+                sendMessage(player, Captions.NOT_A_NUMBER, args[0]);
+                return;
+            }
+            final BackupProfile backupProfile = Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+            if (backupProfile instanceof NullBackupProfile) {
+                sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "other");
+            } else {
+                backupProfile.listBackups().whenComplete((backups, throwable) -> {
+                    // TODO: Load backups
+                });
+            }
+        }
     }
 
 }

@@ -184,6 +184,11 @@ public enum Captions implements Caption {
     PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"),
     PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
     PERMISSION_ADMIN_CHAT_BYPASS("plots.admin.chat.bypass", "static.permissions"),
+    PERMISSION_BACKUP("plots.backup", "static.permissions"),
+    PERMISSION_BACKUP_SAVE("plots.backup.save", "static.permissions"),
+    PERMISSION_BACUP_LIST("plots.backup.list", "static.permissions"),
+    PERMISSION_BACKUP_LOAD("plots.backup.load", "static.permissions"),
+    PERMISSION_ADMIN_BACKUP_OTHER("plots.admin.backup.other", "static.permissions"),
     //</editor-fold>
     //<editor-fold desc="Static Console">
     CONSOLE_JAVA_OUTDATED(
@@ -759,6 +764,10 @@ public enum Captions implements Caption {
 
     //<editor-fold desc="Backups">
     BACKUP_USAGE("$1Usage: $2/plot backup save/list/load", "Backups"),
+    BACKUP_IMPOSSIBLE("$2Backups are not enabled for this plot: %s", "Backups"),
+    BACKUP_SAVED("$1The backup was created successfully", "Backups"),
+    BACKUP_FAILED("$2The backup could not be created: %s", "Backups"),
+    BACKUP_LOAD_USAGE("$1Usage: $2/plot backup load [#]", "Backups"),
     //</editor-fold>
 
     /**
