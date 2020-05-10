@@ -56,42 +56,53 @@ public class PlayerBackupProfile implements BackupProfile {
     private final Plot plot;
     private final BackupManager backupManager;
 
+    private volatile List<Backup> backupCache;
+    private final Object backupLock = new Object();
+
     private static boolean isValidFile(@NotNull final Path path) {
         final String name = path.getFileName().toString();
         return name.endsWith(".schem") || name.endsWith(".schematic");
     }
 
     @Override @NotNull public CompletableFuture<List<Backup>> listBackups() {
-        return CompletableFuture.supplyAsync(() -> {
-            final Path path = this.getBackupDirectory();
-            if (!Files.exists(path)) {
-                try {
-                    Files.createDirectories(path);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return Collections.emptyList();
-                }
+        synchronized (this.backupLock) {
+            if (this.backupCache != null) {
+                return CompletableFuture.completedFuture(backupCache);
             }
-            final List<Backup> backups = new ArrayList<>();
-            try {
-                Files.walk(path).filter(PlayerBackupProfile::isValidFile).forEach(file -> {
+            return CompletableFuture.supplyAsync(() -> {
+                final Path path = this.getBackupDirectory();
+                if (!Files.exists(path)) {
                     try {
-                        final BasicFileAttributes
-                            basicFileAttributes = Files.readAttributes(file, BasicFileAttributes.class);
-                        backups.add(new Backup(this, basicFileAttributes.creationTime().toMillis(), file));
+                        Files.createDirectories(path);
                     } catch (IOException e) {
                         e.printStackTrace();
+                        return Collections.emptyList();
                     }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return backups;
-        });
+                }
+                final List<Backup> backups = new ArrayList<>();
+                try {
+                    Files.walk(path).filter(PlayerBackupProfile::isValidFile).forEach(file -> {
+                        try {
+                            final BasicFileAttributes basicFileAttributes =
+                                Files.readAttributes(file, BasicFileAttributes.class);
+                            backups.add(
+                                new Backup(this, basicFileAttributes.creationTime().toMillis(), file));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return backups;
+            });
+        }
     }
 
     @Override public void destroy() throws IOException {
         Files.delete(this.getBackupDirectory());
+        // Invalidate backup cache
+        this.backupCache = null;
     }
 
     @NotNull public Path getBackupDirectory() {
@@ -102,14 +113,17 @@ public class PlayerBackupProfile implements BackupProfile {
     @Override @NotNull public CompletableFuture<Backup> createBackup() {
         final CompletableFuture<Backup> future = new CompletableFuture<>();
         this.listBackups().thenAcceptAsync(backups -> {
-            if (backups.size() == backupManager.getBackupLimit()) {
-                backups.get(backups.size() - 1).delete();
-            }
-            final List<Plot> plots = Collections.singletonList(plot);
-            final boolean result = SchematicHandler.manager.exportAll(plots, null, null, () ->
-                future.complete(new Backup(this, System.currentTimeMillis(), null)));
-            if (!result) {
-                future.completeExceptionally(new RuntimeException("Failed to complete the backup"));
+            synchronized (this.backupLock) {
+                if (backups.size() == backupManager.getBackupLimit()) {
+                    backups.get(backups.size() - 1).delete();
+                }
+                final List<Plot> plots = Collections.singletonList(plot);
+                final boolean result = SchematicHandler.manager.exportAll(plots, null, null, () ->
+                    future.complete(new Backup(this, System.currentTimeMillis(), null)));
+                if (!result) {
+                    future.completeExceptionally(new RuntimeException("Failed to complete the backup"));
+                }
+                this.backupCache = null;
             }
         });
         return future;

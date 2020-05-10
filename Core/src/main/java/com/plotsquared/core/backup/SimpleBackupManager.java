@@ -25,9 +25,12 @@
  */
 package com.plotsquared.core.backup;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +39,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * {@inheritDoc}
@@ -45,6 +50,8 @@ import java.util.concurrent.CompletableFuture;
     @Getter private final Path backupPath;
     private final boolean automaticBackup;
     @Getter private final int backupLimit;
+    private final Cache<PlotCacheKey, BackupProfile> backupProfileCache = CacheBuilder.newBuilder()
+        .expireAfterAccess(3, TimeUnit.MINUTES).build();
 
     public SimpleBackupManager() throws Exception {
         this.backupPath = Objects.requireNonNull(PlotSquared.imp()).getDirectory().toPath().resolve("backups");
@@ -57,7 +64,13 @@ import java.util.concurrent.CompletableFuture;
 
     @Override @NotNull public BackupProfile getProfile(@NotNull final Plot plot) {
         if (plot.hasOwner() && !plot.isMerged()) {
-            return new PlayerBackupProfile(plot.getOwnerAbs(), plot, this);
+            try {
+                return backupProfileCache.get(new PlotCacheKey(plot), () -> new PlayerBackupProfile(plot.getOwnerAbs(), plot, this));
+            } catch (ExecutionException e) {
+                final BackupProfile profile = new PlayerBackupProfile(plot.getOwnerAbs(), plot, this);
+                this.backupProfileCache.put(new PlotCacheKey(plot), profile);
+                return profile;
+            }
         }
         return new NullBackupProfile();
     }
@@ -72,6 +85,28 @@ import java.util.concurrent.CompletableFuture;
 
     @Override public boolean shouldAutomaticallyBackup() {
         return this.automaticBackup;
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE) private static final class PlotCacheKey {
+
+        private final Plot plot;
+
+        @Override public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            final PlotCacheKey that = (PlotCacheKey) o;
+            return com.google.common.base.Objects.equal(plot.getArea(), that.plot.getArea())
+                && com.google.common.base.Objects.equal(plot.getId(), that.plot.getId())
+                && com.google.common.base.Objects.equal(plot.getOwnerAbs(), that.plot.getOwnerAbs());
+        }
+
+        @Override public int hashCode() {
+            return com.google.common.base.Objects.hashCode(plot.getArea(), plot.getId(), plot.getOwnerAbs());
+        }
     }
 
 }
