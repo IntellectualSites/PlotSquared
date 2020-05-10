@@ -43,8 +43,9 @@ public interface BackupManager {
     @NotNull BackupProfile getProfile(@NotNull final Plot plot);
 
     /**
-     * This will perform an automatic backup of the plot iff the plot has an owner
-     * and automatic backups are enabled. Otherwise it will complete immediately.
+     * This will perform an automatic backup of the plot iff the plot has an owner,
+     * automatic backups are enabled and the plot is not merged.
+     * Otherwise it will complete immediately.
      *
      * @param plot Plot to perform the automatic backup on
      * @return Future that completes when the backup is finished

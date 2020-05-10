@@ -56,7 +56,7 @@ import java.util.concurrent.CompletableFuture;
     }
 
     @Override @NotNull public BackupProfile getProfile(@NotNull final Plot plot) {
-        if (plot.hasOwner()) {
+        if (plot.hasOwner() && !plot.isMerged()) {
             return new PlayerBackupProfile(plot.getOwnerAbs(), plot, this);
         }
         return new NullBackupProfile();
