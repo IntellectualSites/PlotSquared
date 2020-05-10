@@ -1360,9 +1360,10 @@ public class Plot {
                 PlotListener.plotExit(pp, current);
             }
 
-            // Destroy all backups when the plot is unclaimed
-            Objects.requireNonNull(PlotSquared.imp()).getBackupManager()
-                .getProfile(current).destroy();
+            if (Settings.Backup.DELETE_ON_UNCLAIM) {
+                // Destroy all backups when the plot is unclaimed
+                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(current).destroy();
+            }
 
             getArea().removePlot(getId());
             DBFunc.delete(current);

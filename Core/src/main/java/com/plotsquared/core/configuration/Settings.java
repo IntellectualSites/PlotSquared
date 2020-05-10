@@ -420,6 +420,8 @@ public class Settings extends Config {
         public static boolean AUTOMATIC_BACKUPS = true;
         @Comment("Maximum amount of backups associated with a plot")
         public static int BACKUP_LIMIT = 3;
+        @Comment("Whether or not backups should be deleted when the plot is unclaimed")
+        public static boolean DELETE_ON_UNCLAIM = true;
     }
 
 }
