@@ -47,7 +47,7 @@ public class PluginCmd extends SubCommand {
             MainUtil.sendMessage(player,
                 "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92 $2& $1MattBDev $2& $1dordsor21 $2& $1NotMyFault $2& $1SirYwell");
             MainUtil.sendMessage(player,
-                "$2>> $1&lWiki$2: $1https://github.com/IntellectualSites/PlotSquared/wiki");
+                "$2>> $1&lWiki$2: $1https://wiki.intellectualsites.com/plotsquared/home");
             MainUtil
                 .sendMessage(player, "$2>> $1&lPremium$2: $1" + PremiumVerification.isPremium());
         });

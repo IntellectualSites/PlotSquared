@@ -95,10 +95,12 @@ public class Set extends SubCommand {
                             }
 
                             if (blockType.startsWith("##")) {
-                                final BlockCategory category = BlockCategory.REGISTRY.get(blockType.substring(2).toLowerCase(Locale.ROOT));
-                                if (category == null || !category.contains(BlockTypes.get(forbiddenType))) {
-                                    continue;
-                                }
+                                try {
+                                    final BlockCategory category = BlockCategory.REGISTRY.get(blockType.substring(2).toLowerCase(Locale.ENGLISH));
+                                    if (category == null || !category.contains(BlockTypes.get(forbiddenType))) {
+                                        continue;
+                                    }
+                                } catch (final Throwable ignored) {}
                             } else if (!blockType.contains(forbiddenType)) {
                                 continue;
                             }

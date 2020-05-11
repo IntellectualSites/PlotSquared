@@ -207,7 +207,7 @@ public class Settings extends Config {
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
 
-        @Comment("See: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-analysis")
+        @Comment("See: https://wiki.intellectualsites.com/en/plotsquared/optimization/plot-analysis")
         public static final class CALIBRATION {
             public int VARIETY = 0;
             public int VARIETY_SD = 0;
@@ -247,7 +247,93 @@ public class Settings extends Config {
         @Comment("Display scientific numbers (4.2E8)") public static boolean SCIENTIFIC = false;
         @Comment("Replace wall when merging") public static boolean MERGE_REPLACE_WALL = true;
         @Comment("Blocks that may not be used in plot components") public static List<String> INVALID_BLOCKS =
-            Arrays.asList("command_block", "chain_command_block", "repeating_command_block");
+            Arrays.asList(
+                // Acacia Stuff
+                "acacia_button", "acacia_fence_gate", "acacia_door", "acacia_pressure_plate", "acaia_trapdoor",
+                "acacia_sapling",
+                // Birch Stuff
+                "birch_button", "birch_fence_gate", "birch_door", "birch_pressure_plate", "birch_trapdoor",
+                "birch_sapling",
+                // Dark Oak Stuff
+                "dark_oak_button", "dark_oak_fence_gate", "dark_oak_door", "dark_oak_pressure_plate", "dark_oak_trapdoor",
+                "dark_oak_sapling",
+                // Jungle Stuff
+                "jungle_button", "jungle_fence_gate", "jungle_door", "jungle_pressure_plate", "jungle_trapdoor",
+                "jungle_sapling",
+                // Oak Stuff
+                "oak_button", "oak_fence_gate", "oak_door", "oak_pressure_plate", "oak_trapdoor",
+                "oak_sapling",
+                // Spruce Stuff
+                "spruce_button", "spruce_fence_gate", "spruce_door", "spruce_pressure_plate", "spruce_trapdoor",
+                "spruce_sapling",
+                // Rails
+                "activator_rail", "detector_rail", "rail",
+                // Flowers
+                "allium", "azure_bluet", "blue_orchid", "dandelion", "lilac",  "orange_tulip",
+                "oxeye_daisy", "peony", "pink_tulip", "poppy", "potted_allium", "potted_azure_bluet", "potted_birch_sapling", "potted_blue_orchid",
+                "potted_brown_mushroom", "potted_cactus", "potted_fern", "potted_jungle_sapling",
+                "potted_oak_sapling", "potted_orange_tulip", "potted_oxeye_daisy", "potted_pink_tulip",
+                "potted_red_mushroom", "potted_red_tulip", "red_mushroom", "red_tulip", "potted_spruce_sapling",
+                "potted_white_tulip", "rose_bush", "sunflower",  "white_tulip", "cornflower", "wither_rose",
+                // Stems
+                "attached_melon_stem", "attached_pumpkin_stem", "melon_stem", "pumpkin_stem",
+                "mushroom_stem",
+                // Plants
+                "beetroots", "brown_mushroom", "cactus", "carrots", "chorus_flower", "chorus_plant",
+                "cocoa", "dead_bush", "fern", "kelp_plant", "large_fern", "lily_pad", "potatoes",
+                "sea_pickle", "seagrass", "sugar_cane", "tall_grass", "tall_seagrass", "vine",
+                "wheat", "bamboo",
+                // Misc
+                "anvil", "barrier", "beacon", "brewing_stand", "bubble_column", "cake", "cobweb",
+                "comparator", "creeper_head", "creeper_wall_header", "damaged_anvil", "daylight_detector",
+                "dragon_egg", "dragon_head", "dragon_wall_head", "enchanting_table", "end_gateway",
+                "end_portal", "end_rod", "ender_chest", "chest", "flower_pot", "grass", "heavy_weighted_pressure_plate",
+                "lever", "light_weighted_pressure_plate", "player_head", "redstone_wire", "repeater", "comparator",
+                "redstone_torch", "torch", "redstone_wall_torch", "wall_torch", "sign", "skeleton_skull",
+                "skeleton_wall_skull", "snow", "stone_pressure_plate", "trapped_chest", "tripwire",
+                "tripwire_hook", "turtle_egg", "wall_sign", "zombie_head", "zombie_wall_head", "bell",
+                // Black Stuff
+                "black_bed", "black_banner", "black_carpet", "black_concrete_powder", "black_wall_banner",
+                // Blue Stuff
+                "blue_bed", "blue_banner", "blue_carpet", "blue_concrete_powder", "blue_wall_banner",
+                // Brown Stuff
+                "brown_bed", "brown_banner", "brown_carpet", "brown_concrete_powder", "brown_wall_banner",
+                // Cyan Stuff
+                "cyan_bed", "cyan_banner", "cyan_concrete_powder", "cyan_carpet", "cyan_wall_banner",
+                // Gray Stuff
+                "gray_bed", "gray_banner", "gray_concrete_powder", "gray_carpet", "gray_wall_banner",
+                // Green Stuff
+                "green_bed", "green_banner", "green_concrete_powder", "green_carpet", "green_wall_banner",
+                // Light blue Stuff
+                "light_blue_bed", "light_blue_banner", "light_blue_concrete_powder", "light_blue_carpet", "light_blue_wall_banner",
+                // Light Gray Stuff
+                "light_gray_bed", "light_gray_banner", "light_gray_concrete_powder", "light_gray_carpet", "light_gray_wall_banner",
+                // Lime Stuff
+                "lime_bed", "lime_banner", "lime_concrete_powder", "lime_carpet", "lime_wall_banner",
+                // Magenta Stuff
+                "magenta_bed", "magenta_banner", "magenta_concrete_powder", "magenta_carpet", "magenta_wall_banner",
+                // Orange Stuff
+                "orange_bed", "orange_banner", "orange_concrete_powder", "orange_carpet", "orange_wall_banner",
+                // Pink Stuff
+                "pink_bed", "pink_banner", "pink_concrete_powder", "pink_carpet", "pink_wall_banner",
+                // Purple Stuff
+                "purple_bed", "purple_banner", "purple_concrete_powder", "purple_carpet", "purple_wall_banner",
+                // Red Stuff
+                "red_bed", "red_banner", "red_concrete_powder", "red_carpet", "red_wall_banner",
+                // White Stuff
+                "white_bed", "white_banner", "white_concrete_powder", "white_carpet", "white_wall_banner",
+                // Yellow Stuff
+                "yellow_bed", "yellow_banner", "yellow_concrete_powder", "yellow_carpet", "yellow_wall_banner",
+                // Corals
+                "brain_coral", "brain_coral_fan", "brain_coral_wall_fan", "bubble_coral", "bubble_coral_block",
+                "bubble_coral_fan", "bubble_coral_wall_fan", "dead_brain_coral", "dead_brain_coral_block",
+                "dead_brain_coral_fan", "dead_brain_coral_wall_fan", "dead_bubble_coral", "dead_bubble_coral_fan",
+                "dead_bubble_coral_wall_fan", "dead_fire_coral", "dead_fire_coral_block", "dead_fire_coral_fan",
+                "dead_fire_coral_wall_fan", "dead_horn_coral", "dead_horn_coral_block", "dead_horn_coral_fan",
+                "dead_tube_coral", "dead_tube_coral_wall_fan", "dried_kelp_block", "horn_coral", "horn_coral_block",
+                "horn_coral_fan", "horn_coral_wall_fan", "tube_coral", "tube_coral_block", "tube_coral_fan",
+                "tube_coral_wall_fan"
+            );
     }
 
 
