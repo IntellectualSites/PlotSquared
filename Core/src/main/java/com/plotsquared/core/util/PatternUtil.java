@@ -43,6 +43,9 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PatternUtil {
 
     public static BaseBlock apply(@NotNull Pattern pattern, int x, int y, int z) {
@@ -57,6 +60,14 @@ public class PatternUtil {
 
     public static Pattern parse(PlotPlayer plotPlayer, String input) {
         return parse(plotPlayer, input, true);
+    }
+
+    public static List<String> getSuggestions(PlotPlayer plotPlayer, String input) {
+        try {
+            return WorldEdit.getInstance().getPatternFactory().getSuggestions(input);
+        } catch (final Exception ignored) {
+        }
+        return new ArrayList<>();
     }
 
     public static Pattern parse(PlotPlayer plotPlayer, String input, boolean allowLegacy) {

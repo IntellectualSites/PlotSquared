@@ -30,8 +30,13 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
+import com.sk89q.worldedit.command.util.SuggestionHelper;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
+
+import java.util.Collection;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "setbiome",
     permission = "plots.set.biome",
@@ -68,4 +73,13 @@ public class Biome extends SetCommand {
         });
         return true;
     }
+
+    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+        return SuggestionHelper.getNamespacedRegistrySuggestions(BiomeType.REGISTRY, args[0])
+            .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
+            .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+            .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {})
+            .collect(Collectors.toList());
+    }
+
 }

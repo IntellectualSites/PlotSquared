@@ -42,9 +42,12 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "set",
     description = "Set a plot value",
@@ -136,6 +139,16 @@ public class Set extends SubCommand {
                 }
                 return false;
             }
+
+            @Override
+            public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+                return PatternUtil.getSuggestions(player,  StringMan.join(args, ",").trim())
+                    .stream()
+                    .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
+                    .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                    .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {})
+                    .collect(Collectors.toList());
+            }
         };
     }
 
@@ -176,5 +189,39 @@ public class Set extends SubCommand {
             return this.component.onCommand(player, Arrays.copyOfRange(args, 0, args.length));
         }
         return noArgs(player);
+    }
+
+    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            return Stream
+                .of("biome", "alias", "home", "main", "floor", "air", "all", "border", "wall", "outline", "middle")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {})
+                .collect(Collectors.toList());
+        } else if (args.length > 1) {
+            // Additional checks
+            Plot plot = player.getCurrentPlot();
+            if (plot == null) {
+                return new ArrayList<>();
+            }
+
+            final String[] newArgs = new String[args.length - 1];
+            System.arraycopy(args, 1, newArgs, 0, newArgs.length);
+
+            final Command cmd = MainCommand.getInstance().getCommand("set" + args[0]);
+            if (cmd != null) {
+                if (!Permissions.hasPermission(player, cmd.getPermission(), true)) {
+                    return new ArrayList<>();
+                }
+                return cmd.tab(player, newArgs, space);
+            }
+
+            // components
+            HashSet<String> components = new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
+            if (components.contains(args[0].toLowerCase())) {
+                return this.component.tab(player, newArgs, space);
+            }
+        }
+        return tabOf(player, args, space);
     }
 }
