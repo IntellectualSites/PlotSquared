@@ -65,6 +65,7 @@ import com.plotsquared.core.plot.flag.implementations.InstabreakFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.flag.implementations.ItemDropFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
+import com.plotsquared.core.plot.flag.implementations.KeepInventoryFlag;
 import com.plotsquared.core.plot.flag.implementations.KelpGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscBreakFlag;
@@ -176,6 +177,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(ChatFlag.CHAT_FLAG_TRUE);
         this.addFlag(MiscPlaceFlag.MISC_PLACE_FALSE);
         this.addFlag(MiscInteractFlag.MISC_INTERACT_FALSE);
+        this.addFlag(KeepInventoryFlag.KEEP_INVENTORY_FALSE);
 
         // Enum Flags
         this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);

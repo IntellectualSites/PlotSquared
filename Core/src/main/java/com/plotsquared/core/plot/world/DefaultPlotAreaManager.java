@@ -63,7 +63,11 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
             case 0:
                 return null;
             case 1:
-                return this.plotAreas[0];
+                return this.plotAreas[0].getWorldHash() == location.getWorld().hashCode()
+                    && this.plotAreas[0].contains(location) && (!this.plotAreaHasCollision
+                    || location.getWorld().equals(this.plotAreas[0].getWorldName())) ?
+                    this.plotAreas[0] :
+                    null;
             case 2:
             case 3:
             case 4:
