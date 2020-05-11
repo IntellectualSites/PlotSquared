@@ -118,13 +118,13 @@ import java.util.concurrent.TimeUnit;
                 return false;
             }
             final PlotCacheKey that = (PlotCacheKey) o;
-            return com.google.common.base.Objects.equal(plot.getArea(), that.plot.getArea())
-                && com.google.common.base.Objects.equal(plot.getId(), that.plot.getId())
-                && com.google.common.base.Objects.equal(plot.getOwnerAbs(), that.plot.getOwnerAbs());
+            return Objects.equals(plot.getArea(), that.plot.getArea())
+                && Objects.equals(plot.getId(), that.plot.getId())
+                && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
         }
 
         @Override public int hashCode() {
-            return com.google.common.base.Objects.hashCode(plot.getArea(), plot.getId(), plot.getOwnerAbs());
+            return Objects.hash(plot.getArea(), plot.getId(), plot.getOwnerAbs());
         }
     }
 
