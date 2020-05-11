@@ -68,6 +68,7 @@ import com.plotsquared.core.plot.flag.implementations.IceMeltFlag;
 import com.plotsquared.core.plot.flag.implementations.InstabreakFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.flag.implementations.ItemDropFlag;
+import com.plotsquared.core.plot.flag.implementations.KeepInventoryFlag;
 import com.plotsquared.core.plot.flag.implementations.KelpGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscBreakFlag;
@@ -166,6 +167,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
@@ -2988,6 +2990,14 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (!plot.isAdded(uuid) && plot.getFlag(DropProtectionFlag.class)) {
                 event.setCancelled(true);
             }
+        }
+    }
+
+
+    @EventHandler public void onDeath(final PlayerDeathEvent event) {
+        final Plot plot = BukkitUtil.getPlayer(event.getEntity()).getCurrentPlot();
+        if (plot != null && plot.getFlag(KeepInventoryFlag.class)) {
+            event.setKeepInventory(true);
         }
     }
 
