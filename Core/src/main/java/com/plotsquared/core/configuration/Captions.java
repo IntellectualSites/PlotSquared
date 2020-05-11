@@ -186,7 +186,7 @@ public enum Captions implements Caption {
     PERMISSION_ADMIN_CHAT_BYPASS("plots.admin.chat.bypass", "static.permissions"),
     PERMISSION_BACKUP("plots.backup", "static.permissions"),
     PERMISSION_BACKUP_SAVE("plots.backup.save", "static.permissions"),
-    PERMISSION_BAKCUP_LIST("plots.backup.list", "static.permissions"),
+    PERMISSION_BACKUP_LIST("plots.backup.list", "static.permissions"),
     PERMISSION_BACKUP_LOAD("plots.backup.load", "static.permissions"),
     PERMISSION_ADMIN_BACKUP_OTHER("plots.admin.backup.other", "static.permissions"),
     //</editor-fold>
