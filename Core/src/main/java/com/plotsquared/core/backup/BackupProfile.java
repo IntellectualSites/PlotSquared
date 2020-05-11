@@ -64,7 +64,8 @@ public interface BackupProfile {
     /**
      * Restore a backup
      *
-     * @return Backup to restore
+     * @param backup Backup to restore
+     * @return Future that completes when the backup has finished
      */
     @NotNull CompletableFuture<Void> restoreBackup(@NotNull final Backup backup);
 
