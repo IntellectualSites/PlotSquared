@@ -207,7 +207,7 @@ public class Settings extends Config {
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
 
-        @Comment("See: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-analysis")
+        @Comment("See: https://wiki.intellectualsites.com/en/plotsquared/optimization/plot-analysis")
         public static final class CALIBRATION {
             public int VARIETY = 0;
             public int VARIETY_SD = 0;
