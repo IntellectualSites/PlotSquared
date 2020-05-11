@@ -29,6 +29,7 @@ import com.plotsquared.core.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -245,6 +246,8 @@ public class Settings extends Config {
     public static final class General {
         @Comment("Display scientific numbers (4.2E8)") public static boolean SCIENTIFIC = false;
         @Comment("Replace wall when merging") public static boolean MERGE_REPLACE_WALL = true;
+        @Comment("Blocks that may not be used in plot components") public static List<String> INVALID_BLOCKS =
+            Arrays.asList("command_block", "chain_command_block", "repeating_command_block");
     }
 
 

@@ -2993,7 +2993,6 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
     }
 
-
     @EventHandler public void onDeath(final PlayerDeathEvent event) {
         final Plot plot = BukkitUtil.getPlayer(event.getEntity()).getCurrentPlot();
         if (plot != null && plot.getFlag(KeepInventoryFlag.class)) {
