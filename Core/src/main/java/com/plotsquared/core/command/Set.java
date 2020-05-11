@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotManager;
@@ -36,10 +37,14 @@ import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.block.BlockCategory;
+import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 
 @CommandDeclaration(command = "set",
     description = "Set a plot value",
@@ -71,6 +76,34 @@ public class Set extends SubCommand {
                 String material =
                     StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
 
+                final List<String> forbiddenTypes = Settings.General.INVALID_BLOCKS;
+                if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_ALLOW_UNSAFE) &&
+                    !forbiddenTypes.isEmpty()) {
+                    for (String forbiddenType : forbiddenTypes) {
+                        forbiddenType = forbiddenType.toLowerCase(Locale.ENGLISH);
+                        if (forbiddenType.startsWith("minecraft:")) {
+                            forbiddenType = forbiddenType.substring(10);
+                        }
+                        for (String blockType : material.split(",")) {
+                            blockType = blockType.toLowerCase(Locale.ENGLISH);
+                            if (blockType.startsWith("minecraft:")) {
+                                blockType = blockType.substring(10);
+                            }
+
+                            if (blockType.startsWith("##")) {
+                                final BlockCategory category = BlockCategory.REGISTRY.get(blockType.substring(2).toLowerCase(Locale.ROOT));
+                                if (category == null || !category.contains(BlockTypes.get(forbiddenType))) {
+                                    continue;
+                                }
+                            } else if (!blockType.contains(forbiddenType)) {
+                                continue;
+                            }
+                            Captions.COMPONENT_ILLEGAL_BLOCK.send(player, forbiddenType);
+                            return true;
+                        }
+                    }
+                }
+
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
                         if (!Permissions.hasPermission(player, CaptionUtility
@@ -86,7 +119,8 @@ public class Set extends SubCommand {
                             return true;
                         }
 
-                        Pattern pattern = PatternUtil.parse(player, material);
+                        Pattern pattern = PatternUtil.parse(player, material, false);
+
                         if (plot.getRunning() > 0) {
                             MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
                             return false;

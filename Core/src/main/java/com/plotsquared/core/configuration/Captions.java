@@ -184,6 +184,7 @@ public enum Captions implements Caption {
     PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"),
     PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
     PERMISSION_ADMIN_CHAT_BYPASS("plots.admin.chat.bypass", "static.permissions"),
+    PERMISSION_ADMIN_ALLOW_UNSAFE("plots.admin.unsafe", "static.permissions"),
     //</editor-fold>
     //<editor-fold desc="Confirm">
     EXPIRED_CONFIRM("$2Confirmation has expired, please run the command again!", "Confirm"),
@@ -425,6 +426,7 @@ public enum Captions implements Caption {
     COMMAND_SYNTAX("$1Usage: $2%s", "CommandConfig"),
     //</editor-fold>
     //<editor-fold desc="Errors">
+    COMPONENT_ILLEGAL_BLOCK("$2You are not allowed to generate a component containg the block '%s'", "Invalid"),
     INVALID_PLAYER("$2Player not found: $1%s$2.", "Errors"),
     INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors"),
     INVALID_COMMAND_FLAG("$2Invalid command flag: %s0", "Errors"),
