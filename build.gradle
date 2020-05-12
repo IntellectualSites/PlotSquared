@@ -29,7 +29,7 @@ ext {
     git = Grgit.open(dir: new File(rootDir.toString() + "/.git"))
 }
 
-def ver = "5.10.6"
+def ver = "5.11.0"
 def versuffix = ""
 ext {
     if (project.hasProperty("versionsuffix")) {
