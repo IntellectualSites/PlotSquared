@@ -1,23 +1,24 @@
 # Translated by Bobbber#5545 and updated by Aurelien30000
-# Latest update 09/05/2020
+# Latest update 12/05/2020
 confirm:
   expired_confirm: $2La confirmation a expiré, veuillez réitérer votre commande !
-  failed_confirm: '$2Vous n''avez aucune action en attente de confirmation !'
+  failed_confirm: $2Vous n'avez aucune action en attente de confirmation !
   requires_confirm: '$2Êtes-vous sûr de vouloir exécuter $1%s$2?&-$2Cette action est
     irréversible ! Si c''est le cas, utilisez : $1/plot confirm'
 move:
   move_success: $4Parcelle déplacée avec succès.
-  move_merged: '$2Des parcelles fusionnées ne devraient pas être déplacées. Veuillez délier celles-ci
-    avant d''envisager un déplacement.'
+  move_merged: $2Des parcelles fusionnées ne devraient pas être déplacées. Veuillez
+    délier celles-ci avant d'envisager un déplacement.
   copy_success: $4Parcelle copiée avec succès.
-  requires_unowned: '$2L''emplacement spécifié est déjà occupé !'
+  requires_unowned: $2L'emplacement spécifié est déjà occupé !
 debug:
   requires_unmerged: $2Cette parcelle doit être déliée avant toute chose.
   debug_header: $1Informations de débogage&-
   debug_section: $2>> $1&l%val%
   debug_line: $2>> $1%var%$2:$1 %val%&-
 set:
-  set_attribute: $4Modification effectuée avec succès ! La valeur %s0 a été fixée à %s1.
+  set_attribute: $4Modification effectuée avec succès ! La valeur %s0 a été fixée
+    à %s1.
 web:
   generating_link: $1Parcelle en cours de traitement...
   generating_link_failed: $2Impossible de générer le lien de téléchargement !
@@ -29,13 +30,13 @@ web:
 compass:
   compass_target: $4Parcelle ciblée par votre boussole avec succès !
 cluster:
-  cluster_available_args: '$1Les sous-commandes suivantes sont disponibles : $4list$2, $4create$2,
-    $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2,
-    $4tp$2, $4sethome'
+  cluster_available_args: '$1Les sous-commandes suivantes sont disponibles : $4list$2,
+    $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2,
+    $4info$2, $4tp$2, $4sethome'
   cluster_list_heading: $2Il y a $1%s$2 groupe(s) dans ce monde.
   cluster_list_element: $2 - $1%s&-
-  cluster_intersection: '$2La zone proposée empiète sur %s0 !'
-  cluster_outside: '$2La zone proposée est en dehors de la zone de parcelles %s0 !'
+  cluster_intersection: $2La zone proposée empiète sur %s0 !
+  cluster_outside: $2La zone proposée est en dehors de la zone de parcelles %s0 !
   cluster_added: $4Groupe créé avec succès !
   cluster_deleted: $4Groupe supprimé avec succès !
   cluster_resized: $4Groupe redimensionné avec succès !
@@ -43,48 +44,53 @@ cluster:
   cannot_kick_player: $2Vous ne pouvez pas expulser ce joueur !
   cluster_invited: '$1Vous avez été invité(e) au groupe suivant : $2%s.'
   cluster_removed: '$1Vous avez été retiré(e) du groupe suivant : $2%s.'
-  cluster_kicked_user: '$4Joueur expulsé avec succès !'
+  cluster_kicked_user: $4Joueur expulsé avec succès !
   invalid_cluster: '$1Nom de groupe invalide : $2%s.'
-  cluster_not_added: '$2Ce joueur n''a pas été ajouté au groupe !'
-  cluster_cannot_leave: $1Vous devez supprimer ou transférer la propriété avant de quitter ce groupe !
-  cluster_added_helper: '$4Assistant ajouté au groupe avec succès.'
-  cluster_removed_helper: '$4Assistant retiré du groupe avec succès !'
+  cluster_not_added: $2Ce joueur n'a pas été ajouté au groupe !
+  cluster_cannot_leave: $1Vous devez supprimer ou transférer la propriété avant de
+    quitter ce groupe !
+  cluster_added_helper: $4Assistant ajouté au groupe avec succès.
+  cluster_removed_helper: $4Assistant retiré du groupe avec succès !
   cluster_regenerated: $4La régénération du groupe a démarré avec succès...
   cluster_teleporting: $4Téléportation en cours, veuillez patienter...
-  cluster_info: '$1Groupe actuel : $2%id%&-$1Nom : $2%name%&-$1Propriétaire : $2%owner%&-$1Taille :
-    $2%size%&-$1Autorisations : $2%rights%'
+  cluster_info: '$1Groupe actuel : $2%id%&-$1Nom : $2%name%&-$1Propriétaire : $2%owner%&-$1Taille
+    : $2%size%&-$1Autorisations : $2%rights%'
 border:
   border: $2Attention ! Vous êtes en dehors de la bordure de la carte actuelle.
 worldedit masks:
   worldedit_bypass: $2&oPour contourner vos restrictions, utilisez $4/plot wea
   worldedit_bypassed: $2Vous contournez actuellement les restrictions WorldEdit.
 gamemode:
-  gamemode_was_bypassed: $1Vous avez contourné le mode de jeu ($2{gamemode}$1) $1fixé au sein de la parcelle $2{plot}
+  gamemode_was_bypassed: $1Vous avez contourné le mode de jeu ($2{gamemode}$1) $1fixé
+    au sein de la parcelle $2{plot}
 height limit:
   height_limit: $1Cette zone de parcelles possède une limite de construction de $2{limit}
 records:
   notify_enter: $2%player $2est entré(e) dans votre parcelle ($1%plot$2)
   notify_leave: $2%player $2est sorti(e) de votre parcelle ($1%plot$2)
 swap:
-  swap_overlap: '$2La zone proposée n''est pas éligible à l''échange !'
+  swap_overlap: $2La zone proposée n'est pas éligible à l'échange !
   swap_success: $4Parcelles échangées avec succès !
-  swap_merged: '$2Des parcelles fusionnées ne devraient pas être échangées. Veuillez délier celles-ci
-    avant d''envisager un échange.'
+  swap_merged: $2Des parcelles fusionnées ne devraient pas être échangées. Veuillez
+    délier celles-ci avant d'envisager un échange.
 comment:
   inbox_notification: '%s message(s) non lu(s). Utilisez /plot inbox'
   not_valid_inbox_index: $2Aucun commentaire à l'index %s
   inbox_item: $2 - $4%s
   comment_syntax: $2Utilisez /plot comment [X;Z] <%s> <commentaire>
   invalid_inbox: '$2Boîte de réception invalide.&-$1Valeurs possibles : %s'
-  no_perm_inbox: '$2Vous n''avez pas la permission pour cette boîte de réception !'
-  no_perm_inbox_modify: '$2Vous n''avez pas la permission de modifier cette boîte de réception !'
-  no_plot_inbox: '$2Vous devez vous situer au sein d''une parcelle ou la spécifier en argument.'
+  no_perm_inbox: $2Vous n'avez pas la permission pour cette boîte de réception !
+  no_perm_inbox_modify: $2Vous n'avez pas la permission de modifier cette boîte de
+    réception !
+  no_plot_inbox: $2Vous devez vous situer au sein d'une parcelle ou la spécifier en
+    argument.
   comment_removed_success: $4Commentaire supprimé avec succès ! /s:n$2 - '$3%s$2'
   comment_removed_failure: $4Impossible de supprimer ce commentaire !
   comment_added: $4Un commentaire vous a été laissé.
   inbox_empty: $2Aucun commentaire.
 console:
-  not_console: $2Pour des raisons de sécurité, cette commande est uniquement utilisable depuis la console !
+  not_console: $2Pour des raisons de sécurité, cette commande est uniquement utilisable
+    depuis la console !
   is_console: $2Cette commande est uniquement utilisable par un joueur !
 clipboard:
   paste_failed: '$2Impossible de coller votre sélection ! Raison : $2%s'
@@ -92,92 +98,112 @@ toggle:
   toggle_enabled: '$2Paramètre activé : %s'
   toggle_disabled: '$2Paramètre désactivé : %s'
 blocked command:
-  command_blocked: '$2Cette commande n''est pas autorisée au sein de cette parcelle !'
+  command_blocked: $2Cette commande n'est pas autorisée au sein de cette parcelle
+    !
 done:
   done_already_done: $2Cette parcelle est déjà marquée comme terminée !
-  done_not_done: '$2Cette parcelle n''est pas marquée comme terminée !'
-  done_insufficient_complexity: '$2Cette parcelle est trop simpliste. Veuillez y ajouter plus de détails
-    avant d''utiliser cette commande ;)'
+  done_not_done: $2Cette parcelle n'est pas marquée comme terminée !
+  done_insufficient_complexity: $2Cette parcelle est trop simpliste. Veuillez y ajouter
+    plus de détails avant d'utiliser cette commande ;)
   done_success: $1Parcelle marquée comme terminée avec succès !
-  done_removed: '$1Cette parcelle n''est plus marquée comme terminée, vous pouvez maintenant continuer à y construire.'
+  done_removed: $1Cette parcelle n'est plus marquée comme terminée, vous pouvez maintenant
+    continuer à y construire.
 ratings:
   ratings_purged: $2Notes purgées pour cette parcelle.
   rating_not_valid: $2Veuillez spécifier un nombre entre 1 et 10 !
   rating_already_exists: $2Vous avez déjà noté la parcelle $2%s
   rating_applied: $4Vous avez noté la parcelle $2%s
-  rating_disliked: '$4Vous n''avez pas aimé la parcelle $2%s'
+  rating_disliked: $4Vous n'avez pas aimé la parcelle $2%s
   rating_liked: $4Vous avez aimé la parcelle $2%s
   rating_not_your_own: $2Vous ne pouvez pas noter votre propre parcelle !
-  rating_not_done: $2Vous pouvez uniquement noter les parcelles marquées comme terminées !
+  rating_not_done: $2Vous pouvez uniquement noter les parcelles marquées comme terminées
+    !
   rating_not_owned: $2Vous ne pouvez pas noter une parcelle libre !
 tutorial:
   rate_this: $2Merci de noter cette parcelle ^^
   comment_this: '$2Merci de laisser vos retours sur cette parcelle : %s'
 economy:
-  econ_disabled: '$2L''économie est désactivée !'
-  cannot_afford_plot: '$2Vous ne pouvez pas vous permettre d''acheter cette parcelle ! L''achat coûte $1%s'
-  not_for_sale: '$2Cette parcelle n''est pas à vendre !'
+  econ_disabled: $2L'économie est désactivée !
+  cannot_afford_plot: $2Vous ne pouvez pas vous permettre d'acheter cette parcelle
+    ! L'achat coûte $1%s
+  not_for_sale: $2Cette parcelle n'est pas à vendre !
   cannot_buy_own: $2Vous ne pouvez pas acheter votre propre parcelle !
   plot_sold: $4Votre parcelle $1%s0$4, a été vendue à $1%s1$4 pour $1$%s2
-  cannot_afford_merge: $2Vous ne pouvez pas vous permettre de fusionner ces parcelles ! Le fusion coûte $1%s
+  cannot_afford_merge: $2Vous ne pouvez pas vous permettre de fusionner ces parcelles
+    ! Le fusion coûte $1%s
   added_balance: $1%s $2ont été ajoutés à votre solde.
   removed_balance: $1%s $2ont été retirés de votre solde.
-  removed_granted_plot: $2Vous avez utilisé %s parcelle(s) accordée(s), il vous en reste $1%s
+  removed_granted_plot: $2Vous avez utilisé %s parcelle(s) accordée(s), il vous en
+    reste $1%s
 setup:
   setup_init: '$1Utilisation : $2/plot setup <valeur>'
   setup_step: '$3[$1Étape %s0$3] $1%s1 $2- $1Attendu : $2%s2 $1Par défaut : $2%s3'
-  setup_invalid_arg: '$2%s0 n''est pas un argument valide pour l''étape %s1. Pour annuler le setup,
-    utilisez : $1/plot setup cancel'
+  setup_invalid_arg: '$2%s0 n''est pas un argument valide pour l''étape %s1. Pour
+    annuler le setup, utilisez : $1/plot setup cancel'
   setup_valid_arg: $2Valeur $1%s0 $2fixée à %s1
-  setup_finished: '$4Vous devriez avoir été téléporté(e) sur le monde créé. Si ce n''est
+  setup_finished: $4Vous devriez avoir été téléporté(e) sur le monde créé. Si ce n'est
     pas le cas, vous allez devoir régler le générateur manuellement dans le fichier
-    `bukkit.yml` ou choisir un plugin de gestion de mondes.'
+    `bukkit.yml` ou choisir un plugin de gestion de mondes.
   setup_world_taken: $2%s est déjà un monde utilisé !
   setup_cancelled: $7Setup annulé !
   setup_world_name: $1Comment souhaiteriez-vous nommer ce monde ?
   setup_world_name_error: $7Vous devez spécifier un nom de monde !
   setup_world_name_taken: $7Ce nom de monde est déjà utilisé !
   setup_world_generator_error: $7Vous devez spécifier un nom générateur !
-  setup_world_type: '$1Quel type de monde souhaiteriez-vous ?&-$3 - $6normal$3 - $2Génération de parcelles standard&-$3 - $6augmented$3 - $2Génération de parcelles avec du terrain&-$3 - $6partial$3 - $2Génération Vanilla avec des groupes de parcelles'
+  setup_world_type: $1Quel type de monde souhaiteriez-vous ?&-$3 - $6normal$3 - $2Génération
+    de parcelles standard&-$3 - $6augmented$3 - $2Génération de parcelles avec du
+    terrain&-$3 - $6partial$3 - $2Génération Vanilla avec des groupes de parcelles
   setup_world_type_error: $7Vous devez spécifier un type de monde !
-  setup_wrong_generator: '$7Le générateur spécifié ne peut pas être identifié en tant que BukkitPlotGenerator.
-    $3 - $6Vous pourriez avoir besoin de configurer le plugin manuellement !'
-  setup_world_name_format: '$7Caractères non [a-z0-9_.-] détectés dans le nom du monde :$1'
-  setup_world_apply_plotsquared: '$7Le monde spécifié existe déjà. Après redémarrage, le nouveau terrain sera basé sur
-    $1PlotSquared. $7Cependant, vous devriez le remettre à zéro afin qu''il se régénère correctement et entièrement !'
-  setup_partial_area: '$1Quel terrain souhaiteriez-vous au sein des parcelles ?&-$3 - $6NONE$3 - $2Aucun terrain&-$3 - $6ORE$3 - $2Uniquement quelques arbres et filons de minerais&-$3 - $6ROAD$3 - $2Terrain séparé par des routes&-$3 - $6ALL$3 - $2Génération entièrement Vanilla'
+  setup_wrong_generator: $7Le générateur spécifié ne peut pas être identifié en tant
+    que BukkitPlotGenerator. $3 - $6Vous pourriez avoir besoin de configurer le plugin
+    manuellement !
+  setup_world_name_format: $7Caractères non [a-z0-9_.-] détectés dans le nom du monde
+    :$1
+  setup_world_apply_plotsquared: $7Le monde spécifié existe déjà. Après redémarrage,
+    le nouveau terrain sera basé sur $1PlotSquared. $7Cependant, vous devriez le remettre
+    à zéro afin qu'il se régénère correctement et entièrement !
+  setup_partial_area: $1Quel terrain souhaiteriez-vous au sein des parcelles ?&-$3
+    - $6NONE$3 - $2Aucun terrain&-$3 - $6ORE$3 - $2Uniquement quelques arbres et filons
+    de minerais&-$3 - $6ROAD$3 - $2Terrain séparé par des routes&-$3 - $6ALL$3 - $2Génération
+    entièrement Vanilla
   setup_partial_area_error: $7Vous devez spécifier un type de terrain !
   setup_area_name: $1Comment souhaiteriez-vous nommer cette zone de parcelles ?
-  setup_area_non_alphanumerical: '$7L''identifiant de cette zone de parcelles doit être alphanumérique !'
-  setup_area_invalid_id: '$7Vous devez spécifier un identifiant de zone de parcelles inutilisé !'
-  setup_area_min_plot_id: '$1Quel devrait être l''identifiant minimum pour les parcelles ?'
-  setup_area_min_plot_id_error: '$7Vous devez spécifier un identifiant minimum correct pour les parcelles !'
-  setup_area_max_plot_id: '$1Quel devrait être l''identifiant maximum pour les parcelles ?'
-  setup_area_max_plot_id_error: '$7Vous devez spécifier un identifiant maximum correct pour les parcelles !'
-  setup_area_plot_id_greater_than_minimum: '$7L''identifiant maximum pour les parcelleq doit être supérieur à l''identifiant minimum !'
+  setup_area_non_alphanumerical: $7L'identifiant de cette zone de parcelles doit être
+    alphanumérique !
+  setup_area_invalid_id: $7Vous devez spécifier un identifiant de zone de parcelles
+    inutilisé !
+  setup_area_min_plot_id: $1Quel devrait être l'identifiant minimum pour les parcelles
+    ?
+  setup_area_min_plot_id_error: $7Vous devez spécifier un identifiant minimum correct
+    pour les parcelles !
+  setup_area_max_plot_id: $1Quel devrait être l'identifiant maximum pour les parcelles
+    ?
+  setup_area_max_plot_id_error: $7Vous devez spécifier un identifiant maximum correct
+    pour les parcelles !
+  setup_area_plot_id_greater_than_minimum: $7L'identifiant maximum pour les parcelleq
+    doit être supérieur à l'identifiant minimum !
 schematics:
   schematic_too_large: $2Ce schéma est trop vaste pour cette être placé ici !
-  schematic_missing_arg: '$2Vous devez spécifier un argument manquant. Valeurs possibles : $1save$2,
-    $1paste $2, $1exportall$2, $1list'
+  schematic_missing_arg: '$2Vous devez spécifier un argument manquant. Valeurs possibles
+    : $1save$2, $1paste $2, $1exportall$2, $1list'
   schematic_invalid: '$2Schéma invalide. Raison : $2%s'
-  schematic_paste_merged: '$2Des schémas ne devraient pas être collés sur des parcelles fusionnées.
-    Veuillez délier celles-ci avant d''envisager de coller un schéma.'
+  schematic_paste_merged: $2Des schémas ne devraient pas être collés sur des parcelles
+    fusionnées. Veuillez délier celles-ci avant d'envisager de coller un schéma.
   schematic_paste_failed: $2Impossible de coller le schéma !
   schematic_paste_success: $4Schéma collé avec succès !
   schematic_list: '$4Schémas sauvegardés : $1%s'
-  schematic_road_created: '$1Nouveau schéma de route sauvegardé. Afin de le tester, volez jusqu''à
-    une parcelle voisine et utilisez /plot debugroadregen'
+  schematic_road_created: $1Nouveau schéma de route sauvegardé. Afin de le tester,
+    volez jusqu'à une parcelle voisine et utilisez /plot debugroadregen
   mca_file_size: '$1Information : Les fichiers `.mca` sont de taille 512x512.'
-  schematic_exportall_started: '$1Démarrage de l''exportation...'
-  schematic_exportall_world_args: $1Vous devez spécifier un monde. Utilisez $3/plot sch exportall <zone>
-  schematic_exportall_mass_started: $1L''exportation de masse des shémas a démarré. Cela devrait prendre un moment, veuillez patienter...
-  schematic_exportall_count: $3%s $1parcelle(s) trouvée(s).
+  schematic_exportall_started: $1Démarrage de l'exportation...
+  schematic_exportall_world_args: $1Vous devez spécifier un monde. Utilisez $3/plot
+    sch exportall <zone>
   schematic_exportall_finished: $1Exportation de masse terminée !
   schematic_exportall_single_finished: $1Exportation terminée !
 schematic:
   schematic_exportall_world: $1Monde invalide. Utilisez &3/plot sch exportall <zone>
 error:
-  task_in_process: '$1Cette tâche est déjà en cours d''exécution.'
+  task_in_process: $1Cette tâche est déjà en cours d'exécution.
 titles:
   title_entered_plot: '$1Parcelle : %world%;%x%;%z%'
   title_entered_plot_sub: $4Possédée par %s
@@ -195,29 +221,34 @@ desc:
 alias:
   alias_set_to: $2Alias de cette parcelle fixé à $1%alias%
   alias_removed: $2Alias de cette parcelle retiré.
-  alias_too_long: '$2L''alias doit être d''une longueur strictement inférieure à 50 caractères !'
+  alias_too_long: $2L'alias doit être d'une longueur strictement inférieure à 50 caractères
+    !
   alias_is_taken: $2Cet alias est déjà utilisé !
 position:
   position_set: $1Emplacement du home fixé à votre position actuelle.
   position_unset: $1Emplacement du home remis à sa position initiale.
   home_argument: $2Utilisez /plot set home [none]
 permission:
-  no_schematic_permission: '$2Vous n''avez pas la permission requise pour utiliser les schémas : $1%s'
+  no_schematic_permission: '$2Vous n''avez pas la permission requise pour utiliser
+    les schémas : $1%s'
   no_permission: '$2Il vous manque le nœud de permission : $1%s'
   no_permission_event: '$2Il vous manque le nœud de permission : $1%s'
-  no_plot_perms: '$2Vous devez être le propriétaire de cette parcelle afin d''effectuer cette action !'
+  no_plot_perms: $2Vous devez être le propriétaire de cette parcelle afin d'effectuer
+    cette action !
   cant_claim_more_plots: $2Vous ne pouvez pas protéger plus de parcelles !
   cant_claim_more_clusters: $2Vous ne pouvez pas protéger plus de groupes !
-  cant_transfer_more_plots: $2Vous ne pouvez pas transférer plus de parcelles à ce joueur !
-  cant_claim_more_plots_num: $2Vous ne pouvez pas protéger plus de $1%s $2parcelle(s) en même temps !
+  cant_transfer_more_plots: $2Vous ne pouvez pas transférer plus de parcelles à ce
+    joueur !
+  cant_claim_more_plots_num: $2Vous ne pouvez pas protéger plus de $1%s $2parcelle(s)
+    en même temps !
   merge_request_confirm: Requête de fusion par %s
 merge:
   merge_not_valid: $2Cette requête de fusion est actuellement invalide !
   merge_accepted: $2La requête de fusion a été acceptée !
   success_merge: $2Les parcelles ont été fusionnées !
   merge_requested: $2Requête de fusion envoyée avec succès !
-  no_available_automerge: '$2Vous ne possédez aucune parcelle adjacente dans cette direction
-    ou n''êtes pas autorisé(e) à fusionner jusqu''à la taille requise !'
+  no_available_automerge: $2Vous ne possédez aucune parcelle adjacente dans cette
+    direction ou n'êtes pas autorisé(e) à fusionner jusqu'à la taille requise !
   unlink_impossible: $2Vous pouvez uniquement délier une parcelle fusionnée.
   unmerge_cancelled: $1Déliage annulé.
   unlink_success: $2Parcelles déliées avec succès !
@@ -232,23 +263,25 @@ errors:
   invalid_player_offline: '$2Le joueur doit être en ligne : $1%s'
   invalid_command_flag: '$2Propriété / Argument de commande invalide : %s0'
   error: '$2Une erreur est survenue, nous en sommes navrés : %s'
-  command_went_wrong: '$2Quelque chose s''est mal passé lors de l''exécution de cette commande, nous en sommes navrés :/'
-  no_free_plots: '$2Aucune parcelle libre n''est disponible :/'
-  not_in_plot: '$2Vous n''êtes actuellement pas dans une parcelle.'
+  command_went_wrong: $2Quelque chose s'est mal passé lors de l'exécution de cette
+    commande, nous en sommes navrés :/
+  no_free_plots: $2Aucune parcelle libre n'est disponible :/
+  not_in_plot: $2Vous n'êtes actuellement pas dans une parcelle.
   not_in_cluster: $2Vous devez être dans un groupe pour effectuer cette action !
-  not_in_plot_world: '$2Vous n''êtes pas dans une zone de parcelles !'
+  not_in_plot_world: $2Vous n'êtes pas dans une zone de parcelles !
   plotworld_incompatible: $2Les deux mondes doivent être compatibles entre eux.
   not_valid_world: $2Monde invalide (sensible aux minuscules et majuscules) !
-  not_valid_plot_world: $2Zone de parcelles invalide (sensible aux minuscules et majuscules) !
+  not_valid_plot_world: $2Zone de parcelles invalide (sensible aux minuscules et majuscules)
+    !
   no_plots: $2Vous ne possédez aucune parcelle !
-  wait_for_timer: '$2Une tâche de blocs est liée à cette parcelle ou à vous-même.
-    Veuillez attendre qu''elle se termine !'
+  wait_for_timer: $2Une tâche de blocs est liée à cette parcelle ou à vous-même. Veuillez
+    attendre qu'elle se termine !
 paste:
   debug_report_created: '$1Envoi d''un débogage complet à l''adresse : $1%url%'
 purge:
   purge_success: $4%s parcelle(s) purgée(s) avec succès !
 trim:
-  trim_in_progress: 'Une tâche de taille du monde est déjà en cours d''exécution !'
+  trim_in_progress: Une tâche de taille du monde est déjà en cours d'exécution !
 block list:
   block_list_separator: '$1,$2 '
 biome:
@@ -258,9 +291,10 @@ teleport:
   teleported_to_plot: $1Vous avez été téléporté(e) !
   teleported_to_road: $2Vous avez été téléporté(e) sur la route !
   teleport_in_seconds: $1Téléportation dans %s seconde(s). Veuillez rester immobile...
-  teleport_failed: '$2Téléportation annulée en raison d''un mouvement ou d''un dégât.'
+  teleport_failed: $2Téléportation annulée en raison d'un mouvement ou d'un dégât.
 set block:
-  set_block_action_finished: $1La dernière tâche de blocs est maintenant terminée !
+  set_block_action_finished: $1La dernière tâche de blocs est maintenant terminée
+    !
 unsafe:
   debugallowunsafe_on: $2Actions dangereuses autorisées !
   debugallowunsafe_off: $2Actions dangereuses interdites !
@@ -273,6 +307,8 @@ invalid:
   number_not_in_range: '$2Nombre invalide dans la fourchette demandée : (%s, %s)'
   number_not_positive: 'Nombre invalide (non positif) : %s'
   not_a_number: '%s n''est pas un nombre valide !'
+  component_illegal_block: $2You are not allowed to generate a component containg
+    the block '%s'
 need:
   need_block: $2Vous devez spécifier un bloc !
 near:
@@ -284,13 +320,17 @@ info:
   unknown: Inconnu(e)
   server: Serveur
   everyone: Tout le monde
-  plot_unowned: '$2La parcelle doit avoir un propriétaire afin d''effectuer cette action !'
-  plot_info_unclaimed: '$2La parcelle $1%s$2 n''est pas encore protégée !'
+  plot_unowned: $2La parcelle doit avoir un propriétaire afin d'effectuer cette action
+    !
+  plot_info_unclaimed: $2La parcelle $1%s$2 n'est pas encore protégée !
   plot_info_header: $3&m---------&r $1INFORMATIONS $3&m---------
-  plot_info_hidden: $2Vous ne pouvez pas visualiser les informations de cette parcelle !
-  plot_info_format: '$1ID : $2%id%$1&-$1Zone : $2%area%$1&-$1Alias : $2%alias%$1&-$1Propriétaire : $2%owner%$1&-$1Biome :
-    $2%biome%$1&-$1Construction ? : $2%build%$1&-$1Notes : $2%rating%&-$1Dernière vue : $2%seen%&-$1De confiance : $2%trusted%$1&-$1Membres : $2%members%$1&-$1Interdits : $2%denied%$1&-$1Paramètres : $2%flags%&-$1Description :
-    $2%desc%$1'
+  plot_info_hidden: $2Vous ne pouvez pas visualiser les informations de cette parcelle
+    !
+  plot_info_format: '$1ID : $2%id%$1&-$1Zone : $2%area%$1&-$1Alias : $2%alias%$1&-$1Propriétaire
+    : $2%owner%$1&-$1Biome : $2%biome%$1&-$1Construction ? : $2%build%$1&-$1Notes
+    : $2%rating%&-$1Dernière vue : $2%seen%&-$1De confiance : $2%trusted%$1&-$1Membres
+    : $2%members%$1&-$1Interdits : $2%denied%$1&-$1Paramètres : $2%flags%&-$1Description
+    : $2%desc%$1'
   plot_info_footer: $3&m---------&r $1INFORMATIONS $3&m---------
   plot_info_trusted: '$1De confiance : $2%trusted%'
   plot_info_members: '$1Membres : $2%members%'
@@ -305,11 +345,12 @@ info:
   plot_info_size: '$1Taille : $2%size%'
   plot_info_seen: '$1Dernière vue : $2%seen%'
   plot_user_list: ' $1%user%$2,'
-  plot_flag_list: '$2%s0:%s1$3'
+  plot_flag_list: $2%s0:%s1$3
   plot_no_description: Aucune description.
   info_syntax_console: $2/plot info X;Z
   plot_caps_header: $3&m---------&r $1PLAFONDS $3&m---------
-  plot_caps_format: '$2- Type de plafond : $1%cap% $2| Statut : $1%current%$2/$1%limit% $2($1%percentage%%$2)'
+  plot_caps_format: '$2- Type de plafond : $1%cap% $2| Statut : $1%current%$2/$1%limit%
+    $2($1%percentage%%$2)'
 working:
   generating_component: $1La génération selon vos critères a démarré...
   clearing_done: $4Parcelle nettoyée en %sms.
@@ -318,10 +359,13 @@ working:
   plot_is_claimed: $2Cette parcelle est déjà protégée !
   claimed: $4Parcelle protégée avec succès !
 list:
-  comment_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% commentaire(s) :'
+  comment_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% commentaire(s)
+    :'
   clickable: ' (interactif)'
-  area_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% zone(s) de parcelles :'
-  plot_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% parcelle(s) :'
+  area_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% zone(s)
+    de parcelles :'
+  plot_list_header_paged: '$2(Page $1%cur$2/$1%max$2) $1Liste de %amount% parcelle(s)
+    :'
   plot_list_header: '$1Liste de %word% parcelle(s) :'
 chat:
   plot_chat_spy_format: '$2[$1Espionnage$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
@@ -329,8 +373,8 @@ chat:
   plot_chat_forced: $2Ce monde force tous les joueurs à utiliser le chat de parcelle.
 deny:
   denied_added: $4Joueur interdit au sein de cette parcelle avec succès !
-  you_got_denied: $4Vous avez été interdit(e) d''accès au sein de la parcelle sur laquelle vous vous situiez,
-    vous avez été téléporté(e) au spawn !
+  you_got_denied: $4Vous avez été interdit(e) d''accès au sein de la parcelle sur
+    laquelle vous vous situiez, vous avez été téléporté(e) au spawn !
   cant_remove_owner: $2Vous ne pouvez pas retirer le propriétaire de la parcelle !
 kick:
   you_got_kicked: $4Vous avez été expulsé(e) !
@@ -340,14 +384,14 @@ flag:
   not_valid_flag: $2Paramètre invalide !
   not_valid_flag_suggested: '$2Paramètre invalide. Vouliez-vous écrire : $1%s $2?'
   not_valid_value: $2Les valeurs des paramètres doivent être alphanumériques !
-  flag_not_removed: '$2Le paramètre n''a pas pu être retiré !'
-  flag_not_added: '$2Le paramètre n''a pas pu être ajouté !'
+  flag_not_removed: $2Le paramètre n'a pas pu être retiré !
+  flag_not_added: $2Le paramètre n'a pas pu être ajouté !
   flag_removed: $4Paramètre supprimé avec succès !
   flag_partially_removed: $4Valeurs des paramètres supprimées avec succès !
   flag_added: $4Paramètre ajouté avec succès !
-  flag_list_entry: '$2%s: $1%s'
   flag_list_see_info: Cliquez pour afficher des informations sur ce paramètre.
-  flag_parse_error: '$2Impossible d''interpréter le paramètre ''%flag_name%'' ayant pour valeur ''%flag_value%'' : %error%'
+  flag_parse_error: '$2Impossible d''interpréter le paramètre ''%flag_name%'' ayant
+    pour valeur ''%flag_value%'' : %error%'
   flag_info_header: $3&m---------&r $1Plot² Paramètres $3&m---------
   flag_info_footer: $3&m---------&r $1Plot² Paramètres $3&m---------
   flag_info_color_key: $1
@@ -374,130 +418,203 @@ flags:
   flag_category_boolean: Paramètres -> Booléens
   flag_category_fly: Paramètres -> Vol
   flag_category_mixed: Paramètres -> Valeurs mixtes
-  flag_description_entity_cap: 'Fixez ce paramètre à un nombre entier afin de limiter le nombre d''entités
-    au sein de la parcelle.'
-  flag_description_explosion: Fixez ce paramètre à `true` pour autoriser les explosions au sein de la parcelle,
-    et à `false` pour les interdire.
-  flag_description_music: 'Fixez ce paramètre à l''identifiant d''un disque de musique (son nom) afin de le jouer
-    au sein de la parcelle.'
-  flag_description_flight: Fixez ce paramètre à `true` pour autoriser le vol au sein de la parcelle, pour
-    tous les modes de jeu, à `default` pour l''autorisation en fonction du mode de jeu, et à `false`
-    pour le désactiver entièrement.
-  flag_description_untrusted: 'Fixez ce paramètre à `false` afin d''interdire l''accès à la parcelle pour les joueurs
-    qui ne sont pas de confiance.'
-  flag_description_deny_exit: 'Fixez ce paramètre à `true` afin d''empêcher les joueurs de sortir de la parcelle.'
-  flag_description_chat: 'Fixez ce paramètre à `false` afin d''empêcher le chat de parcelle au sein de celle-ci.'
-  flag_description_description: Description de la parcelle. Supporte les codes couleurs en '&'.
-  flag_description_greeting: Message envoyé aux joueurs lorsqu''ils entrent dans la parcelle. Supporte les codes couleurs en '&'.
-  flag_description_farewell: Message envoyé aux joueurs lorsqu''ils sortent de la parcelle. Supporte les codes couleurs en '&'.
-  flag_description_weather: Spécifie les conditions météorologiques au sein de la parcelle.
-  flag_description_animal_attack: 'Fixez ce paramètre à `true` afin d''autoriser les dégâts aux animaux au sein de la parcelle.'
-  flag_description_animal_cap: 'Fixez ce paramètre à un nombre entier afin de limiter le nombre d''animaux
-    au sein de la parcelle.'
-  flag_description_animal_interact: 'Fixez ce paramètre à `true` afin d''autoriser l''interaction avec les animaux au sein de la parcelle.'
-  flag_description_block_burn: 'Fixez ce paramètre à `true` afin d''autoriser les blocs à brûler au sein de la parcelle.'
-  flag_description_block_ignition: 'Fixez ce paramètre à `false` afin d''empêcher les blocs s''enflammer au sein de la parcelle.'
-  flag_description_break: Définit une liste de matériaux que les visiteurs devraient être en mesure de casser au sein de la parcelle.
-  flag_description_device_interact: 'Fixez ce paramètre à `true` afin d''autoriser l''interaction avec les objets au sein de la parcelle.'
-  flag_description_disable_physics: 'Fixez ce paramètre à `true` afin d''empêcher l''application de la physique au sein de la parcelle.'
-  flag_description_drop_protection: 'Fixez ce paramètre à `true` afin d''empêcher les visiteurs de récupérer des articles
-    au sol au sein de la parcelle.'
-  flag_description_feed: Indique un intervalle (en s) et une quantité (optionnelle, 1 par défaut) selon lesquels les joueurs seront nourris.
-  flag_description_forcefield: 'Fixez ce paramètre à `true` afin de mettre en place un champ de force entre les joueurs au sein de la parcelle.'
-  flag_description_grass_grow: 'Fixez ce paramètre à `false` afin d''empêcher la propagation de l''herbe au sein de la parcelle.'
-  flag_description_hanging_break: 'Fixez ce paramètre à `true` afin d''empêcher les visiteurs de casser des objets suspendus au sein de la parcelle.'
-  flag_description_hanging_place: 'Fixez ce paramètre à `true` afin d''empêcher les visiteurs d''accrocher des objets suspendus au sein de la parcelle.'
-  flag_description_heal: Indique un intervalle (en s) et une quantité (optionnelle, 1 par défaut) selon lesquels les joueurs seront soignés.
-  flag_description_hide_info: 'Fixez ce paramètre à `true` afin de masquer les informations de la parcelle.'
-  flag_description_hostile_attack: 'Fixez ce paramètre à `true` afin d''autoriser les dégâts aux monstres au sein de la parcelle.'
-  flag_description_hostile_cap: 'Fixez ce paramètre à un nombre entier afin de limiter le nombre de monstres
-    au sein de la parcelle.'
-  flag_description_hostile_interact: 'Fixez ce paramètre à `true` afin d''autoriser l''interaction avec les monstres au sein de la parcelle.'
-  flag_description_ice_form: 'Fixez ce paramètre à `true` afin d''autoriser la formation de glace au sein de la parcelle.'
-  flag_description_ice_melt: 'Fixez ce paramètre à `false` afin d''empêcher la fonte de la glace au sein de la parcelle.'
-  flag_description_instabreak: 'Fixez ce paramètre à `true` afin que les blocs se cassent instantanément en survie au sein de la parcelle.'
-  flag_description_invincible: 'Fixez ce paramètre à `true` afin d''empêcher les dégâts aux joueurs au sein de la parcelle.'
-  flag_description_item_drop: 'Fixez ce paramètre à `false` afin d''empêcher que les cadres soient vidés au sein de la parcelle.'
-  flag_description_kelp_grow: 'Fixez ce paramètre à `false` afin d''empêcher la croissance des algues au sein de la parcelle.'
-  flag_description_liquid_flow: 'Fixez ce paramètre à `false` afin d''empêcher l''écoulement des liquides au sein de la parcelle.'
-  flag_description_misc_break: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à casser des objets divers au sein de la parcelle.'
-  flag_description_misc_cap: 'Fixez ce paramètre à un nombre entier afin de limiter le nombre d''entités diverses
-    au sein de la parcelle.'
-  flag_description_misc_interact: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à interagir avec des objets divers au sein de la parcelle.'
-  flag_description_misc_place: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à placer des objets divers au sein de la parcelle.'
-  flag_description_mob_break: 'Fixez ce paramètre à `true` afin d''autoriser les mobs à casser des blocs au sein de la parcelle.'
-  flag_description_mob_cap: 'Fixez ce paramètre à un nombre entier afin de limiter le nombre de mobs
-    au sein de la parcelle.'
-  flag_description_mob_place: 'Fixez ce paramètre à `true` afin d''autoriser les mobs à poser des blocs au sein de la parcelle.'
-  flag_description_mycel_grow: 'Fixez ce paramètre à `false` afin d''empêcher la propagation du mycélium au sein de la parcelle.'
-  flag_description_notify_enter: 'Fixez ce paramètre à `true` afin de notifier les propriétaires lorsqu''un joueur entre dans la parcelle.'
-  flag_description_notify_leave: 'Fixez ce paramètre à `true` afin de notifier les propriétaires lorsqu''un joueur sort de la parcelle.'
-  flag_description_no_worldedit: 'Fixez ce paramètre à `true` afin d''empêcher l''utilisation de WorldEdit au sein de la parcelle.'
-  flag_description_place: Définit une liste de matériaux que les visiteurs devraient être en mesure de poser au sein de la parcelle.
-  flag_description_player_interact: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à interagir avec les joueurs au sein de la parcelle.'
-  flag_description_price: Fixe un prix à la parcelle. Celui-ci doit être un nombre positif !
-  flag_description_pve: 'Fixez ce paramètre à `true` afin d''autoriser le PvE au sein de la parcelle.'
-  flag_description_pvp: 'Fixez ce paramètre à `true` afin d''autoriser le PvP au sein de la parcelle.'
-  flag_description_redstone: 'Fixez ce paramètre à `false` afin de désactiver la redstone au sein de la parcelle.'
-  flag_description_server_plot: 'Fixez ce paramètre à `true` afin que le propriétaire de la parcelle soit le serveur.'
-  flag_description_snow_form: 'Fixez ce paramètre à `true` afin d''autoriser la formation de neige au sein de la parcelle.'
-  flag_description_snow_melt: 'Fixez ce paramètre à `true` afin d''autoriser la fonte de la neige au sein de la parcelle.'
-  flag_description_soil_dry: 'Fixez ce paramètre à `true` afin d''autoriser le séchage du sol au sein de la parcelle.'
-  flag_description_coral_dry: 'Fixez ce paramètre à `true` afin d''autoriser le séchage des coraux au sein de la parcelle.'
-  flag_description_tamed_attack: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à attaquer les animaux apprivoisés au sein de la parcelle.'
-  flag_description_tamed_interact: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à interagir avec les animaux apprivoisés au sein de la parcelle.'
-  flag_description_time: 'Définit l''heure à une valeur fixe au sein de la parcelle.'
-  flag_description_titles: 'Fixez ce paramètre à `false` afin d''empêcher les titres des parcelles d''apparaître. Valeurs possibles :
-    `none` (pour suivre la valeur par défaut), `true`, ou `false`'
-  flag_description_use: Définit une liste de matériaux avec lesquels les visiteurs devraient être en mesure d''interagir au sein de la parcelle.
-  flag_description_vehicle_break: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à casser des véhicules au sein de la parcelle.'
-  flag_description_vehicle_cap: 'Fixez ce paramètre à un nombre entier afin de limiter le nombre de véhicules
-    au sein de la parcelle.'
-  flag_description_vehicle_place: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à placer des véhicules au sein de la parcelle.'
-  flag_description_vehicle_use: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à utiliser des véhicules au sein de la parcelle.'
-  flag_description_villager_interact: 'Fixez ce paramètre à `true` afin d''autoriser les visiteurs à interagir avec des villageois au sein de la parcelle.'
-  flag_description_vine_grow: 'Fixez ce paramètre à `false` afin d''empêcher la croissance des lianes au sein de la parcelle.'
-  flag_description_deny_teleport: 'Interdit à un certain groupe de se téléporter à la parcelle.
-    Groupes disponibles : members, nonmembers, trusted, nontrusted, nonowners'
+  flag_description_entity_cap: Fixez ce paramètre à un nombre entier afin de limiter
+    le nombre d'entités au sein de la parcelle.
+  flag_description_explosion: Fixez ce paramètre à `true` pour autoriser les explosions
+    au sein de la parcelle, et à `false` pour les interdire.
+  flag_description_music: Fixez ce paramètre à l'identifiant d'un disque de musique
+    (son nom) afin de le jouer au sein de la parcelle.
+  flag_description_flight: Fixez ce paramètre à `true` pour autoriser le vol au sein
+    de la parcelle, pour tous les modes de jeu, à `default` pour l''autorisation en
+    fonction du mode de jeu, et à `false` pour le désactiver entièrement.
+  flag_description_untrusted: Fixez ce paramètre à `false` afin d'interdire l'accès
+    à la parcelle pour les joueurs qui ne sont pas de confiance.
+  flag_description_deny_exit: Fixez ce paramètre à `true` afin d'empêcher les joueurs
+    de sortir de la parcelle.
+  flag_description_chat: Fixez ce paramètre à `false` afin d'empêcher le chat de parcelle
+    au sein de celle-ci.
+  flag_description_description: Description de la parcelle. Supporte les codes couleurs
+    en '&'.
+  flag_description_greeting: Message envoyé aux joueurs lorsqu''ils entrent dans la
+    parcelle. Supporte les codes couleurs en '&'.
+  flag_description_farewell: Message envoyé aux joueurs lorsqu''ils sortent de la
+    parcelle. Supporte les codes couleurs en '&'.
+  flag_description_weather: Spécifie les conditions météorologiques au sein de la
+    parcelle.
+  flag_description_animal_attack: Fixez ce paramètre à `true` afin d'autoriser les
+    dégâts aux animaux au sein de la parcelle.
+  flag_description_animal_cap: Fixez ce paramètre à un nombre entier afin de limiter
+    le nombre d'animaux au sein de la parcelle.
+  flag_description_animal_interact: Fixez ce paramètre à `true` afin d'autoriser l'interaction
+    avec les animaux au sein de la parcelle.
+  flag_description_block_burn: Fixez ce paramètre à `true` afin d'autoriser les blocs
+    à brûler au sein de la parcelle.
+  flag_description_block_ignition: Fixez ce paramètre à `false` afin d'empêcher les
+    blocs s'enflammer au sein de la parcelle.
+  flag_description_break: Définit une liste de matériaux que les visiteurs devraient
+    être en mesure de casser au sein de la parcelle.
+  flag_description_device_interact: Fixez ce paramètre à `true` afin d'autoriser l'interaction
+    avec les objets au sein de la parcelle.
+  flag_description_disable_physics: Fixez ce paramètre à `true` afin d'empêcher l'application
+    de la physique au sein de la parcelle.
+  flag_description_drop_protection: Fixez ce paramètre à `true` afin d'empêcher les
+    visiteurs de récupérer des articles au sol au sein de la parcelle.
+  flag_description_feed: Indique un intervalle (en s) et une quantité (optionnelle,
+    1 par défaut) selon lesquels les joueurs seront nourris.
+  flag_description_forcefield: Fixez ce paramètre à `true` afin de mettre en place
+    un champ de force entre les joueurs au sein de la parcelle.
+  flag_description_grass_grow: Fixez ce paramètre à `false` afin d'empêcher la propagation
+    de l'herbe au sein de la parcelle.
+  flag_description_hanging_break: Fixez ce paramètre à `true` afin d'empêcher les
+    visiteurs de casser des objets suspendus au sein de la parcelle.
+  flag_description_hanging_place: Fixez ce paramètre à `true` afin d'empêcher les
+    visiteurs d'accrocher des objets suspendus au sein de la parcelle.
+  flag_description_heal: Indique un intervalle (en s) et une quantité (optionnelle,
+    1 par défaut) selon lesquels les joueurs seront soignés.
+  flag_description_hide_info: Fixez ce paramètre à `true` afin de masquer les informations
+    de la parcelle.
+  flag_description_hostile_attack: Fixez ce paramètre à `true` afin d'autoriser les
+    dégâts aux monstres au sein de la parcelle.
+  flag_description_hostile_cap: Fixez ce paramètre à un nombre entier afin de limiter
+    le nombre de monstres au sein de la parcelle.
+  flag_description_hostile_interact: Fixez ce paramètre à `true` afin d'autoriser
+    l'interaction avec les monstres au sein de la parcelle.
+  flag_description_ice_form: Fixez ce paramètre à `true` afin d'autoriser la formation
+    de glace au sein de la parcelle.
+  flag_description_ice_melt: Fixez ce paramètre à `false` afin d'empêcher la fonte
+    de la glace au sein de la parcelle.
+  flag_description_instabreak: Fixez ce paramètre à `true` afin que les blocs se cassent
+    instantanément en survie au sein de la parcelle.
+  flag_description_invincible: Fixez ce paramètre à `true` afin d'empêcher les dégâts
+    aux joueurs au sein de la parcelle.
+  flag_description_item_drop: Fixez ce paramètre à `false` afin d'empêcher que les
+    cadres soient vidés au sein de la parcelle.
+  flag_description_kelp_grow: Fixez ce paramètre à `false` afin d'empêcher la croissance
+    des algues au sein de la parcelle.
+  flag_description_liquid_flow: Fixez ce paramètre à `false` afin d'empêcher l'écoulement
+    des liquides au sein de la parcelle.
+  flag_description_misc_break: Fixez ce paramètre à `true` afin d'autoriser les visiteurs
+    à casser des objets divers au sein de la parcelle.
+  flag_description_misc_cap: Fixez ce paramètre à un nombre entier afin de limiter
+    le nombre d'entités diverses au sein de la parcelle.
+  flag_description_misc_interact: Fixez ce paramètre à `true` afin d'autoriser les
+    visiteurs à interagir avec des objets divers au sein de la parcelle.
+  flag_description_misc_place: Fixez ce paramètre à `true` afin d'autoriser les visiteurs
+    à placer des objets divers au sein de la parcelle.
+  flag_description_mob_break: Fixez ce paramètre à `true` afin d'autoriser les mobs
+    à casser des blocs au sein de la parcelle.
+  flag_description_mob_cap: Fixez ce paramètre à un nombre entier afin de limiter
+    le nombre de mobs au sein de la parcelle.
+  flag_description_mob_place: Fixez ce paramètre à `true` afin d'autoriser les mobs
+    à poser des blocs au sein de la parcelle.
+  flag_description_mycel_grow: Fixez ce paramètre à `false` afin d'empêcher la propagation
+    du mycélium au sein de la parcelle.
+  flag_description_notify_enter: Fixez ce paramètre à `true` afin de notifier les
+    propriétaires lorsqu'un joueur entre dans la parcelle.
+  flag_description_notify_leave: Fixez ce paramètre à `true` afin de notifier les
+    propriétaires lorsqu'un joueur sort de la parcelle.
+  flag_description_no_worldedit: Fixez ce paramètre à `true` afin d'empêcher l'utilisation
+    de WorldEdit au sein de la parcelle.
+  flag_description_place: Définit une liste de matériaux que les visiteurs devraient
+    être en mesure de poser au sein de la parcelle.
+  flag_description_player_interact: Fixez ce paramètre à `true` afin d'autoriser les
+    visiteurs à interagir avec les joueurs au sein de la parcelle.
+  flag_description_price: Fixe un prix à la parcelle. Celui-ci doit être un nombre
+    positif !
+  flag_description_pve: Fixez ce paramètre à `true` afin d'autoriser le PvE au sein
+    de la parcelle.
+  flag_description_pvp: Fixez ce paramètre à `true` afin d'autoriser le PvP au sein
+    de la parcelle.
+  flag_description_redstone: Fixez ce paramètre à `false` afin de désactiver la redstone
+    au sein de la parcelle.
+  flag_description_server_plot: Fixez ce paramètre à `true` afin que le propriétaire
+    de la parcelle soit le serveur.
+  flag_description_snow_form: Fixez ce paramètre à `true` afin d'autoriser la formation
+    de neige au sein de la parcelle.
+  flag_description_snow_melt: Fixez ce paramètre à `true` afin d'autoriser la fonte
+    de la neige au sein de la parcelle.
+  flag_description_soil_dry: Fixez ce paramètre à `true` afin d'autoriser le séchage
+    du sol au sein de la parcelle.
+  flag_description_coral_dry: Fixez ce paramètre à `true` afin d'autoriser le séchage
+    des coraux au sein de la parcelle.
+  flag_description_tamed_attack: Fixez ce paramètre à `true` afin d'autoriser les
+    visiteurs à attaquer les animaux apprivoisés au sein de la parcelle.
+  flag_description_tamed_interact: Fixez ce paramètre à `true` afin d'autoriser les
+    visiteurs à interagir avec les animaux apprivoisés au sein de la parcelle.
+  flag_description_time: Définit l'heure à une valeur fixe au sein de la parcelle.
+  flag_description_titles: 'Fixez ce paramètre à `false` afin d''empêcher les titres
+    des parcelles d''apparaître. Valeurs possibles : `none` (pour suivre la valeur
+    par défaut), `true`, ou `false`'
+  flag_description_use: Définit une liste de matériaux avec lesquels les visiteurs
+    devraient être en mesure d''interagir au sein de la parcelle.
+  flag_description_vehicle_break: Fixez ce paramètre à `true` afin d'autoriser les
+    visiteurs à casser des véhicules au sein de la parcelle.
+  flag_description_vehicle_cap: Fixez ce paramètre à un nombre entier afin de limiter
+    le nombre de véhicules au sein de la parcelle.
+  flag_description_vehicle_place: Fixez ce paramètre à `true` afin d'autoriser les
+    visiteurs à placer des véhicules au sein de la parcelle.
+  flag_description_vehicle_use: Fixez ce paramètre à `true` afin d'autoriser les visiteurs
+    à utiliser des véhicules au sein de la parcelle.
+  flag_description_villager_interact: Fixez ce paramètre à `true` afin d'autoriser
+    les visiteurs à interagir avec des villageois au sein de la parcelle.
+  flag_description_vine_grow: Fixez ce paramètre à `false` afin d'empêcher la croissance
+    des lianes au sein de la parcelle.
+  flag_description_deny_teleport: 'Interdit à un certain groupe de se téléporter à
+    la parcelle. Groupes disponibles : members, nonmembers, trusted, nontrusted, nonowners'
   flag_description_gamemode: Détermine le mode de jeu au sein de la parcelle.
-  flag_description_guest_gamemode: Détermine le mode de jeu des visiteurs au sein de la parcelle.
+  flag_description_guest_gamemode: Détermine le mode de jeu des visiteurs au sein
+    de la parcelle.
   flag_description_blocked_cmds: Une liste de commandes bloquées au sein de la parcelle.
-  flag_description_keep: 'Empêche la parcelle d''expirer. Valeurs possibles : true, false,
-    le nombre de millisecondes à conserver la parcelle, ou un horodatage (3w 2d 5h).'
+  flag_description_keep: 'Empêche la parcelle d''expirer. Valeurs possibles : true,
+    false, le nombre de millisecondes à conserver la parcelle, ou un horodatage (3w
+    2d 5h).'
+  flag_description_keep_inventory: Empêche les joueurs de perdre leur inventaire lors
+    d'une mort au sein de la parcelle.
   flag_error_boolean: La valeur de ce paramètre doit être un booléen (true|false)
   flag_error_enum: 'Doit être une de ces valeurs : %s'
-  flag_error_gamemode: 'La valeur de ce paramètre doit être un mode jeu : ''survival'', ''creative'',
-    ''adventure'' ou ''spectator.'
+  flag_error_gamemode: 'La valeur de ce paramètre doit être un mode jeu : ''survival'',
+    ''creative'', ''adventure'' ou ''spectator.'
   flag_error_integer: La valeur de ce paramètre doit être un nombre entier.
-  flag_error_integer_list: La valeur de ce paramètre doit être une liste de nombres entiers.
-  flag_error_interval: Les valeurs doivent être numériques. /plot set flag <paramètre> <intervalle>
-    [quantité]
+  flag_error_integer_list: La valeur de ce paramètre doit être une liste de nombres
+    entiers.
+  flag_error_interval: Les valeurs doivent être numériques. /plot set flag <paramètre>
+    <intervalle> [quantité]
   flag_error_keep: La valeur de ce paramètre doit être un horodatage ou un booléen.
-  flag_error_long: La valeur de ce paramètre doit être un nombre entier (longs nombres autorisés).
+  flag_error_long: La valeur de ce paramètre doit être un nombre entier (longs nombres
+    autorisés).
   flag_error_plotblocklist: La valeur de ce paramètre doit être une liste des blocs.
-  flag_error_invalid_block: 'La valeur fournie n''est ni un bloc valide ni une catégorie de blocs valide.'
+  flag_error_invalid_block: La valeur fournie n'est ni un bloc valide ni une catégorie
+    de blocs valide.
   flag_error_double: La valeur de ce paramètre doit être un nombre décimal.
-  flag_error_string: La valeur de ce paramètre doit être alphanumérique. La plupart des caractères spéciaux sont supportés.
-  flag_error_stringlist: La valeur de ce paramètre doit être une liste de chaînes de caractères.
-  flag_error_weather: 'La valeur de ce paramètre doit être une météo : ''rain'' ou ''sun'''
-  flag_error_music: La valeur de ce paramètre doit être un identifiant de disque de musique valide.
+  flag_error_string: La valeur de ce paramètre doit être alphanumérique. La plupart
+    des caractères spéciaux sont supportés.
+  flag_error_stringlist: La valeur de ce paramètre doit être une liste de chaînes
+    de caractères.
+  flag_error_weather: 'La valeur de ce paramètre doit être une météo : ''rain'' ou
+    ''sun'''
+  flag_error_music: La valeur de ce paramètre doit être un identifiant de disque de
+    musique valide.
 trusted:
-  trusted_added: $4Vous faites maintenant confiance à ce joueur au sein de cette parcelle !
-  plot_removed_user: '$1La parcelle %s, dont vous étiez un joueur de confiance, a été supprimée en
-    raison de l''inactivité du propriétaire.'
+  trusted_added: $4Vous faites maintenant confiance à ce joueur au sein de cette parcelle
+    !
+  plot_removed_user: $1La parcelle %s, dont vous étiez un joueur de confiance, a été
+    supprimée en raison de l'inactivité du propriétaire.
 member:
   removed_players: $2%s joueurs ont été retirés de cette parcelle.
   plot_left: $2%s a quitté cette parcelle.
   already_owner: '$2Ce joueur est déjà le propriétaire de cette parcelle : %s0'
   already_added: '$2Ce joueur est déjà ajouté à cette catégorie : %s0'
-  member_added: $4Ce joueur peut maintenant construire au sein de cette parcelle tant que le propriétaire est en ligne.
-  plot_max_members: $2Vous n''êtes pas autorisé(e) à définir plus de membres à cette percelle.
-  not_added_trusted: $2Vous devez être membre ou de confiance afin d''utiliser cette commande au sein de cette parcelle.
+  member_added: $4Ce joueur peut maintenant construire au sein de cette parcelle tant
+    que le propriétaire est en ligne.
+  plot_max_members: $2Vous n''êtes pas autorisé(e) à définir plus de membres à cette
+    percelle.
+  not_added_trusted: $2Vous devez être membre ou de confiance afin d''utiliser cette
+    commande au sein de cette parcelle.
 owner:
   set_owner: $4Propriétaire de la parcelle changé avec succès !
   set_owner_cancelled: $2Le changement de propriétaire a été annulé !
-  set_owner_missing_player: '$1Vous devez spécifier un nouveau propriétaire. Utilisation correcte :
-    $2/plot setowner <propriétaire>'
+  set_owner_missing_player: '$1Vous devez spécifier un nouveau propriétaire. Utilisation
+    correcte : $2/plot setowner <propriétaire>'
   now_owner: $4Vous êtes maintenant le propriétaire de la parcelle %s
 signs:
   owner_sign_line_1: '$1ID :  $1%id%'
@@ -512,8 +629,6 @@ help:
   help_item: $1%usage% [%alias%]&- $3- $2%desc%&-
   help_display_all_commands: Affiche toutes les commandes.
   direction: '$1Direction actuelle : %dir%'
-generator_bucket:
-  bucket_entries_ignored: $2La valeur totale des seaux est égale ou supérieure à 1. Les blocs sans chance spécifiée seront ignorés.
 category:
   command_category_claiming: Protection
   command_category_teleport: Téléportation
@@ -529,15 +644,40 @@ grants:
   granted_plot: $1Vous avez octroyé %s0 protection(s) de parcelles à $2%s1
 events:
   event_denied: $1%s $2Annulé par un plugin externe.
+backups:
+  backup_usage: '$1Utilisation : $2/plot backup save/list/load'
+  backup_impossible: '$2Les sauvegardes ne sont pas autorisées au sein de cette parcelle
+    : %s'
+  backup_save_success: $1Sauvegarde créée avec succès !
+  backup_save_failed: '$2Impossible de créer la sauvegarde : %s'
+  backup_load_success: $1Sauvegarde restaurée avec succès !
+  backup_load_failure: '$2Impossible de restaurer la sauvegarde : %s'
+  backup_load_usage: '$1Utilisation : $2/plot backup load [#]'
+  backup_list_header: $1Sauvegarde(s) disponible(s) au sein de cette parcelle $2%s
+  backup_list_entry: $3- $1#%s0 $2%s1
+  backup_list_failed: '$2Impossible d''afficher la liste des sauvegardes : %s'
+  backup_automatic_started: $1Sauvegarde automatique de cette parcelle démarrée...
+  backup_automatic_finished: $1Sauvegarde automatique de cette parcelle effectuée
+    avec succès !
+  backup_automatic_failure: '$2La sauvegarde automatique de cette parcelle a échoué
+    ! Vos actions en cours ont été annulées ! Raison : %s'
+generic:
+  generic_other: autre
+  generic_merged: fusionné(e)
+  generic_unowned: non protégé(e)
+  generic_invalid_choice: choix invalide
 legacyconfig:
-  legacy_config_found: Une ancienne configuration a été détectée. Sa conversion sera tentée.
-  legacy_config_backup: Une copie du fichier `worlds.yml` $1a été faite en tant que `worlds.yml.old`$1.
+  legacy_config_found: Une ancienne configuration a été détectée. Sa conversion sera
+    tentée.
+  legacy_config_backup: Une copie du fichier `worlds.yml` $1a été faite en tant que
+    `worlds.yml.old`$1.
   legacy_config_replaced: '> %s a été remplacé(e) par %s'
-  legacy_config_done: 'La conversion est terminée. PlotSquared sera désormais désactivé
-    et le nouveau fichier de configuration sera utilisé au prochain démarrage du serveur. Veuillez consulter le
-    nouveau fichier `worlds.yml` et y vérifier les valeurs. Veuillez noter que les schémas ne seront pas convertis, car nous
-    utilisons désormais WorldEdit pour traiter ceux-ci. Vous devrez régénérer les schémas.'
-  legacy_config_conversion_failed: 'Échec lors de la conversion de l''ancien fichier de configuration.
-    Reportez-vous aux erreurs pour plus d''informations.'
+  legacy_config_done: La conversion est terminée. PlotSquared sera désormais désactivé
+    et le nouveau fichier de configuration sera utilisé au prochain démarrage du serveur.
+    Veuillez consulter le nouveau fichier `worlds.yml` et y vérifier les valeurs.
+    Veuillez noter que les schémas ne seront pas convertis, car nous utilisons désormais
+    WorldEdit pour traiter ceux-ci. Vous devrez régénérer les schémas.
+  legacy_config_conversion_failed: Échec lors de la conversion de l'ancien fichier
+    de configuration. Reportez-vous aux erreurs pour plus d'informations.
 '-':
   custom_string: '-'
