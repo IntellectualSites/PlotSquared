@@ -430,7 +430,7 @@ public class Settings extends Config {
 
 
     public static final class Confirmation {
-        @Comment("Teleport to your plot on death") public static int CONFIRMATION_TIMEOUT_SECONDS =
+        @Comment("Timeout before a confirmation prompt expires") public static int CONFIRMATION_TIMEOUT_SECONDS =
             20;
     }
 
