@@ -235,7 +235,6 @@ public class PlayerEvents extends PlotListener implements Listener {
     private Field fieldPlayer;
     private PlayerMoveEvent moveTmp;
     private String internalVersion;
-    private String spigotVersion;
 
     {
         try {
@@ -664,8 +663,10 @@ public class PlayerEvents extends PlotListener implements Listener {
             new PlotMessage("-----------------------------------").send(pp);
             new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!")
                 .color("$1").send(pp);
-            new PlotMessage(Captions.PREFIX + "The latest version is " + spigotVersion).color("$1")
-                .send(pp);
+            new PlotMessage(
+                Captions.PREFIX + "&6You are running version " + UpdateUtility.internalVersion
+                    .versionString() + ", &6latest version is " + UpdateUtility.spigotVersion)
+                .color("$1").send(pp);
             new PlotMessage(Captions.PREFIX + "Download at:").color("$1").send(pp);
             player.sendMessage("    https://www.spigotmc.org/resources/77506/updates");
             new PlotMessage("-----------------------------------").send(pp);
