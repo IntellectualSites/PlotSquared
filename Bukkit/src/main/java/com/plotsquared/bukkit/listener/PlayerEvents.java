@@ -225,6 +225,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class PlayerEvents extends PlotListener implements Listener {
 
+    public static final com.sk89q.worldedit.world.entity.EntityType FAKE_ENTITY_TYPE
+        = new com.sk89q.worldedit.world.entity.EntityType("plotsquared:fake");
+
     private boolean pistonBlocks = true;
     private float lastRadius;
     // To prevent recursion
@@ -2751,8 +2754,16 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         if (player != null) {
             PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
-            final com.sk89q.worldedit.world.entity.EntityType entityType =
-                BukkitAdapter.adapt(victim.getType());
+
+            final com.sk89q.worldedit.world.entity.EntityType entityType;
+
+            // Create a fake entity type if the type does not have a name
+            if (victim.getType().getName() == null) {
+                entityType = FAKE_ENTITY_TYPE;
+            } else {
+                entityType = BukkitAdapter.adapt(victim.getType());
+            }
+
             if (EntityCategories.HANGING.contains(entityType)) { // hanging
                 if (plot != null && (plot.getFlag(HangingBreakFlag.class)) || plot
                     .isAdded(plotPlayer.getUUID())) {
