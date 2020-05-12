@@ -250,22 +250,22 @@ public class Settings extends Config {
             INVALID_BLOCKS = Arrays.asList(
             // Acacia Stuff
             "acacia_button", "acacia_fence_gate", "acacia_door", "acacia_pressure_plate",
-            "acaia_trapdoor", "acacia_sapling", "acacia_sign", "acacia_wall_sign",
+            "acaia_trapdoor", "acacia_sapling", "acacia_sign", "acacia_wall_sign", "acacia_leaves",
             // Birch Stuff
             "birch_button", "birch_fence_gate", "birch_door", "birch_pressure_plate",
-            "birch_trapdoor", "birch_sapling", "birch_sign", "birch_wall_sign",
+            "birch_trapdoor", "birch_sapling", "birch_sign", "birch_wall_sign", "birch_leaves",
             // Dark Oak Stuff
             "dark_oak_button", "dark_oak_fence_gate", "dark_oak_door", "dark_oak_pressure_plate",
-            "dark_oak_trapdoor", "dark_oak_sapling", "dark_oak_sign", "dark_oak_wall_sign",
+            "dark_oak_trapdoor", "dark_oak_sapling", "dark_oak_sign", "dark_oak_wall_sign", "dark_oak_leaves",
             // Jungle Stuff
             "jungle_button", "jungle_fence_gate", "jungle_door", "jungle_pressure_plate",
-            "jungle_trapdoor", "jungle_sapling", "jungle_sign", "jungle_wall_sign",
+            "jungle_trapdoor", "jungle_sapling", "jungle_sign", "jungle_wall_sign", "jungle_leaves",
             // Oak Stuff
             "oak_button", "oak_fence_gate", "oak_door", "oak_pressure_plate", "oak_trapdoor",
-            "oak_sapling", "oak_sign", "oak_wall_sign",
+            "oak_sapling", "oak_sign", "oak_wall_sign", "oak_leaves",
             // Spruce Stuff
             "spruce_button", "spruce_fence_gate", "spruce_door", "spruce_pressure_plate",
-            "spruce_trapdoor", "spruce_sapling", "spruce_sign", "spruce_wall_sign",
+            "spruce_trapdoor", "spruce_sapling", "spruce_sign", "spruce_wall_sign", "spruce_leaves",
             // Rails
             "activator_rail", "detector_rail", "rail",
             // Flowers
