@@ -25,7 +25,7 @@ is to provide a lag-free and smooth experience.
 
 ## Links
 
-* [Download](https://github.com/IntellectualSites/PlotSquared/releases/tag/dev)
+* [Download](https://www.spigotmc.org/resources/plotsquared-v5.77506/)
 * [Discord](https://discord.gg/KxkjDVg)
 * [Wiki](https://wiki.intellectualsites.com/plotsquared/home)
 

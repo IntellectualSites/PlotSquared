@@ -82,6 +82,7 @@ import com.plotsquared.core.plot.flag.implementations.NotifyEnterFlag;
 import com.plotsquared.core.plot.flag.implementations.NotifyLeaveFlag;
 import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.PlayerInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
 import com.plotsquared.core.plot.flag.implementations.PveFlag;
 import com.plotsquared.core.plot.flag.implementations.PvpFlag;
@@ -178,6 +179,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(MiscPlaceFlag.MISC_PLACE_FALSE);
         this.addFlag(MiscInteractFlag.MISC_INTERACT_FALSE);
         this.addFlag(KeepInventoryFlag.KEEP_INVENTORY_FALSE);
+        this.addFlag(PreventCreativeCopyFlag.PREVENT_CREATIVE_COPY_FALSE);
 
         // Enum Flags
         this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);

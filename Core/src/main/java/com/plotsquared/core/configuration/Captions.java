@@ -675,6 +675,7 @@ public enum Captions implements Caption {
     FLAG_DESCRIPTION_BLOCKED_CMDS("A list of commands that are blocked in the plot.", "Flags"),
     FLAG_DESCRIPTION_KEEP("Prevents the plot from expiring. Can be set to: true, false, the number of milliseconds to keep the plot for or a timestamp (3w 2d 5h).", "Flags"),
     FLAG_DESCRIPTION_KEEP_INVENTORY("Prevents players from dropping their items when they die inside of the plot.", "Flags"),
+    FLAG_DESCRIPTION_PREVENT_CREATIVE_COPY("Prevents people from copying item NBT data in the plot unless they're added as members.", "Flags"),
     //</editor-fold>
     //<editor-fold desc="Flag category errors">
     FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", false, "Flags"),

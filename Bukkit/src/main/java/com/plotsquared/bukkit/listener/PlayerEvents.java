@@ -79,6 +79,7 @@ import com.plotsquared.core.plot.flag.implementations.MobPlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.MycelGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.PlayerInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
 import com.plotsquared.core.plot.flag.implementations.PveFlag;
 import com.plotsquared.core.plot.flag.implementations.PvpFlag;
 import com.plotsquared.core.plot.flag.implementations.RedstoneFlag;
@@ -173,6 +174,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -1678,6 +1680,19 @@ public class PlayerEvents extends PlotListener implements Listener {
         ItemStack newItem = event.getCursor();
         ItemMeta newMeta = newItem.getItemMeta();
         ItemMeta oldMeta = newItem.getItemMeta();
+
+        if (event.getClick() == ClickType.CREATIVE) {
+            final Plot plot = pp.getCurrentPlot();
+            if (plot != null &&
+                plot.getFlag(PreventCreativeCopyFlag.class) &&
+                !plot.isAdded(player.getUniqueId()) &&
+                !Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_OTHER)) {
+                final ItemStack newStack = new ItemStack(newItem.getType(), newItem.getAmount());
+                event.setCursor(newStack);
+            }
+            return;
+        }
+
         String newLore = "";
         if (newMeta != null) {
             List<String> lore = newMeta.getLore();
