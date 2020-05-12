@@ -184,6 +184,11 @@ public enum Captions implements Caption {
     PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"),
     PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
     PERMISSION_ADMIN_CHAT_BYPASS("plots.admin.chat.bypass", "static.permissions"),
+    PERMISSION_BACKUP("plots.backup", "static.permissions"),
+    PERMISSION_BACKUP_SAVE("plots.backup.save", "static.permissions"),
+    PERMISSION_BACKUP_LIST("plots.backup.list", "static.permissions"),
+    PERMISSION_BACKUP_LOAD("plots.backup.load", "static.permissions"),
+    PERMISSION_ADMIN_BACKUP_OTHER("plots.admin.backup.other", "static.permissions"),
     PERMISSION_ADMIN_ALLOW_UNSAFE("plots.admin.unsafe", "static.permissions"),
     //</editor-fold>
     //<editor-fold desc="Confirm">
@@ -744,6 +749,29 @@ public enum Captions implements Caption {
     PLOT_CAPS_HEADER("$3&m---------&r $1CAPS $3&m---------", false, "Info"),
     PLOT_CAPS_FORMAT("$2- Cap Type: $1%cap% $2| Status: $1%current%$2/$1%limit% $2($1%percentage%%$2)",
         false, "Info"),
+    //</editor-fold>
+
+    //<editor-fold desc="Backups">
+    BACKUP_USAGE("$1Usage: $2/plot backup save/list/load", "Backups"),
+    BACKUP_IMPOSSIBLE("$2Backups are not enabled for this plot: %s", "Backups"),
+    BACKUP_SAVE_SUCCESS("$1The backup was created successfully", "Backups"),
+    BACKUP_SAVE_FAILED("$2The backup could not be created: %s", "Backups"),
+    BACKUP_LOAD_SUCCESS("$1The backup was restored successfully", "Backups"),
+    BACKUP_LOAD_FAILURE("$2The backup could not be restored: %s", "Backups"),
+    BACKUP_LOAD_USAGE("$1Usage: $2/plot backup load [#]", "Backups"),
+    BACKUP_LIST_HEADER("$1Available backups for plot $2%s", "Backups"),
+    BACKUP_LIST_ENTRY("$3- $1#%s0 $2%s1", "Backups"),
+    BACKUP_LIST_FAILED("$2Backup listing failed: %s", "Backups"),
+    BACKUP_AUTOMATIC_STARTED("$1Backing up the plot...", "Backups"),
+    BACKUP_AUTOMATIC_FINISHED("$1The automatic backup process finished successfully!", "Backups"),
+    BACKUP_AUTOMATIC_FAILURE("$2The automatic backup process failed. Your pending action has been canceled. Reason: %s", "Backups"),
+    //</editor-fold>
+
+    //<editor-fold desc="Generic">
+    GENERIC_OTHER("other", "Generic"),
+    GENERIC_MERGED("merged", "Generic"),
+    GENERIC_UNOWNED("unowned", "Generic"),
+    GENERIC_INVALID_CHOICE("invalid choice", "Generic"),
     //</editor-fold>
 
     /**

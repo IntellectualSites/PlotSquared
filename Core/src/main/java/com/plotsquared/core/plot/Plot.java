@@ -93,6 +93,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -1358,6 +1359,12 @@ public class Plot {
             for (PlotPlayer pp : players) {
                 PlotListener.plotExit(pp, current);
             }
+
+            if (Settings.Backup.DELETE_ON_UNCLAIM) {
+                // Destroy all backups when the plot is unclaimed
+                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(current).destroy();
+            }
+
             getArea().removePlot(getId());
             DBFunc.delete(current);
             current.setOwnerAbs(null);

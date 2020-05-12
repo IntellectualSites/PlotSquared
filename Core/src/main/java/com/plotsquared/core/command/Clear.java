@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -82,38 +83,40 @@ public class Clear extends Command {
         checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
             .hasPermission(player, Captions.PERMISSION_CONTINUE), Captions.DONE_ALREADY_DONE);
         confirm.run(this, () -> {
-            final long start = System.currentTimeMillis();
-            boolean result = plot.clear(true, false, () -> {
-                plot.unlink();
-                GlobalBlockQueue.IMP.addEmptyTask(() -> {
-                    plot.removeRunning();
-                    // If the state changes, then mark it as no longer done
-                    if (DoneFlag.isDone(plot)) {
-                        PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
-                        PlotFlagRemoveEvent event =
-                            PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
-                        if (event.getEventResult() != Result.DENY) {
-                            plot.removeFlag(event.getFlag());
+            BackupManager.backup(player, plot, () -> {
+                final long start = System.currentTimeMillis();
+                boolean result = plot.clear(true, false, () -> {
+                    plot.unlink();
+                    GlobalBlockQueue.IMP.addEmptyTask(() -> {
+                        plot.removeRunning();
+                        // If the state changes, then mark it as no longer done
+                        if (DoneFlag.isDone(plot)) {
+                            PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
+                            PlotFlagRemoveEvent event =
+                                PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+                            if (event.getEventResult() != Result.DENY) {
+                                plot.removeFlag(event.getFlag());
+                            }
                         }
-                    }
-                    if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
-                        PlotFlag<?, ?> plotFlag =
-                            plot.getFlagContainer().getFlag(AnalysisFlag.class);
-                        PlotFlagRemoveEvent event =
-                            PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
-                        if (event.getEventResult() != Result.DENY) {
-                            plot.removeFlag(event.getFlag());
+                        if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
+                            PlotFlag<?, ?> plotFlag =
+                                plot.getFlagContainer().getFlag(AnalysisFlag.class);
+                            PlotFlagRemoveEvent event =
+                                PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+                            if (event.getEventResult() != Result.DENY) {
+                                plot.removeFlag(event.getFlag());
+                            }
                         }
-                    }
-                    MainUtil.sendMessage(player, Captions.CLEARING_DONE,
-                        "" + (System.currentTimeMillis() - start));
+                        MainUtil.sendMessage(player, Captions.CLEARING_DONE,
+                            "" + (System.currentTimeMillis() - start));
+                    });
                 });
+                if (!result) {
+                    MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+                } else {
+                    plot.addRunning();
+                }
             });
-            if (!result) {
-                MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
-            } else {
-                plot.addRunning();
-            }
         }, null);
         return CompletableFuture.completedFuture(true);
     }

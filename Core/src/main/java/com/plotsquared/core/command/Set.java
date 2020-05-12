@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -130,12 +131,15 @@ public class Set extends SubCommand {
                             MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
                             return false;
                         }
-                        plot.addRunning();
-                        for (Plot current : plot.getConnectedPlots()) {
-                            current.setComponent(component, pattern);
-                        }
-                        MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
-                        GlobalBlockQueue.IMP.addEmptyTask(plot::removeRunning);
+
+                        BackupManager.backup(player, plot, () -> {
+                            plot.addRunning();
+                            for (Plot current : plot.getConnectedPlots()) {
+                                current.setComponent(component, pattern);
+                            }
+                            MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
+                            GlobalBlockQueue.IMP.addEmptyTask(plot::removeRunning);
+                        });
                         return true;
                     }
                 }

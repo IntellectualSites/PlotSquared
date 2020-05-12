@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.UUID;
 
 @CommandDeclaration(command = "save",
-    aliases = {"backup"},
     description = "Save your plot",
     category = CommandCategory.SCHEMATIC,
     requiredType = RequiredType.NONE,
