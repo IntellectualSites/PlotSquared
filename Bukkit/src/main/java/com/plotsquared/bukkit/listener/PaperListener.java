@@ -33,6 +33,7 @@ import com.destroystokyo.paper.event.entity.SlimePathfindEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -41,6 +42,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -48,7 +50,9 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -249,6 +253,27 @@ public class PaperListener implements Listener {
                 event.setCancelled(true);
                 event.setShouldAbortSpawn(true);
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST) public void onBlockPlace(BlockPlaceEvent event) {
+        if (!Settings.Paper_Components.TILE_ENTITY_CHECK) {
+            return;
+        }
+        if (!(event.getBlock().getState(false) instanceof TileState)) {
+            return;
+        }
+        final Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+        final PlotArea plotArea = location.getPlotArea();
+        if (plotArea == null) {
+            return;
+        }
+        final int tileEntityCount = event.getBlock().getChunk().getTileEntities(false).length;
+        if (tileEntityCount >= Settings.Chunk_Processor.MAX_TILES) {
+            final PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
+            Captions.TILE_ENTITY_CAP_REACHED.send(plotPlayer, Settings.Chunk_Processor.MAX_TILES);
+            event.setCancelled(true);
+            event.setBuild(false);
         }
     }
 
