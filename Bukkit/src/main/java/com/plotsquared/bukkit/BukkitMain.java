@@ -38,8 +38,10 @@ import com.plotsquared.bukkit.placeholder.Placeholders;
 import com.plotsquared.bukkit.queue.BukkitLocalQueue;
 import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChatManager;
+import com.plotsquared.bukkit.util.BukkitChunkManager;
 import com.plotsquared.bukkit.util.BukkitEconHandler;
 import com.plotsquared.bukkit.util.BukkitInventoryUtil;
+import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -86,6 +88,7 @@ import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.ReflectionUtils;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
@@ -751,6 +754,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
 
     @Override public ChunkManager initChunkManager() {
         return new BukkitChunkManager();
+    }
+
+    @Override public RegionManager initRegionManager() {
+        return new BukkitRegionManager();
     }
 
     @Override public void unregister(@NonNull final PlotPlayer player) {

@@ -256,7 +256,8 @@ public class Settings extends Config {
             "birch_trapdoor", "birch_sapling", "birch_sign", "birch_wall_sign", "birch_leaves",
             // Dark Oak Stuff
             "dark_oak_button", "dark_oak_fence_gate", "dark_oak_door", "dark_oak_pressure_plate",
-            "dark_oak_trapdoor", "dark_oak_sapling", "dark_oak_sign", "dark_oak_wall_sign", "dark_oak_leaves",
+            "dark_oak_trapdoor", "dark_oak_sapling", "dark_oak_sign", "dark_oak_wall_sign",
+            "dark_oak_leaves",
             // Jungle Stuff
             "jungle_button", "jungle_fence_gate", "jungle_door", "jungle_pressure_plate",
             "jungle_trapdoor", "jungle_sapling", "jungle_sign", "jungle_wall_sign", "jungle_leaves",
@@ -430,8 +431,8 @@ public class Settings extends Config {
 
 
     public static final class Confirmation {
-        @Comment("Timeout before a confirmation prompt expires") public static int CONFIRMATION_TIMEOUT_SECONDS =
-            20;
+        @Comment("Timeout before a confirmation prompt expires") public static int
+            CONFIRMATION_TIMEOUT_SECONDS = 20;
     }
 
 

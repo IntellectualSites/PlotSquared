@@ -35,6 +35,7 @@ import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
@@ -188,6 +189,13 @@ public interface IPlotMain extends ILogger {
      * @return the PlotSquared chunk manager
      */
     ChunkManager initChunkManager();
+
+    /**
+     * Gets the region manager.
+     *
+     * @return the PlotSquared region manager
+     */
+    RegionManager initRegionManager();
 
     /**
      * Gets the {@link SetupUtils} class.

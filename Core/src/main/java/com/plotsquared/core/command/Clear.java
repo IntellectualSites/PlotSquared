@@ -91,9 +91,10 @@ public class Clear extends Command {
                         plot.removeRunning();
                         // If the state changes, then mark it as no longer done
                         if (DoneFlag.isDone(plot)) {
-                            PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
-                            PlotFlagRemoveEvent event =
-                                PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+                            PlotFlag<?, ?> plotFlag =
+                                plot.getFlagContainer().getFlag(DoneFlag.class);
+                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
+                                .callFlagRemove(plotFlag, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
                             }
@@ -101,8 +102,8 @@ public class Clear extends Command {
                         if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
                             PlotFlag<?, ?> plotFlag =
                                 plot.getFlagContainer().getFlag(AnalysisFlag.class);
-                            PlotFlagRemoveEvent event =
-                                PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
+                                .callFlagRemove(plotFlag, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
                             }

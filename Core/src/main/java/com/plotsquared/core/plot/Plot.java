@@ -60,6 +60,7 @@ import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.WorldUtil;
@@ -98,7 +99,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -944,7 +944,7 @@ public class Plot {
                     Runnable run = () -> {
                         for (CuboidRegion region : regions) {
                             Location[] corners = MainUtil.getCorners(getWorldName(), region);
-                            ChunkManager.manager.clearAllEntities(corners[0], corners[1]);
+                            RegionManager.manager.clearAllEntities(corners[0], corners[1]);
                         }
                         TaskManager.runTask(whenDone);
                     };
@@ -961,7 +961,7 @@ public class Plot {
                 Plot current = queue.poll();
                 if (Plot.this.area.getTerrain() != PlotAreaTerrainType.NONE) {
                     try {
-                        ChunkManager.manager
+                        RegionManager.manager
                             .regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false,
                                 this);
                     } catch (UnsupportedOperationException exception) {
@@ -995,39 +995,10 @@ public class Plot {
         Runnable run = new Runnable() {
             @Override public void run() {
                 if (regions.isEmpty()) {
-                    Plot.this.refreshChunks();
                     TaskManager.runTask(whenDone);
-                    return;
                 }
                 CuboidRegion region = regions.poll();
-                Location pos1 =
-                    new Location(getWorldName(), region.getMinimumPoint().getX() - extendBiome,
-                        region.getMinimumPoint().getY(),
-                        region.getMinimumPoint().getZ() - extendBiome);
-                Location pos2 =
-                    new Location(getWorldName(), region.getMaximumPoint().getX() + extendBiome,
-                        region.getMaximumPoint().getY(),
-                        region.getMaximumPoint().getZ() + extendBiome);
-                ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
-                    @Override public void run(int[] value) {
-                        BlockVector2 loc = BlockVector2.at(value[0], value[1]);
-                        long start = System.currentTimeMillis();
-                        ChunkManager.manager.loadChunk(getWorldName(), loc, false);
-                        long end = System.currentTimeMillis();
-                        PlotSquared.debug(
-                            "[Biome Operation] Loading chunk took: " + TimeUnit.MILLISECONDS
-                                .toSeconds(end - start));
-                        MainUtil.setBiome(getWorldName(), value[2], value[3], value[4], value[5],
-                            biome);
-                        start = System.currentTimeMillis();
-                        ChunkManager.manager.unloadChunk(getWorldName(), loc, true);
-                        end = System.currentTimeMillis();
-                        PlotSquared.debug(
-                            "[Biome Operation] Unloading chunk took: " + TimeUnit.MILLISECONDS
-                                .toSeconds(end - start));
-                    }
-                }, this, 5);
-
+                RegionManager.manager.setBiome(region, extendBiome, biome, getWorldName(), this);
             }
         };
         run.run();
@@ -1279,7 +1250,7 @@ public class Plot {
      * Count the entities in a plot
      *
      * @return array of entity counts
-     * @see ChunkManager#countEntities(Plot)
+     * @see RegionManager#countEntities(Plot)
      * 0 = Entity
      * 1 = Animal
      * 2 = Monster
@@ -1290,7 +1261,7 @@ public class Plot {
     public int[] countEntities() {
         int[] count = new int[6];
         for (Plot current : this.getConnectedPlots()) {
-            int[] result = ChunkManager.manager.countEntities(current);
+            int[] result = RegionManager.manager.countEntities(current);
             count[CAP_ENTITY] += result[CAP_ENTITY];
             count[CAP_ANIMAL] += result[CAP_ANIMAL];
             count[CAP_MONSTER] += result[CAP_MONSTER];
@@ -1362,7 +1333,8 @@ public class Plot {
 
             if (Settings.Backup.DELETE_ON_UNCLAIM) {
                 // Destroy all backups when the plot is unclaimed
-                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(current).destroy();
+                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(current)
+                    .destroy();
             }
 
             getArea().removePlot(getId());
@@ -2055,7 +2027,7 @@ public class Plot {
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
             Location pos2 = new Location(this.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
-            ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
+            RegionManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain()
             != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.area.getPlotManager().removeRoadEast(this);
@@ -2497,7 +2469,7 @@ public class Plot {
             Location top = this.getTopAbs();
             Location pos1 = new Location(this.getWorldName(), bot.getX(), 0, top.getZ());
             Location pos2 = new Location(this.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
-            ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
+            RegionManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain()
             != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.getManager().removeRoadSouth(this);
@@ -2675,7 +2647,7 @@ public class Plot {
             Location pos2 = other.getBottomAbs().subtract(1, 0, 1);
             pos1.setY(0);
             pos2.setY(MAX_HEIGHT);
-            ChunkManager.manager.regenerateRegion(pos1, pos2, true, null);
+            RegionManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain()
             != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.area.getPlotManager().removeRoadSouthEast(this);
@@ -3319,7 +3291,7 @@ public class Plot {
                             Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
                             pos3.setWorld(destination.getWorldName());
                             pos4.setWorld(destination.getWorldName());
-                            ChunkManager.manager.swap(pos1, pos2, pos3, pos4, this);
+                            RegionManager.manager.swap(pos1, pos2, pos3, pos4, this);
                         }
                     }
                 }.run();
@@ -3351,7 +3323,7 @@ public class Plot {
                         final Location pos2 = corners[1];
                         Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
                         newPos.setWorld(destination.getWorldName());
-                        ChunkManager.manager.copyRegion(pos1, pos2, newPos, task);
+                        RegionManager.manager.copyRegion(pos1, pos2, newPos, task);
                     }
                 }.run();
             }
@@ -3446,7 +3418,7 @@ public class Plot {
                 Location pos2 = corners[1];
                 Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
                 newPos.setWorld(destination.getWorldName());
-                ChunkManager.manager.copyRegion(pos1, pos2, newPos, this);
+                RegionManager.manager.copyRegion(pos1, pos2, newPos, this);
             }
         };
         run.run();

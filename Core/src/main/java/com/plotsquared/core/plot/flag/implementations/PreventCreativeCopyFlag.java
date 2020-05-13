@@ -31,8 +31,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class PreventCreativeCopyFlag extends BooleanFlag<PreventCreativeCopyFlag> {
 
-    public static final PreventCreativeCopyFlag PREVENT_CREATIVE_COPY_TRUE  = new PreventCreativeCopyFlag(true);
-    public static final PreventCreativeCopyFlag PREVENT_CREATIVE_COPY_FALSE = new PreventCreativeCopyFlag(false);
+    public static final PreventCreativeCopyFlag PREVENT_CREATIVE_COPY_TRUE =
+        new PreventCreativeCopyFlag(true);
+    public static final PreventCreativeCopyFlag PREVENT_CREATIVE_COPY_FALSE =
+        new PreventCreativeCopyFlag(false);
 
     private PreventCreativeCopyFlag(@NotNull final Boolean value) {
         super(value, Captions.FLAG_DESCRIPTION_PREVENT_CREATIVE_COPY);

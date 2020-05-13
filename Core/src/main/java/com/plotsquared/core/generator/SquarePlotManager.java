@@ -31,8 +31,8 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
 
 import java.util.Arrays;
@@ -66,7 +66,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                     region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
                 Location pos2 = new Location(plot.getWorldName(), region.getMaximumPoint().getX(),
                     region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
-                ChunkManager.manager.regenerateRegion(pos1, pos2, false, this);
+                RegionManager.manager.regenerateRegion(pos1, pos2, false, this);
             }
         };
         run.run();
