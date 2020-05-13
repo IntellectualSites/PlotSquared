@@ -42,6 +42,7 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockCategories;
@@ -667,6 +668,12 @@ public class BukkitUtil extends WorldUtil {
                 .forEach(tileEntityTypes::add);
         }
         return this.tileEntityTypes;
+    }
+
+    @Override
+    public int getTileEntityCount(String world, BlockVector2 chunk) {
+        return Bukkit.getWorld(world).getChunkAt(chunk.getBlockX(), chunk.getBlockZ())
+            .getTileEntities().length;
     }
 
     private static void ensureLoaded(final String world, final int x, final int z,

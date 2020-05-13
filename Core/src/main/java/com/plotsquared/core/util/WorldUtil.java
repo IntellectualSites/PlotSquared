@@ -220,4 +220,6 @@ public abstract class WorldUtil {
 
     public abstract Collection<BlockType> getTileEntityTypes();
 
+    public abstract int getTileEntityCount(String world, BlockVector2 chunk);
+
 }
