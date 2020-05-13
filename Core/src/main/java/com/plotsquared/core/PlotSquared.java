@@ -1923,10 +1923,15 @@ public class PlotSquared {
         object.put("color.14", "d");
         object.put("color.15", "e");
         object.put("color.16", "f");
-        if (!this.style.contains("color")) {
+        if (!this.style.contains("color")
+            || this.style.getConfigurationSection("color").getValues(false).size() != object
+            .size()) {
             for (Entry<String, Object> node : object.entrySet()) {
                 this.style.set(node.getKey(), node.getValue());
             }
+        }
+        if (this.style.contains("version")) {
+            this.style.set("version", null);
         }
     }
 
