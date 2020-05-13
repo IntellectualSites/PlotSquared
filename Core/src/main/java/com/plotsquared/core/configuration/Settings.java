@@ -485,7 +485,7 @@ public class Settings extends Config {
         @Comment("Cancel entity spawns from tick spawn rates before they happen (performance buff)")
         public static boolean CREATURE_SPAWN = true;
         @Comment("Check the tile entity limit on block placement")
-        public static boolean TILE_ENTITY_CHECK = false;
+        public static boolean TILE_ENTITY_CHECK = true;
     }
 
 
