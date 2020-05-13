@@ -96,7 +96,8 @@ public class Set extends SubCommand {
 
                             if (blockType.startsWith("##")) {
                                 try {
-                                    final BlockCategory category = BlockCategory.REGISTRY.get(blockType.substring(2).toLowerCase(Locale.ENGLISH));
+                                    final BlockCategory category = BlockCategory.REGISTRY.get(blockType.substring(2)
+                                        .replaceAll("[*^|]+", "").toLowerCase(Locale.ENGLISH));
                                     if (category == null || !category.contains(BlockTypes.get(forbiddenType))) {
                                         continue;
                                     }

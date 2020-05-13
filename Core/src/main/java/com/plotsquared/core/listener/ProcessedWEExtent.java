@@ -29,6 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.WEManager;
+import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
@@ -90,12 +91,12 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 location, T block)
         throws WorldEditException {
 
-        final boolean isTile = block.toBaseBlock().getNbtData() != null;
+        final boolean isTile = WorldUtil.IMP.getTileEntityTypes().contains(block.getBlockType());
         if (isTile) {
             if (this.BSblocked) {
                 return false;
             }
-            if (++this.BScount > Settings.Chunk_Processor.MAX_TILES) {
+            if (++this.BScount >= Settings.Chunk_Processor.MAX_TILES) {
                 this.BSblocked = true;
                 PlotSquared.debug(Captions.PREFIX + "&cDetected unsafe WorldEdit: " + location.getX() + ","
                         + location.getZ());
