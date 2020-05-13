@@ -257,7 +257,7 @@ public class PaperListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST) public void onBlockPlace(BlockPlaceEvent event) {
-        if (!Settings.Paper_Components.TILE_ENTITY_CHECK) {
+        if (!Settings.Paper_Components.TILE_ENTITY_CHECK || !Settings.Enabled_Components.CHUNK_PROCESSOR) {
             return;
         }
         if (!(event.getBlock().getState(false) instanceof TileState)) {
