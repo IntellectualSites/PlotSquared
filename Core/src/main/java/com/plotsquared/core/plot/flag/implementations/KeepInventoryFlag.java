@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class KeepInventoryFlag extends BooleanFlag<KeepInventoryFlag> {
 
-    public static final KeepInventoryFlag KEEP_INVENTORY_TRUE  = new KeepInventoryFlag(true);
+    public static final KeepInventoryFlag KEEP_INVENTORY_TRUE = new KeepInventoryFlag(true);
     public static final KeepInventoryFlag KEEP_INVENTORY_FALSE = new KeepInventoryFlag(false);
 
     private KeepInventoryFlag(final boolean value) {

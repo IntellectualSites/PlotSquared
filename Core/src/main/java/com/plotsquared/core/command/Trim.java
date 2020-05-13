@@ -33,8 +33,8 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -133,7 +133,7 @@ public class Trim extends SubCommand {
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
-        result.value1 = new HashSet<>(ChunkManager.manager.getChunkChunks(world));
+        result.value1 = new HashSet<>(RegionManager.manager.getChunkChunks(world));
         result.value2 = new HashSet<>();
         MainUtil.sendMessage(null, " - MCA #: " + result.value1.size());
         MainUtil.sendMessage(null, " - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
@@ -238,7 +238,7 @@ public class Trim extends SubCommand {
                         player.sendMessage("Trim done!");
                     };
                 }
-                ChunkManager.manager.deleteRegionFiles(world, viable, regenTask);
+                RegionManager.manager.deleteRegionFiles(world, viable, regenTask);
 
             }
         });

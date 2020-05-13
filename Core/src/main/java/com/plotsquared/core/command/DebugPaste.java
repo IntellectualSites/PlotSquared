@@ -31,7 +31,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.net.IncendoPaster;
@@ -82,7 +81,8 @@ public class DebugPaste extends SubCommand {
                     "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
                         + "problem\n\n");
                 b.append("# PlotSquared Information\n");
-                b.append("PlotSquared Version: ").append(PlotSquared.get().getVersion()).append("\n");
+                b.append("PlotSquared Version: ").append(PlotSquared.get().getVersion())
+                    .append("\n");
                 b.append("Resource ID: ").append(PremiumVerification.getResourceID()).append("\n");
                 b.append("Download ID: ").append(PremiumVerification.getDownloadID()).append("\n");
                 b.append("This PlotSquared version is licensed to the spigot user ")

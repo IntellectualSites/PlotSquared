@@ -109,9 +109,9 @@ public class BlockTypeWrapper {
      *
      * @return the block category represented by this wrapper.
      */
-    @Nullable
-    public BlockCategory getBlockCategory() {
-        if (this.blockCategory == null && this.blockCategoryId != null) { // only if name is available
+    @Nullable public BlockCategory getBlockCategory() {
+        if (this.blockCategory == null
+            && this.blockCategoryId != null) { // only if name is available
             this.blockCategory = BlockCategory.REGISTRY.get(this.blockCategoryId);
             if (this.blockCategory == null && !BlockCategory.REGISTRY.values().isEmpty()) {
                 PlotSquared.debug("- Block category #" + this.blockCategoryId + " does not exist");
@@ -121,17 +121,17 @@ public class BlockTypeWrapper {
         return this.blockCategory;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    @Override public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         BlockTypeWrapper that = (BlockTypeWrapper) o;
-        return Objects.equal(this.blockType, that.blockType) &&
-                Objects.equal(this.blockCategoryId, that.blockCategoryId);
+        return Objects.equal(this.blockType, that.blockType) && Objects
+            .equal(this.blockCategoryId, that.blockCategoryId);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return Objects.hashCode(this.blockType, this.blockCategoryId);
     }
 
@@ -143,7 +143,8 @@ public class BlockTypeWrapper {
     }
 
     public static BlockTypeWrapper get(final BlockCategory blockCategory) {
-        return blockCategories.computeIfAbsent(blockCategory.getId(), id -> new BlockTypeWrapper(blockCategory));
+        return blockCategories
+            .computeIfAbsent(blockCategory.getId(), id -> new BlockTypeWrapper(blockCategory));
     }
 
     public static BlockTypeWrapper get(final String blockCategoryId) {
@@ -159,8 +160,7 @@ public class BlockTypeWrapper {
             super(id);
         }
 
-        @Override
-        public <B extends BlockStateHolder<B>> boolean contains(B blockStateHolder) {
+        @Override public <B extends BlockStateHolder<B>> boolean contains(B blockStateHolder) {
             return false;
         }
     }

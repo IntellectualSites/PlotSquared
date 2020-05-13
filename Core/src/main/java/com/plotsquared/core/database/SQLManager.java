@@ -1963,7 +1963,8 @@ public class SQLManager implements AbstractDB {
 
                 try (final ResultSet resultSet = statement
                     .executeQuery("SELECT * FROM `" + this.prefix + "plot_flags`")) {
-                    BlockTypeListFlag.skipCategoryVerification = true; // allow invalid tags, as initialized lazily
+                    BlockTypeListFlag.skipCategoryVerification =
+                        true; // allow invalid tags, as initialized lazily
                     final ArrayList<Integer> toDelete = new ArrayList<>();
                     final Map<Plot, Collection<PlotFlag<?, ?>>> invalidFlags = new HashMap<>();
                     while (resultSet.next()) {
@@ -2001,7 +2002,8 @@ public class SQLManager implements AbstractDB {
                                 + " in `plot_flags` does not exist. Create this plot or set `database-purger: true` in the settings.yml.");
                         }
                     }
-                    BlockTypeListFlag.skipCategoryVerification = false; // don't allow invalid tags anymore
+                    BlockTypeListFlag.skipCategoryVerification =
+                        false; // don't allow invalid tags anymore
                     if (Settings.Enabled_Components.DATABASE_PURGER) {
                         for (final Map.Entry<Plot, Collection<PlotFlag<?, ?>>> plotFlagEntry : invalidFlags
                             .entrySet()) {

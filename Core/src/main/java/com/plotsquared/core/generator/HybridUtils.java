@@ -46,6 +46,7 @@ import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.WorldUtil;
@@ -378,7 +379,7 @@ public abstract class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        Set<BlockVector2> regions = ChunkManager.manager.getChunkChunks(area.getWorldName());
+        Set<BlockVector2> regions = RegionManager.manager.getChunkChunks(area.getWorldName());
         return scheduleRoadUpdate(area, regions, extend, new HashSet<>());
     }
 
@@ -388,7 +389,7 @@ public abstract class HybridUtils {
         }
         HybridUtils.UPDATE = true;
         Set<BlockVector2> regions = new HashSet<>();
-        regions.add(ChunkManager.getRegion(plot.getCenterSynchronous()));
+        regions.add(RegionManager.getRegion(plot.getCenterSynchronous()));
         return scheduleRoadUpdate(plot.getArea(), regions, extend, new HashSet<>());
     }
 

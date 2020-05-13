@@ -28,8 +28,8 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.entity.EntityCategory;
@@ -59,7 +59,7 @@ public class Debug extends SubCommand {
             final long start = System.currentTimeMillis();
             MainUtil.sendMessage(player, "Fetching loaded chunks...");
             TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,
-                "Loaded chunks: " + ChunkManager.manager
+                "Loaded chunks: " + RegionManager.manager
                     .getChunkChunks(player.getLocation().getWorld()).size() + "(" + (
                     System.currentTimeMillis() - start) + "ms) using thread: " + Thread
                     .currentThread().getName()));

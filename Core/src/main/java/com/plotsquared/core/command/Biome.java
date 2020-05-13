@@ -74,12 +74,14 @@ public class Biome extends SetCommand {
         return true;
     }
 
-    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+    @Override
+    public Collection<Command> tab(final PlotPlayer player, final String[] args,
+        final boolean space) {
         return SuggestionHelper.getNamespacedRegistrySuggestions(BiomeType.REGISTRY, args[0])
             .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
             .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-            .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {})
-            .collect(Collectors.toList());
+            .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+            }).collect(Collectors.toList());
     }
 
 }

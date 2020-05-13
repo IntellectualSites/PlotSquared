@@ -87,8 +87,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
 
     private BlockTypeWrapper getCategory(final String blockString) throws FlagParseException {
         if (!blockString.startsWith("#")) {
-            throw new FlagParseException(this, blockString,
-                    Captions.FLAG_ERROR_INVALID_BLOCK);
+            throw new FlagParseException(this, blockString, Captions.FLAG_ERROR_INVALID_BLOCK);
         }
         String categoryId = blockString.substring(1);
         BlockTypeWrapper blockTypeWrapper;
@@ -97,8 +96,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         } else {
             BlockCategory blockCategory = BlockCategory.REGISTRY.get(categoryId);
             if (blockCategory == null) {
-                throw new FlagParseException(this, blockString,
-                        Captions.FLAG_ERROR_INVALID_BLOCK);
+                throw new FlagParseException(this, blockString, Captions.FLAG_ERROR_INVALID_BLOCK);
             }
             blockTypeWrapper = BlockTypeWrapper.get(blockCategory);
         }
