@@ -996,6 +996,7 @@ public class Plot {
             @Override public void run() {
                 if (regions.isEmpty()) {
                     TaskManager.runTask(whenDone);
+                    return;
                 }
                 CuboidRegion region = regions.poll();
                 RegionManager.manager.setBiome(region, extendBiome, biome, getWorldName(), this);
