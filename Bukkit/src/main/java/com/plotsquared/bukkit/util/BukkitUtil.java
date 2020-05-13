@@ -653,7 +653,7 @@ public class BukkitUtil extends WorldUtil {
             tileEntityTypes.addAll(BlockCategories.FLOWER_POTS.getAll());
             // Individual Types
             // Add these from strings
-            Stream.of("barrel", "beacon", "beehive", "bell", "blast_furnace",
+            Stream.of("barrel", "beacon", "beehive", "bee_nest", "bell", "blast_furnace",
                 "brewing_stand", "campfire", "chest", "ender_chest", "trapped_chest",
                 "command_block", "end_gateway", "hopper", "jigsaw", "jubekox",
                 "lectern", "note_block", "black_shulker_box", "blue_shulker_box",
@@ -661,7 +661,7 @@ public class BukkitUtil extends WorldUtil {
                 "light_blue_shulker_box", "light_gray_shulker_box", "lime_shulker_box",
                 "magenta_shulker_box", "orange_shulker_box", "pink_shulker_box",
                 "purple_shulker_box", "red_shulker_box", "shulker_box", "white_shulker_box",
-                "yellow_shulker_box", "smoker", "structure")
+                "yellow_shulker_box", "smoker", "structure_block", "structure_void")
                 .map(BlockTypes::get)
                 .filter(Objects::nonNull)
                 .forEach(tileEntityTypes::add);

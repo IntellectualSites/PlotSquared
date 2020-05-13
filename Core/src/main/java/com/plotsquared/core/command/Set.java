@@ -37,8 +37,10 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockCategory;
+import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.util.ArrayList;
@@ -80,7 +82,13 @@ public class Set extends SubCommand {
                 String material =
                     StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
 
-                final List<String> forbiddenTypes = Settings.General.INVALID_BLOCKS;
+                final List<String> forbiddenTypes = new ArrayList<>(Settings.General.INVALID_BLOCKS);
+
+                if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
+                    forbiddenTypes.addAll(WorldUtil.IMP.getTileEntityTypes().stream().map(
+                        BlockType::getName).collect(Collectors.toList()));
+                }
+
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_ALLOW_UNSAFE) &&
                     !forbiddenTypes.isEmpty()) {
                     for (String forbiddenType : forbiddenTypes) {
