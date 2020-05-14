@@ -126,7 +126,7 @@ subprojects {
             exclude "org/json/simple/**"
         }
         // relocate('org.mcstats', 'com.plotsquared.stats')
-        archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
+        archiveFileName = "${project.name}-${parent.version}.jar"
         destinationDirectory = file "../target"
     }
 

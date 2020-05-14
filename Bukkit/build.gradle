@@ -89,7 +89,7 @@ shadowJar {
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
-    archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
+    archiveFileName = "${project.name}-${parent.version}.jar"
     destinationDirectory = file "../target"
 }
 
