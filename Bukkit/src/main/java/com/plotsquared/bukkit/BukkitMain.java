@@ -750,6 +750,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         }));
         metrics.addCustomChart(new Metrics.SimplePie("premium",
             () -> PremiumVerification.isPremium() ? "Premium" : "Non-Premium"));
+        metrics.addCustomChart(new Metrics.SimplePie("worldedit_implementation",
+            () -> Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null ? "FastAsyncWorldEdit" : "WorldEdit"));
     }
 
     @Override public ChunkManager initChunkManager() {
