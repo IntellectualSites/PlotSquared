@@ -214,10 +214,8 @@ public class StateWrapper {
                         if (mat != null) {
                             ItemStack item = new ItemStack(mat, (int) amounts[i]);
                             inv.setItem(slots[i], item);
-                            PlotSquared.log(mat.name() + " " + slots[i]);
                         }
                     }
-                    PlotSquared.log(inv.getStorageContents());
                     container.update(true, true);
                     return true;
                 }

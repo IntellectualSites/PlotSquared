@@ -48,7 +48,9 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.inventory.BlockInventoryHolder;
 
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -144,6 +146,10 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
                             if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing
                                 .getBlockData().matches(blockData)) {
                                 continue;
+                            }
+
+                            if (existing.getState() instanceof Container) {
+                                ((Container) existing.getState()).getInventory().clear();
                             }
 
                             existing.setType(BukkitAdapter.adapt(block.getBlockType()), false);
