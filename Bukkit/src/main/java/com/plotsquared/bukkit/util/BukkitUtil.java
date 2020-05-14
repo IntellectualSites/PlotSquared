@@ -42,9 +42,13 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
+import com.sk89q.worldedit.world.block.BlockCategories;
 import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.block.BlockType;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -95,10 +99,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import java.util.stream.Stream;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class BukkitUtil extends WorldUtil {
@@ -636,6 +642,38 @@ public class BukkitUtil extends WorldUtil {
             }
         }
         return types;
+    }
+
+    private final Collection<BlockType> tileEntityTypes = new HashSet<>();
+    @Override public Collection<BlockType> getTileEntityTypes() {
+        if (this.tileEntityTypes.isEmpty()) {
+            // Categories
+            tileEntityTypes.addAll(BlockCategories.BANNERS.getAll());
+            tileEntityTypes.addAll(BlockCategories.SIGNS.getAll());
+            tileEntityTypes.addAll(BlockCategories.BEDS.getAll());
+            tileEntityTypes.addAll(BlockCategories.FLOWER_POTS.getAll());
+            // Individual Types
+            // Add these from strings
+            Stream.of("barrel", "beacon", "beehive", "bee_nest", "bell", "blast_furnace",
+                "brewing_stand", "campfire", "chest", "ender_chest", "trapped_chest",
+                "command_block", "end_gateway", "hopper", "jigsaw", "jubekox",
+                "lectern", "note_block", "black_shulker_box", "blue_shulker_box",
+                "brown_shulker_box", "cyan_shulker_box", "gray_shulker_box", "green_shulker_box",
+                "light_blue_shulker_box", "light_gray_shulker_box", "lime_shulker_box",
+                "magenta_shulker_box", "orange_shulker_box", "pink_shulker_box",
+                "purple_shulker_box", "red_shulker_box", "shulker_box", "white_shulker_box",
+                "yellow_shulker_box", "smoker", "structure_block", "structure_void")
+                .map(BlockTypes::get)
+                .filter(Objects::nonNull)
+                .forEach(tileEntityTypes::add);
+        }
+        return this.tileEntityTypes;
+    }
+
+    @Override
+    public int getTileEntityCount(String world, BlockVector2 chunk) {
+        return Bukkit.getWorld(world).getChunkAt(chunk.getBlockX(), chunk.getBlockZ())
+            .getTileEntities().length;
     }
 
     private static void ensureLoaded(final String world, final int x, final int z,

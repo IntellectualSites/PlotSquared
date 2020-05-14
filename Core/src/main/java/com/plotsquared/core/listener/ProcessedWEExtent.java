@@ -29,6 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.WEManager;
+import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.entity.Entity;
@@ -45,6 +46,8 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class ProcessedWEExtent extends AbstractDelegateExtent {
@@ -52,12 +55,11 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     private final Set<CuboidRegion> mask;
     private final String world;
     private final int max;
-    int BScount = 0;
     int Ecount = 0;
-    boolean BSblocked = false;
     boolean Eblocked = false;
     private int count;
     private Extent parent;
+    private Map<Long, Integer[]> tileEntityCount = new HashMap<>();
 
     public ProcessedWEExtent(String world, Set<CuboidRegion> mask, int max, Extent child,
         Extent parent) {
@@ -89,95 +91,39 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     @Override
     public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 location, T block)
         throws WorldEditException {
-        String id = block.getBlockType().getId();
-        switch (id) {
-            case "54":
-            case "130":
-            case "142":
-            case "27":
-            case "137":
-            case "52":
-            case "154":
-            case "84":
-            case "25":
-            case "144":
-            case "138":
-            case "176":
-            case "177":
-            case "63":
-            case "68":
-            case "323":
-            case "117":
-            case "116":
-            case "28":
-            case "66":
-            case "157":
-            case "61":
-            case "62":
-            case "140":
-            case "146":
-            case "149":
-            case "150":
-            case "158":
-            case "23":
-            case "123":
-            case "124":
-            case "29":
-            case "33":
-            case "151":
-            case "178":
-                if (this.BSblocked) {
-                    return false;
-                }
-                this.BScount++;
-                if (this.BScount > Settings.Chunk_Processor.MAX_TILES) {
-                    this.BSblocked = true;
-                    PlotSquared.debug(
-                        Captions.PREFIX + "&cDetected unsafe WorldEdit: " + location.getX() + ","
-                            + location.getZ());
-                }
-                if (WEManager
-                    .maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
-                    if (this.count++ > this.max) {
-                        if (this.parent != null) {
-                            try {
-                                Field field =
-                                    AbstractDelegateExtent.class.getDeclaredField("extent");
-                                field.setAccessible(true);
-                                field.set(this.parent, new NullExtent());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            this.parent = null;
-                        }
-                        return false;
-                    }
-                    return super.setBlock(location, block);
-                }
-                break;
-            default:
-                if (WEManager
-                    .maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
-                    if (this.count++ > this.max) {
-                        if (this.parent != null) {
-                            try {
-                                Field field =
-                                    AbstractDelegateExtent.class.getDeclaredField("extent");
-                                field.setAccessible(true);
-                                field.set(this.parent, new NullExtent());
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            this.parent = null;
-                        }
-                        return false;
-                    }
-                    super.setBlock(location, block);
-                }
-                return true;
 
+        final boolean isTile = WorldUtil.IMP.getTileEntityTypes().contains(block.getBlockType());
+        if (isTile) {
+            final Integer[] tileEntityCount = this.tileEntityCount.computeIfAbsent(getChunkKey(location),
+                key -> new Integer[] {WorldUtil.IMP.getTileEntityCount(world,
+                    BlockVector2.at(location.getBlockX() >> 4, location.getBlockZ() >> 4))});
+            if (tileEntityCount[0] >= Settings.Chunk_Processor.MAX_TILES) {
+                return false;
+            } else {
+                tileEntityCount[0]++;
+                PlotSquared.debug(Captions.PREFIX + "&cDetected unsafe WorldEdit: " + location.getX() + ","
+                    + location.getZ());
+            }
         }
-        return false;
+        if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
+            if (this.count++ > this.max) {
+                if (this.parent != null) {
+                    try {
+                        Field field =
+                            AbstractDelegateExtent.class.getDeclaredField("extent");
+                        field.setAccessible(true);
+                        field.set(this.parent, new NullExtent());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    this.parent = null;
+                }
+                return false;
+            }
+            return super.setBlock(location, block);
+        }
+
+        return !isTile;
     }
 
     @Override public Entity createEntity(Location location, BaseEntity entity) {
@@ -202,4 +148,10 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
             .setBiome(position, biome);
     }
+
+
+    private static long getChunkKey(final BlockVector3 location) {
+        return (long) (location.getBlockX() >> 4) & 4294967295L | ((long) (location.getBlockZ() >> 4) & 4294967295L) << 32;
+    }
+
 }

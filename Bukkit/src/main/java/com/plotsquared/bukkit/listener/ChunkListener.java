@@ -266,7 +266,7 @@ public class ChunkListener implements Listener {
             long start = System.currentTimeMillis();
             int i = 0;
             while (System.currentTimeMillis() - start < 250) {
-                if (i >= tiles.length) {
+                if (i >= tiles.length - Settings.Chunk_Processor.MAX_TILES) {
                     Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
                     TaskManager.tasks.remove(currentIndex);
                     PlotSquared.debug("Successfully processed and unloaded chunk!");
@@ -287,11 +287,16 @@ public class ChunkListener implements Listener {
         Entity[] entities = chunk.getEntities();
         BlockState[] tiles = chunk.getTileEntities();
         if (entities.length > Settings.Chunk_Processor.MAX_ENTITIES) {
-            for (Entity ent : entities) {
-                if (!(ent instanceof Player)) {
-                    ent.remove();
+            int toRemove = entities.length - Settings.Chunk_Processor.MAX_ENTITIES;
+            int index = 0;
+            while (toRemove > 0 && index < entities.length) {
+                final Entity entity = entities[index++];
+                if (!(entity instanceof Player)) {
+                    entity.remove();
+                    toRemove--;
                 }
             }
+
             PlotSquared.debug(
                 "PlotSquared detected unsafe chunk and processed: " + (chunk.getX() << 4) + "," + (
                     chunk.getX() << 4));
@@ -304,8 +309,9 @@ public class ChunkListener implements Listener {
                 cleanChunk(chunk);
                 return true;
             }
-            for (BlockState tile : tiles) {
-                tile.getBlock().setType(Material.AIR, false);
+
+            for (int i = 0 ; i < (tiles.length - Settings.Chunk_Processor.MAX_TILES); i++) {
+                tiles[i].getBlock().setType(Material.AIR, false);
             }
         }
         return false;
