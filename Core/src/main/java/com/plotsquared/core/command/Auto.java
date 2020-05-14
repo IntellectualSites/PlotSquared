@@ -169,6 +169,9 @@ public class Auto extends SubCommand {
                     }
                 }
             }
+            if (PlotSquared.get().getPlotAreaManager().getAllPlotAreas().length == 1) {
+                plotarea = PlotSquared.get().getPlotAreaManager().getAllPlotAreas()[0];
+            }
             if (plotarea == null) {
                 MainUtil.sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
                 return false;
