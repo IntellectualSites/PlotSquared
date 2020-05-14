@@ -78,7 +78,6 @@ shadowJar {
     relocate("org.json", "com.plotsquared.json") {
         exclude "org/json/simple/**"
     }
-    archiveFileName = "${project.name}-Core-${parent.version}.jar"
 }
 
 shadowJar.doLast {
