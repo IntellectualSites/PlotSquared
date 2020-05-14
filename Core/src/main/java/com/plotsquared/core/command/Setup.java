@@ -125,7 +125,8 @@ public class Setup extends SubCommand {
             case 0:  // choose generator
                 if (args.length != 1 || !SetupUtils.generators.containsKey(args[0])) {
                     String prefix = "\n&8 - &7";
-                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_GENERATOR_ERROR + prefix + StringMan
+                    MainUtil.sendMessage(player,
+                        Captions.SETUP_WORLD_GENERATOR_ERROR + prefix + StringMan
                             .join(SetupUtils.generators.keySet(), prefix)
                             .replaceAll(PlotSquared.imp().getPluginName(),
                                 "&2" + PlotSquared.imp().getPluginName()));
@@ -247,8 +248,7 @@ public class Setup extends SubCommand {
                     return false;
                 }
                 if (id.x <= object.min.x || id.y <= object.min.y) {
-                    MainUtil
-                        .sendMessage(player, Captions.SETUP_AREA_PLOT_ID_GREATER_THAN_MINIMUM);
+                    MainUtil.sendMessage(player, Captions.SETUP_AREA_PLOT_ID_GREATER_THAN_MINIMUM);
                     return false;
                 }
                 object.max = id;
@@ -259,7 +259,8 @@ public class Setup extends SubCommand {
                 Optional<PlotAreaTerrainType> optTerrain;
                 if (args.length != 1 || !(optTerrain = PlotAreaTerrainType.fromString(args[0]))
                     .isPresent()) {
-                    MainUtil.sendMessage(player, Captions.SETUP_PARTIAL_AREA_ERROR, Captions.SETUP_PARTIAL_AREA);
+                    MainUtil.sendMessage(player, Captions.SETUP_PARTIAL_AREA_ERROR,
+                        Captions.SETUP_PARTIAL_AREA);
                     return false;
                 }
                 object.terrain = optTerrain.get();

@@ -40,10 +40,10 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.plot.message.PlotMessage;
-import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
@@ -167,7 +167,7 @@ public class Area extends SubCommand {
                                         player.teleport(WorldUtil.IMP.getSpawn(world),
                                             TeleportCause.COMMAND);
                                         if (area.getTerrain() != PlotAreaTerrainType.ALL) {
-                                            ChunkManager.largeRegionTask(world, region,
+                                            RegionManager.largeRegionTask(world, region,
                                                 new RunnableVal<BlockVector2>() {
                                                     @Override public void run(BlockVector2 value) {
                                                         AugmentedUtils
@@ -474,7 +474,7 @@ public class Area extends SubCommand {
                         "$4Stop the server and delete: " + area.getWorldName() + "/region");
                     return false;
                 }
-                ChunkManager.largeRegionTask(area.getWorldName(), area.getRegion(),
+                RegionManager.largeRegionTask(area.getWorldName(), area.getRegion(),
                     new RunnableVal<BlockVector2>() {
                         @Override public void run(BlockVector2 value) {
                             AugmentedUtils

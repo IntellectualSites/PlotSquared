@@ -109,7 +109,8 @@ public class Set extends SubCommand {
                                     if (category == null || !category.contains(BlockTypes.get(forbiddenType))) {
                                         continue;
                                     }
-                                } catch (final Throwable ignored) {}
+                                } catch (final Throwable ignored) {
+                                }
                             } else if (!blockType.contains(forbiddenType)) {
                                 continue;
                             }
@@ -156,13 +157,13 @@ public class Set extends SubCommand {
             }
 
             @Override
-            public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
-                return PatternUtil.getSuggestions(player,  StringMan.join(args, ",").trim())
-                    .stream()
+            public Collection<Command> tab(final PlotPlayer player, final String[] args,
+                final boolean space) {
+                return PatternUtil.getSuggestions(player, StringMan.join(args, ",").trim()).stream()
                     .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
                     .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                    .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {})
-                    .collect(Collectors.toList());
+                    .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+                    }).collect(Collectors.toList());
             }
         };
     }
@@ -206,13 +207,16 @@ public class Set extends SubCommand {
         return noArgs(player);
     }
 
-    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+    @Override
+    public Collection<Command> tab(final PlotPlayer player, final String[] args,
+        final boolean space) {
         if (args.length == 1) {
             return Stream
-                .of("biome", "alias", "home", "main", "floor", "air", "all", "border", "wall", "outline", "middle")
+                .of("biome", "alias", "home", "main", "floor", "air", "all", "border", "wall",
+                    "outline", "middle")
                 .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {})
-                .collect(Collectors.toList());
+                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
         } else if (args.length > 1) {
             // Additional checks
             Plot plot = player.getCurrentPlot();
@@ -232,7 +236,8 @@ public class Set extends SubCommand {
             }
 
             // components
-            HashSet<String> components = new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
+            HashSet<String> components =
+                new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
             if (components.contains(args[0].toLowerCase())) {
                 return this.component.tab(player, newArgs, space);
             }

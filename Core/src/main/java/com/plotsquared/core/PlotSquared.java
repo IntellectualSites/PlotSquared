@@ -74,6 +74,7 @@ import com.plotsquared.core.util.LegacyConverter;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
@@ -273,6 +274,7 @@ public class PlotSquared {
             GlobalBlockQueue.IMP.runTask();
             // Set chunk
             ChunkManager.manager = this.IMP.initChunkManager();
+            RegionManager.manager = this.IMP.initRegionManager();
             // Schematic handler
             SchematicHandler.manager = this.IMP.initSchematicHandler();
             // Chat
@@ -1923,10 +1925,15 @@ public class PlotSquared {
         object.put("color.14", "d");
         object.put("color.15", "e");
         object.put("color.16", "f");
-        if (!this.style.contains("color")) {
+        if (!this.style.contains("color")
+            || this.style.getConfigurationSection("color").getValues(false).size() != object
+            .size()) {
             for (Entry<String, Object> node : object.entrySet()) {
                 this.style.set(node.getKey(), node.getValue());
             }
+        }
+        if (this.style.contains("version")) {
+            this.style.set("version", null);
         }
     }
 

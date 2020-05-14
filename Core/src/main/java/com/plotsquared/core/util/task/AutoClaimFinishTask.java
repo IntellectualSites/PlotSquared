@@ -28,7 +28,6 @@ package com.plotsquared.core.util.task;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Auto;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
