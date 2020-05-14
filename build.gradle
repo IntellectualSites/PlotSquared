@@ -129,6 +129,8 @@ subprojects {
         archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
         destinationDirectory = file "../target"
     }
+
+    version = rootProject.version
 }
 
 task aggregatedJavadocs(type: Javadoc, description: "Generate javadocs from all child projects as if it was a single project", group: "Documentation") {
