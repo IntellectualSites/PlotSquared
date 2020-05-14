@@ -126,9 +126,11 @@ subprojects {
             exclude "org/json/simple/**"
         }
         // relocate('org.mcstats', 'com.plotsquared.stats')
-        archiveFileName = "${parent.name}-${project.name}-${parent.version}.jar"
+        archiveFileName = "${project.name}-${parent.version}.jar"
         destinationDirectory = file "../target"
     }
+
+    version = rootProject.version
 }
 
 task aggregatedJavadocs(type: Javadoc, description: "Generate javadocs from all child projects as if it was a single project", group: "Documentation") {

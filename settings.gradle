@@ -1,3 +1,6 @@
 rootProject.name = 'PlotSquared'
 
 include 'Core', 'Bukkit' // , 'Nukkit', 'Sponge'
+
+project(':Core').name = 'PlotSquared'
+project(':Bukkit').name = 'PlotSquared-Bukkit'

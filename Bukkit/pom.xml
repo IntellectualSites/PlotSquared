@@ -20,8 +20,8 @@
     </dependency>
     <dependency>
       <groupId>com.plotsquared</groupId>
-      <artifactId>Core</artifactId>
-      <version>unspecified</version>
+      <artifactId>PlotSquared</artifactId>
+      <version>5.11.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
