@@ -321,7 +321,7 @@ public class Plot {
      * the owner of this particular subplot.
      * <p>
      * Unlike {@link #getOwner()} this method does not
-     * consider factors such as {@link com.github.intellectualsites.plotsquared.plot.flags.implementations.ServerPlotFlag}
+     * consider factors such as {@link com.plotsquared.core.plot.flag.implementations.ServerPlotFlag}
      * that could alter the de facto owner of the plot.
      *
      * @return The plot owner of this particular (sub-)plot
@@ -2060,7 +2060,6 @@ public class Plot {
      * @param destination The other plot to swap with
      * @param whenDone    A task to run when finished, or null
      * @return boolean if swap was successful
-     * @see ChunkManager#swap(Location, Location, Location, Location, Runnable) to swap terrain
      * @see #swapData(Plot) to swap plot settings
      */
     public CompletableFuture<Boolean> swap(Plot destination, Runnable whenDone) {

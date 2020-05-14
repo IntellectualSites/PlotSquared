@@ -9,6 +9,7 @@ buildscript {
     dependencies {
         classpath("com.github.jengelman.gradle.plugins:shadow:5.0.0")
         classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.14.0'
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     }
     configurations.all {
         resolutionStrategy {
@@ -41,7 +42,9 @@ version = ver + versuffix
 description = rootProject.name
 
 allprojects {
-    apply plugin: 'com.github.hierynomus.license'
+    apply(plugin: 'com.github.hierynomus.license')
+    apply(plugin: 'com.bmuschko.nexus')
+
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {
             options.compilerArgs << "-Xmaxerrs" << "1000"
@@ -52,6 +55,11 @@ allprojects {
         mapping 'java', 'SLASHSTAR_STYLE'
         ext.year = 2020
         includes(["**/*.java","**/*.js"])
+    }
+    nexus {
+        sign = false
+        repositoryUrl = 'https://mvn.intellectualsites.com/content/repositories/releases/'
+        snapshotRepositoryUrl = 'https://mvn.intellectualsites.com/content/repositories/snapshots/'
     }
 }
 
