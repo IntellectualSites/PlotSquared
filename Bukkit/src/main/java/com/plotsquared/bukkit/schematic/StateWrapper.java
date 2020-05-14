@@ -26,7 +26,6 @@
 package com.plotsquared.bukkit.schematic;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.sk89q.jnbt.ByteTag;
 import com.sk89q.jnbt.CompoundTag;
@@ -34,7 +33,9 @@ import com.sk89q.jnbt.ListTag;
 import com.sk89q.jnbt.ShortTag;
 import com.sk89q.jnbt.StringTag;
 import com.sk89q.jnbt.Tag;
-import org.bukkit.Material;
+import com.sk89q.worldedit.blocks.BaseItemStack;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.item.ItemType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
@@ -171,17 +172,13 @@ public class StateWrapper {
         if (this.tag == null) {
             return false;
         }
-        String tileid = this.tag.getString("id").toLowerCase();
-        if (tileid.startsWith("minecraft:")) {
-            tileid = tileid.replace("minecraft:", "");
-        }
         World world = BukkitUtil.getWorld(worldName);
         Block block = world.getBlockAt(x, y, z);
         if (block == null) {
             return false;
         }
         org.bukkit.block.BlockState state = block.getState();
-        switch (tileid) {
+        switch (getId()) {
             case "chest":
             case "beacon":
             case "brewingstand":
@@ -190,36 +187,27 @@ public class StateWrapper {
             case "furnace":
             case "hopper":
             case "shulkerbox":
+                if (!(state instanceof Container)) {
+                    return false;
+                }
                 List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
-                int length = itemsTag.size();
-                String[] ids = new String[length];
-                byte[] amounts = new byte[length];
-                byte[] slots = new byte[length];
-                for (int i = 0; i < length; i++) {
-                    Tag itemTag = itemsTag.get(i);
+                Container container = (Container) state;
+                Inventory inv = container.getSnapshotInventory();
+                for (Tag itemTag : itemsTag) {
                     CompoundTag itemComp = (CompoundTag) itemTag;
-                    String id = itemComp.getString("id");
-                    if (id.startsWith("minecraft:")) {
-                        id = id.replace("minecraft:", "");
+                    ItemType type = ItemType.REGISTRY.get(itemComp.getString("id").toLowerCase());
+                    if (type == null) {
+                        continue;
                     }
-                    ids[i] = id;
-                    amounts[i] = itemComp.getByte("Count");
-                    slots[i] = itemComp.getByte("Slot");
+                    int count = itemComp.getByte("Count");
+                    int slot = itemComp.getByte("Slot");
+                    CompoundTag tag = (CompoundTag) itemComp.getValue().get("tag");
+                    BaseItemStack baseItemStack = new BaseItemStack(type, tag, count);
+                    ItemStack itemStack = BukkitAdapter.adapt(baseItemStack);
+                    inv.setItem(slot, itemStack);
                 }
-                if (state instanceof Container) {
-                    Container container = (Container) state;
-                    Inventory inv = container.getSnapshotInventory();
-                    for (int i = 0; i < ids.length; i++) {
-                        Material mat = Material.getMaterial(ids[i].toUpperCase());
-                        if (mat != null) {
-                            ItemStack item = new ItemStack(mat, (int) amounts[i]);
-                            inv.setItem(slots[i], item);
-                        }
-                    }
-                    container.update(true, true);
-                    return true;
-                }
-                return false;
+                container.update(true, false);
+                return true;
             case "sign":
                 if (state instanceof Sign) {
                     Sign sign = (Sign) state;
@@ -250,7 +238,11 @@ public class StateWrapper {
     }
 
     public String getId() {
-        return "Chest";
+        String tileid = this.tag.getString("id").toLowerCase();
+        if (tileid.startsWith("minecraft:")) {
+            tileid = tileid.replace("minecraft:", "");
+        }
+        return tileid;
     }
 
     public List<CompoundTag> serializeInventory(ItemStack[] items) {
