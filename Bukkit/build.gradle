@@ -81,7 +81,7 @@ task copyFiles {
 
 shadowJar {
     dependencies {
-        include(dependency(":Core"))
+        include(dependency(":PlotSquared"))
         include(dependency("io.papermc:paperlib:1.0.2"))
         include(dependency("net.kyori:text-adapter-bukkit:3.0.3"))
         include(dependency("org.bstats:bstats-bukkit:1.7"))
