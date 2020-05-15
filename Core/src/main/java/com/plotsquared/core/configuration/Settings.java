@@ -529,6 +529,8 @@ public class Settings extends Config {
             PERSISTENT_ROAD_REGEN = false;
         @Comment("Try to guess plot owners from sign data. This may decrease server performance")
         public static boolean GUESS_PLOT_OWNER = false;
+        @Comment("Plot component preset GUI")
+        public static boolean COMPONENT_PRESETS = true;
     }
 
 }

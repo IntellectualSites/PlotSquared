@@ -769,6 +769,13 @@ public enum Captions implements Caption {
     BACKUP_AUTOMATIC_FAILURE("$2The automatic backup process failed. Your pending action has been canceled. Reason: %s", "Backups"),
     //</editor-fold>
 
+    //<editor-fold desc="Preset">
+    PRESET_CANNOT_AFFORD("$2You cannot afford that preset", "Preset"),
+    PRESET_INVALID("$2Could not generate a pattern from that preset", "Preset"),
+    PRESET_LORE_COST("$2Cost: $1%cost%", "Preset"),
+    PRESET_LORE_COMPONENT("$2Component: $1%component%", "Preset"),
+    //</editor-fold>
+
     //<editor-fold desc="Generic">
     GENERIC_OTHER("other", "Generic"),
     GENERIC_MERGED("merged", "Generic"),

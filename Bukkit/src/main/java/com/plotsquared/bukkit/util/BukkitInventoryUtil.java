@@ -49,7 +49,8 @@ public class BukkitInventoryUtil extends InventoryUtil {
 
     @Override public void open(PlotInventory inv) {
         BukkitPlayer bp = (BukkitPlayer) inv.player;
-        Inventory inventory = Bukkit.createInventory(null, inv.size * 9, inv.getTitle());
+        Inventory inventory = Bukkit.createInventory(null, inv.size * 9,
+            ChatColor.translateAlternateColorCodes('&', inv.getTitle()));
         PlotItemStack[] items = inv.getItems();
         for (int i = 0; i < inv.size * 9; i++) {
             PlotItemStack item = items[i];
