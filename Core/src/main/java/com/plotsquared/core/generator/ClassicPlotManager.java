@@ -41,6 +41,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A plot manager with square plots which tessellate on a square grid with the following sections: ROAD, WALL, BORDER (wall), PLOT, FLOOR (plot).
@@ -55,23 +56,27 @@ public class ClassicPlotManager extends SquarePlotManager {
     }
 
     @Override public boolean setComponent(PlotId plotId, String component, Pattern blocks) {
-        switch (component) {
-            case "floor":
-                return setFloor(plotId, blocks);
-            case "wall":
-                return setWallFilling(plotId, blocks);
-            case "all":
-                return setAll(plotId, blocks);
-            case "air":
-                return setAir(plotId, blocks);
-            case "main":
-                return setMain(plotId, blocks);
-            case "middle":
-                return setMiddle(plotId, blocks);
-            case "outline":
-                return setOutline(plotId, blocks);
-            case "border":
-                return setWall(plotId, blocks);
+        final Optional<ClassicPlotManagerComponent> componentOptional =
+            ClassicPlotManagerComponent.fromString(component);
+        if (componentOptional.isPresent()) {
+            switch (componentOptional.get()) {
+                case FLOOR:
+                    return setFloor(plotId, blocks);
+                case WALL:
+                    return setWallFilling(plotId, blocks);
+                case AIR:
+                    return setAir(plotId, blocks);
+                case MAIN:
+                    return setMain(plotId, blocks);
+                case MIDDLE:
+                    return setMiddle(plotId, blocks);
+                case OUTLINE:
+                    return setOutline(plotId, blocks);
+                case BORDER:
+                    return setWall(plotId, blocks);
+                case ALL:
+                    return setAll(plotId, blocks);
+            }
         }
         return false;
     }
@@ -549,7 +554,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     }
 
     @Override public String[] getPlotComponents(PlotId plotId) {
-        return new String[] {"main", "floor", "air", "all", "border", "wall", "outline", "middle"};
+        return ClassicPlotManagerComponent.stringValues();
     }
 
     /**
@@ -564,4 +569,5 @@ public class ClassicPlotManager extends SquarePlotManager {
         return new Location(classicPlotWorld.getWorldName(), bot.getX() - 1,
             classicPlotWorld.ROAD_HEIGHT + 1, bot.getZ() - 2);
     }
+
 }

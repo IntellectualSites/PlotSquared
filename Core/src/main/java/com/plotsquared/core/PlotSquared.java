@@ -26,6 +26,7 @@
 package com.plotsquared.core;
 
 import com.plotsquared.core.command.WE_Anywhere;
+import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -184,7 +185,6 @@ public class PlotSquared {
         //
         // Register configuration serializable classes
         //
-        //        ConfigurationSerialization.registerClass(BlockState.class, "BlockState");
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
         try {
@@ -305,6 +305,15 @@ public class PlotSquared {
             if (Settings.Enabled_Components.ECONOMY) {
                 TaskManager
                     .runTask(() -> EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler());
+            }
+
+            if (Settings.Enabled_Components.COMPONENT_PRESETS) {
+                try {
+                    new ComponentPresetManager();
+                } catch (final Exception e) {
+                    PlotSquared.log(Captions.PREFIX + "Failed to initialize the preset system");
+                    e.printStackTrace();
+                }
             }
 
             // World generators:
