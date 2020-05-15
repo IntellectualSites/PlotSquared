@@ -29,7 +29,6 @@ import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
-import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
@@ -39,14 +38,10 @@ import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.WorldCreator;
-import org.bukkit.WorldType;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -197,53 +192,21 @@ public class BukkitSetupUtils extends SetupUtils {
                 break;
             }
         }
+
         try {
             PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("Multiverse-Core");
-        if (object.setupGenerator != null) {
-            if (plugin != null && plugin.isEnabled()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                    "mv create " + world + " normal -g " + object.setupGenerator);
-                setGenerator(world, object.setupGenerator);
-                if (Bukkit.getWorld(world) != null) {
-                    return world;
-                }
-            }
-            WorldCreator wc = new WorldCreator(object.world);
-            wc.generator(object.setupGenerator);
-            wc.environment(Environment.NORMAL);
-            wc.type(WorldType.FLAT);
-            Bukkit.createWorld(wc);
-            setGenerator(world, object.setupGenerator);
-        } else {
-            if (plugin != null && plugin.isEnabled()) {
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                    "mv create " + world + " normal");
-                if (Bukkit.getWorld(world) != null) {
-                    return world;
-                }
-            }
-            World bw =
-                Bukkit.createWorld(new WorldCreator(object.world).environment(Environment.NORMAL));
-        }
-        return object.world;
-    }
 
-    public void setGenerator(String world, String generator) {
-        if (Bukkit.getWorlds().isEmpty() || !Bukkit.getWorlds().get(0).getName().equals(world)) {
-            return;
+        Objects.requireNonNull(PlotSquared.imp()).getWorldManager()
+            .handleWorldCreation(object.world, object.setupGenerator);
+
+        if (Bukkit.getWorld(world) != null) {
+            return world;
         }
-        File file = new File("bukkit.yml").getAbsoluteFile();
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(file);
-        yml.set("worlds." + world + ".generator", generator);
-        try {
-            yml.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        return object.world;
     }
 
     @Override public String getGenerator(PlotArea plotArea) {

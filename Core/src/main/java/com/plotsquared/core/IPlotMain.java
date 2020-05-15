@@ -35,6 +35,7 @@ import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
+import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
@@ -277,6 +278,13 @@ public interface IPlotMain extends ILogger {
      *
      * @return Backup manager
      */
-    BackupManager getBackupManager();
+    @NotNull BackupManager getBackupManager();
+
+    /**
+     * Get the platform specific world manager
+     *
+     * @return World manager
+     */
+    @NotNull PlatformWorldManager getWorldManager();
 
 }

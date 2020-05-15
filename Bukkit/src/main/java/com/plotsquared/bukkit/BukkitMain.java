@@ -86,6 +86,7 @@ import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.RegionManager;
@@ -159,6 +160,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
     @Getter private BackupManager backupManager;
+    @Getter private PlatformWorldManager worldManager;
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
