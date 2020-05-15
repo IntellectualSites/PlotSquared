@@ -33,6 +33,9 @@ import com.plotsquared.bukkit.listener.PaperListener;
 import com.plotsquared.bukkit.listener.PlayerEvents;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
+import com.plotsquared.bukkit.managers.BukkitWorldManager;
+import com.plotsquared.bukkit.managers.HyperverseWorldManager;
+import com.plotsquared.bukkit.managers.MultiverseWorldManager;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.Placeholders;
 import com.plotsquared.bukkit.queue.BukkitLocalQueue;
@@ -247,6 +250,17 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             PlotSquared.log(Captions.PREFIX + "&6Backup features will be disabled");
             this.backupManager = new NullBackupManager();
         }
+
+        if (Bukkit.getPluginManager().getPlugin("Hyperverse") != null) {
+            this.worldManager = new HyperverseWorldManager();
+        } else if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
+            this.worldManager = new MultiverseWorldManager();
+        } else {
+            this.worldManager = new BukkitWorldManager();
+        }
+
+        PlotSquared.log(Captions.PREFIX.getTranslated() + "Using platform world manager: " +
+            this.worldManager.getName());
     }
 
     private void unload() {
