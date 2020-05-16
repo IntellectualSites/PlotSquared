@@ -92,10 +92,6 @@ public class ComponentPresetManager {
         }
         this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
 
-        if (!yamlConfiguration.contains("presets")) {
-            yamlConfiguration.createSection("presets");
-        }
-
         if (yamlConfiguration.contains("presets")) {
             this.presets = yamlConfiguration.getMapList("presets").stream().map(o -> (Map<String, Object>) o)
                 .map(ComponentPreset::deserialize).collect(Collectors.toList());
