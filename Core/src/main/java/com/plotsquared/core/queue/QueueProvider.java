@@ -41,7 +41,7 @@ public abstract class QueueProvider {
                         return (LocalBlockQueue) primary.getConstructors()[0].newInstance(world);
                     } catch (Throwable e) {
                         // e.printStackTrace();
-                        PlotSquared.log(Captions.PREFIX + "Failed to initialize primary block queue."
+                        PlotSquared.debug(Captions.PREFIX + "Failed to initialize primary block queue."
                             + " Using secondary queue instead (" + e.getMessage() + ")");
                         failed = true;
                     }
