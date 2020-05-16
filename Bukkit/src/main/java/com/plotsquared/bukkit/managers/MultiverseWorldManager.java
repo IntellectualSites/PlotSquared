@@ -43,7 +43,7 @@ public class MultiverseWorldManager extends BukkitWorldManager {
         // Then we send the console command
         final StringBuilder commandBuilder = new StringBuilder("mv create ")
             .append(worldName).append(" normal");
-        if (generator != null && !generator.isEmpty()) {
+        if (generator != null) {
             commandBuilder.append(" -g ").append(generator);
         }
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), commandBuilder.toString());
