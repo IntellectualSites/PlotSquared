@@ -25,6 +25,9 @@
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Captions;
+
 public abstract class QueueProvider {
     public static QueueProvider of(final Class<? extends LocalBlockQueue> primary,
         final Class<? extends LocalBlockQueue> fallback) {
@@ -37,7 +40,9 @@ public abstract class QueueProvider {
                     try {
                         return (LocalBlockQueue) primary.getConstructors()[0].newInstance(world);
                     } catch (Throwable e) {
-                        e.printStackTrace();
+                        // e.printStackTrace();
+                        PlotSquared.log(Captions.PREFIX + "Failed to initialize primary block queue."
+                            + " Using secondary queue instead (" + e.getMessage() + ")");
                         failed = true;
                     }
                 }

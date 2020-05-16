@@ -46,6 +46,8 @@ import java.util.Map;
     permission = "plots.admin")
 public class Debug extends SubCommand {
 
+    public static boolean enableNativeAccess = true;
+
     @Override public boolean onCommand(PlotPlayer player, String[] args) {
         if (args.length > 0) {
             if ("player".equalsIgnoreCase(args[0])) {
@@ -63,6 +65,11 @@ public class Debug extends SubCommand {
                     .getChunkChunks(player.getLocation().getWorld()).size() + "(" + (
                     System.currentTimeMillis() - start) + "ms) using thread: " + Thread
                     .currentThread().getName()));
+            return true;
+        }
+        if (args.length > 0 && "togglenativequeue".equalsIgnoreCase(args[0])) {
+            MainUtil.sendMessage(player, "Toggling WorldEdit native access. Current status: "
+                + (enableNativeAccess = !enableNativeAccess));
             return true;
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {

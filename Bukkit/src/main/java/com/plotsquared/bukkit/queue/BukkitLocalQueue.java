@@ -50,7 +50,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.inventory.BlockInventoryHolder;
 
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -174,7 +173,7 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
         }
     }
 
-    private Chunk getChunk(final World world, final LocalChunk localChunk) {
+    protected Chunk getChunk(final World world, final LocalChunk localChunk) {
         Chunk chunk = null;
         if (this.getChunkObject() != null && this.getChunkObject() instanceof Chunk) {
             chunk = (Chunk) this.getChunkObject();

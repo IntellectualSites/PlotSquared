@@ -39,6 +39,7 @@ import com.plotsquared.bukkit.managers.MultiverseWorldManager;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.Placeholders;
 import com.plotsquared.bukkit.queue.BukkitLocalQueue;
+import com.plotsquared.bukkit.queue.WorldEditNativeAccessLocalQueue;
 import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
@@ -699,16 +700,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     }
 
     @Override public QueueProvider initBlockQueue() {
-        //TODO Figure out why this code is still here yet isn't being called anywhere.
-        //        try {
-        //            new SendChunk();
-        //            MainUtil.canSendChunk = true;
-        //        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
-        //            PlotSquared.debug(
-        //                SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
-        //            MainUtil.canSendChunk = false;
-        //        }
-        return QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class);
+        return QueueProvider.of(WorldEditNativeAccessLocalQueue.class, BukkitLocalQueue.class);
     }
 
     @Override public WorldUtil initWorldUtil() {
