@@ -30,7 +30,7 @@ dependencies {
         exclude(module: "bukkit")
     }
     implementation("me.clip:placeholderapi:2.10.4")
-    compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT")
+    compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
 }
 
 sourceCompatibility = 1.8
