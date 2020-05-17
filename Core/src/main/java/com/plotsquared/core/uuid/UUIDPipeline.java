@@ -28,8 +28,11 @@ package com.plotsquared.core.uuid;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -79,9 +82,7 @@ public class UUIDPipeline {
      * @return Copy of service list
      */
     public List<UUIDService> getServiceListInstance() {
-        final List<UUIDService> serviceList = Lists.newLinkedList(this.serviceList);
-        serviceList.add(EndOfPipeline.instance);
-        return serviceList;
+        return Collections.unmodifiableList(this.serviceList);
     }
 
     private void consume(@NotNull final UUIDMapping mapping) {
@@ -93,74 +94,34 @@ public class UUIDPipeline {
     /**
      * Asynchronously attempt to fetch the mapping from a given UUID or username
      *
-     * @param request UUID or username
+     * @param requests UUIDs or usernames
      * @return Future that may complete with the mapping
      */
-    public CompletableFuture<UUIDMapping> get(@NotNull final Object request) {
-        if (!(request instanceof String) && !(request instanceof UUID)) {
-            throw new IllegalArgumentException("Request has to be either a username or UUID");
-        }
-        final CompletableFuture<UUIDMapping> future = new CompletableFuture<>();
-        final ListIterator<UUIDService> serviceListIterator
-            = this.getServiceListInstance().listIterator();
-        final Runnable[] runnable = new Runnable[1];
-        runnable[0] = () -> {
-            if (serviceListIterator.hasNext()) {
-                final UUIDService uuidService = serviceListIterator.next();
-                uuidService.get(request).whenCompleteAsync(((result, throwable) -> {
-                    if (throwable != null) {
-                        if (throwable instanceof ServiceFailure) {
-                            try {
-                                runnable[0].run();
-                            } catch (final Throwable inner) {
-                                future.completeExceptionally(inner);
-                            }
-                        } else {
-                            future.completeExceptionally(throwable);
-                        }
-                    } else {
+    public CompletableFuture<Collection<UUIDMapping>> get(@NotNull final Collection<Object> requests) {
+        final List<UUIDService> serviceList = this.getServiceListInstance();
+        return CompletableFuture.supplyAsync(() -> {
+            final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
+            outer: for (final Object request : requests) {
+                if (!(request instanceof String) && !(request instanceof UUID)) {
+                    throw new IllegalArgumentException("Request has to be either a username or UUID");
+                }
+                for (final UUIDService service : serviceList) {
+                    final Optional<?> result = service.get(request);
+                    if (result.isPresent()) {
                         final String username = request instanceof String ? (String) request
-                            : (String) result;
+                            : (String) result.get();
                         final UUID uuid = request instanceof UUID ? (UUID) request
-                            : (UUID) result;
+                            : (UUID) result.get();
                         final UUIDMapping mapping = new UUIDMapping(uuid, username);
-                        future.complete(mapping);
                         this.consume(mapping);
+                        mappings.add(mapping);
+                        continue outer;
                     }
-                }), this.executor);
-            } else {
-                throw new ServiceError("Pipeline is incomplete");
+                }
+                throw new ServiceError("End of pipeline");
             }
-        };
-        try {
-            // Start the pipeline traversal
-            runnable[0].run();
-        } catch (final Throwable throwable) {
-            future.completeExceptionally(throwable);
-        }
-        return future;
-    }
-
-    /**
-     * Indicates that the end of the pipeline has been reached, this
-     * will cause the request to fail, as no service was able to
-     * fulfil the request
-     */
-    private static class EndOfPipeline implements UUIDService {
-
-        public static final EndOfPipeline instance = new EndOfPipeline();
-
-        @Override @NotNull public CompletableFuture<String> get(@NotNull final UUID uuid) {
-            final CompletableFuture<String> future = new CompletableFuture<>();
-            future.completeExceptionally(new ServiceError("End of pipeline"));
-            return future;
-        }
-
-        @Override @NotNull public CompletableFuture<UUID> get(@NotNull final String username) {
-            final CompletableFuture<UUID> future = new CompletableFuture<>();
-            future.completeExceptionally(new ServiceError("End of pipeline"));
-            return future;
-        }
+            return mappings;
+        }, this.executor);
     }
 
 }

@@ -27,15 +27,15 @@ package com.plotsquared.core.uuid;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Service used to provide usernames from player UUIDs
  */
 public interface UUIDService {
 
-    default CompletableFuture<?> get(@NotNull final Object request) {
+    default Optional<?> get(@NotNull final Object request) {
         if (request instanceof UUID) {
             return get((UUID) request);
         } else if (request instanceof String) {
@@ -54,9 +54,9 @@ public interface UUIDService {
      * this completes with an empty optional.
      *
      * @param uuid Player UUID
-     * @return Future that may contain the username if it exists
+     * @return Optional that may contain the username if it exists
      */
-    @NotNull CompletableFuture<String> get(@NotNull final UUID uuid);
+    @NotNull Optional<String> get(@NotNull final UUID uuid);
 
     /**
      * Get a stored UUID from the service if it exists.
@@ -67,8 +67,8 @@ public interface UUIDService {
      * this completes with an empty optional.
      *
      * @param username Player username
-     * @return Future that may contain the UUID if it exists
+     * @return Optional  that may contain the UUID if it exists
      */
-    @NotNull CompletableFuture<UUID> get(@NotNull final String username);
+    @NotNull Optional<UUID> get(@NotNull final String username);
 
 }

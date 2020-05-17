@@ -27,13 +27,12 @@ package com.plotsquared.core.uuid.offline;
 
 import com.google.common.base.Charsets;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.uuid.ServiceFailure;
 import com.plotsquared.core.uuid.UUIDService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Name provider service that creates UUIDs from usernames
@@ -47,13 +46,12 @@ public class OfflineModeUUIDService implements UUIDService {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(Charsets.UTF_8));
     }
 
-    @Override @NotNull public CompletableFuture<String> get(@NotNull final UUID uuid) {
-        // This service can only get UUIDs from usernames
-        return ServiceFailure.getFuture();
+    @Override @NotNull public Optional<String> get(@NotNull final UUID uuid) {
+        return Optional.empty();
     }
 
-    @Override @NotNull public CompletableFuture<UUID> get(@NotNull final String username) {
-        return CompletableFuture.completedFuture(this.getFromUsername(username));
+    @Override @NotNull public Optional<UUID> get(@NotNull final String username) {
+        return Optional.of(this.getFromUsername(username));
     }
 
 }
