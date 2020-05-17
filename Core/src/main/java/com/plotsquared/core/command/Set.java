@@ -76,7 +76,6 @@ public class Set extends SubCommand {
             @Override public boolean set(PlotPlayer player, final Plot plot, String value) {
                 PlotManager manager = player.getLocation().getPlotManager();
                 String[] components = manager.getPlotComponents(plot.getId());
-                boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(player.getUUID());
 
                 String[] args = value.split(" ");
                 String material =

@@ -60,9 +60,7 @@ import java.util.UUID;
  *
  * @version 5
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
-@NoArgsConstructor
-public class PlotAPI {
+@SuppressWarnings({"unused", "WeakerAccess"}) @NoArgsConstructor public class PlotAPI {
 
     /**
      * Gets all plots.

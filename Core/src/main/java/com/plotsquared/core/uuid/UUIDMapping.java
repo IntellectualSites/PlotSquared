@@ -23,25 +23,31 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.uuid;
+package com.plotsquared.core.uuid;
 
-import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.player.PlotPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public interface UUIDWrapper {
+/**
+ * A pair consisting of a UUID and a username
+ */
+public class UUIDMapping {
 
-    @NotNull UUID getUUID(PlotPlayer player);
+    private final UUID uuid;
+    private final String username;
 
-    UUID getUUID(OfflinePlotPlayer player);
+    public UUIDMapping(@NotNull final UUID uuid, final String username) {
+        this.uuid = uuid;
+        this.username = username;
+    }
 
-    UUID getUUID(String name);
+    @NotNull public String getUsername() {
+        return this.username;
+    }
 
-    OfflinePlotPlayer getOfflinePlayer(UUID uuid);
+    @NotNull public UUID getUuid() {
+        return this.uuid;
+    }
 
-    OfflinePlotPlayer getOfflinePlayer(String name);
-
-    OfflinePlotPlayer[] getOfflinePlayers();
 }

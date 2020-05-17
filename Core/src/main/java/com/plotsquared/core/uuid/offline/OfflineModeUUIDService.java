@@ -23,25 +23,37 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.uuid;
+package com.plotsquared.core.uuid.offline;
 
-import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.player.PlotPlayer;
+import com.google.common.base.Charsets;
+import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.uuid.ServiceFailure;
+import com.plotsquared.core.uuid.UUIDService;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
-public interface UUIDWrapper {
+/**
+ * Name provider service that creates UUIDs from usernames
+ */
+public class OfflineModeUUIDService implements UUIDService {
 
-    @NotNull UUID getUUID(PlotPlayer player);
+    @NotNull protected final UUID getFromUsername(@NotNull String username) {
+        if (Settings.UUID.FORCE_LOWERCASE) {
+            username = username.toLowerCase(Locale.ENGLISH);
+        }
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(Charsets.UTF_8));
+    }
 
-    UUID getUUID(OfflinePlotPlayer player);
+    @Override @NotNull public CompletableFuture<String> get(@NotNull final UUID uuid) {
+        // This service can only get UUIDs from usernames
+        return ServiceFailure.getFuture();
+    }
 
-    UUID getUUID(String name);
+    @Override @NotNull public CompletableFuture<UUID> get(@NotNull final String username) {
+        return CompletableFuture.completedFuture(this.getFromUsername(username));
+    }
 
-    OfflinePlotPlayer getOfflinePlayer(UUID uuid);
-
-    OfflinePlotPlayer getOfflinePlayer(String name);
-
-    OfflinePlotPlayer[] getOfflinePlayers();
 }

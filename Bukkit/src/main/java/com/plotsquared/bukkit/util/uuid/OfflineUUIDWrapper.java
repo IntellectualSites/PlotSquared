@@ -46,7 +46,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
-public class OfflineUUIDWrapper extends UUIDWrapper {
+public class OfflineUUIDWrapper implements UUIDWrapper {
 
     private final Object[] arg = new Object[0];
     private Method getOnline = null;

@@ -23,25 +23,27 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.uuid;
+package com.plotsquared.core.uuid;
 
-import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.player.PlotPlayer;
-import org.jetbrains.annotations.NotNull;
+import java.util.concurrent.CompletableFuture;
 
-import java.util.UUID;
+/**
+ * Thrown by a {@link UUIDService} when it cannot
+ * complete a request. This is not an error and
+ * will be dealt with silently.
+ */
+public class ServiceFailure extends Throwable {
 
-public interface UUIDWrapper {
+    private static final ServiceFailure instance = new ServiceFailure();
 
-    @NotNull UUID getUUID(PlotPlayer player);
+    public static <T> CompletableFuture<T> getFuture() {
+        final CompletableFuture<T> completableFuture = new CompletableFuture<>();
+        completableFuture.completeExceptionally(instance);
+        return completableFuture;
+    }
 
-    UUID getUUID(OfflinePlotPlayer player);
+    @Override public Throwable fillInStackTrace() {
+        return this;
+    }
 
-    UUID getUUID(String name);
-
-    OfflinePlotPlayer getOfflinePlayer(UUID uuid);
-
-    OfflinePlotPlayer getOfflinePlayer(String name);
-
-    OfflinePlotPlayer[] getOfflinePlayers();
 }
