@@ -140,12 +140,18 @@ public class UUIDPipeline {
      */
     public CompletableFuture<Collection<UUIDMapping>> getNames(
         @NotNull final Collection<UUID> requests) {
+        if (requests.isEmpty()) {
+            return CompletableFuture.completedFuture(Collections.emptyList());
+        }
         final List<UUIDService> serviceList = this.getServiceListInstance();
         return CompletableFuture.supplyAsync(() -> {
             final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
             final List<UUID> remainingRequests = new ArrayList<>(requests);
 
             for (final UUIDService service : serviceList) {
+                if (remainingRequests.isEmpty()) {
+                    break;
+                }
                 final List<UUIDMapping> completedRequests = service.getNames(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
                     remainingRequests.remove(mapping.getUuid());
@@ -170,12 +176,18 @@ public class UUIDPipeline {
      */
     public CompletableFuture<Collection<UUIDMapping>> getUUIDs(
         @NotNull final Collection<String> requests) {
+        if (requests.isEmpty()) {
+            return CompletableFuture.completedFuture(Collections.emptyList());
+        }
         final List<UUIDService> serviceList = this.getServiceListInstance();
         return CompletableFuture.supplyAsync(() -> {
             final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
             final List<String> remainingRequests = new ArrayList<>(requests);
 
             for (final UUIDService service : serviceList) {
+                if (remainingRequests.isEmpty()) {
+                    break;
+                }
                 final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
                     remainingRequests.remove(mapping.getUsername());
