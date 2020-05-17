@@ -26,6 +26,8 @@
 package com.plotsquared.core.uuid;
 
 import com.google.common.collect.Lists;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.util.task.TaskManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,8 +51,14 @@ public class UUIDPipeline {
 
     private final Executor executor;
     private final List<UUIDService> serviceList;
-    private final List<Consumer<UUIDMapping>> consumerList;
+    private final List<Consumer<List<UUIDMapping>>> consumerList;
 
+    /**
+     * Construct a new UUID pipeline
+     *
+     * @param executor Executor that is used to run asynchronous tasks inside
+     *                 of the pipeline
+     */
     public UUIDPipeline(@NotNull final Executor executor) {
         this.executor = executor;
         this.serviceList = Lists.newLinkedList();
@@ -71,7 +79,7 @@ public class UUIDPipeline {
      *
      * @param mappingConsumer Consumer to register
      */
-    public void registerConsumer(@NotNull final Consumer<UUIDMapping> mappingConsumer) {
+    public void registerConsumer(@NotNull final Consumer<List<UUIDMapping>> mappingConsumer) {
         this.consumerList.add(mappingConsumer);
     }
 
@@ -84,10 +92,44 @@ public class UUIDPipeline {
         return Collections.unmodifiableList(this.serviceList);
     }
 
-    private void consume(@NotNull final UUIDMapping mapping) {
-        for (final Consumer<UUIDMapping> consumer : this.consumerList) {
-            consumer.accept(mapping);
+    /**
+     * Let all consumers act on the given mapping.
+     *
+     * @param mappings Mappings
+     */
+    public void consume(@NotNull final List<UUIDMapping> mappings) {
+        final Runnable runnable = () -> {
+            for (final Consumer<List<UUIDMapping>> consumer : this.consumerList) {
+                consumer.accept(mappings);
+            }
+        };
+        if (PlotSquared.get().isMainThread(Thread.currentThread())) {
+            TaskManager.runTaskAsync(runnable);
+        } else {
+            runnable.run();
         }
+    }
+
+    /**
+     * Consume a single mapping
+     *
+     * @param mapping Mapping to consume
+     */
+    public void consume(@NotNull final UUIDMapping mapping) {
+        this.consume(Collections.singletonList(mapping));
+    }
+
+    /**
+     * This will store the given username-UUID pair directly, and overwrite
+     * any existing caches. This can be used to update usernames automatically
+     * whenever a player joins the server, to make sure an up-to-date UUID
+     * mapping is stored
+     *
+     * @param username Player username
+     * @param uuid     Player uuid
+     */
+    public void storeImmediately(@NotNull final String username, @NotNull final UUID uuid) {
+        this.consume(new UUIDMapping(uuid, username));
     }
 
     /**
@@ -96,7 +138,8 @@ public class UUIDPipeline {
      * @param requests UUIDs
      * @return Mappings
      */
-    public CompletableFuture<Collection<UUIDMapping>> getNames(@NotNull final Collection<UUID> requests) {
+    public CompletableFuture<Collection<UUIDMapping>> getNames(
+        @NotNull final Collection<UUID> requests) {
         final List<UUIDService> serviceList = this.getServiceListInstance();
         return CompletableFuture.supplyAsync(() -> {
             final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
@@ -111,6 +154,7 @@ public class UUIDPipeline {
             }
 
             if (mappings.size() == requests.size()) {
+                this.consume(mappings);
                 return mappings;
             }
 
@@ -124,7 +168,8 @@ public class UUIDPipeline {
      * @param requests Names
      * @return Mappings
      */
-    public CompletableFuture<Collection<UUIDMapping>> getUUIDs(@NotNull final Collection<String> requests) {
+    public CompletableFuture<Collection<UUIDMapping>> getUUIDs(
+        @NotNull final Collection<String> requests) {
         final List<UUIDService> serviceList = this.getServiceListInstance();
         return CompletableFuture.supplyAsync(() -> {
             final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
@@ -139,6 +184,7 @@ public class UUIDPipeline {
             }
 
             if (mappings.size() == requests.size()) {
+                this.consume(mappings);
                 return mappings;
             }
 
