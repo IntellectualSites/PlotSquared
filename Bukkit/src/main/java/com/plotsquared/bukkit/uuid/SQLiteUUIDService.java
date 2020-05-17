@@ -71,7 +71,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         }
     }
 
-    @Override public @NotNull List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
         try (final PreparedStatement statement = getConnection()
             .prepareStatement("SELECT `username` FROM `usercache` WHERE `uuid` = ?")) {
@@ -89,7 +89,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         return mappings;
     }
 
-    @Override public @NotNull List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
+    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         try (final PreparedStatement statement = getConnection()
             .prepareStatement("SELECT `uuid` FROM `usercache` WHERE `username` = ?")) {
