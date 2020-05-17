@@ -25,12 +25,14 @@
  */
 package com.plotsquared.bukkit.uuid;
 
+import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -38,20 +40,26 @@ import java.util.UUID;
  */
 public class OfflinePlayerUUIDService implements UUIDService {
 
-    @Override @NotNull public Optional<String> get(@NotNull final UUID uuid) {
-        final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-        if (offlinePlayer.hasPlayedBefore()) {
-            return Optional.ofNullable(offlinePlayer.getName());
+    @Override public @NotNull List<UUIDMapping> getNames(@NotNull List<UUID> uuids) {
+        final List<UUIDMapping> wrappers = new ArrayList<>(uuids.size());
+        for (final UUID uuid : uuids) {
+            final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            if (offlinePlayer.hasPlayedBefore()) {
+                wrappers.add(new UUIDMapping(uuid, offlinePlayer.getName()));
+            }
         }
-        return Optional.empty();
+        return wrappers;
     }
 
-    @Override @NotNull public Optional<UUID> get(@NotNull final String username) {
-        final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(username);
-        if (offlinePlayer.hasPlayedBefore()) {
-            return Optional.of(offlinePlayer.getUniqueId());
+    @Override public @NotNull List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
+        final List<UUIDMapping> wrappers = new ArrayList<>(usernames.size());
+        for (final String username : usernames) {
+            final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(username);
+            if (offlinePlayer.hasPlayedBefore()) {
+                wrappers.add(new UUIDMapping(offlinePlayer.getUniqueId(), offlinePlayer.getName()));
+            }
         }
-        return Optional.empty();
+        return wrappers;
     }
 
 }
