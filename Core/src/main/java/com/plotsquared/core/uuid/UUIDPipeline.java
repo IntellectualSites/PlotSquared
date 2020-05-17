@@ -29,6 +29,7 @@ import com.google.common.collect.Lists;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.util.task.TaskManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +37,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 /**
@@ -133,13 +137,76 @@ public class UUIDPipeline {
     }
 
     /**
+     * Get a single UUID from a username. This is blocking.
+     *
+     * @param username Username
+     * @param timeout  Timeout in milliseconds
+     * @return The mapped uuid. Will return null if the request timed out.
+     */
+    @Nullable public UUID getSingle(@NotNull final String username, final long timeout) {
+        try {
+            this.getUUIDs(Collections.singletonList(username)).get(timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException ignored) {
+            // This is completely valid, we just don't care anymore
+        }
+        return null;
+    }
+
+    /**
+     * Get a single username from a UUID. This is blocking.
+     *
+     * @param uuid    UUID
+     * @param timeout Timeout in milliseconds
+     * @return The mapped username. Will return null if the request timeout.
+     */
+    @Nullable public String getSingle(@NotNull final UUID uuid, final long timeout) {
+        try {
+            this.getNames(Collections.singletonList(uuid)).get(timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException ignored) {
+            // This is completely valid, we just don't care anymore
+        }
+        return null;
+    }
+
+    /**
+     * Get a single UUID from a username. This is non-blocking.
+     *
+     * @param username Username
+     * @param uuid     UUID consumer
+     */
+    public void getSingle(@NotNull final String username, @NotNull final Consumer<UUID> uuid) {
+        this.getUUIDs(Collections.singletonList(username)).thenAccept(uuids -> {
+            if (!uuids.isEmpty()) {
+                uuid.accept(uuids.get(0).getUuid());
+            }
+        });
+    }
+
+    /**
+     * Get a single username from a UUID. This is non-blocking.
+     *
+     * @param uuid     UUID
+     * @param username Username consumer
+     */
+    public void getSingle(@NotNull final UUID uuid, @NotNull final Consumer<String> username) {
+        this.getNames(Collections.singletonList(uuid)).thenAccept(uuids -> {
+            if (!uuids.isEmpty()) {
+                username.accept(uuids.get(0).getUsername());
+            }
+        });
+    }
+
+    /**
      * Asynchronously attempt to fetch the mapping from a list of UUIDs
      *
      * @param requests UUIDs
      * @return Mappings
      */
-    public CompletableFuture<Collection<UUIDMapping>> getNames(
-        @NotNull final Collection<UUID> requests) {
+    public CompletableFuture<List<UUIDMapping>> getNames(@NotNull final Collection<UUID> requests) {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
@@ -174,7 +241,7 @@ public class UUIDPipeline {
      * @param requests Names
      * @return Mappings
      */
-    public CompletableFuture<Collection<UUIDMapping>> getUUIDs(
+    public CompletableFuture<List<UUIDMapping>> getUUIDs(
         @NotNull final Collection<String> requests) {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
