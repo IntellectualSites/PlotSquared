@@ -40,4 +40,8 @@ public class ServiceError extends RuntimeException {
         super(message, cause);
     }
 
+    @Override public Throwable fillInStackTrace() {
+        return this;
+    }
+
 }
