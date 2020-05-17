@@ -23,34 +23,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.uuid;
+package com.plotsquared.bukkit.uuid;
 
+import com.plotsquared.core.uuid.UUIDService;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Service used to provide usernames from player UUIDs
+ * UUID service that use {@link org.bukkit.OfflinePlayer offline players}
  */
-public interface UUIDService {
+public class OfflinePlayerUUIDService implements UUIDService {
 
-    /**
-     * Attempt to complete the given requests. Returns the mappings
-     * that could be created by this server
-     *
-     * @param uuids Requests
-     * @return Completed requests
-     */
-    @NotNull List<UUIDMapping> getNames(@NotNull final List<UUID> uuids);
+    @Override @NotNull public Optional<String> get(@NotNull final UUID uuid) {
+        final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+        if (offlinePlayer.hasPlayedBefore()) {
+            return Optional.ofNullable(offlinePlayer.getName());
+        }
+        return Optional.empty();
+    }
 
-    /**
-     * Attempt to complete the given requests. Returns the mappings
-     * that could be created by this server
-     *
-     * @param usernames Requests
-     * @return Completed requests
-     */
-    @NotNull List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames);
+    @Override @NotNull public Optional<UUID> get(@NotNull final String username) {
+        final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(username);
+        if (offlinePlayer.hasPlayedBefore()) {
+            return Optional.of(offlinePlayer.getUniqueId());
+        }
+        return Optional.empty();
+    }
 
 }

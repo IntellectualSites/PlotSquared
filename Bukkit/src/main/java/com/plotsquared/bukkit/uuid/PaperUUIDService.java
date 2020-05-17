@@ -23,40 +23,41 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.uuid.offline;
+package com.plotsquared.bukkit.uuid;
 
-import com.google.common.base.Charsets;
-import com.plotsquared.core.configuration.Settings;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 /**
- * Name provider service that creates UUIDs from usernames
+ * UUID service that uses the Paper profile API
  */
-public class OfflineModeUUIDService implements UUIDService {
-
-    @NotNull protected final UUID getFromUsername(@NotNull String username) {
-        if (Settings.UUID.FORCE_LOWERCASE) {
-            username = username.toLowerCase(Locale.ENGLISH);
-        }
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(Charsets.UTF_8));
-    }
+public class PaperUUIDService implements UUIDService {
 
     @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
-        return Collections.emptyList();
+        final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
+        for (final UUID uuid : uuids) {
+            final PlayerProfile playerProfile = Bukkit.createProfile(uuid);
+            if ((playerProfile.isComplete() || playerProfile.completeFromCache()) && playerProfile.getId() != null) {
+                mappings.add(new UUIDMapping(playerProfile.getId(), playerProfile.getName()));
+            }
+        }
+        return mappings;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
+    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
-            mappings.add(new UUIDMapping(getFromUsername(username), username));
+            final PlayerProfile playerProfile = Bukkit.createProfile(username);
+            if ((playerProfile.isComplete() || playerProfile.completeFromCache()) && playerProfile.getId() != null) {
+                mappings.add(new UUIDMapping(playerProfile.getId(), playerProfile.getName()));
+            }
         }
         return mappings;
     }

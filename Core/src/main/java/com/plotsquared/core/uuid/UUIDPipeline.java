@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -92,35 +91,58 @@ public class UUIDPipeline {
     }
 
     /**
-     * Asynchronously attempt to fetch the mapping from a given UUID or username
+     * Asynchronously attempt to fetch the mapping from a list of UUIDs
      *
-     * @param requests UUIDs or usernames
-     * @return Future that may complete with the mapping
+     * @param requests UUIDs
+     * @return Mappings
      */
-    public CompletableFuture<Collection<UUIDMapping>> get(@NotNull final Collection<Object> requests) {
+    public CompletableFuture<Collection<UUIDMapping>> getNames(@NotNull final Collection<UUID> requests) {
         final List<UUIDService> serviceList = this.getServiceListInstance();
         return CompletableFuture.supplyAsync(() -> {
             final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
-            outer: for (final Object request : requests) {
-                if (!(request instanceof String) && !(request instanceof UUID)) {
-                    throw new IllegalArgumentException("Request has to be either a username or UUID");
+            final List<UUID> remainingRequests = new ArrayList<>(requests);
+
+            for (final UUIDService service : serviceList) {
+                final List<UUIDMapping> completedRequests = service.getNames(remainingRequests);
+                for (final UUIDMapping mapping : completedRequests) {
+                    remainingRequests.remove(mapping.getUuid());
                 }
-                for (final UUIDService service : serviceList) {
-                    final Optional<?> result = service.get(request);
-                    if (result.isPresent()) {
-                        final String username = request instanceof String ? (String) request
-                            : (String) result.get();
-                        final UUID uuid = request instanceof UUID ? (UUID) request
-                            : (UUID) result.get();
-                        final UUIDMapping mapping = new UUIDMapping(uuid, username);
-                        this.consume(mapping);
-                        mappings.add(mapping);
-                        continue outer;
-                    }
-                }
-                throw new ServiceError("End of pipeline");
+                mappings.addAll(completedRequests);
             }
-            return mappings;
+
+            if (mappings.size() == requests.size()) {
+                return mappings;
+            }
+
+            throw new ServiceError("End of pipeline");
+        }, this.executor);
+    }
+
+    /**
+     * Asynchronously attempt to fetch the mapping from a list of names
+     *
+     * @param requests Names
+     * @return Mappings
+     */
+    public CompletableFuture<Collection<UUIDMapping>> getUUIDs(@NotNull final Collection<String> requests) {
+        final List<UUIDService> serviceList = this.getServiceListInstance();
+        return CompletableFuture.supplyAsync(() -> {
+            final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
+            final List<String> remainingRequests = new ArrayList<>(requests);
+
+            for (final UUIDService service : serviceList) {
+                final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
+                for (final UUIDMapping mapping : completedRequests) {
+                    remainingRequests.remove(mapping.getUsername());
+                }
+                mappings.addAll(completedRequests);
+            }
+
+            if (mappings.size() == requests.size()) {
+                return mappings;
+            }
+
+            throw new ServiceError("End of pipeline");
         }, this.executor);
     }
 

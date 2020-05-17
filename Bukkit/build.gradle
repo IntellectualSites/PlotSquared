@@ -31,6 +31,7 @@ dependencies {
     }
     implementation("me.clip:placeholderapi:2.10.4")
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
+    compile 'com.github.pavog:SquirrelID:0.6.1'
 }
 
 sourceCompatibility = 1.8
@@ -87,10 +88,12 @@ shadowJar {
         include(dependency("io.papermc:paperlib:1.0.2"))
         include(dependency("net.kyori:text-adapter-bukkit:3.0.3"))
         include(dependency("org.bstats:bstats-bukkit:1.7"))
+        include(dependency("com.github.pavog:SquirrelID:0.6.1"))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
+    relocate('com.sk89q.squirrelid', 'com.plotsquared.squirrelid')
     archiveFileName = "${project.name}-${parent.version}.jar"
     destinationDirectory = file "../target"
 }
