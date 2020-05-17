@@ -27,6 +27,7 @@ package com.plotsquared.core.uuid;
 
 import com.google.common.collect.Lists;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -144,6 +145,7 @@ public class UUIDPipeline {
      * @return The mapped uuid. Will return null if the request timed out.
      */
     @Nullable public UUID getSingle(@NotNull final String username, final long timeout) {
+        ThreadUtils.catchSync("Blocking UUID retrieval from the main thread");
         try {
             this.getUUIDs(Collections.singletonList(username)).get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException e) {
@@ -162,6 +164,7 @@ public class UUIDPipeline {
      * @return The mapped username. Will return null if the request timeout.
      */
     @Nullable public String getSingle(@NotNull final UUID uuid, final long timeout) {
+        ThreadUtils.catchSync("Blocking username retrieval from the main thread");
         try {
             this.getNames(Collections.singletonList(uuid)).get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException e) {
