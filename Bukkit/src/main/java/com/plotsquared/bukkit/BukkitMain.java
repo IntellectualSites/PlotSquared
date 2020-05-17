@@ -55,6 +55,10 @@ import com.plotsquared.bukkit.util.uuid.FileUUIDHandler;
 import com.plotsquared.bukkit.util.uuid.LowerOfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.OfflineUUIDWrapper;
 import com.plotsquared.bukkit.util.uuid.SQLUUIDHandler;
+import com.plotsquared.bukkit.uuid.OfflinePlayerUUIDService;
+import com.plotsquared.bukkit.uuid.PaperUUIDService;
+import com.plotsquared.bukkit.uuid.SQLiteUUIDService;
+import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
 import com.plotsquared.core.IPlotMain;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
@@ -101,6 +105,9 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.util.uuid.UUIDHandlerImplementation;
 import com.plotsquared.core.util.uuid.UUIDWrapper;
+import com.plotsquared.core.uuid.CacheUUIDService;
+import com.plotsquared.core.uuid.UUIDPipeline;
+import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -219,6 +226,43 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             PlotSquared.log(Captions.PREFIX + "&6Thanks for supporting us :)");
         } else {
             PlotSquared.log(Captions.PREFIX + "&6Couldn't verify purchase :(");
+        }
+
+        // TODO: Do we respect the UUID settings?
+        final UUIDPipeline impromptuPipeline  = PlotSquared.get().getImpromptuUUIDPipeline();
+        final UUIDPipeline backgroundPipeline = PlotSquared.get().getBackgroundUUIDPipeline();
+        // Services are accessed in order
+        final CacheUUIDService cacheUUIDService = new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
+        impromptuPipeline.registerService(cacheUUIDService);
+        backgroundPipeline.registerService(cacheUUIDService);
+        impromptuPipeline.registerConsumer(cacheUUIDService);
+        backgroundPipeline.registerConsumer(cacheUUIDService);
+        // Now, if the server is in offline mode we can only use profiles and direct UUID
+        // access, and so we skip the player profile stuff as well as SquirrelID (Mojang lookups)
+        if (Settings.UUID.OFFLINE) {
+            final OfflineModeUUIDService offlineModeUUIDService = new OfflineModeUUIDService();
+            impromptuPipeline.registerService(offlineModeUUIDService);
+            backgroundPipeline.registerService(offlineModeUUIDService);
+        }
+        final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
+        impromptuPipeline.registerService(offlinePlayerUUIDService);
+        backgroundPipeline.registerService(offlinePlayerUUIDService);
+        if (!Settings.UUID.OFFLINE) {
+            // If running Paper we'll also try to use their profiles
+            if (PaperLib.isPaper()) {
+                final PaperUUIDService paperUUIDService = new PaperUUIDService();
+                impromptuPipeline.registerService(paperUUIDService);
+                backgroundPipeline.registerService(paperUUIDService);
+            }
+            final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService();
+            impromptuPipeline.registerService(sqLiteUUIDService);
+            backgroundPipeline.registerService(sqLiteUUIDService);
+            impromptuPipeline.registerConsumer(sqLiteUUIDService);
+            backgroundPipeline.registerConsumer(sqLiteUUIDService);
+            final SquirrelIdUUIDService impromptuMojangService = new SquirrelIdUUIDService(Settings.UUID.IMPROMPTU_LIMIT);
+            impromptuPipeline.registerService(impromptuMojangService);
+            final SquirrelIdUUIDService backgroundMojangService = new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
+            backgroundPipeline.registerService(backgroundMojangService);
         }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {

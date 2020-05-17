@@ -239,6 +239,12 @@ public class Settings extends Config {
         @Comment("Use a database to store UUID/name info") public static boolean
             USE_SQLUUIDHANDLER = false;
         @Ignore public static boolean NATIVE_UUID_PROVIDER = false;
+        @Comment("How many UUIDs that may be stored in the cache")
+        public static int UUID_CACHE_SIZE = 100000;
+        @Comment("Rate limit (per 10 minutes) for background UUID fetching from the Mojang API")
+        public static int BACKGROUND_LIMIT = 200;
+        @Comment("Rate limit (per 10 minutes) for random UUID fetching from the Mojang API")
+        public static int IMPROMPTU_LIMIT = 300;
     }
 
 

@@ -84,6 +84,7 @@ import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.uuid.UUIDHandler;
+import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -123,6 +124,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -140,6 +142,11 @@ public class PlotSquared {
     public final IPlotMain IMP;
     // Current thread
     private final Thread thread;
+    // UUID pipelines
+    @Getter private final UUIDPipeline impromptuUUIDPipeline =
+        new UUIDPipeline(Executors.newCachedThreadPool());
+    @Getter private final UUIDPipeline backgroundUUIDPipeline =
+        new UUIDPipeline(Executors.newSingleThreadExecutor());
     // WorldEdit instance
     public WorldEdit worldedit;
     public File styleFile;
