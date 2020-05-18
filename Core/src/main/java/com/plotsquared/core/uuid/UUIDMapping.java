@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.uuid;
 
+import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -32,7 +33,7 @@ import java.util.UUID;
 /**
  * A pair consisting of a UUID and a username
  */
-public class UUIDMapping {
+@EqualsAndHashCode public class UUIDMapping {
 
     private final UUID uuid;
     private final String username;

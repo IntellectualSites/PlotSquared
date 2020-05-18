@@ -35,13 +35,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -181,10 +184,16 @@ public class UUIDPipeline {
      * @param username Username
      * @param uuid     UUID consumer
      */
-    public void getSingle(@NotNull final String username, @NotNull final Consumer<UUID> uuid) {
-        this.getUUIDs(Collections.singletonList(username)).thenAccept(uuids -> {
-            if (!uuids.isEmpty()) {
-                uuid.accept(uuids.get(0).getUuid());
+    public void getSingle(@NotNull final String username, @NotNull final BiConsumer<UUID, Throwable> uuid) {
+        this.getUUIDs(Collections.singletonList(username)).whenComplete((uuids, throwable) -> {
+            if (throwable != null) {
+                uuid.accept(null, throwable);
+            } else {
+                if (!uuids.isEmpty()) {
+                    uuid.accept(uuids.get(0).getUuid(), null);
+                } else {
+                    uuid.accept(null, null);
+                }
             }
         });
     }
@@ -195,10 +204,16 @@ public class UUIDPipeline {
      * @param uuid     UUID
      * @param username Username consumer
      */
-    public void getSingle(@NotNull final UUID uuid, @NotNull final Consumer<String> username) {
-        this.getNames(Collections.singletonList(uuid)).thenAccept(uuids -> {
-            if (!uuids.isEmpty()) {
-                username.accept(uuids.get(0).getUsername());
+    public void getSingle(@NotNull final UUID uuid, @NotNull final BiConsumer<String, Throwable> username) {
+        this.getNames(Collections.singletonList(uuid)).whenComplete((uuids, throwable) -> {
+            if (throwable != null) {
+                username.accept(null, throwable);
+            } else {
+                if (!uuids.isEmpty()) {
+                    username.accept(uuids.get(0).getUsername(), null);
+                } else {
+                    username.accept(null, null);
+                }
             }
         });
     }
@@ -272,6 +287,20 @@ public class UUIDPipeline {
 
             throw new ServiceError("End of pipeline");
         }, this.executor);
+    }
+
+    /**
+     * Get as many UUID mappings as possible under the condition
+     * that the operation cannot be blocking (for an extended amount of time)
+     *
+     * @return All mappings that could be provided immediately
+     */
+    @NotNull public final Collection<UUIDMapping> getAllImmediately() {
+        final Set<UUIDMapping> mappings = new LinkedHashSet<>();
+        for (final UUIDService service : this.getServiceListInstance()) {
+            mappings.addAll(service.getImmediately());
+        }
+        return mappings;
     }
 
 }

@@ -38,14 +38,16 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 @CommandDeclaration(command = "visit",
     permission = "plots.visit",
@@ -71,10 +73,71 @@ public class Visit extends Command {
         if (args.length == 1 && args[0].contains(":")) {
             args = args[0].split(":");
         }
-        int page = Integer.MIN_VALUE;
-        Collection<Plot> unsorted = null;
-        PlotArea sortByArea = player.getApplicablePlotArea();
-        boolean shouldSortByArea = Settings.Teleport.PER_WORLD_VISIT;
+
+        final Collection<Plot> unsortedPre = new HashSet<>();
+        final PlotArea[] sortByArea = new PlotArea[] {player.getApplicablePlotArea()};
+        final AtomicBoolean shouldSortByArea = new AtomicBoolean(Settings.Teleport.PER_WORLD_VISIT);
+
+        final Consumer<Integer> pageConsumer = page -> {
+            if (page == Integer.MIN_VALUE) {
+                page = 1;
+            }
+            if (unsortedPre.isEmpty()) {
+                Captions.FOUND_NO_PLOTS.send(player);
+            } else {
+                final Collection<Plot> unsorted = new ArrayList<>(unsortedPre);
+                if (unsorted.size() > 1) {
+                    unsorted.removeIf(plot -> !plot.isBasePlot());
+                }
+                if (page < 1 || page > unsorted.size()) {
+                    Captions.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
+                } else {
+                    List<Plot> plots;
+                    if (shouldSortByArea.get()) {
+                        plots = PlotSquared.get().sortPlots(unsorted, PlotSquared.SortType.CREATION_DATE, sortByArea[0]);
+                    } else {
+                        plots = PlotSquared.get().sortPlotsByTemp(unsorted);
+                    }
+                    final Plot plot = plots.get(page - 1);
+                    if (!plot.hasOwner()) {
+                        if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_UNOWNED)) {
+                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_UNOWNED);
+                            return;
+                        }
+                    } else if (plot.isOwner(player.getUUID())) {
+                        if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions.hasPermission(player, Captions.PERMISSION_HOME)) {
+                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OWNED);
+                            return;
+                        }
+                    } else if (plot.isAdded(player.getUUID())) {
+                        if (!Permissions.hasPermission(player, Captions.PERMISSION_SHARED)) {
+                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_SHARED);
+                            return;
+                        }
+                    } else {
+                        if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER)) {
+                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
+                            return;
+                        }
+                        if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED);
+                            return;
+                        }
+                    }
+                    confirm.run(this,
+                        () -> plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+                            if (result) {
+                                whenDone.run(Visit.this, CommandResult.SUCCESS);
+                            } else {
+                                whenDone.run(Visit.this, CommandResult.FAILURE);
+                            }
+                        }), () -> whenDone.run(Visit.this, CommandResult.FAILURE));
+                }
+            }
+        };
+
+        final int[] page = new int[]{Integer.MIN_VALUE};
+
         switch (args.length) {
             case 3:
                 if (!MathMan.isInteger(args[1])) {
@@ -82,109 +145,66 @@ public class Visit extends Command {
                     Captions.COMMAND_SYNTAX.send(player, getUsage());
                     return CompletableFuture.completedFuture(false);
                 }
-                page = Integer.parseInt(args[2]);
+                page[0] = Integer.parseInt(args[2]);
             case 2:
-                if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
-                    sortByArea = PlotSquared.get().getPlotAreaByString(args[1]);
-                    if (sortByArea == null) {
+                if (page[0] != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
+                    sortByArea[0] = PlotSquared.get().getPlotAreaByString(args[1]);
+                    if (sortByArea[0] == null) {
                         Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                         Captions.COMMAND_SYNTAX.send(player, getUsage());
                         return CompletableFuture.completedFuture(false);
                     }
-                    UUID user = UUIDHandler.getUUIDFromString(args[0]);
-                    if (user == null) {
-                        Captions.COMMAND_SYNTAX.send(player, getUsage());
-                        return CompletableFuture.completedFuture(false);
-                    }
-                    unsorted = PlotSquared.get().getBasePlots(user);
-                    shouldSortByArea = true;
+
+                    MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+                        if (throwable != null || uuids.size() != 1) {
+                            Captions.COMMAND_SYNTAX.send(player, getUsage());
+                        } else {
+                            unsortedPre.addAll(PlotSquared.get().getBasePlots((UUID) uuids.toArray()[0]));
+                            shouldSortByArea.set(true);
+                            pageConsumer.accept(page[0]);
+                        }
+                    });
                     break;
                 }
-                page = Integer.parseInt(args[1]);
+                page[0] = Integer.parseInt(args[1]);
             case 1:
-                UUID user = args[0].length() >= 2 ? UUIDHandler.getUUIDFromString(args[0]) : null;
-                if (user != null && !PlotSquared.get().hasPlot(user)) {
-                    user = null;
-                }
-                if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
-                    page = Integer.parseInt(args[0]);
-                    unsorted = PlotSquared.get().getBasePlots(player);
-                    break;
-                }
-                if (user != null) {
-                    unsorted = PlotSquared.get().getBasePlots(user);
-                } else {
-                    Plot plot = MainUtil.getPlotFromString(player, args[0], true);
-                    if (plot != null) {
-                        unsorted = Collections.singletonList(plot.getBasePlot(false));
+                final String[] finalArgs = args;
+                final Consumer<UUID> uuidConsumer = uuid -> {
+                    if (page[0] == Integer.MIN_VALUE && uuid == null && MathMan.isInteger(finalArgs[0])) {
+                        page[0] = Integer.parseInt(finalArgs[0]);
+                        unsortedPre.addAll(PlotSquared.get().getBasePlots(player));
+                    } else {
+                        if (uuid != null) {
+                            unsortedPre.addAll(PlotSquared.get().getBasePlots(uuid));
+                        } else {
+                            Plot plot = MainUtil.getPlotFromString(player, finalArgs[0], true);
+                            if (plot != null) {
+                                unsortedPre.addAll(Collections.singletonList(plot.getBasePlot(false)));
+                            }
+                        }
                     }
+                    pageConsumer.accept(page[0]);
+                };
+
+                if (args[0].length() >= 2) {
+                    PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
+                        if (uuid != null && !PlotSquared.get().hasPlot(uuid)) {
+                            uuidConsumer.accept(null);
+                        } else {
+                            uuidConsumer.accept(uuid);
+                        }
+                    });
+                } else {
+                    uuidConsumer.accept(null);
                 }
                 break;
             case 0:
-                page = 1;
-                unsorted = PlotSquared.get().getPlots(player);
+                unsortedPre.addAll(PlotSquared.get().getPlots(player));
+                pageConsumer.accept(1);
                 break;
             default:
 
         }
-        if (page == Integer.MIN_VALUE) {
-            page = 1;
-        }
-        if (unsorted == null || unsorted.isEmpty()) {
-            Captions.FOUND_NO_PLOTS.send(player);
-            return CompletableFuture.completedFuture(false);
-        }
-        unsorted = new ArrayList<>(unsorted);
-        if (unsorted.size() > 1) {
-            unsorted.removeIf(plot -> !plot.isBasePlot());
-        }
-        if (page < 1 || page > unsorted.size()) {
-            Captions.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
-            return CompletableFuture.completedFuture(false);
-        }
-        List<Plot> plots;
-        if (shouldSortByArea) {
-            plots = PlotSquared.get()
-                .sortPlots(unsorted, PlotSquared.SortType.CREATION_DATE, sortByArea);
-        } else {
-            plots = PlotSquared.get().sortPlotsByTemp(unsorted);
-        }
-        final Plot plot = plots.get(page - 1);
-        if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_UNOWNED)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_UNOWNED);
-                return CompletableFuture.completedFuture(false);
-            }
-        } else if (plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions
-                .hasPermission(player, Captions.PERMISSION_HOME)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OWNED);
-                return CompletableFuture.completedFuture(false);
-            }
-        } else if (plot.isAdded(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_SHARED)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_SHARED);
-                return CompletableFuture.completedFuture(false);
-            }
-        } else {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
-                return CompletableFuture.completedFuture(false);
-            }
-            if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED);
-                return CompletableFuture.completedFuture(false);
-            }
-        }
-        confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
-            if (result) {
-                whenDone.run(Visit.this, CommandResult.SUCCESS);
-            } else {
-                whenDone.run(Visit.this, CommandResult.FAILURE);
-            }
-        }), () -> whenDone.run(Visit.this, CommandResult.FAILURE));
-
         return CompletableFuture.completedFuture(true);
     }
 

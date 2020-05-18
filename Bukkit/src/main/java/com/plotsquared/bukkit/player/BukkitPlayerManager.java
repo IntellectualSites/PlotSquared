@@ -23,14 +23,27 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util.uuid;
+package com.plotsquared.bukkit.player;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.PlayerManager;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-public class DatFileFilter implements FilenameFilter {
+import java.util.UUID;
 
-    @Override public boolean accept(File dir, String name) {
-        return name.endsWith(".dat");
+/**
+ * Player manager providing {@link BukkitPlayer Bukkit players}
+ */
+public class BukkitPlayerManager extends PlayerManager {
+
+    @Override @NotNull public PlotPlayer createPlayer(@NotNull final UUID uuid) {
+        final Player player = Bukkit.getPlayer(uuid);
+        if (player == null || !player.isOnline()) {
+            throw new NoSuchPlayerException(uuid);
+        }
+        return new BukkitPlayer(player);
     }
+
 }

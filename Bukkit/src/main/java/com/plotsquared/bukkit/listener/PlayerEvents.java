@@ -103,10 +103,8 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.RegExUtil;
-import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
@@ -216,7 +214,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -254,8 +251,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             int x = bloc.getBlockX();
             int z = bloc.getBlockZ();
             int distance = Bukkit.getViewDistance() * 16;
-            for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-                PlotPlayer player = entry.getValue();
+
+            for (final PlotPlayer player : PlotSquared.imp().getPlayerManager().getPlayers()) {
                 Location location = player.getLocation();
                 if (location.getWorld().equals(world)) {
                     if (16 * Math.abs(location.getX() - x) / 16 > distance
@@ -356,18 +353,18 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (plot.isMerged()) {
                     disable = true;
                     for (UUID owner : plot.getOwners()) {
-                        if (UUIDHandler.getPlayer(owner) != null) {
+                        if (PlotSquared.imp().getPlayerManager().getPlayerIfExists(owner) != null) {
                             disable = false;
                             break;
                         }
                     }
                 } else {
-                    disable = UUIDHandler.getPlayer(plot.guessOwner()) == null;
+                    disable = PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs()) == null;
                 }
             }
             if (disable) {
                 for (UUID trusted : plot.getTrusted()) {
-                    if (UUIDHandler.getPlayer(trusted) != null) {
+                    if (PlotSquared.imp().getPlayerManager().getPlayerIfExists(trusted) != null) {
                         disable = false;
                         break;
                     }
@@ -379,8 +376,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         }
         if (Settings.Redstone.DISABLE_UNOCCUPIED) {
-            for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-                if (plot.equals(entry.getValue().getCurrentPlot())) {
+            for (final PlotPlayer player : PlotSquared.imp().getPlayerManager().getPlayers()) {
+                if (plot.equals(player.getCurrentPlot())) {
                     return;
                 }
             }
@@ -638,14 +635,8 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onConnect(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        UUIDHandler.getPlayers().remove(player.getName());
         BukkitUtil.removePlayer(player.getName());
         final PlotPlayer pp = BukkitUtil.getPlayer(player);
-        // Now
-        String name = pp.getName();
-        StringWrapper sw = new StringWrapper(name);
-        UUID uuid = pp.getUUID();
-        UUIDHandler.add(sw, uuid);
 
         Location location = pp.getLocation();
         PlotArea area = location.getPlotArea();
@@ -951,8 +942,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Set<Player> recipients = event.getRecipients();
         recipients.clear();
         Set<Player> spies = new HashSet<>();
-        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            PlotPlayer pp = entry.getValue();
+        for (final PlotPlayer pp : PlotSquared.imp().getPlayerManager().getPlayers()) {
             if (pp.getAttribute("chatspy")) {
                 spies.add(((BukkitPlayer) pp).player);
             } else {
@@ -2876,7 +2866,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             return true;
         } else if (dplot != null && (!dplot.equals(vplot) || Objects
-            .equals(dplot.guessOwner(), vplot.guessOwner()))) {
+            .equals(dplot.getOwnerAbs(), vplot.getOwnerAbs()))) {
             return vplot != null && vplot.getFlag(PveFlag.class);
         }
         //disable the firework damage. too much of a headache to support at the moment.

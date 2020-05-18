@@ -35,7 +35,6 @@ import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -97,10 +96,7 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @NotNull @Override public UUID getUUID() {
-        if (this.uuid == null) {
-            this.uuid = UUIDHandler.getUUID(this);
-        }
-        return this.uuid;
+        return this.player.getUniqueId();
     }
 
     @Override public long getLastPlayed() {

@@ -172,7 +172,7 @@ public class Merge extends SubCommand {
                 MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
                 return false;
             } else {
-                uuid = plot.guessOwner();
+                uuid = plot.getOwnerAbs();
             }
         }
         if (!force && EconHandler.manager != null && plotArea.useEconomy() && price > 0d

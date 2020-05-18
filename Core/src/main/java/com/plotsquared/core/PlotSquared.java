@@ -79,11 +79,9 @@ import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -91,6 +89,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
@@ -259,15 +258,6 @@ public class PlotSquared {
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
             }
-            // create UUIDWrapper
-            UUIDHandler.implementation = this.IMP.initUUIDHandler();
-            if (Settings.Enabled_Components.UUID_CACHE) {
-                startUuidCatching();
-            } else {
-                // Start these separately
-                UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
-                startExpiryTasks();
-            }
             // Create Event utility class
             eventDispatcher = new EventDispatcher();
             // create Hybrid utility class
@@ -392,11 +382,11 @@ public class PlotSquared {
         return PlotSquared.instance;
     }
 
-    public static IPlotMain imp() {
-        if (instance != null) {
+    @NotNull public static IPlotMain imp() {
+        if (instance != null && instance.IMP != null) {
             return instance.IMP;
         }
-        return null;
+        throw new IllegalStateException("Plot main implementation is missing");
     }
 
     /**
@@ -437,8 +427,7 @@ public class PlotSquared {
     private void startUuidCatching() {
         TaskManager.runTaskLater(() -> {
             debug("Starting UUID caching");
-            UUIDHandler.startCaching(() -> {
-                UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
+            /*UUIDHandler.startCaching(() -> {
                 forEachPlotRaw(plot -> {
                     if (plot.hasOwner() && plot.temp != -1) {
                         if (UUIDHandler.getName(plot.getOwnerAbs()) == null) {
@@ -447,7 +436,8 @@ public class PlotSquared {
                     }
                 });
                 startExpiryTasks();
-            });
+            });*/
+            // TODO: Re-implement
         }, 20);
     }
 
@@ -973,7 +963,7 @@ public class PlotSquared {
      * @return Set of Plot
      */
     public Set<Plot> getPlots(String world, String player) {
-        final UUID uuid = UUIDHandler.getUUID(player, null);
+        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, 10L);
         return getPlots(world, uuid);
     }
 
@@ -985,7 +975,7 @@ public class PlotSquared {
      * @return Set of Plot
      */
     public Set<Plot> getPlots(PlotArea area, String player) {
-        UUID uuid = UUIDHandler.getUUID(player, null);
+        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, 10L);
         return getPlots(area, uuid);
     }
 
@@ -1018,7 +1008,10 @@ public class PlotSquared {
      * @param uuid  the plot owner
      * @return Set of plot
      */
-    public Set<Plot> getPlots(String world, UUID uuid) {
+    public Set<Plot> getPlots(String world, @Nullable UUID uuid) {
+        if (uuid == null) {
+            return Collections.emptySet();
+        }
         final Set<Plot> plots =
             getPlots(world).stream().filter(plot -> plot.hasOwner() && plot.isOwnerAbs(uuid))
                 .collect(Collectors.toSet());
@@ -1627,7 +1620,6 @@ public class PlotSquared {
 
             // Close the connection
             DBFunc.close();
-            UUIDHandler.handleShutdown();
         } catch (NullPointerException throwable) {
             throwable.printStackTrace();
             PlotSquared.log("&cCould not close database connection!");

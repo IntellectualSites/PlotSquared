@@ -31,8 +31,11 @@ import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
 import com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent;
 import com.destroystokyo.paper.event.entity.SlimePathfindEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
+import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.command.Command;
+import com.plotsquared.core.command.MainCommand;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -55,6 +58,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Events specific to Paper. Some toit nups here
@@ -306,4 +316,42 @@ public class PaperListener implements Listener {
             event.setCancelled(true);
         }
     }
+
+    @EventHandler public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
+        PlotSquared.debug("ASYNC COMPLETION");
+        String buffer = event.getBuffer();
+        if (!(event.getSender() instanceof Player)) {
+            return;
+        }
+        if ((!event.isCommand() && !buffer.startsWith("/")) || buffer.indexOf(' ') == -1) {
+            return;
+        }
+        if (buffer.startsWith("/")) {
+            buffer = buffer.substring(1);
+        }
+        final String[] unprocessedArgs = buffer.split(Pattern.quote(" "));
+        if (unprocessedArgs.length == 1) {
+            return; // We don't do anything in this case
+        } else if (!Arrays.asList("plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap")
+            .contains(unprocessedArgs[0].toLowerCase(Locale.ENGLISH))) {
+            return;
+        }
+        final String[] args = new String[unprocessedArgs.length - 1];
+        System.arraycopy(unprocessedArgs, 1, args, 0, args.length);
+        try {
+            final PlotPlayer player = BukkitUtil.getPlayer((Player) event.getSender());
+            final Collection<Command> objects = MainCommand.getInstance().tab(player, args, buffer.endsWith(" "));
+            if (objects == null) {
+                return;
+            }
+            final List<String> result = new ArrayList<>();
+            for (final com.plotsquared.core.command.Command o : objects) {
+                result.add(o.toString());
+            }
+            event.setCompletions(result);
+            event.setHandled(true);
+            PlotSquared.debug("ASYNC COMPLETION HANDLED");
+        } catch (final Exception ignored) {}
+    }
+
 }

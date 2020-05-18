@@ -39,7 +39,6 @@ import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -371,22 +370,27 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                // check uuid
-                UUID uuid = UUIDHandler.getUUID(args[1], null);
-                if (uuid == null) {
-                    MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[2]);
-                    return false;
-                }
-                if (!cluster.isAdded(uuid)) {
-                    // add the user if not added
-                    cluster.invited.add(uuid);
-                    DBFunc.setInvited(cluster, uuid);
-                    PlotPlayer player2 = UUIDHandler.getPlayer(uuid);
-                    if (player2 != null) {
-                        MainUtil.sendMessage(player2, Captions.CLUSTER_INVITED, cluster.getName());
-                    }
-                }
-                MainUtil.sendMessage(player, Captions.CLUSTER_ADDED_USER);
+
+                PlotSquared.get().getImpromptuUUIDPipeline()
+                    .getSingle(args[1], (uuid, throwable) -> {
+                        if (throwable != null) {
+                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[1]);
+                        } else {
+                            if (!cluster.isAdded(uuid)) {
+                                // add the user if not added
+                                cluster.invited.add(uuid);
+                                DBFunc.setInvited(cluster, uuid);
+
+                                final PlotPlayer otherPlayer =
+                                    PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                                if (otherPlayer != null) {
+                                    MainUtil.sendMessage(otherPlayer, Captions.CLUSTER_INVITED,
+                                        cluster.getName());
+                                }
+                            }
+                            MainUtil.sendMessage(player, Captions.CLUSTER_ADDED_USER);
+                        }
+                    });
                 return true;
             }
             case "k":
@@ -420,35 +424,41 @@ public class Cluster extends SubCommand {
                     }
                 }
                 // check uuid
-                UUID uuid = UUIDHandler.getUUID(args[1], null);
-                if (uuid == null) {
-                    MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[1]);
-                    return false;
-                }
-                // Can't kick if the player is yourself, the owner, or not added to the cluster
-                if (uuid.equals(player.getUUID()) || uuid.equals(cluster.owner) || !cluster
-                    .isAdded(uuid)) {
-                    MainUtil.sendMessage(player, Captions.CANNOT_KICK_PLAYER, cluster.getName());
-                    return false;
-                }
-                if (cluster.helpers.contains(uuid)) {
-                    cluster.helpers.remove(uuid);
-                    DBFunc.removeHelper(cluster, uuid);
-                }
-                cluster.invited.remove(uuid);
-                DBFunc.removeInvited(cluster, uuid);
-                PlotPlayer player2 = UUIDHandler.getPlayer(uuid);
-                if (player2 != null) {
-                    MainUtil.sendMessage(player2, Captions.CLUSTER_REMOVED, cluster.getName());
-                }
-                for (Plot plot : new ArrayList<>(
-                    PlotSquared.get().getPlots(player2.getLocation().getWorld(), uuid))) {
-                    PlotCluster current = plot.getCluster();
-                    if (current != null && current.equals(cluster)) {
-                        plot.unclaim();
-                    }
-                }
-                MainUtil.sendMessage(player2, Captions.CLUSTER_KICKED_USER);
+                PlotSquared.get().getImpromptuUUIDPipeline()
+                    .getSingle(args[1], (uuid, throwable) -> {
+                        if (throwable != null) {
+                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[1]);
+                        } else {
+                            // Can't kick if the player is yourself, the owner, or not added to the cluster
+                            if (uuid.equals(player.getUUID()) || uuid.equals(cluster.owner)
+                                || !cluster.isAdded(uuid)) {
+                                MainUtil.sendMessage(player, Captions.CANNOT_KICK_PLAYER,
+                                    cluster.getName());
+                            } else {
+                                if (cluster.helpers.contains(uuid)) {
+                                    cluster.helpers.remove(uuid);
+                                    DBFunc.removeHelper(cluster, uuid);
+                                }
+                                cluster.invited.remove(uuid);
+                                DBFunc.removeInvited(cluster, uuid);
+
+                                final PlotPlayer player2 =
+                                    PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                                if (player2 != null) {
+                                    MainUtil.sendMessage(player2, Captions.CLUSTER_REMOVED,
+                                        cluster.getName());
+                                }
+                                for (Plot plot : new ArrayList<>(PlotSquared.get()
+                                    .getPlots(player2.getLocation().getWorld(), uuid))) {
+                                    PlotCluster current = plot.getCluster();
+                                    if (current != null && current.equals(cluster)) {
+                                        plot.unclaim();
+                                    }
+                                }
+                                MainUtil.sendMessage(player2, Captions.CLUSTER_KICKED_USER);
+                            }
+                        }
+                    });
                 return true;
             }
             case "quit":
@@ -529,24 +539,27 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(player, Captions.NOT_IN_CLUSTER);
                     return false;
                 }
-                UUID uuid = UUIDHandler.getUUID(args[2], null);
-                if (uuid == null) {
-                    MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[2]);
-                    return false;
-                }
-                if (args[1].equalsIgnoreCase("add")) {
-                    cluster.helpers.add(uuid);
-                    DBFunc.setHelper(cluster, uuid);
-                    return MainUtil.sendMessage(player, Captions.CLUSTER_ADDED_HELPER);
-                }
-                if (args[1].equalsIgnoreCase("remove")) {
-                    cluster.helpers.remove(uuid);
-                    DBFunc.removeHelper(cluster, uuid);
-                    return MainUtil.sendMessage(player, Captions.CLUSTER_REMOVED_HELPER);
-                }
-                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                    "/plot cluster helpers <add|remove> <player>");
-                return false;
+
+                PlotSquared.get().getImpromptuUUIDPipeline()
+                    .getSingle(args[2], (uuid, throwable) -> {
+                        if (throwable != null) {
+                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[2]);
+                        } else {
+                            if (args[1].equalsIgnoreCase("add")) {
+                                cluster.helpers.add(uuid);
+                                DBFunc.setHelper(cluster, uuid);
+                                MainUtil.sendMessage(player, Captions.CLUSTER_ADDED_HELPER);
+                            } else if (args[1].equalsIgnoreCase("remove")) {
+                                cluster.helpers.remove(uuid);
+                                DBFunc.removeHelper(cluster, uuid);
+                                MainUtil.sendMessage(player, Captions.CLUSTER_REMOVED_HELPER);
+                            } else {
+                                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
+                                    "/plot cluster helpers <add|remove> <player>");
+                            }
+                        }
+                    });
+                return true;
             }
             case "spawn":
             case "home":
@@ -615,21 +628,27 @@ public class Cluster extends SubCommand {
                     }
                 }
                 String id = cluster.toString();
-                String owner = UUIDHandler.getName(cluster.owner);
-                if (owner == null) {
-                    owner = "unknown";
-                }
-                String name = cluster.getName();
-                String size = (cluster.getP2().x - cluster.getP1().x + 1) + "x" + (
-                    cluster.getP2().y - cluster.getP1().y + 1);
-                String rights = cluster.isAdded(player.getUUID()) + "";
-                String message = Captions.CLUSTER_INFO.getTranslated();
-                message = message.replaceAll("%id%", id);
-                message = message.replaceAll("%owner%", owner);
-                message = message.replaceAll("%name%", name);
-                message = message.replaceAll("%size%", size);
-                message = message.replaceAll("%rights%", rights);
-                MainUtil.sendMessage(player, message);
+
+                PlotSquared.get().getImpromptuUUIDPipeline()
+                    .getSingle(cluster.owner, (username, throwable) -> {
+                        final String owner;
+                        if (username == null) {
+                            owner = "unknown";
+                        } else {
+                            owner = username;
+                        }
+                        String name = cluster.getName();
+                        String size = (cluster.getP2().x - cluster.getP1().x + 1) + "x" + (
+                            cluster.getP2().y - cluster.getP1().y + 1);
+                        String rights = cluster.isAdded(player.getUUID()) + "";
+                        String message = Captions.CLUSTER_INFO.getTranslated();
+                        message = message.replaceAll("%id%", id);
+                        message = message.replaceAll("%owner%", owner);
+                        message = message.replaceAll("%name%", name);
+                        message = message.replaceAll("%size%", size);
+                        message = message.replaceAll("%rights%", rights);
+                        MainUtil.sendMessage(player, message);
+                    });
                 return true;
             }
             case "sh":

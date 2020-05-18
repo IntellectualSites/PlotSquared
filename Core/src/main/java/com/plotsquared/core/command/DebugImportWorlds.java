@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.common.base.Charsets;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -35,7 +36,6 @@ import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.io.File;
 import java.util.UUID;
@@ -76,7 +76,8 @@ public class DebugImportWorlds extends Command {
                 if (name.length() > 16) {
                     uuid = UUID.fromString(name);
                 } else {
-                    uuid = UUIDHandler.getUUID(name, null);
+                    Captions.FETCHING_PLAYER.send(player);
+                    uuid = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(name, 60000L);
                 }
                 if (uuid == null) {
                     uuid =

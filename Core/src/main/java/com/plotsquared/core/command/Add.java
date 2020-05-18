@@ -36,7 +36,6 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
 import java.util.Iterator;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -62,51 +61,64 @@ public class Add extends Command {
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
             Captions.NO_PLOT_PERMS);
         checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
-        final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-        checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
-        Iterator<UUID> iterator = uuids.iterator();
-        int size = plot.getTrusted().size() + plot.getMembers().size();
-        while (iterator.hasNext()) {
-            UUID uuid = iterator.next();
-            if (uuid == DBFunc.EVERYONE && !(
-                Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
-                iterator.remove();
-                continue;
-            }
-            if (plot.isOwner(uuid)) {
-                MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
-                iterator.remove();
-                continue;
-            }
-            if (plot.getMembers().contains(uuid)) {
-                MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
-                iterator.remove();
-                continue;
-            }
-            size += plot.getTrusted().contains(uuid) ? 0 : 1;
-        }
-        checkTrue(!uuids.isEmpty(), null);
-        checkTrue(size <= plot.getArea().getMaxPlotMembers() || Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
-            Captions.PLOT_MAX_MEMBERS);
-        // Success
-        confirm.run(this, () -> {
-            for (UUID uuid : uuids) {
-                if (uuid != DBFunc.EVERYONE) {
-                    if (!plot.removeTrusted(uuid)) {
-                        if (plot.getDenied().contains(uuid)) {
-                            plot.removeDenied(uuid);
-                        }
-                    }
-                }
-                plot.addMember(uuid);
-                PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, true);
-                MainUtil.sendMessage(player, Captions.MEMBER_ADDED);
-            }
-        }, null);
 
-        return CompletableFuture.completedFuture(true);
+        final CompletableFuture<Boolean> future = new CompletableFuture<>();
+        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+            if (throwable != null) {
+                Captions.INVALID_PLAYER.send(player, args[0]);
+                future.completeExceptionally(throwable);
+                return;
+            } else {
+                try {
+                    checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
+                    Iterator<UUID> iterator = uuids.iterator();
+                    int size = plot.getTrusted().size() + plot.getMembers().size();
+                    while (iterator.hasNext()) {
+                        UUID uuid = iterator.next();
+                        if (uuid == DBFunc.EVERYONE && !(
+                            Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
+                                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
+                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
+                            iterator.remove();
+                            continue;
+                        }
+                        if (plot.isOwner(uuid)) {
+                            MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                            iterator.remove();
+                            continue;
+                        }
+                        if (plot.getMembers().contains(uuid)) {
+                            MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                            iterator.remove();
+                            continue;
+                        }
+                        size += plot.getTrusted().contains(uuid) ? 0 : 1;
+                    }
+                    checkTrue(!uuids.isEmpty(), null);
+                    checkTrue(size <= plot.getArea().getMaxPlotMembers() || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
+                        Captions.PLOT_MAX_MEMBERS);
+                    // Success
+                    confirm.run(this, () -> {
+                        for (UUID uuid : uuids) {
+                            if (uuid != DBFunc.EVERYONE) {
+                                if (!plot.removeTrusted(uuid)) {
+                                    if (plot.getDenied().contains(uuid)) {
+                                        plot.removeDenied(uuid);
+                                    }
+                                }
+                            }
+                            plot.addMember(uuid);
+                            PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, true);
+                            MainUtil.sendMessage(player, Captions.MEMBER_ADDED);
+                        }
+                    }, null);
+                } catch (final Throwable exception) {
+                    future.completeExceptionally(exception);
+                    return;
+                }
+            }
+            future.complete(true);
+        });
+        return future;
     }
 }

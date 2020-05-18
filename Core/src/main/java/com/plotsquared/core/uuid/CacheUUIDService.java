@@ -30,6 +30,7 @@ import com.google.common.cache.CacheBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -71,6 +72,10 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
             this.uuidCache.put(mapping.getUuid(), mapping);
             this.usernameCache.put(mapping.getUsername(), mapping);
         }
+    }
+
+    @Override @NotNull public Collection<UUIDMapping> getImmediately() {
+        return this.usernameCache.asMap().values();
     }
 
 }

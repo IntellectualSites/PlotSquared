@@ -104,7 +104,7 @@ public abstract class SchematicHandler {
                 Iterator<Plot> i = plots.iterator();
                 final Plot plot = i.next();
                 i.remove();
-                String owner = UUIDHandler.getName(plot.guessOwner());
+                String owner = UUIDHandler.getName(plot.getOwnerAbs());
                 if (owner == null) {
                     owner = "unknown";
                 }

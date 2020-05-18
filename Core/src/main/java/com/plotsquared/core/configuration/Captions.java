@@ -450,6 +450,7 @@ public enum Captions implements Caption {
     //</editor-fold>
     DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"),
     PURGE_SUCCESS("$4Successfully purged %s plots", "Purge"),
+    FETCHING_PLAYER("$1PlotSquared is attempting to find the specified player from your argument(s). This may take a while.", "Players"),
     //<editor-fold desc="Trim">
     TRIM_IN_PROGRESS("A world trim task is already in progress!", "Trim"),
     //</editor-fold>

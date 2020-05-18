@@ -49,7 +49,6 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -106,17 +105,6 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      */
     public static PlotPlayer wrap(Object player) {
         return PlotSquared.get().IMP.wrapPlayer(player);
-    }
-
-    /**
-     * Get the cached PlotPlayer from a username<br>
-     * - This will return null if the player has not finished logging in or is not online
-     *
-     * @param name
-     * @return
-     */
-    public static PlotPlayer get(String name) {
-        return UUIDHandler.getPlayer(name);
     }
 
     public abstract Actor toActor();
@@ -363,8 +351,6 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
 
     /**
      * Get this player's full location (including yaw/pitch)
-     *
-     * @return
      */
     public abstract Location getLocationFull();
 
@@ -563,11 +549,10 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
                         plot.getId(), getName()));
             }
         }
-        String name = getName();
         if (ExpireManager.IMP != null) {
             ExpireManager.IMP.storeDate(getUUID(), System.currentTimeMillis());
         }
-        UUIDHandler.getPlayers().remove(name);
+        PlotSquared.imp().getPlayerManager().removePlayer(this);
         PlotSquared.get().IMP.unregister(this);
     }
 

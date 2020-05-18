@@ -38,6 +38,7 @@ import com.plotsquared.bukkit.managers.HyperverseWorldManager;
 import com.plotsquared.bukkit.managers.MultiverseWorldManager;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.Placeholders;
+import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitLocalQueue;
 import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChatManager;
@@ -50,11 +51,6 @@ import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
-import com.plotsquared.bukkit.util.uuid.DefaultUUIDWrapper;
-import com.plotsquared.bukkit.util.uuid.FileUUIDHandler;
-import com.plotsquared.bukkit.util.uuid.LowerOfflineUUIDWrapper;
-import com.plotsquared.bukkit.util.uuid.OfflineUUIDWrapper;
-import com.plotsquared.bukkit.util.uuid.SQLUUIDHandler;
 import com.plotsquared.bukkit.uuid.OfflinePlayerUUIDService;
 import com.plotsquared.bukkit.uuid.PaperUUIDService;
 import com.plotsquared.bukkit.uuid.SQLiteUUIDService;
@@ -69,6 +65,7 @@ import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridGen;
 import com.plotsquared.core.generator.HybridUtils;
@@ -94,6 +91,7 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PlatformWorldManager;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.RegionManager;
@@ -102,9 +100,6 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.plotsquared.core.util.uuid.UUIDHandlerImplementation;
-import com.plotsquared.core.util.uuid.UUIDWrapper;
 import com.plotsquared.core.uuid.CacheUUIDService;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
@@ -171,6 +166,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     private boolean metricsStarted;
     @Getter private BackupManager backupManager;
     @Getter private PlatformWorldManager worldManager;
+    @Getter private final PlayerManager playerManager = new BukkitPlayerManager();
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -264,6 +260,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             final SquirrelIdUUIDService backgroundMojangService = new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
             backgroundPipeline.registerService(backgroundMojangService);
         }
+
+        impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new Placeholders().register();
@@ -842,39 +840,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return new BukkitInventoryUtil();
     }
 
-    @Override public UUIDHandlerImplementation initUUIDHandler() {
-        final UUIDWrapper wrapper;
-        if (Settings.UUID.OFFLINE) {
-            if (Settings.UUID.FORCE_LOWERCASE) {
-                wrapper = new LowerOfflineUUIDWrapper();
-            } else {
-                wrapper = new OfflineUUIDWrapper();
-            }
-            Settings.UUID.OFFLINE = true;
-        } else {
-            wrapper = new DefaultUUIDWrapper();
-            Settings.UUID.OFFLINE = false;
-        }
-        if (!Bukkit.getVersion().contains("git-Spigot")) {
-            if (wrapper instanceof DefaultUUIDWrapper
-                || wrapper.getClass() == OfflineUUIDWrapper.class && !Bukkit.getOnlineMode()) {
-                Settings.UUID.NATIVE_UUID_PROVIDER = true;
-            }
-        }
-        if (Settings.UUID.OFFLINE) {
-            PlotSquared.log(Captions.PREFIX + "&6" + getPluginName()
-                + " is using Offline Mode UUIDs either because of user preference, or because you are using an old version of "
-                + "Bukkit");
-        } else {
-            PlotSquared.log(Captions.PREFIX + "&6" + getPluginName() + " is using online UUIDs");
-        }
-        if (Settings.UUID.USE_SQLUUIDHANDLER) {
-            return new SQLUUIDHandler(wrapper);
-        } else {
-            return new FileUUIDHandler(wrapper);
-        }
-    }
-
     @Override public void setGenerator(@NonNull final String worldName) {
         World world = BukkitUtil.getWorld(worldName);
         if (world == null) {
@@ -925,10 +890,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             return BukkitUtil.getPlayer((OfflinePlayer) player);
         }
         if (player instanceof String) {
-            return UUIDHandler.getPlayer((String) player);
+            return PlotSquared.imp().getPlayerManager().getPlayerIfExists((String) player);
         }
         if (player instanceof UUID) {
-            return UUIDHandler.getPlayer((UUID) player);
+            return PlotSquared.imp().getPlayerManager().getPlayerIfExists((UUID) player);
         }
         return null;
     }

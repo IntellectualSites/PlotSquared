@@ -27,6 +27,8 @@ package com.plotsquared.core.uuid;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,5 +54,15 @@ public interface UUIDService {
      * @return Completed requests
      */
     @NotNull List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames);
+
+    /**
+     * Get as many UUID mappings as possible under the condition
+     * that the operation cannot be blocking (for an extended amount of time)
+     *
+     * @return All mappings that could be provided immediately
+     */
+    default @NotNull Collection<UUIDMapping> getImmediately() {
+        return Collections.emptyList();
+    }
 
 }
