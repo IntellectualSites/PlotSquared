@@ -78,4 +78,7 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
         return this.usernameCache.asMap().values();
     }
 
+    @Override public boolean canBeSynchronous() {
+        return true;
+    }
 }

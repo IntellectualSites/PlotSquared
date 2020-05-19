@@ -82,6 +82,7 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
@@ -902,24 +903,61 @@ public class MainUtil {
         return (directory.delete());
     }
 
-    /**
-     * Get a list of names given a list of uuids.<br>
-     * - Uses the format {@link Captions#PLOT_USER_LIST} for the returned string
-     *
-     * @param uuids
-     * @return
-     */
-    public static String getPlayerList(Collection<UUID> uuids) {
-        ArrayList<UUID> l = new ArrayList<>(uuids);
-        if (l.size() < 1) {
+    /*
+    @NotNull public static String getName(UUID owner) {
+        if (owner == null) {
             return Captions.NONE.getTranslated();
         }
-        List<String> users =
-            l.stream().map(MainUtil::getName).sorted().collect(Collectors.toList());
+        if (owner.equals(DBFunc.EVERYONE)) {
+            return Captions.EVERYONE.getTranslated();
+        }
+        if (owner.equals(DBFunc.SERVER)) {
+            return Captions.SERVER.getTranslated();
+        }
+        String name = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
+        if (name == null) {
+            return Captions.UNKNOWN.getTranslated();
+        }
+        return name;
+    }
+     */
+
+    /**
+     * Get a list of names given a list of UUIDs.
+     * - Uses the format {@link Captions#PLOT_USER_LIST} for the returned string
+     */
+    public static String getPlayerList(final Collection<UUID> uuids) {
+        if (uuids.size() < 1) {
+            return Captions.NONE.getTranslated();
+        }
+
+        final List<UUID> players = new LinkedList<>();
+        final List<String> users = new LinkedList<>();
+        for (final UUID uuid : uuids) {
+            if (uuid == null) {
+                users.add(Captions.NONE.getTranslated());
+            } else if (DBFunc.EVERYONE.equals(uuid)) {
+                users.add(Captions.EVERYONE.getTranslated());
+            } else if (DBFunc.SERVER.equals(uuid)) {
+                users.add(Captions.SERVER.getTranslated());
+            } else {
+                players.add(uuid);
+            }
+        }
+
+        try {
+            for (final UUIDMapping mapping : PlotSquared.get().getImpromptuUUIDPipeline().getNames(players).get(Settings.UUID.BLOCKING_TIMEOUT,
+                TimeUnit.MILLISECONDS)) {
+                users.add(mapping.getUsername());
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+
         String c = Captions.PLOT_USER_LIST.getTranslated();
         StringBuilder list = new StringBuilder();
         for (int x = 0; x < users.size(); x++) {
-            if (x + 1 == l.size()) {
+            if (x + 1 == uuids.size()) {
                 list.append(c.replace("%user%", users.get(x)).replace(",", ""));
             } else {
                 list.append(c.replace("%user%", users.get(x)));

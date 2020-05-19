@@ -27,6 +27,7 @@ package com.plotsquared.core.uuid;
 
 import com.google.common.collect.Lists;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
@@ -156,10 +157,14 @@ public class UUIDPipeline {
     @Nullable public UUID getSingle(@NotNull final String username, final long timeout) {
         ThreadUtils.catchSync("Blocking UUID retrieval from the main thread");
         try {
-            this.getUUIDs(Collections.singletonList(username)).get(timeout, TimeUnit.MILLISECONDS);
+            final List<UUIDMapping> mappings = this.getUUIDs(Collections.singletonList(username)).get(timeout, TimeUnit.MILLISECONDS);
+            if (mappings.size() == 1) {
+                return mappings.get(0).getUuid();
+            }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
+            PlotSquared.log(Captions.PREFIX + " (UUID) Request for " + username + " timed out");
             // This is completely valid, we just don't care anymore
         }
         return null;
@@ -175,10 +180,14 @@ public class UUIDPipeline {
     @Nullable public String getSingle(@NotNull final UUID uuid, final long timeout) {
         ThreadUtils.catchSync("Blocking username retrieval from the main thread");
         try {
-            this.getNames(Collections.singletonList(uuid)).get(timeout, TimeUnit.MILLISECONDS);
+            final List<UUIDMapping> mappings = this.getNames(Collections.singletonList(uuid)).get(timeout, TimeUnit.MILLISECONDS);
+            if (mappings.size() == 1) {
+                return mappings.get(0).getUsername();
+            }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
+            PlotSquared.log(Captions.PREFIX + " (UUID) Request for " + uuid + " timed out");
             // This is completely valid, we just don't care anymore
         }
         return null;
@@ -274,25 +283,45 @@ public class UUIDPipeline {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
-        final List<UUIDService> serviceList = this.getServiceListInstance();
-        return CompletableFuture.supplyAsync(() -> {
-            final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
-            final List<UUID> remainingRequests = new ArrayList<>(requests);
 
-            for (final UUIDService service : serviceList) {
-                if (remainingRequests.isEmpty()) {
-                    break;
-                }
+        final List<UUIDService> serviceList = this.getServiceListInstance();
+        final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
+        final List<UUID> remainingRequests = new ArrayList<>(requests);
+
+        for (final UUIDService service : serviceList) {
+            // We can chain multiple synchronous
+            // ones in a row
+            if (service.canBeSynchronous()) {
                 final List<UUIDMapping> completedRequests = service.getNames(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
                     remainingRequests.remove(mapping.getUuid());
                 }
                 mappings.addAll(completedRequests);
+            } else {
+                break;
+            }
+            if (remainingRequests.isEmpty()) {
+                return CompletableFuture.completedFuture(mappings);
+            }
+        }
+
+        return CompletableFuture.supplyAsync(() -> {
+            for (final UUIDService service : serviceList) {
+                final List<UUIDMapping> completedRequests = service.getNames(remainingRequests);
+                for (final UUIDMapping mapping : completedRequests) {
+                    remainingRequests.remove(mapping.getUuid());
+                }
+                mappings.addAll(completedRequests);
+                if (remainingRequests.isEmpty()) {
+                    break;
+                }
             }
 
             if (mappings.size() == requests.size()) {
                 this.consume(mappings);
                 return mappings;
+            } else if (Settings.DEBUG) {
+                PlotSquared.log("Failed to find all usernames");
             }
 
             throw new ServiceError("End of pipeline");
@@ -310,25 +339,45 @@ public class UUIDPipeline {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
-        final List<UUIDService> serviceList = this.getServiceListInstance();
-        return CompletableFuture.supplyAsync(() -> {
-            final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
-            final List<String> remainingRequests = new ArrayList<>(requests);
 
-            for (final UUIDService service : serviceList) {
-                if (remainingRequests.isEmpty()) {
-                    break;
-                }
+        final List<UUIDService> serviceList = this.getServiceListInstance();
+        final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
+        final List<String> remainingRequests = new ArrayList<>(requests);
+
+        for (final UUIDService service : serviceList) {
+            // We can chain multiple synchronous
+            // ones in a row
+            if (service.canBeSynchronous()) {
                 final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
                     remainingRequests.remove(mapping.getUsername());
                 }
                 mappings.addAll(completedRequests);
+            } else {
+                break;
+            }
+            if (remainingRequests.isEmpty()) {
+                return CompletableFuture.completedFuture(mappings);
+            }
+        }
+
+        return CompletableFuture.supplyAsync(() -> {
+            for (final UUIDService service : serviceList) {
+                final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
+                for (final UUIDMapping mapping : completedRequests) {
+                    remainingRequests.remove(mapping.getUsername());
+                }
+                mappings.addAll(completedRequests);
+                if (remainingRequests.isEmpty()) {
+                    break;
+                }
             }
 
             if (mappings.size() == requests.size()) {
                 this.consume(mappings);
                 return mappings;
+            } else if (Settings.DEBUG) {
+                PlotSquared.log("Failed to find all UUIDs");
             }
 
             throw new ServiceError("End of pipeline");

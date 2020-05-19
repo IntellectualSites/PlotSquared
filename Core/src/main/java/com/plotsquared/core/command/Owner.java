@@ -150,7 +150,7 @@ public class Owner extends SetCommand {
                if (throwable instanceof TimeoutException) {
                    MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
                } else if (throwable != null) {
-                   MainUtil.sendMessage(player, Captions.INVALID_PLAYER);
+                   MainUtil.sendMessage(player, Captions.INVALID_PLAYER, value);
                } else {
                    uuidConsumer.accept(uuid);
                }

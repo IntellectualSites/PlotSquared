@@ -318,7 +318,6 @@ public class PaperListener implements Listener {
     }
 
     @EventHandler public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
-        PlotSquared.debug("ASYNC COMPLETION");
         String buffer = event.getBuffer();
         if (!(event.getSender() instanceof Player)) {
             return;
@@ -332,7 +331,7 @@ public class PaperListener implements Listener {
         final String[] unprocessedArgs = buffer.split(Pattern.quote(" "));
         if (unprocessedArgs.length == 1) {
             return; // We don't do anything in this case
-        } else if (!Arrays.asList("plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap")
+        } else if (!Arrays.asList("plot", "plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap")
             .contains(unprocessedArgs[0].toLowerCase(Locale.ENGLISH))) {
             return;
         }
@@ -350,7 +349,6 @@ public class PaperListener implements Listener {
             }
             event.setCompletions(result);
             event.setHandled(true);
-            PlotSquared.debug("ASYNC COMPLETION HANDLED");
         } catch (final Exception ignored) {}
     }
 

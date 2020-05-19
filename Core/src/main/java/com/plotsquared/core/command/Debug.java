@@ -34,8 +34,10 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.entity.EntityCategory;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -63,6 +65,11 @@ public class Debug extends SubCommand {
                     .getChunkChunks(player.getLocation().getWorld()).size() + "(" + (
                     System.currentTimeMillis() - start) + "ms) using thread: " + Thread
                     .currentThread().getName()));
+            return true;
+        }
+        if (args.length > 0 && "uuids".equalsIgnoreCase(args[0])) {
+            final Collection<UUIDMapping> mappings = PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
+            MainUtil.sendMessage(player, String.format("There are %d cached UUIDs", mappings.size()));
             return true;
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {
