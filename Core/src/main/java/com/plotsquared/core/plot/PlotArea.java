@@ -118,6 +118,7 @@ public abstract class PlotArea {
     @Getter private GameMode gameMode = GameModes.CREATIVE;
     @Getter private Map<String, Expression<Double>> prices = new HashMap<>();
     @Getter(AccessLevel.PROTECTED) private List<String> schematics = new ArrayList<>();
+    @Getter private boolean roadRespectingGlobalFlags = false;
     private boolean worldBorder = false;
     private boolean useEconomy = false;
     private int hash;
@@ -370,6 +371,7 @@ public abstract class PlotArea {
         this.spawnEggs = config.getBoolean("event.spawn.egg");
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
+        this.roadRespectingGlobalFlags = config.getBoolean("road.respect-global-flags");
         loadConfiguration(config);
     }
 
@@ -413,6 +415,7 @@ public abstract class PlotArea {
         options.put("world.max_height", this.getMaxBuildHeight());
         options.put("world.min_height", this.getMinBuildHeight());
         options.put("world.gamemode", this.getGameMode().getName().toLowerCase());
+        options.put("road.respect-global-flags", this.isRoadRespectingGlobalFlags());
 
         if (this.getType() != PlotAreaType.NORMAL) {
             options.put("generator.terrain", this.getTerrain());
