@@ -38,6 +38,7 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import java.util.Iterator;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "add",
     description = "Allow a user to build in a plot while the plot owner is online.",
@@ -65,7 +66,11 @@ public class Add extends Command {
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable != null) {
-                Captions.INVALID_PLAYER.send(player, args[0]);
+                if (throwable instanceof TimeoutException) {
+                    Captions.FETCHING_PLAYERS_TIMEOUT.send(player);
+                } else {
+                    Captions.INVALID_PLAYER.send(player, args[0]);
+                }
                 future.completeExceptionally(throwable);
                 return;
             } else {
@@ -121,4 +126,5 @@ public class Add extends Command {
         });
         return future;
     }
+
 }

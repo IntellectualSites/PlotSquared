@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "cluster",
     aliases = "clusters",
@@ -373,7 +374,9 @@ public class Cluster extends SubCommand {
 
                 PlotSquared.get().getImpromptuUUIDPipeline()
                     .getSingle(args[1], (uuid, throwable) -> {
-                        if (throwable != null) {
+                        if (throwable instanceof TimeoutException) {
+                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                        } else if (throwable != null) {
                             MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[1]);
                         } else {
                             if (!cluster.isAdded(uuid)) {
@@ -426,7 +429,9 @@ public class Cluster extends SubCommand {
                 // check uuid
                 PlotSquared.get().getImpromptuUUIDPipeline()
                     .getSingle(args[1], (uuid, throwable) -> {
-                        if (throwable != null) {
+                        if (throwable instanceof TimeoutException) {
+                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                        } else if (throwable != null) {
                             MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[1]);
                         } else {
                             // Can't kick if the player is yourself, the owner, or not added to the cluster
@@ -542,7 +547,9 @@ public class Cluster extends SubCommand {
 
                 PlotSquared.get().getImpromptuUUIDPipeline()
                     .getSingle(args[2], (uuid, throwable) -> {
-                        if (throwable != null) {
+                        if (throwable instanceof TimeoutException) {
+                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                        } else if (throwable != null) {
                             MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[2]);
                         } else {
                             if (args[1].equalsIgnoreCase("add")) {
@@ -631,23 +638,27 @@ public class Cluster extends SubCommand {
 
                 PlotSquared.get().getImpromptuUUIDPipeline()
                     .getSingle(cluster.owner, (username, throwable) -> {
-                        final String owner;
-                        if (username == null) {
-                            owner = "unknown";
+                        if (throwable instanceof TimeoutException) {
+                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
                         } else {
-                            owner = username;
+                            final String owner;
+                            if (username == null) {
+                                owner = "unknown";
+                            } else {
+                                owner = username;
+                            }
+                            String name = cluster.getName();
+                            String size = (cluster.getP2().x - cluster.getP1().x + 1) + "x" + (
+                                cluster.getP2().y - cluster.getP1().y + 1);
+                            String rights = cluster.isAdded(player.getUUID()) + "";
+                            String message = Captions.CLUSTER_INFO.getTranslated();
+                            message = message.replaceAll("%id%", id);
+                            message = message.replaceAll("%owner%", owner);
+                            message = message.replaceAll("%name%", name);
+                            message = message.replaceAll("%size%", size);
+                            message = message.replaceAll("%rights%", rights);
+                            MainUtil.sendMessage(player, message);
                         }
-                        String name = cluster.getName();
-                        String size = (cluster.getP2().x - cluster.getP1().x + 1) + "x" + (
-                            cluster.getP2().y - cluster.getP1().y + 1);
-                        String rights = cluster.isAdded(player.getUUID()) + "";
-                        String message = Captions.CLUSTER_INFO.getTranslated();
-                        message = message.replaceAll("%id%", id);
-                        message = message.replaceAll("%owner%", owner);
-                        message = message.replaceAll("%name%", name);
-                        message = message.replaceAll("%size%", size);
-                        message = message.replaceAll("%rights%", rights);
-                        MainUtil.sendMessage(player, message);
                     });
                 return true;
             }

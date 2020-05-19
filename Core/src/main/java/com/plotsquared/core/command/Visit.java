@@ -46,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -156,7 +157,9 @@ public class Visit extends Command {
                     }
 
                     MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
-                        if (throwable != null || uuids.size() != 1) {
+                        if (throwable instanceof TimeoutException) {
+                            Captions.FETCHING_PLAYERS_TIMEOUT.send(player);
+                        } else if (throwable != null || uuids.size() != 1) {
                             Captions.COMMAND_SYNTAX.send(player, getUsage());
                         } else {
                             unsortedPre.addAll(PlotSquared.get().getBasePlots((UUID) uuids.toArray()[0]));
@@ -188,7 +191,9 @@ public class Visit extends Command {
 
                 if (args[0].length() >= 2) {
                     PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
-                        if (uuid != null && !PlotSquared.get().hasPlot(uuid)) {
+                        if (throwable instanceof TimeoutException) {
+                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                        } else if (uuid != null && !PlotSquared.get().hasPlot(uuid)) {
                             uuidConsumer.accept(null);
                         } else {
                             uuidConsumer.accept(uuid);

@@ -34,6 +34,8 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 
+import java.util.concurrent.TimeoutException;
+
 @CommandDeclaration(command = "setalias",
     permission = "plots.alias",
     description = "Set the plot name",
@@ -115,7 +117,9 @@ public class Alias extends SubCommand {
                 }
             }
             PlotSquared.get().getImpromptuUUIDPipeline().getSingle(alias, ((uuid, throwable) -> {
-                if (uuid != null) {
+                if (throwable instanceof TimeoutException) {
+                    MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                } else if (uuid != null) {
                     MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
                 } else {
                     plot.setAlias(alias);

@@ -37,6 +37,7 @@ import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "deny",
     aliases = {"d", "ban"},
@@ -68,7 +69,9 @@ public class Deny extends SubCommand {
         }
 
         MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
-            if (throwable != null || uuids.isEmpty()) {
+            if (throwable instanceof TimeoutException) {
+                MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+            } else if (throwable != null || uuids.isEmpty()) {
                 MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
             } else {
                 for (UUID uuid : uuids) {

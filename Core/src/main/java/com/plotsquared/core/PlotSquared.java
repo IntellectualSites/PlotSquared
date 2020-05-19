@@ -963,7 +963,7 @@ public class PlotSquared {
      * @return Set of Plot
      */
     public Set<Plot> getPlots(String world, String player) {
-        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, 10L);
+        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, Settings.UUID.BLOCKING_TIMEOUT);
         return getPlots(world, uuid);
     }
 
@@ -975,7 +975,7 @@ public class PlotSquared {
      * @return Set of Plot
      */
     public Set<Plot> getPlots(PlotArea area, String player) {
-        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, 10L);
+        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, Settings.UUID.BLOCKING_TIMEOUT);
         return getPlots(area, uuid);
     }
 

@@ -383,7 +383,7 @@ public class MainUtil {
         if (owner.equals(DBFunc.SERVER)) {
             return Captions.SERVER.getTranslated();
         }
-        String name = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(owner, 10L);
+        String name = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
         if (name == null) {
             return Captions.UNKNOWN.getTranslated();
         }
@@ -454,7 +454,7 @@ public class MainUtil {
 
         for (String term : split) {
             try {
-                UUID uuid = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(term, 10L);
+                UUID uuid = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(term, Settings.UUID.BLOCKING_TIMEOUT);
                 if (uuid == null) {
                     uuid = UUID.fromString(term);
                 }
@@ -752,7 +752,8 @@ public class MainUtil {
         if (request.isEmpty()) {
             consumer.accept(result, null);
         } else {
-            PlotSquared.get().getImpromptuUUIDPipeline().getUUIDs(request).whenComplete((uuids, throwable) -> {
+            PlotSquared.get().getImpromptuUUIDPipeline().getUUIDs(request, Settings.UUID.NON_BLOCKING_TIMEOUT)
+                .whenComplete((uuids, throwable) -> {
                 if (throwable != null) {
                     consumer.accept(null, throwable);
                 } else {

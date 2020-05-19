@@ -245,6 +245,10 @@ public class Settings extends Config {
         public static int BACKGROUND_LIMIT = 200;
         @Comment("Rate limit (per 10 minutes) for random UUID fetching from the Mojang API")
         public static int IMPROMPTU_LIMIT = 300;
+        @Comment("Timeout (in milliseconds) for non-blocking UUID requests (mostly commands)")
+        public static long NON_BLOCKING_TIMEOUT = 3000L;
+        @Comment("Timeout (in milliseconds) for blocking UUID requests (events)")
+        public static long BLOCKING_TIMEOUT = 10L;
     }
 
 

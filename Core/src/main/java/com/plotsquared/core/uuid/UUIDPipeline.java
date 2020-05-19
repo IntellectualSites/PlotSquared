@@ -27,6 +27,7 @@ package com.plotsquared.core.uuid;
 
 import com.google.common.collect.Lists;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import org.jetbrains.annotations.NotNull;
@@ -42,10 +43,13 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * An UUID pipeline is essentially an ordered list of
@@ -60,6 +64,7 @@ public class UUIDPipeline {
     private final Executor executor;
     private final List<UUIDService> serviceList;
     private final List<Consumer<List<UUIDMapping>>> consumerList;
+    private final ScheduledExecutorService timeoutExecutor;
 
     /**
      * Construct a new UUID pipeline
@@ -71,6 +76,7 @@ public class UUIDPipeline {
         this.executor = executor;
         this.serviceList = Lists.newLinkedList();
         this.consumerList = Lists.newLinkedList();
+        this.timeoutExecutor = Executors.newSingleThreadScheduledExecutor();
     }
 
     /**
@@ -184,8 +190,10 @@ public class UUIDPipeline {
      * @param username Username
      * @param uuid     UUID consumer
      */
-    public void getSingle(@NotNull final String username, @NotNull final BiConsumer<UUID, Throwable> uuid) {
-        this.getUUIDs(Collections.singletonList(username)).whenComplete((uuids, throwable) -> {
+    public void getSingle(@NotNull final String username,
+        @NotNull final BiConsumer<UUID, Throwable> uuid) {
+        this.getUUIDs(Collections.singletonList(username)).applyToEither(timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT), Function.identity())
+            .whenComplete((uuids, throwable) -> {
             if (throwable != null) {
                 uuid.accept(null, throwable);
             } else {
@@ -204,8 +212,10 @@ public class UUIDPipeline {
      * @param uuid     UUID
      * @param username Username consumer
      */
-    public void getSingle(@NotNull final UUID uuid, @NotNull final BiConsumer<String, Throwable> username) {
-        this.getNames(Collections.singletonList(uuid)).whenComplete((uuids, throwable) -> {
+    public void getSingle(@NotNull final UUID uuid,
+        @NotNull final BiConsumer<String, Throwable> username) {
+        this.getNames(Collections.singletonList(uuid)).applyToEither(timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT), Function.identity())
+            .whenComplete((uuids, throwable) -> {
             if (throwable != null) {
                 username.accept(null, throwable);
             } else {
@@ -216,6 +226,42 @@ public class UUIDPipeline {
                 }
             }
         });
+    }
+
+    /**
+     * Asynchronously attempt to fetch the mapping from a list of UUIDs.
+     * <p>
+     * This will timeout after the specified time and throws a {@link TimeoutException}
+     * if this happens
+     *
+     * @param requests UUIDs
+     * @param timeout  Timeout in milliseconds
+     * @return Mappings
+     */
+    public CompletableFuture<List<UUIDMapping>> getNames(@NotNull final Collection<UUID> requests,
+        final long timeout) {
+        return this.getNames(requests).applyToEither(timeoutAfter(timeout), Function.identity());
+    }
+
+    /**
+     * Asynchronously attempt to fetch the mapping from a list of names.
+     * <p>
+     * This will timeout after the specified time and throws a {@link TimeoutException}
+     * if this happens
+     *
+     * @param requests Names
+     * @param timeout  Timeout in milliseconds
+     * @return Mappings
+     */
+    public CompletableFuture<List<UUIDMapping>> getUUIDs(@NotNull final Collection<String> requests,
+        final long timeout) {
+        return this.getUUIDs(requests).applyToEither(timeoutAfter(timeout), Function.identity());
+    }
+
+    private CompletableFuture<List<UUIDMapping>> timeoutAfter(final long timeout) {
+        final CompletableFuture<List<UUIDMapping>> result = new CompletableFuture<>();
+        this.timeoutExecutor.schedule(() -> result.completeExceptionally(new TimeoutException()), timeout, TimeUnit.MILLISECONDS);
+        return result;
     }
 
     /**
