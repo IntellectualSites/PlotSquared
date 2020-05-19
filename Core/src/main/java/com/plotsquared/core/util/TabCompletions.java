@@ -45,7 +45,8 @@ import java.util.stream.Collectors;
 /**
  * Tab completion utilities
  */
-@UtilityClass public class TabCompletions {
+@UtilityClass
+public class TabCompletions {
 
     private final Cache<String, List<String>> cachedCompletionValues =
         CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
@@ -77,6 +78,21 @@ import java.util.stream.Collectors;
                 player -> new Command(null, false, player, "", RequiredType.NONE,
                     CommandCategory.INFO) {
                 }).collect(Collectors.toList());
+    }
+
+    /**
+     * Get a list of completions corresponding to WorldEdit(/FAWE) patterns. This uses
+     * WorldEdit's pattern completer internally.
+     *
+     * @param input Command input
+     * @return List of completions
+     */
+    @NotNull public List<Command> completePatterns(@NotNull final String input) {
+        return PatternUtil.getSuggestions(input.trim()).stream()
+            .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
+            .filter(value -> value.startsWith(input.toLowerCase(Locale.ENGLISH)))
+            .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+            }).collect(Collectors.toList());
     }
 
 }
