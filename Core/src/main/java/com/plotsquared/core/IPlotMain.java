@@ -286,6 +286,6 @@ public interface IPlotMain extends ILogger {
      *
      * @return Player manager
      */
-    @NotNull PlayerManager getPlayerManager();
+    @NotNull PlayerManager<?, ?> getPlayerManager();
 
 }

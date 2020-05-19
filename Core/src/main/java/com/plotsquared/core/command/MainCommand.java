@@ -99,7 +99,6 @@ public class MainCommand extends Command {
             new DebugPaste();
             new Unlink();
             new Kick();
-            new DebugClaimTest();
             new Inbox();
             new Comment();
             new DatabaseCommand();

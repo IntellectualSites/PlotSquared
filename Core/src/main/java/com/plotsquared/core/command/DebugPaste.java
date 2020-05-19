@@ -35,7 +35,6 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import lombok.NonNull;
 
 import java.io.BufferedReader;
@@ -90,7 +89,7 @@ public class DebugPaste extends SubCommand {
                 b.append("# Server Information\n");
                 b.append("Server Version: ").append(PlotSquared.get().IMP.getServerImplementation())
                     .append("\n");
-                b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(';')
+                b.append("online_mode: ").append(!Settings.UUID.OFFLINE).append(';')
                     .append(!Settings.UUID.OFFLINE).append('\n');
                 b.append("Plugins:");
                 for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared

@@ -35,7 +35,6 @@ import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
@@ -104,16 +103,24 @@ public abstract class SchematicHandler {
                 Iterator<Plot> i = plots.iterator();
                 final Plot plot = i.next();
                 i.remove();
-                String owner = UUIDHandler.getName(plot.getOwnerAbs());
-                if (owner == null) {
+
+                PlotSquared.get().getImpromptuUUIDPipeline().getSingle(plot.getOwnerAbs(), (username, throwable) -> {
+
+                });
+
+                final String owner;
+                if (plot.hasOwner()) {
+                    owner = plot.getOwnerAbs().toString();
+                } else {
                     owner = "unknown";
                 }
+
                 final String name;
                 if (namingScheme == null) {
                     name =
                         plot.getId().x + ";" + plot.getId().y + ',' + plot.getArea() + ',' + owner;
                 } else {
-                    name = namingScheme.replaceAll("%owner%", owner)
+                    name = namingScheme
                         .replaceAll("%id%", plot.getId().toString())
                         .replaceAll("%idx%", plot.getId().x + "")
                         .replaceAll("%idy%", plot.getId().y + "")

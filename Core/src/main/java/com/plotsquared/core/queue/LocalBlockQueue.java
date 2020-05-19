@@ -25,13 +25,13 @@
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -42,8 +42,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public abstract class LocalBlockQueue {
 
@@ -124,8 +122,8 @@ public abstract class LocalBlockQueue {
         regenChunk(x, z);
         fixChunkLighting(x, z);
         BlockVector2 loc = BlockVector2.at(x, z);
-        for (Map.Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            PlotPlayer pp = entry.getValue();
+
+        for (final PlotPlayer pp : PlotSquared.imp().getPlayerManager().getPlayers()) {
             Location pLoc = pp.getLocation();
             if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getBlockVector2()
                 .equals(loc)) {

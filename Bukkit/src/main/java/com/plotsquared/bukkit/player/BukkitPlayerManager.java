@@ -25,25 +25,36 @@
  */
 package com.plotsquared.bukkit.player;
 
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 /**
  * Player manager providing {@link BukkitPlayer Bukkit players}
  */
-public class BukkitPlayerManager extends PlayerManager {
+public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, BukkitOfflinePlayer> {
 
-    @Override @NotNull public PlotPlayer createPlayer(@NotNull final UUID uuid) {
+    @Override @NotNull public BukkitPlayer createPlayer(@NotNull final UUID uuid) {
         final Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline()) {
             throw new NoSuchPlayerException(uuid);
         }
         return new BukkitPlayer(player);
+    }
+
+    @Nullable @Override public BukkitOfflinePlayer getOfflinePlayer(@Nullable final UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
+    }
+
+    @NotNull @Override public BukkitOfflinePlayer getOfflinePlayer(@NotNull final String username) {
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(username));
     }
 
 }

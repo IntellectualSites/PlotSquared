@@ -496,7 +496,7 @@ public class Plot {
         }
         if (isMerged()) {
             Set<Plot> plots = getConnectedPlots();
-            Plot[] array = plots.toArray(new Plot[plots.size()]);
+            Plot[] array = plots.toArray(new Plot[0]);
             ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
             UUID last = this.getOwner();
             owners.add(this.getOwner());
@@ -1711,7 +1711,8 @@ public class Plot {
             this.setSign("unknown");
             return;
         }
-        PlotSquared.get().getImpromptuUUIDPipeline().getSingle(this.getOwnerAbs(), this::setSign);
+        PlotSquared.get().getImpromptuUUIDPipeline().getSingle(this.getOwnerAbs(), (username, sign) ->
+            this.setSign(username));
     }
 
     /**

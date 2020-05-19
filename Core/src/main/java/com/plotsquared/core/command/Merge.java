@@ -40,7 +40,6 @@ import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.UUID;
 
@@ -213,7 +212,7 @@ public class Merge extends SubCommand {
         java.util.Set<UUID> uuids = adjacent.getOwners();
         boolean isOnline = false;
         for (final UUID owner : uuids) {
-            final PlotPlayer accepter = UUIDHandler.getPlayer(owner);
+            final PlotPlayer accepter = PlotSquared.imp().getPlayerManager().getPlayerIfExists(owner);
             if (!force && accepter == null) {
                 continue;
             }
@@ -222,7 +221,7 @@ public class Merge extends SubCommand {
             Runnable run = () -> {
                 MainUtil.sendMessage(accepter, Captions.MERGE_ACCEPTED);
                 plot.autoMerge(dir, maxSize - size, owner, terrain);
-                PlotPlayer plotPlayer = UUIDHandler.getPlayer(player.getUUID());
+                PlotPlayer plotPlayer = PlotSquared.imp().getPlayerManager().getPlayerIfExists(player.getUUID());
                 if (plotPlayer == null) {
                     sendMessage(accepter, Captions.MERGE_NOT_VALID);
                     return;

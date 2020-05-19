@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,9 +39,9 @@ import java.util.UUID;
 /**
  * Manages player instances
  */
-public abstract class PlayerManager {
+public abstract class PlayerManager<P extends PlotPlayer, O extends OfflinePlotPlayer> {
 
-    private final Map<UUID, PlotPlayer> playerMap = new HashMap<>();
+    private final Map<UUID, P> playerMap = new HashMap<>();
     private final Object playerLock = new Object();
 
     /**
@@ -60,15 +61,15 @@ public abstract class PlayerManager {
      * @param uuid Player UUID
      * @return Player, or null
      */
-    @Nullable public PlotPlayer getPlayerIfExists(@Nullable final UUID uuid) {
+    @Nullable public P getPlayerIfExists(@Nullable final UUID uuid) {
         if (uuid == null) {
             return null;
         }
         return this.playerMap.get(uuid);
     }
 
-    @Nullable public PlotPlayer getPlayerIfExists(@Nullable final String name) {
-        for (final PlotPlayer plotPlayer : this.playerMap.values()) {
+    @Nullable public P getPlayerIfExists(@Nullable final String name) {
+        for (final P plotPlayer : this.playerMap.values()) {
             if (plotPlayer.getName().equalsIgnoreCase(name)) {
                 return plotPlayer;
             }
@@ -86,9 +87,9 @@ public abstract class PlayerManager {
      * @param uuid Player UUID
      * @return Player object
      */
-    @NotNull public PlotPlayer getPlayer(@NotNull final UUID uuid) {
+    @NotNull public P getPlayer(@NotNull final UUID uuid) {
         synchronized (playerLock) {
-            PlotPlayer player = this.playerMap.get(uuid);
+            P player = this.playerMap.get(uuid);
             if (player == null) {
                 player = createPlayer(uuid);
                 this.playerMap.put(uuid, player);
@@ -97,14 +98,30 @@ public abstract class PlayerManager {
         }
     }
 
-    @NotNull protected abstract PlotPlayer createPlayer(@NotNull final UUID uuid);
+    @NotNull protected abstract P createPlayer(@NotNull final UUID uuid);
+
+    /**
+     * Get an an offline player object from the player's UUID
+     *
+     * @param uuid Player UUID
+     * @return Offline player object
+     */
+    @Nullable public abstract O getOfflinePlayer(@Nullable final UUID uuid);
+
+    /**
+     * Get an offline player object from the player's username
+     *
+     * @param username Player name
+     * @return Offline player object
+     */
+    @Nullable public abstract O getOfflinePlayer(@NotNull final String username);
 
     /**
      * Get all online players
      *
      * @return Unmodifiable collection of players
      */
-    public Collection<PlotPlayer> getPlayers() {
+    public Collection<P> getPlayers() {
         return Collections.unmodifiableCollection(this.playerMap.values());
     }
 
