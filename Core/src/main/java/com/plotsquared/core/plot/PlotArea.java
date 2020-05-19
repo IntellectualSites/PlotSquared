@@ -1072,4 +1072,28 @@ public abstract class PlotArea {
         }
         return flags;
     }
+
+    /**
+     * Get the value associated with the specified flag. This will look at
+     * the default values stored in {@link GlobalFlagContainer}.
+     *
+     * @param flagClass The flag type (Class)
+     * @return The flag value
+     */
+    public <T> T getFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
+        return this.flagContainer.getFlag(flagClass).getValue();
+    }
+
+    /**
+     * Get the value associated with the specified flag. This will look at
+     * the default values stored in {@link GlobalFlagContainer}.
+     *
+     * @param flag The flag type (Any instance of the flag)
+     * @return The flag value
+     */
+    public <T, V extends PlotFlag<T, ?>> T getFlag(final V flag) {
+        final Class<?> flagClass = flag.getClass();
+        final PlotFlag<?, ?> flagInstance = this.flagContainer.getFlagErased(flagClass);
+        return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
+    }
 }
