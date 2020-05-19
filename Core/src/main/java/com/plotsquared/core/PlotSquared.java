@@ -270,7 +270,7 @@ public class PlotSquared {
             // create setup util class
             SetupUtils.manager = this.IMP.initSetupUtils();
             // Set block
-            GlobalBlockQueue.IMP = new GlobalBlockQueue(IMP.initBlockQueue(), 1);
+            GlobalBlockQueue.IMP = new GlobalBlockQueue(IMP.initBlockQueue(), 1, Settings.QUEUE.TARGET_TIME);
             GlobalBlockQueue.IMP.runTask();
             // Set chunk
             ChunkManager.manager = this.IMP.initChunkManager();
