@@ -1046,9 +1046,11 @@ public class Plot {
         }
         if (createSign) {
             GlobalBlockQueue.IMP.addEmptyTask(() -> {
-                for (Plot current : plots) {
-                    current.setSign(MainUtil.getName(current.getOwnerAbs()));
-                }
+                TaskManager.runTaskAsync(() -> {
+                    for (Plot current : plots) {
+                        current.setSign(MainUtil.getName(current.getOwnerAbs()));
+                    }
+                });
             });
         }
         if (createRoad) {
