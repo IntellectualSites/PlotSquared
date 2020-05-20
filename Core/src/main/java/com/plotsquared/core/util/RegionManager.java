@@ -28,8 +28,11 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
@@ -145,6 +148,19 @@ public abstract class RegionManager {
             }
             TaskManager.runTask(whenDone);
         });
+    }
+
+    public boolean setCuboids(final PlotArea area, final Set<CuboidRegion> regions,
+        final Pattern blocks, int minY, int maxY) {
+        LocalBlockQueue queue = area.getQueue(false);
+        for (CuboidRegion region : regions) {
+            Location pos1 = new Location(area.getWorldName(), region.getMinimumPoint().getX(), minY,
+                region.getMinimumPoint().getZ());
+            Location pos2 = new Location(area.getWorldName(), region.getMaximumPoint().getX(), maxY,
+                region.getMaximumPoint().getZ());
+            queue.setCuboid(pos1, pos2, blocks);
+        }
+        return queue.enqueue();
     }
 
     /**
