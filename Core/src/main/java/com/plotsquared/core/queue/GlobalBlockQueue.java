@@ -44,8 +44,8 @@ public class GlobalBlockQueue {
     private final ConcurrentLinkedDeque<LocalBlockQueue> inactiveQueues;
     private final ConcurrentLinkedDeque<Runnable> runnables;
     private final AtomicBoolean running;
+    private final int targetTime;
     private QueueProvider provider;
-
     /**
      * Used to calculate elapsed time in milliseconds and ensure block placement doesn't lag the
      * server
@@ -53,6 +53,7 @@ public class GlobalBlockQueue {
     private long last;
     private long secondLast;
     private long lastSuccess;
+    private double lastPeriod = 0;
     private final RunnableVal2<Long, LocalBlockQueue> SET_TASK =
         new RunnableVal2<Long, LocalBlockQueue>() {
             @Override public void run(Long free, LocalBlockQueue queue) {
@@ -65,17 +66,19 @@ public class GlobalBlockQueue {
                         }
                         return;
                     }
-                } while (((GlobalBlockQueue.this.secondLast = System.currentTimeMillis())
-                    - GlobalBlockQueue.this.last) < free);
+                } while ((lastPeriod =
+                    ((GlobalBlockQueue.this.secondLast = System.currentTimeMillis())
+                        - GlobalBlockQueue.this.last)) < free);
             }
         };
 
-    public GlobalBlockQueue(QueueProvider provider, int threads) {
+    public GlobalBlockQueue(QueueProvider provider, int threads, int targetTime) {
         this.provider = provider;
         this.activeQueues = new ConcurrentLinkedDeque<>();
         this.inactiveQueues = new ConcurrentLinkedDeque<>();
         this.runnables = new ConcurrentLinkedDeque<>();
         this.running = new AtomicBoolean();
+        this.targetTime = targetTime;
         this.PARALLEL_THREADS = threads;
     }
 
@@ -112,7 +115,13 @@ public class GlobalBlockQueue {
             @Override public void run() {
                 if (inactiveQueues.isEmpty() && activeQueues.isEmpty()) {
                     lastSuccess = System.currentTimeMillis();
+                    lastPeriod = 0;
                     GlobalBlockQueue.this.runEmptyTasks();
+                    return;
+                }
+                // Server laggy? Skip.
+                if (lastPeriod > targetTime) {
+                    lastPeriod -= targetTime;
                     return;
                 }
                 SET_TASK.value1 = 50 + Math.min(

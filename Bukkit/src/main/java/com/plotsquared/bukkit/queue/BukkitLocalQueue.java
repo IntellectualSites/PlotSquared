@@ -31,6 +31,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.queue.BasicLocalBlockQueue;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -50,7 +51,6 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.inventory.BlockInventoryHolder;
 
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -117,9 +117,6 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
     @Override public final void setComponents(LocalChunk lc)
         throws ExecutionException, InterruptedException {
         setBaseBlocks(lc);
-        if (setBiome() && lc.biomes != null) {
-            setBiomes(lc);
-        }
     }
 
     public void setBaseBlocks(LocalChunk localChunk) {
@@ -160,6 +157,22 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
 
                                 sw.restoreTag(worldObj.getName(), existing.getX(), existing.getY(),
                                     existing.getZ());
+                            }
+                        }
+                    }
+                }
+            }
+            if (setBiome() && localChunk.biomes != null) {
+                for (int x = 0; x < localChunk.biomes.length; x++) {
+                    BiomeType[] biomeZ = localChunk.biomes[x];
+                    if (biomeZ != null) {
+                        for (int z = 0; z < biomeZ.length; z++) {
+                            if (biomeZ[z] != null) {
+                                BiomeType biomeType = biomeZ[z];
+
+                                Biome biome = BukkitAdapter.adapt(biomeType);
+                                worldObj.setBiome((chunk.getX() << 4) + x, (chunk.getZ() << 4) + z,
+                                    biome);
                             }
                         }
                     }

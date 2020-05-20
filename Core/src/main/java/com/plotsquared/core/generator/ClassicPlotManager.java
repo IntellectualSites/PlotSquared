@@ -36,6 +36,7 @@ import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -92,75 +93,38 @@ public class ClassicPlotManager extends SquarePlotManager {
 
     public boolean setFloor(PlotId plotId, Pattern blocks) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
         if (plot.isBasePlot()) {
-            for (CuboidRegion region : plot.getRegions()) {
-                Location pos1 =
-                    new Location(classicPlotWorld.getWorldName(), region.getMinimumPoint().getX(),
-                        classicPlotWorld.PLOT_HEIGHT, region.getMinimumPoint().getZ());
-                Location pos2 =
-                    new Location(classicPlotWorld.getWorldName(), region.getMaximumPoint().getX(),
-                        classicPlotWorld.PLOT_HEIGHT, region.getMaximumPoint().getZ());
-                queue.setCuboid(pos1, pos2, blocks);
-            }
+            return RegionManager.manager.setCuboids(classicPlotWorld, plot.getRegions(), blocks,
+                classicPlotWorld.PLOT_HEIGHT, classicPlotWorld.PLOT_HEIGHT);
         }
-        return queue.enqueue();
+        return false;
     }
 
     public boolean setAll(PlotId plotId, Pattern blocks) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
-        if (!plot.isBasePlot()) {
-            return false;
+        if (plot.isBasePlot()) {
+            return RegionManager.manager
+                .setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1, getWorldHeight());
         }
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
-        int maxY = getWorldHeight();
-        for (CuboidRegion region : plot.getRegions()) {
-            Location pos1 =
-                new Location(classicPlotWorld.getWorldName(), region.getMinimumPoint().getX(), 1,
-                    region.getMinimumPoint().getZ());
-            Location pos2 =
-                new Location(classicPlotWorld.getWorldName(), region.getMaximumPoint().getX(), maxY,
-                    region.getMaximumPoint().getZ());
-            queue.setCuboid(pos1, pos2, blocks);
-        }
-        return queue.enqueue();
+        return false;
     }
 
     public boolean setAir(PlotId plotId, Pattern blocks) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
-        if (!plot.isBasePlot()) {
-            return false;
+        if (plot.isBasePlot()) {
+            return RegionManager.manager.setCuboids(classicPlotWorld, plot.getRegions(), blocks,
+                classicPlotWorld.PLOT_HEIGHT + 1, getWorldHeight());
         }
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
-        int maxY = getWorldHeight();
-        for (CuboidRegion region : plot.getRegions()) {
-            Location pos1 =
-                new Location(classicPlotWorld.getWorldName(), region.getMinimumPoint().getX(),
-                    classicPlotWorld.PLOT_HEIGHT + 1, region.getMinimumPoint().getZ());
-            Location pos2 =
-                new Location(classicPlotWorld.getWorldName(), region.getMaximumPoint().getX(), maxY,
-                    region.getMaximumPoint().getZ());
-            queue.setCuboid(pos1, pos2, blocks);
-        }
-        return queue.enqueue();
+        return false;
     }
 
     public boolean setMain(PlotId plotId, Pattern blocks) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
-        if (!plot.isBasePlot()) {
-            return false;
+        if (plot.isBasePlot()) {
+            return RegionManager.manager.setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1,
+                classicPlotWorld.PLOT_HEIGHT - 1);
         }
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
-        for (CuboidRegion region : plot.getRegions()) {
-            Location pos1 =
-                new Location(classicPlotWorld.getWorldName(), region.getMinimumPoint().getX(), 1,
-                    region.getMinimumPoint().getZ());
-            Location pos2 =
-                new Location(classicPlotWorld.getWorldName(), region.getMaximumPoint().getX(),
-                    classicPlotWorld.PLOT_HEIGHT - 1, region.getMaximumPoint().getZ());
-            queue.setCuboid(pos1, pos2, blocks);
-        }
-        return queue.enqueue();
+        return false;
     }
 
     public boolean setMiddle(PlotId plotId, Pattern blocks) {
