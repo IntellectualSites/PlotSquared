@@ -136,10 +136,17 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import static com.plotsquared.core.util.PremiumVerification.getDownloadID;
 import static com.plotsquared.core.util.PremiumVerification.getResourceID;
@@ -243,6 +250,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
         impromptuPipeline.registerService(offlinePlayerUUIDService);
         backgroundPipeline.registerService(offlinePlayerUUIDService);
+
+        final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService();
         if (!Settings.UUID.OFFLINE) {
             // If running Paper we'll also try to use their profiles
             if (PaperLib.isPaper()) {
@@ -250,7 +259,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 impromptuPipeline.registerService(paperUUIDService);
                 backgroundPipeline.registerService(paperUUIDService);
             }
-            final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService();
             impromptuPipeline.registerService(sqLiteUUIDService);
             backgroundPipeline.registerService(sqLiteUUIDService);
             impromptuPipeline.registerConsumer(sqLiteUUIDService);
@@ -259,9 +267,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             impromptuPipeline.registerService(impromptuMojangService);
             final SquirrelIdUUIDService backgroundMojangService = new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
             backgroundPipeline.registerService(backgroundMojangService);
+        } else {
+            impromptuPipeline.registerService(sqLiteUUIDService);
+            backgroundPipeline.registerService(sqLiteUUIDService);
+            impromptuPipeline.registerConsumer(sqLiteUUIDService);
+            backgroundPipeline.registerConsumer(sqLiteUUIDService);
         }
 
         impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
+        this.startUuidCatching(sqLiteUUIDService, cacheUUIDService);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new Placeholders().register();
@@ -382,6 +396,50 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
                 }
             }
         }
+    }
+
+    private void startUuidCatching(@NotNull final SQLiteUUIDService sqLiteUUIDService,
+                                   @NotNull final CacheUUIDService cacheUUIDService) {
+        // Load all uuids into a big chunky boi queue
+        final Queue<UUID> uuidQueue = new LinkedBlockingQueue<>();
+        PlotSquared.get().forEachPlotRaw(plot -> {
+            final Set<UUID> uuids = new HashSet<>();
+            uuids.add(plot.getOwnerAbs());
+            uuids.addAll(plot.getMembers());
+            uuids.addAll(plot.getTrusted());
+            uuids.addAll(plot.getDenied());
+            for (final UUID uuid : uuids) {
+                if (!uuidQueue.contains(uuid)) {
+                    uuidQueue.add(uuid);
+                }
+            }
+        });
+        PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) " + uuidQueue.size() + " UUIDs will be cached.");
+
+        Executors.newSingleThreadScheduledExecutor().schedule(() -> {
+            // Begin by reading all the SQLite cache at once
+            cacheUUIDService.accept(sqLiteUUIDService.getAll());
+            // Now fetch names for all known UUIDs
+            final int totalSize = uuidQueue.size();
+            int read = 0;
+            PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) PlotSquared will fetch UUIDs in groups of "
+                + Settings.UUID.BACKGROUND_LIMIT);
+            final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
+            while (!uuidQueue.isEmpty()) {
+                for (int i = 0; i < Settings.UUID.BACKGROUND_LIMIT && !uuidQueue.isEmpty(); i++) {
+                    uuidList.add(uuidQueue.poll());
+                    read++;
+                }
+                try {
+                    PlotSquared.get().getBackgroundUUIDPipeline().getNames(uuidList).get();
+                } catch (final InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                final double percentage = ((double) read / (double) totalSize) * 100.0D;
+                PlotSquared.log(Captions.PREFIX.getTranslated() + String.format("(UUID) PlotSquared has cached %.1f%% of UUIDs", percentage));
+            }
+            PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) PlotSquared has cached all UUIDs");
+        }, 10, TimeUnit.SECONDS);
     }
 
     @Override public void onDisable() {

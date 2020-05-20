@@ -37,6 +37,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -120,5 +121,25 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
             e.printStackTrace();
         }
     }
+
+    /**
+     * Read the entire cache at once
+     *
+     * @return All read mappings
+     */
+    @NotNull public List<UUIDMapping> getAll() {
+        final List<UUIDMapping> mappings = new LinkedList<>();
+        try (final PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM `usercache`")) {
+            try (final ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    mappings.add(new UUIDMapping(UUID.fromString(resultSet.getString("uuid")), resultSet.getString("username")));
+                }
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        return mappings;
+    }
+
 
 }

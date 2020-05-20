@@ -424,23 +424,6 @@ public class PlotSquared {
         }
     }
 
-    private void startUuidCatching() {
-        TaskManager.runTaskLater(() -> {
-            debug("Starting UUID caching");
-            /*UUIDHandler.startCaching(() -> {
-                forEachPlotRaw(plot -> {
-                    if (plot.hasOwner() && plot.temp != -1) {
-                        if (UUIDHandler.getName(plot.getOwnerAbs()) == null) {
-                            UUIDHandler.implementation.unknown.add(plot.getOwnerAbs());
-                        }
-                    }
-                });
-                startExpiryTasks();
-            });*/
-            // TODO: Re-implement
-        }, 20);
-    }
-
     private void startExpiryTasks() {
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
             ExpireManager.IMP = new ExpireManager();
