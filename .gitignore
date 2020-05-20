@@ -142,3 +142,4 @@ p2error.txt
 *.bat
 Nukkit/build/resources/main/plugin.yml
 docs/
+build/
