@@ -44,10 +44,7 @@ import java.util.Set;
 public class DefaultPlotAreaManager implements PlotAreaManager {
 
     final PlotArea[] noPlotAreas = new PlotArea[0];
-
     private final Map<String, PlotWorld> plotWorlds = new HashMap<>();
-    // Optimization if there are no hash collisions
-    private boolean plotAreaHasCollision = false;
 
     @Override public PlotArea[] getAllPlotAreas() {
         final Set<PlotArea> area = new HashSet<>();
