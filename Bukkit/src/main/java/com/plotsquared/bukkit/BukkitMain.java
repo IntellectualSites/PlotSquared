@@ -425,18 +425,40 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) PlotSquared will fetch UUIDs in groups of "
                 + Settings.UUID.BACKGROUND_LIMIT);
             final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
-            while (!uuidQueue.isEmpty()) {
-                for (int i = 0; i < Settings.UUID.BACKGROUND_LIMIT && !uuidQueue.isEmpty(); i++) {
-                    uuidList.add(uuidQueue.poll());
-                    read++;
+
+            // Used to indicate that the second retrieval has been attempted
+            boolean secondRun = false;
+
+            while (!uuidQueue.isEmpty() || !uuidList.isEmpty()) {
+                if (!uuidList.isEmpty() && secondRun) {
+                    PlotSquared.log("Giving up on last batch. Fetching new batch instead.");
+                    uuidList.clear();
+                }
+                if (uuidList.isEmpty()) {
+                    // Retrieve the secondRun variable to indicate that we're retrieving a
+                    // fresh batch
+                    secondRun = false;
+                    // Populate the request list
+                    for (int i = 0; i < Settings.UUID.BACKGROUND_LIMIT && !uuidQueue.isEmpty(); i++) {
+                        uuidList.add(uuidQueue.poll());
+                        read++;
+                    }
+                } else {
+                    // If the list isn't empty then this is a second run for
+                    // an old batch, so we re-use the patch
+                    secondRun = true;
                 }
                 try {
                     PlotSquared.get().getBackgroundUUIDPipeline().getNames(uuidList).get();
+                    // Clear the list if we successfully index all the names
+                    uuidList.clear();
+                    // Print progress
+                    final double percentage = ((double) read / (double) totalSize) * 100.0D;
+                    PlotSquared.log(Captions.PREFIX.getTranslated() + String.format("(UUID) PlotSquared has cached %.1f%% of UUIDs", percentage));
                 } catch (final InterruptedException | ExecutionException e) {
+                    PlotSquared.log("Failed to retrieve that batch. Will try again.");
                     e.printStackTrace();
                 }
-                final double percentage = ((double) read / (double) totalSize) * 100.0D;
-                PlotSquared.log(Captions.PREFIX.getTranslated() + String.format("(UUID) PlotSquared has cached %.1f%% of UUIDs", percentage));
             }
             PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) PlotSquared has cached all UUIDs");
         }, 10, TimeUnit.SECONDS);
