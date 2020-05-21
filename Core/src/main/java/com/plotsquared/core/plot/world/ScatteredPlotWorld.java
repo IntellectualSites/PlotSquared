@@ -62,6 +62,9 @@ public class ScatteredPlotWorld extends PlotWorld {
     }
 
     @Override @Nullable public PlotArea getArea(@NotNull final Location location) {
+        if (this.areas.isEmpty()) {
+            return null;
+        }
         synchronized (this.treeLock) {
             final Observable<Entry<PlotArea, Geometry>> area =
                 areaTree.search(Geometries.point(location.getX(), location.getZ()));
@@ -87,6 +90,9 @@ public class ScatteredPlotWorld extends PlotWorld {
     }
 
     @Override @NotNull public Collection<PlotArea> getAreasInRegion(@NotNull final CuboidRegion region) {
+        if (this.areas.isEmpty()) {
+            return Collections.emptyList();
+        }
         synchronized (this.treeLock) {
             final List<PlotArea> areas = new LinkedList<>();
             this.areaTree.search(RegionUtil.toRectangle(region)).toBlocking().forEach(entry -> areas.add(entry.value()));
