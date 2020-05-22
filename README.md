@@ -28,6 +28,7 @@ is to provide a lag-free and smooth experience.
 * [Download](https://www.spigotmc.org/resources/plotsquared-v5.77506/)
 * [Discord](https://discord.gg/KxkjDVg)
 * [Wiki](https://wiki.intellectualsites.com/plotsquared/home)
+* [Issues](https://issues.intellectualsites.com/projects/6572cc05-7756-4c9e-92de-bd28b9aabc3f)
 
 ### Developer Resources
 * [API Documentation](https://wiki.intellectualsites.com/en/plotsquared/developer/development-portal)
