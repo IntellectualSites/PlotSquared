@@ -58,6 +58,7 @@ import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 
@@ -97,7 +98,8 @@ public class Area extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NEEDS_NAME);
                     return false;
                 }
-                if (PlotSquared.get().getPlotArea(player.getLocation().getWorld(), args[1]) != null) {
+                final PlotArea existingArea = PlotSquared.get().getPlotArea(player.getLocation().getWorld(), args[1]);
+                if (existingArea != null && existingArea.getId().equalsIgnoreCase(args[1])) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NAME_TAKEN);
                     return false;
                 }
@@ -127,12 +129,15 @@ public class Area extends SubCommand {
                 final HybridPlotWorld hybridPlotWorld = new HybridPlotWorld(player.getLocation().getWorld(), args[1],
                     Objects.requireNonNull(PlotSquared.imp()).getDefaultGenerator(), plotId, plotId);
                 // Plot size is the same as the region width
-                hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
+                hybridPlotWorld.PLOT_WIDTH = hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
                 // We use a schematic generator
                 hybridPlotWorld.setTerrain(PlotAreaTerrainType.ALL);
                 // It is always a partial plot world
                 hybridPlotWorld.setType(PlotAreaType.PARTIAL);
                 // We save the schematic :D
+                hybridPlotWorld.PLOT_SCHEMATIC = true;
+                // Set the road width to 0
+                hybridPlotWorld.ROAD_WIDTH = hybridPlotWorld.ROAD_OFFSET_X = hybridPlotWorld.ROAD_OFFSET_Z = 0;
                 final File parentFile = MainUtil.getFile(PlotSquared.imp().getDirectory(), "schematics" + File.separator +
                     "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld.getWorldName() + File.separator +
                     hybridPlotWorld.getId());
@@ -149,6 +154,9 @@ public class Area extends SubCommand {
                     e.printStackTrace();
                     return false;
                 }
+                // Calculate the offset
+                final BlockVector3 singlePos1 = selectedRegion.getMinimumPoint();
+
                 // Now the schematic is saved, which is wonderful!
                 final SetupObject singleSetup = new SetupObject();
                 singleSetup.world = hybridPlotWorld.getWorldName();
@@ -161,6 +169,19 @@ public class Area extends SubCommand {
                 singleSetup.max = plotId;
                 singleSetup.min = plotId;
                 Runnable singleRun = () -> {
+                    final String path =
+                        "worlds." + hybridPlotWorld.getWorldName() + ".areas." + hybridPlotWorld.getId() + '-'
+                            + singleSetup.min + '-' + singleSetup.max;
+                    final int offsetX = singlePos1.getX();
+                    final int offsetZ = singlePos1.getZ();
+                    if (offsetX != 0) {
+                        PlotSquared.get().worlds
+                            .set(path + ".road.offset.x", offsetX);
+                    }
+                    if (offsetZ != 0) {
+                        PlotSquared.get().worlds
+                            .set(path + ".road.offset.z", offsetZ);
+                    }
                     final String world = SetupUtils.manager.setupWorld(singleSetup);
                     if (WorldUtil.IMP.isWorld(world)) {
                         PlotSquared.get().loadWorld(world, null);
