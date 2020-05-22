@@ -88,6 +88,7 @@ shadowJar {
         include(dependency("net.kyori:text-adapter-bukkit:3.0.3"))
         include(dependency("org.bstats:bstats-bukkit:1.7"))
         include(dependency("com.github.davidmoten:rtree:0.8.7"))
+        include(dependency("io.reactivex:rxjava:1.3.8"))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
