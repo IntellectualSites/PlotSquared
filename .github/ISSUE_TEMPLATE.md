@@ -28,6 +28,7 @@ assignees: ''
 <!--- Issue /plot debugpaste in game or in your console and copy the supplied URL here -->
 <!--- If you cannot perform the above, we require logs/latest.log; settings.yml; worlds.yml and possibly PlotSquared.use_THIS.yml -->
 <!--- If you are unwilling to supply the information we need, we reserve the right to not assist you. Redact IP addresses if you need to. -->
+**/plot debugpaste:** 
 
 ### Server type:
 **Select one**
