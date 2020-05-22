@@ -783,6 +783,16 @@ public enum Captions implements Caption {
     GENERIC_INVALID_CHOICE("invalid choice", "Generic"),
     //</editor-fold>
 
+    //<editor-fold des="Single area">
+    SINGLE_AREA_MISSING_SELECTION("$2Error! You need to select a square region", "Single"),
+    SINGLE_AREA_NOT_SQUARE("$2Error! Your selection needs to be a square", "Single"),
+    SINGLE_AREA_OVERLAPPING("$2Error! Your selection overlaps with an existing plot area", "Single"),
+    SINGLE_AREA_NEEDS_NAME("$2Error! Please specify a plot name: /plot area single <name>", "Single"),
+    SINGLE_AREA_NAME_TAKEN("$2Error! The plot name is already taken", "Single"),
+    SINGLE_AREA_FAILED_TO_SAVE("$2Error! Failed to save the area schematic", "Single"),
+    SINGLE_AREA_COULD_NOT_MAKE_DIRECTORIES("$2Error! Failed to create the schematic directory", "Single"),
+    //</editor-fold>
+
     /**
      * Legacy Configuration Conversion
      */
