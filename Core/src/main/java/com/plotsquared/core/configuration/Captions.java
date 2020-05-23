@@ -791,6 +791,7 @@ public enum Captions implements Caption {
     SINGLE_AREA_NAME_TAKEN("$2Error! The plot name is already taken", "Single"),
     SINGLE_AREA_FAILED_TO_SAVE("$2Error! Failed to save the area schematic", "Single"),
     SINGLE_AREA_COULD_NOT_MAKE_DIRECTORIES("$2Error! Failed to create the schematic directory", "Single"),
+    SINGLE_AREA_CREATED("$1The area was created successfully!", "Single"),
     //</editor-fold>
 
     /**
