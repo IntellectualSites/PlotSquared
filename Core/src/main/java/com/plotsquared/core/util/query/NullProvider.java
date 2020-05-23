@@ -26,26 +26,14 @@
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
 
-class AreaLimitedPlotProvider implements PlotProvider {
-
-    private final Collection<PlotArea> areas;
-
-    AreaLimitedPlotProvider(Collection<PlotArea> areas) {
-        this.areas = areas;
-    }
+class NullProvider implements PlotProvider {
 
     @Override public Collection<Plot> getPlots() {
-        final List<Plot> plots = new LinkedList<>();
-        for (final PlotArea area : areas) {
-            plots.addAll(area.getPlots());
-        }
-        return plots;
+        return Collections.emptyList();
     }
 
 }
