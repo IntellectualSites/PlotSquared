@@ -25,7 +25,10 @@
  */
 package com.plotsquared.core.plot;
 
-public abstract class PlotFilter {
+/**
+ * Use {@link com.plotsquared.core.util.query.PlotQuery} instead
+ */
+@Deprecated public abstract class PlotFilter {
     public boolean allowsArea(final PlotArea area) {
         return true;
     }
@@ -33,4 +36,5 @@ public abstract class PlotFilter {
     public boolean allowsPlot(final Plot plot) {
         return true;
     }
+
 }
