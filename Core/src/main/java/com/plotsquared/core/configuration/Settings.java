@@ -238,7 +238,6 @@ public class Settings extends Config {
         @Comment("Force using lowercase UUIDs") public static boolean FORCE_LOWERCASE = false;
         @Comment("Use a database to store UUID/name info") public static boolean
             USE_SQLUUIDHANDLER = false;
-        @Ignore public static boolean NATIVE_UUID_PROVIDER = false;
         @Comment("How many UUIDs that may be stored in the cache")
         public static int UUID_CACHE_SIZE = 100000;
         @Comment("Rate limit (per 10 minutes) for background UUID fetching from the Mojang API")
@@ -497,6 +496,8 @@ public class Settings extends Config {
         public static boolean CREATURE_SPAWN = true;
         @Comment("Check the tile entity limit on block placement")
         public static boolean TILE_ENTITY_CHECK = true;
+        @Comment("Use Paper's async tab completion")
+        public static boolean ASYNC_TAB_COMPLETION;
     }
 
     @Comment("Settings relating to PlotSquared's GlobalBlockQueue")
@@ -514,8 +515,6 @@ public class Settings extends Config {
         @Comment("Events are needed to track a lot of things") public static boolean EVENTS = true;
         @Comment("Commands are used to interact with the plugin") public static boolean COMMANDS =
             true;
-        @Comment("The UUID cacher is used to resolve player names") public static boolean
-            UUID_CACHE = true;
         @Comment("Whether we should notify you about updates or not.") public static boolean
             UPDATE_NOTIFICATIONS = true;
         @Comment("Stores user metadata in a database") public static boolean PERSISTENT_META = true;
@@ -544,10 +543,10 @@ public class Settings extends Config {
         public static boolean EXTERNAL_PLACEHOLDERS = true;
         @Comment("Make road regeneration persistent across restarts") public static boolean
             PERSISTENT_ROAD_REGEN = false;
-        @Comment("Try to guess plot owners from sign data. This may decrease server performance")
-        public static boolean GUESS_PLOT_OWNER = false;
         @Comment("Plot component preset GUI")
         public static boolean COMPONENT_PRESETS = true;
+        @Comment("Use UUID cache to complete usernames")
+        public static boolean EXTENDED_USERNAME_COMPLETION = true;
     }
 
 }

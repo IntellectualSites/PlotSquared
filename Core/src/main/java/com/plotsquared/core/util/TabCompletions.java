@@ -31,6 +31,8 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.command.RequiredType;
+import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.uuid.UUIDMapping;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
@@ -61,15 +63,24 @@ public class TabCompletions {
      */
     @NotNull public List<Command> completePlayers(@NotNull final String input,
         @NotNull final List<String> existing) {
-        List<String> players = cachedCompletionValues.getIfPresent("players");
-        if (players == null) {
-            final Collection<UUIDMapping> mappings =
-                PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
-            players = new ArrayList<>(mappings.size());
-            for (final UUIDMapping mapping : mappings) {
-                players.add(mapping.getUsername());
+        List<String> players;
+        if (Settings.Enabled_Components.EXTENDED_USERNAME_COMPLETION) {
+            players = cachedCompletionValues.getIfPresent("players");
+            if (players == null) {
+                final Collection<UUIDMapping> mappings =
+                    PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
+                players = new ArrayList<>(mappings.size());
+                for (final UUIDMapping mapping : mappings) {
+                    players.add(mapping.getUsername());
+                }
+                cachedCompletionValues.put("players", players);
             }
-            cachedCompletionValues.put("players", players);
+        } else {
+            final Collection<? extends PlotPlayer> onlinePlayers = PlotSquared.imp().getPlayerManager().getPlayers();
+            players = new ArrayList<>(onlinePlayers.size());
+            for (final PlotPlayer player : onlinePlayers) {
+                players.add(player.getName());
+            }
         }
         final String processedInput = input.toLowerCase(Locale.ENGLISH);
         return players.stream()
@@ -77,7 +88,10 @@ public class TabCompletions {
             .filter(player -> !existing.contains(player)).map(
                 player -> new Command(null, false, player, "", RequiredType.NONE,
                     CommandCategory.INFO) {
-                }).collect(Collectors.toList());
+                })
+            /* If there are more than 200 suggestions, just send the first 200 */
+            .limit(200)
+            .collect(Collectors.toList());
     }
 
     /**

@@ -318,6 +318,9 @@ public class PaperListener implements Listener {
     }
 
     @EventHandler public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
+        if (!Settings.Paper_Components.ASYNC_TAB_COMPLETION) {
+            return;
+        }
         String buffer = event.getBuffer();
         if (!(event.getSender() instanceof Player)) {
             return;
