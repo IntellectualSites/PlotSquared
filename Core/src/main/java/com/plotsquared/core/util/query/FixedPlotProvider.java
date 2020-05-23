@@ -25,32 +25,22 @@
  */
 package com.plotsquared.core.util.query;
 
-/**
- * Strategy used when sorting plot results
- */
-public enum SortingStrategy {
-    /**
-     * Plots won't be sorted at all
-     */
-    NO_SORTING,
-    /**
-     * Sort by the temporary (magic) plot ID
-     */
-    SORT_BY_TEMP,
-    /**
-     * Sort by the value in the plot's {@link com.plotsquared.core.plot.flag.implementations.DoneFlag}
-     */
-    SORT_BY_DONE,
-    /**
-     * Sort by the plot rating
-     */
-    SORT_BY_RATING,
-    /**
-     * Sort by creation date
-     */
-    SORT_BY_CREATION,
-    /**
-     * Sort using a comparator
-     */
-    COMPARATOR;
+import com.plotsquared.core.plot.Plot;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Collections;
+
+class FixedPlotProvider implements PlotProvider {
+
+    private final Plot plot;
+
+    FixedPlotProvider(@NotNull final Plot plot) {
+        this.plot = plot;
+    }
+
+    @Override public Collection<Plot> getPlots() {
+        return Collections.singleton(plot);
+    }
+
 }

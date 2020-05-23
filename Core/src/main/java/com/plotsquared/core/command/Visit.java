@@ -36,13 +36,13 @@ import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.query.PlotQuery;
+import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -72,9 +72,11 @@ public class Visit extends Command {
             args = args[0].split(":");
         }
         int page = Integer.MIN_VALUE;
-        Collection<Plot> unsorted = null;
         PlotArea sortByArea = player.getApplicablePlotArea();
         boolean shouldSortByArea = Settings.Teleport.PER_WORLD_VISIT;
+
+        final PlotQuery query = PlotQuery.newQuery();
+
         switch (args.length) {
             case 3:
                 if (!MathMan.isInteger(args[1])) {
@@ -96,7 +98,7 @@ public class Visit extends Command {
                         Captions.COMMAND_SYNTAX.send(player, getUsage());
                         return CompletableFuture.completedFuture(false);
                     }
-                    unsorted = PlotSquared.get().getBasePlots(user);
+                    query.ownedBy(user).whereBasePlot();
                     shouldSortByArea = true;
                     break;
                 }
@@ -108,21 +110,21 @@ public class Visit extends Command {
                 }
                 if (page == Integer.MIN_VALUE && user == null && MathMan.isInteger(args[0])) {
                     page = Integer.parseInt(args[0]);
-                    unsorted = PlotSquared.get().getBasePlots(player);
+                    query.ownedBy(player).whereBasePlot();
                     break;
                 }
                 if (user != null) {
-                    unsorted = PlotSquared.get().getBasePlots(user);
+                    query.ownedBy(player).whereBasePlot();
                 } else {
                     Plot plot = MainUtil.getPlotFromString(player, args[0], true);
                     if (plot != null) {
-                        unsorted = Collections.singletonList(plot.getBasePlot(false));
+                        query.withPlot(plot);
                     }
                 }
                 break;
             case 0:
                 page = 1;
-                unsorted = PlotSquared.get().getPlots(player);
+                query.ownedBy(player);
                 break;
             default:
 
@@ -130,25 +132,33 @@ public class Visit extends Command {
         if (page == Integer.MIN_VALUE) {
             page = 1;
         }
-        if (unsorted == null || unsorted.isEmpty()) {
+
+        // We get the query once,
+        // then we get it another time further on
+        final List<Plot> unsorted = query.asList();
+
+        if (unsorted.isEmpty()) {
             Captions.FOUND_NO_PLOTS.send(player);
             return CompletableFuture.completedFuture(false);
         }
-        unsorted = new ArrayList<>(unsorted);
+
         if (unsorted.size() > 1) {
-            unsorted.removeIf(plot -> !plot.isBasePlot());
+            query.whereBasePlot();
         }
+
         if (page < 1 || page > unsorted.size()) {
             Captions.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
             return CompletableFuture.completedFuture(false);
         }
-        List<Plot> plots;
+
         if (shouldSortByArea) {
-            plots = PlotSquared.get()
-                .sortPlots(unsorted, PlotSquared.SortType.CREATION_DATE, sortByArea);
+            query.relativeToArea(sortByArea).withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
         } else {
-            plots = PlotSquared.get().sortPlotsByTemp(unsorted);
+            query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
         }
+
+        final List<Plot> plots = query.asList();
+
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_UNOWNED)) {
@@ -177,6 +187,7 @@ public class Visit extends Command {
                 return CompletableFuture.completedFuture(false);
             }
         }
+
         confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
             if (result) {
                 whenDone.run(Visit.this, CommandResult.SUCCESS);
