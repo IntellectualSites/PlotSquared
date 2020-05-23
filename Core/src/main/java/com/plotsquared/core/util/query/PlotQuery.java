@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,6 +61,7 @@ public final class PlotQuery {
     private PlotProvider plotProvider = new GlobalPlotProvider();
     private SortingStrategy sortingStrategy = SortingStrategy.NO_SORTING;
     private PlotArea priorityArea;
+    private Comparator<Plot> plotComparator;
 
     private PlotQuery() {
     }
@@ -152,6 +154,17 @@ public final class PlotQuery {
     }
 
     /**
+     * Query with a pre-defined result
+     *
+     * @return The query instance
+     */
+    @NotNull public PlotQuery withPlot(@NotNull final Plot plot) {
+        Preconditions.checkNotNull(plot, "Plot may not be null");
+        this.plotProvider = new FixedPlotProvider(plot);
+        return this;
+    }
+
+    /**
      * Query for base plots only
      *
      * @return The query instance
@@ -225,6 +238,19 @@ public final class PlotQuery {
     @NotNull public PlotQuery withSortingStrategy(@NotNull final SortingStrategy strategy) {
         Preconditions.checkNotNull(strategy, "Strategy may not be null");
         this.sortingStrategy = strategy;
+        return this;
+    }
+
+    /**
+     * Use a custom comparator to sort the results
+     *
+     * @param comparator Comparator
+     * @return The query instance
+     */
+    @NotNull public PlotQuery sorted(@NotNull final Comparator<Plot> comparator) {
+        Preconditions.checkNotNull(comparator, "Comparator may not be null");
+        this.sortingStrategy = SortingStrategy.COMPARATOR;
+        this.plotComparator = comparator;
         return this;
     }
 
@@ -313,6 +339,8 @@ public final class PlotQuery {
             });
         } else if (this.sortingStrategy == SortingStrategy.SORT_BY_CREATION) {
             return PlotSquared.get().sortPlots(result, PlotSquared.SortType.CREATION_DATE, this.priorityArea);
+        } else if (this.sortingStrategy == SortingStrategy.COMPARATOR) {
+            result.sort(this.plotComparator);
         }
         return result;
     }
