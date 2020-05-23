@@ -51,6 +51,8 @@ import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
+import com.plotsquared.bukkit.uuid.EssentialsUUIDService;
+import com.plotsquared.bukkit.uuid.LuckPermsUUIDService;
 import com.plotsquared.bukkit.uuid.OfflinePlayerUUIDService;
 import com.plotsquared.bukkit.uuid.PaperUUIDService;
 import com.plotsquared.bukkit.uuid.SQLiteUUIDService;
@@ -231,38 +233,71 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             PlotSquared.log(Captions.PREFIX + "&6Couldn't verify purchase :(");
         }
 
-        // TODO: Do we respect the UUID settings?
         final UUIDPipeline impromptuPipeline  = PlotSquared.get().getImpromptuUUIDPipeline();
         final UUIDPipeline backgroundPipeline = PlotSquared.get().getBackgroundUUIDPipeline();
+
         // Services are accessed in order
         final CacheUUIDService cacheUUIDService = new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
         impromptuPipeline.registerService(cacheUUIDService);
         backgroundPipeline.registerService(cacheUUIDService);
         impromptuPipeline.registerConsumer(cacheUUIDService);
         backgroundPipeline.registerConsumer(cacheUUIDService);
+
         // Now, if the server is in offline mode we can only use profiles and direct UUID
         // access, and so we skip the player profile stuff as well as SquirrelID (Mojang lookups)
         if (Settings.UUID.OFFLINE) {
             final OfflineModeUUIDService offlineModeUUIDService = new OfflineModeUUIDService();
             impromptuPipeline.registerService(offlineModeUUIDService);
             backgroundPipeline.registerService(offlineModeUUIDService);
+            PlotSquared.log(Captions.PREFIX + "(UUID) Using the offline mode UUID service");
         }
+
         final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
         impromptuPipeline.registerService(offlinePlayerUUIDService);
         backgroundPipeline.registerService(offlinePlayerUUIDService);
 
         final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService();
+
+        final LuckPermsUUIDService luckPermsUUIDService;
+        if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+            luckPermsUUIDService = new LuckPermsUUIDService();
+            PlotSquared.log(Captions.PREFIX + "(UUID) Using LuckPerms as a complementary UUID service");
+        } else {
+            luckPermsUUIDService = null;
+        }
+
+        final EssentialsUUIDService essentialsUUIDService;
+        if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
+            essentialsUUIDService = new EssentialsUUIDService();
+            PlotSquared.log(Captions.PREFIX + "(UUID) Using Essentials as a complementary UUID service");
+        } else {
+            essentialsUUIDService = null;
+        }
+
         if (!Settings.UUID.OFFLINE) {
             // If running Paper we'll also try to use their profiles
             if (PaperLib.isPaper()) {
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 impromptuPipeline.registerService(paperUUIDService);
                 backgroundPipeline.registerService(paperUUIDService);
+                PlotSquared.log(Captions.PREFIX + "(UUID) Using Paper as a complementary UUID service");
             }
+
             impromptuPipeline.registerService(sqLiteUUIDService);
             backgroundPipeline.registerService(sqLiteUUIDService);
             impromptuPipeline.registerConsumer(sqLiteUUIDService);
             backgroundPipeline.registerConsumer(sqLiteUUIDService);
+
+            // Plugin providers
+            if (luckPermsUUIDService != null) {
+                impromptuPipeline.registerService(luckPermsUUIDService);
+                backgroundPipeline.registerService(luckPermsUUIDService);
+            }
+            if (essentialsUUIDService != null) {
+                impromptuPipeline.registerService(essentialsUUIDService);
+                backgroundPipeline.registerService(essentialsUUIDService);
+            }
+
             final SquirrelIdUUIDService impromptuMojangService = new SquirrelIdUUIDService(Settings.UUID.IMPROMPTU_LIMIT);
             impromptuPipeline.registerService(impromptuMojangService);
             final SquirrelIdUUIDService backgroundMojangService = new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
