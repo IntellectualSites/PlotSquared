@@ -116,7 +116,7 @@ public final class PlotQuery {
      * @return The query instance
      */
     @NotNull public PlotQuery expiredPlots() {
-        this.plotProvider = new ExploredPlotProvider();
+        this.plotProvider = new ExpiredPlotProvider();
         return this;
     }
 
