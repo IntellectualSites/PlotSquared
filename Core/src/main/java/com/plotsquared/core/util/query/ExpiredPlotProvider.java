@@ -30,7 +30,7 @@ import com.plotsquared.core.plot.expiration.ExpireManager;
 
 import java.util.Collection;
 
-class ExploredPlotProvider implements PlotProvider {
+class ExpiredPlotProvider implements PlotProvider {
 
     @Override public Collection<Plot> getPlots() {
         return ExpireManager.IMP.getPendingExpired();
