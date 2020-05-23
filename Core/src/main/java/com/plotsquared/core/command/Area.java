@@ -131,13 +131,15 @@ public class Area extends SubCommand {
                 // Plot size is the same as the region width
                 hybridPlotWorld.PLOT_WIDTH = hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
                 // We use a schematic generator
-                hybridPlotWorld.setTerrain(PlotAreaTerrainType.ALL);
+                hybridPlotWorld.setTerrain(PlotAreaTerrainType.NONE);
                 // It is always a partial plot world
                 hybridPlotWorld.setType(PlotAreaType.PARTIAL);
                 // We save the schematic :D
                 hybridPlotWorld.PLOT_SCHEMATIC = true;
                 // Set the road width to 0
                 hybridPlotWorld.ROAD_WIDTH = hybridPlotWorld.ROAD_OFFSET_X = hybridPlotWorld.ROAD_OFFSET_Z = 0;
+                // Set the plot height to the selection height
+                hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT = hybridPlotWorld.WALL_HEIGHT = selectedRegion.getHeight();
                 final File parentFile = MainUtil.getFile(PlotSquared.imp().getDirectory(), "schematics" + File.separator +
                     "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld.getWorldName() + File.separator +
                     hybridPlotWorld.getId());

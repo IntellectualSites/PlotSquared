@@ -53,6 +53,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotFilter;
@@ -90,6 +91,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
@@ -270,7 +272,8 @@ public class PlotSquared {
             // create setup util class
             SetupUtils.manager = this.IMP.initSetupUtils();
             // Set block
-            GlobalBlockQueue.IMP = new GlobalBlockQueue(IMP.initBlockQueue(), 1, Settings.QUEUE.TARGET_TIME);
+            GlobalBlockQueue.IMP =
+                new GlobalBlockQueue(IMP.initBlockQueue(), 1, Settings.QUEUE.TARGET_TIME);
             GlobalBlockQueue.IMP.runTask();
             // Set chunk
             ChunkManager.manager = this.IMP.initChunkManager();
@@ -2012,6 +2015,23 @@ public class PlotSquared {
         final Set<PlotArea> set = new HashSet<>();
         Collections.addAll(set, plotAreaManager.getAllPlotAreas());
         return Collections.unmodifiableSet(set);
+    }
+
+    /**
+     * Check if the chunk uses vanilla/non-PlotSquared generation
+     *
+     * @param world            World name
+     * @param chunkCoordinates Chunk coordinates
+     * @return True if the chunk uses non-standard generation, false if not
+     */
+    public boolean isNonStandardGeneration(@NotNull final String world,
+        @NotNull final BlockVector2 chunkCoordinates) {
+        final Location location = new Location(world, chunkCoordinates.getBlockX() << 4, 64, chunkCoordinates.getBlockZ() << 4);
+        final PlotArea area = plotAreaManager.getApplicablePlotArea(location);
+        if (area == null) {
+            return true;
+        }
+        return area.getTerrain() != PlotAreaTerrainType.NONE;
     }
 
     public boolean isAugmented(@NonNull final String world) {

@@ -348,7 +348,7 @@ public class BukkitRegionManager extends RegionManager {
                         CuboidRegion currentPlotClear = RegionUtil
                             .createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
                         map.saveEntitiesOut(chunkObj, currentPlotClear);
-                        AugmentedUtils.bypass(ignoreAugment, () -> ChunkManager.manager
+                        AugmentedUtils.bypass(ignoreAugment, () -> ChunkManager
                             .setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
                                 @Override public void run(ScopedLocalBlockQueue value) {
                                     Location min = value.getMin();
