@@ -253,7 +253,7 @@ public final class PlotQuery {
     /**
      * Get all plots that match the given criteria
      *
-     * @return Matching plots as an immutable list
+     * @return Matching plots as a mutable
      */
     @NotNull public List<Plot> asList() {
         final List<Plot> result;
@@ -320,7 +320,7 @@ public final class PlotQuery {
     /**
      * Get all plots that match the given criteria
      *
-     * @return Matching plots as an immutable set
+     * @return Matching plots as a mutable set
      */
     @NotNull public Set<Plot> asSet() {
         return new HashSet<>(this.asList());
