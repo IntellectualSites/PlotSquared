@@ -281,7 +281,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
 
-            PlotSquared.debug(Captions.PREFIX + "&3 - plot schematic: &7true");
+            PlotSquared.debug(Captions.PREFIX + "&3 - plot schematic: &7"  + schematic3File.getPath());
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
             PlotSquared.debug(Captions.PREFIX + "&3 - schematic: &7false");

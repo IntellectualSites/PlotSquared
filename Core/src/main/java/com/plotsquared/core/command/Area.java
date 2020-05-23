@@ -52,12 +52,15 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
+import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
+import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -109,22 +112,29 @@ public class Area extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_MISSING_SELECTION);
                     return false;
                 }
-                Region selectedRegion = null;
+                Region playerSelectedRegion = null;
                 try {
-                    selectedRegion = localSession.getSelection(((Player) player.toActor()).getWorld());
+                    playerSelectedRegion = localSession.getSelection(((Player) player.toActor()).getWorld());
                 } catch (final Exception ignored) {}
-                if (selectedRegion == null) {
+                if (playerSelectedRegion == null) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_MISSING_SELECTION);
                     return false;
                 }
-                if (selectedRegion.getWidth() != selectedRegion.getLength()) {
+                if (playerSelectedRegion.getWidth() != playerSelectedRegion.getLength()) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NOT_SQUARE);
                     return false;
                 }
                 if (PlotSquared.get().getPlotAreaManager().getPlotAreas(
-                    Objects.requireNonNull(selectedRegion.getWorld()).getName(), CuboidRegion.makeCuboid(selectedRegion)).length != 0) {
+                    Objects.requireNonNull(playerSelectedRegion.getWorld()).getName(), CuboidRegion.makeCuboid(playerSelectedRegion)).length != 0) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_OVERLAPPING);
                 }
+                // Alter the region
+                final BlockVector3 playerSelectionMin = playerSelectedRegion.getMinimumPoint();
+                final BlockVector3 playerSelectionMax = playerSelectedRegion.getMaximumPoint();
+                // Create a new selection that spans the entire vertical range of the world
+                final CuboidRegion selectedRegion = new CuboidRegion(playerSelectedRegion.getWorld(),
+                    BlockVector3.at(playerSelectionMin.getX(), 0, playerSelectionMin.getZ()),
+                    BlockVector3.at(playerSelectionMax.getX(), 255, playerSelectionMax.getZ()));
                 // There's only one plot in the area...
                 final PlotId plotId = new PlotId(1, 1);
                 final HybridPlotWorld hybridPlotWorld = new HybridPlotWorld(player.getLocation().getWorld(), args[1],
@@ -140,7 +150,7 @@ public class Area extends SubCommand {
                 // Set the road width to 0
                 hybridPlotWorld.ROAD_WIDTH = hybridPlotWorld.ROAD_OFFSET_X = hybridPlotWorld.ROAD_OFFSET_Z = 0;
                 // Set the plot height to the selection height
-                hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT = hybridPlotWorld.WALL_HEIGHT = selectedRegion.getMaximumPoint().getBlockY();
+                hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT = hybridPlotWorld.WALL_HEIGHT = playerSelectionMin.getBlockY();
                 // No sign plz
                 hybridPlotWorld.setAllowSigns(false);
                 final File parentFile = MainUtil.getFile(PlotSquared.imp().getDirectory(), "schematics" + File.separator +
@@ -153,6 +163,11 @@ public class Area extends SubCommand {
                 final File file = new File(parentFile, "plot.schem");
                 try (final ClipboardWriter clipboardWriter = BuiltInClipboardFormat.SPONGE_SCHEMATIC.getWriter(new FileOutputStream(file))) {
                     final BlockArrayClipboard clipboard = new BlockArrayClipboard(selectedRegion);
+                    final EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(selectedRegion.getWorld(), -1);
+                    final ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(editSession, selectedRegion, clipboard, selectedRegion.getMinimumPoint());
+                    forwardExtentCopy.setCopyingBiomes(true);
+                    forwardExtentCopy.setCopyingEntities(true);
+                    Operations.complete(forwardExtentCopy);
                     clipboardWriter.write(clipboard);
                 } catch (final Exception e) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_FAILED_TO_SAVE);
