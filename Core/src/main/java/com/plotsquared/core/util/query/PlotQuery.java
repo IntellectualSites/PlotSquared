@@ -30,16 +30,21 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.Rating;
+import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.util.MathMan;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -51,8 +56,10 @@ import java.util.stream.Stream;
  */
 public final class PlotQuery {
 
-    private PlotProvider plotProvider = new GlobalPlotProvider();
     private final Collection<PlotFilter> filters = new LinkedList<>();
+    private PlotProvider plotProvider = new GlobalPlotProvider();
+    private SortingStrategy sortingStrategy = SortingStrategy.NO_SORTING;
+    private PlotArea priorityArea;
 
     private PlotQuery() {
     }
@@ -100,6 +107,47 @@ public final class PlotQuery {
         Preconditions.checkNotNull(areas, "Areas may not be null");
         Preconditions.checkState(!areas.isEmpty(), "At least one area must be provided");
         this.plotProvider = new AreaLimitedPlotProvider(Collections.unmodifiableCollection(areas));
+        return this;
+    }
+
+    /**
+     * Query for expired plots
+     *
+     * @return The query instance
+     */
+    @NotNull public PlotQuery expiredPlots() {
+        this.plotProvider = new ExploredPlotProvider();
+        return this;
+    }
+
+    /**
+     * Query for all plots
+     *
+     * @return The query instance
+     */
+    @NotNull public PlotQuery allPlots() {
+        this.plotProvider = new GlobalPlotProvider();
+        return this;
+    }
+
+    /**
+     * Don't query at all
+     *
+     * @return The query instance
+     */
+    @NotNull public PlotQuery noPlots() {
+        this.plotProvider = new NullProvider();
+        return this;
+    }
+
+    /**
+     * Query for plots based on a search term
+     *
+     * @return The query instance
+     */
+    @NotNull public PlotQuery plotsBySearch(@NotNull final String searchTerm) {
+        Preconditions.checkNotNull(searchTerm, "Search term may not be null");
+        this.plotProvider = new SearchPlotProvider(searchTerm);
         return this;
     }
 
@@ -168,16 +216,31 @@ public final class PlotQuery {
     }
 
     /**
+     * Specify the sorting strategy that will decide how to
+     * sort the results. This only matters if you use {@link #asList()}
+     *
+     * @param strategy Strategy
+     * @return The query instance
+     */
+    @NotNull public PlotQuery withSortingStrategy(@NotNull final SortingStrategy strategy) {
+        Preconditions.checkNotNull(strategy, "Strategy may not be null");
+        this.sortingStrategy = strategy;
+        return this;
+    }
+
+    @NotNull public PlotQuery relativeToArea(@NotNull final PlotArea plotArea) {
+        Preconditions.checkNotNull(plotArea, "Area may not be null");
+        this.priorityArea = plotArea;
+        return this;
+    }
+
+    /**
      * Get all plots that match the given criteria
      *
      * @return Matching plots
      */
     @NotNull public Stream<Plot> asStream() {
-        Stream<Plot> plots = this.plotProvider.getPlots();
-        for (final PlotFilter filter : this.filters) {
-            plots = plots.filter(filter);
-        }
-        return plots;
+        return this.asList().stream();
     }
 
     /**
@@ -186,7 +249,65 @@ public final class PlotQuery {
      * @return Matching plots as an immutable list
      */
     @NotNull public List<Plot> asList() {
-        return Collections.unmodifiableList(this.asStream().collect(Collectors.toList()));
+        final List<Plot> result;
+        if (this.filters.isEmpty()) {
+            result = new ArrayList<>(this.plotProvider.getPlots());
+        } else {
+            final Collection<Plot> plots = this.plotProvider.getPlots();
+            result = new ArrayList<>(plots.size());
+            for (final Plot plot : plots) {
+                for (final PlotFilter filter : this.filters) {
+                    if (filter.accepts(plot)) {
+                        result.add(plot);
+                    }
+                }
+            }
+        }
+        if (this.sortingStrategy == SortingStrategy.NO_SORTING) {
+            return result;
+        } else if (this.sortingStrategy == SortingStrategy.SORT_BY_TEMP) {
+            return PlotSquared.get().sortPlotsByTemp(result);
+        } else if (this.sortingStrategy == SortingStrategy.SORT_BY_DONE) {
+            result.sort((a, b) -> {
+                String va = a.getFlag(DoneFlag.class);
+                String vb = b.getFlag(DoneFlag.class);
+                if (MathMan.isInteger(va)) {
+                    if (MathMan.isInteger(vb)) {
+                        return Integer.parseInt(vb) - Integer.parseInt(va);
+                    }
+                    return -1;
+                }
+                return 1;
+            });
+        } else if (this.sortingStrategy == SortingStrategy.SORT_BY_RATING) {
+            result.sort((p1, p2) -> {
+                double v1 = 0;
+                int p1s = p1.getSettings().getRatings().size();
+                int p2s = p2.getRatings().size();
+                if (!p1.getSettings().getRatings().isEmpty()) {
+                    v1 = p1.getRatings().values().stream().mapToDouble(Rating::getAverageRating)
+                        .map(av -> av * av).sum();
+                    v1 /= p1s;
+                    v1 += p1s;
+                }
+                double v2 = 0;
+                if (!p2.getSettings().getRatings().isEmpty()) {
+                    for (Map.Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
+                        double av = entry.getValue().getAverageRating();
+                        v2 += av * av;
+                    }
+                    v2 /= p2s;
+                    v2 += p2s;
+                }
+                if (v2 == v1 && v2 != 0) {
+                    return p2s - p1s;
+                }
+                return (int) Math.signum(v2 - v1);
+            });
+        } else if (this.sortingStrategy == SortingStrategy.SORT_BY_CREATION) {
+            return PlotSquared.get().sortPlots(result, PlotSquared.SortType.CREATION_DATE, this.priorityArea);
+        }
+        return result;
     }
 
     /**
@@ -195,7 +316,7 @@ public final class PlotQuery {
      * @return Matching plots as an immutable set
      */
     @NotNull public Set<Plot> asSet() {
-        return Collections.unmodifiableSet(this.asStream().collect(Collectors.toSet()));
+        return new HashSet<>(this.asList());
     }
 
     /**

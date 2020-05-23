@@ -26,26 +26,21 @@
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.util.MainUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
-class AreaLimitedPlotProvider implements PlotProvider {
+class SearchPlotProvider implements PlotProvider {
 
-    private final Collection<PlotArea> areas;
+    private final String searchTerm;
 
-    AreaLimitedPlotProvider(Collection<PlotArea> areas) {
-        this.areas = areas;
+    SearchPlotProvider(@NotNull final String searchTerm) {
+        this.searchTerm = searchTerm;
     }
 
     @Override public Collection<Plot> getPlots() {
-        final List<Plot> plots = new LinkedList<>();
-        for (final PlotArea area : areas) {
-            plots.addAll(area.getPlots());
-        }
-        return plots;
+        return MainUtil.getPlotsBySearch(this.searchTerm);
     }
 
 }

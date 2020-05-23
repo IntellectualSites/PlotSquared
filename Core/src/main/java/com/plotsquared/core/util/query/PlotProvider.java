@@ -27,10 +27,10 @@ package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
 
-import java.util.stream.Stream;
+import java.util.Collection;
 
 @FunctionalInterface interface PlotProvider {
 
-    Stream<Plot> getPlots();
+    Collection<Plot> getPlots();
 
 }

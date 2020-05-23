@@ -25,27 +25,28 @@
  */
 package com.plotsquared.core.util.query;
 
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-class AreaLimitedPlotProvider implements PlotProvider {
-
-    private final Collection<PlotArea> areas;
-
-    AreaLimitedPlotProvider(Collection<PlotArea> areas) {
-        this.areas = areas;
-    }
-
-    @Override public Collection<Plot> getPlots() {
-        final List<Plot> plots = new LinkedList<>();
-        for (final PlotArea area : areas) {
-            plots.addAll(area.getPlots());
-        }
-        return plots;
-    }
-
+/**
+ * Strategy used when sorting plot results
+ */
+public enum SortingStrategy {
+    /**
+     * Plots won't be sorted at all
+     */
+    NO_SORTING,
+    /**
+     * Sort by the temporary (magic) plot ID
+     */
+    SORT_BY_TEMP,
+    /**
+     * Sort by the value in the plot's {@link com.plotsquared.core.plot.flag.implementations.DoneFlag}
+     */
+    SORT_BY_DONE,
+    /**
+     * Sort by the plot rating
+     */
+    SORT_BY_RATING,
+    /**
+     * Sort by creation date
+     */
+    SORT_BY_CREATION
 }

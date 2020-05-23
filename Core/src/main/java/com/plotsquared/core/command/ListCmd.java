@@ -26,13 +26,11 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.PlotSquared.SortType;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
@@ -43,13 +41,14 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.query.PlotQuery;
+import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 @CommandDeclaration(command = "list",
@@ -128,12 +127,13 @@ public class ListCmd extends SubCommand {
             }
         }
 
-        List<Plot> plots = null;
-
         String world = player.getLocation().getWorld();
         PlotArea area = player.getApplicablePlotArea();
         String arg = args[0].toLowerCase();
         boolean sort = true;
+
+        PlotQuery query = null;
+
         switch (arg) {
             case "mine":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_MINE)) {
@@ -141,8 +141,8 @@ public class ListCmd extends SubCommand {
                         .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_LIST_MINE);
                     return false;
                 }
+                query = PlotQuery.newQuery().ownedBy(player).whereBasePlot().withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
                 sort = false;
-                plots = PlotSquared.get().sortPlotsByTemp(PlotSquared.get().getBasePlots(player));
                 break;
             case "shared":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_SHARED)) {
@@ -150,13 +150,8 @@ public class ListCmd extends SubCommand {
                         Captions.PERMISSION_LIST_SHARED);
                     return false;
                 }
-                plots = new ArrayList<>();
-                for (Plot plot : PlotSquared.get().getPlots()) {
-                    if (plot.getTrusted().contains(player.getUUID()) || plot.getMembers()
-                        .contains(player.getUUID())) {
-                        plots.add(plot);
-                    }
-                }
+                // withMember checks for trusted + members + owner, we don't want the owner part
+                query = PlotQuery.newQuery().withMember(player.getUUID()).thatPasses(plot -> !plot.isOwnerAbs(player.getUUID()));
                 break;
             case "world":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_WORLD)) {
@@ -171,7 +166,7 @@ public class ListCmd extends SubCommand {
                             world));
                     return false;
                 }
-                plots = new ArrayList<>(PlotSquared.get().getPlots(world));
+                query = PlotQuery.newQuery().inWorld(world);
                 break;
             case "expired":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_EXPIRED)) {
@@ -179,9 +174,11 @@ public class ListCmd extends SubCommand {
                         Captions.PERMISSION_LIST_EXPIRED);
                     return false;
                 }
-                plots = ExpireManager.IMP == null ?
-                    new ArrayList<Plot>() :
-                    new ArrayList<>(ExpireManager.IMP.getPendingExpired());
+                if (ExpireManager.IMP == null) {
+                    query = PlotQuery.newQuery().noPlots();
+                } else {
+                    query = PlotQuery.newQuery().expiredPlots();
+                }
                 break;
             case "area":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_AREA)) {
@@ -196,7 +193,11 @@ public class ListCmd extends SubCommand {
                             world));
                     return false;
                 }
-                plots = area == null ? new ArrayList<Plot>() : new ArrayList<>(area.getPlots());
+                if (area == null) {
+                    query = PlotQuery.newQuery().noPlots();
+                } else {
+                    query = PlotQuery.newQuery().inArea(area);
+                }
                 break;
             case "all":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_ALL)) {
@@ -204,7 +205,7 @@ public class ListCmd extends SubCommand {
                         .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_LIST_ALL);
                     return false;
                 }
-                plots = new ArrayList<>(PlotSquared.get().getPlots());
+                query = PlotQuery.newQuery().allPlots();
                 break;
             case "done":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_DONE)) {
@@ -212,23 +213,7 @@ public class ListCmd extends SubCommand {
                         .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_LIST_DONE);
                     return false;
                 }
-                plots = new ArrayList<>();
-                for (Plot plot : PlotSquared.get().getPlots()) {
-                    if (DoneFlag.isDone(plot)) {
-                        plots.add(plot);
-                    }
-                }
-                plots.sort((a, b) -> {
-                    String va = a.getFlag(DoneFlag.class);
-                    String vb = b.getFlag(DoneFlag.class);
-                    if (MathMan.isInteger(va)) {
-                        if (MathMan.isInteger(vb)) {
-                            return Integer.parseInt(vb) - Integer.parseInt(va);
-                        }
-                        return -1;
-                    }
-                    return 1;
-                });
+                query = PlotQuery.newQuery().allPlots().thatPasses(DoneFlag::isDone).withSortingStrategy(SortingStrategy.SORT_BY_DONE);
                 sort = false;
                 break;
             case "top":
@@ -237,31 +222,7 @@ public class ListCmd extends SubCommand {
                         .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_LIST_TOP);
                     return false;
                 }
-                plots = new ArrayList<>(PlotSquared.get().getPlots());
-                plots.sort((p1, p2) -> {
-                    double v1 = 0;
-                    int p1s = p1.getSettings().getRatings().size();
-                    int p2s = p2.getRatings().size();
-                    if (!p1.getSettings().getRatings().isEmpty()) {
-                        v1 = p1.getRatings().values().stream().mapToDouble(Rating::getAverageRating)
-                            .map(av -> av * av).sum();
-                        v1 /= p1s;
-                        v1 += p1s;
-                    }
-                    double v2 = 0;
-                    if (!p2.getSettings().getRatings().isEmpty()) {
-                        for (Entry<UUID, Rating> entry : p2.getRatings().entrySet()) {
-                            double av = entry.getValue().getAverageRating();
-                            v2 += av * av;
-                        }
-                        v2 /= p2s;
-                        v2 += p2s;
-                    }
-                    if (v2 == v1 && v2 != 0) {
-                        return p2s - p1s;
-                    }
-                    return (int) Math.signum(v2 - v1);
-                });
+                query = PlotQuery.newQuery().allPlots().withSortingStrategy(SortingStrategy.SORT_BY_RATING);
                 sort = false;
                 break;
             case "forsale":
@@ -273,12 +234,7 @@ public class ListCmd extends SubCommand {
                 if (EconHandler.manager == null) {
                     break;
                 }
-                plots = new ArrayList<>();
-                for (Plot plot : PlotSquared.get().getPlots()) {
-                    if (plot.getFlag(PriceFlag.class) > 0) {
-                        plots.add(plot);
-                    }
-                }
+                query = PlotQuery.newQuery().allPlots().thatPasses(plot -> plot.getFlag(PriceFlag.class) > 0);
                 break;
             case "unowned":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_UNOWNED)) {
@@ -286,12 +242,7 @@ public class ListCmd extends SubCommand {
                         Captions.PERMISSION_LIST_UNOWNED);
                     return false;
                 }
-                plots = new ArrayList<>();
-                for (Plot plot : PlotSquared.get().getPlots()) {
-                    if (plot.getOwner() == null) {
-                        plots.add(plot);
-                    }
-                }
+                query = PlotQuery.newQuery().allPlots().thatPasses(plot -> plot.getOwner() == null);
                 break;
             case "unknown":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_UNKNOWN)) {
@@ -299,15 +250,12 @@ public class ListCmd extends SubCommand {
                         Captions.PERMISSION_LIST_UNKNOWN);
                     return false;
                 }
-                plots = new ArrayList<>();
-                for (Plot plot : PlotSquared.get().getPlots()) {
+                query = PlotQuery.newQuery().allPlots().thatPasses(plot -> {
                     if (plot.getOwner() == null) {
-                        continue;
+                        return false;
                     }
-                    if (UUIDHandler.getName(plot.getOwner()) == null) {
-                        plots.add(plot);
-                    }
-                }
+                    return UUIDHandler.getName(plot.getOwner()) == null;
+                });
                 break;
             case "fuzzy":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_FUZZY)) {
@@ -325,7 +273,7 @@ public class ListCmd extends SubCommand {
                 } else {
                     term = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
                 }
-                plots = MainUtil.getPlotsBySearch(term);
+                query = PlotQuery.newQuery().plotsBySearch(term);
                 sort = false;
                 break;
             default:
@@ -343,7 +291,7 @@ public class ListCmd extends SubCommand {
                                 args[0]));
                         return false;
                     }
-                    plots = new ArrayList<>(PlotSquared.get().getPlots(args[0]));
+                    query = PlotQuery.newQuery().inWorld(args[0]);
                     break;
                 }
                 UUID uuid = UUIDHandler.getUUID(args[0], null);
@@ -360,33 +308,40 @@ public class ListCmd extends SubCommand {
                         return false;
                     }
                     sort = false;
-                    plots = PlotSquared.get().sortPlotsByTemp(PlotSquared.get().getPlots(uuid));
+                    query = PlotQuery.newQuery().ownedBy(uuid).withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
                     break;
                 }
         }
 
-        if (plots == null) {
+        if (query == null) {
             sendMessage(player, Captions.DID_YOU_MEAN,
                 new StringComparison<>(args[0], new String[] {"mine", "shared", "world", "all"})
                     .getBestMatch());
             return false;
         }
 
+
+        if (area != null) {
+            query.relativeToArea(area);
+        }
+
+        if (sort) {
+            query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
+        }
+
+        final List<Plot> plots = query.asList();
+
         if (plots.isEmpty()) {
             MainUtil.sendMessage(player, Captions.FOUND_NO_PLOTS);
             return false;
         }
-        displayPlots(player, plots, 12, page, area, args, sort);
+        displayPlots(player, plots, 12, page, args);
         return true;
     }
 
-    public void displayPlots(final PlotPlayer player, List<Plot> plots, int pageSize, int page,
-        PlotArea area, String[] args, boolean sort) {
+    public void displayPlots(final PlotPlayer player, List<Plot> plots, int pageSize, int page, String[] args) {
         // Header
         plots.removeIf(plot -> !plot.isBasePlot());
-        if (sort) {
-            plots = PlotSquared.get().sortPlots(plots, SortType.CREATION_DATE, area);
-        }
         this.paginate(player, plots, pageSize, page,
             new RunnableVal3<Integer, Plot, PlotMessage>() {
                 @Override public void run(Integer i, Plot plot, PlotMessage message) {

@@ -28,12 +28,12 @@ package com.plotsquared.core.util.query;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
 
-import java.util.stream.Stream;
+import java.util.Collection;
 
 class GlobalPlotProvider implements PlotProvider {
 
-    @Override public Stream<Plot> getPlots() {
-        return PlotSquared.get().getPlots().stream();
+    @Override public Collection<Plot> getPlots() {
+        return PlotSquared.get().getPlots();
     }
 
 }
