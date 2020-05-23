@@ -46,6 +46,7 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
+import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
@@ -140,6 +141,8 @@ public class Area extends SubCommand {
                 hybridPlotWorld.ROAD_WIDTH = hybridPlotWorld.ROAD_OFFSET_X = hybridPlotWorld.ROAD_OFFSET_Z = 0;
                 // Set the plot height to the selection height
                 hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT = hybridPlotWorld.WALL_HEIGHT = selectedRegion.getMaximumPoint().getBlockY();
+                // No sign plz
+                hybridPlotWorld.setAllowSigns(false);
                 final File parentFile = MainUtil.getFile(PlotSquared.imp().getDirectory(), "schematics" + File.separator +
                     "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld.getWorldName() + File.separator +
                     hybridPlotWorld.getId());
@@ -156,6 +159,14 @@ public class Area extends SubCommand {
                     e.printStackTrace();
                     return false;
                 }
+
+                // Setup schematic
+                try {
+                    hybridPlotWorld.setupSchematics();
+                } catch (final SchematicHandler.UnsupportedFormatException e) {
+                    e.printStackTrace();
+                }
+
                 // Calculate the offset
                 final BlockVector3 singlePos1 = selectedRegion.getMinimumPoint();
 
@@ -187,21 +198,14 @@ public class Area extends SubCommand {
                     final String world = SetupUtils.manager.setupWorld(singleSetup);
                     if (WorldUtil.IMP.isWorld(world)) {
                         PlotSquared.get().loadWorld(world, null);
-                        Captions.SETUP_FINISHED.send(player);
-                        player.teleport(WorldUtil.IMP.getSpawn(world),
-                            TeleportCause.COMMAND);
+                        MainUtil.sendMessage(player, Captions.SINGLE_AREA_CREATED);
                     } else {
                         MainUtil.sendMessage(player,
                             "An error occurred while creating the world: " + hybridPlotWorld
                                 .getWorldName());
                     }
                 };
-                if (hasConfirmation(player)) {
-                    CmdConfirm.addPending(player,
-                        getCommandString() + " create pos2 (Creates world)", singleRun);
-                } else {
-                    singleRun.run();
-                }
+                singleRun.run();
                 return true;
             case "c":
             case "setup":
