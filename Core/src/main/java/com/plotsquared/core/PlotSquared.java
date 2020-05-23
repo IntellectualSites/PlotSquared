@@ -895,8 +895,9 @@ public class PlotSquared {
      *
      * @param filters the filter
      * @return a filtered set of plots
+     * @deprecated Use {@link PlotQuery}
      */
-    public Set<Plot> getPlots(final PlotFilter... filters) {
+    @Deprecated public Set<Plot> getPlots(final PlotFilter... filters) {
         final List<PlotArea> areas = new LinkedList<>();
         for (final PlotArea plotArea : this.getPlotAreas()) {
             for (final PlotFilter filter : filters) {
