@@ -228,6 +228,13 @@ public final class PlotQuery {
         return this;
     }
 
+    /**
+     * Defines the area around which plots may be sorted, depending on the
+     * sorting strategy
+     *
+     * @param plotArea Plot area
+     * @return The query instance
+     */
     @NotNull public PlotQuery relativeToArea(@NotNull final PlotArea plotArea) {
         Preconditions.checkNotNull(plotArea, "Area may not be null");
         this.priorityArea = plotArea;
