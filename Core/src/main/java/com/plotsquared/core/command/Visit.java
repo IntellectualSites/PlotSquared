@@ -35,6 +35,7 @@ import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
@@ -42,6 +43,8 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -58,10 +61,6 @@ public class Visit extends Command {
 
     public Visit() {
         super(MainCommand.getInstance(), true);
-    }
-
-    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
-        return tabOf(player, args, space, getUsage());
     }
 
     private void visit(@NotNull final PlotPlayer player, @NotNull final PlotQuery query, final PlotArea sortByArea,
@@ -194,7 +193,7 @@ public class Visit extends Command {
             case 1:
                 final String[] finalArgs = args;
                 int finalPage = page;
-                if (args[0].length() >= 2) {
+                if (args[0].length() >= 2 && !args[0].contains(";") && !args[0].contains(",")) {
                     PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
                             // The request timed out
@@ -257,6 +256,58 @@ public class Visit extends Command {
         }
 
         return CompletableFuture.completedFuture(true);
+    }
+
+    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+        final List<Command> completions = new LinkedList<>();
+        player.sendMessage("u haef " + args.length + " args and they r ");
+        for (int i = 0; i < args.length; i++) {
+            player.sendMessage(i + ": " + args[i]);
+        }
+
+        switch (args.length - 1) {
+            case 0:
+                this.completeNumbers(completions, args[0], 0);
+                completions.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            break;
+            case 1:
+                if (MathMan.isInteger(args[0])) {
+                    break;
+                }
+                this.completeNumbers(completions, args[1], 0);
+                this.completeAreas(completions, args[1]);
+                break;
+            case 2:
+                if (MathMan.isInteger(args[1])) {
+                    break;
+                }
+                this.completeNumbers(completions, args[2], 0);
+                break;
+        }
+
+        return completions;
+    }
+
+    private void completeNumbers(final List<Command> commands, final String arg, final int start) {
+        for (int i = 0; i < 10; i++) {
+            final String command = Integer.toString(start + 1);
+            if (!command.toLowerCase().startsWith(arg.toLowerCase())) {
+                continue;
+            }
+            commands.add(new Command(this, false, command, "",
+                RequiredType.NONE, CommandCategory.TELEPORT) {});
+        }
+    }
+
+    private void completeAreas(final List<Command> commands, final String arg) {
+        for (final PlotArea area : PlotSquared.get().getPlotAreas()) {
+            final String areaName = area.getWorldName() + ";" + area.getId();
+            if (!areaName.toLowerCase().startsWith(arg.toLowerCase())) {
+                continue;
+            }
+            commands.add(new Command(this, false, area.getWorldName() + ";" + area.getId(), "",
+                RequiredType.NONE, CommandCategory.TELEPORT) {});
+        }
     }
 
 }
