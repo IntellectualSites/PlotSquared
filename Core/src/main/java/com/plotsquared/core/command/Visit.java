@@ -260,11 +260,6 @@ public class Visit extends Command {
 
     public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         final List<Command> completions = new LinkedList<>();
-        player.sendMessage("u haef " + args.length + " args and they r ");
-        for (int i = 0; i < args.length; i++) {
-            player.sendMessage(i + ": " + args[i]);
-        }
-
         switch (args.length - 1) {
             case 0:
                 this.completeNumbers(completions, args[0], 0);
@@ -289,7 +284,7 @@ public class Visit extends Command {
     }
 
     private void completeNumbers(final List<Command> commands, final String arg, final int start) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             final String command = Integer.toString(start + 1);
             if (!command.toLowerCase().startsWith(arg.toLowerCase())) {
                 continue;
