@@ -42,6 +42,7 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -49,12 +50,16 @@ import com.plotsquared.core.uuid.UUIDMapping;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "list",
     aliases = {"l", "find", "search"},
@@ -395,6 +400,50 @@ public class ListCmd extends SubCommand {
                     }
                 }
             }, "/plot list " + args[0], Captions.PLOT_LIST_HEADER_PAGED.getTranslated());
+    }
+
+    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+        final List<String> completions = new LinkedList<>();
+        if (EconHandler.manager != null && Permissions
+            .hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
+            completions.add("forsale");
+        }
+        if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_MINE)) {
+            completions.add("mine");
+        }
+        if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_SHARED)) {
+            completions.add("shared");
+        }
+        if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_WORLD)) {
+            completions.addAll(PlotSquared.imp().getWorldManager().getWorlds());
+        }
+        if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_TOP)) {
+            completions.add("top");
+        }
+        if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_ALL)) {
+            completions.add("all");
+        }
+        if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_UNOWNED)) {
+            completions.add("unowned");
+        }
+        if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_DONE)) {
+            completions.add("done");
+        }
+        if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_EXPIRED)) {
+            completions.add("expired");
+        }
+
+        final List<Command> commands = new LinkedList<>();
+        commands.addAll(completions.stream()
+            .filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+            .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.TELEPORT) {})
+            .collect(Collectors.toList()));
+
+        if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_PLAYER) && args[0].length() > 0) {
+            commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+        }
+
+        return commands;
     }
 
 }

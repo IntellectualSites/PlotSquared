@@ -36,6 +36,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Default Bukkit world manager. It will handle world creation by
@@ -74,6 +77,15 @@ public class BukkitWorldManager implements PlatformWorldManager<World> {
 
     @Override public String getName() {
         return "bukkit";
+    }
+
+    @Override public Collection<String> getWorlds() {
+        final List<World> worlds = Bukkit.getWorlds();
+        final List<String> worldNames = new ArrayList<>();
+        for (final World world : worlds) {
+            worldNames.add(world.getName());
+        }
+        return worldNames;
     }
 
 }
