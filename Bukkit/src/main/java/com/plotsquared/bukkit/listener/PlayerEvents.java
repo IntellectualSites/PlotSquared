@@ -26,6 +26,7 @@
 package com.plotsquared.bukkit.listener;
 
 import com.destroystokyo.paper.MaterialTags;
+import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.UpdateUtility;
@@ -629,7 +630,19 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPreLoin(final AsyncPlayerPreLoginEvent event) {
-        PlotSquared.get().getImpromptuUUIDPipeline().storeImmediately(event.getName(), event.getUniqueId());
+        final UUID uuid;
+        if (Settings.UUID.OFFLINE) {
+            if (Settings.UUID.FORCE_LOWERCASE) {
+                uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    event.getName().toLowerCase()).getBytes(Charsets.UTF_8));
+            } else {
+                uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    event.getName()).getBytes(Charsets.UTF_8));
+            }
+        } else {
+            uuid = event.getUniqueId();
+        }
+        PlotSquared.get().getImpromptuUUIDPipeline().storeImmediately(event.getName(), uuid);
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

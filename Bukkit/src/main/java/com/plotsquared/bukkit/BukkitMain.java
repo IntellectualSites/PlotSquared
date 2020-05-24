@@ -274,15 +274,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             essentialsUUIDService = null;
         }
 
-        if (!Settings.UUID.OFFLINE) {
-            // If running Paper we'll also try to use their profiles
-            if (PaperLib.isPaper()) {
-                final PaperUUIDService paperUUIDService = new PaperUUIDService();
-                impromptuPipeline.registerService(paperUUIDService);
-                backgroundPipeline.registerService(paperUUIDService);
-                PlotSquared.log(Captions.PREFIX + "(UUID) Using Paper as a complementary UUID service");
-            }
+        // If running Paper we'll also try to use their profiles
+        if (PaperLib.isPaper()) {
+            final PaperUUIDService paperUUIDService = new PaperUUIDService();
+            impromptuPipeline.registerService(paperUUIDService);
+            backgroundPipeline.registerService(paperUUIDService);
+            PlotSquared.log(Captions.PREFIX + "(UUID) Using Paper as a complementary UUID service");
+        }
 
+        if (!Settings.UUID.OFFLINE) {
             impromptuPipeline.registerService(sqLiteUUIDService);
             backgroundPipeline.registerService(sqLiteUUIDService);
             impromptuPipeline.registerConsumer(sqLiteUUIDService);

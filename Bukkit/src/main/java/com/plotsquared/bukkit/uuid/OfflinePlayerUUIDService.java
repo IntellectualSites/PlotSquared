@@ -25,6 +25,8 @@
  */
 package com.plotsquared.bukkit.uuid;
 
+import com.google.common.base.Charsets;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import org.bukkit.Bukkit;
@@ -32,6 +34,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,7 +43,10 @@ import java.util.UUID;
  */
 public class OfflinePlayerUUIDService implements UUIDService {
 
-    @Override public @NotNull List<UUIDMapping> getNames(@NotNull List<UUID> uuids) {
+    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+        if (Settings.UUID.FORCE_LOWERCASE) {
+            return Collections.emptyList(); // This is useless now
+        }
         final List<UUIDMapping> wrappers = new ArrayList<>(uuids.size());
         for (final UUID uuid : uuids) {
             final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
@@ -51,12 +57,15 @@ public class OfflinePlayerUUIDService implements UUIDService {
         return wrappers;
     }
 
-    @Override public @NotNull List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
+    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
         final List<UUIDMapping> wrappers = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
-            final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(username);
-            if (offlinePlayer.hasPlayedBefore()) {
-                wrappers.add(new UUIDMapping(offlinePlayer.getUniqueId(), offlinePlayer.getName()));
+            if (Settings.UUID.FORCE_LOWERCASE) {
+                wrappers.add(new UUIDMapping(UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    username.toLowerCase()).getBytes(Charsets.UTF_8)), username));
+            } else {
+                wrappers.add(new UUIDMapping(UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    username).getBytes(Charsets.UTF_8)), username));
             }
         }
         return wrappers;

@@ -25,9 +25,11 @@
  */
 package com.plotsquared.bukkit.player;
 
+import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -96,7 +98,16 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @NotNull @Override public UUID getUUID() {
-        return this.player.getUniqueId();
+        if (Settings.UUID.OFFLINE) {
+            if (Settings.UUID.FORCE_LOWERCASE) {
+                return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    getName().toLowerCase()).getBytes(Charsets.UTF_8));
+            } else {
+                return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    getName()).getBytes(Charsets.UTF_8));
+            }
+        }
+        return player.getUniqueId();
     }
 
     @Override public long getLastPlayed() {
