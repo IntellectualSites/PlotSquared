@@ -57,7 +57,6 @@ public class GlobalBlockQueue {
     private final RunnableVal2<Long, LocalBlockQueue> SET_TASK =
         new RunnableVal2<Long, LocalBlockQueue>() {
             @Override public void run(Long free, LocalBlockQueue queue) {
-                long t1 = System.currentTimeMillis();
                 do {
                     boolean more = queue.next();
                     if (!more) {
@@ -67,9 +66,9 @@ public class GlobalBlockQueue {
                         }
                         return;
                     }
-                } while (((GlobalBlockQueue.this.secondLast = System.currentTimeMillis())
-                    - GlobalBlockQueue.this.last) < free);
-                lastPeriod = System.currentTimeMillis() - t1;
+                } while ((lastPeriod =
+                    ((GlobalBlockQueue.this.secondLast = System.currentTimeMillis())
+                        - GlobalBlockQueue.this.last)) < free);
             }
         };
 
@@ -125,8 +124,8 @@ public class GlobalBlockQueue {
                     lastPeriod -= targetTime;
                     return;
                 }
-                SET_TASK.value1 = 30 + Math.min(
-                    (30 + GlobalBlockQueue.this.last) - (GlobalBlockQueue.this.last =
+                SET_TASK.value1 = 50 + Math.min(
+                    (50 + GlobalBlockQueue.this.last) - (GlobalBlockQueue.this.last =
                         System.currentTimeMillis()),
                     GlobalBlockQueue.this.secondLast - System.currentTimeMillis());
                 SET_TASK.value2 = GlobalBlockQueue.this.getNextQueue();
