@@ -256,7 +256,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         impromptuPipeline.registerService(offlinePlayerUUIDService);
         backgroundPipeline.registerService(offlinePlayerUUIDService);
 
-        final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService();
+        final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService("user_cache.db");
+        final SQLiteUUIDService legacyUUIDSerivce = new SQLiteUUIDService("usercache.db");
 
         final LuckPermsUUIDService luckPermsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
@@ -288,6 +289,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             impromptuPipeline.registerConsumer(sqLiteUUIDService);
             backgroundPipeline.registerConsumer(sqLiteUUIDService);
 
+            impromptuPipeline.registerService(legacyUUIDSerivce);
+            backgroundPipeline.registerService(legacyUUIDSerivce);
+
             // Plugin providers
             if (luckPermsUUIDService != null) {
                 impromptuPipeline.registerService(luckPermsUUIDService);
@@ -307,6 +311,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             backgroundPipeline.registerService(sqLiteUUIDService);
             impromptuPipeline.registerConsumer(sqLiteUUIDService);
             backgroundPipeline.registerConsumer(sqLiteUUIDService);
+
+            impromptuPipeline.registerService(legacyUUIDSerivce);
+            backgroundPipeline.registerService(legacyUUIDSerivce);
         }
 
         impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
