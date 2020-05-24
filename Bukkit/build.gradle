@@ -13,6 +13,7 @@ repositories {
     }
     maven { url = "https://ci.ender.zone/plugin/repository/everything/" }
     maven { url = "https://mvn.intellectualsites.com/content/repositories/snapshots" }
+    maven { url = "https://repo.wea-ondara.net/repository/public/" }
     mavenLocal()
 }
 
@@ -33,6 +34,7 @@ dependencies {
     implementation("me.clip:placeholderapi:2.10.4")
     implementation("net.luckperms:api:5.0")
     implementation("net.ess3:EssentialsX:2.16.1")
+    implementation("net.alpenblock:BungeePerms:4.0-dev-106")
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile 'com.github.pavog:SquirrelID:0.6.1'
 }
