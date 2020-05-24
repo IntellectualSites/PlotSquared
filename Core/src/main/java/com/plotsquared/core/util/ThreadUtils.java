@@ -23,38 +23,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util.uuid;
+package com.plotsquared.core.util;
 
-import com.google.common.base.Charsets;
-import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.player.PlotPlayer;
-import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
+import com.plotsquared.core.PlotSquared;
+import lombok.experimental.UtilityClass;
 
-import java.util.Objects;
-import java.util.UUID;
+@UtilityClass public class ThreadUtils {
 
-public class LowerOfflineUUIDWrapper extends OfflineUUIDWrapper {
-
-    @NotNull @Override public UUID getUUID(PlotPlayer player) {
-        return UUID.nameUUIDFromBytes(
-            ("OfflinePlayer:" + player.getName().toLowerCase()).getBytes(Charsets.UTF_8));
+    /**
+     * Throws {@link IllegalStateException} if the method
+     * is called from the server main thread
+     *
+     * @param message Message describing the issue
+     */
+    public void catchSync(final String message) {
+        if (PlotSquared.get().isMainThread(Thread.currentThread())) {
+            throw new IllegalStateException(message);
+        }
     }
 
-    @Override public UUID getUUID(OfflinePlotPlayer player) {
-        return UUID.nameUUIDFromBytes(
-            ("OfflinePlayer:" + player.getName().toLowerCase()).getBytes(Charsets.UTF_8));
-    }
-
-    @Override public UUID getUUID(OfflinePlayer player) {
-        return UUID.nameUUIDFromBytes(
-            ("OfflinePlayer:" + Objects.requireNonNull(player.getName()).toLowerCase())
-                .getBytes(Charsets.UTF_8));
-    }
-
-    @Override public UUID getUUID(String name) {
-        return UUID
-            .nameUUIDFromBytes(("OfflinePlayer:" + name.toLowerCase()).getBytes(Charsets.UTF_8));
+    /**
+     * Throws {@link IllegalStateException} if the method
+     * is not called from the server main thread
+     *
+     * @param message Message describing the issue
+     */
+    public void catchAsync(final String message) {
+        if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
+            throw new IllegalStateException(message);
+        }
     }
 
 }

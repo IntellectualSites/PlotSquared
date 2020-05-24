@@ -23,52 +23,48 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util;
+package com.plotsquared.bukkit.uuid;
 
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
+import com.plotsquared.core.uuid.UUIDMapping;
+import com.plotsquared.core.uuid.UUIDService;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 /**
- * This class should be implemented by each platform to allow PlotSquared to interact
- * with the world management solution used on the server.
- * <p>
- * Special support for world management plugins such as Multiverse and
- * Hyperverse can be added by extending the platform specific class. This
- * way PlotSquared can hook into different APIs and provide better support for that
- * particular plugin
+ * UUID service using the EssentialsX API
  */
-public interface PlatformWorldManager<T> {
+public class EssentialsUUIDService implements UUIDService {
 
-    /**
-     * Initialize the platform world manager
-     */
-    void initialize();
+    private final Essentials essentials;
 
-    /**
-     * Inform the manager that PlotSquared has created a new world, using
-     * a specified generator.
-     *
-     * @param worldName World name
-     * @param generator World generator
-     * @return Created world
-     */
-    @Nullable T handleWorldCreation(@NotNull final String worldName,
-        @Nullable final String generator);
+    public EssentialsUUIDService() {
+        this.essentials = Essentials.getPlugin(Essentials.class);
+    }
 
-    /**
-     * Get the implementation name
-     *
-     * @return implementation name
-     */
-    String getName();
+    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+        return Collections.emptyList();
+    }
 
-    /**
-     * Get the names of all worlds on the server
-     *
-     * @return Worlds
-     */
-    Collection<String> getWorlds();
+    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+        final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
+        for (final String username : usernames) {
+            try {
+                final User user = essentials.getUser(username);
+                if (user != null) {
+                    final UUID uuid = user.getConfigUUID();
+                    if (uuid != null) {
+                        mappings.add(new UUIDMapping(uuid, username));
+                    }
+                }
+            } catch (final Exception ignored){}
+        }
+        return mappings;
+    }
 
 }

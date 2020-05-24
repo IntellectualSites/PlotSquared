@@ -23,44 +23,56 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util.uuid;
+package com.plotsquared.core.uuid;
 
-import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
-import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.uuid.UUIDWrapper;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
-public class DefaultUUIDWrapper extends UUIDWrapper {
+/**
+ * Service used to provide usernames from player UUIDs
+ */
+public interface UUIDService {
 
-    @NotNull @Override public UUID getUUID(PlotPlayer player) {
-        return ((BukkitPlayer) player).player.getUniqueId();
+    /**
+     * Attempt to complete the given requests. Returns the mappings
+     * that could be created by this server
+     *
+     * @param uuids Requests
+     * @return Completed requests
+     */
+    @NotNull List<UUIDMapping> getNames(@NotNull final List<UUID> uuids);
+
+    /**
+     * Attempt to complete the given requests. Returns the mappings
+     * that could be created by this server
+     *
+     * @param usernames Requests
+     * @return Completed requests
+     */
+    @NotNull List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames);
+
+    /**
+     * Get as many UUID mappings as possible under the condition
+     * that the operation cannot be blocking (for an extended amount of time)
+     *
+     * @return All mappings that could be provided immediately
+     */
+    default @NotNull Collection<UUIDMapping> getImmediately() {
+        return Collections.emptyList();
     }
 
-    @Override public UUID getUUID(OfflinePlotPlayer player) {
-        return player.getUUID();
+    /**
+     * Check whether or not this service can be safely used synchronously
+     * without blocking the server for an extended amount of time.
+     *
+     * @return True if the service can be used synchronously
+     */
+    default boolean canBeSynchronous() {
+        return false;
     }
 
-    @Override public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
-        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
-    }
-
-    @Override public UUID getUUID(String name) {
-        return Bukkit.getOfflinePlayer(name).getUniqueId();
-    }
-
-    @Override public OfflinePlotPlayer[] getOfflinePlayers() {
-        OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
-        return Arrays.stream(ops).map(BukkitOfflinePlayer::new).toArray(BukkitOfflinePlayer[]::new);
-    }
-
-    @Override public OfflinePlotPlayer getOfflinePlayer(String name) {
-        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(name));
-    }
 }

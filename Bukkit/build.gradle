@@ -11,6 +11,7 @@ repositories {
         name = "papermc"
         url = "https://papermc.io/repo/repository/maven-public/"
     }
+    maven { url = "https://ci.ender.zone/plugin/repository/everything/" }
     maven { url = "https://mvn.intellectualsites.com/content/repositories/snapshots" }
     mavenLocal()
 }
@@ -30,7 +31,10 @@ dependencies {
         exclude(module: "bukkit")
     }
     implementation("me.clip:placeholderapi:2.10.4")
+    implementation("net.luckperms:api:5.0")
+    implementation("net.ess3:EssentialsX:2.16.1")
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
+    compile 'com.github.pavog:SquirrelID:0.6.1'
 }
 
 sourceCompatibility = 1.8
@@ -90,10 +94,12 @@ shadowJar {
         include(dependency("com.github.davidmoten:rtree:0.8.7"))
         include(dependency("io.reactivex:rxjava:1.3.8"))
         include(dependency("com.github.davidmoten:guava-mini:0.1.1"))
+        include(dependency("com.github.pavog:SquirrelID:0.6.1"))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
+    relocate('com.sk89q.squirrelid', 'com.plotsquared.squirrelid')
     archiveFileName = "${project.name}-${parent.version}.jar"
     destinationDirectory = file "../target"
 }

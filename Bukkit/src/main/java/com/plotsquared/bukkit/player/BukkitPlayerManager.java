@@ -23,52 +23,38 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util;
+package com.plotsquared.bukkit.player;
 
+import com.plotsquared.core.util.PlayerManager;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.UUID;
 
 /**
- * This class should be implemented by each platform to allow PlotSquared to interact
- * with the world management solution used on the server.
- * <p>
- * Special support for world management plugins such as Multiverse and
- * Hyperverse can be added by extending the platform specific class. This
- * way PlotSquared can hook into different APIs and provide better support for that
- * particular plugin
+ * Player manager providing {@link BukkitPlayer Bukkit players}
  */
-public interface PlatformWorldManager<T> {
+public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, BukkitOfflinePlayer> {
 
-    /**
-     * Initialize the platform world manager
-     */
-    void initialize();
+    @Override @NotNull public BukkitPlayer createPlayer(@NotNull final UUID uuid) {
+        final Player player = Bukkit.getPlayer(uuid);
+        if (player == null || !player.isOnline()) {
+            throw new NoSuchPlayerException(uuid);
+        }
+        return new BukkitPlayer(player);
+    }
 
-    /**
-     * Inform the manager that PlotSquared has created a new world, using
-     * a specified generator.
-     *
-     * @param worldName World name
-     * @param generator World generator
-     * @return Created world
-     */
-    @Nullable T handleWorldCreation(@NotNull final String worldName,
-        @Nullable final String generator);
+    @Nullable @Override public BukkitOfflinePlayer getOfflinePlayer(@Nullable final UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
+    }
 
-    /**
-     * Get the implementation name
-     *
-     * @return implementation name
-     */
-    String getName();
-
-    /**
-     * Get the names of all worlds on the server
-     *
-     * @return Worlds
-     */
-    Collection<String> getWorlds();
+    @NotNull @Override public BukkitOfflinePlayer getOfflinePlayer(@NotNull final String username) {
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(username));
+    }
 
 }

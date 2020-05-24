@@ -25,9 +25,10 @@
  */
 package com.plotsquared.bukkit.placeholder;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -62,7 +63,7 @@ public class Placeholders extends PlaceholderExpansion {
     }
 
     @Override public String onPlaceholderRequest(Player p, String identifier) {
-        final PlotPlayer pl = PlotPlayer.get(p.getName());
+        final PlotPlayer pl = PlotSquared.imp().getPlayerManager().getPlayerIfExists(p.getUniqueId());
 
         if (pl == null) {
             return "";
@@ -122,7 +123,9 @@ public class Placeholders extends PlaceholderExpansion {
                 if (uid == null) {
                     return "";
                 }
-                String name = UUIDHandler.getName(uid);
+
+                String name = PlotSquared.get().getImpromptuUUIDPipeline() .getSingle(uid,
+                    Settings.UUID.BLOCKING_TIMEOUT);
 
                 if (name != null) {
                     return name;

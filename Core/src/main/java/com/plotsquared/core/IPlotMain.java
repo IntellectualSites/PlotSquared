@@ -36,13 +36,13 @@ import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.PlatformWorldManager;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandlerImplementation;
 import com.sk89q.worldedit.extension.platform.Actor;
 import org.jetbrains.annotations.NotNull;
 
@@ -221,12 +221,6 @@ public interface IPlotMain extends ILogger {
     void setGenerator(String world);
 
     /**
-     * Gets the {@link UUIDHandlerImplementation} which will cache and
-     * provide UUIDs.
-     */
-    UUIDHandlerImplementation initUUIDHandler();
-
-    /**
      * Gets the {@link InventoryUtil} class (used for implementation specific
      * inventory guis).
      */
@@ -285,6 +279,13 @@ public interface IPlotMain extends ILogger {
      *
      * @return World manager
      */
-    @NotNull PlatformWorldManager getWorldManager();
+    @NotNull PlatformWorldManager<?> getWorldManager();
+
+    /**
+     * Get the player manager implementation for the platform
+     *
+     * @return Player manager
+     */
+    @NotNull PlayerManager<?, ?> getPlayerManager();
 
 }

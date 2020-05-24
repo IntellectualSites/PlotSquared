@@ -142,7 +142,7 @@ public class PlayerBackupProfile implements BackupProfile {
                 }
                 final List<Plot> plots = Collections.singletonList(plot);
                 final boolean result = SchematicHandler.manager.exportAll(plots, getBackupDirectory().toFile(),
-                    "%world%-%id%-%owner%-" + System.currentTimeMillis(), () ->
+                    "%world%-%id%-" + System.currentTimeMillis(), () ->
                     future.complete(new Backup(this, System.currentTimeMillis(), null)));
                 if (!result) {
                     future.completeExceptionally(new RuntimeException("Failed to complete the backup"));

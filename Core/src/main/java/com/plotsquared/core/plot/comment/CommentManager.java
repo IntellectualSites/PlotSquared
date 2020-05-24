@@ -38,8 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Beta
-public class CommentManager {
+@Beta public class CommentManager {
 
     public static final HashMap<String, CommentInbox> inboxes = new HashMap<>();
 

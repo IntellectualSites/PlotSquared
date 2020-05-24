@@ -33,8 +33,8 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.StringWrapper;
-import com.plotsquared.core.util.uuid.UUIDHandler;
+
+import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "setalias",
     permission = "plots.alias",
@@ -79,7 +79,8 @@ public class Alias extends SubCommand {
 
                 if (canExecuteCommand(player, Captions.PERMISSION_ALIAS_SET, false)
                     || canExecuteCommand(player, Captions.PERMISSION_ALIAS_SET_OBSOLETE, false)) {
-                    result = setAlias(player, plot, args[1]);
+                    setAlias(player, plot, args[1]);
+                    return true;
                 } else {
                     MainUtil.sendMessage(player, Captions.NO_PERMISSION);
                 }
@@ -99,38 +100,34 @@ public class Alias extends SubCommand {
     }
 
 
-    private boolean setAlias(PlotPlayer player, Plot plot, String alias) {
+    private void setAlias(PlotPlayer player, Plot plot, String alias) {
         if (alias.isEmpty()) {
             Captions.COMMAND_SYNTAX.send(player, getUsage());
-            return false;
-        }
-        if (alias.length() >= 50) {
+        } else if (alias.length() >= 50) {
             MainUtil.sendMessage(player, Captions.ALIAS_TOO_LONG);
-            return false;
-        }
-        if (alias.contains(" ")) {
+        } else if (alias.contains(" ")) {
             Captions.NOT_VALID_VALUE.send(player);
-            return false;
-        }
-        if (MathMan.isInteger(alias)) {
+        } else if (MathMan.isInteger(alias)) {
             Captions.NOT_VALID_VALUE.send(player);
-            return false;
-        }
-        for (Plot p : PlotSquared.get().getPlots(plot.getArea())) {
-            if (p.getAlias().equalsIgnoreCase(alias)) {
-                MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
-                return false;
+        } else {
+            for (Plot p : PlotSquared.get().getPlots(plot.getArea())) {
+                if (p.getAlias().equalsIgnoreCase(alias)) {
+                    MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
+                    return;
+                }
             }
+            PlotSquared.get().getImpromptuUUIDPipeline().getSingle(alias, ((uuid, throwable) -> {
+                if (throwable instanceof TimeoutException) {
+                    MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                } else if (uuid != null) {
+                    MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
+                } else {
+                    plot.setAlias(alias);
+                    MainUtil.sendMessage(player,
+                        Captions.ALIAS_SET_TO.getTranslated().replaceAll("%alias%", alias));
+                }
+            }));
         }
-        if (UUIDHandler.nameExists(new StringWrapper(alias)) || PlotSquared.get()
-            .hasPlotArea(alias)) {
-            MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
-            return false;
-        }
-        plot.setAlias(alias);
-        MainUtil.sendMessage(player,
-            Captions.ALIAS_SET_TO.getTranslated().replaceAll("%alias%", alias));
-        return true;
     }
 
     private boolean removeAlias(PlotPlayer player, Plot plot) {

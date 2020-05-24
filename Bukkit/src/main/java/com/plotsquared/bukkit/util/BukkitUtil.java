@@ -39,7 +39,6 @@ import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -268,15 +267,7 @@ public class BukkitUtil extends WorldUtil {
         if (player == lastPlayer) {
             return lastPlotPlayer;
         }
-        final String name = player.getName();
-        final PlotPlayer plotPlayer = UUIDHandler.getPlayer(name);
-        if (plotPlayer != null) {
-            return plotPlayer;
-        }
-        lastPlotPlayer = new BukkitPlayer(player);
-        UUIDHandler.getPlayers().put(name, lastPlotPlayer);
-        lastPlayer = player;
-        return lastPlotPlayer;
+        return PlotSquared.imp().getPlayerManager().getPlayer(player.getUniqueId());
     }
 
     public static Location getLocation(@NonNull final org.bukkit.Location location) {

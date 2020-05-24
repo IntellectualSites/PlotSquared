@@ -38,8 +38,6 @@ import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SchematicHandler;
-import com.plotsquared.core.util.uuid.UUIDHandler;
-import com.plotsquared.core.util.uuid.UUIDWrapper;
 import lombok.NoArgsConstructor;
 
 import java.util.Collections;
@@ -60,9 +58,7 @@ import java.util.UUID;
  *
  * @version 5
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
-@NoArgsConstructor
-public class PlotAPI {
+@SuppressWarnings({"unused", "WeakerAccess"}) @NoArgsConstructor public class PlotAPI {
 
     /**
      * Gets all plots.
@@ -138,17 +134,6 @@ public class PlotAPI {
      */
     public GlobalBlockQueue getBlockQueue() {
         return GlobalBlockQueue.IMP;
-    }
-
-    /**
-     * UUIDWrapper class has basic methods for getting UUIDS. It's recommended
-     * to use the UUIDHandler class instead.
-     *
-     * @return UUIDWrapper
-     * @see UUIDWrapper
-     */
-    public UUIDWrapper getUUIDWrapper() {
-        return UUIDHandler.getUUIDWrapper();
     }
 
     /**

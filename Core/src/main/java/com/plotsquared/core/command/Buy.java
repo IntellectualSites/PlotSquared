@@ -37,7 +37,6 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -82,10 +81,10 @@ public class Buy extends Command {
         // Success
         confirm.run(this, () -> {
             Captions.REMOVED_BALANCE.send(player, price);
-            EconHandler.manager
-                .depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.getOwnerAbs()),
-                    price);
-            PlotPlayer owner = UUIDHandler.getPlayer(plot.getOwnerAbs());
+
+            EconHandler.manager.depositMoney(PlotSquared.imp().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
+
+            PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {
                 Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }

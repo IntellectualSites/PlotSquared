@@ -25,9 +25,11 @@
  */
 package com.plotsquared.bukkit.player;
 
+import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -35,7 +37,6 @@ import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -97,10 +98,16 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @NotNull @Override public UUID getUUID() {
-        if (this.uuid == null) {
-            this.uuid = UUIDHandler.getUUID(this);
+        if (Settings.UUID.OFFLINE) {
+            if (Settings.UUID.FORCE_LOWERCASE) {
+                return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    getName().toLowerCase()).getBytes(Charsets.UTF_8));
+            } else {
+                return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    getName()).getBytes(Charsets.UTF_8));
+            }
         }
-        return this.uuid;
+        return player.getUniqueId();
     }
 
     @Override public long getLastPlayed() {

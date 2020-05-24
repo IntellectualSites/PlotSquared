@@ -33,12 +33,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "remove",
     aliases = {"r", "untrust", "ut", "undeny", "unban", "ud"},
@@ -68,74 +65,59 @@ public class Remove extends SubCommand {
             MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return true;
         }
-        int count = 0;
-        switch (args[0]) {
-            case "unknown": {
-                HashSet<UUID> all = new HashSet<>();
-                all.addAll(plot.getMembers());
-                all.addAll(plot.getTrusted());
-                all.addAll(plot.getDenied());
-                ArrayList<UUID> toRemove = new ArrayList<>();
-                for (UUID uuid : all) {
-                    if (UUIDHandler.getName(uuid) == null) {
-                        toRemove.add(uuid);
-                        count++;
-                    }
-                }
-                for (UUID uuid : toRemove) {
-                    plot.removeDenied(uuid);
-                    plot.removeTrusted(uuid);
-                    plot.removeMember(uuid);
-                }
-                break;
-            }
-            default:
-                Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-                if (!uuids.isEmpty()) {
-                    for (UUID uuid : uuids) {
-                        if (plot.getTrusted().contains(uuid)) {
-                            if (plot.removeTrusted(uuid)) {
-                                PlotSquared.get().getEventDispatcher()
-                                    .callTrusted(player, plot, uuid, false);
-                                count++;
-                            }
-                        } else if (plot.getMembers().contains(uuid)) {
-                            if (plot.removeMember(uuid)) {
-                                PlotSquared.get().getEventDispatcher()
-                                    .callMember(player, plot, uuid, false);
-                                count++;
-                            }
-                        } else if (plot.getDenied().contains(uuid)) {
-                            if (plot.removeDenied(uuid)) {
-                                PlotSquared.get().getEventDispatcher()
-                                    .callDenied(player, plot, uuid, false);
-                                count++;
-                            }
-                        } else if (uuid == DBFunc.EVERYONE) {
-                            if (plot.removeTrusted(uuid)) {
-                                PlotSquared.get().getEventDispatcher()
-                                    .callTrusted(player, plot, uuid, false);
-                                count++;
-                            } else if (plot.removeMember(uuid)) {
-                                PlotSquared.get().getEventDispatcher()
-                                    .callMember(player, plot, uuid, false);
-                                count++;
-                            } else if (plot.removeDenied(uuid)) {
-                                PlotSquared.get().getEventDispatcher()
-                                    .callDenied(player, plot, uuid, false);
-                                count++;
-                            }
+
+        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+            int count = 0;
+            if (throwable instanceof TimeoutException) {
+                MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                return;
+            } else if (throwable != null) {
+                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                return;
+            } else if (!uuids.isEmpty()) {
+                for (UUID uuid : uuids) {
+                    if (plot.getTrusted().contains(uuid)) {
+                        if (plot.removeTrusted(uuid)) {
+                            PlotSquared.get().getEventDispatcher()
+                                .callTrusted(player, plot, uuid, false);
+                            count++;
+                        }
+                    } else if (plot.getMembers().contains(uuid)) {
+                        if (plot.removeMember(uuid)) {
+                            PlotSquared.get().getEventDispatcher()
+                                .callMember(player, plot, uuid, false);
+                            count++;
+                        }
+                    } else if (plot.getDenied().contains(uuid)) {
+                        if (plot.removeDenied(uuid)) {
+                            PlotSquared.get().getEventDispatcher()
+                                .callDenied(player, plot, uuid, false);
+                            count++;
+                        }
+                    } else if (uuid == DBFunc.EVERYONE) {
+                        if (plot.removeTrusted(uuid)) {
+                            PlotSquared.get().getEventDispatcher()
+                                .callTrusted(player, plot, uuid, false);
+                            count++;
+                        } else if (plot.removeMember(uuid)) {
+                            PlotSquared.get().getEventDispatcher()
+                                .callMember(player, plot, uuid, false);
+                            count++;
+                        } else if (plot.removeDenied(uuid)) {
+                            PlotSquared.get().getEventDispatcher()
+                                .callDenied(player, plot, uuid, false);
+                            count++;
                         }
                     }
                 }
-                break;
-        }
-        if (count == 0) {
-            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
-            return false;
-        } else {
-            MainUtil.sendMessage(player, Captions.REMOVED_PLAYERS, count + "");
-        }
+            }
+            if (count == 0) {
+                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+            } else {
+                MainUtil.sendMessage(player, Captions.REMOVED_PLAYERS, count + "");
+            }
+        });
         return true;
     }
+
 }

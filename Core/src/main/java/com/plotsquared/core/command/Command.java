@@ -37,6 +37,8 @@ import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -601,6 +603,10 @@ public abstract class Command {
             throw new CommandException(message, args);
         }
         return object;
+    }
+
+    @SneakyThrows protected static void sneakyThrow(@NotNull final Throwable throwable) {
+        throw throwable;
     }
 
     public enum CommandResult {

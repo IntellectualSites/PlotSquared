@@ -23,14 +23,42 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util.uuid;
+package com.plotsquared.core.uuid.offline;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import com.google.common.base.Charsets;
+import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.uuid.UUIDMapping;
+import com.plotsquared.core.uuid.UUIDService;
+import org.jetbrains.annotations.NotNull;
 
-public class DatFileFilter implements FilenameFilter {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
-    @Override public boolean accept(File dir, String name) {
-        return name.endsWith(".dat");
+/**
+ * Name provider service that creates UUIDs from usernames
+ */
+public class OfflineModeUUIDService implements UUIDService {
+
+    @NotNull protected final UUID getFromUsername(@NotNull String username) {
+        if (Settings.UUID.FORCE_LOWERCASE) {
+            username = username.toLowerCase(Locale.ENGLISH);
+        }
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(Charsets.UTF_8));
     }
+
+    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+        return Collections.emptyList();
+    }
+
+    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
+        final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
+        for (final String username : usernames) {
+            mappings.add(new UUIDMapping(getFromUsername(username), username));
+        }
+        return mappings;
+    }
+
 }

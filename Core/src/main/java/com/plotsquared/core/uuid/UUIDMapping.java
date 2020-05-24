@@ -23,28 +23,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot.util;
+package com.plotsquared.core.uuid;
 
-import com.plotsquared.core.database.AbstractDBTest;
-import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.uuid.UUIDHandlerImplementation;
-import com.plotsquared.core.util.uuid.UUIDWrapper;
-import org.junit.Before;
+import lombok.EqualsAndHashCode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class UUIDHandlerImplementationTest extends UUIDHandlerImplementation {
+/**
+ * A pair consisting of a UUID and a username
+ */
+@EqualsAndHashCode public class UUIDMapping {
 
-    public UUIDHandlerImplementationTest(UUIDWrapper wrapper) {
-        super(wrapper);
+    private final UUID uuid;
+    private final String username;
+
+    public UUIDMapping(@NotNull final UUID uuid, final String username) {
+        this.uuid = uuid;
+        this.username = username;
     }
 
-    @Before public void setUp() throws Exception {
-        DBFunc.dbManager = new AbstractDBTest();
+    @NotNull public String getUsername() {
+        return this.username;
     }
 
-    @Override public void fetchUUID(String name, RunnableVal<UUID> ifFetch) {
-
+    @NotNull public UUID getUuid() {
+        return this.uuid;
     }
+
 }

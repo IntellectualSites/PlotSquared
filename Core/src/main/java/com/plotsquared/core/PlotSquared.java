@@ -80,12 +80,11 @@ import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
+import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -127,6 +126,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -144,6 +144,11 @@ public class PlotSquared {
     public final IPlotMain IMP;
     // Current thread
     private final Thread thread;
+    // UUID pipelines
+    @Getter private final UUIDPipeline impromptuUUIDPipeline =
+        new UUIDPipeline(Executors.newCachedThreadPool());
+    @Getter private final UUIDPipeline backgroundUUIDPipeline =
+        new UUIDPipeline(Executors.newSingleThreadExecutor());
     // WorldEdit instance
     public WorldEdit worldedit;
     public File styleFile;
@@ -255,15 +260,6 @@ public class PlotSquared {
             this.IMP.registerWorldEvents();
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
-            }
-            // create UUIDWrapper
-            UUIDHandler.implementation = this.IMP.initUUIDHandler();
-            if (Settings.Enabled_Components.UUID_CACHE) {
-                startUuidCatching();
-            } else {
-                // Start these separately
-                UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
-                startExpiryTasks();
             }
             // Create Event utility class
             eventDispatcher = new EventDispatcher();
@@ -390,11 +386,11 @@ public class PlotSquared {
         return PlotSquared.instance;
     }
 
-    public static IPlotMain imp() {
-        if (instance != null) {
+    @NotNull public static IPlotMain imp() {
+        if (instance != null && instance.IMP != null) {
             return instance.IMP;
         }
-        return null;
+        throw new IllegalStateException("Plot main implementation is missing");
     }
 
     /**
@@ -430,23 +426,6 @@ public class PlotSquared {
                 PlotSquared.get().getLogger().log(StringMan.getString(message));
             }
         }
-    }
-
-    private void startUuidCatching() {
-        TaskManager.runTaskLater(() -> {
-            debug("Starting UUID caching");
-            UUIDHandler.startCaching(() -> {
-                UUIDHandler.add(new StringWrapper("*"), DBFunc.EVERYONE);
-                forEachPlotRaw(plot -> {
-                    if (plot.hasOwner() && plot.temp != -1) {
-                        if (UUIDHandler.getName(plot.getOwnerAbs()) == null) {
-                            UUIDHandler.implementation.unknown.add(plot.getOwnerAbs());
-                        }
-                    }
-                });
-                startExpiryTasks();
-            });
-        }, 20);
     }
 
     private void startExpiryTasks() {
@@ -959,7 +938,7 @@ public class PlotSquared {
      * @return Set of Plot
      */
     public Set<Plot> getPlots(String world, String player) {
-        final UUID uuid = UUIDHandler.getUUID(player, null);
+        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, Settings.UUID.BLOCKING_TIMEOUT);
         return getPlots(world, uuid);
     }
 
@@ -971,7 +950,7 @@ public class PlotSquared {
      * @return Set of Plot
      */
     public Set<Plot> getPlots(PlotArea area, String player) {
-        UUID uuid = UUIDHandler.getUUID(player, null);
+        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, Settings.UUID.BLOCKING_TIMEOUT);
         return getPlots(area, uuid);
     }
 
@@ -1584,7 +1563,6 @@ public class PlotSquared {
 
             // Close the connection
             DBFunc.close();
-            UUIDHandler.handleShutdown();
         } catch (NullPointerException throwable) {
             throwable.printStackTrace();
             PlotSquared.log("&cCould not close database connection!");

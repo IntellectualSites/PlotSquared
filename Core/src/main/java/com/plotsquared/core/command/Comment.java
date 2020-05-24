@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -33,11 +34,9 @@ import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Map.Entry;
 
 @CommandDeclaration(command = "comment",
     aliases = {"msg"},
@@ -96,12 +95,13 @@ public class Comment extends SubCommand {
                 StringMan.join(CommentManager.inboxes.keySet(), "|"));
             return false;
         }
-        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            PlotPlayer pp = entry.getValue();
+
+        for (final PlotPlayer pp : PlotSquared.imp().getPlayerManager().getPlayers()) {
             if (pp.getAttribute("chatspy")) {
                 MainUtil.sendMessage(pp, "/plot comment " + StringMan.join(args, " "));
             }
         }
+
         sendMessage(player, Captions.COMMENT_ADDED);
         return true;
     }

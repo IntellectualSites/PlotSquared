@@ -32,13 +32,16 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "trust",
     aliases = {"t"},
@@ -65,51 +68,69 @@ public class Trust extends Command {
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
             Captions.NO_PLOT_PERMS);
         checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
-        final Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-        checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
-        Iterator<UUID> iterator = uuids.iterator();
-        int size = currentPlot.getTrusted().size() + currentPlot.getMembers().size();
-        while (iterator.hasNext()) {
-            UUID uuid = iterator.next();
-            if (uuid == DBFunc.EVERYONE && !(
-                Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
-                iterator.remove();
-                continue;
-            }
-            if (currentPlot.isOwner(uuid)) {
-                MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
-                iterator.remove();
-                continue;
-            }
-            if (currentPlot.getTrusted().contains(uuid)) {
-                MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
-                iterator.remove();
-                continue;
-            }
-            size += currentPlot.getMembers().contains(uuid) ? 0 : 1;
-        }
-        checkTrue(!uuids.isEmpty(), null);
-        checkTrue(size <= currentPlot.getArea().getMaxPlotMembers() || Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
-            Captions.PLOT_MAX_MEMBERS);
-        // Success
-        confirm.run(this, () -> {
-            for (UUID uuid : uuids) {
-                if (uuid != DBFunc.EVERYONE) {
-                    if (!currentPlot.removeMember(uuid)) {
-                        if (currentPlot.getDenied().contains(uuid)) {
-                            currentPlot.removeDenied(uuid);
-                        }
-                    }
-                }
-                currentPlot.addTrusted(uuid);
-                PlotSquared.get().getEventDispatcher().callTrusted(player, currentPlot, uuid, true);
-                MainUtil.sendMessage(player, Captions.TRUSTED_ADDED);
-            }
-        }, null);
 
+        final CompletableFuture<Boolean> future = new CompletableFuture<>();
+        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+            if (throwable != null) {
+                if (throwable instanceof TimeoutException) {
+                    Captions.FETCHING_PLAYERS_TIMEOUT.send(player);
+                } else {
+                    Captions.INVALID_PLAYER.send(player, args[0]);
+                }
+                future.completeExceptionally(throwable);
+                return;
+            } else {
+                checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
+                Iterator<UUID> iterator = uuids.iterator();
+                int size = currentPlot.getTrusted().size() + currentPlot.getMembers().size();
+                while (iterator.hasNext()) {
+                    UUID uuid = iterator.next();
+                    if (uuid == DBFunc.EVERYONE && !(
+                        Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
+                            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
+                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
+                        iterator.remove();
+                        continue;
+                    }
+                    if (currentPlot.isOwner(uuid)) {
+                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                        iterator.remove();
+                        continue;
+                    }
+                    if (currentPlot.getTrusted().contains(uuid)) {
+                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                        iterator.remove();
+                        continue;
+                    }
+                    size += currentPlot.getMembers().contains(uuid) ? 0 : 1;
+                }
+                checkTrue(!uuids.isEmpty(), null);
+                checkTrue(size <= currentPlot.getArea().getMaxPlotMembers() || Permissions
+                        .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
+                    Captions.PLOT_MAX_MEMBERS);
+                // Success
+                confirm.run(this, () -> {
+                    for (UUID uuid : uuids) {
+                        if (uuid != DBFunc.EVERYONE) {
+                            if (!currentPlot.removeMember(uuid)) {
+                                if (currentPlot.getDenied().contains(uuid)) {
+                                    currentPlot.removeDenied(uuid);
+                                }
+                            }
+                        }
+                        currentPlot.addTrusted(uuid);
+                        PlotSquared.get().getEventDispatcher().callTrusted(player, currentPlot, uuid, true);
+                        MainUtil.sendMessage(player, Captions.TRUSTED_ADDED);
+                    }
+                }, null);
+            }
+            future.complete(true);
+        });
         return CompletableFuture.completedFuture(true);
     }
+
+    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+    }
+
 }
