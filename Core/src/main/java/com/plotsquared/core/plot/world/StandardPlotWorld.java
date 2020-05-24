@@ -27,50 +27,39 @@ package com.plotsquared.core.plot.world;
 
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface PlotAreaManager {
+import java.util.Collection;
+import java.util.Collections;
 
-    /**
-     * Get the plot area for a particular location. This
-     * method assumes that the caller already knows that
-     * the location belongs to a plot area, in which
-     * case it will return the appropriate plot area.
-     * <p>
-     * If the location does not belong to a plot area,
-     * it may still return an area.
-     *
-     * @param location The location
-     * @return An applicable area, or null
-     */
-    @Nullable PlotArea getApplicablePlotArea(Location location);
+/**
+ * Ordinary plot world with a single plot area
+ */
+public class StandardPlotWorld extends PlotWorld {
 
-    /**
-     * Get the plot area, if there is any, for the given
-     * location. This may return null, if given location
-     * does not belong to a plot area.
-     *
-     * @param location The location
-     * @return The area, if found
-     */
-    PlotArea getPlotArea(@NotNull Location location);
+    private final PlotArea area;
 
-    PlotArea getPlotArea(String world, String id);
+    public StandardPlotWorld(@NotNull final String world, @Nullable final PlotArea area) {
+        super(world);
+        this.area = area;
+    }
 
-    PlotArea[] getPlotAreas(String world, CuboidRegion region);
+    @Override @Nullable public PlotArea getArea(@NotNull final Location location) {
+        return this.area;
+    }
 
-    PlotArea[] getAllPlotAreas();
+    @Override @NotNull public Collection<PlotArea> getAreas() {
+        if (this.area == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(this.area);
+    }
 
-    String[] getAllWorlds();
-
-    void addPlotArea(PlotArea area);
-
-    void removePlotArea(PlotArea area);
-
-    void addWorld(String worldName);
-
-    void removeWorld(String worldName);
+    @Override @NotNull public Collection<PlotArea> getAreasInRegion(@NotNull final CuboidRegion region) {
+        return this.getAreas();
+    }
 
 }

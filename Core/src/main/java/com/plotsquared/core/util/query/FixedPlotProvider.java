@@ -23,18 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot;
+package com.plotsquared.core.util.query;
 
-/**
- * Use {@link com.plotsquared.core.util.query.PlotQuery} instead
- */
-@Deprecated public abstract class PlotFilter {
-    public boolean allowsArea(final PlotArea area) {
-        return true;
+import com.plotsquared.core.plot.Plot;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Collections;
+
+class FixedPlotProvider implements PlotProvider {
+
+    private final Plot plot;
+
+    FixedPlotProvider(@NotNull final Plot plot) {
+        this.plot = plot;
     }
 
-    public boolean allowsPlot(final Plot plot) {
-        return true;
+    @Override public Collection<Plot> getPlots() {
+        return Collections.singleton(plot);
     }
 
 }

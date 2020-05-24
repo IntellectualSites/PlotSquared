@@ -25,9 +25,13 @@
  */
 package com.plotsquared.core.util;
 
+import com.github.davidmoten.rtree.geometry.Geometries;
+import com.github.davidmoten.rtree.geometry.Rectangle;
 import com.plotsquared.core.plot.Plot;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.jetbrains.annotations.NotNull;
 
 public class RegionUtil {
     public static CuboidRegion createRegion(int pos1x, int pos2x, int pos1z, int pos2z) {
@@ -52,6 +56,12 @@ public class RegionUtil {
         BlockVector3 max = region.getMaximumPoint();
         return x >= min.getX() && x <= max.getX() && z >= min.getZ() && z <= max.getZ() && y >= min
             .getY() && y <= max.getY();
+    }
+
+    @NotNull public static Rectangle toRectangle(@NotNull final CuboidRegion region) {
+        final BlockVector2 min = region.getMinimumPoint().toBlockVector2();
+        final BlockVector2 max = region.getMaximumPoint().toBlockVector2();
+        return Geometries.rectangle(min.getX(), min.getZ(), max.getX(), max.getZ());
     }
 
     // Because WE (not fawe) lack this for CuboidRegion

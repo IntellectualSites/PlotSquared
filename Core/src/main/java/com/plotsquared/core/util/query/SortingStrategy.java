@@ -23,18 +23,34 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot;
+package com.plotsquared.core.util.query;
 
 /**
- * Use {@link com.plotsquared.core.util.query.PlotQuery} instead
+ * Strategy used when sorting plot results
  */
-@Deprecated public abstract class PlotFilter {
-    public boolean allowsArea(final PlotArea area) {
-        return true;
-    }
-
-    public boolean allowsPlot(final Plot plot) {
-        return true;
-    }
-
+public enum SortingStrategy {
+    /**
+     * Plots won't be sorted at all
+     */
+    NO_SORTING,
+    /**
+     * Sort by the temporary (magic) plot ID
+     */
+    SORT_BY_TEMP,
+    /**
+     * Sort by the value in the plot's {@link com.plotsquared.core.plot.flag.implementations.DoneFlag}
+     */
+    SORT_BY_DONE,
+    /**
+     * Sort by the plot rating
+     */
+    SORT_BY_RATING,
+    /**
+     * Sort by creation date
+     */
+    SORT_BY_CREATION,
+    /**
+     * Sort using a comparator
+     */
+    COMPARATOR;
 }

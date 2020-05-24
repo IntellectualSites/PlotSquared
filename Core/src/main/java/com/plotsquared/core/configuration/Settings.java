@@ -506,9 +506,9 @@ public class Settings extends Config {
 
     @Comment("Settings relating to PlotSquared's GlobalBlockQueue")
     public static final class QUEUE {
-        @Comment({"Average time per tick spent completing chunk tasks in ms. Target average TPS = 20 * 50 / TARGET_TIME.",
+        @Comment({"Average time per tick spent completing chunk tasks in ms.",
         "Waits (chunk task time / target_time) ticks before completely the next task."})
-        public static int TARGET_TIME = 65;
+        public static int TARGET_TIME = 40;
     }
 
 

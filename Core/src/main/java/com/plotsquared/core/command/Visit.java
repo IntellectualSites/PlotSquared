@@ -36,6 +36,8 @@ import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.query.PlotQuery;
+import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
@@ -75,66 +77,73 @@ public class Visit extends Command {
             args = args[0].split(":");
         }
 
-        final Collection<Plot> unsortedPre = new HashSet<>();
+        final PlotQuery query = PlotQuery.newQuery();
         final PlotArea[] sortByArea = new PlotArea[] {player.getApplicablePlotArea()};
-        final AtomicBoolean shouldSortByArea = new AtomicBoolean(Settings.Teleport.PER_WORLD_VISIT);
+        final Atomicboolean shouldSortByArea = new AtomicBoolean(Settings.Teleport.PER_WORLD_VISIT);
 
         final Consumer<Integer> pageConsumer = page -> {
-            if (page == Integer.MIN_VALUE) {
-                page = 1;
-            }
-            if (unsortedPre.isEmpty()) {
+            // We get the query once,
+            // then we get it another time further on
+            final List<Plot> unsorted = query.asList();
+
+            if (unsorted.isEmpty()) {
                 Captions.FOUND_NO_PLOTS.send(player);
+                return CompletableFuture.completedFuture(false);
+            }
+
+            if (unsorted.size() > 1) {
+                query.whereBasePlot();
+            }
+
+            if (page < 1 || page > unsorted.size()) {
+                Captions.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
+                return CompletableFuture.completedFuture(false);
+            }
+
+            if (shouldSortByArea.get()) {
+                query.relativeToArea(sortByArea).withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
             } else {
-                final Collection<Plot> unsorted = new ArrayList<>(unsortedPre);
-                if (unsorted.size() > 1) {
-                    unsorted.removeIf(plot -> !plot.isBasePlot());
+                query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
+            }
+
+            final List<Plot> plots = query.asList();
+
+            final Plot plot = plots.get(page - 1);
+            if (!plot.hasOwner()) {
+                if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_UNOWNED)) {
+                    Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_UNOWNED);
+                    return;
                 }
-                if (page < 1 || page > unsorted.size()) {
-                    Captions.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
-                } else {
-                    List<Plot> plots;
-                    if (shouldSortByArea.get()) {
-                        plots = PlotSquared.get().sortPlots(unsorted, PlotSquared.SortType.CREATION_DATE, sortByArea[0]);
-                    } else {
-                        plots = PlotSquared.get().sortPlotsByTemp(unsorted);
-                    }
-                    final Plot plot = plots.get(page - 1);
-                    if (!plot.hasOwner()) {
-                        if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_UNOWNED)) {
-                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_UNOWNED);
-                            return;
-                        }
-                    } else if (plot.isOwner(player.getUUID())) {
-                        if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions.hasPermission(player, Captions.PERMISSION_HOME)) {
-                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OWNED);
-                            return;
-                        }
-                    } else if (plot.isAdded(player.getUUID())) {
-                        if (!Permissions.hasPermission(player, Captions.PERMISSION_SHARED)) {
-                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_SHARED);
-                            return;
-                        }
-                    } else {
-                        if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER)) {
-                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
-                            return;
-                        }
-                        if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
-                            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED);
-                            return;
-                        }
-                    }
-                    confirm.run(this,
-                        () -> plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
-                            if (result) {
-                                whenDone.run(Visit.this, CommandResult.SUCCESS);
-                            } else {
-                                whenDone.run(Visit.this, CommandResult.FAILURE);
-                            }
-                        }), () -> whenDone.run(Visit.this, CommandResult.FAILURE));
+            } else if (plot.isOwner(player.getUUID())) {
+                if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions
+                    .hasPermission(player, Captions.PERMISSION_HOME)) {
+                    Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OWNED);
+                    return;
+                }
+            } else if (plot.isAdded(player.getUUID())) {
+                if (!Permissions.hasPermission(player, Captions.PERMISSION_SHARED)) {
+                    Captions.NO_PERMISSION.send(player, Captions.PERMISSION_SHARED);
+                    return;
+                }
+            } else {
+                if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER)) {
+                    Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
+                    return;
+                }
+                if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+                    Captions.NO_PERMISSION.send(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED);
+                    return;
                 }
             }
+
+            confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+                if (result) {
+                    whenDone.run(Visit.this, CommandResult.SUCCESS);
+                } else {
+                    whenDone.run(Visit.this, CommandResult.FAILURE);
+                }
+            }), () -> whenDone.run(Visit.this, CommandResult.FAILURE));
         };
 
         final int[] page = new int[]{Integer.MIN_VALUE};
@@ -162,7 +171,7 @@ public class Visit extends Command {
                         } else if (throwable != null || uuids.size() != 1) {
                             Captions.COMMAND_SYNTAX.send(player, getUsage());
                         } else {
-                            unsortedPre.addAll(PlotSquared.get().getBasePlots((UUID) uuids.toArray()[0]));
+                            query.ownedBy(user).whereBasePlot();
                             shouldSortByArea.set(true);
                             pageConsumer.accept(page[0]);
                         }
@@ -175,14 +184,14 @@ public class Visit extends Command {
                 final Consumer<UUID> uuidConsumer = uuid -> {
                     if (page[0] == Integer.MIN_VALUE && uuid == null && MathMan.isInteger(finalArgs[0])) {
                         page[0] = Integer.parseInt(finalArgs[0]);
-                        unsortedPre.addAll(PlotSquared.get().getBasePlots(player));
+                        query.ownedBy(player).whereBasePlot();
                     } else {
                         if (uuid != null) {
-                            unsortedPre.addAll(PlotSquared.get().getBasePlots(uuid));
+                            query.ownedBy(player).whereBasePlot();
                         } else {
                             Plot plot = MainUtil.getPlotFromString(player, finalArgs[0], true);
                             if (plot != null) {
-                                unsortedPre.addAll(Collections.singletonList(plot.getBasePlot(false)));
+                                query.withPlot(plot);
                             }
                         }
                     }
@@ -204,12 +213,12 @@ public class Visit extends Command {
                 }
                 break;
             case 0:
-                unsortedPre.addAll(PlotSquared.get().getPlots(player));
+                query.ownedBy(player);
                 pageConsumer.accept(1);
                 break;
             default:
-
         }
+
         return CompletableFuture.completedFuture(true);
     }
 

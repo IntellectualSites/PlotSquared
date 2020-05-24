@@ -23,54 +23,51 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot.world;
+package com.plotsquared.core.util.query;
 
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.PlotArea;
-import com.sk89q.worldedit.regions.CuboidRegion;
+import com.google.common.base.Preconditions;
+import com.plotsquared.core.plot.Plot;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public interface PlotAreaManager {
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Paginated collection of plots as a result of a {@link PlotQuery query}
+ */
+public final class PaginatedPlotResult {
+
+    private final List<Plot> plots;
+    private final int pageSize;
+
+    PaginatedPlotResult(@NotNull final List<Plot> plots, final int pageSize) {
+        this.plots = plots;
+        this.pageSize = pageSize;
+    }
 
     /**
-     * Get the plot area for a particular location. This
-     * method assumes that the caller already knows that
-     * the location belongs to a plot area, in which
-     * case it will return the appropriate plot area.
-     * <p>
-     * If the location does not belong to a plot area,
-     * it may still return an area.
+     * Get the plots belonging to a certain page.
      *
-     * @param location The location
-     * @return An applicable area, or null
+     * @param page Positive page number. Indexed from 1
+     * @return Plots that belong to the specified page
      */
-    @Nullable PlotArea getApplicablePlotArea(Location location);
+    public List<Plot> getPage(final int page) {
+        Preconditions.checkState(page >= 0, "Page must be positive");
+        final int from = (page - 1) * this.pageSize;
+        if (this.plots.size() < from) {
+            return Collections.emptyList();
+        }
+        final int to = Math.max(from + pageSize, this.plots.size());
+        return this.plots.subList(from, to);
+    }
 
     /**
-     * Get the plot area, if there is any, for the given
-     * location. This may return null, if given location
-     * does not belong to a plot area.
+     * Get the number of available pages
      *
-     * @param location The location
-     * @return The area, if found
+     * @return Available pages
      */
-    PlotArea getPlotArea(@NotNull Location location);
-
-    PlotArea getPlotArea(String world, String id);
-
-    PlotArea[] getPlotAreas(String world, CuboidRegion region);
-
-    PlotArea[] getAllPlotAreas();
-
-    String[] getAllWorlds();
-
-    void addPlotArea(PlotArea area);
-
-    void removePlotArea(PlotArea area);
-
-    void addWorld(String worldName);
-
-    void removeWorld(String worldName);
+    public int getPages() {
+        return (int) Math.ceil((double) plots.size() / (double) pageSize);
+    }
 
 }
