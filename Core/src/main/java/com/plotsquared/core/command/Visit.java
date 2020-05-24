@@ -41,10 +41,7 @@ import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -79,7 +76,7 @@ public class Visit extends Command {
 
         final PlotQuery query = PlotQuery.newQuery();
         final PlotArea[] sortByArea = new PlotArea[] {player.getApplicablePlotArea()};
-        final Atomicboolean shouldSortByArea = new AtomicBoolean(Settings.Teleport.PER_WORLD_VISIT);
+        final AtomicBoolean shouldSortByArea = new AtomicBoolean(Settings.Teleport.PER_WORLD_VISIT);
 
         final Consumer<Integer> pageConsumer = page -> {
             // We get the query once,
@@ -88,7 +85,7 @@ public class Visit extends Command {
 
             if (unsorted.isEmpty()) {
                 Captions.FOUND_NO_PLOTS.send(player);
-                return CompletableFuture.completedFuture(false);
+                return;
             }
 
             if (unsorted.size() > 1) {
@@ -97,11 +94,11 @@ public class Visit extends Command {
 
             if (page < 1 || page > unsorted.size()) {
                 Captions.NOT_VALID_NUMBER.send(player, "(1, " + unsorted.size() + ")");
-                return CompletableFuture.completedFuture(false);
+                return;
             }
 
             if (shouldSortByArea.get()) {
-                query.relativeToArea(sortByArea).withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
+                query.relativeToArea(sortByArea[0]).withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
             } else {
                 query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
             }
@@ -171,7 +168,7 @@ public class Visit extends Command {
                         } else if (throwable != null || uuids.size() != 1) {
                             Captions.COMMAND_SYNTAX.send(player, getUsage());
                         } else {
-                            query.ownedBy(user).whereBasePlot();
+                            query.ownedBy(uuids.toArray(new UUID[0])[0]).whereBasePlot();
                             shouldSortByArea.set(true);
                             pageConsumer.accept(page[0]);
                         }
