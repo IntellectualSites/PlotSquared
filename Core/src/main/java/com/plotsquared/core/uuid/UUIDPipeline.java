@@ -324,7 +324,14 @@ public class UUIDPipeline {
                 PlotSquared.log("Failed to find all usernames");
             }
 
-            throw new ServiceError("End of pipeline");
+            if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
+                for (final UUID uuid : remainingRequests) {
+                    mappings.add(new UUIDMapping(uuid, Captions.UNKNOWN.getTranslated()));
+                }
+                return mappings;
+            } else {
+                throw new ServiceError("End of pipeline");
+            }
         }, this.executor);
     }
 

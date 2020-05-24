@@ -248,6 +248,10 @@ public class Settings extends Config {
         public static long NON_BLOCKING_TIMEOUT = 3000L;
         @Comment("Timeout (in milliseconds) for blocking UUID requests (events)")
         public static long BLOCKING_TIMEOUT = 10L;
+        @Comment("Whether or not PlotSquared should read from the legacy database")
+        public static boolean LEGACY_DATABASE_SUPPORT = true;
+        @Comment("Whether or not PlotSquared should return Unknown if it fails to fulfill a request")
+        public static boolean UNKNOWN_AS_DEFAULT = true;
     }
 
 

@@ -257,7 +257,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         backgroundPipeline.registerService(offlinePlayerUUIDService);
 
         final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService("user_cache.db");
-        final SQLiteUUIDService legacyUUIDSerivce = new SQLiteUUIDService("usercache.db");
+
+        final SQLiteUUIDService legacyUUIDService;
+        if (Settings.UUID.LEGACY_DATABASE_SUPPORT && MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "usercache.db").exists()) {
+            legacyUUIDService = new SQLiteUUIDService("usercache.db");
+        } else {
+            legacyUUIDService = null;
+        }
 
         final LuckPermsUUIDService luckPermsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
@@ -289,8 +295,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             impromptuPipeline.registerConsumer(sqLiteUUIDService);
             backgroundPipeline.registerConsumer(sqLiteUUIDService);
 
-            impromptuPipeline.registerService(legacyUUIDSerivce);
-            backgroundPipeline.registerService(legacyUUIDSerivce);
+            if (legacyUUIDService != null) {
+                impromptuPipeline.registerService(legacyUUIDService);
+                backgroundPipeline.registerService(legacyUUIDService);
+            }
 
             // Plugin providers
             if (luckPermsUUIDService != null) {
@@ -312,8 +320,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
             impromptuPipeline.registerConsumer(sqLiteUUIDService);
             backgroundPipeline.registerConsumer(sqLiteUUIDService);
 
-            impromptuPipeline.registerService(legacyUUIDSerivce);
-            backgroundPipeline.registerService(legacyUUIDSerivce);
+            if (legacyUUIDService != null) {
+                impromptuPipeline.registerService(legacyUUIDService);
+                backgroundPipeline.registerService(legacyUUIDService);
+            }
         }
 
         impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
