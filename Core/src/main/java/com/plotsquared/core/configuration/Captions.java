@@ -445,6 +445,7 @@ public enum Captions implements Caption {
     NOT_VALID_WORLD("$2That is not a valid world (case sensitive)", "Errors"),
     NOT_VALID_PLOT_WORLD("$2That is not a valid plot area (case sensitive)", "Errors"),
     NO_PLOTS("$2You don't have any plots", "Errors"),
+    PLAYER_NO_PLOTS("$2That player does not own any plots", "Errors"),
     WAIT_FOR_TIMER("$2A set block timer is bound to either the current plot or you. Please wait for it to finish", "Errors"),
     TILE_ENTITY_CAP_REACHED("$2The total number of tile entities in this chunk may not exceed $1%s", "Errors"),
     //</editor-fold>

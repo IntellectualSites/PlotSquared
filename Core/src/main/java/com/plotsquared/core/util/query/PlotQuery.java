@@ -288,12 +288,13 @@ public final class PlotQuery {
         } else {
             final Collection<Plot> plots = this.plotProvider.getPlots();
             result = new ArrayList<>(plots.size());
-            for (final Plot plot : plots) {
+            outer: for (final Plot plot : plots) {
                 for (final PlotFilter filter : this.filters) {
-                    if (filter.accepts(plot)) {
-                        result.add(plot);
+                    if (!filter.accepts(plot)) {
+                        continue outer;
                     }
                 }
+                result.add(plot);
             }
         }
         if (this.sortingStrategy == SortingStrategy.NO_SORTING) {
