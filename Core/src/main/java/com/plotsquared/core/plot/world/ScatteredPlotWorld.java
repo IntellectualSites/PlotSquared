@@ -25,18 +25,18 @@
  */
 package com.plotsquared.core.plot.world;
 
-import com.github.davidmoten.rtree.Entry;
-import com.github.davidmoten.rtree.RTree;
-import com.github.davidmoten.rtree.geometry.Geometries;
-import com.github.davidmoten.rtree.geometry.Geometry;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWorld;
+import com.plotsquared.core.util.PlotAreaConverter;
 import com.plotsquared.core.util.RegionUtil;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import rx.Observable;
+import org.khelekore.prtree.MBR;
+import org.khelekore.prtree.PRTree;
+import org.khelekore.prtree.SimpleMBR;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -48,9 +48,12 @@ import java.util.List;
  */
 public class ScatteredPlotWorld extends PlotWorld {
 
+    private static final PlotAreaConverter MBR_CONVERTER = new PlotAreaConverter();
+    private static final int BRANCH_FACTOR = 30;
+
     private final List<PlotArea> areas = new LinkedList<>();
     private final Object treeLock = new Object();
-    private RTree<PlotArea, Geometry> areaTree;
+    private PRTree<PlotArea> areaTree;
 
     /**
      * Create a new plot world with a given world name
@@ -66,13 +69,13 @@ public class ScatteredPlotWorld extends PlotWorld {
             return null;
         }
         synchronized (this.treeLock) {
-            final Observable<Entry<PlotArea, Geometry>> area =
-                areaTree.search(Geometries.point(location.getX(), location.getZ()));
-            if (area.isEmpty().toBlocking().first()) {
-                return null;
+            for (final PlotArea area : this.areaTree.find(location.toMBR())) {
+                if (area.contains(location)) {
+                    return area;
+                }
             }
-            return area.toBlocking().first().value();
         }
+        return null;
     }
 
     @Override @NotNull public Collection<PlotArea> getAreas() {
@@ -95,7 +98,17 @@ public class ScatteredPlotWorld extends PlotWorld {
         }
         synchronized (this.treeLock) {
             final List<PlotArea> areas = new LinkedList<>();
-            this.areaTree.search(RegionUtil.toRectangle(region)).toBlocking().forEach(entry -> areas.add(entry.value()));
+
+            final BlockVector3 min = region.getMinimumPoint();
+            final BlockVector3 max = region.getMaximumPoint();
+            final MBR mbr = new SimpleMBR(min.getX(), max.getX(), min.getY(), max.getY(), min.getZ(), max.getZ());
+
+            for (final PlotArea area : this.areaTree.find(mbr)) {
+                if (RegionUtil.intersects(area.getRegion(), region)) {
+                    areas.add(area);
+                }
+            }
+
             return areas;
         }
     }
@@ -105,11 +118,8 @@ public class ScatteredPlotWorld extends PlotWorld {
      */
     private void buildTree() {
         synchronized (this.treeLock) {
-            this.areaTree = RTree.create();
-            for (final PlotArea area : areas) {
-                this.areaTree = this.areaTree.add(area,
-                    RegionUtil.toRectangle(area.getRegion()));
-            }
+            this.areaTree = new PRTree<>(MBR_CONVERTER, BRANCH_FACTOR);
+            this.areaTree.load(this.areas);
         }
     }
 

@@ -34,6 +34,8 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
 import lombok.Setter;
+import org.khelekore.prtree.MBR;
+import org.khelekore.prtree.SimpleMBR;
 
 public class Location implements Cloneable, Comparable<Location> {
 
@@ -219,6 +221,10 @@ public class Location implements Cloneable, Comparable<Location> {
         this.y -= y;
         this.z -= z;
         return this;
+    }
+
+    public MBR toMBR() {
+        return new SimpleMBR(this.getX(), this.getX(), this.getY(), this.getY(), this.getZ(), this.getZ());
     }
 
     @Override public boolean equals(Object o) {
