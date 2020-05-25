@@ -23,18 +23,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot;
+package com.plotsquared.core.util.query;
 
-/**
- * Use {@link com.plotsquared.core.util.query.PlotQuery} instead
- */
-@Deprecated public abstract class PlotFilter {
-    public boolean allowsArea(final PlotArea area) {
-        return true;
-    }
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.expiration.ExpireManager;
 
-    public boolean allowsPlot(final Plot plot) {
-        return true;
+import java.util.Collection;
+
+class ExpiredPlotProvider implements PlotProvider {
+
+    @Override public Collection<Plot> getPlots() {
+        return ExpireManager.IMP.getPendingExpired();
     }
 
 }

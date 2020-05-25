@@ -445,6 +445,7 @@ public enum Captions implements Caption {
     NOT_VALID_WORLD("$2That is not a valid world (case sensitive)", "Errors"),
     NOT_VALID_PLOT_WORLD("$2That is not a valid plot area (case sensitive)", "Errors"),
     NO_PLOTS("$2You don't have any plots", "Errors"),
+    PLAYER_NO_PLOTS("$2That player does not own any plots", "Errors"),
     WAIT_FOR_TIMER("$2A set block timer is bound to either the current plot or you. Please wait for it to finish", "Errors"),
     TILE_ENTITY_CAP_REACHED("$2The total number of tile entities in this chunk may not exceed $1%s", "Errors"),
     //</editor-fold>
@@ -783,6 +784,17 @@ public enum Captions implements Caption {
     GENERIC_MERGED("merged", "Generic"),
     GENERIC_UNOWNED("unowned", "Generic"),
     GENERIC_INVALID_CHOICE("invalid choice", "Generic"),
+    //</editor-fold>
+
+    //<editor-fold des="Single area">
+    SINGLE_AREA_MISSING_SELECTION("$2Error! You need to select a square region", "Single"),
+    SINGLE_AREA_NOT_SQUARE("$2Error! Your selection needs to be a square", "Single"),
+    SINGLE_AREA_OVERLAPPING("$2Error! Your selection overlaps with an existing plot area", "Single"),
+    SINGLE_AREA_NEEDS_NAME("$2Error! Please specify a plot name: /plot area single <name>", "Single"),
+    SINGLE_AREA_NAME_TAKEN("$2Error! The plot name is already taken", "Single"),
+    SINGLE_AREA_FAILED_TO_SAVE("$2Error! Failed to save the area schematic", "Single"),
+    SINGLE_AREA_COULD_NOT_MAKE_DIRECTORIES("$2Error! Failed to create the schematic directory", "Single"),
+    SINGLE_AREA_CREATED("$1The area was created successfully!", "Single"),
     //</editor-fold>
 
     /**

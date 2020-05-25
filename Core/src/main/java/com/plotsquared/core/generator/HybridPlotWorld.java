@@ -195,8 +195,16 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public void setupSchematics() throws SchematicHandler.UnsupportedFormatException {
         this.G_SCH = new HashMap<>();
         this.G_SCH_B = new HashMap<>();
-        File root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-            "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName());
+
+        // Try to determine root. This means that plot areas can have separate schematic
+        // directories
+        File root;
+        if (!(root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" +
+            this.getWorldName() + "/" + this.getId())).exists()) {
+            root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+                "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName());
+        }
+
         File schematic1File = new File(root, "sideroad.schem");
         if (!schematic1File.exists())
             schematic1File = new File(root, "sideroad.schematic");
@@ -272,37 +280,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                         (short) (z + shift + oddshift + centerShiftZ), biome);
                 }
             }
-/*            HashMap<BlockLoc, CompoundTag> items = schematic3.getTiles();
-            if (!items.isEmpty()) {
-                this.G_SCH_STATE = new HashMap<>();
-                outer:
-                for (Map.Entry<BlockLoc, CompoundTag> entry : items.entrySet()) {
-                    BlockLoc loc = entry.getKey();
-                    short x = (short) (loc.x + shift + oddshift + centerShiftX);
-                    short z = (short) (loc.z + shift + oddshift + centerShiftZ);
-                    short y = (short) (loc.y + this.PLOT_HEIGHT);
-                    int pair = MathMan.pair(x, z);
-                    HashMap<Integer, CompoundTag> existing = this.G_SCH_STATE.get(pair);
-                    if (existing == null) {
-                        existing = new HashMap<>();
-                        this.G_SCH_STATE.put(pair, existing);
-                    }
-                    existing.put((int) y, entry.getValue());
 
-                    CompoundTag tag = entry.getValue();
-                    Map<String, Tag> map = ReflectionUtils.getMap(tag.getValue());
-                    for (int i = 1; i <= 4; i++) {
-                        String ln = tag.getString("Line" + i);
-                        if (ln == null || ln.length() > 11)
-                            continue outer;
-                    }
-                    SIGN_LOCATION =
-                        new Location(worldname, loc.x + centerShiftX, this.PLOT_HEIGHT + loc.y,
-                            loc.z + centerShiftZ);
-                    ALLOW_SIGNS = true;
-                    continue outer;
-                }
-            }*/
+            PlotSquared.debug(Captions.PREFIX + "&3 - plot schematic: &7"  + schematic3File.getPath());
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
             PlotSquared.debug(Captions.PREFIX + "&3 - schematic: &7false");
