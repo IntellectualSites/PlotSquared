@@ -31,7 +31,7 @@ dependencies {
         exclude(module: "bukkit")
     }
     implementation("me.clip:placeholderapi:2.10.4")
-    implementation("net.luckperms:api:5.0")
+    implementation("net.luckperms:api:5.1")
     implementation("net.ess3:EssentialsX:2.16.1")
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile 'com.github.pavog:SquirrelID:0.6.1'
