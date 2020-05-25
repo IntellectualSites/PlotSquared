@@ -118,7 +118,7 @@ subprojects {
 
     shadowJar {
         dependencies {
-            include(dependency("org.json:json:20190722"))
+            include(dependency("org.json:json:20200518"))
             include(dependency("net.kyori:text-api:3.0.2"))
         }
         relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
