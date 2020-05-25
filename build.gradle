@@ -77,7 +77,7 @@ subprojects {
     }
 
     dependencies {
-        compile group: 'org.json', name: 'json', version: '20190722'
+        compile group: 'org.json', name: 'json', version: '20200518'
 
         implementation("com.sk89q.worldedit:worldedit-core:7.0.0") {
             exclude(module: "bukkit-classloader-check")
