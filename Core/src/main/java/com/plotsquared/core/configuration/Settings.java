@@ -40,13 +40,14 @@ public class Settings extends Config {
     NOTE: Fields are saved in declaration order, classes in reverse order
      */
 
-    @Comment("The first value is not configurable") // This is a comment
+    @Comment("This value is not configurable. It shows the platform you are using.") // This is a comment
     @Final public static String PLATFORM; // These values are set from P2 before loading
 
-    @Comment("Show additional information in console") public static boolean DEBUG = false;
-    @Comment({"The big annoying text that appears when you enter a plot",
-        "For a single plot: `/plot flag set titles false`", "For just you: `/plot toggle titles`",
-        "For all plots: Add `titles: false` in the worlds.yml flags block"}) public static boolean
+    @Comment({"Show additional information in console. It helps us at IntellectualSites to find out more about an issue.",
+    "Leave it off if you don't need it, it can spam your console."}) public static boolean DEBUG = false;
+    @Comment({"The big text that appears when you enter a plot.",
+        "For a single plot set `/plot flag set titles false` to disable it.", "For just you run `/plot toggle titles` to disable it.",
+        "For all plots: Add `titles: false` in the worlds.yml flags block to disable it."}) public static boolean
         TITLES = true;
 
     @Create // This value will be generated automatically
@@ -207,7 +208,7 @@ public class Settings extends Config {
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
 
-        @Comment("See: https://wiki.intellectualsites.com/en/plotsquared/optimization/plot-analysis")
+        @Comment("See: https://wiki.intellectualsites.com/en/plotsquared/optimization/plot-analysis for a description of each value.")
         public static final class CALIBRATION {
             public int VARIETY = 0;
             public int VARIETY_SD = 0;
@@ -223,6 +224,8 @@ public class Settings extends Config {
     }
 
 
+    @Comment({"Chunk processor related settings",
+        "See https://wiki.intellectualsites.com/en/plotsquared/optimization/chunk-processor for more information."})
     public static class Chunk_Processor {
         @Comment("Auto trim will not save chunks which aren't claimed") public static boolean
             AUTO_TRIM = false;
@@ -232,6 +235,8 @@ public class Settings extends Config {
     }
 
 
+    @Comment({"UUID settings",
+    "DO NOT EDIT them unless you know what you are doing."})
     public static class UUID {
         @Comment("Force using offline UUIDs (it usually detects the right mode)")
         public static boolean OFFLINE = false;
@@ -259,7 +264,8 @@ public class Settings extends Config {
     public static final class General {
         @Comment("Display scientific numbers (4.2E8)") public static boolean SCIENTIFIC = false;
         @Comment("Replace wall when merging") public static boolean MERGE_REPLACE_WALL = true;
-        @Comment("Blocks that may not be used in plot components") public static List<String>
+        @Comment({"Blocks that may not be used in plot components",
+        "Checkout the wiki article regarding plot components before modifying: https://wiki.intellectualsites.com/en/plotsquared/installation/plot-components"}) public static List<String>
             INVALID_BLOCKS = Arrays.asList(
             // Acacia Stuff
             "acacia_button", "acacia_fence_gate", "acacia_door", "acacia_pressure_plate",
@@ -373,7 +379,8 @@ public class Settings extends Config {
     }
 
 
-    @Comment("Schematic Settings")
+    @Comment({"Schematic Settings",
+            "See https://wiki.intellectualsites.com/en/plotsquared/schematics/on-claim for more information."})
     public static final class Schematics {
         @Comment(
             "Whether schematic based generation should paste schematic on top of plots, or from Y=1")
@@ -390,6 +397,7 @@ public class Settings extends Config {
     }
 
 
+    @Comment("Schematic and Asset interface related settings")
     public static class Web {
         @Comment({"The web interface for schematics", " - All schematics are anonymous and private",
             " - Downloads can be deleted by the user",
@@ -402,8 +410,9 @@ public class Settings extends Config {
     }
 
 
+    @Comment("Misc settings")
     public static final class Done {
-        @Comment("Require a plot marked as done to download") public static boolean
+        @Comment("Require a plot marked as done to download (/plot download)") public static boolean
             REQUIRED_FOR_DOWNLOAD = false;
         @Comment("Only plots marked as done can be rated") public static boolean
             REQUIRED_FOR_RATINGS = false;
@@ -414,6 +423,7 @@ public class Settings extends Config {
     }
 
 
+    @Comment("Chat related settings")
     public static final class Chat {
         @Comment("Sometimes console color doesn't work, you can disable it here")
         public static boolean CONSOLE_COLOR = true;
@@ -421,7 +431,7 @@ public class Settings extends Config {
     }
 
 
-    @Comment("Relating to how many plots someone can claim  ")
+    @Comment("Relating to how many plots someone can claim")
     public static final class Limit {
         @Comment("Should the limit be global (over multiple worlds)") public static boolean GLOBAL =
             false;
@@ -432,9 +442,10 @@ public class Settings extends Config {
     }
 
 
-    @Comment("Backup related settings")
+    @Comment({"Backup related settings",
+            "See https://wiki.intellectualsites.com/en/plotsquared/backups for more information."})
     public static final class Backup {
-        @Comment("Automatically backup plots when destructive commands are performed")
+        @Comment("Automatically backup plots when destructive commands are performed, e.g. /plot clear")
         public static boolean AUTOMATIC_BACKUPS = true;
         @Comment("Maximum amount of backups associated with a plot") public static int
             BACKUP_LIMIT = 3;
@@ -443,12 +454,14 @@ public class Settings extends Config {
     }
 
 
+    @Comment("Confirmation timeout related settings")
     public static final class Confirmation {
         @Comment("Timeout before a confirmation prompt expires") public static int
             CONFIRMATION_TIMEOUT_SECONDS = 20;
     }
 
 
+    @Comment("Teleportation related settings")
     public static final class Teleport {
         @Comment("Teleport to your plot on death") public static boolean ON_DEATH = false;
         @Comment("Teleport to your plot on login") public static boolean ON_LOGIN = false;
@@ -461,6 +474,7 @@ public class Settings extends Config {
     }
 
 
+    @Comment("Redstone related settings")
     public static final class Redstone {
         @Comment("Disable redstone in unoccupied plots") public static boolean DISABLE_UNOCCUPIED =
             false;
@@ -472,12 +486,14 @@ public class Settings extends Config {
     }
 
 
+    @Comment("Claim related settings")
     public static final class Claim {
         @Comment("The max plots claimed in a single `/plot auto <size>` command") public static int
             MAX_AUTO_AREA = 4;
     }
 
 
+    @Comment("Rating related settings")
     public static final class Ratings {
         @Comment("Replace the rating system with a like system. Will add /plot like/dislike,"
             + " and remove the rating command") public static boolean USE_LIKES = false;
@@ -528,27 +544,28 @@ public class Settings extends Config {
             true;
         @Comment("Allow WorldEdit to be restricted to plots") public static boolean
             WORLDEDIT_RESTRICTIONS = true;
-        @Comment("Allow economy to be used") public static boolean ECONOMY = true;
+        @Comment("Allow economy to be used to sell, claim or buy plots.") public static boolean ECONOMY = true;
         @Comment("Expiry will clear old or simplistic plots") public static boolean PLOT_EXPIRY =
             false;
         @Comment("Processes chunks (trimming, or entity/tile limits) ") public static boolean
             CHUNK_PROCESSOR = false;
-        @Comment("Kill mobs on roads") public static boolean KILL_ROAD_MOBS = false;
-        @Comment("Kill items on roads") public static boolean KILL_ROAD_ITEMS = false;
-        @Comment("Kill vehicles on roads") public static boolean KILL_ROAD_VEHICLES = false;
-        @Comment("Notify a player of any missed comments upon plot entry") public static boolean
+        @Comment("Kill mobs on roads (Chicken, Cow, etc.)") public static boolean KILL_ROAD_MOBS = false;
+        @Comment("Kill items on roads (Stick, Paper, etc.)") public static boolean KILL_ROAD_ITEMS = false;
+        @Comment("Kill vehicles on roads (Boat, Minecart, etc.)") public static boolean KILL_ROAD_VEHICLES = false;
+        @Comment("Notify a player of any missed plot comments upon plot entry") public static boolean
             COMMENT_NOTIFIER = false;
         @Comment("Let players claim entire worlds with PlotSquared") public static boolean WORLDS =
             false;
         @Comment("Actively purge invalid database entries") public static boolean DATABASE_PURGER =
             false;
-        @Comment("Delete plots when a player is banned") public static boolean BAN_DELETER = false;
-        @Comment("Allows PlaceholderAPI placeholders to be used in captions, flags, etc")
+        @Comment({"Delete plots when a player is banned.",
+        "Note: This only works with the /minecraft:ban command. Any punishment plugin like LiteBans is not supported."}) public static boolean BAN_DELETER = false;
+        @Comment("Allows PlaceholderAPI placeholders to be used in captions, flags, etc.")
         public static boolean EXTERNAL_PLACEHOLDERS = true;
         @Comment("Make road regeneration persistent across restarts") public static boolean
             PERSISTENT_ROAD_REGEN = false;
-        @Comment("Plot component preset GUI")
-        public static boolean COMPONENT_PRESETS = true;
+        @Comment({"Enable the `/plot component` preset GUI",
+        "Read more about components here: https://wiki.intellectualsites.com/en/plotsquared/installation/plot-components"}) public static boolean COMPONENT_PRESETS = true;
         @Comment("Use UUID cache to complete usernames")
         public static boolean EXTENDED_USERNAME_COMPLETION = true;
     }
