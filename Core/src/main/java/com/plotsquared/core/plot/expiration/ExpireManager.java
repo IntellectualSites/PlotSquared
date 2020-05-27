@@ -83,7 +83,7 @@ public class ExpireManager {
         this.tasks.add(task);
     }
 
-    public void handleJoin(PlotPlayer pp) {
+    public void handleJoin(PlotPlayer<?> pp) {
         storeDate(pp.getUUID(), System.currentTimeMillis());
         if (plotsToDelete != null && !plotsToDelete.isEmpty()) {
             for (Plot plot : pp.getPlots()) {

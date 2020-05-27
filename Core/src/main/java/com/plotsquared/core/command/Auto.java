@@ -154,7 +154,7 @@ public class Auto extends SubCommand {
             () -> autoClaimFromDatabase(player, area, plot.getId(), whenDone));
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
             if (EconHandler.manager != null) {

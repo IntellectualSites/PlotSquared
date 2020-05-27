@@ -54,7 +54,7 @@ public class Buy extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
 

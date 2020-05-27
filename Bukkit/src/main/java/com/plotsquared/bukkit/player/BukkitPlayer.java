@@ -63,12 +63,11 @@ import static com.sk89q.worldedit.world.gamemode.GameModes.CREATIVE;
 import static com.sk89q.worldedit.world.gamemode.GameModes.SPECTATOR;
 import static com.sk89q.worldedit.world.gamemode.GameModes.SURVIVAL;
 
-public class BukkitPlayer extends PlotPlayer {
+public class BukkitPlayer extends PlotPlayer<Player> {
 
     private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
     private boolean offline;
-    private UUID uuid;
     private String name;
 
     /**
@@ -78,18 +77,27 @@ public class BukkitPlayer extends PlotPlayer {
      * @param player Bukkit player instance
      */
     public BukkitPlayer(@NotNull final Player player) {
-        this.player = player;
-        super.populatePersistentMetaMap();
+        this(player, false);
     }
 
     public BukkitPlayer(@NotNull final Player player, final boolean offline) {
+        this(player, offline, true);
+    }
+
+    public BukkitPlayer(@NotNull final Player player, final boolean offline, final boolean realPlayer) {
         this.player = player;
         this.offline = offline;
-        super.populatePersistentMetaMap();
+        if (realPlayer) {
+            super.populatePersistentMetaMap();
+        }
     }
 
     @Override public Actor toActor() {
         return BukkitAdapter.adapt(player);
+    }
+
+    @Override public Player getPlatformPlayer() {
+        return this.player;
     }
 
     @NotNull @Override public Location getLocation() {

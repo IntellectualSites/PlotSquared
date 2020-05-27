@@ -44,7 +44,7 @@ import com.plotsquared.core.util.Permissions;
     requiredType = RequiredType.PLAYER)
 public class Continue extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);

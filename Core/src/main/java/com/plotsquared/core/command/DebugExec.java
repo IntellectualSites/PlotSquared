@@ -178,7 +178,7 @@ public class DebugExec extends SubCommand {
         }
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         List<String> allowed_params = Arrays
             .asList("analyze", "calibrate-analysis", "remove-flag", "stop-expire", "start-expire",
                 "seen", "list-scripts", "start-rgar", "stop-rgar", "help", "addcmd", "runasync",
@@ -312,7 +312,7 @@ public class DebugExec extends SubCommand {
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
                             RequiredType.NONE, CommandCategory.DEBUG) {
                             @Override
-                            public CompletableFuture<Boolean> execute(PlotPlayer player,
+                            public CompletableFuture<Boolean> execute(PlotPlayer<?> player,
                                 String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
                                 RunnableVal2<Command, CommandResult> whenDone) {
                                 try {

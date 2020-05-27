@@ -399,9 +399,9 @@ public class Plot {
      *
      * @return list of PlotPlayer(s) or an empty list
      */
-    public List<PlotPlayer> getPlayersInPlot() {
-        final List<PlotPlayer> players = new ArrayList<>();
-        for (final PlotPlayer player : PlotSquared.imp().getPlayerManager().getPlayers()) {
+    public List<PlotPlayer<?>> getPlayersInPlot() {
+        final List<PlotPlayer<?>> players = new ArrayList<>();
+        for (final PlotPlayer<?> player : PlotSquared.imp().getPlayerManager().getPlayers()) {
             if (this.equals(player.getCurrentPlot())) {
                 players.add(player);
             }
@@ -1323,8 +1323,8 @@ public class Plot {
             return false;
         }
         for (Plot current : getConnectedPlots()) {
-            List<PlotPlayer> players = current.getPlayersInPlot();
-            for (PlotPlayer pp : players) {
+            List<PlotPlayer<?>> players = current.getPlayersInPlot();
+            for (PlotPlayer<?> pp : players) {
                 PlotListener.plotExit(pp, current);
             }
 

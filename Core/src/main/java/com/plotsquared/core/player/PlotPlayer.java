@@ -68,7 +68,7 @@ import java.util.stream.Collectors;
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
  */
-public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
+public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer {
 
     public static final String META_LAST_PLOT = "lastplot";
     public static final String META_LOCATION = "location";
@@ -103,11 +103,13 @@ public abstract class PlotPlayer implements CommandCaller, OfflinePlotPlayer {
      * @param player
      * @return
      */
-    public static PlotPlayer wrap(Object player) {
+    public static PlotPlayer<?> wrap(Object player) {
         return PlotSquared.get().IMP.wrapPlayer(player);
     }
 
     public abstract Actor toActor();
+
+    public abstract P getPlatformPlayer();
 
     /**
      * Set some session only metadata for this player.

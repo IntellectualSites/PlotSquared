@@ -175,7 +175,7 @@ public class Like extends SubCommand {
         return numLikes / (numLikes + numDislikes);
     }
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         return handleLike(player, args, true);
     }
 

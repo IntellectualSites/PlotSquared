@@ -51,7 +51,7 @@ public class Deny extends SubCommand {
         super(Argument.PlayerName);
     }
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();

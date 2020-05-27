@@ -45,7 +45,7 @@ import java.util.concurrent.TimeoutException;
     requiredType = RequiredType.PLAYER)
 public class Alias extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
         if (args.length == 0) {
             Captions.COMMAND_SYNTAX.send(player, getUsage());

@@ -78,7 +78,7 @@ public class Merge extends SubCommand {
         }
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocationFull();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {

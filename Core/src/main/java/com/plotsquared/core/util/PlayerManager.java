@@ -39,7 +39,7 @@ import java.util.UUID;
 /**
  * Manages player instances
  */
-public abstract class PlayerManager<P extends PlotPlayer, O extends OfflinePlotPlayer> {
+public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
 
     private final Map<UUID, P> playerMap = new HashMap<>();
     private final Object playerLock = new Object();
@@ -78,6 +78,18 @@ public abstract class PlayerManager<P extends PlotPlayer, O extends OfflinePlotP
     }
 
     /**
+     * Get a plot player from a platform player object. This method requires
+     * that the caller actually knows that the player exists.
+     * <p>
+     * The method will throw an exception if there is no such
+     * player online.
+     *
+     * @param object Platform player object
+     * @return Player object
+     */
+    @NotNull public abstract P getPlayer(@NotNull final T object);
+
+    /**
      * Get a plot player from a UUID. This method requires
      * that the caller actually knows that the player exists.
      * <p>
@@ -106,7 +118,7 @@ public abstract class PlayerManager<P extends PlotPlayer, O extends OfflinePlotP
      * @param uuid Player UUID
      * @return Offline player object
      */
-    @Nullable public abstract O getOfflinePlayer(@Nullable final UUID uuid);
+    @Nullable public abstract OfflinePlotPlayer getOfflinePlayer(@Nullable final UUID uuid);
 
     /**
      * Get an offline player object from the player's username
@@ -114,7 +126,7 @@ public abstract class PlayerManager<P extends PlotPlayer, O extends OfflinePlotP
      * @param username Player name
      * @return Offline player object
      */
-    @Nullable public abstract O getOfflinePlayer(@NotNull final String username);
+    @Nullable public abstract OfflinePlotPlayer getOfflinePlayer(@NotNull final String username);
 
     /**
      * Get all online players
@@ -132,6 +144,9 @@ public abstract class PlayerManager<P extends PlotPlayer, O extends OfflinePlotP
             super(String.format("There is no online player with UUID '%s'", uuid.toString()));
         }
 
+        @Override public synchronized Throwable fillInStackTrace() {
+            return this;
+        }
     }
 
 }

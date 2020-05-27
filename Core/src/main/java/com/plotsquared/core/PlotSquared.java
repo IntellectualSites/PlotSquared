@@ -141,7 +141,7 @@ public class PlotSquared {
     private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
     private static PlotSquared instance;
     // Implementation
-    public final IPlotMain IMP;
+    public final IPlotMain<?> IMP;
     // Current thread
     private final Thread thread;
     // UUID pipelines
@@ -386,7 +386,7 @@ public class PlotSquared {
         return PlotSquared.instance;
     }
 
-    @NotNull public static IPlotMain imp() {
+    @NotNull public static IPlotMain<?> imp() {
         if (instance != null && instance.IMP != null) {
             return instance.IMP;
         }

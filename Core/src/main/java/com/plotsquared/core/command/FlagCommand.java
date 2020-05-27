@@ -207,7 +207,7 @@ public final class FlagCommand extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 0 || !Arrays

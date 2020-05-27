@@ -83,7 +83,7 @@ import java.util.Set;
     confirmation = true)
 public class Area extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             Captions.COMMAND_SYNTAX.send(player, getUsage());
             return false;

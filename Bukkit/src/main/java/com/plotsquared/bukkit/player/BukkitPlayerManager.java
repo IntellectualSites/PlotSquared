@@ -36,7 +36,15 @@ import java.util.UUID;
 /**
  * Player manager providing {@link BukkitPlayer Bukkit players}
  */
-public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, BukkitOfflinePlayer> {
+public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
+
+    @NotNull @Override public BukkitPlayer getPlayer(@NotNull final Player object) {
+        try {
+            return getPlayer(object.getUniqueId());
+        } catch (final NoSuchPlayerException exception) {
+            return new BukkitPlayer(object, object.isOnline(), false);
+        }
+    }
 
     @Override @NotNull public BukkitPlayer createPlayer(@NotNull final UUID uuid) {
         final Player player = Bukkit.getPlayer(uuid);

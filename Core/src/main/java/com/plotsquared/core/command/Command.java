@@ -106,7 +106,7 @@ public abstract class Command {
                     && types[4] == RunnableVal2.class) {
                     Command tmp = new Command(this, true) {
                         @Override
-                        public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+                        public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
                             RunnableVal3<Command, Runnable, Runnable> confirm,
                             RunnableVal2<Command, CommandResult> whenDone) {
                             try {
@@ -300,7 +300,7 @@ public abstract class Command {
      * @return CompletableFuture true if the command executed fully, false in
      * any other case
      */
-    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 0 || args[0] == null) {

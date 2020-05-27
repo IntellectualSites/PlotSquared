@@ -50,7 +50,12 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public interface IPlotMain extends ILogger {
+/**
+ * PlotSquared main utility class
+ *
+ * @param <P> Player type
+ */
+public interface IPlotMain<P> extends ILogger {
 
     /**
      * Logs a message to console.
@@ -286,6 +291,6 @@ public interface IPlotMain extends ILogger {
      *
      * @return Player manager
      */
-    @NotNull PlayerManager<?, ?> getPlayerManager();
+    @NotNull PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager();
 
 }

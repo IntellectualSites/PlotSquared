@@ -41,7 +41,7 @@ import com.plotsquared.core.util.Permissions;
     requiredType = RequiredType.NONE)
 public class Copy extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {

@@ -50,7 +50,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
     usage = "/plot caps")
 public class Caps extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, final String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             return Captions.NOT_IN_PLOT.send(player);

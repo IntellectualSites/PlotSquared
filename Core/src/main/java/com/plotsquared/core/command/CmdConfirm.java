@@ -32,15 +32,15 @@ import com.plotsquared.core.util.task.TaskManager;
 
 public class CmdConfirm {
 
-    public static CmdInstance getPending(PlotPlayer player) {
+    public static CmdInstance getPending(PlotPlayer<?> player) {
         return player.getMeta("cmdConfirm");
     }
 
-    public static void removePending(PlotPlayer player) {
+    public static void removePending(PlotPlayer<?> player) {
         player.deleteMeta("cmdConfirm");
     }
 
-    public static void addPending(final PlotPlayer player, String commandStr,
+    public static void addPending(final PlotPlayer<?> player, String commandStr,
         final Runnable runnable) {
         removePending(player);
         if (commandStr != null) {

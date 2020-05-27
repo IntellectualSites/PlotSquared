@@ -123,7 +123,7 @@ public class PlotListener {
         }, 20);
     }
 
-    public static boolean plotEntry(final PlotPlayer player, final Plot plot) {
+    public static boolean plotEntry(final PlotPlayer<?> player, final Plot plot) {
         if (plot.isDenied(player.getUUID()) && !Permissions
             .hasPermission(player, "plots.admin.entry.denied")) {
             return false;
@@ -293,7 +293,7 @@ public class PlotListener {
         return true;
     }
 
-    public static boolean plotExit(final PlotPlayer player, Plot plot) {
+    public static boolean plotExit(final PlotPlayer<?> player, Plot plot) {
         Object previous = player.deleteMeta(PlotPlayer.META_LAST_PLOT);
         PlotSquared.get().getEventDispatcher().callLeave(player, plot);
         if (plot.hasOwner()) {

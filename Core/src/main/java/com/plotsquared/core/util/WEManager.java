@@ -83,7 +83,7 @@ public class WEManager {
         return false;
     }
 
-    public static HashSet<CuboidRegion> getMask(PlotPlayer player) {
+    public static HashSet<CuboidRegion> getMask(PlotPlayer<?> player) {
         HashSet<CuboidRegion> regions = new HashSet<>();
         UUID uuid = player.getUUID();
         Location location = player.getLocation();

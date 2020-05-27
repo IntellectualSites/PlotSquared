@@ -53,7 +53,7 @@ public class Grant extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length >= 1 && args.length <= 2, Captions.COMMAND_SYNTAX, getUsage());

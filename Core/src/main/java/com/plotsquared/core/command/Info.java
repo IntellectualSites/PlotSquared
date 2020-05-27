@@ -41,7 +41,7 @@ import com.plotsquared.core.util.task.RunnableVal;
     category = CommandCategory.INFO)
 public class Info extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Plot plot;
         String arg;
         if (args.length > 0) {

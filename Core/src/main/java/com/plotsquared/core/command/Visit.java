@@ -139,7 +139,7 @@ public class Visit extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer player,
+    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player,
         String[] args,
         final RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) throws CommandException {

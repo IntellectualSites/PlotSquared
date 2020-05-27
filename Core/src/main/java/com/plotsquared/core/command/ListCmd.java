@@ -116,7 +116,7 @@ public class ListCmd extends SubCommand {
             .toString(getArgumentList(player)));
     }
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
             noArgs(player);
             return false;

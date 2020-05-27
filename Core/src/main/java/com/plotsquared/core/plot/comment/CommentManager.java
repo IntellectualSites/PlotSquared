@@ -75,7 +75,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         }, 20);
     }
 
-    public static long getTimestamp(PlotPlayer player, String inbox) {
+    public static long getTimestamp(PlotPlayer<?> player, String inbox) {
         return player.getMeta("inbox:" + inbox, player.getLastPlayed());
     }
 

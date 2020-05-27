@@ -90,7 +90,7 @@ public class Setup extends SubCommand {
         MainUtil.sendMessage(player, message.toString());
     }
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         // going through setup
         SetupObject object = player.getMeta("setup");
         if (object == null) {

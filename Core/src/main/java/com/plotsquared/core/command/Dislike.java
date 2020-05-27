@@ -35,7 +35,7 @@ import com.plotsquared.core.player.PlotPlayer;
     requiredType = RequiredType.PLAYER)
 public class Dislike extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         return Like.handleLike(player, args, false);
     }
 

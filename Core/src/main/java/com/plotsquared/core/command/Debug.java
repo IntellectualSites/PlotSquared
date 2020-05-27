@@ -48,7 +48,7 @@ import java.util.Map;
     permission = "plots.admin")
 public class Debug extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length > 0) {
             if ("player".equalsIgnoreCase(args[0])) {
                 for (Map.Entry<String, Object> meta : player.getMeta().entrySet()) {

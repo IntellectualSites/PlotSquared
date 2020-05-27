@@ -156,7 +156,7 @@ import static com.plotsquared.core.util.PremiumVerification.getResourceID;
 import static com.plotsquared.core.util.PremiumVerification.getUserID;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
-public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain {
+public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<Player> {
 
     private static final int BSTATS_ID = 1404;
     @Getter private static WorldEdit worldEdit;
@@ -175,8 +175,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
     @Getter private BackupManager backupManager;
-    @Getter private PlatformWorldManager worldManager;
-    @Getter private final PlayerManager playerManager = new BukkitPlayerManager();
+    @Getter private PlatformWorldManager<World> worldManager;
+    private final BukkitPlayerManager playerManager = new BukkitPlayerManager();
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -1079,4 +1079,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain 
         return wePlugin.wrapCommandSender(console);
     }
 
+    @Override @NotNull public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
+        return this.playerManager;
+    }
 }

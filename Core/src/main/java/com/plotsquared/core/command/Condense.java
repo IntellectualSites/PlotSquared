@@ -54,7 +54,7 @@ public class Condense extends SubCommand {
 
     public static boolean TASK = false;
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {
             MainUtil.sendMessage(player, getUsage());
             return false;

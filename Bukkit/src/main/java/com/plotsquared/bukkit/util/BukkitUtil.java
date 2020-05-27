@@ -27,6 +27,7 @@ package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.player.BukkitPlayer;
+import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
@@ -35,6 +36,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -112,14 +114,14 @@ public class BukkitUtil extends WorldUtil {
     private static World lastWorld = null;
 
     private static Player lastPlayer = null;
-    private static PlotPlayer lastPlotPlayer = null;
+    private static BukkitPlayer lastPlotPlayer = null;
 
     public static void removePlayer(String player) {
         lastPlayer = null;
         lastPlotPlayer = null;
     }
 
-    public static PlotPlayer getPlayer(@NonNull final OfflinePlayer op) {
+    public static PlotPlayer<?> getPlayer(@NonNull final OfflinePlayer op) {
         if (op.isOnline()) {
             return getPlayer(op.getPlayer());
         }
@@ -164,7 +166,7 @@ public class BukkitUtil extends WorldUtil {
      * @return a {@code PlotPlayer}
      * @see PlotPlayer#wrap(Object)
      */
-    public static PlotPlayer wrapPlayer(OfflinePlayer player) {
+    public static PlotPlayer<?> wrapPlayer(OfflinePlayer player) {
         return PlotPlayer.wrap(player);
     }
 
@@ -176,7 +178,7 @@ public class BukkitUtil extends WorldUtil {
      * @return a {@code PlotPlayer}
      * @see PlotPlayer#wrap(Object)
      */
-    public static PlotPlayer wrapPlayer(Player player) {
+    public static PlotPlayer<?> wrapPlayer(Player player) {
         return PlotPlayer.wrap(player);
     }
 
@@ -188,7 +190,7 @@ public class BukkitUtil extends WorldUtil {
      * @return a {@code PlotPlayer}
      * @see PlotPlayer#wrap(Object)
      */
-    @Override public PlotPlayer wrapPlayer(UUID uuid) {
+    @Override public PlotPlayer<?> wrapPlayer(UUID uuid) {
         return PlotPlayer.wrap(Bukkit.getOfflinePlayer(uuid));
     }
 
@@ -199,7 +201,7 @@ public class BukkitUtil extends WorldUtil {
      * @return the number of allowed plots
      */
     public static int getAllowedPlots(Player player) {
-        PlotPlayer plotPlayer = PlotPlayer.wrap(player);
+        PlotPlayer<?> plotPlayer = PlotPlayer.wrap(player);
         return plotPlayer.getAllowedPlots();
     }
 
@@ -225,7 +227,7 @@ public class BukkitUtil extends WorldUtil {
         if (world == null) {
             return new HashSet<>();
         }
-        return PlotPlayer.wrap(player).getPlots(world);
+        return BukkitPlayer.wrap(player).getPlots(world);
     }
 
     /**
@@ -263,11 +265,12 @@ public class BukkitUtil extends WorldUtil {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
     }
 
-    public static PlotPlayer getPlayer(@NonNull final Player player) {
+    public static BukkitPlayer getPlayer(@NonNull final Player player) {
         if (player == lastPlayer) {
             return lastPlotPlayer;
         }
-        return PlotSquared.imp().getPlayerManager().getPlayer(player.getUniqueId());
+        final PlayerManager<?, ?> playerManager = PlotSquared.imp().getPlayerManager();
+        return ((BukkitPlayerManager) player).getPlayer(player);
     }
 
     public static Location getLocation(@NonNull final org.bukkit.Location location) {

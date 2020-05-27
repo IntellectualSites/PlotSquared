@@ -695,7 +695,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
         Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
         org.bukkit.Location to = event.getTo();
         //noinspection ConstantConditions
@@ -805,7 +805,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         int x2;
         if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
             Player player = event.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            BukkitPlayer pp = BukkitUtil.getPlayer(player);
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
@@ -865,7 +865,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         int z2;
         if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
             Player player = event.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            BukkitPlayer pp = BukkitUtil.getPlayer(player);
             // Cancel teleport
             TaskManager.TELEPORT_QUEUE.remove(pp.getName());
             // Set last location
@@ -929,7 +929,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
 
-        PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
+        BukkitPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -997,7 +997,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = area.getPlot(location);
         if (plot != null) {
-            PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+            BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (event.getBlock().getY() == 0) {
                 if (!Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
@@ -1046,7 +1046,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             return;
         }
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
         if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
@@ -1114,7 +1114,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldChanged(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
         // Delete last location
         Plot plot = (Plot) pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
         pp.deleteMeta(PlotPlayer.META_LOCATION);
@@ -1177,14 +1177,14 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (entity instanceof Player) {
             Player player = (Player) entity;
             if (!plot.hasOwner()) {
-                PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+                BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
                 if (plot.getFlag(IceFormFlag.class)) {
                     return;
                 }
                 event.setCancelled(true);
                 return;
             }
-            PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+            BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
                 if (plot.getFlag(IceFormFlag.class)) {
                     return;
@@ -1297,7 +1297,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             if (!plot.hasOwner()) {
-                PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+                BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
                 if (Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
@@ -1305,7 +1305,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+            BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
                 List<BlockTypeWrapper> destroy = plot.getFlag(BreakFlag.class);
                 Block block = event.getBlock();
@@ -1320,7 +1320,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             return;
         }
-        PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+        BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
         if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
@@ -1671,7 +1671,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Player player = (Player) clicker;
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
         final PlotInventory inventory = PlotInventory.getOpenPlotInventory(pp);
         if (inventory != null && event.getRawSlot() == event.getSlot()) {
             if (!inventory.onClick(event.getSlot())) {
@@ -1812,7 +1812,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         EntitySpawnListener.testNether(entity);
         Plot plot = location.getPlotAbs();
-        PlotPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
+        BukkitPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
@@ -1881,7 +1881,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onCancelledInteract(PlayerInteractEvent event) {
         if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
             Player player = event.getPlayer();
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            BukkitPlayer pp = BukkitUtil.getPlayer(player);
             PlotArea area = pp.getPlotAreaAbs();
             if (area == null) {
                 return;
@@ -1918,7 +1918,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
         PlotArea area = pp.getPlotAreaAbs();
         if (area == null) {
             return;
@@ -2195,7 +2195,7 @@ public class PlayerEvents extends PlotListener implements Listener {
 
         Plot plot = area.getOwnedPlot(location1);
         if (player != null) {
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            BukkitPlayer pp = BukkitUtil.getPlayer(player);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
@@ -2271,7 +2271,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         if (area == null) {
             return;
         }
-        PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
+        BukkitPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         Plot plot = area.getPlot(location);
         if (plot == null) {
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
@@ -2322,7 +2322,7 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR) public void onLeave(PlayerQuitEvent event) {
         TaskManager.TELEPORT_QUEUE.remove(event.getPlayer().getName());
-        PlotPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
+        BukkitPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         pp.unregister();
         PlotListener.logout(pp.getUUID());
     }
@@ -2336,7 +2336,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+        BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
         Plot plot = area.getPlot(location);
         if (plot == null) {
             if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
@@ -2409,7 +2409,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        PlotPlayer pp = BukkitUtil.getPlayer(p);
+        BukkitPlayer pp = BukkitUtil.getPlayer(p);
         Plot plot = area.getPlot(location);
         if (plot == null) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
@@ -2453,7 +2453,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (area == null) {
                 return;
             }
-            PlotPlayer pp = BukkitUtil.getPlayer(p);
+            BukkitPlayer pp = BukkitUtil.getPlayer(p);
             Plot plot = area.getPlot(location);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_DESTROY_ROAD)) {
@@ -2486,7 +2486,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (area == null) {
                     return;
                 }
-                PlotPlayer player = BukkitUtil.getPlayer(shooter);
+                BukkitPlayer player = BukkitUtil.getPlayer(shooter);
                 Plot plot = area.getPlot(BukkitUtil.getLocation(event.getEntity()));
                 if (plot != null) {
                     if (!plot.hasOwner()) {
@@ -2521,7 +2521,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Player p = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(p);
+        BukkitPlayer pp = BukkitUtil.getPlayer(p);
         Plot plot = area.getPlot(location);
         if (plot == null) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_ROAD)) {
@@ -2595,7 +2595,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Entity attacker = event.getAttacker();
         if (attacker instanceof Player) {
             Player p = (Player) attacker;
-            PlotPlayer pp = BukkitUtil.getPlayer(p);
+            BukkitPlayer pp = BukkitUtil.getPlayer(p);
             Plot plot = area.getPlot(location);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.road")) {
@@ -2778,7 +2778,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             player = null;
         }
         if (player != null) {
-            PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+            BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
 
             final com.sk89q.worldedit.world.entity.EntityType entityType;
 
@@ -2901,7 +2901,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        PlotPlayer plotPlayer = BukkitUtil.getPlayer(player);
+        BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
         Plot plot = area.getPlot(location);
         if (plot == null) {
             if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.road")) {
@@ -2932,7 +2932,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = area.getPlot(location);
         if (plot != null) {
             if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area
@@ -3000,7 +3000,7 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler public void onItemDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
-        PlotPlayer pp = BukkitUtil.getPlayer(player);
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
         Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
         if (plot == null) {
             return;
@@ -3017,7 +3017,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         LivingEntity ent = event.getEntity();
         if (ent instanceof Player) {
             Player player = (Player) ent;
-            PlotPlayer pp = BukkitUtil.getPlayer(player);
+            BukkitPlayer pp = BukkitUtil.getPlayer(player);
             Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
             if (plot == null) {
                 return;

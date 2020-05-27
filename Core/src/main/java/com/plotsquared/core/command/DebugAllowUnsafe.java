@@ -42,7 +42,7 @@ public class DebugAllowUnsafe extends SubCommand {
 
     public static final List<UUID> unsafeAllowed = new ArrayList<>();
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
         if (unsafeAllowed.contains(player.getUUID())) {
             unsafeAllowed.remove(player.getUUID());

@@ -176,7 +176,7 @@ public class Set extends SubCommand {
         return false;
     }
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             return noArgs(player);
         }

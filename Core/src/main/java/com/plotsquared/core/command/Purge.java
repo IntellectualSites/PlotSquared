@@ -53,7 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
     confirmation = true)
 public class Purge extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             Captions.COMMAND_SYNTAX.send(player, getUsage());
             return false;

@@ -45,7 +45,7 @@ import java.util.concurrent.CompletableFuture;
 public class Swap extends SubCommand {
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         Location location = player.getLocation();
@@ -93,7 +93,7 @@ public class Swap extends SubCommand {
         });
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         return true;
     }
 }

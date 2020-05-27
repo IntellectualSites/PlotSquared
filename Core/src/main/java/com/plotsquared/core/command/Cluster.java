@@ -54,7 +54,7 @@ import java.util.concurrent.TimeoutException;
     description = "Manage a plot cluster")
 public class Cluster extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
         if (args.length == 0) {

@@ -37,7 +37,7 @@ import com.plotsquared.core.util.MainUtil;
     requiredType = RequiredType.PLAYER)
 public class Chat extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (player.getPlotAreaAbs().isForcingPlotChat()) {
             MainUtil.sendMessage(player, Captions.PLOT_CHAT_FORCED);
             return true;

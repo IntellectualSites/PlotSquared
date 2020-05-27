@@ -54,7 +54,7 @@ import com.plotsquared.core.util.task.TaskManager;
     usage = "/plot claim")
 public class Claim extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String schematic = null;
         if (args.length >= 1) {
             schematic = args[0];

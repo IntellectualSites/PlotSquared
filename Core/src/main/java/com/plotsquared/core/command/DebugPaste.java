@@ -71,7 +71,7 @@ public class DebugPaste extends SubCommand {
         return content.toString();
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.runTaskAsync(() -> {
             try {
 

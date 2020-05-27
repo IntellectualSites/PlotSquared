@@ -45,7 +45,7 @@ public class Target extends SubCommand {
         super(Argument.PlotID);
     }
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         if (!location.isPlotArea()) {
             MainUtil.sendMessage(player, Captions.NOT_IN_PLOT_WORLD);

@@ -46,7 +46,7 @@ import java.util.Locale;
     permission = "plots.comment")
 public class Comment extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 2) {
             sendMessage(player, Captions.COMMENT_SYNTAX,
                 StringMan.join(CommentManager.inboxes.keySet(), "|"));

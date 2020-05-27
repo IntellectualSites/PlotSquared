@@ -86,7 +86,7 @@ public class Inbox extends SubCommand {
         MainUtil.sendMessage(player, string.toString());
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             sendMessage(player, Captions.NOT_IN_PLOT);
