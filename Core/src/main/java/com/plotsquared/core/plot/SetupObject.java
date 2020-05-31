@@ -28,6 +28,10 @@ package com.plotsquared.core.plot;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.util.SetupUtils;
 
+/**
+ * @deprecated will be removed in v6
+ */
+@Deprecated
 public class SetupObject {
 
     /**
