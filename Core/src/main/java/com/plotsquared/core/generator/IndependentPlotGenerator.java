@@ -30,6 +30,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.setup.SetupProcess;
 
 /**
  * This class allows for implementation independent world generation.
@@ -74,8 +75,17 @@ public abstract class IndependentPlotGenerator {
      *
      * @param setup
      */
+    @Deprecated
     public void processSetup(SetupObject setup) {
     }
+
+    /**
+     * If any additional setup options need to be changed before world creation.
+     * - e.g. If setup doesn't support some standard options
+     *
+     * @param setupProcess the setup process to modify
+     */
+    public void processSetup(SetupProcess setupProcess) { }
 
     /**
      * It is preferred for the PlotArea object to do most of the initialization necessary.

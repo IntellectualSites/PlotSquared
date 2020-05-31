@@ -25,6 +25,10 @@
  */
 package com.plotsquared.core.plot;
 
+import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.Captions;
+import lombok.Getter;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -32,10 +36,22 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum PlotAreaType {
-    NORMAL, AUGMENTED, PARTIAL;
+    NORMAL(Captions.PLOT_AREA_TYPE_NORMAL),
+    AUGMENTED(Captions.PLOT_AREA_TYPE_AUGMENTED),
+    PARTIAL(Captions.PLOT_AREA_TYPE_PARTIAL);
+
+    @Getter private final Caption description;
 
     private static final Map<String, PlotAreaType> types = Stream.of(values())
         .collect(Collectors.toMap(e -> e.toString().toLowerCase(), Function.identity()));
+
+    PlotAreaType(Caption description) {
+        this.description = description;
+    }
+
+    public static Map<PlotAreaType, Caption> getDescriptionMap() {
+        return Stream.of(values()).collect(Collectors.toMap(e -> e, PlotAreaType::getDescription));
+    }
 
     public static Optional<PlotAreaType> fromString(String typeName) {
         return Optional.ofNullable(types.get(typeName.toLowerCase()));
