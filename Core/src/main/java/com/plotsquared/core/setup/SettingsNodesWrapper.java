@@ -1,13 +1,16 @@
 package com.plotsquared.core.setup;
 
 import com.plotsquared.core.configuration.ConfigurationNode;
+import lombok.Getter;
 
 public class SettingsNodesWrapper {
-    private final ConfigurationNode[] settingsNodes;
+    @Getter private final ConfigurationNode[] settingsNodes;
+    @Getter private final SetupStep afterwards;
     private int current;
 
-    public SettingsNodesWrapper(ConfigurationNode[] settingsNodes) {
+    public SettingsNodesWrapper(ConfigurationNode[] settingsNodes, SetupStep afterwards) {
         this.settingsNodes = settingsNodes;
+        this.afterwards = afterwards;
         this.current = 0;
     }
 

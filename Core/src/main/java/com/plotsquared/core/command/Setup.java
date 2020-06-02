@@ -29,6 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.StaticCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.player.PlotPlayer;
@@ -38,6 +39,8 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.setup.SetupProcess;
+import com.plotsquared.core.setup.SetupStep;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
@@ -91,6 +94,42 @@ public class Setup extends SubCommand {
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        SetupProcess process = player.getMeta("setup");
+        if (process == null) {
+            if (args.length > 0) {
+                // TODO use old behaviour?
+                MainUtil.sendMessage(player, "Use /plot setup to start the setup");
+                return true;
+            }
+            process = new SetupProcess();
+            player.setMeta("setup", process);
+            SetupUtils.manager.updateGenerators();
+            com.plotsquared.core.setup.SetupStep step = process.getCurrentStep();
+            // TODO generalize?
+            step.announce(player);
+            displayGenerators(player);
+            return true;
+        }
+        if (args.length == 1) {
+            if ("back".equalsIgnoreCase(args[0])) {
+                process.back();
+                process.getCurrentStep().announce(player);
+            } else if ("cancel".equalsIgnoreCase(args[0])) {
+                player.deleteMeta("setup");
+            } else {
+                process.handleInput(player, args[0]);
+            }
+            return true;
+        } else {
+            process.getCurrentStep().announce(player);
+            // TODO return only
+            if (true) {
+                return true;
+            }
+        }
+
+
+
         // going through setup
         SetupObject object = player.getMeta("setup");
         if (object == null) {
@@ -354,7 +393,7 @@ public class Setup extends SubCommand {
     }
 
 
-    private static final class StepPickGenerator extends SetupStep {
+    /*private static final class StepPickGenerator extends SetupStep {
 
         @Getter private String generator;
 
@@ -481,6 +520,6 @@ public class Setup extends SubCommand {
             }
         }
 
-    }
+    }*/
 
 }

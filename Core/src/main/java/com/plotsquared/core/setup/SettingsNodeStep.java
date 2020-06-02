@@ -25,7 +25,7 @@ public class SettingsNodeStep implements SetupStep {
         if (this.configurationNode.isValid(argument)) {
             this.configurationNode.setValue(argument);
         }
-        return wrapper.next();
+        return this.wrapper.hasNext() ? wrapper.next() : wrapper.getAfterwards();
     }
 
     @NotNull @Override public Collection<String> getSuggestions() {

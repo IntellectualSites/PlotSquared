@@ -319,6 +319,7 @@ public enum Captions implements Caption {
     REMOVED_GRANTED_PLOT("$2You used %s0 plot grant(s), you've got $1%s1 $2left", "Economy"),
     //</editor-fold>
     //<editor-fold desc="Setup">
+    SETUP_NOT_STARTED("$7No setup started. Use $2/plot setup $7to start a setup process.", "Setup"),
     SETUP_INIT("$1Usage: $2/plot setup <value>", "Setup"),
     SETUP_STEP("$3[$1Step %s0$3] $1%s1 $2- $1Expecting: $2%s2 $1Default: $2%s3", "Setup"),
     SETUP_INVALID_ARG("$2%s0 is not a valid argument for step %s1. To cancel setup use: $1/plot setup cancel", "Setup"),
@@ -356,6 +357,11 @@ public enum Captions implements Caption {
     SETUP_AREA_MAX_PLOT_ID("$1What should be the maximum Plot Id?", "Setup"),
     SETUP_AREA_MAX_PLOT_ID_ERROR("$7You must choose a valid maximum Plot Id!", "Setup"),
     SETUP_AREA_PLOT_ID_GREATER_THAN_MINIMUM("$7The max PlotId must be greater than the minimum!", "Setup"),
+    //</editor-fold>
+    //<editor-fold desc=PlotAreaType>
+    PLOT_AREA_TYPE_NORMAL("Standard plot generation", "PlotAreaType"),
+    PLOT_AREA_TYPE_AUGMENTED("Plot generation with vanilla terrain", "PlotAreaType"),
+    PLOT_AREA_TYPE_PARTIAL("Vanilla with clusters of plots", "PlotAreaType"),
     //</editor-fold>
     //<editor-fold desc="Schematic">
     SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!", "Schematics"),

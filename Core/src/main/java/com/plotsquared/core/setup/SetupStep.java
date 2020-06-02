@@ -16,7 +16,7 @@ public interface SetupStep {
      * @param argument   the argument given as input
      * @return the next step if input was valid, this setup step otherwise
      */
-    SetupStep handleInput(PlotPlayer plotPlayer, PlotAreaBuilder builder, String argument);
+    SetupStep handleInput(final PlotPlayer plotPlayer, PlotAreaBuilder builder, String argument);
 
     @NotNull Collection<String> getSuggestions();
 
