@@ -28,6 +28,7 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.SetupObject;
+import com.plotsquared.core.setup.PlotAreaBuilder;
 
 import java.util.HashMap;
 
@@ -42,6 +43,8 @@ public abstract class SetupUtils {
     public abstract String getGenerator(final PlotArea plotArea);
 
     public abstract String setupWorld(final SetupObject object);
+
+    public abstract String setupWorld(final PlotAreaBuilder builder);
 
     public abstract void unload(String world, boolean save);
 }
