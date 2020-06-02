@@ -270,7 +270,7 @@ public class BukkitUtil extends WorldUtil {
             return lastPlotPlayer;
         }
         final PlayerManager<?, ?> playerManager = PlotSquared.imp().getPlayerManager();
-        return ((BukkitPlayerManager) player).getPlayer(player);
+        return ((BukkitPlayerManager) playerManager).getPlayer(player);
     }
 
     public static Location getLocation(@NonNull final org.bukkit.Location location) {

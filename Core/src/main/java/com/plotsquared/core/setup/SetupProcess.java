@@ -19,7 +19,7 @@ public class SetupProcess {
         return this.current;
     }
 
-    public void handleInput(PlotPlayer plotPlayer, String argument) {
+    public void handleInput(PlotPlayer<?> plotPlayer, String argument) {
         SetupStep previous = this.current;
         // TODO null check?
         this.current = this.current.handleInput(plotPlayer, this.builder, argument);

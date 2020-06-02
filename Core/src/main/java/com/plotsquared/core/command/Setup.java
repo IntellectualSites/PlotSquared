@@ -57,6 +57,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,14 +99,13 @@ public class Setup extends SubCommand {
         if (process == null) {
             if (args.length > 0) {
                 // TODO use old behaviour?
-                MainUtil.sendMessage(player, "Use /plot setup to start the setup");
+                MainUtil.sendMessage(player, Captions.SETUP_NOT_STARTED);
                 return true;
             }
             process = new SetupProcess();
             player.setMeta("setup", process);
             SetupUtils.manager.updateGenerators();
             com.plotsquared.core.setup.SetupStep step = process.getCurrentStep();
-            // TODO generalize?
             step.announce(player);
             displayGenerators(player);
             return true;
@@ -116,8 +116,12 @@ public class Setup extends SubCommand {
                 process.getCurrentStep().announce(player);
             } else if ("cancel".equalsIgnoreCase(args[0])) {
                 player.deleteMeta("setup");
+                MainUtil.sendMessage(player, Captions.SETUP_CANCELLED);
             } else {
                 process.handleInput(player, args[0]);
+                if (process.getCurrentStep() != null) {
+                    process.getCurrentStep().announce(player);
+                }
             }
             return true;
         } else {
@@ -392,6 +396,18 @@ public class Setup extends SubCommand {
         return false;
     }
 
+    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+        SetupProcess process = (SetupProcess) player.getMeta("setup"); // TODO use generics -> auto cast
+        if (process == null) {
+            return Collections.emptyList();
+        }
+        // player already provided too many arguments
+        if (args.length > 1 || (args.length == 1 && space)) {
+            return Collections.emptyList();
+        }
+        SetupStep setupStep = process.getCurrentStep();
+        return setupStep.createSuggestions(player, space ? "" : args[0]);
+    }
 
     /*private static final class StepPickGenerator extends SetupStep {
 

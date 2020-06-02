@@ -3,7 +3,6 @@ package com.plotsquared.core.setup;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.player.PlotPlayer;
@@ -30,18 +29,16 @@ import static com.plotsquared.core.util.MainUtil.sendMessage;
 public enum CommonSetupSteps implements SetupStep {
     CHOOSE_GENERATOR(Captions.SETUP_INIT) {
 
-        @Override public SetupStep handleInput(PlotPlayer plotPlayer, PlotAreaBuilder builder, String arg) {
+        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
             if (!SetupUtils.generators.containsKey(arg)) {
                 String prefix = "\n&8 - &7";
                 sendMessage(plotPlayer, Captions.SETUP_WORLD_GENERATOR_ERROR + prefix + StringMan
                         .join(SetupUtils.generators.keySet(), prefix)
                         .replaceAll(PlotSquared.imp().getPluginName(),
                                 "&2" + PlotSquared.imp().getPluginName()));
-                sendMessage(plotPlayer, Captions.SETUP_INIT);
                 return this; // invalid input -> same setup step
             }
             builder.generatorName(arg);
-            sendMessage(plotPlayer, Captions.SETUP_WORLD_TYPE);
             return CommonSetupSteps.CHOOSE_PLOT_AREA_TYPE; // proceed with next step
         }
 
@@ -55,7 +52,7 @@ public enum CommonSetupSteps implements SetupStep {
     },
     CHOOSE_PLOT_AREA_TYPE(PlotAreaType.class, Captions.SETUP_WORLD_TYPE) {
 
-        @Override public SetupStep handleInput(PlotPlayer plotPlayer, PlotAreaBuilder builder, String arg) {
+        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
             boolean withNormal = SetupUtils.generators.get(builder.generatorName()).isFull();
             Optional<PlotAreaType> plotAreaType = PlotAreaType.fromString(arg);
             if (!plotAreaType.isPresent()) {
@@ -71,7 +68,6 @@ public enum CommonSetupSteps implements SetupStep {
                 return this;
             }
             builder.plotAreaType(plotAreaType.get());
-            // object.type = plotAreaType.get();
             GeneratorWrapper<?> gen = SetupUtils.generators.get(builder.generatorName());
             if (builder.plotAreaType() == PlotAreaType.NORMAL) {
                 if (builder.settingsNodesWrapper() == null) {
@@ -81,16 +77,10 @@ public enum CommonSetupSteps implements SetupStep {
                     //                            .processSetup(process);
                 }
                 if (!builder.settingsNodesWrapper().hasNext()) {
-                    // MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_NAME);
                     // object.setup_index = 0; TODO what did that do?
-                    return CHOOSE_WORLD_NAME; // skip
+                    return builder.settingsNodesWrapper().getAfterwards(); // skip
                 }
-                SettingsNodeStep next = builder.settingsNodesWrapper().next();
-                ConfigurationNode step = next.getConfigurationNode();
-                sendMessage(plotPlayer, Captions.SETUP_STEP, next.getId() + 1,
-                        step.getDescription(), step.getType().getType(),
-                        String.valueOf(step.getDefaultValue()));
-                return next;
+                return builder.settingsNodesWrapper().next();
             } else {
                 if (gen.isFull()) {
                     builder.plotManager(builder.generatorName());
@@ -105,23 +95,20 @@ public enum CommonSetupSteps implements SetupStep {
                     // TODO why is processSetup not called here?
                 }
                 if (builder.plotAreaType() == PlotAreaType.PARTIAL) {
-                    // MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_NAME);
-                    // TODO return step area id
-                    return null;
+                    return CHOOSE_AREA_ID;
                 } else {
-                    // MainUtil.sendMessage(plotPlayer, Captions.SETUP_PARTIAL_AREA);
                     return CHOOSE_TERRAIN_TYPE;
                 }
             }
         }
 
         @Nullable @Override public String getDefaultValue() {
-            return PlotAreaType.NORMAL.toString(); // TODO toLowerCase here?
+            return PlotAreaType.NORMAL.toString();
         }
     },
     CHOOSE_AREA_ID(Captions.SETUP_AREA_NAME) {
 
-        @Override public SetupStep handleInput(PlotPlayer plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             if (!StringMan.isAlphanumericUnd(argument)) {
                 MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_NON_ALPHANUMERICAL);
                 return this;
@@ -142,7 +129,7 @@ public enum CommonSetupSteps implements SetupStep {
     },
     CHOOSE_MINIMUM_PLOT_ID(Captions.SETUP_AREA_MIN_PLOT_ID) {
 
-        @Override public SetupStep handleInput(PlotPlayer plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             try {
                 builder.minimumId(PlotId.fromString(argument));
             } catch (IllegalArgumentException ignored) {
@@ -161,7 +148,7 @@ public enum CommonSetupSteps implements SetupStep {
     },
     CHOOSE_MAXIMUM_PLOT_ID(Captions.SETUP_AREA_MAX_PLOT_ID) {
 
-        @Override public SetupStep handleInput(PlotPlayer plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             try {
                 builder.maximumId(PlotId.fromString(argument));
             } catch (IllegalArgumentException ignored) {
@@ -180,7 +167,7 @@ public enum CommonSetupSteps implements SetupStep {
     },
     CHOOSE_TERRAIN_TYPE(PlotAreaTerrainType.class, Captions.SETUP_PARTIAL_AREA) {
 
-        @Override public SetupStep handleInput(PlotPlayer plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             Optional<PlotAreaTerrainType> optTerrain;
             if (!(optTerrain = PlotAreaTerrainType.fromString(argument))
                     .isPresent()) {
@@ -192,17 +179,16 @@ public enum CommonSetupSteps implements SetupStep {
                 builder.settingsNodesWrapper(CommonSetupSteps.wrap(builder.plotManager()));
             }
             SettingsNodesWrapper wrapper = builder.settingsNodesWrapper();
-            // TODO return CHOOSE_WORLD_NAME if !hasNext
             return wrapper.hasNext() ? wrapper.next() : wrapper.getAfterwards();
         }
 
         @Nullable @Override public String getDefaultValue() {
-            return PlotAreaTerrainType.NONE.toString();  // TODO toLowerCase here?
+            return PlotAreaTerrainType.NONE.toString();
         }
     },
     CHOOSE_WORLD_NAME(Captions.SETUP_WORLD_NAME) {
 
-        @Override public SetupStep handleInput(PlotPlayer plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             if (!isValidWorldName(argument)) {
                 MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_NAME_FORMAT + argument);
                 return this;
@@ -259,8 +245,7 @@ public enum CommonSetupSteps implements SetupStep {
         this(enumToStrings(argumentType), description);
     }
 
-    @Override
-    public void announce(PlotPlayer plotPlayer) {
+    @Override public void announce(PlotPlayer<?> plotPlayer) {
         MainUtil.sendMessage(plotPlayer, this.description);
     }
 
