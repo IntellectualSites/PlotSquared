@@ -5,7 +5,7 @@ version: "${version}"
 load: STARTUP
 description: "Easy, yet powerful Plot World generation and management."
 authors: [Citymonstret, Empire92, MattBDev, dordsor21, NotMyFault, SirYwell]
-website: https://github.com/IntellectualSites/
+website: https://www.spigotmc.org/resources/77506/
 softdepend: [Vault, PlaceholderAPI]
 loadbefore: [MultiWorld, Multiverse-Core]
 depend: [WorldEdit]
