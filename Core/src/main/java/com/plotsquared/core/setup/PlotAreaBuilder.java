@@ -32,7 +32,7 @@ public class PlotAreaBuilder {
 
     public void maximumId(PlotId maximumId) {
         if (this.minimumId != null
-                && (this.minimumId.getX() <= maximumId.getX() || this.minimumId.getY() <= maximumId.getY())) {
+                && (maximumId.getX() <= this.minimumId.getX() || maximumId.getY() <= this.minimumId.getY())) {
             throw new IllegalStateException("maxId <= minId");
         }
         this.maximumId = maximumId;

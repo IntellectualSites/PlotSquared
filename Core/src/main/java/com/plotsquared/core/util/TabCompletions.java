@@ -38,7 +38,9 @@ import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +54,11 @@ public class TabCompletions {
 
     private final Cache<String, List<String>> cachedCompletionValues =
         CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
+
+    private final Command booleanTrueCompletion = new Command(null, false, "true", "",
+            RequiredType.NONE, null) {};
+    private final Command booleanFalseCompletion = new Command(null, false, "false", "",
+            RequiredType.NONE, null) {};
 
     /**
      * Get a list of tab completions corresponding to player names. This uses the UUID pipeline
@@ -107,6 +114,19 @@ public class TabCompletions {
             .filter(value -> value.startsWith(input.toLowerCase(Locale.ENGLISH)))
             .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
             }).collect(Collectors.toList());
+    }
+
+    @NotNull public List<Command> completeBoolean(@NotNull final String input) {
+        if (input.isEmpty()) {
+            return Arrays.asList(booleanTrueCompletion, booleanFalseCompletion);
+        }
+        if ("true".startsWith(input)) {
+            return Collections.singletonList(booleanTrueCompletion);
+        }
+        if ("false".startsWith(input)) {
+            return Collections.singletonList(booleanFalseCompletion);
+        }
+        return Collections.emptyList();
     }
 
 }
