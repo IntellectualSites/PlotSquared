@@ -1216,7 +1216,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         switch (event.getSource().getType()) {
-            case GRASS:
+            case GRASS_BLOCK:
                 if (!plot.getFlag(GrassGrowFlag.class)) {
                     event.setCancelled(true);
                 }
