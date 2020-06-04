@@ -979,9 +979,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                 .replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender)
                 .replace("%msg%", message);
             for (Player player : spies) {
-                if (player.equals(event.getPlayer())) {
-                    continue;
-                }
                 player.sendMessage(spyMessage);
             }
         }
