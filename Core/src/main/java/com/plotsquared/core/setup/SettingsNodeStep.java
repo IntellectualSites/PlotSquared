@@ -14,6 +14,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * A SettingsNodeStep is a step wrapping a {@link ConfigurationNode}.
+ */
 public class SettingsNodeStep implements SetupStep {
     @Getter private final ConfigurationNode configurationNode;
     @Getter private final int id;
