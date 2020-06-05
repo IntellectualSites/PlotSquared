@@ -12,28 +12,7 @@ public class SettingsNodesWrapper {
         this.afterwards = afterwards;
     }
 
-
-    public SettingsNodeStep next(int current) {
-        if (this.settingsNodes.length <= current + 1) {
-            throw new IllegalStateException("No step left");
-        } else {
-            return new SettingsNodeStep(this.settingsNodes[current + 1], current + 1, this);
-        }
-    }
-
-    public SettingsNodeStep first() {
-        if (this.settingsNodes.length == 0) {
-            throw new IllegalStateException("No step left");
-        } else {
-            return new SettingsNodeStep(this.settingsNodes[0], 0, this);
-        }
-    }
-
-    public boolean hasNext(int current) {
-        return current + 1 < this.settingsNodes.length;
-    }
-
-    public boolean hasStep() {
-        return this.settingsNodes.length > 0;
+    public SetupStep getFirstStep() {
+        return this.settingsNodes.length == 0 ? this.afterwards : new SettingsNodeStep(this.settingsNodes[0], 0, this);
     }
 }

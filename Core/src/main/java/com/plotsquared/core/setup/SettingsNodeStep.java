@@ -17,19 +17,23 @@ import java.util.Collections;
 public class SettingsNodeStep implements SetupStep {
     @Getter private final ConfigurationNode configurationNode;
     @Getter private final int id;
-    private final SettingsNodesWrapper wrapper;
+    private final SetupStep next;
 
     public SettingsNodeStep(ConfigurationNode configurationNode, int id, SettingsNodesWrapper wrapper) {
         this.configurationNode = configurationNode;
         this.id = id;
-        this.wrapper = wrapper;
+        if (wrapper.getSettingsNodes().length > id + 1) {
+            this.next = new SettingsNodeStep(wrapper.getSettingsNodes()[id + 1], id + 1, wrapper);
+        } else {
+            this.next = wrapper.getAfterwards();
+        }
     }
 
     @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
         if (this.configurationNode.isValid(argument)) {
             this.configurationNode.setValue(argument);
         }
-        return this.wrapper.hasNext(this.id) ? wrapper.next(this.id) : wrapper.getAfterwards();
+        return this.next;
     }
 
     @NotNull @Override public Collection<String> getSuggestions() {
