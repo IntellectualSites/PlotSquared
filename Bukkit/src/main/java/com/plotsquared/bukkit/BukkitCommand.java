@@ -78,6 +78,6 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         for (com.plotsquared.core.command.Command o : objects) {
             result.add(o.toString());
         }
-        return result.isEmpty() ? null : result;
+        return result;
     }
 }
