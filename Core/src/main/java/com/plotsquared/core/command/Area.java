@@ -39,8 +39,8 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -186,20 +186,15 @@ public class Area extends SubCommand {
                 final BlockVector3 singlePos1 = selectedRegion.getMinimumPoint();
 
                 // Now the schematic is saved, which is wonderful!
-                final SetupObject singleSetup = new SetupObject();
-                singleSetup.world = hybridPlotWorld.getWorldName();
-                singleSetup.id = hybridPlotWorld.getId();
-                singleSetup.terrain = hybridPlotWorld.getTerrain();
-                singleSetup.type = hybridPlotWorld.getType();
-                singleSetup.plotManager = PlotSquared.imp().getPluginName();
-                singleSetup.setupGenerator = PlotSquared.imp().getPluginName();
-                singleSetup.step = hybridPlotWorld.getSettingNodes();
-                singleSetup.max = plotId;
-                singleSetup.min = plotId;
+                PlotAreaBuilder singleBuilder = PlotAreaBuilder.ofPlotArea(hybridPlotWorld)
+                        .plotManager(PlotSquared.imp().getPluginName())
+                        .generatorName(PlotSquared.imp().getPluginName())
+                        .maximumId(plotId)
+                        .minimumId(plotId); // TODO will throw exception right now
                 Runnable singleRun = () -> {
                     final String path =
                         "worlds." + hybridPlotWorld.getWorldName() + ".areas." + hybridPlotWorld.getId() + '-'
-                            + singleSetup.min + '-' + singleSetup.max;
+                            + singleBuilder.minimumId() + '-' + singleBuilder.maximumId();
                     final int offsetX = singlePos1.getX();
                     final int offsetZ = singlePos1.getZ();
                     if (offsetX != 0) {
@@ -210,7 +205,7 @@ public class Area extends SubCommand {
                         PlotSquared.get().worlds
                             .set(path + ".road.offset.z", offsetZ);
                     }
-                    final String world = SetupUtils.manager.setupWorld(singleSetup);
+                    final String world = SetupUtils.manager.setupWorld(singleBuilder);
                     if (WorldUtil.IMP.isWorld(world)) {
                         PlotSquared.get().loadWorld(world, null);
                         MainUtil.sendMessage(player, Captions.SINGLE_AREA_CREATED);
@@ -286,19 +281,14 @@ public class Area extends SubCommand {
                                         .send(player, areas.iterator().next().toString());
                                     return false;
                                 }
-                                final SetupObject object = new SetupObject();
-                                object.world = area.getWorldName();
-                                object.id = area.getId();
-                                object.terrain = area.getTerrain();
-                                object.type = area.getType();
-                                object.min = new PlotId(1, 1);
-                                object.max = new PlotId(numX, numZ);
-                                object.plotManager = PlotSquared.imp().getPluginName();
-                                object.setupGenerator = PlotSquared.imp().getPluginName();
-                                object.step = area.getSettingNodes();
+                                PlotAreaBuilder builder = PlotAreaBuilder.ofPlotArea(area)
+                                        .plotManager(PlotSquared.imp().getPluginName())
+                                        .generatorName(PlotSquared.imp().getPluginName())
+                                        .minimumId(new PlotId(1, 1))
+                                        .maximumId(new PlotId(numX, numZ));
                                 final String path =
                                     "worlds." + area.getWorldName() + ".areas." + area.getId() + '-'
-                                        + object.min + '-' + object.max;
+                                        + builder.minimumId() + '-' + builder.maximumId();
                                 Runnable run = () -> {
                                     if (offsetX != 0) {
                                         PlotSquared.get().worlds
@@ -308,7 +298,7 @@ public class Area extends SubCommand {
                                         PlotSquared.get().worlds
                                             .set(path + ".road.offset.z", offsetZ);
                                     }
-                                    final String world = SetupUtils.manager.setupWorld(object);
+                                    final String world = SetupUtils.manager.setupWorld(builder);
                                     if (WorldUtil.IMP.isWorld(world)) {
                                         PlotSquared.get().loadWorld(world, null);
                                         Captions.SETUP_FINISHED.send(player);
@@ -346,9 +336,9 @@ public class Area extends SubCommand {
                         } else {
                             id = null;
                         }
-                        final SetupObject object = new SetupObject();
-                        object.world = split[0];
-                        final HybridPlotWorld pa = new HybridPlotWorld(object.world, id,
+                        PlotAreaBuilder builder = new PlotAreaBuilder();
+                        builder.worldName(split[0]);
+                        final HybridPlotWorld pa = new HybridPlotWorld(builder.worldName(), id,
                             PlotSquared.get().IMP.getDefaultGenerator(), null, null);
                         PlotArea other = PlotSquared.get().getPlotArea(pa.getWorldName(), id);
                         if (other != null && Objects.equals(pa.getId(), other.getId())) {
@@ -410,13 +400,13 @@ public class Area extends SubCommand {
                                     pa.setTerrain(PlotAreaTerrainType.fromString(pair[1])
                                         .orElseThrow(() -> new IllegalArgumentException(
                                             pair[1] + " is not a valid terrain.")));
-                                    object.terrain = pa.getTerrain();
+                                    builder.terrainType(pa.getTerrain());
                                     break;
                                 case "type":
                                     pa.setType(PlotAreaType.fromString(pair[1]).orElseThrow(
                                         () -> new IllegalArgumentException(
                                             pair[1] + " is not a valid type.")));
-                                    object.type = pa.getType();
+                                    builder.plotAreaType(pa.getType());
                                     break;
                                 default:
                                     Captions.COMMAND_SYNTAX.send(player, getCommandString()
@@ -438,9 +428,9 @@ public class Area extends SubCommand {
                                     PlotSquared.get().worlds.getConfigurationSection(path);
                                 pa.saveConfiguration(section);
                                 pa.loadConfiguration(section);
-                                object.plotManager = PlotSquared.imp().getPluginName();
-                                object.setupGenerator = PlotSquared.imp().getPluginName();
-                                String world = SetupUtils.manager.setupWorld(object);
+                                builder.plotManager(PlotSquared.imp().getPluginName());
+                                builder.generatorName(PlotSquared.imp().getPluginName());
+                                String world = SetupUtils.manager.setupWorld(builder);
                                 if (WorldUtil.IMP.isWorld(world)) {
                                     Captions.SETUP_FINISHED.send(player);
                                     player.teleport(WorldUtil.IMP.getSpawn(world),
@@ -475,9 +465,9 @@ public class Area extends SubCommand {
                                     TeleportCause.COMMAND);
                             }
                         } else {
-                            object.terrain = PlotAreaTerrainType.NONE;
-                            object.type = PlotAreaType.NORMAL;
-                            SetupUtils.manager.setupWorld(object);
+                            builder.terrainType(PlotAreaTerrainType.NONE);
+                            builder.plotAreaType(PlotAreaType.NORMAL);
+                            SetupUtils.manager.setupWorld(builder);
                             player.teleport(WorldUtil.IMP.getSpawn(pa.getWorldName()),
                                 TeleportCause.COMMAND);
                         }

@@ -42,6 +42,7 @@ public abstract class SetupUtils {
 
     public abstract String getGenerator(final PlotArea plotArea);
 
+    @Deprecated
     public abstract String setupWorld(final SetupObject object);
 
     public abstract String setupWorld(final PlotAreaBuilder builder);

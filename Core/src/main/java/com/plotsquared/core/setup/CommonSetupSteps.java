@@ -76,11 +76,11 @@ public enum CommonSetupSteps implements SetupStep {
                     // TODO reimplement SetupUtils.generators.get(object.plotManager).getPlotGenerator()
                     //                            .processSetup(process);
                 }
-                if (!builder.settingsNodesWrapper().hasNext()) {
+                if (!builder.settingsNodesWrapper().hasStep()) {
                     // object.setup_index = 0; TODO what did that do?
                     return builder.settingsNodesWrapper().getAfterwards(); // skip
                 }
-                return builder.settingsNodesWrapper().next();
+                return builder.settingsNodesWrapper().first();
             } else {
                 if (gen.isFull()) {
                     builder.plotManager(builder.generatorName());
@@ -179,7 +179,7 @@ public enum CommonSetupSteps implements SetupStep {
                 builder.settingsNodesWrapper(CommonSetupSteps.wrap(builder.plotManager()));
             }
             SettingsNodesWrapper wrapper = builder.settingsNodesWrapper();
-            return wrapper.hasNext() ? wrapper.next() : wrapper.getAfterwards();
+            return wrapper.hasStep() ? wrapper.first() : wrapper.getAfterwards();
         }
 
         @Nullable @Override public String getDefaultValue() {

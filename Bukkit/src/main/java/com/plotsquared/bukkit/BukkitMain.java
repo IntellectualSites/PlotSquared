@@ -81,12 +81,13 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.plot.message.PlainChatManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.QueueProvider;
+import com.plotsquared.core.setup.PlotAreaBuilder;
+import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.ConsoleColors;
@@ -992,14 +993,14 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             ConfigurationSection worldConfig =
                 PlotSquared.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", getPluginName());
-            SetupObject setup = new SetupObject();
-            setup.plotManager = manager;
-            setup.setupGenerator = worldConfig.getString("generator.init", manager);
-            setup.type = MainUtil.getType(worldConfig);
-            setup.terrain = MainUtil.getTerrain(worldConfig);
-            setup.step = new ConfigurationNode[0];
-            setup.world = worldName;
-            SetupUtils.manager.setupWorld(setup);
+            PlotAreaBuilder builder = new PlotAreaBuilder()
+                    .plotManager(manager)
+                    .generatorName(worldConfig.getString("generator.init", manager))
+                    .plotAreaType(MainUtil.getType(worldConfig))
+                    .terrainType(MainUtil.getTerrain(worldConfig))
+                    .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
+                    .worldName(worldName);
+            SetupUtils.manager.setupWorld(builder);
             world = Bukkit.getWorld(worldName);
         } else {
             try {

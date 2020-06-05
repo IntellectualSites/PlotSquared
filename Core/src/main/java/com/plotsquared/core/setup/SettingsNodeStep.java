@@ -29,7 +29,7 @@ public class SettingsNodeStep implements SetupStep {
         if (this.configurationNode.isValid(argument)) {
             this.configurationNode.setValue(argument);
         }
-        return this.wrapper.hasNext() ? wrapper.next() : wrapper.getAfterwards();
+        return this.wrapper.hasNext(this.id) ? wrapper.next(this.id) : wrapper.getAfterwards();
     }
 
     @NotNull @Override public Collection<String> getSuggestions() {

@@ -36,8 +36,9 @@ import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.setup.PlotAreaBuilder;
+import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.FileBytes;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
@@ -181,15 +182,15 @@ public class Template extends SubCommand {
                 String manager =
                     worldConfig.getString("generator.plugin", PlotSquared.imp().getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
-                SetupObject setup = new SetupObject();
-                setup.type = MainUtil.getType(worldConfig);
-                setup.terrain = MainUtil.getTerrain(worldConfig);
+                PlotAreaBuilder builder = new PlotAreaBuilder()
+                        .plotAreaType(MainUtil.getType(worldConfig))
+                        .terrainType(MainUtil.getTerrain(worldConfig))
+                        .plotManager(manager)
+                        .generatorName(generator)
+                        .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
+                        .worldName(world);
 
-                setup.plotManager = manager;
-                setup.setupGenerator = generator;
-                setup.step = new ConfigurationNode[0];
-                setup.world = world;
-                SetupUtils.manager.setupWorld(setup);
+                SetupUtils.manager.setupWorld(builder);
                 GlobalBlockQueue.IMP.addEmptyTask(() -> {
                     MainUtil.sendMessage(player, "Done!");
                     player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
