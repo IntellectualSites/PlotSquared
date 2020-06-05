@@ -98,7 +98,7 @@ public class BukkitSetupUtils extends SetupUtils {
         Bukkit.unloadWorld(world, false);
     }
 
-    @Override public String setupWorld(SetupObject object) {
+    @Deprecated @Override public String setupWorld(SetupObject object) {
         SetupUtils.manager.updateGenerators();
         ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
         String world = object.world;
@@ -210,8 +210,7 @@ public class BukkitSetupUtils extends SetupUtils {
         return object.world;
     }
 
-    @Override
-    public String setupWorld(PlotAreaBuilder builder) {
+    @Override public String setupWorld(PlotAreaBuilder builder) {
         SetupUtils.manager.updateGenerators();
         ConfigurationNode[] steps = builder.settingsNodesWrapper() == null ?
                 new ConfigurationNode[0] : builder.settingsNodesWrapper().getSettingsNodes();

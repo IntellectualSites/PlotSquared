@@ -4,6 +4,10 @@ import com.plotsquared.core.player.PlotPlayer;
 
 import java.util.Stack;
 
+/**
+ * This class keeps track of a setup process.
+ * It holds the history and the current setup state.
+ */
 public class SetupProcess {
     private final PlotAreaBuilder builder;
     private final Stack<SetupStep> history;
@@ -21,7 +25,6 @@ public class SetupProcess {
 
     public void handleInput(PlotPlayer<?> plotPlayer, String argument) {
         SetupStep previous = this.current;
-        // TODO null check?
         this.current = this.current.handleInput(plotPlayer, this.builder, argument);
         // push previous step into history
         if (this.current != previous && this.current != null) {
