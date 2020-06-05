@@ -73,8 +73,8 @@ public enum CommonSetupSteps implements SetupStep {
                 if (builder.settingsNodesWrapper() == null) {
                     builder.plotManager(builder.generatorName());
                     builder.settingsNodesWrapper(CommonSetupSteps.wrap(builder.plotManager()));
-                    // TODO reimplement SetupUtils.generators.get(object.plotManager).getPlotGenerator()
-                    //                            .processSetup(process);
+                    SetupUtils.generators.get(builder.plotManager()).getPlotGenerator()
+                            .processAreaSetup(builder);
                 }
                 return builder.settingsNodesWrapper().getFirstStep();
             } else {
@@ -82,8 +82,8 @@ public enum CommonSetupSteps implements SetupStep {
                     builder.plotManager(builder.generatorName());
                     builder.generatorName(null);
                     builder.settingsNodesWrapper(CommonSetupSteps.wrap(builder.plotManager()));
-                    // TODO reimplement SetupUtils.generators.get(object.plotManager).getPlotGenerator()
-                    //                            .processSetup(process);
+                    SetupUtils.generators.get(builder.plotManager()).getPlotGenerator()
+                            .processAreaSetup(builder);
                 } else {
                     builder.plotManager(PlotSquared.imp().getPluginName());
                     MainUtil.sendMessage(plotPlayer, Captions.SETUP_WRONG_GENERATOR);
