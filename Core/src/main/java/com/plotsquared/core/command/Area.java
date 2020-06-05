@@ -190,7 +190,7 @@ public class Area extends SubCommand {
                         .plotManager(PlotSquared.imp().getPluginName())
                         .generatorName(PlotSquared.imp().getPluginName())
                         .maximumId(plotId)
-                        .minimumId(plotId); // TODO will throw exception right now
+                        .minimumId(plotId);
                 Runnable singleRun = () -> {
                     final String path =
                         "worlds." + hybridPlotWorld.getWorldName() + ".areas." + hybridPlotWorld.getId() + '-'
