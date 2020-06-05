@@ -72,7 +72,6 @@ public class Setup extends SubCommand {
         SetupProcess process = player.getMeta("setup");
         if (process == null) {
             if (args.length > 0) {
-                // TODO use old behaviour?
                 MainUtil.sendMessage(player, Captions.SETUP_NOT_STARTED);
                 return true;
             }
