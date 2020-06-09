@@ -35,7 +35,6 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -48,10 +47,6 @@ import java.util.Map.Entry;
     aliases = {"create"},
     category = CommandCategory.ADMINISTRATION)
 public class Setup extends SubCommand {
-    private static final Collection<Command> specialCommands = Arrays.asList(
-            new Command(null, false, "back", "", RequiredType.NONE, null) {},
-            new Command(null, false, "cancel", "", RequiredType.NONE, null) {});
-
 
     public void displayGenerators(PlotPlayer<?> player) {
         StringBuilder message = new StringBuilder();
