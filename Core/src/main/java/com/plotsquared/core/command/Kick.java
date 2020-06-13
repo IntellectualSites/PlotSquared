@@ -33,8 +33,11 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -121,5 +124,15 @@ public class Kick extends SubCommand {
         });
 
         return true;
+    }
+
+    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
+        if (plot == null) {
+            return Collections.emptyList();
+        }
+        return TabCompletions.completePlayersInPlot(plot, String.join(",", args).trim(),
+                Collections.singletonList(player.getName()));
     }
 }

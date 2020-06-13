@@ -33,9 +33,12 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
@@ -110,6 +113,10 @@ public class Deny extends SubCommand {
         });
 
         return true;
+    }
+
+    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 
     private void handleKick(PlotPlayer player, Plot plot) {
