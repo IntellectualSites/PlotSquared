@@ -60,12 +60,19 @@ public class OfflinePlayerUUIDService implements UUIDService {
     @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
         final List<UUIDMapping> wrappers = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
-            if (Settings.UUID.FORCE_LOWERCASE) {
-                wrappers.add(new UUIDMapping(UUID.nameUUIDFromBytes(("OfflinePlayer:" +
-                    username.toLowerCase()).getBytes(Charsets.UTF_8)), username));
+            if (Settings.UUID.OFFLINE) {
+                if (Settings.UUID.FORCE_LOWERCASE) {
+                    wrappers.add(new UUIDMapping(UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                            username.toLowerCase()).getBytes(Charsets.UTF_8)), username));
+                } else {
+                    wrappers.add(new UUIDMapping(UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                            username).getBytes(Charsets.UTF_8)), username));
+                }
             } else {
-                wrappers.add(new UUIDMapping(UUID.nameUUIDFromBytes(("OfflinePlayer:" +
-                    username).getBytes(Charsets.UTF_8)), username));
+                final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(username);
+                if (offlinePlayer.hasPlayedBefore()) {
+                    wrappers.add(new UUIDMapping(offlinePlayer.getUniqueId(), offlinePlayer.getName()));
+                }
             }
         }
         return wrappers;
