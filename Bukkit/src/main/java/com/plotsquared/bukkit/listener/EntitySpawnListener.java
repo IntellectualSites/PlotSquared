@@ -100,14 +100,14 @@ public class EntitySpawnListener implements Listener {
             if (!originWorld.equals(world)) {
                 if (!ignoreTP) {
                     if (!world.getName().equalsIgnoreCase(originWorld + "_the_end")) {
+                        if (entity.getType() == EntityType.PLAYER) {
+                            return;
+                        }
                         try {
                             ignoreTP = true;
                             PaperLib.teleportAsync(entity, origin);
                         } finally {
                             ignoreTP = false;
-                        }
-                        if (entity.getType() == EntityType.PLAYER) {
-                            return;
                         }
                         if (entity.getLocation().getWorld().equals(world)) {
                             entity.remove();
