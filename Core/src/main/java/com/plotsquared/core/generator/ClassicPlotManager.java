@@ -455,17 +455,17 @@ public class ClassicPlotManager extends SquarePlotManager {
         int sz = location.getZ() + 1;
         int ez = sz + classicPlotWorld.ROAD_WIDTH - 1;
         LocalBlockQueue queue = classicPlotWorld.getQueue(false);
-        queue.setCuboid(
-            new Location(classicPlotWorld.getWorldName(), sx, classicPlotWorld.ROAD_HEIGHT + 1, sz),
-            new Location(classicPlotWorld.getWorldName(), ex,
-                classicPlotWorld.getPlotManager().getWorldHeight(), ez),
-            BlockTypes.AIR.getDefaultState());
+        queue.setCuboid(new Location(classicPlotWorld.getWorldName(), sx,
+                        Math.min(classicPlotWorld.PLOT_HEIGHT, classicPlotWorld.ROAD_HEIGHT) + 1, sz),
+                new Location(classicPlotWorld.getWorldName(), ex,
+                        classicPlotWorld.getPlotManager().getWorldHeight(), ez),
+                BlockTypes.AIR.getDefaultState());
         queue.setCuboid(new Location(classicPlotWorld.getWorldName(), sx, 1, sz),
-            new Location(classicPlotWorld.getWorldName(), ex, classicPlotWorld.ROAD_HEIGHT - 1, ez),
+            new Location(classicPlotWorld.getWorldName(), ex, classicPlotWorld.PLOT_HEIGHT - 1, ez),
             classicPlotWorld.MAIN_BLOCK.toPattern());
         queue.setCuboid(
-            new Location(classicPlotWorld.getWorldName(), sx, classicPlotWorld.ROAD_HEIGHT, sz),
-            new Location(classicPlotWorld.getWorldName(), ex, classicPlotWorld.ROAD_HEIGHT, ez),
+            new Location(classicPlotWorld.getWorldName(), sx, classicPlotWorld.PLOT_HEIGHT, sz),
+            new Location(classicPlotWorld.getWorldName(), ex, classicPlotWorld.PLOT_HEIGHT, ez),
             classicPlotWorld.TOP_BLOCK.toPattern());
         return queue.enqueue();
     }
