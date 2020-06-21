@@ -190,6 +190,7 @@ public enum Captions implements Caption {
     PERMISSION_BACKUP_LOAD("plots.backup.load", "static.permissions"),
     PERMISSION_ADMIN_BACKUP_OTHER("plots.admin.backup.other", "static.permissions"),
     PERMISSION_ADMIN_ALLOW_UNSAFE("plots.admin.unsafe", "static.permissions"),
+    PERMISSION_ADMIN_DEBUG_OTHER("plots.admin.debug.other", "static.permissions"),
     //</editor-fold>
     //<editor-fold desc="Confirm">
     EXPIRED_CONFIRM("$2Confirmation has expired, please run the command again!", "Confirm"),
@@ -801,6 +802,10 @@ public enum Captions implements Caption {
     SINGLE_AREA_FAILED_TO_SAVE("$2Error! Failed to save the area schematic", "Single"),
     SINGLE_AREA_COULD_NOT_MAKE_DIRECTORIES("$2Error! Failed to create the schematic directory", "Single"),
     SINGLE_AREA_CREATED("$1The area was created successfully!", "Single"),
+    //</editor-fold>
+
+    //<editor-fold desc="Debug">
+    PLOT_DEBUG("$1Plot Debug ($2%plot%$1): %message%", "Plot-Debug"),
     //</editor-fold>
 
     /**

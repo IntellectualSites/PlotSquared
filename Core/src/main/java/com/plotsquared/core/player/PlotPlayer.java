@@ -56,8 +56,11 @@ import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -72,12 +75,17 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
 
     public static final String META_LAST_PLOT = "lastplot";
     public static final String META_LOCATION = "location";
+
+    // Used to track debug mode
+    private static final Set<PlotPlayer<?>> debugModeEnabled = Collections.synchronizedSet(new HashSet<>());
+
     private static final Map<Class, PlotPlayerConverter> converters = new HashMap<>();
     private Map<String, byte[]> metaMap = new HashMap<>();
     /**
      * The metadata map.
      */
     private ConcurrentHashMap<String, Object> meta;
+    private int hash;
 
     public static <T> PlotPlayer from(@NonNull final T object) {
         if (!converters.containsKey(object.getClass())) {
@@ -91,6 +99,19 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     public static <T> void registerConverter(@NonNull final Class<T> clazz,
         final PlotPlayerConverter<T> converter) {
         converters.put(clazz, converter);
+    }
+
+    public static Collection<PlotPlayer<?>> getDebugModePlayerInPlot(@NotNull final Plot plot) {
+        if (debugModeEnabled.isEmpty()) {
+            return Collections.emptyList();
+        }
+        final Collection<PlotPlayer<?>> players = new LinkedList<>();
+        for (final PlotPlayer<?> player : debugModeEnabled) {
+            if (player.getCurrentPlot().equals(plot)) {
+                players.add(player);
+            }
+        }
+        return players;
     }
 
     /**
@@ -519,6 +540,15 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     public abstract void kick(String message);
 
+    public void refreshDebug() {
+        final boolean debug = this.getAttribute("debug");
+        if (debug && !debugModeEnabled.contains(this)) {
+            debugModeEnabled.add(this);
+        } else if (!debug) {
+            debugModeEnabled.remove(this);
+        }
+    }
+
     /**
      * Called when this player quits.
      */
@@ -556,6 +586,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         }
         PlotSquared.imp().getPlayerManager().removePlayer(this);
         PlotSquared.get().IMP.unregister(this);
+
+        debugModeEnabled.remove(this);
     }
 
     /**
@@ -601,6 +633,10 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
                         PlotPlayer.this.metaMap = value;
                         if (value.isEmpty()) {
                             return;
+                        }
+
+                        if (PlotPlayer.this.getAttribute("debug")) {
+                            debugModeEnabled.add(PlotPlayer.this);
                         }
 
                         if (!Settings.Teleport.ON_LOGIN) {
@@ -693,10 +729,27 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
 
     public abstract void stopSpectating();
 
+    public boolean hasDebugMode() {
+        return this.getAttribute("debug");
+    }
+
+    @Override public int hashCode() {
+        if (this.hash == 0 || this.hash == 485) {
+            this.hash = 485 + this.getUUID().hashCode();
+        }
+        return this.hash;
+    }
+
+    @Override public boolean equals(final Object obj) {
+        if (!(obj instanceof PlotPlayer)) {
+            return false;
+        }
+        final PlotPlayer<?> other = (PlotPlayer<?>) obj;
+        return this.getUUID().equals(other.getUUID());
+    }
+
     /**
      * The amount of money this Player has.
-     *
-     * @return
      */
     public double getMoney() {
         return EconHandler.manager == null ? 0 : EconHandler.manager.getMoney(this);

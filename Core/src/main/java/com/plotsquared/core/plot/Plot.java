@@ -2924,6 +2924,21 @@ public class Plot {
         }, 1);
     }
 
+    public void debug(@NotNull final String message) {
+        final Collection<PlotPlayer<?>> players = PlotPlayer.getDebugModePlayerInPlot(this);
+        if (players.isEmpty()) {
+            return;
+        }
+        final String string = Captions.PLOT_DEBUG.getTranslated().replace("%plot%", this.toString())
+            .replace("%message%", message);
+        for (final PlotPlayer<?> player : players) {
+            if (isOwner(player.getUUID()) ||
+                Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_DEBUG_OTHER)) {
+                player.sendMessage(string);
+            }
+        }
+    }
+
     /**
      * Gets all the corners of the plot (supports non-rectangular shapes).
      *

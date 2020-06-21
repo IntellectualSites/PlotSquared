@@ -49,7 +49,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      *
      * @param plotPlayer Player to remove
      */
-    public void removePlayer(@NotNull final PlotPlayer plotPlayer) {
+    public void removePlayer(@NotNull final PlotPlayer<?> plotPlayer) {
         synchronized (playerLock) {
             this.playerMap.remove(plotPlayer.getUUID());
         }

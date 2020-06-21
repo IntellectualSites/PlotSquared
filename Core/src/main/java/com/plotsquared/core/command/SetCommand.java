@@ -52,7 +52,7 @@ public abstract class SetCommand extends SubCommand {
                 return false;
             }
         }
-        if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID())) {
+        if (!plot.isOwner(player.getUUID())) {
             if (!Permissions.hasPermission(player, CaptionUtility
                 .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility

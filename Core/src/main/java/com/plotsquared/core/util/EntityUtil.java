@@ -90,6 +90,7 @@ public final class EntityUtil {
             if (mobs[i] >= cap) {
                 plot.setMeta("EntityCount", mobs);
                 plot.setMeta("EntityCountTime", System.currentTimeMillis());
+                plot.debug("Prevented spawning of mob because it would exceed " + flag.getName());
                 return true;
             }
         }
