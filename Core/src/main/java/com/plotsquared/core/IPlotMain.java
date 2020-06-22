@@ -45,6 +45,7 @@ import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
@@ -84,7 +85,7 @@ public interface IPlotMain<P> extends ILogger {
      * @param player The player to convert to a PlotPlayer
      * @return A PlotPlayer
      */
-    PlotPlayer wrapPlayer(Object player);
+    @Nullable PlotPlayer<P> wrapPlayer(Object player);
 
     /**
      * Completely shuts down the plugin.

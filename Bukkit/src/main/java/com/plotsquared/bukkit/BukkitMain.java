@@ -235,11 +235,12 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             PlotSquared.log(Captions.PREFIX + "&6Couldn't verify purchase :(");
         }
 
-        final UUIDPipeline impromptuPipeline  = PlotSquared.get().getImpromptuUUIDPipeline();
+        final UUIDPipeline impromptuPipeline = PlotSquared.get().getImpromptuUUIDPipeline();
         final UUIDPipeline backgroundPipeline = PlotSquared.get().getBackgroundUUIDPipeline();
 
         // Services are accessed in order
-        final CacheUUIDService cacheUUIDService = new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
+        final CacheUUIDService cacheUUIDService =
+            new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
         impromptuPipeline.registerService(cacheUUIDService);
         backgroundPipeline.registerService(cacheUUIDService);
         impromptuPipeline.registerConsumer(cacheUUIDService);
@@ -261,7 +262,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService("user_cache.db");
 
         final SQLiteUUIDService legacyUUIDService;
-        if (Settings.UUID.LEGACY_DATABASE_SUPPORT && MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "usercache.db").exists()) {
+        if (Settings.UUID.LEGACY_DATABASE_SUPPORT && MainUtil
+            .getFile(PlotSquared.get().IMP.getDirectory(), "usercache.db").exists()) {
             legacyUUIDService = new SQLiteUUIDService("usercache.db");
         } else {
             legacyUUIDService = null;
@@ -270,7 +272,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         final LuckPermsUUIDService luckPermsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
-            PlotSquared.log(Captions.PREFIX + "(UUID) Using LuckPerms as a complementary UUID service");
+            PlotSquared
+                .log(Captions.PREFIX + "(UUID) Using LuckPerms as a complementary UUID service");
         } else {
             luckPermsUUIDService = null;
         }
@@ -278,15 +281,17 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         final BungeePermsUUIDService bungeePermsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
             bungeePermsUUIDService = new BungeePermsUUIDService();
-            PlotSquared.log(Captions.PREFIX + "(UUID) Using BungeePerms as a complementary UUID service");
+            PlotSquared
+                .log(Captions.PREFIX + "(UUID) Using BungeePerms as a complementary UUID service");
         } else {
             bungeePermsUUIDService = null;
         }
-        
+
         final EssentialsUUIDService essentialsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
-            PlotSquared.log(Captions.PREFIX + "(UUID) Using Essentials as a complementary UUID service");
+            PlotSquared
+                .log(Captions.PREFIX + "(UUID) Using Essentials as a complementary UUID service");
         } else {
             essentialsUUIDService = null;
         }
@@ -297,7 +302,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 impromptuPipeline.registerService(paperUUIDService);
                 backgroundPipeline.registerService(paperUUIDService);
-                PlotSquared.log(Captions.PREFIX + "(UUID) Using Paper as a complementary UUID service");
+                PlotSquared
+                    .log(Captions.PREFIX + "(UUID) Using Paper as a complementary UUID service");
             }
 
             impromptuPipeline.registerService(sqLiteUUIDService);
@@ -324,9 +330,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 backgroundPipeline.registerService(essentialsUUIDService);
             }
 
-            final SquirrelIdUUIDService impromptuMojangService = new SquirrelIdUUIDService(Settings.UUID.IMPROMPTU_LIMIT);
+            final SquirrelIdUUIDService impromptuMojangService =
+                new SquirrelIdUUIDService(Settings.UUID.IMPROMPTU_LIMIT);
             impromptuPipeline.registerService(impromptuMojangService);
-            final SquirrelIdUUIDService backgroundMojangService = new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
+            final SquirrelIdUUIDService backgroundMojangService =
+                new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
             backgroundPipeline.registerService(backgroundMojangService);
         } else {
             impromptuPipeline.registerService(sqLiteUUIDService);
@@ -381,8 +389,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             this.worldManager = new BukkitWorldManager();
         }
 
-        PlotSquared.log(Captions.PREFIX.getTranslated() + "Using platform world manager: " +
-            this.worldManager.getName());
+        PlotSquared.log(
+            Captions.PREFIX.getTranslated() + "Using platform world manager: " + this.worldManager
+                .getName());
     }
 
     private void unload() {
@@ -465,7 +474,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
     }
 
     private void startUuidCatching(@NotNull final SQLiteUUIDService sqLiteUUIDService,
-                                   @NotNull final CacheUUIDService cacheUUIDService) {
+        @NotNull final CacheUUIDService cacheUUIDService) {
         // Load all uuids into a big chunky boi queue
         final Queue<UUID> uuidQueue = new LinkedBlockingQueue<>();
         PlotSquared.get().forEachPlotRaw(plot -> {
@@ -480,7 +489,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 }
             }
         });
-        PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) " + uuidQueue.size() + " UUIDs will be cached.");
+        PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) " + uuidQueue.size()
+            + " UUIDs will be cached.");
 
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             // Begin by reading all the SQLite cache at once
@@ -488,7 +498,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             // Now fetch names for all known UUIDs
             final int totalSize = uuidQueue.size();
             int read = 0;
-            PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) PlotSquared will fetch UUIDs in groups of "
+            PlotSquared.log(Captions.PREFIX.getTranslated()
+                + "(UUID) PlotSquared will fetch UUIDs in groups of "
                 + Settings.UUID.BACKGROUND_LIMIT);
             final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
 
@@ -505,7 +516,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                     // fresh batch
                     secondRun = false;
                     // Populate the request list
-                    for (int i = 0; i < Settings.UUID.BACKGROUND_LIMIT && !uuidQueue.isEmpty(); i++) {
+                    for (int i = 0;
+                         i < Settings.UUID.BACKGROUND_LIMIT && !uuidQueue.isEmpty(); i++) {
                         uuidList.add(uuidQueue.poll());
                         read++;
                     }
@@ -520,13 +532,15 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                     uuidList.clear();
                     // Print progress
                     final double percentage = ((double) read / (double) totalSize) * 100.0D;
-                    PlotSquared.log(Captions.PREFIX.getTranslated() + String.format("(UUID) PlotSquared has cached %.1f%% of UUIDs", percentage));
+                    PlotSquared.log(Captions.PREFIX.getTranslated() + String
+                        .format("(UUID) PlotSquared has cached %.1f%% of UUIDs", percentage));
                 } catch (final InterruptedException | ExecutionException e) {
                     PlotSquared.log("Failed to retrieve that batch. Will try again.");
                     e.printStackTrace();
                 }
             }
-            PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) PlotSquared has cached all UUIDs");
+            PlotSquared
+                .log(Captions.PREFIX.getTranslated() + "(UUID) PlotSquared has cached all UUIDs");
         }, 10, TimeUnit.SECONDS);
     }
 
@@ -903,8 +917,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         return new BukkitUtil();
     }
 
-    @Override @Nullable
-    public GeneratorWrapper<?> getGenerator(@NonNull final String world,
+    @Override @Nullable public GeneratorWrapper<?> getGenerator(@NonNull final String world,
         @Nullable final String name) {
         if (name == null) {
             return null;
@@ -955,7 +968,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         metrics.addCustomChart(new Metrics.SimplePie("premium",
             () -> PremiumVerification.isPremium() ? "Premium" : "Non-Premium"));
         metrics.addCustomChart(new Metrics.SimplePie("worldedit_implementation",
-            () -> Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null ? "FastAsyncWorldEdit" : "WorldEdit"));
+            () -> Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null ?
+                "FastAsyncWorldEdit" :
+                "WorldEdit"));
     }
 
     @Override public ChunkManager initChunkManager() {
@@ -993,13 +1008,12 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             ConfigurationSection worldConfig =
                 PlotSquared.get().worlds.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", getPluginName());
-            PlotAreaBuilder builder = new PlotAreaBuilder()
-                    .plotManager(manager)
-                    .generatorName(worldConfig.getString("generator.init", manager))
-                    .plotAreaType(MainUtil.getType(worldConfig))
-                    .terrainType(MainUtil.getTerrain(worldConfig))
-                    .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
-                    .worldName(worldName);
+            PlotAreaBuilder builder = new PlotAreaBuilder().plotManager(manager)
+                .generatorName(worldConfig.getString("generator.init", manager))
+                .plotAreaType(MainUtil.getType(worldConfig))
+                .terrainType(MainUtil.getTerrain(worldConfig))
+                .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
+                .worldName(worldName);
             SetupUtils.manager.setupWorld(builder);
             world = Bukkit.getWorld(worldName);
         } else {
@@ -1028,7 +1042,22 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         return new BukkitSchematicHandler();
     }
 
-    @Override @Nullable public PlotPlayer wrapPlayer(final Object player) {
+    /**
+     * Attempt to retrieve a {@link PlotPlayer} from a player identifier.
+     * This method accepts:
+     * - {@link Player} objects,
+     * - {@link OfflinePlayer} objects,
+     * - {@link String} usernames for online players, and
+     * - {@link UUID} UUIDs for online players
+     * <p>
+     * In the case of offline players, a fake {@link Player} instance will be created.
+     * This is a rather expensive operation, and should be avoided if possible.
+     *
+     * @param player The player to convert to a PlotPlayer
+     * @return The plot player instance that corresponds to the identifier, or null
+     * if no such player object could be created
+     */
+    @Override @Nullable public PlotPlayer<Player> wrapPlayer(final Object player) {
         if (player instanceof Player) {
             return BukkitUtil.getPlayer((Player) player);
         }
@@ -1036,10 +1065,12 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             return BukkitUtil.getPlayer((OfflinePlayer) player);
         }
         if (player instanceof String) {
-            return PlotSquared.imp().getPlayerManager().getPlayerIfExists((String) player);
+            return (PlotPlayer<Player>) PlotSquared.imp().getPlayerManager()
+                .getPlayerIfExists((String) player);
         }
         if (player instanceof UUID) {
-            return PlotSquared.imp().getPlayerManager().getPlayerIfExists((UUID) player);
+            return (PlotPlayer<Player>) PlotSquared.imp().getPlayerManager()
+                .getPlayerIfExists((UUID) player);
         }
         return null;
     }
@@ -1057,8 +1088,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
     }
 
-    @Override
-    public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world,
+    @Override public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world,
         @NonNull final IndependentPlotGenerator generator) {
         return new BukkitPlotGenerator(world, generator);
     }
@@ -1080,7 +1110,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         return wePlugin.wrapCommandSender(console);
     }
 
-    @Override @NotNull public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
+    @Override @NotNull
+    public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
         return this.playerManager;
     }
+
 }

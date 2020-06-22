@@ -121,8 +121,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * - Accepts UUID
      * - Accepts bukkit OfflinePlayer (offline)
      *
-     * @param player
-     * @return
+     * @param player Player object to wrap
+     * @return Wrapped player
      */
     public static PlotPlayer<?> wrap(Object player) {
         return PlotSquared.get().IMP.wrapPlayer(player);

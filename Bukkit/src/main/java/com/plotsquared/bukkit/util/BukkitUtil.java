@@ -121,7 +121,7 @@ public class BukkitUtil extends WorldUtil {
         lastPlotPlayer = null;
     }
 
-    public static PlotPlayer<?> getPlayer(@NonNull final OfflinePlayer op) {
+    public static PlotPlayer<Player> getPlayer(@NonNull final OfflinePlayer op) {
         if (op.isOnline()) {
             return getPlayer(op.getPlayer());
         }
