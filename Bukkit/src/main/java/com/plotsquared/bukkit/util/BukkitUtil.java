@@ -116,9 +116,11 @@ public class BukkitUtil extends WorldUtil {
     private static Player lastPlayer = null;
     private static BukkitPlayer lastPlotPlayer = null;
 
-    public static void removePlayer(String player) {
+    public static void removePlayer(UUID uuid) {
         lastPlayer = null;
         lastPlotPlayer = null;
+        // Make sure that it's removed internally
+        PlotSquared.imp().getPlayerManager().removePlayer(uuid);
     }
 
     public static PlotPlayer<Player> getPlayer(@NonNull final OfflinePlayer op) {

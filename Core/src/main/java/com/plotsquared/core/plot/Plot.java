@@ -2917,7 +2917,7 @@ public class Plot {
      */
     public void reEnter() {
         TaskManager.runTaskLater(() -> {
-            for (PlotPlayer pp : Plot.this.getPlayersInPlot()) {
+            for (PlotPlayer<?> pp : Plot.this.getPlayersInPlot()) {
                 PlotListener.plotExit(pp, Plot.this);
                 PlotListener.plotEntry(pp, Plot.this);
             }
@@ -2925,18 +2925,19 @@ public class Plot {
     }
 
     public void debug(@NotNull final String message) {
-        final Collection<PlotPlayer<?>> players = PlotPlayer.getDebugModePlayersInPlot(this);
-        if (players.isEmpty()) {
-            return;
-        }
-        final String string = Captions.PLOT_DEBUG.getTranslated().replace("%plot%", this.toString())
-            .replace("%message%", message);
-        for (final PlotPlayer<?> player : players) {
-            if (isOwner(player.getUUID()) ||
-                Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_DEBUG_OTHER)) {
-                player.sendMessage(string);
+        try {
+            final Collection<PlotPlayer<?>> players = PlotPlayer.getDebugModePlayersInPlot(this);
+            if (players.isEmpty()) {
+                return;
             }
-        }
+            final String string =
+                Captions.PLOT_DEBUG.getTranslated().replace("%plot%", this.toString()).replace("%message%", message);
+            for (final PlotPlayer<?> player : players) {
+                if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_DEBUG_OTHER)) {
+                    player.sendMessage(string);
+                }
+            }
+        } catch (final Exception ignored) {}
     }
 
     /**

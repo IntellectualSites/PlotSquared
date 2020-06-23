@@ -392,6 +392,19 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         PlotSquared.log(
             Captions.PREFIX.getTranslated() + "Using platform world manager: " + this.worldManager
                 .getName());
+
+        // Clean up potential memory leak
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            try {
+                for (final PlotPlayer<? extends Player> player : this.getPlayerManager().getPlayers()) {
+                    if (player.getPlatformPlayer() == null || !player.getPlatformPlayer().isOnline()) {
+                        this.getPlayerManager().removePlayer(player);
+                    }
+                }
+            } catch (final Exception e) {
+                getLogger().warning("Failed to clean up players: " + e.getMessage());
+            }
+        }, 100L, 100L);
     }
 
     private void unload() {
@@ -982,7 +995,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
     }
 
     @Override public void unregister(@NonNull final PlotPlayer player) {
-        BukkitUtil.removePlayer(player.getName());
+        BukkitUtil.removePlayer(player.getUUID());
     }
 
     @Override public void registerChunkProcessor() {

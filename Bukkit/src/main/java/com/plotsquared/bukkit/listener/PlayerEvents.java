@@ -650,10 +650,10 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotSquared.get().getImpromptuUUIDPipeline().storeImmediately(event.getName(), uuid);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onConnect(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        BukkitUtil.removePlayer(player.getName());
+        BukkitUtil.removePlayer(player.getUniqueId());
         final PlotPlayer<Player> pp = BukkitUtil.getPlayer(player);
 
         Location location = pp.getLocation();

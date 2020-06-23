@@ -30,6 +30,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,6 +53,17 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
     public void removePlayer(@NotNull final PlotPlayer<?> plotPlayer) {
         synchronized (playerLock) {
             this.playerMap.remove(plotPlayer.getUUID());
+        }
+    }
+
+    /**
+     * Remove a player from the player map
+     *
+     * @param uuid Player to remove
+     */
+    public void removePlayer(@NotNull final UUID uuid) {
+        synchronized (playerLock) {
+            this.playerMap.remove(uuid);
         }
     }
 
@@ -110,7 +122,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         }
     }
 
-    @NotNull protected abstract P createPlayer(@NotNull final UUID uuid);
+    @NotNull public abstract P createPlayer(@NotNull final UUID uuid);
 
     /**
      * Get an an offline player object from the player's UUID
@@ -134,7 +146,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @return Unmodifiable collection of players
      */
     public Collection<P> getPlayers() {
-        return Collections.unmodifiableCollection(this.playerMap.values());
+        return Collections.unmodifiableCollection(new ArrayList<>(this.playerMap.values()));
     }
 
 
