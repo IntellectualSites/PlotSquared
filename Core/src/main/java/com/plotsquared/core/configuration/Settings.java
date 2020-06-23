@@ -568,6 +568,8 @@ public class Settings extends Config {
         "Read more about components here: https://wiki.intellectualsites.com/en/plotsquared/installation/plot-components"}) public static boolean COMPONENT_PRESETS = true;
         @Comment("Use UUID cache to complete usernames")
         public static boolean EXTENDED_USERNAME_COMPLETION = true;
+        @Comment("Command aliases that will be tab completed")
+        public static List<String> TAB_COMPLETED_ALIASES = Arrays.asList("plot", "plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap");
     }
 
 }

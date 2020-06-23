@@ -72,6 +72,13 @@ public class Debug extends SubCommand {
             MainUtil.sendMessage(player, String.format("There are %d cached UUIDs", mappings.size()));
             return true;
         }
+        if (args.length > 0 && "debug-players".equalsIgnoreCase(args[0])) {
+            MainUtil.sendMessage(player, "Player in debug mode: " );
+            for (final PlotPlayer<?> pp : PlotPlayer.getDebugModePlayers()) {
+                MainUtil.sendMessage(player, "- " + pp.getName());
+            }
+            return true;
+        }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {
             EntityCategories.init();
             player.sendMessage(Captions.PREFIX.getTranslated() + "§cEntity Categories: ");

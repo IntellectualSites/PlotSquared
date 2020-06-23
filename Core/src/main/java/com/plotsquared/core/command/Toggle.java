@@ -129,7 +129,7 @@ public class Toggle extends Command {
     public void debug(Command command, PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
-        if (toggle(player, "debug")) {
+        if (!toggle(player, "debug")) {
             MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
         } else {
             MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());

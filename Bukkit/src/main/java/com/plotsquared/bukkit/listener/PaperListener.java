@@ -60,7 +60,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -280,7 +279,7 @@ public class PaperListener implements Listener {
         }
         final int tileEntityCount = event.getBlock().getChunk().getTileEntities(false).length;
         if (tileEntityCount >= Settings.Chunk_Processor.MAX_TILES) {
-            final PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
+            final PlotPlayer<?> plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
             Captions.TILE_ENTITY_CAP_REACHED.send(plotPlayer, Settings.Chunk_Processor.MAX_TILES);
             event.setCancelled(true);
             event.setBuild(false);
@@ -309,7 +308,7 @@ public class PaperListener implements Listener {
         if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
             return;
         }
-        PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
+        PlotPlayer<?> pp = BukkitUtil.getPlayer((Player) shooter);
         Plot plot = location.getOwnedPlot();
         if (plot != null && !plot.isAdded(pp.getUUID())) {
             entity.remove();
@@ -334,14 +333,14 @@ public class PaperListener implements Listener {
         final String[] unprocessedArgs = buffer.split(Pattern.quote(" "));
         if (unprocessedArgs.length == 1) {
             return; // We don't do anything in this case
-        } else if (!Arrays.asList("plot", "plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap")
+        } else if (!Settings.Enabled_Components.TAB_COMPLETED_ALIASES
             .contains(unprocessedArgs[0].toLowerCase(Locale.ENGLISH))) {
             return;
         }
         final String[] args = new String[unprocessedArgs.length - 1];
         System.arraycopy(unprocessedArgs, 1, args, 0, args.length);
         try {
-            final PlotPlayer player = BukkitUtil.getPlayer((Player) event.getSender());
+            final PlotPlayer<?> player = BukkitUtil.getPlayer((Player) event.getSender());
             final Collection<Command> objects = MainCommand.getInstance().tab(player, args, buffer.endsWith(" "));
             if (objects == null) {
                 return;

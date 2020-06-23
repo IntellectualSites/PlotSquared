@@ -805,7 +805,7 @@ public enum Captions implements Caption {
     //</editor-fold>
 
     //<editor-fold desc="Debug">
-    PLOT_DEBUG("$1Plot Debug ($2%plot%$1): %message%", "Plot-Debug"),
+    PLOT_DEBUG("$2Plot Debug ($1%plot%$2): %message%", "Plot-Debug"),
     //</editor-fold>
 
     /**

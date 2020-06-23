@@ -87,7 +87,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     private ConcurrentHashMap<String, Object> meta;
     private int hash;
 
-    public static <T> PlotPlayer from(@NonNull final T object) {
+    public static <T> PlotPlayer<T> from(@NonNull final T object) {
         if (!converters.containsKey(object.getClass())) {
             throw new IllegalArgumentException(String
                 .format("There is no registered PlotPlayer converter for type %s",
@@ -101,7 +101,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         converters.put(clazz, converter);
     }
 
-    public static Collection<PlotPlayer<?>> getDebugModePlayerInPlot(@NotNull final Plot plot) {
+    public static Collection<PlotPlayer<?>> getDebugModePlayers() {
+        return Collections.unmodifiableCollection(debugModeEnabled);
+    }
+
+    public static Collection<PlotPlayer<?>> getDebugModePlayersInPlot(@NotNull final Plot plot) {
         if (debugModeEnabled.isEmpty()) {
             return Collections.emptyList();
         }

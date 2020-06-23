@@ -2925,7 +2925,7 @@ public class Plot {
     }
 
     public void debug(@NotNull final String message) {
-        final Collection<PlotPlayer<?>> players = PlotPlayer.getDebugModePlayerInPlot(this);
+        final Collection<PlotPlayer<?>> players = PlotPlayer.getDebugModePlayersInPlot(this);
         if (players.isEmpty()) {
             return;
         }
