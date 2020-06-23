@@ -38,12 +38,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Placeholders extends PlaceholderExpansion {
-
-    private Pattern flagPattern = Pattern.compile("currentplot_flag_(.+)");
 
     public Placeholders() {
     }
@@ -130,8 +126,8 @@ public class Placeholders extends PlaceholderExpansion {
                     return "";
                 }
 
-                String name = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(uid,
-                    Settings.UUID.BLOCKING_TIMEOUT);
+                String name = PlotSquared.get().getImpromptuUUIDPipeline()
+                    .getSingle(uid, Settings.UUID.BLOCKING_TIMEOUT);
 
                 if (name != null) {
                     return name;
@@ -187,31 +183,40 @@ public class Placeholders extends PlaceholderExpansion {
             default:
                 break;
         }
-        final Matcher matcher = this.flagPattern.matcher(identifier);
-        if (matcher.find()) {
-            return getFlag(plot, matcher.group(1));
+        if (identifier.startsWith("currentplot_localflag_")) {
+            final String[] splitValues = identifier.split("currentplot_localflag_");
+            return (splitValues.length >= 2) ? getFlagValue(plot, splitValues[1], false) : "";
+        }
+        if (identifier.startsWith("currentplot_flag_")) {
+            final String[] splitValues = identifier.split("currentplot_flag_");
+            return (splitValues.length >= 2) ? getFlagValue(plot, splitValues[1], true) : "";
         }
         return "";
     }
 
     /**
      * Return the flag value from its name on the current plot.
-     * If the flag doesn't exist it return an empty string.
-     * If the flag exists but it is not set on current plot it return the default value.
+     * If the flag doesn't exist it returns an empty string.
+     * If the flag exists but it is not set on current plot and the parameter inherit is set to true,
+     * it returns the default value.
      *
      * @param plot     Current plot where the player is
      * @param flagName Name of flag to get from current plot
+     * @param inherit  Define if it returns only the flag set on currentplot or also inherited flag
      * @return The value of flag serialized in string
      */
-    private String getFlag(final Plot plot, final String flagName) {
+    private String getFlagValue(final Plot plot, final String flagName, final boolean inherit) {
         final PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(flagName);
-        if (flag != null) {
-            return plot.getFlags().stream()
-                .filter(pflag -> pflag.getName().equals(flagName)).findFirst()
-                .map(PlotFlag::getValue)
-                .map(Object::toString)
-                .orElseGet(() -> plot.getFlagContainer().getFlagErased(flag.getClass()).toString());
+        if (flag == null) {
+            return "";
         }
-        return "";
+
+        if (inherit) {
+            return plot.getFlag(flag).toString();
+        } else {
+            final PlotFlag<?, ?> plotFlag = plot.getFlagContainer().queryLocal(flag.getClass());
+            return (plotFlag != null) ? plotFlag.getValue().toString() : "";
+        }
+
     }
 }
