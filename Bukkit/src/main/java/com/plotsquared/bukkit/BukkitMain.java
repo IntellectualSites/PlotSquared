@@ -45,6 +45,7 @@ import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
 import com.plotsquared.bukkit.util.BukkitEconHandler;
 import com.plotsquared.bukkit.util.BukkitInventoryUtil;
+import com.plotsquared.bukkit.util.BukkitPermHandler;
 import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitTaskManager;
@@ -94,6 +95,7 @@ import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.PremiumVerification;
@@ -179,6 +181,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
     @Getter private PlatformWorldManager<World> worldManager;
     private final BukkitPlayerManager playerManager = new BukkitPlayerManager();
     private EconHandler econ;
+    private PermHandler perm;
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -904,7 +907,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
 
     @Override public EconHandler getEconomyHandler() {
         if (econ != null) {
-            if (econ.init() /* is inited*/) {
+            if (econ.init() /* is inited */) {
                 return econ;
             } else {
                 return null;
@@ -918,6 +921,26 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             }
         } catch (Throwable ignored) {
             PlotSquared.debug("No economy detected!");
+        }
+        return null;
+    }
+
+    @Override public PermHandler getPermissionHandler() {
+        if (perm != null) {
+            if (perm.init() /* is inited */) {
+                return perm;
+            } else {
+                return null;
+            }
+        }
+
+        try {
+            perm = new BukkitPermHandler();
+            if (perm.init()) {
+                return perm;
+            }
+        } catch (Throwable ignored) {
+            PlotSquared.debug("No permissions detected!");
         }
         return null;
     }
