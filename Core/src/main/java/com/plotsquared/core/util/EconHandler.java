@@ -35,18 +35,17 @@ import org.jetbrains.annotations.Nullable;
 public abstract class EconHandler {
 
     /**
-     * @deprecated This will be made private in the future
+     * @deprecated This will be removed in the future,
+     * call {@link IPlotMain#getEconomyHandler()} instead.
      */
-    @Deprecated public static EconHandler manager;
+    @Deprecated @Nullable public static EconHandler manager;
 
     /**
-     * Initialize the economy handler using
-     * {@link IPlotMain#getEconomyHandler()}
+     * Initialize the economy handler using {@link IPlotMain#getEconomyHandler()}
+     * @deprecated Call {@link #init} instead or use {@link IPlotMain#getEconomyHandler()}
+     * which does this already.
      */
-    public static void initializeEconHandler() {
-        if (manager != null) {
-            return;
-        }
+    @Deprecated public static void initializeEconHandler() {
         manager = PlotSquared.get().IMP.getEconomyHandler();
     }
 
@@ -54,10 +53,14 @@ public abstract class EconHandler {
      * Return the econ handler instance, if one exists
      *
      * @return Economy handler instance
+     * @deprecated Call {@link IPlotMain#getEconomyHandler()} instead
      */
-    @Nullable public static EconHandler getEconHandler() {
+    @Deprecated @Nullable public static EconHandler getEconHandler() {
+        manager = PlotSquared.get().IMP.getEconomyHandler();
         return manager;
     }
+
+    public abstract boolean init();
 
     public double getMoney(PlotPlayer<?> player) {
         if (player instanceof ConsolePlayer) {

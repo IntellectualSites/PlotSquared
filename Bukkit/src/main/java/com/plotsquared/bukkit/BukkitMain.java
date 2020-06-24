@@ -178,6 +178,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
     @Getter private BackupManager backupManager;
     @Getter private PlatformWorldManager<World> worldManager;
     private final BukkitPlayerManager playerManager = new BukkitPlayerManager();
+    private EconHandler econ;
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -902,8 +903,16 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
     }
 
     @Override public EconHandler getEconomyHandler() {
+        if (econ != null) {
+            if (econ.init() /* is inited*/) {
+                return econ;
+            } else {
+                return null;
+            }
+        }
+
         try {
-            BukkitEconHandler econ = new BukkitEconHandler();
+            econ = new BukkitEconHandler();
             if (econ.init()) {
                 return econ;
             }
