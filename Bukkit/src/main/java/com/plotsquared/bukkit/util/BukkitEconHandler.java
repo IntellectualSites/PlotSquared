@@ -27,34 +27,25 @@ package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.player.BukkitPlayer;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.PermHandler;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class BukkitEconHandler extends EconHandler {
 
     private Economy econ;
-    private Permission perms;
 
     @Override
     public boolean init() {
-        if (this.econ == null || this.perms == null) {
-            setupPermissions();
+        if (this.econ == null) {
             setupEconomy();
         }
-        return this.econ != null && this.perms != null;
-    }
-
-    private void setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider =
-            Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
-        if (permissionProvider != null) {
-            this.perms = permissionProvider.getProvider();
-        }
+        return this.econ != null;
     }
 
     private void setupEconomy() {
@@ -88,20 +79,19 @@ public class BukkitEconHandler extends EconHandler {
         this.econ.depositPlayer(((BukkitOfflinePlayer) player).player, amount);
     }
 
-    @Override public boolean hasPermission(String world, String player, String perm) {
-        return this.perms.playerHas(world, Bukkit.getOfflinePlayer(player), perm);
+    /**
+     * @deprecated Use {@link PermHandler#hasPermission(String, String, String)} instead
+     */
+    @Deprecated @Override public boolean hasPermission(String world, String player, String perm) {
+        if (PlotSquared.imp().getPermissionHandler() != null) {
+            return PlotSquared.imp().getPermissionHandler().hasPermission(world, player, perm);
+        } else {
+            return false;
+        }
     }
 
     @Override public double getBalance(PlotPlayer<?> player) {
         return this.econ.getBalance(player.getName());
-    }
-
-    @Deprecated public void setPermission(String world, String player, String perm, boolean value) {
-        if (value) {
-            this.perms.playerAdd(world, player, perm);
-        } else {
-            this.perms.playerRemove(world, player, perm);
-        }
     }
 
 }
