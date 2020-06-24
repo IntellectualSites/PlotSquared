@@ -156,8 +156,8 @@ public class Merge extends SubCommand {
                 return true;
             }
             if (plot.autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
-                if (EconHandler.manager != null && plotArea.useEconomy() && price > 0d) {
-                    EconHandler.manager.withdrawMoney(player, price);
+                if (EconHandler.getEconHandler() != null && plotArea.useEconomy() && price > 0d) {
+                    EconHandler.getEconHandler().withdrawMoney(player, price);
                     sendMessage(player, Captions.REMOVED_BALANCE, String.valueOf(price));
                 }
                 MainUtil.sendMessage(player, Captions.SUCCESS_MERGE);
@@ -174,8 +174,8 @@ public class Merge extends SubCommand {
                 uuid = plot.getOwnerAbs();
             }
         }
-        if (!force && EconHandler.manager != null && plotArea.useEconomy() && price > 0d
-            && EconHandler.manager.getMoney(player) < price) {
+        if (!force && EconHandler.getEconHandler() != null && plotArea.useEconomy() && price > 0d
+            && EconHandler.getEconHandler().getMoney(player) < price) {
             sendMessage(player, Captions.CANNOT_AFFORD_MERGE, String.valueOf(price));
             return false;
         }
@@ -192,8 +192,8 @@ public class Merge extends SubCommand {
             return true;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
-            if (EconHandler.manager != null && plotArea.useEconomy() && price > 0d) {
-                EconHandler.manager.withdrawMoney(player, price);
+            if (EconHandler.getEconHandler() != null && plotArea.useEconomy() && price > 0d) {
+                EconHandler.getEconHandler().withdrawMoney(player, price);
                 sendMessage(player, Captions.REMOVED_BALANCE, String.valueOf(price));
             }
             MainUtil.sendMessage(player, Captions.SUCCESS_MERGE);
@@ -226,12 +226,12 @@ public class Merge extends SubCommand {
                     sendMessage(accepter, Captions.MERGE_NOT_VALID);
                     return;
                 }
-                if (EconHandler.manager != null && plotArea.useEconomy() && price > 0d) {
-                    if (!force && EconHandler.manager.getMoney(player) < price) {
+                if (EconHandler.getEconHandler() != null && plotArea.useEconomy() && price > 0d) {
+                    if (!force && EconHandler.getEconHandler().getMoney(player) < price) {
                         sendMessage(player, Captions.CANNOT_AFFORD_MERGE, String.valueOf(price));
                         return;
                     }
-                    EconHandler.manager.withdrawMoney(player, price);
+                    EconHandler.getEconHandler().withdrawMoney(player, price);
                     sendMessage(player, Captions.REMOVED_BALANCE, String.valueOf(price));
                 }
                 MainUtil.sendMessage(player, Captions.SUCCESS_MERGE);

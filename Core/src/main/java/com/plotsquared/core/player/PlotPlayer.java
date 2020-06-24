@@ -756,18 +756,18 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * The amount of money this Player has.
      */
     public double getMoney() {
-        return EconHandler.manager == null ? 0 : EconHandler.manager.getMoney(this);
+        return EconHandler.getEconHandler() == null ? 0 : EconHandler.getEconHandler().getMoney(this);
     }
 
     public void withdraw(double amount) {
-        if (EconHandler.manager != null) {
-            EconHandler.manager.withdrawMoney(this, amount);
+        if (EconHandler.getEconHandler() != null) {
+            EconHandler.getEconHandler().withdrawMoney(this, amount);
         }
     }
 
     public void deposit(double amount) {
-        if (EconHandler.manager != null) {
-            EconHandler.manager.depositMoney(this, amount);
+        if (EconHandler.getEconHandler() != null) {
+            EconHandler.getEconHandler().depositMoney(this, amount);
         }
     }
 

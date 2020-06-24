@@ -157,9 +157,9 @@ public class Auto extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
-            if (EconHandler.manager != null) {
+            if (EconHandler.getEconHandler() != null) {
                 for (PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
-                    if (EconHandler.manager
+                    if (EconHandler.getEconHandler()
                         .hasPermission(area.getWorldName(), player.getName(), "plots.auto")) {
                         if (plotarea != null) {
                             plotarea = null;
@@ -253,18 +253,18 @@ public class Auto extends SubCommand {
                 return true;
             }
         }
-        if (EconHandler.manager != null && plotarea.useEconomy()) {
+        if (EconHandler.getEconHandler() != null && plotarea.useEconomy()) {
             Expression<Double> costExp = plotarea.getPrices().get("claim");
             double cost = costExp.evaluate((double) (Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
                 player.getPlotCount(plotarea.getWorldName())));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
-                if (!force && EconHandler.manager.getMoney(player) < cost) {
+                if (!force && EconHandler.getEconHandler().getMoney(player) < cost) {
                     sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
                 }
-                EconHandler.manager.withdrawMoney(player, cost);
+                EconHandler.getEconHandler().withdrawMoney(player, cost);
                 sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
             }
         }

@@ -86,11 +86,11 @@ public class Delete extends SubCommand {
             final long start = System.currentTimeMillis();
             boolean result = plot.deletePlot(() -> {
                 plot.removeRunning();
-                if ((EconHandler.manager != null) && plotArea.useEconomy()) {
+                if ((EconHandler.getEconHandler() != null) && plotArea.useEconomy()) {
                     Expression<Double> valueExr = plotArea.getPrices().get("sell");
                     double value = plots.size() * valueExr.evaluate((double) currentPlots);
                     if (value > 0d) {
-                        EconHandler.manager.depositMoney(player, value);
+                        EconHandler.getEconHandler().depositMoney(player, value);
                         sendMessage(player, Captions.ADDED_BALANCE, String.valueOf(value));
                     }
                 }

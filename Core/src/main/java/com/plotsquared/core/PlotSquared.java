@@ -304,8 +304,7 @@ public class PlotSquared {
             }
             // Economy
             if (Settings.Enabled_Components.ECONOMY) {
-                TaskManager
-                    .runTask(() -> EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler());
+                TaskManager.runTask(() -> EconHandler.initializeEconHandler());
             }
 
             if (Settings.Enabled_Components.COMPONENT_PRESETS) {

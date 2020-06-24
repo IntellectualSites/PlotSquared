@@ -76,6 +76,8 @@ subprojects {
         delete("../target")
     }
 
+    javadoc.options.encoding = 'UTF-8'
+
     dependencies {
         compile group: 'org.json', name: 'json', version: '20200518'
 

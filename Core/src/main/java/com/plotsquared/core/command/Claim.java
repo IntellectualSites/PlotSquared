@@ -105,14 +105,14 @@ public class Claim extends SubCommand {
                 }
             }
         }
-        if ((EconHandler.manager != null) && area.useEconomy() && !force) {
+        if ((EconHandler.getEconHandler() != null) && area.useEconomy() && !force) {
             Expression<Double> costExr = area.getPrices().get("claim");
             double cost = costExr.evaluate((double) currentPlots);
             if (cost > 0d) {
-                if (EconHandler.manager.getMoney(player) < cost) {
+                if (EconHandler.getEconHandler().getMoney(player) < cost) {
                     return sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
                 }
-                EconHandler.manager.withdrawMoney(player, cost);
+                EconHandler.getEconHandler().withdrawMoney(player, cost);
                 sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
             }
         }

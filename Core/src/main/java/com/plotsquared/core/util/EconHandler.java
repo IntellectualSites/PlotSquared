@@ -25,36 +25,52 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.IPlotMain;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class EconHandler {
 
-    public static EconHandler manager;
-    private static boolean initialized;
+    /**
+     * @deprecated This will be made private in the future
+     */
+    @Deprecated public static EconHandler manager;
 
-    public static EconHandler getEconHandler() {
-        if (initialized) {
-            return manager;
+    /**
+     * Initialize the economy handler using
+     * {@link IPlotMain#getEconomyHandler()}
+     */
+    public static void initializeEconHandler() {
+        if (manager != null) {
+            return;
         }
-        initialized = true;
-        return manager = PlotSquared.get().IMP.getEconomyHandler();
+        manager = PlotSquared.get().IMP.getEconomyHandler();
     }
 
-    public double getMoney(PlotPlayer player) {
+    /**
+     * Return the econ handler instance, if one exists
+     *
+     * @return Economy handler instance
+     */
+    @Nullable public static EconHandler getEconHandler() {
+        return manager;
+    }
+
+    public double getMoney(PlotPlayer<?> player) {
         if (player instanceof ConsolePlayer) {
             return Double.MAX_VALUE;
         }
         return getBalance(player);
     }
 
-    public abstract double getBalance(PlotPlayer player);
+    public abstract double getBalance(PlotPlayer<?> player);
 
-    public abstract void withdrawMoney(PlotPlayer player, double amount);
+    public abstract void withdrawMoney(PlotPlayer<?> player, double amount);
 
-    public abstract void depositMoney(PlotPlayer player, double amount);
+    public abstract void depositMoney(PlotPlayer<?> player, double amount);
 
     public abstract void depositMoney(OfflinePlotPlayer player, double amount);
 

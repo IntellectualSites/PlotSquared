@@ -71,7 +71,7 @@ public class ListCmd extends SubCommand {
 
     private String[] getArgumentList(PlotPlayer player) {
         List<String> args = new ArrayList<>();
-        if (EconHandler.manager != null && Permissions
+        if (EconHandler.getEconHandler() != null && Permissions
             .hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
             args.add("forsale");
         }
@@ -264,7 +264,7 @@ public class ListCmd extends SubCommand {
                         Captions.PERMISSION_LIST_FOR_SALE);
                     return false;
                 }
-                if (EconHandler.manager == null) {
+                if (EconHandler.getEconHandler() == null) {
                     break;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().allPlots().thatPasses(plot -> plot.getFlag(PriceFlag.class) > 0));
@@ -404,7 +404,7 @@ public class ListCmd extends SubCommand {
 
     @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         final List<String> completions = new LinkedList<>();
-        if (EconHandler.manager != null && Permissions
+        if (EconHandler.getEconHandler() != null && Permissions
             .hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
             completions.add("forsale");
         }
