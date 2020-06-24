@@ -44,15 +44,19 @@ import java.util.UUID;
 public class OfflinePlayerUUIDService implements UUIDService {
 
     @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
-        if (Settings.UUID.FORCE_LOWERCASE) {
+        if (Settings.UUID.FORCE_LOWERCASE || Bukkit.getWorlds().isEmpty()) {
             return Collections.emptyList(); // This is useless now
         }
         final List<UUIDMapping> wrappers = new ArrayList<>(uuids.size());
         for (final UUID uuid : uuids) {
             final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-            if (offlinePlayer.hasPlayedBefore()) {
-                wrappers.add(new UUIDMapping(uuid, offlinePlayer.getName()));
-            }
+            try {
+                if (offlinePlayer.hasPlayedBefore()) {
+                    wrappers.add(new UUIDMapping(uuid, offlinePlayer.getName()));
+                }
+            } catch (final Exception ignored) {} /* This can be safely ignored. If this happens, it is
+                                                    probably because it's called before the worlds have
+                                                    been loaded. This is bad, but does not break anything */
         }
         return wrappers;
     }
