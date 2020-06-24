@@ -405,4 +405,20 @@ public class UUIDPipeline {
         return mappings;
     }
 
+    /**
+     * Get a single UUID mapping immediately, if possible
+     *
+     * @param object Username ({@link String}) or {@link UUID}
+     * @return Mapping, if it could be found immediately
+     */
+    @Nullable public final UUIDMapping getImmediately(@NotNull final Object object) {
+        for (final UUIDService uuidService : this.getServiceListInstance()) {
+            final UUIDMapping mapping = uuidService.getImmediately(object);
+            if (mapping != null) {
+                return mapping;
+            }
+        }
+        return null;
+    }
+
 }

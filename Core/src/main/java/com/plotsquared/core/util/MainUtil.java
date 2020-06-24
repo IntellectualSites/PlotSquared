@@ -55,6 +55,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -515,7 +516,7 @@ public class MainUtil {
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
      */
-    public static Plot getPlotFromString(PlotPlayer player, String arg, boolean message) {
+    @Nullable public static Plot getPlotFromString(PlotPlayer player, String arg, boolean message) {
         if (arg == null) {
             if (player == null) {
                 if (message) {

@@ -40,6 +40,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.uuid.UUIDMapping;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -193,7 +194,18 @@ public class Visit extends Command {
             case 1:
                 final String[] finalArgs = args;
                 int finalPage = page;
-                if (args[0].length() >= 2 && !args[0].contains(";") && !args[0].contains(",")) {
+                // Try to determine whether the given argument is a username
+                // or an ordinal
+                boolean isNumber = false;
+                if (args[0].length() < 2) {
+                    isNumber = true;
+                } else if (args[0].length() <= 4 && MathMan.isInteger(args[0])) {
+                    // Check if it's an all-digit username that is stored in cache
+                    final UUIDMapping mapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(args[0]);
+                    // If no UUID could be found, then we assume it's a number and not a username
+                    isNumber = mapping == null;
+                }
+                if (!isNumber && args[0].length() >= 2 && !args[0].contains(";") && !args[0].contains(",")) {
                     PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
                             // The request timed out
@@ -240,9 +252,7 @@ public class Visit extends Command {
                     } else {
                         // Try to parse a plot
                         final Plot plot = MainUtil.getPlotFromString(player, finalArgs[0], true);
-                        if (plot == null) {
-                            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
-                        } else {
+                        if (plot != null) {
                             this.visit(player, PlotQuery.newQuery().withPlot(plot), null, confirm, whenDone, 1);
                         }
                     }

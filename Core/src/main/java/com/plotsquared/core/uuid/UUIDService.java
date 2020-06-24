@@ -26,6 +26,7 @@
 package com.plotsquared.core.uuid;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -73,6 +74,16 @@ public interface UUIDService {
      */
     default boolean canBeSynchronous() {
         return false;
+    }
+
+    /**
+     * Get a single UUID mapping immediately, if possible
+     *
+     * @param object Username ({@link String}) or {@link UUID}
+     * @return Mapping, if it could be found immediately
+     */
+    default @Nullable UUIDMapping getImmediately(@NotNull final Object object) {
+        return null;
     }
 
 }

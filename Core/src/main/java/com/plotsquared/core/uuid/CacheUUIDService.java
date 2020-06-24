@@ -28,9 +28,11 @@ package com.plotsquared.core.uuid;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -81,4 +83,20 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
     @Override public boolean canBeSynchronous() {
         return true;
     }
+
+    @Override @Nullable public UUIDMapping getImmediately(@NotNull final Object object) {
+        final List<UUIDMapping> list;
+        if (object instanceof String) {
+            list = getUUIDs(Collections.singletonList((String) object));
+        } else if (object instanceof UUID) {
+            list = getNames(Collections.singletonList((UUID) object));
+        } else {
+            list = Collections.emptyList();
+        }
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
 }
