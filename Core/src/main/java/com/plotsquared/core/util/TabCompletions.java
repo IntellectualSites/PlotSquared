@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 public class TabCompletions {
 
     private final Cache<String, List<String>> cachedCompletionValues =
-        CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES).build();
+        CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).build();
 
     private final Command booleanTrueCompletion = new Command(null, false, "true", "",
             RequiredType.NONE, null) {};

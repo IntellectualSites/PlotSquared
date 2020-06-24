@@ -72,12 +72,12 @@ public class Kick extends SubCommand {
             if (throwable instanceof TimeoutException) {
                 MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
             } else if (throwable != null || uuids.isEmpty()) {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER);
+                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
             } else {
-                Set<PlotPlayer> players = new HashSet<>();
+                Set<PlotPlayer<?>> players = new HashSet<>();
                 for (UUID uuid : uuids) {
                     if (uuid == DBFunc.EVERYONE) {
-                        for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                        for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
                             if (pp == player || Permissions
                                 .hasPermission(pp, Captions.PERMISSION_ADMIN_ENTRY_DENIED)) {
                                 continue;
@@ -86,7 +86,7 @@ public class Kick extends SubCommand {
                         }
                         continue;
                     }
-                    PlotPlayer pp = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                    PlotPlayer<?> pp = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
                     if (pp != null) {
                         players.add(pp);
                     }
@@ -96,7 +96,7 @@ public class Kick extends SubCommand {
                     MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
                     return;
                 }
-                for (PlotPlayer player2 : players) {
+                for (PlotPlayer<?> player2 : players) {
                     if (!plot.equals(player2.getCurrentPlot())) {
                         MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
                         return;
