@@ -174,11 +174,11 @@ public interface IPlotMain<P> extends ILogger {
     boolean initWorldEdit();
 
     /**
-     * Gets the economy provider.
+     * Gets the economy provider, if there is one
      *
      * @return the PlotSquared economy manager
      */
-    EconHandler getEconomyHandler();
+    @Nullable EconHandler getEconomyHandler();
 
     /**
      * Gets the {@link QueueProvider} class.

@@ -40,6 +40,7 @@ public class BukkitEconHandler extends EconHandler {
     private Economy econ;
     private Permission perms;
 
+    @Override
     public boolean init() {
         if (this.econ == null || this.perms == null) {
             setupPermissions();
