@@ -72,20 +72,20 @@ public class Placeholders extends PlaceholderExpansion {
         }
 
         if (identifier.startsWith("has_plot_")) {
-            if (identifier.split("has_plot_").length != 2)
+            identifier = identifier.substring("has_plot_".length());
+            if (identifier.isEmpty())
                 return "";
 
-            identifier = identifier.split("has_plot_")[1];
             return pl.getPlotCount(identifier) > 0 ?
                 PlaceholderAPIPlugin.booleanTrue() :
                 PlaceholderAPIPlugin.booleanFalse();
         }
 
         if (identifier.startsWith("plot_count_")) {
-            if (identifier.split("plot_count_").length != 2)
+            identifier = identifier.substring("plot_count_".length());
+            if (identifier.isEmpty())
                 return "";
 
-            identifier = identifier.split("plot_count_")[1];
             return String.valueOf(pl.getPlotCount(identifier));
         }
 
@@ -184,12 +184,11 @@ public class Placeholders extends PlaceholderExpansion {
                 break;
         }
         if (identifier.startsWith("currentplot_localflag_")) {
-            final String[] splitValues = identifier.split("currentplot_localflag_");
-            return (splitValues.length >= 2) ? getFlagValue(plot, splitValues[1], false) : "";
+            return getFlagValue(plot, identifier.substring("currentplot_localflag_".length()),
+                false);
         }
         if (identifier.startsWith("currentplot_flag_")) {
-            final String[] splitValues = identifier.split("currentplot_flag_");
-            return (splitValues.length >= 2) ? getFlagValue(plot, splitValues[1], true) : "";
+            return getFlagValue(plot, identifier.substring("currentplot_flag_".length()), true);
         }
         return "";
     }
@@ -206,10 +205,11 @@ public class Placeholders extends PlaceholderExpansion {
      * @return The value of flag serialized in string
      */
     private String getFlagValue(final Plot plot, final String flagName, final boolean inherit) {
-        final PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(flagName);
-        if (flag == null) {
+        if (flagName.isEmpty())
             return "";
-        }
+        final PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(flagName);
+        if (flag == null)
+            return "";
 
         if (inherit) {
             return plot.getFlag(flag).toString();
@@ -217,6 +217,5 @@ public class Placeholders extends PlaceholderExpansion {
             final PlotFlag<?, ?> plotFlag = plot.getFlagContainer().queryLocal(flag.getClass());
             return (plotFlag != null) ? plotFlag.getValue().toString() : "";
         }
-
     }
 }
