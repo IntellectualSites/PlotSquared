@@ -37,6 +37,7 @@ dependencies {
     implementation("net.alpenblock:BungeePerms:4.0-dev-106")
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile('com.sk89q:squirrelid:1.0.0-SNAPSHOT'){ transitive = false }
+    compile("org.slf4j:slf4j-jdk14:2.0.0-alpha1")
 }
 
 sourceCompatibility = 1.8
@@ -95,6 +96,7 @@ shadowJar {
         include(dependency("org.bstats:bstats-bukkit:1.7"))
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))
+        include(dependency("org.slf4j:slf4j-jdk14:2.0.0-alpha1"))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")

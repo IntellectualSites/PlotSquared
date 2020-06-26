@@ -165,7 +165,7 @@ public class PlotSquared {
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     private YamlConfiguration config;
     // Implementation logger
-    @Setter @Getter private ILogger logger;
+    @Deprecated @Setter @Getter private ILogger logger;
     // Platform / Version / Update URL
     private PlotVersion version;
     // Files and configuration
@@ -398,8 +398,9 @@ public class PlotSquared {
      *
      * @param message Message to log
      * @see IPlotMain#log(String)
+     * @deprecated Use slf4j
      */
-    public static void log(Object message) {
+    @Deprecated public static void log(Object message) {
         if (message == null || (message instanceof Caption ?
             ((Caption) message).getTranslated().isEmpty() :
             message.toString().isEmpty())) {
@@ -417,8 +418,9 @@ public class PlotSquared {
      *
      * @param message Message to log
      * @see IPlotMain#log(String)
+     * @deprecated Use sl4j
      */
-    public static void debug(@Nullable Object message) {
+    @Deprecated public static void debug(@Nullable Object message) {
         if (Settings.DEBUG) {
             if (PlotSquared.get() == null || PlotSquared.get().getLogger() == null) {
                 System.out.printf("[P2][Debug] %s\n", StringMan.getString(message));

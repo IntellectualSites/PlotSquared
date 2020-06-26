@@ -28,10 +28,15 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.DebugExec;
 import com.plotsquared.core.command.MainCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptException;
 
 public abstract class Expression<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(Expression.class);
+
     public static <U> Expression<U> constant(final U value) {
         return new Expression<U>() {
             @Override public U evaluate(U arg) {
@@ -66,7 +71,7 @@ public abstract class Expression<T> {
                 try {
                     return (Double) exec.getEngine().eval(expression.replace("{arg}", "" + arg));
                 } catch (ScriptException e) {
-                    PlotSquared.debug("Invalid Expression: " + expression);
+                    logger.debug("Invalid expression: {}", expression);
                     e.printStackTrace();
                 }
                 return 0d;
