@@ -1389,6 +1389,11 @@ public class PlayerEvents extends PlotListener implements Listener {
             case BUBBLE_CORAL_FAN:
             case FIRE_CORAL_FAN:
             case HORN_CORAL_FAN:
+            case BRAIN_CORAL_WALL_FAN:
+            case BUBBLE_CORAL_WALL_FAN:
+            case FIRE_CORAL_WALL_FAN:
+            case HORN_CORAL_WALL_FAN:
+            case TUBE_CORAL_WALL_FAN:
                 if (!plot.getFlag(CoralDryFlag.class)) {
                     plot.debug("Coral could not dry because coral-dry = false");
                     event.setCancelled(true);

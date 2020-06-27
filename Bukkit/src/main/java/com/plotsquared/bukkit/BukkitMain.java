@@ -123,6 +123,7 @@ import org.bukkit.World;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -790,7 +791,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                         case MUSHROOM_COW:
                         case OCELOT:
                         case PIG:
-                        case PIG_ZOMBIE:
                         case RABBIT:
                         case SHEEP:
                         case SILVERFISH:
