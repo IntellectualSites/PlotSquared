@@ -527,6 +527,13 @@ public class Settings extends Config {
         public static int TARGET_TIME = 65;
     }
 
+    @Comment("Settings related to tab completion")
+    public static final class Tab_Completions {
+        @Comment({"The time in seconds how long tab completions should remain in cache.",
+                 "0 will disable caching. Lower values may be less performant."})
+        public static int CACHE_EXPIRATION = 15;
+    }
+
 
     @Comment({"Enable or disable parts of the plugin",
         "Note: A cache will use some memory if enabled"})
