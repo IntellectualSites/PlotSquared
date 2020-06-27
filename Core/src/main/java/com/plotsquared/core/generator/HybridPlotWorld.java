@@ -335,7 +335,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                             (short) (z - shift), id, false, h2);
                     }
                 }
-                BiomeType biome = blockArrayClipboard1
+                BiomeType biome = blockArrayClipboard2
                     .getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
                 addOverlayBiome((short) (x - shift), (short) (z - shift), biome);
             }
