@@ -1751,6 +1751,7 @@ public class Plot {
             }
         } else {
             area.addPlot(this);
+            updateWorldBorder();
         }
         setSign(player.getName());
         MainUtil.sendMessage(player, Captions.CLAIMED);
