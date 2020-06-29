@@ -573,6 +573,10 @@ public class Settings extends Config {
             PERSISTENT_ROAD_REGEN = false;
         @Comment({"Enable the `/plot component` preset GUI",
         "Read more about components here: https://wiki.intellectualsites.com/en/plotsquared/installation/plot-components"}) public static boolean COMPONENT_PRESETS = true;
+        @Comment({"Use legacy messages (will be removed in future)",
+                 "It is recommended to use the new message system"}) public static boolean LEGACY_MESSAGES = true;
+        @Comment("Enable per user locale") public static boolean PER_USER_LOCALE = false;
+        @Comment("The default locale") public static String DEFAULT_LOCALE = "en";
         @Comment("Use UUID cache to complete usernames")
         public static boolean EXTENDED_USERNAME_COMPLETION = true;
         @Comment("Command aliases that will be tab completed")

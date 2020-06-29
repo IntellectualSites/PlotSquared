@@ -61,6 +61,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -86,6 +87,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     private ConcurrentHashMap<String, Object> meta;
     private int hash;
+    private Locale locale;
 
     public static <T> PlotPlayer<T> from(@NonNull final T object) {
         if (!converters.containsKey(object.getClass())) {
@@ -735,6 +737,21 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
 
     public boolean hasDebugMode() {
         return this.getAttribute("debug");
+    }
+
+    @NotNull public Locale getLocale() {
+        if (this.locale == null) {
+            this.locale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
+        }
+        return this.locale;
+    }
+
+    public void setLocale(@NotNull final Locale locale) {
+        if (!PlotSquared.get().getCaptionMap().supportsLocale(locale)) {
+            this.locale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
+        } else {
+            this.locale = locale;
+        }
     }
 
     @Override public int hashCode() {

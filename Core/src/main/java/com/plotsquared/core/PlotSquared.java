@@ -28,13 +28,16 @@ package com.plotsquared.core;
 import com.plotsquared.core.command.WE_Anywhere;
 import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.caption.LegacyCaptionMap;
 import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
+import com.plotsquared.core.configuration.caption.CaptionLoader;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
 import com.plotsquared.core.database.DBFunc;
@@ -107,6 +110,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
@@ -164,6 +168,8 @@ public class PlotSquared {
     public HashMap<String, Set<PlotCluster>> clusters_tmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     private YamlConfiguration config;
+    // Localization
+    @Getter private CaptionMap captionMap;
     // Implementation logger
     @Setter @Getter private ILogger logger;
     // Platform / Version / Update URL
@@ -219,10 +225,23 @@ public class PlotSquared {
             if (!setupConfigs()) {
                 return;
             }
-            this.translationFile = MainUtil.getFile(this.IMP.getDirectory(),
-                Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName()
-                    + ".use_THIS.yml");
-            Captions.load(this.translationFile);
+
+            // Setup localization
+            CaptionMap captionMap;
+            if (Settings.Enabled_Components.PER_USER_LOCALE) {
+                captionMap = CaptionLoader.loadAll(Paths.get("lang"));
+            } else {
+                String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
+                captionMap = CaptionLoader.loadSingle(Paths.get("lang", fileName));
+            }
+            if (Settings.Enabled_Components.LEGACY_MESSAGES) {
+                this.translationFile = MainUtil.getFile(this.IMP.getDirectory(),
+                        Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName()
+                                + ".use_THIS.yml");
+                Captions.load(this.translationFile);
+                captionMap = new LegacyCaptionMap(captionMap);
+            }
+            this.captionMap = captionMap;
 
             // Setup plotAreaManager
             if (Settings.Enabled_Components.WORLDS) {
