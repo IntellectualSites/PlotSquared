@@ -376,6 +376,30 @@ public final class PlotQuery {
         return this.asList();
     }
 
+    /**
+     * Get whether any provided plot matches the given filters.
+     * If no plot was provided, false will be returned.
+     *
+     * @return true if any provided plot matches the filters.
+     */
+    public boolean anyMatch() {
+        if (this.filters.isEmpty()) {
+            return !this.plotProvider.getPlots().isEmpty();
+        } else {
+            final Collection<Plot> plots = this.plotProvider.getPlots();
+            outer: for (final Plot plot : plots) {
+                // a plot must pass all filters to match the criteria
+                for (final PlotFilter filter : this.filters) {
+                    if (!filter.accepts(plot)) {
+                        continue outer;
+                    }
+                }
+                return true; // a plot passed all filters, so we have a match
+            }
+            return false;
+        }
+    }
+
     @NotNull private PlotQuery addFilter(@NotNull final PlotFilter filter) {
         this.filters.add(filter);
         return this;
