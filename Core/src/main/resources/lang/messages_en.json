@@ -2,16 +2,20 @@
   "confirm.expired_confirm": "<gray>Confirmation has expired, please run the command again!</gray>",
   "confirm.failed_confirm": "<gray>You have no pending actions to confirm!</gray>",
   "confirm.requires_confirm": "<gray>Are you sure you wish to execute: </gray><gold>%s</orange><gray>?</gray>\n<red>This cannot be undone! If you are sure: </red><gray>/plot confirm</gray>",
+  
   "move.move_success": "<dark_aqua>Successfully moved plot.</dark_aqua>",
   "move.move_merged": "<gray>Merged plots may not be moved. Please unmerge the plot before performing the move.</gray>",
   "move.copy_success": "<dark_aqua>Successfully copied plot.</dark_aqua>",
   "move.reqiores_unowned": "<gray>The location specified is already occupied.</gray>",
+  
   "debug.requires_unmerged": "<gray>The plot cannot be merged.</gray>",
   "debug.degub_header": " <gold>Debug Information</orange>\n",
   "debug.debug_section": "<gray>>></gray> <gold><bold>&l%val%</bold></gold>",
   "debug.debug_line": "<gray>>></gray> <gold>%var%</gold><gray>:</gray><gold> %val%</gold>\n",
   "debug.plot_debug": "<gray>[<gold>Plot </gold><gray>Debug] (</gray><gold>%plot%</gold><gray>): %message%</gray>",
+  
   "set.set_attribute": "<dark_aqua>Successfully set %s0 set to %s1</dark_aqua>",
+  
   "web.generating_link": "<gold>Processing plot...</gold>",
   "web.generating_link_failed": "<red>Failed to generate download link!</red>",
   "web.save_failed": "<gray>Failed to save.</gray>",
@@ -19,7 +23,9 @@
   "web.load_failed": "<gray>Failed to load schematic.</gray>",
   "web.load_list": "<gray>To load a schematic, use </gray><gold>/plot load #</gold><gray>.</gray>",
   "web.save_success": "<gold>Successfully saved!</gold>",
+  
   "compass.compass_target": "<dark_aqua>Successfully targeted plot with your compass.</dark_aqua>",
+  
   "cluster.cluster_available_args": "<gold>The following sub commands are available: </gold><dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>",
   "cluster.cluster_list_heading": "<gray>There are </gray><gold>%s</gold><gray> clusters in this world.</gray>",
   "cluster.cluster_list_element": "<gray> - </gray><gold>%s</gold>\n",
@@ -41,16 +47,23 @@
   "cluster.cluster_regenerated": "<dark_aqua>Successfully started cluster regeneration.</dark_aqua>",
   "cluster.cluster_teleporting": "<dark_aqua>Teleporting...</dark_aqua>",
   "cluster.cluster_info": "<gold>Current cluster: </gold><gray>%id%</gray>\n<gold>Name: </gold><gray>%name%</gray>\n<gold>Owner: </gold><gray>%owner%</gray>\n<gold>Size: </gold><gray>%size%</gray>\n<gold>Rights: </gold><gray>%rights%</gray>",
+  
   "border.border": "<gray>You are outside the current map border.</gray>",
+  
   "worldedit.worldedit_bypass": "<gray><italic>To bypass your restrictions use </gray><dark_aqua>/plot wea</dark_aqua></italic>",
   "worldedit.worldedit_bypassed": "<gray>Currently bypassing WorldEdit restriction.</gray>",
+  
   "gamemode.gamemode_was_bypassed": "<gold>You bypassed the gamemode (</gold><gray>{gamemode}</gray><gold>) <gold>set for </gold><gray>{plot}</gray>",
+  
   "height.height_limit": "<gold>This plot area has a height limit of </gold><gray>{limit}.</gray>",
+  
   "notification.notify_enter": "<gray>%player entered your plot (</gray><gold>%plot</gold><gray>).</gray>",
   "notification.notify_leave": "<gray>%player left your plot (</gray><gold>%plot</gold><gray>).</gray>",
+  
   "swap.swap_overlap": "<gray>The proposed areas are not allowed to overlap.</gray>",
   "swap.swap_success": "<dark_aqua>Successfully swapped plots.</dark_aqua>",
   "swap.swap_merged": "<red>Merged plots may not be swapped. Please unmerge the plots before performing the swap.</red>",
+  
   "comment.inbox_notification": "<dark_aqua>%s </dark_aqua><gray>unread messages. Use /plot inbox.</gray>",
   "comment.not_valid_inbox_index": "<gray>No comment at index %s.</gray>",
   "comment.inbox_item": "<gray> - </gray><dark_aqua>%s</dark_aqua>",
@@ -63,17 +76,23 @@
   "comment.comment_removed_failure": "<red>Failed to delete comment!</red>",
   "comment.comment_added": "<dark_aqua>A comment has been left.</dark_aqua>",
   "comment.inbox_empty": "<gray>No comments.</gray>",
+  
   "console.not_console": "<red>For safety reasons, this command can only be executed by console.</red>",
   "console.is_console": "<red>This command can only be executed by a player.</red>",
+  
   "clipboard.paste_failed": "<red>Failed to paste the selection. Reason: </red><gray>%s</gray>",
+  
   "toggle.toggle_enabled": "<gray>Enabled setting: </gray><dark_aqua>%s</dark_aqua>",
   "toggle.toggle_disabled": "<gray>Disabled setting: </gray><dark_aqua>%s</dark_aqua>",
+  
   "blockedcmds.command_blocked": "<red>That command is not allowed in this plot.</red>",
+  
   "done.done_already_done": "<gray>This plot is already marked as done.</gray>",
   "done.done_not_done": "<gray>This plot is not marked as done.</gray>",
   "done.done_insufficient_complexity": "<red>This plot is too simple. Please add more detail before using this command.</red>",
   "done.done_success": "<gold>Successfully marked this plot as done.</gold>",
   "done.done_removed": "<gray>You may now continue building in this plot.</gray>",
+  
   "ratings.ratings_purged": "<gray>Purged ratings for this plot.</gray>",
   "ratings.rating_not_valid": "<red>You need to specify a number between 1 and 10.</red>",
   "ratings.rating_already_exists": "<gray>You have already rated plot %s.</gray>",
@@ -83,8 +102,10 @@
   "ratings.rating_not_your_own": "<red>You cannot rate your own plot.</red>",
   "ratings.rating_not_done": "<red>You can only rate finished plots.</red>",
   "ratings.rating_not_owned": "<red>You cannot rate a plot that is not claimed by anyone.</red>",
+  
   "tutorial.rate_this": "<gray>Rate this plot!</gray>",
   "tutorial.comment_this": "<gray>Leave some feedback on this plot: %s.</gray>",
+  
   "economy.econ_disabled": "<red>Economy is not enabled.</red>",
   "economy.cannot_afford_plot": "<red>You cannot afford to buy this plot. It costs </red><gold>%s</gold><red>.</red>",
   "economy.not_for_sale": "<red>This plot is not for sale.</red>",
@@ -94,6 +115,7 @@
   "economy.added_balance": "<gold>%s </gold><gray>has been added to your balance.</gray>",
   "economy.removed_balance": "<gold>%s </gold><gray>has been taken from your balance.</gray>",
   "ecomomy.removed_granted_plot": "<gray>You used %s0 plot grant(s), you've got </gray><gold>%s1</gold> <gray>left.</gray>",
+  
   "setup.setup_not_started": "<gold>No setup started. Use </gold><gray>/plot setup</gray> <gold>to start a setup process.</gold>",
   "setup.setup_init": "<gold>Usage: </gold><gray>/plot setup </gray><value>",
   "setup.setup_step": "<dark_gray>[</dark_gray><gold>Step %s0</gold><dark_gray>]</dark_gray> <gold>%s1 </gold><gray>-</gray> <gold>Expecting:</gold> <gray>%s2</gray> <gold>Default:</gold> <gray>%s3</gray>",
@@ -121,9 +143,11 @@
   "setup.setup_area_max_plot_id": "<gold>What should be the maximum Plot ID?</gold>",
   "setup.setup_area_max_plot_id_error": "<red>You must choose a valid maximum Plot ID!</red>",
   "setup.setup_area_plot_id_greater_than_minimum": "<red>The maximum Plot ID must be greater than the minimum!</red>",
+  
   "plotareatype.plot_area_type_normal": "<gray>Standard plot generation</gray>",
   "plotareatype.plot_area_type_augmented": "<gray>Plot generation with vanilla terrain</gray>",
   "plotareatype.plot_area_type_partial": "<gray>Vanilla with clusters of plots</gray>",
+  
   "schematics.schematic_too_large": "<red>The plot is too large for this action!</red>",
   "schematics.schematic_missing_arg": "<gray>You need to specify an argument. Possible values: </gray><gold>save</gold><gray>, </gray><gold>paste </gold><gray>, </gray><gold>exportall</gold><gray>, </gray><gold>list</gold>",
   "schematics.schematic_invalid": "<red>That is not a valid schematic. Reason: </red><gray>%s.</gray>",
@@ -138,24 +162,32 @@
   "schematics.schematic_exportall_finished": "<gold>Finished mass export.</gold>",
   "schematics.schematic_exportall_single_finished": "<gold>Finished export.</gold>",
   "schematic.schematic_exportall_world": "<red>Invalid world. Use </red><dark_aqua>/plot sch exportall <area></dark_aqua><red>.</red>",
+  
   "error.task_in_process": "<gold>Task is already running.</gold>",
+  
   "titles.title_entered_plot": "<gold>Plot: %world%;%x%;%z%</gold>",
   "titles.title_entered_plot_sub": "<dark_aqua>Owned by %s</dark_aqua>",
   "titles.prefix_greeting": "<gold>%id%</gold><gray>></gray>",
   "titles.prefix_farewell": "<gold>%id%</gold><gray>></gray>",
+  
   "core.prefix": "<dark_gray>[</dark_gray><gold>P2</gold><dark_gray>]</dark_gray>",
   "core.enabled": "<gold>%s0 is now enabled.</gold>",
+  
   "reload.reloaded_configs": "<gold>Translations and world settings have been reloaded.</gold>",
   "reload.reload_failed": "<red>Failed to reload file configurations.</red>",
+  
   "desc.desc_set": "<gray>Plot description set.</gray>",
   "desc.desc_unset": "<gray>Plot description unset.</gray>",
+  
   "alias.alias_set_to": "<gray>Plot alias set to </gray><gold>%alias%</gold><gray>.</gray>",
   "alias.alias_removed": "<gray>Plot alias removed.</gray>",
   "alias.alias_too_long": "<red>The alias must have less than 50 characters in length.</red>",
   "alias.alias_is_taken": "<red>That alias is already taken.</red>",
+  
   "position.position_set": "<gold>Home position set to your current location.</gold>",
   "position.position_unset": "<gold>Home position reset to the default location.</gold>",
   "position.home_argument": "<gray>Use /plot set home [none]</gray>",
+  
   "permission.no_schematic_permission": "<red>You don't have the permission required to use schematic </red><gold>%s</gold><red>.</red>",
   "permission.no_permission": "<red>You are lacking the permission node: </red><gold>%s</gold><red>.</red>",
   "permission.no_permission_event": "<red>You are lacking the permission node: <gold>%s</gold><red>.</red>",
@@ -164,6 +196,7 @@
   "permission.cant_claim_more_clusters": "<red>You can't claim more clusters.</red>",
   "permission.cant_transfer_more_plots": "<red>You can't send more plots to that user.</red>",
   "permission.cant_claim_more_plots_num": "<red>You can't claim more than </red><gold>%s </gold><red>plots at once.</red>",
+  
   "merge.merge_request_confirm": "<gray>Merge request from </gray><gold>%s</gold><gray>.</gray>",
   "merge.merge_not_valid": "<gray>This merge request is no longer valid.</gray>",
   "merge.merge_accepted": "<gray>The merge request has been accepted.</gray>",
@@ -173,11 +206,13 @@
   "merge.unlink_impossible": "<gray>You can only unlink a mega-plot.",
   "merge.unmerge_cancelled": "<gray>Unlink has been cancelled.</gray>",
   "merge.unlink_success": "<dark_aqua>Successfully unlinked plots.</dark_aqua>",
+  
   "commandconfig.not_valid_subcommand": "<gray>That is not a valid subcommand.</gray>",
   "commandconfig.did_you_mean": "<gray>Did you mean: </gray><gold>%s</gold>",
   "commandconfig.subcommand_set_options_header": "<gray>Possible Values: ",
   "commandconfig.command_syntax": "<gold>Usage: </gold><gray>%s</gray>",
   "commandconfig.flag_tutorial_usage": "<gold>Have an admin set the flag: </gold><gray>%s</gray>",
+  
   "invalid.component_illegal_block": "<red>You are not allowed to generate a component containg the block <gray>%s</gray>",
   "invalid.not_valid_block": "<red>That's not a valid block: </red><gray>%s</gray>",
   "invalid.not_allowed_block": "<red>That block is not allowed: </red><gray>%s</gray>",
@@ -187,6 +222,7 @@
   "invalid.number_not_in_range": "<red>That's not a valid number within the range: </red><gray>(%s, %s)</gray>",
   "invalid.number_not_positive": "<red>That's not a positive number: </red><gray>%s</gray>",
   "invalid.not_a_number": "<gray>%s</gray><red> is not a valid number.</red>",
+  
   "errors.invalid_player": "<red>Player not found: </red><gray>%s.</gray>",
   "errors.invalid_player_offline": "<red>The player must be online: <gray>%s.</gray>",
   "errors.invalid_command_flag": "<red>Invalid command flag: </red>%s0</gray>",
@@ -203,23 +239,35 @@
   "errors.player_no_plots": "<gray>That player does not own any plots.</gray>",
   "errors.wait_for_timer": "<gray>A set block timer is bound to either the current plot or you. Please wait for it to finish.</gray>",
   "errors.tile_entity_cap_reached": "<red>The total number of tile entities in this chunk may not exceed </red><gold>%s</gold><red>.</red>",
+  
   "debugpaste.debug_report_created": "<gold>Uploaded a full debug to: <gray>%url%</gray>",
+  
   "purge.purge_success": "<dark_aqua>Successfully purged %s plots.</dark_aqua>",
+  
   "players.fetching_player": "<gold>PlotSquared is attempting to find the specified player from your argument(s). This may take a while.</gold>",
   "players.fetching_players_timeout": "<red>The specified users did not exist in the cache and will be fetched in the background. Please wait a couple of minutes.</red>",
+  
   "trim.trim_in_progress": "<red>A world trim task is already in progress!</red>",
+  
   "blocklist.block_list_separator": "<gold>,</gold><gray> ",
+  
   "biome.need_biome": "<red>You need to specify a valid biome.</red>",
   "biome.biome_set_to": "<gold>Plot biome set to </gold><gray>",
+  
   "teleport.teleported_to_plot": "<gold>You have been teleported.</gold>",
   "teleport.teleported_to_road": "<gold>You got teleported to the road.</gold>",
   "teleport.teleport_in_seconds": "<gold>Teleporting in %s seconds. Do not move...</gold>",
   "teleport.teleport_failed": "<red>Teleportation cancelled due to movement or damage.</red>",
+  
   "setblock.set_block_action_finished": "<gold>The last setblock action is now finished.</gold>",
+  
   "unsafe.debugallowunsafe_on": "<gray>Unsafe actions enabled.</gray>",
   "unsafe.debugallowunsafe_off": "<gray>Unsafe actions disabled.</gray>",
+  
   "need.need_block": "<red>You've got to specify a block.</red>",
+  
   "near.plot_near": "<gold>Players: </gold></gray>%s0</gray>",
+  
   "info.none": "<gray>None</gray>",
   "info.now": "<gray>Now</gray>",
   "info.unknown": "<gray>Unknown</gray>",
@@ -248,27 +296,35 @@
   "info.plot_no_description": "<gray>No description set.</gray>",
   "info.info_syntax_console": "<gray>/plot info X;Z</gray>",
   "info.plot_caps_header": "<dark_gray><strikethrough>---------<reset> <gold>CAPS </gold><dark_gray><strikethrough>---------<reset>",
+  
   "infoplot_caps_format": "<gray>- Cap Type: </gray><gold>%cap% </gold><gray>| Status: </gray><gold>%current%</gold><gray>/</gray><gold>%limit% </gold><gray>(</gray><gold>%percentage%%</gold><gray>)</gray>",
+  
   "working.generating_component": "<gold>Started generating component from your settings.</gold>",
   "working.clearing_done": "<dark_aqua>Clear completed! Took %sms.</dark_aqua>",
   "working.deleting_done": "<dark_aqua>Delete completed! Took %sms.</dark_aqua>",
   "working.plot_not_claimed": "<gray>Plot not claimed.</gray>",
   "working.plot_is_claimed": "<gray>This plot is already claimed.</gray>",
   "working.claimed": "<dark_aqua>You successfully claimed the plot.</dark_aqua>",
+  
   "list.comment_list_header_paged": "<gray>(Page </gray><gold>%cur</gold><gray>/</gray><gold>%max</gold><gray>) </gray><gold>List of %amount% comments</gold>",
   "list.clickable": "<gray> (interactive)</gray>",
   "list.area_list_header_paged": "<gray>(Page </gray><gold>%cur</gold><gray>/</gray><gold>%max</gold><gray>) </gray><gold>List of %amount% areas</gold>",
   "list.plot_list_header_paged": "<gray>(Page </gray><gold>%cur</gold><gray>/</gray><gold>%max</gray><gray>) </gray><gold>List of %amount% plots</gold>",
   "list.plot_list_header": "<gold>List of %word% plots.</gold>",
+  
   "chat.plot_chat_spy_format": "<gray>[</gray><gold>Plot Spy</gold><gray>] [</gray><gold>%plot_id%</gold><gray>] </gray><gold>%sender%</gold><gray>: </gray><gold>%msg%</gold>",
   "chat.plot_chat_format": "<gray>[</gray><gold>Plot Chat</gold><gray>] [</gray><gold>%plot_id%</gold><gray>] </gray><gold>%sender%</gold><gray>: </gray><gold>%msg%</gold>",
   "chat.plot_chat_forced": "<gray>This world forces everyone to use plot chat.</gray>",
+  
   "deny.denied_added": "<dark_aqua>You successfully denied the player from this plot.</dark_aqua>",
   "deny.you_got_denied": "<dark_aqua>You are denied from the plot you were previously on, and got teleported to spawn.</dark_aqua>.",
   "deny.cant_remove_owner": "<red>You can't remove the plot owner.</red>",
+  
   "kick.you_got_kicked": "<dark_aqua>You got kicked!</dark_aqua>",
+  
   "trusted.trusted_added": "<dark_aqua>You successfully trusted a user to the plot.</dark_aqua>",
   "trusted.plot_removed_user": "<gold>Plot %s of which you were added to has been deleted due to owner inactivity.</gold>",
+  
   "member.removed_players": "<gray>Removed %s player(s) from this plot.</gray>",
   "member.plot_left": "<gray>%s left the plot.</gray>",
   "member.already_owner": "<gray>That user is already the plot owner: %s0</gray>",
@@ -276,14 +332,17 @@
   "member.member_added": "<dark_aqua>That user can now build while the plot owner is online.</dark_aqua>",
   "members.plot_max_members": "<red>You are not allowed to add any more players to this plot.</red>",
   "members.not_added_trusted": "<red>You must be added or trusted to the plot to run that command.</red>",
+  
   "owner.set_owner": "<dark_aqua>You successfully set the plot owner.</dark_aqua>",
   "owner.set_owner_cancelled": "<red>The set owner action was cancelled.</red>",
   "owner.set_owner_missing_player": "<red>You need to specify a new owner. Correct usage is: </red><gray>/plot setowner <owner></gray>",
   "owner.now_owner": "<dark_aqua>You are now the plot owner of %s</dark_aqua>",
+  
   "signs.owner_sign_line_1": "<gold>ID: </gold><gray>%id%</gray>",
   "signs.owner_sign_line_2": "<gold>Owner:</gold>",
   "signs.owner_sign_line_3": "<gray>%plr%</gray>",
   "signs.owner_sign_line_4": "<dark_gray>Claimed</dark_gray>",
+  
   "help.help_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",
   "help.help_page_header": "<gold>Category: </gold><gray>%category%,</gray><gold> Page: </gold><gray>%current%</gray><dark_gray>/</dark_gray><gray>%max%</gray>",
   "help.help_footer": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",
@@ -291,6 +350,7 @@
   "help.help_item": "<gold>%usage% <gray>[</gray><gold>%alias%</gray>]</gray>\n <dark_gray>- </dark_gray><gray>%desc%</gray>\n",
   "help.help_display_all_commands": "<gray>Display all commands.</gray>",
   "help.direction": "<gold>Current direction: %dir%</gold>",
+ 
   "category.command_category_claiming": "<gray>Claiming</gray>",
   "category.command_category_teleport": "<gray>Teleport</gray>",
   "category.command_category_settings": "<gray>Protection</gray>",
@@ -300,9 +360,12 @@
   "category.command_category_info": "<gray>Info</gray>",
   "category.command_category_debug": "<gray>Debug</gray>",
   "category.command_category_administration": "<gray>Admin</gray>",
+  
   "grants.granted_plots": "<gold>Result: </gold><gray>%s </gray><gold>grants left.</gold>",
   "grants.granted_plot": "<gold>You granted %s0 plot to </gold><gray>%s1.</gray>",
+  
   "events.event_denied": "<gold>%s </gold><gray>Cancelled by external plugin.</gray>",
+  
   "backups.backup_usage": "<gold>Usage: </gold><gray>/plot backup save/list/load</gray>",
   "backups.backup_impossible": "<gray>Backups are not enabled for this plot: %s.</gray>",
   "backups.backup_save_success": "<gold>The backup was created successfully.</gold>",
@@ -316,14 +379,17 @@
   "backups.backup_automatic_started": "<gold>Backing up the plot...</gold>",
   "backups.backup_automatic_finished": "<gold>The automatic backup process finished successfully!</gold>",
   "backups.backup_automatic_failure": "<red>The automatic backup process failed. Your pending action has been canceled. Reason: </red><gray>%s</gray>",
+  
   "preset.preset_cannot_afford": "<red>You cannot afford that preset.</red>",
   "preset.preset_invalid": "<red>Could not generate a pattern from that preset.</red>",
   "preset.preset_lore_cost": "<gray>Cost: </gray><gold>%cost%</gold>",
   "preset-preset_lore_component": "<gray>Component: </gray><gold>%component%</gold>",
+  
   "generic.generic_other": "<gray>other</gray>",
   "generic.generic_merged": "<gray>merged</gray>",
   "generic.generic_unowned": "<gray>unowned</gray>",
   "generic.generic_invalid_choice": "<gray>invalid choice</gray>",
+  
   "single.single_area_missing_selection": "<red>Error! You need to select a square region.</red>",
   "single.single_area_not_square": "<red>Error! Your selection needs to be a square.</red>",
   "single.single_area_overlapping": "<red>Error! Your selection overlaps with an existing plot area.</red>",
@@ -332,14 +398,142 @@
   "single.single_area_failed_to_save": "<red>Error! Failed to save the area schematic.</red>",
   "single.single_area_could_not_make_directories": "<red>Error! Failed to create the schematic directory.</red>",
   "single.single_area_created": "<gold>The area was created successfully!</gold>",
+ 
   "legacyconfig.legacy_config_found": "<green>A legacy configuration file was detected. Conversion will be attempted.</green>",
   "legacyconfig.legacy_config_backup": "<gold>A copy of worlds.yml has been saved in the file worlds.yml.old</gold>.",
   "legacyconfig.legacy_config_replaced": "<gray>> %s has been replaced with %s</gray>",
   "legacyconfig.legacy_config_done": "<green>The conversion has finished. PlotSquared will now be disabled and the new configuration file will be used at next startup. Please review the new worlds.yml file. Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. You need to re-generate the schematics.</green>",
   "legacyconfig.legacy_config_conversion_failed": "<red>Failed to convert the legacy configuration file. See stack trace for information.</red>",
+ 
+  "flag.flag_key": "<gray>Key: %s</gray>",
+  "flag.flag_desc": "<gray>Desc: %s</gray>",
+  "flag.not_valid_flag": "<red>That is not a valid flag.</red>",
+  "flag.not_valid_flag_suggested": "<gray>That is not a valid flag. Did you mean: </gray><gold>%s</gold>",
+  "flag.not_valid_value": "<red>Flag values must be alphanumerical.</red>",
+  "flag.flag_not_removed": "<red>The flag could not be removed.</red>",
+  "flag.flag_not_added": "<red>The flag could not be added.</red>",
+  "flag.flag_removed": "<dark_aqua>Successfully removed flag.</dark_aqua>",
+  "flag.flag_partially_removed": "<dark_aqua>Successfully removed flag value(s).</dark_aqua>",
+  "flag.flag_added": "<dark_aqua>Successfully added flag.</dark_aqua>",
+  "flag.flag_list_see_info": "<gray>Click to view information about the flag.</gray>",
+  "flag.flag_parse_error": "<red>Failed to parse flag </red><gray>%flag_name%<red>, value </red><gray>%flag_value%</gray><red>: %error%</red>",
+  "flag.flag_info_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Flags </gold><dark_gray><strikethrough>---------<reset>",
+  "flag.flag_info_footer": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Flags </gold><dark_gray><strikethrough>---------<reset>",
+  "flag.flag_info_color_key": "<gold>",
+  "flag.flag_info_color_value": "<gray>",
+  "flag.flag_info_name": "<gray>Name: </gray>",
+  "flag.flag_info_category": "<gray>Category: </gray>",
+  "flag.flag_info_description": "<gray>Description: </gray>",
+  "flag.flag_info_example": "<gray>Example: </gray>",
+  "flag.flag_info_default_value": "<gray>Default Value: </gray>",
+
+  "flags.flag_category_string": "<gray>String Flags</gray>",
+  "flags.flag_category_integers": "<gray>Integer Flags</gray>",
+  "flags.flag_category_doubles": "<gray>Decimal Flags</gray>",
+  "flags.flag_category_teleport_deny": "<gray>Teleport Deny Flag</gray",
+  "flags.flag_category_string_list": "<gray>String List Flags</gray>",
+  "flags.flag_category_weather": "<gray>Weather Flags</gray>",
+  "flags.flag_category_music": "<gray>Music Flags</gray>",
+  "flags.flag_category_block_list": "<gray>Material Flags</gray>",
+  "flags.flag_category_intervals": "<gray>Interval Flags</gray>",
+  "flags.flag_category_integer_list": "<gray>Integer List Flags</gray>",
+  "flags.flag_category_gamemode": "<gray>Game Mode Flags</gray>",
+  "flags.flag_category_enum": "<gray>Generic Enum Flags</gray>",
+  "flags.flag_category_decimal": "<gray>Decimal Flags<gray>",
+  "flags.flag_category_boolean": "<gray>Boolean Flags</gray>",
+  "flags.flag_category_fly": "<gray>Flight Flags</gray>",
+  "flags.flag_category_mixed": "<gray>Mixed Value Flags</gray>",
+  "flags.flag_description_entity_cap": "<gray>Set to an integer value to limit the amount of entities on the plot.</gray>",
+  "flags.flag_description_explosion": "<gray>Set to `true` to enable explosions in the plot, and `false` to disable them.</gray>",
+  "flags.flag_description_music": "<gray>Set to a music disk ID (item name) to play the music disc inside of the plot.</gray>",
+  "flags.flag_description_flight": "<gray>Set to `true` to enable flight within the plot when in survival or adventure mode</gray>\n<gray>set to `default` to use the gamemode default, and `false` to disable flight entirely.</gray>",
+  "flags.flag_description_untrusted": "<gray>Set to `false` to disallow untrusted players from visiting the plot.</gray>",
+  "flags.flag_description_deny_exit": "<gray>Set to `true` to disallow players from exiting the plot.</gray>",
+  "flags.flag_description_chat": "<gray>Set to `false` to prevent plot chat on the plot.</gray>",
+  "flags.flag_description_description": "<gray>Plot description. Supports '&' color codes.</gray>",
+  "flags.flag_description_greeting": "<gray>Message sent to players on plot entry. Supports '&' color codes.</gray>",
+  "flags.flag_description_farewell": "<gray>Message sent to players when leaving the plot. Supports '&' color codes.</gray>",
+  "flags.flag_description_weather": "<gray>Specifies the weather conditions inside of the plot.</gray>",
+  "flags.flag_description_animal_attack": "<gray>Set to `true` to allow animals to be attacked in the plot.</gray>",
+  "flags.flag_description_animal_cap": "<gray>Set to an integer value to limit the amount of animals on the plot.</gray>",
+  "flags.flag_description_animal_interact": "<gray>Set to `true` to allow animals to be interacted with in the plot.</gray>",
+  "flags.flag_description_block_burn": "<gray>Set to `true` to allow blocks to burn within the plot.</gray>",
+  "flags.flag_description_block_ignition": "<gray>Set to `false` to prevent blocks from igniting within the plot.</gray>",
+  "flags.flag_description_break": "<gray>Define a list of materials players should be able to break even when they aren't added to the plot.</gray>",
+  "flags.flag_description_device_interact": "<gray>Set to `true` to allow devices to be interacted with in the plot.</gray>",
+  "flags.flag_description_disable_physics": "<gray>Set to `true` to disable block physics in the plot.</gray>",
+  "flags.flag_description_drop_protection": "<gray>Set to `true` to prevent dropped items from being picked up by non-members of the plot.</gray>",
+  "flags.flag_description_feed": "<gray>Specify an interval in seconds and an optional amount by which the players will be fed (amount is 1 by default).</gray>",
+  "flags.flag_description_forcefield": "<gray>Set to `true` to enable member forcefield in the plot.</gray>",
+  "flags.flag_description_grass_grow": "<gray>Set to `false` to prevent grass from growing within the plot.</gray>",
+  "flags.flag_description_hanging_break": "<gray>Set to `true` to allow guests to break hanging objects in the plot.</gray>",
+  "flags.flag_description_hanging_place": "<gray>Set to `true` to allow guests to hang objects in the plot.</gray>",
+  "flags.flag_description_heal": "<gray>Specify an interval in seconds and an optional amount by which the players will be healed (amount is 1 by default).</gray>",
+  "flags.flag_description_hide_info": "<gray>Set to `true` to hide plot information.</gray>",
+  "flags.flag_description_hostile_attack": "<gray>Set to `true` to enable players to attack hostile mobs in the plot.</gray>",
+  "flags.flag_description_hostile_cap": "<gray>Set to an integer value to limit the amount of hostile entities on the plot.</gray>",
+  "flags.flag_description_hostile_interact": "<gray>Set to `true` to allow players to interact with hostile mobs in the plot.</gray>",
+  "flags.flag_description_ice_form": "<gray>Set to `true` to allow ice to form in the plot.</gray>",
+  "flags.flag_description_ice_melt": "<gray>Set to `false` to disable ice melting in the plot.</gray>",
+  "flags.flag_description_instabreak": "<gray>Set to `true` to allow blocks to be instantaneously broken in survival mode.</gray>",
+  "flags.flag_description_invincible": "<gray>Set to `true` to prevent players from taking damage inside of the plot.</gray>",
+  "flags.flag_description_item_drop": "<gray>Set to `false` to prevent items from being dropped inside of the plot.</gray>",
+  "flags.flag_description_kelp_grow": "<gray>Set to `false` to prevent kelp from growing in the plot.</gray>",
+  "flags.flag_description_liquid_flow": "<gray>Set to `false` to disable liquids from flowing within the plot.</gray>",
+  "flags.flag_description_misc_break": "<gray>Set to `true` to allow guests to break miscellaneous items.</gray>",
+  "flags.flag_description_misc_cap": "<gray>Set to an integer value to limit the amount of miscellaneous entities on the plot.</gray>",
+  "flags.flag_description_misc_interact": "<gray>Set to `true` to allow guests to interact with miscellaneous items.</gray>",
+  "flags.flag_description_misc_place": "<gray>Set to `true` to allow guests to place miscellaneous items.</gray>",
+  "flags.flag_description_mob_break": "<gray>Set to `true` to allow mobs to break blocks within the plot.</gray>",
+  "flags.flag_description_mob_cap": "<gray>Set to an integer value to limit the amount of mobs on the plot.</gray>",
+  "flags.flag_description_mob_place": "<gray>Set to `true` to allow mobs to place blocks within the plot.</gray>",
+  "flags.flag_description_mycel_grow": "<gray>Set to `false` to prevent mycelium from growing in the plot.</gray>",
+  "flags.flag_description_notify_enter": "<gray>Set to `true` to notify the plot owners when someone enters the plot.</gray>",
+  "flags.flag_description_notify_leave": "<gray>Set to `true` to notify the plot owners when someone leaves the plot.</gray>",
+  "flags.flag_description_no_worldedit": "<gray>Set to `true` to disable WorldEdit usage within the plot.</gray>",
+  "flags.flag_description_place": "<gray>Define a list of materials players should be able to place in the plot.</gray>",
+  "flags.flag_description_player_interact": "<gray>Set to `true` to allow guests to interact with players in the plot.</gray>",
+  "flags.flag_description_price": "<gray>Set a price for a plot. Must be a positive decimal number.</gray>",
+  "flags.flag_description_pve": "<gray>Set to `true` to enable PVE inside the plot.</gray>",
+  "flags.flag_description_pvp": "<gray>Set to `true` to enable PVP inside the plot.</gray>",
+  "flags.flag_description_redstone": "<gray>Set to `false` to disable redstone in the plot.</gray>",
+  "flags.flag_description_server_plot": "<gray>Set to `true` to turn the plot into a server plot. This is equivalent to setting the server as the plot owner.</gray>",
+  "flags.flag_description_snow_form": "<gray>Set to `true` to allow snow to form within the plot.</gray>",
+  "flags.flag_description_snow_melt": "<gray>Set to `true` to allow snow to melt within the plot.</gray>",
+  "flags.flag_description_soil_dry": "<gray>Set to `true` to allow soil to dry within the plot.</gray>",
+  "flags.flag_description_coral_dry": "<gray>Set to `true` to allow coral blocks to dry within the plot.</gray>",
+  "flags.flag_description_tamed_attack": "<gray>Set to `true` to allow guests to attack tamed animals in the plot.</gray>",
+  "flags.flag_description_tamed_interact": "<gray>Set to `true` to allow guests to interact with tamed animals in the plot.</gray>",
+  "flags.flag_description_time": "<gray>Set the time in the plot to a fixed value.</gray>",
+  "flags.flag_description_titles": "<gray>Set to `false` to disable plot titles. Can be set to: `none` (to inherit world settings), `true`, or `false`</gray>",
+  "flags.flag_description_use": "<gray>Define a list of materials players should be able to interact with in the plot.</gray>",
+  "flags.flag_description_vehicle_break": "<gray>Set to `true` to allow guests to break vehicles in the plot.</gray>",
+  "flags.flag_description_vehicle_cap": "<gray>Set to an integer value to limit the amount of vehicles on the plot.</gray>",
+  "flags.flag_description_vehicle_place": "<gray>Set to `true` to allow guests to place vehicles in the plot.</gray>",
+  "flags.flag_description_vehicle_use": "<gray>Set to `true` to allow guests to use vehicles in the plot.</gray>",
+  "flags.flag_description_villager_interact": "<gray>Set to `true` to allow guests to interact with villagers in the plot.</gray>",
+  "flags.flag_description_vine_grow": "<gray>Set to `false` to prevent vines from growing within the plot.</gray>",
+  "flags.flag_description_deny_teleport": "<gray>Deny a certain group from teleporting to the plot. Available groups: members, nonmembers, trusted, nontrusted, nonowners</gray>",
+  "flags.flag_description_gamemode": "<gray>Determines the gamemode in the plot.</gray>",
+  "flags.flag_description_guest_gamemode": "<gray>Determines the guest gamemode in the plot.</gray>",
+  "flags.flag_description_blocked_cmds": "<gray>A list of commands that are blocked in the plot.</gray>",
+  "flags.flag_description_keep": "<gray>Prevents the plot from expiring. Can be set to: true, false, the number of milliseconds to keep the plot for or a timestamp (3w 2d 5h).</gray>",
+  "flags.flag_description_keep_inventory": "<gray>Prevents players from dropping their items when they die inside of the plot.</gray>",
+  "flags.flag_description_prevent_creative_copy": "<gray>Prevents people from copying item NBT data in the plot unless they're added as members.</gray>",
   
-  
-
-
-
+  "flags.flag_error_boolean": "<red>Flag value must be a boolean (true|false)</red>",
+  "flags.flag_error_enum": "<red>Must be one of: %s</red>",
+  "flags.flag_error_gamemode": "<red>Flag value must be a gamemode: 'survival', 'creative', 'adventure' or 'spectator.</red>",
+  "flags.flag_error_integer": "<red>Flag value must be a whole number.</red>",
+  "flags.flag_error_integer_list": "<red>Flag value must be an integer list.</red>",
+  "flags.flag_error_internal": "<red>Value(s) must be numeric. /plot set flag <flag> <interval> [amount].</red>",
+  "flags.flag_error_keep": "<red>Flag value must be a timestamp or a boolean.</red>",
+  "flags.flag_error_long": "<red>Flag value must be a whole number (large numbers allowed).</red>",
+  "flags.flag_error_plotblocklist": "<red>Flag value must be a block list.</red>",
+  "flags.flag_error_invalid_block": "<red>The provided value is not a valid block or block category.</red>",
+  "flags.flag_error_double": "<red>Flag value must be a decimal number.</red>",
+  "flags.flag_error_string": "<red>Flag value must be alphanumeric. Some special characters are allowed.</red>",
+  "flags.flag_error_stringlist": "<red>Flag value must be a string list.</red>",
+  "flags.flag_error_weather": "<red>Flag must be a weather: 'rain' or 'sun'.</red>",
+  "flags.flag_error_music": "<red>Flag value must be a valid music disc ID.</red>"
 }
