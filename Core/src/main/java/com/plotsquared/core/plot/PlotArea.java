@@ -118,7 +118,7 @@ public abstract class PlotArea {
     @Getter private GameMode gameMode = GameModes.CREATIVE;
     @Getter private Map<String, Expression<Double>> prices = new HashMap<>();
     @Getter(AccessLevel.PROTECTED) private List<String> schematics = new ArrayList<>();
-    @Getter private boolean roadRespectingGlobalFlags = false;
+    @Getter private boolean roadFlags = false;
     private boolean worldBorder = false;
     private boolean useEconomy = false;
     private int hash;
@@ -128,7 +128,9 @@ public abstract class PlotArea {
     /**
      * Area flag container
      */
-    @Getter private FlagContainer flagContainer =
+    @Getter private final FlagContainer flagContainer =
+        new FlagContainer(GlobalFlagContainer.getInstance());
+    @Getter private final FlagContainer roadFlagContainer =
         new FlagContainer(GlobalFlagContainer.getInstance());
 
     public PlotArea(@NotNull final String worldName, @Nullable final String id,
@@ -371,7 +373,40 @@ public abstract class PlotArea {
         this.spawnEggs = config.getBoolean("event.spawn.egg");
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
-        this.roadRespectingGlobalFlags = config.getBoolean("road.respect-global-flags");
+
+        List<String> roadflags = config.getStringList("flags.default");
+        if (roadflags.isEmpty()) {
+            roadflags = config.getStringList("road.flags");
+            if (roadflags.isEmpty()) {
+                roadflags = new ArrayList<>();
+                ConfigurationSection section = config.getConfigurationSection("road.flags");
+                Set<String> keys = section.getKeys(false);
+                for (String key : keys) {
+                    if (!"default".equals(key)) {
+                        roadflags.add(key + ';' + section.get(key));
+                    }
+                }
+            }
+        }
+        this.getRoadFlagContainer().addAll(parseFlags(roadflags));
+
+        StringBuilder roadFlagBuilder = new StringBuilder();
+        Collection<PlotFlag<?, ?>> roadFlagCollection = this.getFlagContainer().getFlagMap().values();
+        if (roadFlagCollection.isEmpty()) {
+            roadFlagBuilder.append(Captions.NONE.getTranslated());
+        } else {
+            roadFlags = true;
+            String prefix = " ";
+            for (final PlotFlag<?, ?> flag : roadFlagCollection) {
+                Object value = flag.toString();
+                roadFlagBuilder.append(prefix).append(CaptionUtility
+                    .format(null, Captions.PLOT_FLAG_LIST.getTranslated(), flag.getName(),
+                        CaptionUtility.formatRaw(null, value.toString(), "")));
+                prefix = ", ";
+            }
+        }
+        PlotSquared.log(Captions.PREFIX + "&3 - road flags: &7" + roadFlagBuilder.toString());
+
         loadConfiguration(config);
     }
 
@@ -415,7 +450,7 @@ public abstract class PlotArea {
         options.put("world.max_height", this.getMaxBuildHeight());
         options.put("world.min_height", this.getMinBuildHeight());
         options.put("world.gamemode", this.getGameMode().getName().toLowerCase());
-        options.put("road.respect-global-flags", this.isRoadRespectingGlobalFlags());
+        options.put("road.flags.default", null);
 
         if (this.getType() != PlotAreaType.NORMAL) {
             options.put("generator.terrain", this.getTerrain());
@@ -436,6 +471,9 @@ public abstract class PlotArea {
         if (!config.contains("flags")) {
             config.set("flags.use",
                 "63,64,68,69,71,77,96,143,167,193,194,195,196,197,77,143,69,70,72,147,148,107,183,184,185,186,187,132");
+        }
+        if (!config.contains("road.flags")) {
+            config.set("road.flags.liquid-flow", false);
         }
     }
 
@@ -1094,6 +1132,30 @@ public abstract class PlotArea {
     public <T, V extends PlotFlag<T, ?>> T getFlag(final V flag) {
         final Class<?> flagClass = flag.getClass();
         final PlotFlag<?, ?> flagInstance = this.flagContainer.getFlagErased(flagClass);
+        return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
+    }
+
+    /**
+     * Get the value associated with the specified road flag. This will look at
+     * the default values stored in {@link GlobalFlagContainer}.
+     *
+     * @param flagClass The flag type (Class)
+     * @return The flag value
+     */
+    public <T> T getRoadFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
+        return this.roadFlagContainer.getFlag(flagClass).getValue();
+    }
+
+    /**
+     * Get the value associated with the specified road flag. This will look at
+     * the default values stored in {@link GlobalFlagContainer}.
+     *
+     * @param flag The flag type (Any instance of the flag)
+     * @return The flag value
+     */
+    public <T, V extends PlotFlag<T, ?>> T getRoadFlag(final V flag) {
+        final Class<?> flagClass = flag.getClass();
+        final PlotFlag<?, ?> flagInstance = this.roadFlagContainer.getFlagErased(flagClass);
         return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
     }
 }

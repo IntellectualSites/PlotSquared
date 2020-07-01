@@ -343,8 +343,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadRespectingGlobalFlags() && area.
-                getFlag(RedstoneFlag.class)) {
+            if (area.isRoadFlags() && area.getRoadFlag(RedstoneFlag.class)) {
                 event.setNewCurrent(0);
             }
             return;
@@ -578,7 +577,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
         }
-        if (plot == null && !area.isRoadRespectingGlobalFlags()) {
+        if (plot == null && !area.isRoadFlags()) {
             return;
         }
 
@@ -631,8 +630,6 @@ public class PlayerEvents extends PlotListener implements Listener {
                     String perm;
                     if (plot != null && plot.isAdded(plotPlayer.getUUID())) {
                         perm = "plots.admin.command.blocked-cmds.shared";
-                    } else if (!area.isRoadRespectingGlobalFlags()) {
-                        perm = "plots.admin.command.blocked-cmds.other";
                     } else {
                         perm = "plots.admin.command.blocked-cmds.road";
                     }
@@ -1745,13 +1742,11 @@ public class PlayerEvents extends PlotListener implements Listener {
                 }
             } else {
                 PlotArea area = pp.getPlotAreaAbs();
-                if (area != null && area.isRoadRespectingGlobalFlags() && area
-                    .getFlag(PreventCreativeCopyFlag.class)) {
+                if (area != null && area.isRoadFlags() && area
+                    .getRoadFlag(PreventCreativeCopyFlag.class)) {
                     final ItemStack newStack =
                         new ItemStack(newItem.getType(), newItem.getAmount());
                     event.setCursor(newStack);
-                    plot.debug(player.getName()
-                        + " could not creative-copy an item because prevent-creative-copy = true");
                 }
             }
             return;
@@ -1869,7 +1864,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Plot plot = location.getPlotAbs();
         BukkitPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
-            if (!area.isRoadRespectingGlobalFlags() && !area.getFlag(MiscInteractFlag.class)
+            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class)
                 && !Permissions.hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
@@ -1883,8 +1878,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             }
-            if (!plot.hasOwner() && !area.isRoadRespectingGlobalFlags() && !area
-                .getFlag(MiscInteractFlag.class)) {
+            if (!plot.hasOwner() && !area.isRoadFlags() && !area
+                .getRoadFlag(MiscInteractFlag.class)) {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                         "plots.admin.interact.unowned");
@@ -2235,7 +2230,9 @@ public class PlayerEvents extends PlotListener implements Listener {
 
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(BlockBurnFlag.class)) {
-            plot.debug("Block burning was cancelled because block-burn = false");
+            if (plot != null) {
+                plot.debug("Block burning was cancelled because block-burn = false");
+            }
             event.setCancelled(true);
         }
 
@@ -2592,7 +2589,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Player p = event.getPlayer();
         BukkitPlayer pp = BukkitUtil.getPlayer(p);
         Plot plot = area.getPlot(location);
-        if (plot == null && !area.isRoadRespectingGlobalFlags()) {
+        if (plot == null && !area.isRoadFlags()) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                     Captions.PERMISSION_ADMIN_INTERACT_ROAD);
@@ -2605,14 +2602,14 @@ public class PlayerEvents extends PlotListener implements Listener {
                 event.setCancelled(true);
             }
         } else if ((plot != null && !plot.isAdded(pp.getUUID())) || area
-            .isRoadRespectingGlobalFlags()) {
+            .isRoadFlags()) {
             final Entity entity = event.getRightClicked();
             final com.sk89q.worldedit.world.entity.EntityType entityType =
                 BukkitAdapter.adapt(entity.getType());
 
             FlagContainer flagContainer;
             if (plot == null) {
-                flagContainer = area.getFlagContainer();
+                flagContainer = area.getRoadFlagContainer();
             } else {
                 flagContainer = plot.getFlagContainer();
             }
@@ -2839,9 +2836,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 stub = "unowned";
             }
         }
-        boolean roadFlags = vArea != null ?
-            vArea.isRoadRespectingGlobalFlags() :
-            dArea.isRoadRespectingGlobalFlags();
+        boolean roadFlags = vArea != null ? vArea.isRoadFlags() : dArea.isRoadFlags();
         PlotArea area = vArea != null ? vArea : dArea;
 
         Player player;
@@ -2913,7 +2908,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         .isAdded(plotPlayer.getUUID())) {
                         return true;
                     }
-                } else if (roadFlags && (area.getFlag(HostileAttackFlag.class) || area
+                } else if (roadFlags && (area.getRoadFlag(HostileAttackFlag.class) || area
                     .getFlag(PveFlag.class))) {
                     return true;
                 }
@@ -2932,7 +2927,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                         .isAdded(plotPlayer.getUUID())) {
                         return true;
                     }
-                } else if (roadFlags && (area.getFlag(TamedAttackFlag.class) || area
+                } else if (roadFlags && (area.getRoadFlag(TamedAttackFlag.class) || area
                     .getFlag(PveFlag.class))) {
                     return true;
                 }
@@ -2957,7 +2952,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     } else {
                         return true;
                     }
-                } else if (roadFlags && area.getFlag(PvpFlag.class)) {
+                } else if (roadFlags && area.getRoadFlag(PvpFlag.class)) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pvp." + stub)) {
@@ -2973,7 +2968,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                             + " because pve = false OR animal-attack = false");
                         return true;
                     }
-                } else if (roadFlags && (area.getFlag(AnimalAttackFlag.class) || area
+                } else if (roadFlags && (area.getRoadFlag(AnimalAttackFlag.class) || area
                     .getFlag(PveFlag.class))) {
                     if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
                         MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
@@ -2989,7 +2984,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     if (plot.getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID())) {
                         return true;
                     }
-                } else if (roadFlags && area.getFlag(PveFlag.class)) {
+                } else if (roadFlags && area.getRoadFlag(PveFlag.class)) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
@@ -3014,7 +3009,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return false;
             }
         }
-        if (vplot == null && roadFlags && area.getFlag(PveFlag.class)) {
+        if (vplot == null && roadFlags && area.getRoadFlag(PveFlag.class)) {
             return true;
         }
         return ((vplot != null && vplot.getFlag(PveFlag.class)) || !(damager instanceof Arrow
@@ -3128,7 +3123,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadRespectingGlobalFlags() && area.getFlag(InvincibleFlag.class)) {
+            if (area.isRoadFlags() && area.getRoadFlag(InvincibleFlag.class)) {
                 event.setCancelled(true);
             }
             return;
@@ -3150,7 +3145,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadRespectingGlobalFlags() && area.getFlag(ItemDropFlag.class)) {
+            if (area.isRoadFlags() && area.getRoadFlag(ItemDropFlag.class)) {
                 event.setCancelled(true);
             }
             return;
@@ -3176,7 +3171,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             Plot plot = location.getOwnedPlot();
             if (plot == null) {
-                if (area.isRoadRespectingGlobalFlags() && area.getFlag(DropProtectionFlag.class)) {
+                if (area.isRoadFlags() && area.getRoadFlag(DropProtectionFlag.class)) {
                     event.setCancelled(true);
                 }
                 return;
@@ -3198,7 +3193,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadRespectingGlobalFlags() && area.getFlag(KeepInventoryFlag.class)) {
+            if (area.isRoadFlags() && area.getRoadFlag(KeepInventoryFlag.class)) {
                 event.setCancelled(true);
             }
             return;
