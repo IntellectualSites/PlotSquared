@@ -23,14 +23,43 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util.uuid;
+package com.plotsquared.core.plot.world;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotWorld;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class DatFileFilter implements FilenameFilter {
+import java.util.Collection;
+import java.util.Collections;
 
-    @Override public boolean accept(File dir, String name) {
-        return name.endsWith(".dat");
+/**
+ * Ordinary plot world with a single plot area
+ */
+public class StandardPlotWorld extends PlotWorld {
+
+    private final PlotArea area;
+
+    public StandardPlotWorld(@NotNull final String world, @Nullable final PlotArea area) {
+        super(world);
+        this.area = area;
     }
+
+    @Override @Nullable public PlotArea getArea(@NotNull final Location location) {
+        return this.area;
+    }
+
+    @Override @NotNull public Collection<PlotArea> getAreas() {
+        if (this.area == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(this.area);
+    }
+
+    @Override @NotNull public Collection<PlotArea> getAreasInRegion(@NotNull final CuboidRegion region) {
+        return this.getAreas();
+    }
+
 }

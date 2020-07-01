@@ -28,6 +28,8 @@ package com.plotsquared.core.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 /**
  * This class should be implemented by each platform to allow PlotSquared to interact
  * with the world management solution used on the server.
@@ -61,5 +63,12 @@ public interface PlatformWorldManager<T> {
      * @return implementation name
      */
     String getName();
+
+    /**
+     * Get the names of all worlds on the server
+     *
+     * @return Worlds
+     */
+    Collection<String> getWorlds();
 
 }

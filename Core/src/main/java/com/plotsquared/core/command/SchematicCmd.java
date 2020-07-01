@@ -57,7 +57,7 @@ public class SchematicCmd extends SubCommand {
 
     private boolean running = false;
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
             sendMessage(player, Captions.SCHEMATIC_MISSING_ARG);
             return true;

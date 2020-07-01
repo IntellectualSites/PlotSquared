@@ -44,6 +44,8 @@ import java.util.Map;
  */
 public class BlockTypeWrapper {
 
+    private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
+    private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();
     @Nullable @Getter private final BlockType blockType;
     @Nullable private final String blockCategoryId;
     @Nullable private BlockCategory blockCategory;
@@ -64,6 +66,19 @@ public class BlockTypeWrapper {
         this.blockType = null;
         this.blockCategory = null;
         this.blockCategoryId = Preconditions.checkNotNull(blockCategoryId);
+    }
+
+    public static BlockTypeWrapper get(final BlockType blockType) {
+        return blockTypes.computeIfAbsent(blockType, BlockTypeWrapper::new);
+    }
+
+    public static BlockTypeWrapper get(final BlockCategory blockCategory) {
+        return blockCategories
+            .computeIfAbsent(blockCategory.getId(), id -> new BlockTypeWrapper(blockCategory));
+    }
+
+    public static BlockTypeWrapper get(final String blockCategoryId) {
+        return blockCategories.computeIfAbsent(blockCategoryId, BlockTypeWrapper::new);
     }
 
     @Override public String toString() {
@@ -135,21 +150,6 @@ public class BlockTypeWrapper {
         return Objects.hashCode(this.blockType, this.blockCategoryId);
     }
 
-    private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
-    private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();
-
-    public static BlockTypeWrapper get(final BlockType blockType) {
-        return blockTypes.computeIfAbsent(blockType, BlockTypeWrapper::new);
-    }
-
-    public static BlockTypeWrapper get(final BlockCategory blockCategory) {
-        return blockCategories
-            .computeIfAbsent(blockCategory.getId(), id -> new BlockTypeWrapper(blockCategory));
-    }
-
-    public static BlockTypeWrapper get(final String blockCategoryId) {
-        return blockCategories.computeIfAbsent(blockCategoryId, BlockTypeWrapper::new);
-    }
 
     /**
      * Prevents exceptions when loading/saving block categories

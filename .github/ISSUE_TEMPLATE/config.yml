@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: PlotSquared Issue Tracker
+    url: https://issues.intellectualsites.com/projects/ps
+    about: Click here to move to our new issue tracker
   - name: PlotSquared Suggestions
     url: https://github.com/IntellectualSites/PlotSquaredSuggestions
     about: If you want to submit feature or suggestion ideas, do that here

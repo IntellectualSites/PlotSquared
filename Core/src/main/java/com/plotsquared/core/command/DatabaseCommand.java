@@ -74,7 +74,7 @@ public class DatabaseCommand extends SubCommand {
         });
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
             MainUtil.sendMessage(player, getUsage());
             return false;

@@ -35,22 +35,29 @@ import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
+import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandlerImplementation;
 import com.sk89q.worldedit.extension.platform.Actor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public interface IPlotMain extends ILogger {
+/**
+ * PlotSquared main utility class
+ *
+ * @param <P> Player type
+ */
+public interface IPlotMain<P> extends ILogger {
 
     /**
      * Logs a message to console.
@@ -79,7 +86,7 @@ public interface IPlotMain extends ILogger {
      * @param player The player to convert to a PlotPlayer
      * @return A PlotPlayer
      */
-    PlotPlayer wrapPlayer(Object player);
+    @Nullable PlotPlayer<P> wrapPlayer(Object player);
 
     /**
      * Completely shuts down the plugin.
@@ -168,11 +175,18 @@ public interface IPlotMain extends ILogger {
     boolean initWorldEdit();
 
     /**
-     * Gets the economy provider.
+     * Gets the economy provider, if there is one
      *
      * @return the PlotSquared economy manager
      */
-    EconHandler getEconomyHandler();
+    @Nullable EconHandler getEconomyHandler();
+
+    /**
+     * Gets the permission provider, if there is one
+     *
+     * @return the PlotSquared permission manager
+     */
+    @Nullable PermHandler getPermissionHandler();
 
     /**
      * Gets the {@link QueueProvider} class.
@@ -219,12 +233,6 @@ public interface IPlotMain extends ILogger {
      * @param world The world to set the generator
      */
     void setGenerator(String world);
-
-    /**
-     * Gets the {@link UUIDHandlerImplementation} which will cache and
-     * provide UUIDs.
-     */
-    UUIDHandlerImplementation initUUIDHandler();
 
     /**
      * Gets the {@link InventoryUtil} class (used for implementation specific
@@ -285,6 +293,13 @@ public interface IPlotMain extends ILogger {
      *
      * @return World manager
      */
-    @NotNull PlatformWorldManager getWorldManager();
+    @NotNull PlatformWorldManager<?> getWorldManager();
+
+    /**
+     * Get the player manager implementation for the platform
+     *
+     * @return Player manager
+     */
+    @NotNull PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager();
 
 }

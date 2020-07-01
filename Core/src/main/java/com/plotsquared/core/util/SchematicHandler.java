@@ -35,7 +35,6 @@ import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.jnbt.ByteArrayTag;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.IntArrayTag;
@@ -118,27 +117,32 @@ public abstract class SchematicHandler {
                 Iterator<Plot> i = plots.iterator();
                 final Plot plot = i.next();
                 i.remove();
-                String owner = UUIDHandler.getName(plot.guessOwner());
-                if (owner == null) {
+
+                final String owner;
+                if (plot.hasOwner()) {
+                    owner = plot.getOwnerAbs().toString();
+                } else {
                     owner = "unknown";
                 }
+
                 final String name;
                 if (namingScheme == null) {
                     name =
                         plot.getId().x + ";" + plot.getId().y + ',' + plot.getArea() + ',' + owner;
                 } else {
-                    name = namingScheme.replaceAll("%owner%", owner)
-                        .replaceAll("%id%", plot.getId().toString())
+                    name = namingScheme.replaceAll("%id%", plot.getId().toString())
                         .replaceAll("%idx%", plot.getId().x + "")
                         .replaceAll("%idy%", plot.getId().y + "")
                         .replaceAll("%world%", plot.getArea().toString());
                 }
+
                 final String directory;
                 if (outputDir == null) {
                     directory = Settings.Paths.SCHEMATICS;
                 } else {
                     directory = outputDir.getAbsolutePath();
                 }
+
                 final Runnable THIS = this;
                 SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                     @Override public void run(final CompoundTag value) {
@@ -561,100 +565,114 @@ public abstract class SchematicHandler {
                     final int p2z = pos2.getZ();
                     final int ey = pos2.getY();
                     Iterator<Integer> yiter = IntStream.range(sy, ey + 1).iterator();
-                    final Runnable yTask = () -> {
-                        long ystart = System.currentTimeMillis();
-                        while (yiter.hasNext() && System.currentTimeMillis() - ystart < 20) {
-                            final int y = yiter.next();
-                            Iterator<Integer> ziter = IntStream.range(p1z, p2z + 1).iterator();
-                            final Runnable zTask = () -> {
-                                long zstart = System.currentTimeMillis();
-                                while (ziter.hasNext()
-                                    && System.currentTimeMillis() - zstart < 20) {
-                                    final int z = ziter.next();
-                                    Iterator<Integer> xiter =
-                                        IntStream.range(p1x, p2x + 1).iterator();
-                                    final Runnable xTask = () -> {
-                                        long xstart = System.currentTimeMillis();
-                                        final int ry = y - sy;
-                                        final int rz = z - p1z;
-                                        while (xiter.hasNext()
-                                            && System.currentTimeMillis() - xstart < 20) {
-                                            final int x = xiter.next();
-                                            final int rx = x - p1x;
-                                            BlockVector3 point = BlockVector3.at(x, y, z);
-                                            BaseBlock block =
-                                                cuboidRegion.getWorld().getFullBlock(point);
-                                            if (block.getNbtData() != null) {
-                                                Map<String, Tag> values = new HashMap<>();
-                                                for (Map.Entry<String, Tag> entry : block
-                                                    .getNbtData().getValue().entrySet()) {
-                                                    values.put(entry.getKey(), entry.getValue());
+                    final Runnable yTask = new Runnable() {
+                        @Override public void run() {
+                            long ystart = System.currentTimeMillis();
+                            while (yiter.hasNext() && System.currentTimeMillis() - ystart < 20) {
+                                final int y = yiter.next();
+                                Iterator<Integer> ziter = IntStream.range(p1z, p2z + 1).iterator();
+                                final Runnable zTask = new Runnable() {
+                                    @Override public void run() {
+                                        long zstart = System.currentTimeMillis();
+                                        while (ziter.hasNext()
+                                            && System.currentTimeMillis() - zstart < 20) {
+                                            final int z = ziter.next();
+                                            Iterator<Integer> xiter =
+                                                IntStream.range(p1x, p2x + 1).iterator();
+                                            final Runnable xTask = new Runnable() {
+                                                @Override public void run() {
+                                                    long xstart = System.currentTimeMillis();
+                                                    final int ry = y - sy;
+                                                    final int rz = z - p1z;
+                                                    while (xiter.hasNext()
+                                                        && System.currentTimeMillis() - xstart
+                                                        < 20) {
+                                                        final int x = xiter.next();
+                                                        final int rx = x - p1x;
+                                                        BlockVector3 point =
+                                                            BlockVector3.at(x, y, z);
+                                                        BaseBlock block = cuboidRegion.getWorld()
+                                                            .getFullBlock(point);
+                                                        if (block.getNbtData() != null) {
+                                                            Map<String, Tag> values =
+                                                                new HashMap<>();
+                                                            for (Map.Entry<String, Tag> entry : block
+                                                                .getNbtData().getValue()
+                                                                .entrySet()) {
+                                                                values.put(entry.getKey(),
+                                                                    entry.getValue());
+                                                            }
+                                                            // Remove 'id' if it exists. We want 'Id'
+                                                            values.remove("id");
+
+                                                            // Positions are kept in NBT, we don't want that.
+                                                            values.remove("x");
+                                                            values.remove("y");
+                                                            values.remove("z");
+
+                                                            values.put("Id",
+                                                                new StringTag(block.getNbtId()));
+                                                            values.put("Pos", new IntArrayTag(
+                                                                new int[] {rx, ry, rz}));
+
+                                                            tileEntities
+                                                                .add(new CompoundTag(values));
+                                                        }
+                                                        String blockKey =
+                                                            block.toImmutableState().getAsString();
+                                                        int blockId;
+                                                        if (palette.containsKey(blockKey)) {
+                                                            blockId = palette.get(blockKey);
+                                                        } else {
+                                                            blockId = palette.size();
+                                                            palette.put(blockKey, palette.size());
+                                                        }
+
+                                                        while ((blockId & -128) != 0) {
+                                                            buffer.write(blockId & 127 | 128);
+                                                            blockId >>>= 7;
+                                                        }
+                                                        buffer.write(blockId);
+
+                                                        if (ry > 0) {
+                                                            continue;
+                                                        }
+                                                        BlockVector2 pt = BlockVector2.at(x, z);
+                                                        BiomeType biome =
+                                                            cuboidRegion.getWorld().getBiome(pt);
+                                                        String biomeStr = biome.getId();
+                                                        int biomeId;
+                                                        if (biomePalette.containsKey(biomeStr)) {
+                                                            biomeId = biomePalette.get(biomeStr);
+                                                        } else {
+                                                            biomeId = biomePalette.size();
+                                                            biomePalette.put(biomeStr, biomeId);
+                                                        }
+                                                        while ((biomeId & -128) != 0) {
+                                                            biomeBuffer.write(biomeId & 127 | 128);
+                                                            biomeId >>>= 7;
+                                                        }
+                                                        biomeBuffer.write(biomeId);
+                                                    }
+                                                    if (xiter.hasNext()) {
+                                                        this.run();
+                                                    }
                                                 }
-                                                // Remove 'id' if it exists. We want 'Id'
-                                                values.remove("id");
-
-                                                // Positions are kept in NBT, we don't want that.
-                                                values.remove("x");
-                                                values.remove("y");
-                                                values.remove("z");
-
-                                                values.put("Id", new StringTag(block.getNbtId()));
-                                                values.put("Pos",
-                                                    new IntArrayTag(new int[] {rx, ry, rz}));
-
-                                                tileEntities.add(new CompoundTag(values));
-                                            }
-                                            String blockKey =
-                                                block.toImmutableState().getAsString();
-                                            int blockId;
-                                            if (palette.containsKey(blockKey)) {
-                                                blockId = palette.get(blockKey);
-                                            } else {
-                                                blockId = palette.size();
-                                                palette.put(blockKey, palette.size());
-                                            }
-
-                                            while ((blockId & -128) != 0) {
-                                                buffer.write(blockId & 127 | 128);
-                                                blockId >>>= 7;
-                                            }
-                                            buffer.write(blockId);
-
-                                            if (ry > 0) {
-                                                continue;
-                                            }
-                                            BlockVector2 pt = BlockVector2.at(x, z);
-                                            BiomeType biome = cuboidRegion.getWorld().getBiome(pt);
-                                            String biomeStr = biome.getId();
-                                            int biomeId;
-                                            if (biomePalette.containsKey(biomeStr)) {
-                                                biomeId = biomePalette.get(biomeStr);
-                                            } else {
-                                                biomeId = biomePalette.size();
-                                                biomePalette.put(biomeStr, biomeId);
-                                            }
-                                            while ((biomeId & -128) != 0) {
-                                                biomeBuffer.write(biomeId & 127 | 128);
-                                                biomeId >>>= 7;
-                                            }
-                                            biomeBuffer.write(biomeId);
+                                            };
+                                            xTask.run();
                                         }
-                                        if (xiter.hasNext()) {
+                                        if (ziter.hasNext()) {
                                             this.run();
                                         }
-                                    };
-                                    xTask.run();
-                                }
-                                if (ziter.hasNext()) {
-                                    this.run();
-                                }
-                            };
-                            zTask.run();
-                        }
-                        if (yiter.hasNext()) {
-                            TaskManager.runTaskLater(this, 1);
-                        } else {
-                            regionTask.run();
+                                    }
+                                };
+                                zTask.run();
+                            }
+                            if (yiter.hasNext()) {
+                                TaskManager.runTaskLater(this, 1);
+                            } else {
+                                regionTask.run();
+                            }
                         }
                     };
                     yTask.run();

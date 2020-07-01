@@ -51,7 +51,7 @@ import com.plotsquared.core.util.task.RunnableVal;
     requiredType = RequiredType.NONE)
 public class Done extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {

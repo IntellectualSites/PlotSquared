@@ -61,7 +61,6 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -124,7 +123,7 @@ public class PlotListener {
         }, 20);
     }
 
-    public static boolean plotEntry(final PlotPlayer player, final Plot plot) {
+    public static boolean plotEntry(final PlotPlayer<?> player, final Plot plot) {
         if (plot.isDenied(player.getUUID()) && !Permissions
             .hasPermission(player, "plots.admin.entry.denied")) {
             return false;
@@ -161,7 +160,7 @@ public class PlotListener {
             if (plot.getFlag(NotifyEnterFlag.class)) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
-                        PlotPlayer owner = UUIDHandler.getPlayer(uuid);
+                        final PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID())) {
                             MainUtil.sendMessage(owner, Captions.NOTIFY_ENTER.getTranslated()
                                 .replace("%player", player.getName())
@@ -294,7 +293,7 @@ public class PlotListener {
         return true;
     }
 
-    public static boolean plotExit(final PlotPlayer player, Plot plot) {
+    public static boolean plotExit(final PlotPlayer<?> player, Plot plot) {
         Object previous = player.deleteMeta(PlotPlayer.META_LAST_PLOT);
         PlotSquared.get().getEventDispatcher().callLeave(player, plot);
         if (plot.hasOwner()) {
@@ -337,7 +336,7 @@ public class PlotListener {
             if (plot.getFlag(NotifyLeaveFlag.class)) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
-                        PlotPlayer owner = UUIDHandler.getPlayer(uuid);
+                        final PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
                         if ((owner != null) && !owner.getUUID().equals(player.getUUID())) {
                             MainUtil.sendMessage(owner, Captions.NOTIFY_LEAVE.getTranslated()
                                 .replace("%player", player.getName())

@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.plot;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.plotsquared.core.PlotSquared;
@@ -56,17 +55,14 @@ import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
-import com.plotsquared.core.util.StringWrapper;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -83,7 +79,6 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -404,12 +399,11 @@ public class Plot {
      *
      * @return list of PlotPlayer(s) or an empty list
      */
-    public List<PlotPlayer> getPlayersInPlot() {
-        ArrayList<PlotPlayer> players = new ArrayList<>();
-        for (Entry<String, PlotPlayer> entry : UUIDHandler.getPlayers().entrySet()) {
-            PlotPlayer plotPlayer = entry.getValue();
-            if (this.equals(plotPlayer.getCurrentPlot())) {
-                players.add(plotPlayer);
+    public List<PlotPlayer<?>> getPlayersInPlot() {
+        final List<PlotPlayer<?>> players = new ArrayList<>();
+        for (final PlotPlayer<?> player : PlotSquared.imp().getPlayerManager().getPlayers()) {
+            if (this.equals(player.getCurrentPlot())) {
+                players.add(player);
             }
         }
         return players;
@@ -502,7 +496,7 @@ public class Plot {
         }
         if (isMerged()) {
             Set<Plot> plots = getConnectedPlots();
-            Plot[] array = plots.toArray(new Plot[plots.size()]);
+            Plot[] array = plots.toArray(new Plot[0]);
             ImmutableSet.Builder<UUID> owners = ImmutableSet.builder();
             UUID last = this.getOwner();
             owners.add(this.getOwner());
@@ -1052,9 +1046,11 @@ public class Plot {
         }
         if (createSign) {
             GlobalBlockQueue.IMP.addEmptyTask(() -> {
-                for (Plot current : plots) {
-                    current.setSign(MainUtil.getName(current.getOwnerAbs()));
-                }
+                TaskManager.runTaskAsync(() -> {
+                    for (Plot current : plots) {
+                        current.setSign(MainUtil.getName(current.getOwnerAbs()));
+                    }
+                });
             });
         }
         if (createRoad) {
@@ -1327,8 +1323,8 @@ public class Plot {
             return false;
         }
         for (Plot current : getConnectedPlots()) {
-            List<PlotPlayer> players = current.getPlayersInPlot();
-            for (PlotPlayer pp : players) {
+            List<PlotPlayer<?>> players = current.getPlayersInPlot();
+            for (PlotPlayer<?> pp : players) {
                 PlotListener.plotExit(pp, current);
             }
 
@@ -1717,12 +1713,8 @@ public class Plot {
             this.setSign("unknown");
             return;
         }
-        String name = UUIDHandler.getName(this.getOwnerAbs());
-        if (name == null) {
-            this.setSign("unknown");
-        } else {
-            this.setSign(name);
-        }
+        PlotSquared.get().getImpromptuUUIDPipeline().getSingle(this.getOwnerAbs(), (username, sign) ->
+            this.setSign(username));
     }
 
     /**
@@ -1759,6 +1751,7 @@ public class Plot {
             }
         } else {
             area.addPlot(this);
+            updateWorldBorder();
         }
         setSign(player.getName());
         MainUtil.sendMessage(player, Captions.CLAIMED);
@@ -2372,7 +2365,6 @@ public class Plot {
      * Check if a plot can be claimed by the provided player.
      *
      * @param player the claiming player
-     * @return
      */
     public boolean canClaim(@NotNull PlotPlayer player) {
         PlotCluster cluster = this.getCluster();
@@ -2382,79 +2374,11 @@ public class Plot {
                 return false;
             }
         }
-        final UUID owner = this.guessOwner();
+        final UUID owner = this.getOwnerAbs();
         if (owner != null) {
             return false;
         }
         return !isMerged();
-    }
-
-    /**
-     * Guess the owner of a plot either by the value in memory, or the sign data<br>
-     * Note: Recovering from sign information is useful if e.g. PlotMe conversion wasn't successful
-     *
-     * @return UUID
-     */
-    public UUID guessOwner() {
-        if (this.hasOwner()) {
-            return this.getOwnerAbs();
-        }
-        if (!this.area.allowSigns() || !Settings.Enabled_Components.GUESS_PLOT_OWNER) {
-            return null;
-        }
-        try {
-            final Location location = this.getManager().getSignLoc(this);
-            String[] lines = TaskManager.IMP.sync(new RunnableVal<String[]>() {
-                @Override public void run(String[] value) {
-                    ChunkManager.manager
-                        .loadChunk(location.getWorld(), location.getBlockVector2(), false);
-                    this.value = WorldUtil.IMP.getSignSynchronous(location);
-                }
-            });
-            if (lines == null) {
-                return null;
-            }
-            loop:
-            for (int i = 4; i > 0; i--) {
-                String caption = Captions.valueOf("OWNER_SIGN_LINE_" + i).getTranslated();
-                int index = caption.indexOf("%plr%");
-                if (index < 0) {
-                    continue;
-                }
-                String line = lines[i - 1];
-                if (line.length() <= index) {
-                    return null;
-                }
-                String name = line.substring(index);
-                if (name.isEmpty()) {
-                    return null;
-                }
-                UUID owner = UUIDHandler.getUUID(name, null);
-                if (owner != null) {
-                    this.setOwnerAbs(owner);
-                    break;
-                }
-                if (lines[i - 1].length() == 15) {
-                    BiMap<StringWrapper, UUID> map = UUIDHandler.getUuidMap();
-                    for (Entry<StringWrapper, UUID> entry : map.entrySet()) {
-                        String key = entry.getKey().value;
-                        if (key.length() > name.length() && key.startsWith(name)) {
-                            this.setOwnerAbs(entry.getValue());
-                            break loop;
-                        }
-                    }
-                }
-                this.setOwnerAbs(UUID.nameUUIDFromBytes(
-                    ("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8)));
-                break;
-            }
-            if (this.hasOwner()) {
-                this.create();
-            }
-            return this.getOwnerAbs();
-        } catch (IllegalArgumentException ignored) {
-            return null;
-        }
     }
 
     /**
@@ -2994,11 +2918,27 @@ public class Plot {
      */
     public void reEnter() {
         TaskManager.runTaskLater(() -> {
-            for (PlotPlayer pp : Plot.this.getPlayersInPlot()) {
+            for (PlotPlayer<?> pp : Plot.this.getPlayersInPlot()) {
                 PlotListener.plotExit(pp, Plot.this);
                 PlotListener.plotEntry(pp, Plot.this);
             }
         }, 1);
+    }
+
+    public void debug(@NotNull final String message) {
+        try {
+            final Collection<PlotPlayer<?>> players = PlotPlayer.getDebugModePlayersInPlot(this);
+            if (players.isEmpty()) {
+                return;
+            }
+            final String string =
+                Captions.PLOT_DEBUG.getTranslated().replace("%plot%", this.toString()).replace("%message%", message);
+            for (final PlotPlayer<?> player : players) {
+                if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_DEBUG_OTHER)) {
+                    player.sendMessage(string);
+                }
+            }
+        } catch (final Exception ignored) {}
     }
 
     /**
@@ -3099,10 +3039,12 @@ public class Plot {
             return false;
         }
         if (!isMerged()) {
-            return UUIDHandler.getPlayer(this.getOwnerAbs()) != null;
+            return PlotSquared.imp().getPlayerManager()
+                .getPlayerIfExists(Objects.requireNonNull(this.getOwnerAbs())) != null;
         }
         for (final Plot current : getConnectedPlots()) {
-            if (current.hasOwner() && UUIDHandler.getPlayer(current.getOwnerAbs()) != null) {
+            if (current.hasOwner() && PlotSquared.imp().getPlayerManager()
+                .getPlayerIfExists(Objects.requireNonNull(current.getOwnerAbs())) != null) {
                 return true;
             }
         }
@@ -3114,9 +3056,9 @@ public class Plot {
      * - E.g. floor, wall, border etc.<br>
      * - The available components depend on the generator being used<br>
      *
-     * @param component
-     * @param blocks
-     * @return
+     * @param component Component to set
+     * @param blocks    Pattern to use the generation
+     * @return True if the component was set successfully
      */
     public boolean setComponent(String component, Pattern blocks) {
         PlotComponentSetEvent event =

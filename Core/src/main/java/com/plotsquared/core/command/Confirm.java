@@ -37,7 +37,7 @@ import com.plotsquared.core.util.task.TaskManager;
     category = CommandCategory.INFO)
 public class Confirm extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         CmdInstance command = CmdConfirm.getPending(player);
         if (command == null) {
             MainUtil.sendMessage(player, Captions.FAILED_CONFIRM);

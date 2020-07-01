@@ -35,7 +35,6 @@ import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
-import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -59,7 +58,6 @@ import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.world.block.BlockState;
 
 import javax.script.Bindings;
@@ -71,13 +69,10 @@ import javax.script.SimpleScriptContext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugexec",
@@ -171,8 +166,7 @@ public class DebugExec extends SubCommand {
         this.scope.put("BlockManager", WorldUtil.IMP);
         this.scope.put("SetupUtils", SetupUtils.manager);
         this.scope.put("EventUtil", PlotSquared.get().getEventDispatcher());
-        this.scope.put("EconHandler", EconHandler.manager);
-        this.scope.put("UUIDHandler", UUIDHandler.implementation);
+        this.scope.put("EconHandler", EconHandler.getEconHandler());
         this.scope.put("DBFunc", DBFunc.dbManager);
         this.scope.put("HybridUtils", HybridUtils.manager);
         this.scope.put("IMP", PlotSquared.get().IMP);
@@ -184,7 +178,7 @@ public class DebugExec extends SubCommand {
         }
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         List<String> allowed_params = Arrays
             .asList("analyze", "calibrate-analysis", "remove-flag", "stop-expire", "start-expire",
                 "seen", "list-scripts", "start-rgar", "stop-rgar", "help", "addcmd", "runasync",
@@ -301,27 +295,6 @@ public class DebugExec extends SubCommand {
                     } else {
                         return MainUtil.sendMessage(player, "Plot expiry task already started");
                     }
-                case "seen":
-                    if (args.length != 2) {
-                        return MainUtil.sendMessage(player, "Use /plot debugexec seen <player>");
-                    }
-                    UUID uuid = UUIDHandler.getUUID(args[1], null);
-                    if (uuid == null) {
-                        return MainUtil.sendMessage(player, "Player not found: " + args[1]);
-                    }
-                    OfflinePlotPlayer op = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
-                    if (op == null || op.getLastPlayed() == 0) {
-                        return MainUtil
-                            .sendMessage(player, "Player hasn't connected before: " + args[1]);
-                    }
-                    Timestamp stamp = new Timestamp(op.getLastPlayed());
-                    Date date = new Date(stamp.getTime());
-                    MainUtil.sendMessage(player, "PLAYER: " + args[1]);
-                    MainUtil.sendMessage(player, "UUID: " + uuid);
-                    MainUtil.sendMessage(player, "Object: " + date.toGMTString());
-                    MainUtil.sendMessage(player, "GMT: " + date.toGMTString());
-                    MainUtil.sendMessage(player, "Local: " + date.toLocaleString());
-                    return true;
                 case "h":
                 case "he":
                 case "?":
@@ -339,7 +312,7 @@ public class DebugExec extends SubCommand {
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
                             RequiredType.NONE, CommandCategory.DEBUG) {
                             @Override
-                            public CompletableFuture<Boolean> execute(PlotPlayer player,
+                            public CompletableFuture<Boolean> execute(PlotPlayer<?> player,
                                 String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
                                 RunnableVal2<Command, CommandResult> whenDone) {
                                 try {

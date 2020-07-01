@@ -37,6 +37,8 @@ import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -104,7 +106,7 @@ public abstract class Command {
                     && types[4] == RunnableVal2.class) {
                     Command tmp = new Command(this, true) {
                         @Override
-                        public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+                        public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
                             RunnableVal3<Command, Runnable, Runnable> confirm,
                             RunnableVal2<Command, CommandResult> whenDone) {
                             try {
@@ -298,7 +300,7 @@ public abstract class Command {
      * @return CompletableFuture true if the command executed fully, false in
      * any other case
      */
-    public CompletableFuture<Boolean> execute(PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 0 || args[0] == null) {
@@ -601,6 +603,10 @@ public abstract class Command {
             throw new CommandException(message, args);
         }
         return object;
+    }
+
+    @SneakyThrows protected static void sneakyThrow(@NotNull final Throwable throwable) {
+        throw throwable;
     }
 
     public enum CommandResult {

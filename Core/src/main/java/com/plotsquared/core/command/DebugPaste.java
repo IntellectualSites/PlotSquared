@@ -35,7 +35,6 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import lombok.NonNull;
 
 import java.io.BufferedReader;
@@ -72,7 +71,7 @@ public class DebugPaste extends SubCommand {
         return content.toString();
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.runTaskAsync(() -> {
             try {
 
@@ -90,7 +89,7 @@ public class DebugPaste extends SubCommand {
                 b.append("# Server Information\n");
                 b.append("Server Version: ").append(PlotSquared.get().IMP.getServerImplementation())
                     .append("\n");
-                b.append("online_mode: ").append(UUIDHandler.getUUIDWrapper()).append(';')
+                b.append("online_mode: ").append(!Settings.UUID.OFFLINE).append(';')
                     .append(!Settings.UUID.OFFLINE).append('\n');
                 b.append("Plugins:");
                 for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared
@@ -122,7 +121,7 @@ public class DebugPaste extends SubCommand {
                 b.append("OS Arch: ").append(System.getProperty("os.arch")).append('\n');
                 b.append("# Okay :D Great. You are now ready to create your bug report!");
                 b.append(
-                    "\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
+                    "\n# You can do so at https://issues.intellectualsites.com/projects/ps");
                 b.append("\n# or via our Discord at https://discord.gg/KxkjDVg");
 
                 final IncendoPaster incendoPaster = new IncendoPaster("plotsquared");

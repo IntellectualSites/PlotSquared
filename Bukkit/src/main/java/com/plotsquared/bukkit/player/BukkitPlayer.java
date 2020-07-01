@@ -25,9 +25,11 @@
  */
 package com.plotsquared.bukkit.player;
 
+import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -35,7 +37,6 @@ import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -62,12 +63,11 @@ import static com.sk89q.worldedit.world.gamemode.GameModes.CREATIVE;
 import static com.sk89q.worldedit.world.gamemode.GameModes.SPECTATOR;
 import static com.sk89q.worldedit.world.gamemode.GameModes.SURVIVAL;
 
-public class BukkitPlayer extends PlotPlayer {
+public class BukkitPlayer extends PlotPlayer<Player> {
 
     private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
     private boolean offline;
-    private UUID uuid;
     private String name;
 
     /**
@@ -77,18 +77,27 @@ public class BukkitPlayer extends PlotPlayer {
      * @param player Bukkit player instance
      */
     public BukkitPlayer(@NotNull final Player player) {
-        this.player = player;
-        super.populatePersistentMetaMap();
+        this(player, false);
     }
 
     public BukkitPlayer(@NotNull final Player player, final boolean offline) {
+        this(player, offline, true);
+    }
+
+    public BukkitPlayer(@NotNull final Player player, final boolean offline, final boolean realPlayer) {
         this.player = player;
         this.offline = offline;
-        super.populatePersistentMetaMap();
+        if (realPlayer) {
+            super.populatePersistentMetaMap();
+        }
     }
 
     @Override public Actor toActor() {
         return BukkitAdapter.adapt(player);
+    }
+
+    @Override public Player getPlatformPlayer() {
+        return this.player;
     }
 
     @NotNull @Override public Location getLocation() {
@@ -97,10 +106,16 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @NotNull @Override public UUID getUUID() {
-        if (this.uuid == null) {
-            this.uuid = UUIDHandler.getUUID(this);
+        if (Settings.UUID.OFFLINE) {
+            if (Settings.UUID.FORCE_LOWERCASE) {
+                return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    getName().toLowerCase()).getBytes(Charsets.UTF_8));
+            } else {
+                return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
+                    getName()).getBytes(Charsets.UTF_8));
+            }
         }
-        return this.uuid;
+        return player.getUniqueId();
     }
 
     @Override public long getLastPlayed() {
@@ -140,8 +155,8 @@ public class BukkitPlayer extends PlotPlayer {
     }
 
     @Override public boolean hasPermission(final String permission) {
-        if (this.offline && EconHandler.manager != null) {
-            return EconHandler.manager.hasPermission(getName(), permission);
+        if (this.offline && EconHandler.getEconHandler() != null) {
+            return EconHandler.getEconHandler().hasPermission(getName(), permission);
         }
         return this.player.hasPermission(permission);
     }

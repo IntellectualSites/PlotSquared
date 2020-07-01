@@ -34,8 +34,10 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.entity.EntityCategory;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -46,7 +48,7 @@ import java.util.Map;
     permission = "plots.admin")
 public class Debug extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length > 0) {
             if ("player".equalsIgnoreCase(args[0])) {
                 for (Map.Entry<String, Object> meta : player.getMeta().entrySet()) {
@@ -63,6 +65,18 @@ public class Debug extends SubCommand {
                     .getChunkChunks(player.getLocation().getWorld()).size() + "(" + (
                     System.currentTimeMillis() - start) + "ms) using thread: " + Thread
                     .currentThread().getName()));
+            return true;
+        }
+        if (args.length > 0 && "uuids".equalsIgnoreCase(args[0])) {
+            final Collection<UUIDMapping> mappings = PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
+            MainUtil.sendMessage(player, String.format("There are %d cached UUIDs", mappings.size()));
+            return true;
+        }
+        if (args.length > 0 && "debug-players".equalsIgnoreCase(args[0])) {
+            MainUtil.sendMessage(player, "Player in debug mode: " );
+            for (final PlotPlayer<?> pp : PlotPlayer.getDebugModePlayers()) {
+                MainUtil.sendMessage(player, "- " + pp.getName());
+            }
             return true;
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {

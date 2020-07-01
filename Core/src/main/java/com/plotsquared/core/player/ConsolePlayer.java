@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ConsolePlayer extends PlotPlayer {
+public class ConsolePlayer extends PlotPlayer<Actor> {
 
     private static ConsolePlayer instance;
 
@@ -69,6 +69,10 @@ public class ConsolePlayer extends PlotPlayer {
 
     @Override public Actor toActor() {
         return PlotSquared.get().IMP.getConsole();
+    }
+
+    @Override public Actor getPlatformPlayer() {
+        return this.toActor();
     }
 
     @Override public boolean canTeleport(@NotNull Location location) {

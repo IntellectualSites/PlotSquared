@@ -36,7 +36,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,7 +53,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
     confirmation = true)
 public class Purge extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             Captions.COMMAND_SYNTAX.send(player, getUsage());
             return false;
@@ -65,7 +64,6 @@ public class Purge extends SubCommand {
         PlotId id = null;
         UUID owner = null;
         UUID added = null;
-        boolean unknown = false;
         boolean clear = false;
         for (String arg : args) {
             String[] split = arg.split(":");
@@ -97,7 +95,7 @@ public class Purge extends SubCommand {
                     break;
                 case "owner":
                 case "o":
-                    owner = UUIDHandler.getUUID(split[1], null);
+                    owner = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(split[1], Settings.UUID.BLOCKING_TIMEOUT);
                     if (owner == null) {
                         Captions.INVALID_PLAYER.send(player, split[1]);
                         return false;
@@ -105,16 +103,11 @@ public class Purge extends SubCommand {
                     break;
                 case "shared":
                 case "s":
-                    added = UUIDHandler.getUUID(split[1], null);
+                    added = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(split[1], Settings.UUID.BLOCKING_TIMEOUT);
                     if (added == null) {
                         Captions.INVALID_PLAYER.send(player, split[1]);
                         return false;
                     }
-                    break;
-                case "unknown":
-                case "?":
-                case "u":
-                    unknown = Boolean.parseBoolean(split[1]);
                     break;
                 case "clear":
                 case "c":
@@ -145,9 +138,6 @@ public class Purge extends SubCommand {
             if (added != null && !plot.isAdded(added)) {
                 continue;
             }
-            if (unknown && UUIDHandler.getName(plot.getOwnerAbs()) != null) {
-                continue;
-            }
             toDelete.addAll(plot.getConnectedPlots());
         }
         if (PlotSquared.get().plots_tmp != null) {
@@ -166,9 +156,6 @@ public class Purge extends SubCommand {
                         continue;
                     }
                     if (added != null && !plot.isAdded(added)) {
-                        continue;
-                    }
-                    if (unknown && UUIDHandler.getName(plot.getOwnerAbs()) != null) {
                         continue;
                     }
                     toDelete.add(plot);

@@ -46,7 +46,7 @@ import com.plotsquared.core.util.task.TaskManager;
     confirmation = true)
 public class Unlink extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {

@@ -33,12 +33,15 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "kick",
     aliases = "k",
@@ -53,7 +56,7 @@ public class Kick extends SubCommand {
         super(Argument.PlayerName);
     }
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         Plot plot = location.getPlot();
         if (plot == null) {
@@ -64,57 +67,72 @@ public class Kick extends SubCommand {
             MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
             return false;
         }
-        Set<UUID> uuids = MainUtil.getUUIDsFromString(args[0]);
-        if (uuids.isEmpty()) {
-            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
-            return false;
-        }
-        Set<PlotPlayer> players = new HashSet<>();
-        for (UUID uuid : uuids) {
-            if (uuid == DBFunc.EVERYONE) {
-                for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                    if (pp == player || Permissions
-                        .hasPermission(pp, Captions.PERMISSION_ADMIN_ENTRY_DENIED)) {
+
+        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+            if (throwable instanceof TimeoutException) {
+                MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+            } else if (throwable != null || uuids.isEmpty()) {
+                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+            } else {
+                Set<PlotPlayer<?>> players = new HashSet<>();
+                for (UUID uuid : uuids) {
+                    if (uuid == DBFunc.EVERYONE) {
+                        for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
+                            if (pp == player || Permissions
+                                .hasPermission(pp, Captions.PERMISSION_ADMIN_ENTRY_DENIED)) {
+                                continue;
+                            }
+                            players.add(pp);
+                        }
                         continue;
                     }
-                    players.add(pp);
+                    PlotPlayer<?> pp = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                    if (pp != null) {
+                        players.add(pp);
+                    }
                 }
-                continue;
-            }
-            PlotPlayer pp = UUIDHandler.getPlayer(uuid);
-            if (pp != null) {
-                players.add(pp);
-            }
-        }
-        players.remove(player); // Don't ever kick the calling player
-        if (players.isEmpty()) {
-            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
-            return false;
-        }
-        for (PlotPlayer player2 : players) {
-            if (!plot.equals(player2.getCurrentPlot())) {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
-                return false;
-            }
-            if (Permissions.hasPermission(player2, Captions.PERMISSION_ADMIN_ENTRY_DENIED)) {
-                Captions.CANNOT_KICK_PLAYER.send(player, player2.getName());
-                return false;
-            }
-            Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
-            Captions.YOU_GOT_KICKED.send(player2);
-            if (plot.equals(spawn.getPlot())) {
-                Location newSpawn = WorldUtil.IMP
-                    .getSpawn(PlotSquared.get().getPlotAreaManager().getAllWorlds()[0]);
-                if (plot.equals(newSpawn.getPlot())) {
-                    // Kick from server if you can't be teleported to spawn
-                    player2.kick(Captions.YOU_GOT_KICKED.getTranslated());
-                } else {
-                    player2.plotkick(newSpawn);
+                players.remove(player); // Don't ever kick the calling player
+                if (players.isEmpty()) {
+                    MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                    return;
                 }
-            } else {
-                player2.plotkick(spawn);
+                for (PlotPlayer<?> player2 : players) {
+                    if (!plot.equals(player2.getCurrentPlot())) {
+                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                        return;
+                    }
+                    if (Permissions.hasPermission(player2, Captions.PERMISSION_ADMIN_ENTRY_DENIED)) {
+                        Captions.CANNOT_KICK_PLAYER.send(player, player2.getName());
+                        return;
+                    }
+                    Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
+                    Captions.YOU_GOT_KICKED.send(player2);
+                    if (plot.equals(spawn.getPlot())) {
+                        Location newSpawn = WorldUtil.IMP
+                            .getSpawn(PlotSquared.get().getPlotAreaManager().getAllWorlds()[0]);
+                        if (plot.equals(newSpawn.getPlot())) {
+                            // Kick from server if you can't be teleported to spawn
+                            player2.kick(Captions.YOU_GOT_KICKED.getTranslated());
+                        } else {
+                            player2.plotkick(newSpawn);
+                        }
+                    } else {
+                        player2.plotkick(spawn);
+                    }
+                }
             }
-        }
+        });
+
         return true;
+    }
+
+    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
+        if (plot == null) {
+            return Collections.emptyList();
+        }
+        return TabCompletions.completePlayersInPlot(plot, String.join(",", args).trim(),
+                Collections.singletonList(player.getName()));
     }
 }

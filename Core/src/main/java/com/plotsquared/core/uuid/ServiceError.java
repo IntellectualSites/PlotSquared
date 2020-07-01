@@ -23,25 +23,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.uuid;
+package com.plotsquared.core.uuid;
 
-import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.player.PlotPlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
+/**
+ * Thrown by {@link ServiceError} when something goes wrong
+ */
+public class ServiceError extends RuntimeException {
 
-public abstract class UUIDWrapper {
+    public ServiceError(@NotNull final String message) {
+        super(message);
+    }
 
-    @NotNull public abstract UUID getUUID(PlotPlayer player);
+    public ServiceError(@NotNull final String message, @NotNull final Throwable cause) {
+        super(message, cause);
+    }
 
-    public abstract UUID getUUID(OfflinePlotPlayer player);
+    @Override public Throwable fillInStackTrace() {
+        return this;
+    }
 
-    public abstract UUID getUUID(String name);
-
-    public abstract OfflinePlotPlayer getOfflinePlayer(UUID uuid);
-
-    public abstract OfflinePlotPlayer getOfflinePlayer(String name);
-
-    public abstract OfflinePlotPlayer[] getOfflinePlayers();
 }

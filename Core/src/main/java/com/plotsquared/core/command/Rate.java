@@ -56,7 +56,7 @@ import java.util.UUID;
     requiredType = RequiredType.PLAYER)
 public class Rate extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
                 case "next": {

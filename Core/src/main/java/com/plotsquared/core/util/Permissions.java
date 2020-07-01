@@ -61,7 +61,7 @@ public class Permissions {
      * @param permission
      * @return
      */
-    public static boolean hasPermission(PlotPlayer player, String permission) {
+    public static boolean hasPermission(PlotPlayer<?> player, String permission) {
         if (!Settings.Enabled_Components.PERMISSION_CACHE) {
             return hasPermission((CommandCaller) player, permission);
         }

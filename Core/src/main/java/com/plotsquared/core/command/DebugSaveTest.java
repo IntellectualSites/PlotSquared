@@ -41,7 +41,7 @@ import java.util.ArrayList;
     description = "This command will force the recreation of all plots in the DB")
 public class DebugSaveTest extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
         MainUtil.sendMessage(player, "&6Starting `DEBUGSAVETEST`");
         DBFunc.createPlotsAndData(plots,

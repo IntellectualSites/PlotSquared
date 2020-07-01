@@ -37,7 +37,7 @@ import com.plotsquared.core.player.PlotPlayer;
     requiredType = RequiredType.CONSOLE)
 public class DebugLoadTest extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         PlotSquared.get().plots_tmp = DBFunc.getPlots();
         return true;
     }

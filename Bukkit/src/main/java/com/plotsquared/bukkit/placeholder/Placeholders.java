@@ -25,9 +25,12 @@
  */
 package com.plotsquared.bukkit.placeholder;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.uuid.UUIDHandler;
+import com.plotsquared.core.plot.flag.GlobalFlagContainer;
+import com.plotsquared.core.plot.flag.PlotFlag;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -58,31 +61,31 @@ public class Placeholders extends PlaceholderExpansion {
     }
 
     @Override public String getVersion() {
-        return "2.4";
+        return "2.5";
     }
 
     @Override public String onPlaceholderRequest(Player p, String identifier) {
-        final PlotPlayer pl = PlotPlayer.get(p.getName());
+        final PlotPlayer pl = PlotSquared.imp().getPlayerManager().getPlayerIfExists(p.getUniqueId());
 
         if (pl == null) {
             return "";
         }
 
         if (identifier.startsWith("has_plot_")) {
-            if (identifier.split("has_plot_").length != 2)
+            identifier = identifier.substring("has_plot_".length());
+            if (identifier.isEmpty())
                 return "";
 
-            identifier = identifier.split("has_plot_")[1];
             return pl.getPlotCount(identifier) > 0 ?
                 PlaceholderAPIPlugin.booleanTrue() :
                 PlaceholderAPIPlugin.booleanFalse();
         }
 
         if (identifier.startsWith("plot_count_")) {
-            if (identifier.split("plot_count_").length != 2)
+            identifier = identifier.substring("plot_count_".length());
+            if (identifier.isEmpty())
                 return "";
 
-            identifier = identifier.split("plot_count_")[1];
             return String.valueOf(pl.getPlotCount(identifier));
         }
 
@@ -122,7 +125,9 @@ public class Placeholders extends PlaceholderExpansion {
                 if (uid == null) {
                     return "";
                 }
-                String name = UUIDHandler.getName(uid);
+
+                String name = PlotSquared.get().getImpromptuUUIDPipeline()
+                    .getSingle(uid, Settings.UUID.BLOCKING_TIMEOUT);
 
                 if (name != null) {
                     return name;
@@ -178,6 +183,39 @@ public class Placeholders extends PlaceholderExpansion {
             default:
                 break;
         }
+        if (identifier.startsWith("currentplot_localflag_")) {
+            return getFlagValue(plot, identifier.substring("currentplot_localflag_".length()),
+                false);
+        }
+        if (identifier.startsWith("currentplot_flag_")) {
+            return getFlagValue(plot, identifier.substring("currentplot_flag_".length()), true);
+        }
         return "";
+    }
+
+    /**
+     * Return the flag value from its name on the current plot.
+     * If the flag doesn't exist it returns an empty string.
+     * If the flag exists but it is not set on current plot and the parameter inherit is set to true,
+     * it returns the default value.
+     *
+     * @param plot     Current plot where the player is
+     * @param flagName Name of flag to get from current plot
+     * @param inherit  Define if it returns only the flag set on currentplot or also inherited flag
+     * @return The value of flag serialized in string
+     */
+    private String getFlagValue(final Plot plot, final String flagName, final boolean inherit) {
+        if (flagName.isEmpty())
+            return "";
+        final PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(flagName);
+        if (flag == null)
+            return "";
+
+        if (inherit) {
+            return plot.getFlag(flag).toString();
+        } else {
+            final PlotFlag<?, ?> plotFlag = plot.getFlagContainer().queryLocal(flag.getClass());
+            return (plotFlag != null) ? plotFlag.getValue().toString() : "";
+        }
     }
 }

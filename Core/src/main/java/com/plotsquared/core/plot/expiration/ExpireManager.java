@@ -27,7 +27,6 @@ package com.plotsquared.core.plot.expiration;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
@@ -48,7 +47,6 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -85,7 +83,7 @@ public class ExpireManager {
         this.tasks.add(task);
     }
 
-    public void handleJoin(PlotPlayer pp) {
+    public void handleJoin(PlotPlayer<?> pp) {
         storeDate(pp.getUUID(), System.currentTimeMillis());
         if (plotsToDelete != null && !plotsToDelete.isEmpty()) {
             for (Plot plot : pp.getPlots()) {
@@ -153,11 +151,11 @@ public class ExpireManager {
                             //.text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
                             .text("\n - ").color("$3").text("Delete this (/plot delete)")
                             .color("$2").command("/plot delete").tooltip("/plot delete")
-                            .text("\n - ").color("$3").text("Remind later (/plot set keep 1d)")
-                            .color("$2").command("/plot set keep 1d").tooltip("/plot set keep 1d")
-                            .text("\n - ").color("$3").text("Keep this (/plot set keep true)")
-                            .color("$2").command("/plot set keep true")
-                            .tooltip("/plot set keep true").text("\n - ").color("$3")
+                            .text("\n - ").color("$3").text("Remind later (/plot flag set keep 1d)")
+                            .color("$2").command("/plot flag set keep 1d").tooltip("/plot flag set keep 1d")
+                            .text("\n - ").color("$3").text("Keep this (/plot flag set keep true)")
+                            .color("$2").command("/plot flag set keep true")
+                            .tooltip("/plot flag set keep true").text("\n - ").color("$3")
                             .text("Don't show me this").color("$2")
                             .command("/plot toggle clear-confirmation")
                             .tooltip("/plot toggle clear-confirmation");
@@ -411,13 +409,13 @@ public class ExpireManager {
             }
         }
         for (UUID helper : plot.getTrusted()) {
-            PlotPlayer player = UUIDHandler.getPlayer(helper);
+            PlotPlayer player = PlotSquared.imp().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
         }
         for (UUID helper : plot.getMembers()) {
-            PlotPlayer player = UUIDHandler.getPlayer(helper);
+            PlotPlayer player = PlotSquared.imp().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
@@ -433,56 +431,34 @@ public class ExpireManager {
                 .getString(plots));
         PlotSquared.debug("$4 - Area: " + plot.getArea());
         if (plot.hasOwner()) {
-            PlotSquared.debug("$4 - Owner: " + UUIDHandler.getName(plot.getOwner()));
+            PlotSquared.debug("$4 - Owner: " + plot.getOwner());
         } else {
             PlotSquared.debug("$4 - Owner: Unowned");
         }
     }
 
     public long getAge(UUID uuid) {
-        if (UUIDHandler.getPlayer(uuid) != null) {
+        if (PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid) != null) {
             return 0;
         }
-        String name = UUIDHandler.getName(uuid);
-        if (name != null) {
-            Long last = this.dates_cache.get(uuid);
-            if (last == null) {
-                OfflinePlotPlayer opp;
-                if (Settings.UUID.NATIVE_UUID_PROVIDER) {
-                    opp = UUIDHandler.getUUIDWrapper().getOfflinePlayer(uuid);
-                } else {
-                    opp = UUIDHandler.getUUIDWrapper().getOfflinePlayer(name);
-                }
-                if (opp != null && (last = opp.getLastPlayed()) != 0) {
-                    this.dates_cache.put(uuid, last);
-                } else {
-                    return 0;
-                }
-            }
-            if (last == 0) {
+        Long last = this.dates_cache.get(uuid);
+        if (last == null) {
+            OfflinePlotPlayer opp = PlotSquared.imp().getPlayerManager().getOfflinePlayer(uuid);
+            if (opp != null && (last = opp.getLastPlayed()) != 0) {
+                this.dates_cache.put(uuid, last);
+            } else {
                 return 0;
             }
-            return System.currentTimeMillis() - last;
         }
-        return 0;
-    }
-
-    public long getAccountAge(Plot plot) {
-        if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
-            || UUIDHandler.getPlayer(plot.getOwner()) != null || plot.getRunning() > 0) {
-            return Long.MAX_VALUE;
+        if (last == 0) {
+            return 0;
         }
-        long max = 0;
-        for (UUID owner : plot.getOwners()) {
-            long age = getAccountAge(owner);
-            max = Math.max(age, max);
-        }
-        return max;
+        return System.currentTimeMillis() - last;
     }
 
     public long getAge(Plot plot) {
         if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
-            || UUIDHandler.getPlayer(plot.getOwner()) != null || plot.getRunning() > 0) {
+            || PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
             return 0;
         }
 

@@ -50,7 +50,7 @@ import java.net.URL;
     permission = "plots.download")
 public class Download extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String world = player.getLocation().getWorld();
         if (!PlotSquared.get().hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);

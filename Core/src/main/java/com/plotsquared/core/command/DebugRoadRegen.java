@@ -46,7 +46,7 @@ import java.util.Arrays;
 public class DebugRoadRegen extends SubCommand {
     public static final String USAGE = "/plot debugroadregen <plot|region [height]>";
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
             MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, DebugRoadRegen.USAGE);
             return false;

@@ -182,7 +182,9 @@ public enum Captions implements Caption {
     PERMISSION_HOME("plots.home", "static.permissions"),
     PERMISSION_ALIAS_SET_OBSOLETE("plots.set.alias", "static.permissions"), // Note this is for backwards compatibility
     PERMISSION_ALIAS_SET("plots.alias.set", "static.permissions"),
+    PERMISSION_ADMIN_ALIAS_SET("plots.admin.alias.set", "static.permissions"),
     PERMISSION_ALIAS_REMOVE("plots.alias.remove", "static.permissions"),
+    PERMISSION_ADMIN_ALIAS_REMOVE("plots.admin.alias.remove", "static.permissions"),
     PERMISSION_ADMIN_CHAT_BYPASS("plots.admin.chat.bypass", "static.permissions"),
     PERMISSION_BACKUP("plots.backup", "static.permissions"),
     PERMISSION_BACKUP_SAVE("plots.backup.save", "static.permissions"),
@@ -190,6 +192,7 @@ public enum Captions implements Caption {
     PERMISSION_BACKUP_LOAD("plots.backup.load", "static.permissions"),
     PERMISSION_ADMIN_BACKUP_OTHER("plots.admin.backup.other", "static.permissions"),
     PERMISSION_ADMIN_ALLOW_UNSAFE("plots.admin.unsafe", "static.permissions"),
+    PERMISSION_ADMIN_DEBUG_OTHER("plots.admin.debug.other", "static.permissions"),
     //</editor-fold>
     //<editor-fold desc="Confirm">
     EXPIRED_CONFIRM("$2Confirmation has expired, please run the command again!", "Confirm"),
@@ -319,6 +322,7 @@ public enum Captions implements Caption {
     REMOVED_GRANTED_PLOT("$2You used %s0 plot grant(s), you've got $1%s1 $2left", "Economy"),
     //</editor-fold>
     //<editor-fold desc="Setup">
+    SETUP_NOT_STARTED("$1No setup started. Use $2/plot setup $1to start a setup process.", "Setup"),
     SETUP_INIT("$1Usage: $2/plot setup <value>", "Setup"),
     SETUP_STEP("$3[$1Step %s0$3] $1%s1 $2- $1Expecting: $2%s2 $1Default: $2%s3", "Setup"),
     SETUP_INVALID_ARG("$2%s0 is not a valid argument for step %s1. To cancel setup use: $1/plot setup cancel", "Setup"),
@@ -356,6 +360,11 @@ public enum Captions implements Caption {
     SETUP_AREA_MAX_PLOT_ID("$1What should be the maximum Plot Id?", "Setup"),
     SETUP_AREA_MAX_PLOT_ID_ERROR("$7You must choose a valid maximum Plot Id!", "Setup"),
     SETUP_AREA_PLOT_ID_GREATER_THAN_MINIMUM("$7The max PlotId must be greater than the minimum!", "Setup"),
+    //</editor-fold>
+    //<editor-fold desc=PlotAreaType>
+    PLOT_AREA_TYPE_NORMAL("Standard plot generation", "PlotAreaType"),
+    PLOT_AREA_TYPE_AUGMENTED("Plot generation with vanilla terrain", "PlotAreaType"),
+    PLOT_AREA_TYPE_PARTIAL("Vanilla with clusters of plots", "PlotAreaType"),
     //</editor-fold>
     //<editor-fold desc="Schematic">
     SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!", "Schematics"),
@@ -445,11 +454,14 @@ public enum Captions implements Caption {
     NOT_VALID_WORLD("$2That is not a valid world (case sensitive)", "Errors"),
     NOT_VALID_PLOT_WORLD("$2That is not a valid plot area (case sensitive)", "Errors"),
     NO_PLOTS("$2You don't have any plots", "Errors"),
+    PLAYER_NO_PLOTS("$2That player does not own any plots", "Errors"),
     WAIT_FOR_TIMER("$2A set block timer is bound to either the current plot or you. Please wait for it to finish", "Errors"),
     TILE_ENTITY_CAP_REACHED("$2The total number of tile entities in this chunk may not exceed $1%s", "Errors"),
     //</editor-fold>
     DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"),
     PURGE_SUCCESS("$4Successfully purged %s plots", "Purge"),
+    FETCHING_PLAYER("$1PlotSquared is attempting to find the specified player from your argument(s). This may take a while.", "Players"),
+    FETCHING_PLAYERS_TIMEOUT("$2The specified users did not exist in the cache and will be fetched in the background. Please wait a couple of minutes.", "Players"),
     //<editor-fold desc="Trim">
     TRIM_IN_PROGRESS("A world trim task is already in progress!", "Trim"),
     //</editor-fold>
@@ -781,6 +793,21 @@ public enum Captions implements Caption {
     GENERIC_MERGED("merged", "Generic"),
     GENERIC_UNOWNED("unowned", "Generic"),
     GENERIC_INVALID_CHOICE("invalid choice", "Generic"),
+    //</editor-fold>
+
+    //<editor-fold des="Single area">
+    SINGLE_AREA_MISSING_SELECTION("$2Error! You need to select a square region", "Single"),
+    SINGLE_AREA_NOT_SQUARE("$2Error! Your selection needs to be a square", "Single"),
+    SINGLE_AREA_OVERLAPPING("$2Error! Your selection overlaps with an existing plot area", "Single"),
+    SINGLE_AREA_NEEDS_NAME("$2Error! Please specify a plot name: /plot area single <name>", "Single"),
+    SINGLE_AREA_NAME_TAKEN("$2Error! The plot name is already taken", "Single"),
+    SINGLE_AREA_FAILED_TO_SAVE("$2Error! Failed to save the area schematic", "Single"),
+    SINGLE_AREA_COULD_NOT_MAKE_DIRECTORIES("$2Error! Failed to create the schematic directory", "Single"),
+    SINGLE_AREA_CREATED("$1The area was created successfully!", "Single"),
+    //</editor-fold>
+
+    //<editor-fold desc="Debug">
+    PLOT_DEBUG("$2Plot Debug ($1%plot%$2): %message%", "Plot-Debug"),
     //</editor-fold>
 
     /**

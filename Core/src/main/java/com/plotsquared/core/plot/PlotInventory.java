@@ -33,40 +33,40 @@ import lombok.NonNull;
 public class PlotInventory {
 
     private static final String META_KEY = "inventory";
-    public final PlotPlayer player;
+    public final PlotPlayer<?> player;
     public final int size;
     private final PlotItemStack[] items;
     private String title;
     private boolean open = false;
 
-    public PlotInventory(PlotPlayer player) {
+    public PlotInventory(PlotPlayer<?> player) {
         this.size = 4;
         this.title = null;
         this.player = player;
         this.items = InventoryUtil.manager.getItems(player);
     }
 
-    public PlotInventory(PlotPlayer player, int size, String name) {
+    public PlotInventory(PlotPlayer<?> player, int size, String name) {
         this.size = size;
         this.title = name == null ? "" : name;
         this.player = player;
         this.items = new PlotItemStack[size * 9];
     }
 
-    public static boolean hasPlotInventoryOpen(@NonNull final PlotPlayer plotPlayer) {
+    public static boolean hasPlotInventoryOpen(@NonNull final PlotPlayer<?> plotPlayer) {
         return getOpenPlotInventory(plotPlayer) != null;
     }
 
-    public static PlotInventory getOpenPlotInventory(@NonNull final PlotPlayer plotPlayer) {
+    public static PlotInventory getOpenPlotInventory(@NonNull final PlotPlayer<?> plotPlayer) {
         return plotPlayer.getMeta(META_KEY, null);
     }
 
-    public static void setPlotInventoryOpen(@NonNull final PlotPlayer plotPlayer,
+    public static void setPlotInventoryOpen(@NonNull final PlotPlayer<?> plotPlayer,
         @NonNull final PlotInventory plotInventory) {
         plotPlayer.setMeta(META_KEY, plotInventory);
     }
 
-    public static void removePlotInventoryOpen(@NonNull final PlotPlayer plotPlayer) {
+    public static void removePlotInventoryOpen(@NonNull final PlotPlayer<?>plotPlayer) {
         plotPlayer.deleteMeta(META_KEY);
     }
 

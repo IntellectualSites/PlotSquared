@@ -36,7 +36,7 @@ import com.plotsquared.core.util.StringMan;
 
 public abstract class SetCommand extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -52,7 +52,7 @@ public abstract class SetCommand extends SubCommand {
                 return false;
             }
         }
-        if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID())) {
+        if (!plot.isOwner(player.getUUID())) {
             if (!Permissions.hasPermission(player, CaptionUtility
                 .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility

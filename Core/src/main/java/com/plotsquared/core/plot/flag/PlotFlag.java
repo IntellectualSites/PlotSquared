@@ -41,8 +41,7 @@ import java.util.Collections;
  *
  * @param <T> Value contained in the flag.
  */
-@EqualsAndHashCode(of = "value")
-public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
+@EqualsAndHashCode(of = "value") public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
 
     private final T value;
     private final Caption flagCategory;

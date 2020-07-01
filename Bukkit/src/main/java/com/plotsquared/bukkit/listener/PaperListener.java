@@ -31,8 +31,11 @@ import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
 import com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent;
 import com.destroystokyo.paper.event.entity.SlimePathfindEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
+import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.command.Command;
+import com.plotsquared.core.command.MainCommand;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -55,6 +58,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Events specific to Paper. Some toit nups here
@@ -270,7 +279,7 @@ public class PaperListener implements Listener {
         }
         final int tileEntityCount = event.getBlock().getChunk().getTileEntities(false).length;
         if (tileEntityCount >= Settings.Chunk_Processor.MAX_TILES) {
-            final PlotPlayer plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
+            final PlotPlayer<?> plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
             Captions.TILE_ENTITY_CAP_REACHED.send(plotPlayer, Settings.Chunk_Processor.MAX_TILES);
             event.setCancelled(true);
             event.setBuild(false);
@@ -299,11 +308,50 @@ public class PaperListener implements Listener {
         if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
             return;
         }
-        PlotPlayer pp = BukkitUtil.getPlayer((Player) shooter);
+        PlotPlayer<?> pp = BukkitUtil.getPlayer((Player) shooter);
         Plot plot = location.getOwnedPlot();
         if (plot != null && !plot.isAdded(pp.getUUID())) {
             entity.remove();
             event.setCancelled(true);
         }
     }
+
+    @EventHandler public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
+        if (!Settings.Paper_Components.ASYNC_TAB_COMPLETION) {
+            return;
+        }
+        String buffer = event.getBuffer();
+        if (!(event.getSender() instanceof Player)) {
+            return;
+        }
+        if ((!event.isCommand() && !buffer.startsWith("/")) || buffer.indexOf(' ') == -1) {
+            return;
+        }
+        if (buffer.startsWith("/")) {
+            buffer = buffer.substring(1);
+        }
+        final String[] unprocessedArgs = buffer.split(Pattern.quote(" "));
+        if (unprocessedArgs.length == 1) {
+            return; // We don't do anything in this case
+        } else if (!Settings.Enabled_Components.TAB_COMPLETED_ALIASES
+            .contains(unprocessedArgs[0].toLowerCase(Locale.ENGLISH))) {
+            return;
+        }
+        final String[] args = new String[unprocessedArgs.length - 1];
+        System.arraycopy(unprocessedArgs, 1, args, 0, args.length);
+        try {
+            final PlotPlayer<?> player = BukkitUtil.getPlayer((Player) event.getSender());
+            final Collection<Command> objects = MainCommand.getInstance().tab(player, args, buffer.endsWith(" "));
+            if (objects == null) {
+                return;
+            }
+            final List<String> result = new ArrayList<>();
+            for (final com.plotsquared.core.command.Command o : objects) {
+                result.add(o.toString());
+            }
+            event.setCompletions(result);
+            event.setHandled(true);
+        } catch (final Exception ignored) {}
+    }
+
 }

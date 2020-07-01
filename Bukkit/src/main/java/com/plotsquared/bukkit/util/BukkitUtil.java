@@ -27,6 +27,7 @@ package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.player.BukkitPlayer;
+import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
@@ -35,11 +36,11 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -113,14 +114,16 @@ public class BukkitUtil extends WorldUtil {
     private static World lastWorld = null;
 
     private static Player lastPlayer = null;
-    private static PlotPlayer lastPlotPlayer = null;
+    private static BukkitPlayer lastPlotPlayer = null;
 
-    public static void removePlayer(String player) {
+    public static void removePlayer(UUID uuid) {
         lastPlayer = null;
         lastPlotPlayer = null;
+        // Make sure that it's removed internally
+        PlotSquared.imp().getPlayerManager().removePlayer(uuid);
     }
 
-    public static PlotPlayer getPlayer(@NonNull final OfflinePlayer op) {
+    public static PlotPlayer<Player> getPlayer(@NonNull final OfflinePlayer op) {
         if (op.isOnline()) {
             return getPlayer(op.getPlayer());
         }
@@ -165,7 +168,7 @@ public class BukkitUtil extends WorldUtil {
      * @return a {@code PlotPlayer}
      * @see PlotPlayer#wrap(Object)
      */
-    public static PlotPlayer wrapPlayer(OfflinePlayer player) {
+    public static PlotPlayer<?> wrapPlayer(OfflinePlayer player) {
         return PlotPlayer.wrap(player);
     }
 
@@ -177,7 +180,7 @@ public class BukkitUtil extends WorldUtil {
      * @return a {@code PlotPlayer}
      * @see PlotPlayer#wrap(Object)
      */
-    public static PlotPlayer wrapPlayer(Player player) {
+    public static PlotPlayer<?> wrapPlayer(Player player) {
         return PlotPlayer.wrap(player);
     }
 
@@ -189,7 +192,7 @@ public class BukkitUtil extends WorldUtil {
      * @return a {@code PlotPlayer}
      * @see PlotPlayer#wrap(Object)
      */
-    @Override public PlotPlayer wrapPlayer(UUID uuid) {
+    @Override public PlotPlayer<?> wrapPlayer(UUID uuid) {
         return PlotPlayer.wrap(Bukkit.getOfflinePlayer(uuid));
     }
 
@@ -200,7 +203,7 @@ public class BukkitUtil extends WorldUtil {
      * @return the number of allowed plots
      */
     public static int getAllowedPlots(Player player) {
-        PlotPlayer plotPlayer = PlotPlayer.wrap(player);
+        PlotPlayer<?> plotPlayer = PlotPlayer.wrap(player);
         return plotPlayer.getAllowedPlots();
     }
 
@@ -226,7 +229,7 @@ public class BukkitUtil extends WorldUtil {
         if (world == null) {
             return new HashSet<>();
         }
-        return PlotPlayer.wrap(player).getPlots(world);
+        return BukkitPlayer.wrap(player).getPlots(world);
     }
 
     /**
@@ -264,19 +267,12 @@ public class BukkitUtil extends WorldUtil {
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
     }
 
-    public static PlotPlayer getPlayer(@NonNull final Player player) {
+    public static BukkitPlayer getPlayer(@NonNull final Player player) {
         if (player == lastPlayer) {
             return lastPlotPlayer;
         }
-        final String name = player.getName();
-        final PlotPlayer plotPlayer = UUIDHandler.getPlayer(name);
-        if (plotPlayer != null) {
-            return plotPlayer;
-        }
-        lastPlotPlayer = new BukkitPlayer(player);
-        UUIDHandler.getPlayers().put(name, lastPlotPlayer);
-        lastPlayer = player;
-        return lastPlotPlayer;
+        final PlayerManager<?, ?> playerManager = PlotSquared.imp().getPlayerManager();
+        return ((BukkitPlayerManager) playerManager).getPlayer(player);
     }
 
     public static Location getLocation(@NonNull final org.bukkit.Location location) {

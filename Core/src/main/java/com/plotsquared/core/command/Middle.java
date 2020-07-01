@@ -42,7 +42,7 @@ import com.plotsquared.core.plot.Plot;
     requiredType = RequiredType.PLAYER)
 public class Middle extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] arguments) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] arguments) {
         Location location = player.getLocation();
         Plot plot = location.getPlot();
         if (plot == null) {

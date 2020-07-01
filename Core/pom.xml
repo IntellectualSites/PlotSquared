@@ -9,7 +9,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20190722</version>
+      <version>20200518</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -90,6 +90,12 @@
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>
       <version>1.3.72</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.khelekore</groupId>
+      <artifactId>prtree</artifactId>
+      <version>1.7.0-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

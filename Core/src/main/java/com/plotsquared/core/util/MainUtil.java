@@ -49,12 +49,13 @@ import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.util.net.AbstractDelegateOutputStream;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.uuid.UUIDHandler;
+import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +74,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -81,6 +83,8 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
@@ -99,12 +103,6 @@ public class MainUtil {
         FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
     }
 
-    /**
-     * If the NMS code for sending chunk updates is functional<br>
-     * - E.g. If using an older version of Bukkit, or before the plugin is updated to 1.5<br>
-     * - Slower fallback code will be used if not.<br>
-     */
-    public static boolean canSendChunk = false;
     /**
      * Cache of mapping x,y,z coordinates to the chunk array<br>
      * - Used for efficient world generation<br>
@@ -150,15 +148,6 @@ public class MainUtil {
                 }
             }
         }
-    }
-
-    public static void sendAdmin(final String s) {
-        for (final PlotPlayer player : UUIDHandler.getPlayers().values()) {
-            if (player.hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
-                player.sendMessage(Captions.color(s));
-            }
-        }
-        PlotSquared.debug(s);
     }
 
     public static void upload(UUID uuid, String file, String extension,
@@ -396,7 +385,7 @@ public class MainUtil {
         if (owner.equals(DBFunc.SERVER)) {
             return Captions.SERVER.getTranslated();
         }
-        String name = UUIDHandler.getName(owner);
+        String name = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
         if (name == null) {
             return Captions.UNKNOWN.getTranslated();
         }
@@ -467,7 +456,7 @@ public class MainUtil {
 
         for (String term : split) {
             try {
-                UUID uuid = UUIDHandler.getUUID(term, null);
+                UUID uuid = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(term, Settings.UUID.BLOCKING_TIMEOUT);
                 if (uuid == null) {
                     uuid = UUID.fromString(term);
                 }
@@ -527,7 +516,7 @@ public class MainUtil {
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
      */
-    public static Plot getPlotFromString(PlotPlayer player, String arg, boolean message) {
+    @Nullable public static Plot getPlotFromString(PlotPlayer player, String arg, boolean message) {
         if (arg == null) {
             if (player == null) {
                 if (message) {
@@ -738,33 +727,45 @@ public class MainUtil {
         return ratings;
     }
 
-    public static Set<UUID> getUUIDsFromString(String list) {
+    public static void getUUIDsFromString(final String list, final BiConsumer<Collection<UUID>, Throwable> consumer) {
         String[] split = list.split(",");
-        HashSet<UUID> result = new HashSet<>();
-        for (String name : split) {
+
+        final Set<UUID> result = new HashSet<>();
+        final List<String> request = new LinkedList<>();
+
+        for (final String name : split) {
             if (name.isEmpty()) {
-                // Invalid
-                return Collections.emptySet();
-            }
-            if ("*".equals(name)) {
+                consumer.accept(Collections.emptySet(), null);
+                return;
+            } else if ("*".equals(name)) {
                 result.add(DBFunc.EVERYONE);
-                continue;
-            }
-            if (name.length() > 16) {
+            } else if (name.length() > 16) {
                 try {
                     result.add(UUID.fromString(name));
-                    continue;
                 } catch (IllegalArgumentException ignored) {
-                    return Collections.emptySet();
+                    consumer.accept(Collections.emptySet(), null);
+                    return;
                 }
+            } else {
+                request.add(name);
             }
-            UUID uuid = UUIDHandler.getUUID(name, null);
-            if (uuid == null) {
-                return Collections.emptySet();
-            }
-            result.add(uuid);
         }
-        return result;
+
+        if (request.isEmpty()) {
+            consumer.accept(result, null);
+        } else {
+            PlotSquared.get().getImpromptuUUIDPipeline().getUUIDs(request, Settings.UUID.NON_BLOCKING_TIMEOUT)
+                .whenComplete((uuids, throwable) -> {
+                if (throwable != null) {
+                    consumer.accept(null, throwable);
+                } else {
+                    for (final UUIDMapping uuid : uuids) {
+                        result.add(uuid.getUuid());
+                    }
+                    consumer.accept(result, null);
+                }
+            });
+        }
     }
 
     /**
@@ -903,24 +904,61 @@ public class MainUtil {
         return (directory.delete());
     }
 
-    /**
-     * Get a list of names given a list of uuids.<br>
-     * - Uses the format {@link Captions#PLOT_USER_LIST} for the returned string
-     *
-     * @param uuids
-     * @return
-     */
-    public static String getPlayerList(Collection<UUID> uuids) {
-        ArrayList<UUID> l = new ArrayList<>(uuids);
-        if (l.size() < 1) {
+    /*
+    @NotNull public static String getName(UUID owner) {
+        if (owner == null) {
             return Captions.NONE.getTranslated();
         }
-        List<String> users =
-            l.stream().map(MainUtil::getName).sorted().collect(Collectors.toList());
+        if (owner.equals(DBFunc.EVERYONE)) {
+            return Captions.EVERYONE.getTranslated();
+        }
+        if (owner.equals(DBFunc.SERVER)) {
+            return Captions.SERVER.getTranslated();
+        }
+        String name = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
+        if (name == null) {
+            return Captions.UNKNOWN.getTranslated();
+        }
+        return name;
+    }
+     */
+
+    /**
+     * Get a list of names given a list of UUIDs.
+     * - Uses the format {@link Captions#PLOT_USER_LIST} for the returned string
+     */
+    public static String getPlayerList(final Collection<UUID> uuids) {
+        if (uuids.size() < 1) {
+            return Captions.NONE.getTranslated();
+        }
+
+        final List<UUID> players = new LinkedList<>();
+        final List<String> users = new LinkedList<>();
+        for (final UUID uuid : uuids) {
+            if (uuid == null) {
+                users.add(Captions.NONE.getTranslated());
+            } else if (DBFunc.EVERYONE.equals(uuid)) {
+                users.add(Captions.EVERYONE.getTranslated());
+            } else if (DBFunc.SERVER.equals(uuid)) {
+                users.add(Captions.SERVER.getTranslated());
+            } else {
+                players.add(uuid);
+            }
+        }
+
+        try {
+            for (final UUIDMapping mapping : PlotSquared.get().getImpromptuUUIDPipeline().getNames(players).get(Settings.UUID.BLOCKING_TIMEOUT,
+                TimeUnit.MILLISECONDS)) {
+                users.add(mapping.getUsername());
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+
         String c = Captions.PLOT_USER_LIST.getTranslated();
         StringBuilder list = new StringBuilder();
         for (int x = 0; x < users.size(); x++) {
-            if (x + 1 == l.size()) {
+            if (x + 1 == uuids.size()) {
                 list.append(c.replace("%user%", users.get(x)).replace(",", ""));
             } else {
                 list.append(c.replace("%user%", users.get(x)));
@@ -931,7 +969,7 @@ public class MainUtil {
 
     public static void getPersistentMeta(UUID uuid, final String key,
         final RunnableVal<byte[]> result) {
-        PlotPlayer player = UUIDHandler.getPlayer(uuid);
+        PlotPlayer player = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
         if (player != null) {
             result.run(player.getPersistentMeta(key));
         } else {

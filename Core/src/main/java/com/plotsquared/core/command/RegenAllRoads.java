@@ -43,7 +43,7 @@ import com.plotsquared.core.util.MainUtil;
     permission = "plots.regenallroads")
 public class RegenAllRoads extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         int height = 0;
         if (args.length == 2) {
             try {

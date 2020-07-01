@@ -29,6 +29,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface PlotAreaManager {
 
@@ -44,7 +45,7 @@ public interface PlotAreaManager {
      * @param location The location
      * @return An applicable area, or null
      */
-    PlotArea getApplicablePlotArea(Location location);
+    @Nullable PlotArea getApplicablePlotArea(Location location);
 
     /**
      * Get the plot area, if there is any, for the given

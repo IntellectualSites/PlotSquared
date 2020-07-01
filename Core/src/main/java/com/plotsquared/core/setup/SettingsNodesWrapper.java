@@ -23,28 +23,30 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot.util;
+package com.plotsquared.core.setup;
 
-import com.plotsquared.core.database.AbstractDBTest;
-import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.uuid.UUIDHandlerImplementation;
-import com.plotsquared.core.util.uuid.UUIDWrapper;
-import org.junit.Before;
+import com.plotsquared.core.configuration.ConfigurationNode;
+import lombok.Getter;
 
-import java.util.UUID;
+/**
+ * This class wraps an array of {@link ConfigurationNode}s.
+ */
+public class SettingsNodesWrapper {
+    @Getter private final ConfigurationNode[] settingsNodes;
+    @Getter private final SetupStep afterwards;
 
-public class UUIDHandlerImplementationTest extends UUIDHandlerImplementation {
-
-    public UUIDHandlerImplementationTest(UUIDWrapper wrapper) {
-        super(wrapper);
+    public SettingsNodesWrapper(ConfigurationNode[] settingsNodes, SetupStep afterwards) {
+        this.settingsNodes = settingsNodes;
+        this.afterwards = afterwards;
     }
 
-    @Before public void setUp() throws Exception {
-        DBFunc.dbManager = new AbstractDBTest();
-    }
-
-    @Override public void fetchUUID(String name, RunnableVal<UUID> ifFetch) {
-
+    /**
+     * Returns the first step of this wrapper or the step or the
+     * {@code afterwards} step if no step is available.
+     *
+     * @return the first step or {@code afterwards}.
+     */
+    public SetupStep getFirstStep() {
+        return this.settingsNodes.length == 0 ? this.afterwards : new SettingsNodeStep(this.settingsNodes[0], 0, this);
     }
 }

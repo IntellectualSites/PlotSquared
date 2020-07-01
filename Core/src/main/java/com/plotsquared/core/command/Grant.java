@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.primitives.Ints;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
@@ -35,10 +36,10 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "grant",
     category = CommandCategory.CLAIMING,
@@ -52,7 +53,7 @@ public class Grant extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length >= 1 && args.length <= 2, Captions.COMMAND_SYNTAX, getUsage());
@@ -69,43 +70,44 @@ public class Grant extends Command {
                 if (args.length > 2) {
                     break;
                 }
-                final UUID uuid;
-                if (args.length == 2) {
-                    uuid = UUIDHandler.getUUIDFromString(args[1]);
-                } else {
-                    uuid = player.getUUID();
-                }
-                if (uuid == null) {
-                    Captions.INVALID_PLAYER.send(player, args[1]);
-                    return CompletableFuture.completedFuture(false);
-                }
-                MainUtil.getPersistentMeta(uuid, "grantedPlots", new RunnableVal<byte[]>() {
-                    @Override public void run(byte[] array) {
-                        if (arg0.equals("check")) { // check
-                            int granted;
-                            if (array == null) {
-                                granted = 0;
-                            } else {
-                                granted = Ints.fromByteArray(array);
+                MainUtil.getUUIDsFromString(args[1], (uuids, throwable) -> {
+                    if (throwable instanceof TimeoutException) {
+                        MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                    } else if (throwable != null || uuids.size() != 1) {
+                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER);
+                    } else {
+                        final UUID uuid = uuids.toArray(new UUID[0])[0];
+                        MainUtil.getPersistentMeta(uuid,
+                            "grantedPlots", new RunnableVal<byte[]>() {
+                            @Override public void run(byte[] array) {
+                                if (arg0.equals("check")) { // check
+                                    int granted;
+                                    if (array == null) {
+                                        granted = 0;
+                                    } else {
+                                        granted = Ints.fromByteArray(array);
+                                    }
+                                    Captions.GRANTED_PLOTS.send(player, granted);
+                                } else { // add
+                                    int amount;
+                                    if (array == null) {
+                                        amount = 1;
+                                    } else {
+                                        amount = 1 + Ints.fromByteArray(array);
+                                    }
+                                    boolean replace = array != null;
+                                    String key = "grantedPlots";
+                                    byte[] rawData = Ints.toByteArray(amount);
+
+                                    PlotPlayer online = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                                    if (online != null) {
+                                        online.setPersistentMeta(key, rawData);
+                                    } else {
+                                        DBFunc.addPersistentMeta(uuid, key, rawData, replace);
+                                    }
+                                }
                             }
-                            Captions.GRANTED_PLOTS.send(player, granted);
-                        } else { // add
-                            int amount;
-                            if (array == null) {
-                                amount = 1;
-                            } else {
-                                amount = 1 + Ints.fromByteArray(array);
-                            }
-                            boolean replace = array != null;
-                            String key = "grantedPlots";
-                            byte[] rawData = Ints.toByteArray(amount);
-                            PlotPlayer online = UUIDHandler.getPlayer(uuid);
-                            if (online != null) {
-                                online.setPersistentMeta(key, rawData);
-                            } else {
-                                DBFunc.addPersistentMeta(uuid, key, rawData, replace);
-                            }
-                        }
+                        });
                     }
                 });
                 return CompletableFuture.completedFuture(true);

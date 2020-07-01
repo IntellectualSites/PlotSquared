@@ -46,7 +46,7 @@ public class ComponentCommand extends SubCommand {
         this.componentPresetManager = componentPresetManager;
     }
 
-    @Override public boolean onCommand(final PlotPlayer player, final String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final PlotInventory inventory = componentPresetManager.buildInventory(player);
         if (inventory != null) {
             inventory.openInventory();

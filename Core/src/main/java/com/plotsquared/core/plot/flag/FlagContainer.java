@@ -42,8 +42,7 @@ import java.util.Map;
 /**
  * Container type for {@link PlotFlag plot flags}.
  */
-@EqualsAndHashCode(of = "flagMap")
-public class FlagContainer {
+@EqualsAndHashCode(of = "flagMap") public class FlagContainer {
 
     private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
@@ -341,8 +340,7 @@ public class FlagContainer {
     /**
      * Handler for update events in {@link FlagContainer flag containers}.
      */
-    @FunctionalInterface
-    public interface PlotFlagUpdateHandler {
+    @FunctionalInterface public interface PlotFlagUpdateHandler {
 
         /**
          * Act on the flag update event

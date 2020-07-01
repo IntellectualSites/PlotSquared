@@ -52,7 +52,7 @@ import java.util.List;
     usage = "/plot load")
 public class Load extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String world = player.getLocation().getWorld();
         if (!PlotSquared.get().hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
@@ -152,7 +152,7 @@ public class Load extends SubCommand {
         return true;
     }
 
-    public void displaySaves(PlotPlayer player) {
+    public void displaySaves(PlotPlayer<?> player) {
         List<String> schematics = player.getMeta("plot_schematics");
         for (int i = 0; i < Math.min(schematics.size(), 32); i++) {
             try {

@@ -55,7 +55,7 @@ public class Music extends SubCommand {
             "music_disc_far", "music_disc_mall", "music_disc_mellohi", "music_disc_stal",
             "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait");
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {

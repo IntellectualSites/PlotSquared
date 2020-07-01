@@ -49,7 +49,7 @@ import java.util.UUID;
     permission = "plots.save")
 public class Save extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String world = player.getLocation().getWorld();
         if (!PlotSquared.get().hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);

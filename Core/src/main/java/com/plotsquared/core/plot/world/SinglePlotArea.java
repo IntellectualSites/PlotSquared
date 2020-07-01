@@ -38,8 +38,9 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.PlotSettings;
-import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.plot.flag.FlagContainer;
+import com.plotsquared.core.setup.PlotAreaBuilder;
+import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -78,13 +79,13 @@ public class SinglePlotArea extends GridPlotWorld {
         if (WorldUtil.IMP.isWorld(worldName)) {
             return;
         }
-        SetupObject setup = new SetupObject();
-        setup.plotManager = "PlotSquared:single";
-        setup.setupGenerator = "PlotSquared:single";
-        setup.type = getType();
-        setup.terrain = getTerrain();
-        setup.step = new ConfigurationNode[0];
-        setup.world = worldName;
+        PlotAreaBuilder builder = new PlotAreaBuilder()
+                .plotManager("PlotSquared:single")
+                .generatorName("PlotSquared:single")
+                .plotAreaType(getType())
+                .terrainType(getTerrain())
+                .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
+                .worldName(worldName);
 
         File container = PlotSquared.imp().getWorldContainer();
         File destination = new File(container, worldName);
@@ -96,7 +97,7 @@ public class SinglePlotArea extends GridPlotWorld {
             }
         }
         // Duplicate 0;0
-        if (setup.type != PlotAreaType.NORMAL) {
+        if (builder.plotAreaType() != PlotAreaType.NORMAL) {
             if (!destination.exists()) {
                 File src = new File(container, "0.0");
                 if (src.exists()) {
@@ -132,7 +133,7 @@ public class SinglePlotArea extends GridPlotWorld {
                     return;
                 }
 
-                SetupUtils.manager.setupWorld(setup);
+                SetupUtils.manager.setupWorld(builder);
             }
         });
         //        String worldName = plot.getWorldName();

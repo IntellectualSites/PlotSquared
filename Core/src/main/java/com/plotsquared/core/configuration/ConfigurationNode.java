@@ -28,9 +28,11 @@ package com.plotsquared.core.configuration;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.world.block.BlockState;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,19 +40,26 @@ import java.util.List;
  */
 public class ConfigurationNode {
 
-    private final String constant;
+    @Getter private final String constant;
     private final Object defaultValue;
-    private final String description;
+    @Getter private final String description;
     private final ConfigurationUtil.SettingValue type;
+    @Getter private final Collection<String> suggestions;
     private Object value;
 
     public ConfigurationNode(String constant, Object defaultValue, String description,
         ConfigurationUtil.SettingValue type) {
+        this(constant, defaultValue, description, type, new ArrayList<>());
+    }
+
+    public ConfigurationNode(String constant, Object defaultValue, String description,
+                             ConfigurationUtil.SettingValue type, Collection<String> suggestions) {
         this.constant = constant;
         this.defaultValue = defaultValue;
         this.description = description;
         this.value = defaultValue;
         this.type = type;
+        this.suggestions = suggestions;
     }
 
     public ConfigurationUtil.SettingValue getType() {
@@ -97,18 +106,10 @@ public class ConfigurationNode {
         return this.value;
     }
 
-    public String getConstant() {
-        return this.constant;
-    }
-
     public Object getDefaultValue() {
         if (this.defaultValue instanceof Object[]) {
             return StringMan.join((Object[]) this.defaultValue, ",");
         }
         return this.defaultValue;
-    }
-
-    public String getDescription() {
-        return this.description;
     }
 }

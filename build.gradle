@@ -30,7 +30,7 @@ ext {
     git = Grgit.open(dir: new File(rootDir.toString() + "/.git"))
 }
 
-def ver = "5.11.2"
+def ver = "5.12.2"
 def versuffix = ""
 ext {
     if (project.hasProperty("versionsuffix")) {
@@ -76,8 +76,10 @@ subprojects {
         delete("../target")
     }
 
+    javadoc.options.encoding = 'UTF-8'
+
     dependencies {
-        compile group: 'org.json', name: 'json', version: '20190722'
+        compile group: 'org.json', name: 'json', version: '20200518'
 
         implementation("com.sk89q.worldedit:worldedit-core:7.0.0") {
             exclude(module: "bukkit-classloader-check")
@@ -118,7 +120,7 @@ subprojects {
 
     shadowJar {
         dependencies {
-            include(dependency("org.json:json:20190722"))
+            include(dependency("org.json:json:20200518"))
             include(dependency("net.kyori:text-api:3.0.2"))
         }
         relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")

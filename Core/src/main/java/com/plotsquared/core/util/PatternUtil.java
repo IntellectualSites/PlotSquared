@@ -62,7 +62,7 @@ public class PatternUtil {
         return parse(plotPlayer, input, true);
     }
 
-    public static List<String> getSuggestions(PlotPlayer plotPlayer, String input) {
+    public static List<String> getSuggestions(String input) {
         try {
             return WorldEdit.getInstance().getPatternFactory().getSuggestions(input);
         } catch (final Exception ignored) {

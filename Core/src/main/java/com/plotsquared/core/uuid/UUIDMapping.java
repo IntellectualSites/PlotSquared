@@ -23,44 +23,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util.uuid;
+package com.plotsquared.core.uuid;
 
-import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
-import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.uuid.UUIDWrapper;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.UUID;
 
-public class DefaultUUIDWrapper extends UUIDWrapper {
+/**
+ * A pair consisting of a UUID and a username
+ */
+@EqualsAndHashCode public class UUIDMapping {
 
-    @NotNull @Override public UUID getUUID(PlotPlayer player) {
-        return ((BukkitPlayer) player).player.getUniqueId();
+    private final UUID uuid;
+    private final String username;
+
+    public UUIDMapping(@NotNull final UUID uuid, final String username) {
+        this.uuid = uuid;
+        this.username = username;
     }
 
-    @Override public UUID getUUID(OfflinePlotPlayer player) {
-        return player.getUUID();
+    @NotNull public String getUsername() {
+        return this.username;
     }
 
-    @Override public OfflinePlotPlayer getOfflinePlayer(UUID uuid) {
-        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
+    @NotNull public UUID getUuid() {
+        return this.uuid;
     }
 
-    @Override public UUID getUUID(String name) {
-        return Bukkit.getOfflinePlayer(name).getUniqueId();
-    }
-
-    @Override public OfflinePlotPlayer[] getOfflinePlayers() {
-        OfflinePlayer[] ops = Bukkit.getOfflinePlayers();
-        return Arrays.stream(ops).map(BukkitOfflinePlayer::new).toArray(BukkitOfflinePlayer[]::new);
-    }
-
-    @Override public OfflinePlotPlayer getOfflinePlayer(String name) {
-        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(name));
-    }
 }

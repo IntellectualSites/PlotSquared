@@ -45,7 +45,7 @@ import java.util.Objects;
     category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.

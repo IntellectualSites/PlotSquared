@@ -37,6 +37,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockCategory;
@@ -76,7 +77,6 @@ public class Set extends SubCommand {
             @Override public boolean set(PlotPlayer player, final Plot plot, String value) {
                 PlotManager manager = player.getLocation().getPlotManager();
                 String[] components = manager.getPlotComponents(plot.getId());
-                boolean allowUnsafe = DebugAllowUnsafe.unsafeAllowed.contains(player.getUUID());
 
                 String[] args = value.split(" ");
                 String material =
@@ -159,11 +159,7 @@ public class Set extends SubCommand {
             @Override
             public Collection<Command> tab(final PlotPlayer player, final String[] args,
                 final boolean space) {
-                return PatternUtil.getSuggestions(player, StringMan.join(args, ",").trim()).stream()
-                    .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
-                    .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                    .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
-                    }).collect(Collectors.toList());
+                return TabCompletions.completePatterns(StringMan.join(args, ","));
             }
         };
     }
@@ -180,7 +176,7 @@ public class Set extends SubCommand {
         return false;
     }
 
-    @Override public boolean onCommand(PlotPlayer player, String[] args) {
+    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             return noArgs(player);
         }

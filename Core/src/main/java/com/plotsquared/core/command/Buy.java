@@ -37,7 +37,6 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.util.uuid.UUIDHandler;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -55,11 +54,11 @@ public class Buy extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer player, String[] args,
+    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
 
-        check(EconHandler.manager, Captions.ECON_DISABLED);
+        check(EconHandler.getEconHandler(), Captions.ECON_DISABLED);
         final Plot plot;
         if (args.length != 0) {
             checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
@@ -82,10 +81,10 @@ public class Buy extends Command {
         // Success
         confirm.run(this, () -> {
             Captions.REMOVED_BALANCE.send(player, price);
-            EconHandler.manager
-                .depositMoney(UUIDHandler.getUUIDWrapper().getOfflinePlayer(plot.getOwnerAbs()),
-                    price);
-            PlotPlayer owner = UUIDHandler.getPlayer(plot.getOwnerAbs());
+
+            EconHandler.getEconHandler().depositMoney(PlotSquared.imp().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
+
+            PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {
                 Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }
