@@ -221,7 +221,7 @@ public class Cluster extends SubCommand {
                 if (args.length == 2) {
                     cluster = area.getCluster(args[1]);
                     if (cluster == null) {
-                        MainUtil.sendMessage(player, Captions.INVALID_CLUSTER_NAME, args[1]);
+                        MainUtil.sendMessage(player, Captions.INVALID_CLUSTER, args[1]);
                         return false;
                     }
                 } else {
