@@ -2966,262 +2966,249 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return false;
                 }
             } else if (EntityCategories.ANIMAL.contains(entityType)) { // victim is animal
-<<<<<<<HEAD if (isPlot) {
+                if (isPlot) {
                     if (plot.getFlag(AnimalAttackFlag.class) || plot.getFlag(PveFlag.class) || plot
                         .isAdded(plotPlayer.getUUID())) {
+                        plot.debug(player.getName() + " could not attack " + entityType
+                            + " because pve = false OR animal-attack = false");
                         return true;
                     }
                 } else if (roadFlags && (area.getFlag(AnimalAttackFlag.class) || area
                     .getFlag(PveFlag.class))) {
-=======
-                    if (plot != null && (plot.getFlag(AnimalAttackFlag.class) || plot
-                        .getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID()))) {
-                        plot.debug(player.getName() + " could not attack " + entityType
-                            + " because pve = false OR animal-attack = false");
->>>>>>>v5 return true;
-                    } if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
-                        MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                            "plots.admin.pve." + stub);
-                        return false;
-                    }
-                } else if (EntityCategories.VEHICLE
-                    .contains(entityType)) { // Vehicles are managed in vehicle destroy event
-                    return true;
-                } else { // victim is something else
-                    if (isPlot) {
-                        if (plot.getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID())) {
-                            return true;
-                        }
-                    } else if (roadFlags && area.getFlag(PveFlag.class)) {
-                        return true;
-                    }
                     if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
                         MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
                             "plots.admin.pve." + stub);
-                        if (plot != null) {
-                            plot.debug(player.getName() + " could not attack " + entityType
-                                + " because pve = false");
-                        }
                         return false;
                     }
-                } return true;
-            } else if (dplot != null && (!dplot.equals(vplot) || Objects
-                .equals(dplot.getOwnerAbs(), vplot.getOwnerAbs()))) {
-                return vplot != null && vplot.getFlag(PveFlag.class);
-            }
-            //disable the firework damage. too much of a headache to support at the moment.
-            if (vplot != null) {
-                if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause
-                    && damager.getType() == EntityType.FIREWORK) {
+                }
+            } else if (EntityCategories.VEHICLE
+                .contains(entityType)) { // Vehicles are managed in vehicle destroy event
+                return true;
+            } else { // victim is something else
+                if (isPlot) {
+                    if (plot.getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID())) {
+                        return true;
+                    }
+                } else if (roadFlags && area.getFlag(PveFlag.class)) {
+                    return true;
+                }
+                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
+                        "plots.admin.pve." + stub);
+                    if (plot != null) {
+                        plot.debug(player.getName() + " could not attack " + entityType
+                            + " because pve = false");
+                    }
                     return false;
                 }
             }
-            if (vplot == null && roadFlags && area.getFlag(PveFlag.class)) {
-                return true;
-            }
-            return ((vplot != null && vplot.getFlag(PveFlag.class)) || !(damager instanceof Arrow
-                && !(victim instanceof Creature)));
+            return true;
+        } else if (dplot != null && (!dplot.equals(vplot) || Objects
+            .equals(dplot.getOwnerAbs(), vplot.getOwnerAbs()))) {
+            return vplot != null && vplot.getFlag(PveFlag.class);
         }
-
-        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        public void onPlayerEggThrow (PlayerEggThrowEvent event){
-            Location location = BukkitUtil.getLocation(event.getEgg().getLocation());
-            PlotArea area = location.getPlotArea();
-            if (area == null) {
-                return;
-            }
-            Player player = event.getPlayer();
-            BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
-            Plot plot = area.getPlot(location);
-            if (plot == null) {
-                if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.road")) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.projectile.road");
-                    event.setHatching(false);
-                }
-            } else if (!plot.hasOwner()) {
-                if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.unowned")) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.projectile.unowned");
-                    event.setHatching(false);
-                }
-            } else if (!plot.isAdded(plotPlayer.getUUID())) {
-                if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.other")) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.projectile.other");
-                    event.setHatching(false);
-                }
+        //disable the firework damage. too much of a headache to support at the moment.
+        if (vplot != null) {
+            if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause
+                && damager.getType() == EntityType.FIREWORK) {
+                return false;
             }
         }
+        if (vplot == null && roadFlags && area.getFlag(PveFlag.class)) {
+            return true;
+        }
+        return ((vplot != null && vplot.getFlag(PveFlag.class)) || !(damager instanceof Arrow
+            && !(victim instanceof Creature)));
+    }
 
-        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-        public void blockCreate (BlockPlaceEvent event){
-            Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
-            PlotArea area = location.getPlotArea();
-            if (area == null) {
-                return;
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerEggThrow(PlayerEggThrowEvent event) {
+        Location location = BukkitUtil.getLocation(event.getEgg().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Player player = event.getPlayer();
+        BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
+        Plot plot = area.getPlot(location);
+        if (plot == null) {
+            if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.road")) {
+                MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
+                    "plots.admin.projectile.road");
+                event.setHatching(false);
             }
-            Player player = event.getPlayer();
+        } else if (!plot.hasOwner()) {
+            if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.unowned")) {
+                MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
+                    "plots.admin.projectile.unowned");
+                event.setHatching(false);
+            }
+        } else if (!plot.isAdded(plotPlayer.getUUID())) {
+            if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.other")) {
+                MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
+                    "plots.admin.projectile.other");
+                event.setHatching(false);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void blockCreate(BlockPlaceEvent event) {
+        Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Player player = event.getPlayer();
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
+        Plot plot = area.getPlot(location);
+        if (plot != null) {
+            if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area
+                .getMinBuildHeight()) && !Permissions
+                .hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+                event.setCancelled(true);
+                MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.getTranslated()
+                    .replace("{limit}", String.valueOf(area.getMaxBuildHeight())));
+            }
+            if (!plot.hasOwner()) {
+                if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_UNOWNED)) {
+                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                        Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
+                    event.setCancelled(true);
+                    return;
+                }
+            } else if (!plot.isAdded(pp.getUUID())) {
+                List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
+                if (place != null) {
+                    Block block = event.getBlock();
+                    if (place.contains(
+                        BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))) {
+                        return;
+                    }
+                }
+                if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                        Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                    event.setCancelled(true);
+                    plot.debug(player.getName() + " could not place " + event.getBlock().getType()
+                        + " because of the place flag");
+                    return;
+                }
+            } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
+                if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
+                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                        Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            if (plot.getFlag(DisablePhysicsFlag.class)) {
+                Block block = event.getBlockPlaced();
+                if (block.getType().hasGravity()) {
+                    sendBlockChange(block.getLocation(), block.getBlockData());
+                    plot.debug(event.getBlock().getType()
+                        + " did not fall because of disable-physics = true");
+                }
+            }
+        } else if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
+            MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
+                Captions.PERMISSION_ADMIN_BUILD_ROAD);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH) public void onDamage(EntityDamageEvent event) {
+        if (event.getEntityType() != EntityType.PLAYER) {
+            return;
+        }
+        Location location = BukkitUtil.getLocation(event.getEntity());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (area.isRoadRespectingGlobalFlags() && area.getFlag(InvincibleFlag.class)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (plot.getFlag(InvincibleFlag.class)) {
+            plot.debug(
+                event.getEntity().getName() + " could not take damage because invincible = true");
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler public void onItemDrop(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
+        Location location = pp.getLocation();
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (area.isRoadRespectingGlobalFlags() && area.getFlag(ItemDropFlag.class)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        UUID uuid = pp.getUUID();
+        if (!plot.isAdded(uuid)) {
+            if (!plot.getFlag(ItemDropFlag.class)) {
+                plot.debug(player.getName() + " could not drop item because of item-drop = false");
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler public void onItemPickup(EntityPickupItemEvent event) {
+        LivingEntity ent = event.getEntity();
+        if (ent instanceof Player) {
+            Player player = (Player) ent;
             BukkitPlayer pp = BukkitUtil.getPlayer(player);
-            Plot plot = area.getPlot(location);
-            if (plot != null) {
-                if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area
-                    .getMinBuildHeight()) && !Permissions
-                    .hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
-                    event.setCancelled(true);
-                    MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.getTranslated()
-                        .replace("{limit}", String.valueOf(area.getMaxBuildHeight())));
-                }
-                if (!plot.hasOwner()) {
-                    if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_UNOWNED)) {
-                        MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                            Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
-                        event.setCancelled(true);
-                        return;
-                    }
-                } else if (!plot.isAdded(pp.getUUID())) {
-                    List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
-                    if (place != null) {
-                        Block block = event.getBlock();
-                        if (place.contains(
-                            BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))) {
-                            return;
-                        }
-                    }
-                    if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                        MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                            Captions.PERMISSION_ADMIN_BUILD_OTHER);
-                        event.setCancelled(true);
-                        plot.debug(
-                            player.getName() + " could not place " + event.getBlock().getType()
-                                + " because of the place flag");
-                        return;
-                    }
-                } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
-                    if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                        MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                            Captions.PERMISSION_ADMIN_BUILD_OTHER);
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-                if (plot.getFlag(DisablePhysicsFlag.class)) {
-                    Block block = event.getBlockPlaced();
-                    if (block.getType().hasGravity()) {
-                        sendBlockChange(block.getLocation(), block.getBlockData());
-                        plot.debug(event.getBlock().getType()
-                            + " did not fall because of disable-physics = true");
-                    }
-                }
-            } else if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_BUILD_ROAD);
-                event.setCancelled(true);
-            }
-        }
-
-        @EventHandler(priority = EventPriority.HIGH) public void onDamage (EntityDamageEvent event){
-            if (event.getEntityType() != EntityType.PLAYER) {
-                return;
-            }
-            Location location = BukkitUtil.getLocation(event.getEntity());
-            PlotArea area = location.getPlotArea();
-            if (area == null) {
-                return;
-            }
-            Plot plot = location.getOwnedPlot();
-            if (plot == null) {
-                if (area.isRoadRespectingGlobalFlags() && area.getFlag(InvincibleFlag.class)) {
-                    event.setCancelled(true);
-                }
-                return;
-            }
-            if (plot.getFlag(InvincibleFlag.class)) {
-                plot.debug(event.getEntity().getName()
-                    + " could not take damage because invincible = true");
-                event.setCancelled(true);
-            }
-        }
-
-        @EventHandler public void onItemDrop (PlayerDropItemEvent event){
-            Player player = event.getPlayer();
-<<<<<<<HEAD PlotPlayer pp = BukkitUtil.getPlayer(player);
             Location location = pp.getLocation();
             PlotArea area = location.getPlotArea();
             if (area == null) {
                 return;
             }
             Plot plot = location.getOwnedPlot();
-=======
-            BukkitPlayer pp = BukkitUtil.getPlayer(player);
-            Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
->>>>>>>v5 if (plot == null) {
-                if (area.isRoadRespectingGlobalFlags() && area.getFlag(ItemDropFlag.class)) {
+            if (plot == null) {
+                if (area.isRoadRespectingGlobalFlags() && area.getFlag(DropProtectionFlag.class)) {
                     event.setCancelled(true);
                 }
                 return;
             }
             UUID uuid = pp.getUUID();
-            if (!plot.isAdded(uuid)) {
-                if (!plot.getFlag(ItemDropFlag.class)) {
-                    plot.debug(
-                        player.getName() + " could not drop item because of item-drop = false");
-                    event.setCancelled(true);
-                }
+            if (!plot.isAdded(uuid) && plot.getFlag(DropProtectionFlag.class)) {
+                plot.debug(
+                    player.getName() + " could not pick up item because of drop-protection = true");
+                event.setCancelled(true);
             }
         }
+    }
 
-        @EventHandler public void onItemPickup (EntityPickupItemEvent event){
-            LivingEntity ent = event.getEntity();
-            if (ent instanceof Player) {
-                Player player = (Player) ent;
-<<<<<<<HEAD PlotPlayer pp = BukkitUtil.getPlayer(player);
-                Location location = pp.getLocation();
-                PlotArea area = location.getPlotArea();
-                if (area == null) {
-                    return;
-                }
-                Plot plot = location.getOwnedPlot();
-=======
-                BukkitPlayer pp = BukkitUtil.getPlayer(player);
-                Plot plot = BukkitUtil.getLocation(player).getOwnedPlot();
->>>>>>>v5 if (plot == null) {
-                    if (area.isRoadRespectingGlobalFlags() && area
-                        .getFlag(DropProtectionFlag.class)) {
-                        event.setCancelled(true);
-                    }
-                    return;
-                }
-                UUID uuid = pp.getUUID();
-                if (!plot.isAdded(uuid) && plot.getFlag(DropProtectionFlag.class)) {
-                    plot.debug(player.getName()
-                        + " could not pick up item because of drop-protection = true");
-                    event.setCancelled(true);
-                }
-            }
+    @EventHandler public void onDeath(final PlayerDeathEvent event) {
+        Location location = BukkitUtil.getLocation(event.getEntity());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
         }
-
-        @EventHandler public void onDeath ( final PlayerDeathEvent event){
-<<<<<<<HEAD Location location = BukkitUtil.getLocation(event.getEntity());
-            PlotArea area = location.getPlotArea();
-            if (area == null) {
-                return;
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (area.isRoadRespectingGlobalFlags() && area.getFlag(KeepInventoryFlag.class)) {
+                event.setCancelled(true);
             }
-            Plot plot = location.getOwnedPlot();
-            if (plot == null) {
-                if (area.isRoadRespectingGlobalFlags() && area.getFlag(KeepInventoryFlag.class)) {
-                    event.setCancelled(true);
-                }
-                return;
-            }
+            return;
+        }
+        if (plot.getFlag(KeepInventoryFlag.class)) {
             if (plot.getFlag(KeepInventoryFlag.class)) {
-=======
-                final Plot plot = BukkitUtil.getPlayer(event.getEntity()).getCurrentPlot();
-                if (plot != null && plot.getFlag(KeepInventoryFlag.class)) {
-                    plot.debug(event.getEntity().getName()
-                        + " kept their inventory because of keep-inventory = true");
->>>>>>>v5 event.setKeepInventory(true);
-                }
+                plot.debug(event.getEntity().getName()
+                    + " kept their inventory because of keep-inventory = true");
+                event.setKeepInventory(true);
             }
-
         }
+    }
+}
