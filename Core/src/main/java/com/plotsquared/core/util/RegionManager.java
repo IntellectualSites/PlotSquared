@@ -29,6 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -162,6 +163,20 @@ public abstract class RegionManager {
         }
         return queue.enqueue();
     }
+
+    /**
+     * Notify any plugins that may want to modify clear behaviour that a clear is occuring
+     *
+     * @return true if the notified will accept the clear task
+     */
+    public boolean notifyClear() {
+        return false;
+    }
+
+    /**
+     * Only called when {@link RegionManager#notifyClear()} returns true in specific PlotManagers
+     */
+    public abstract boolean handleClear(Plot plot, final Runnable whenDone, PlotManager manager);
 
     /**
      * Copy a region to a new location (in the same world)
