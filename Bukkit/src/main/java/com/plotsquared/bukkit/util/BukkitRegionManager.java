@@ -32,6 +32,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
@@ -107,6 +108,10 @@ public class BukkitRegionManager extends RegionManager {
             }
         }
         return chunks;
+    }
+
+    @Override public boolean handleClear(Plot plot, Runnable whenDone, PlotManager manager) {
+        return false;
     }
 
     @Override public int[] countEntities(Plot plot) {
