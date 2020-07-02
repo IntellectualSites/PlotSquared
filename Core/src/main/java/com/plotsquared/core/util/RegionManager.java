@@ -169,12 +169,14 @@ public abstract class RegionManager {
      *
      * @return true if the notified will accept the clear task
      */
-    public boolean notifyClear() {
+    public boolean notifyClear(PlotManager manager) {
         return false;
     }
 
     /**
-     * Only called when {@link RegionManager#notifyClear()} returns true in specific PlotManagers
+     * Only called when {@link RegionManager#notifyClear(PlotManager)} returns true in specific PlotManagers
+     *
+     * @return true if the clear worked. False if someone went wrong so P2 can then handle the clear
      */
     public abstract boolean handleClear(Plot plot, final Runnable whenDone, PlotManager manager);
 
