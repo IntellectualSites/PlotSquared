@@ -353,7 +353,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
 
         impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
-        this.startUuidCaching(sqLiteUUIDService, cacheUUIDService);
+
+        if (Settings.UUID.BACKGROUND_CACHING_ENABLED) {
+            this.startUuidCaching(sqLiteUUIDService, cacheUUIDService);
+        }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new Placeholders().register();
