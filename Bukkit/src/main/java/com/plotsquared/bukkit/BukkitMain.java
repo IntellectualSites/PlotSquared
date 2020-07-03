@@ -125,7 +125,6 @@ import org.bukkit.World;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -354,7 +353,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
 
         impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
-        this.startUuidCatching(sqLiteUUIDService, cacheUUIDService);
+        this.startUuidCaching(sqLiteUUIDService, cacheUUIDService);
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new Placeholders().register();
@@ -491,7 +490,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
     }
 
-    private void startUuidCatching(@NotNull final SQLiteUUIDService sqLiteUUIDService,
+    private void startUuidCaching(@NotNull final SQLiteUUIDService sqLiteUUIDService,
         @NotNull final CacheUUIDService cacheUUIDService) {
         // Load all uuids into a big chunky boi queue
         final Queue<UUID> uuidQueue = new LinkedBlockingQueue<>();
