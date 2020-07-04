@@ -33,7 +33,7 @@ public interface Caption {
 
     String getTranslated();
 
-    default String formatted() {
+    @Deprecated default String formatted() {
         return StringMan.replaceFromMap(getTranslated(), Captions.replacements);
     }
 

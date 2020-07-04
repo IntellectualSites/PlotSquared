@@ -25,7 +25,9 @@
  */
 package com.plotsquared.core.configuration;
 
+import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
 public final class StaticCaption implements Caption {
@@ -33,8 +35,21 @@ public final class StaticCaption implements Caption {
     private final String value;
     private final boolean usePrefix;
 
-    public StaticCaption(final String value) {
+    /**
+     * @deprecated Use {@link #of(String)}
+     */
+    @Deprecated public StaticCaption(final String value) {
         this(value, true);
+    }
+
+    /**
+     * Create a new static caption from the given text
+     *
+     * @param text Text
+     * @return Created caption
+     */
+    @NotNull public static StaticCaption of(@NotNull final String text) {
+        return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
     }
 
     @Override public String getTranslated() {

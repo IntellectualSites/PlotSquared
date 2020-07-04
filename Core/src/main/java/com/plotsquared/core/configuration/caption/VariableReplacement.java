@@ -23,38 +23,57 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.command;
+package com.plotsquared.core.configuration.caption;
 
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.caption.VariableReplacement;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-public interface CommandCaller {
+import java.util.Objects;
+
+/**
+ * Key-value pair used as replacement of variables in {@link com.plotsquared.core.configuration.Caption captions}
+ */
+@ToString
+@EqualsAndHashCode
+public final class VariableReplacement {
+
+    private final String key;
+    private final String value;
+
+    private VariableReplacement(@NotNull final String key, @NotNull final String value) {
+        this.key = Objects.requireNonNull(key, "Key may not be null");
+        this.value = Objects.requireNonNull(value, "Value may not be null");
+    }
 
     /**
-     * Send the player a message.
+     * Create a new variable replacement from a key-value pair
      *
-     * @param message the message to send
-     * @deprecated Use static captions instead
+     * @param key   Replacement key
+     * @param value Replacement value
+     * @return Replacement instance
      */
-    @Deprecated void sendMessage(String message);
+    @NotNull public static VariableReplacement keyed(@NotNull final String key,
+        @NotNull final String value) {
+        return new VariableReplacement(key, value);
+    }
 
     /**
-     * Send a message to the command caller
+     * Get the replacement key
      *
-     * @param caption      Caption to send
-     * @param replacements Variable replacements
+     * @return Replacement key
      */
-    void sendMessage(@NotNull Caption caption, @NotNull VariableReplacement... replacements);
+    @NotNull public String getKey() {
+        return this.key;
+    }
 
     /**
-     * Check the player's permissions. <i>Will be cached if permission caching is enabled.</i>
+     * Get the replacement value
      *
-     * @param permission the name of the permission
+     * @return Replacement value
      */
-    boolean hasPermission(String permission);
+    @NotNull public String getValue() {
+        return this.value;
+    }
 
-    boolean isPermissionSet(String permission);
-
-    RequiredType getSuperCaller();
 }

@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class CaptionLoader {
+
     private static final Gson GSON = new GsonBuilder().create();
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile("messages_(.*)\\.json");
 
@@ -82,4 +83,5 @@ public final class CaptionLoader {
         }
         return new LocalizedCaptionMap(locale, captions);
     }
+
 }

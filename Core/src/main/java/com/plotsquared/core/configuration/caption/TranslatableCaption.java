@@ -25,10 +25,12 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Caption;
 import org.jetbrains.annotations.NotNull;
 
 public final class TranslatableCaption implements Caption {
+
     @NotNull private final String key;
 
     private TranslatableCaption(@NotNull String key) {
@@ -50,4 +52,5 @@ public final class TranslatableCaption implements Caption {
     @NotNull public String getKey() {
         return this.key;
     }
+
 }

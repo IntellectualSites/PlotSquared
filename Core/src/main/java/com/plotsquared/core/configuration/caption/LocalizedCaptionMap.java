@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class LocalizedCaptionMap implements CaptionMap {
+
     private final Locale locale;
     private final Map<TranslatableCaption, String> captions;
 
@@ -54,4 +55,5 @@ public class LocalizedCaptionMap implements CaptionMap {
     @Override public Locale getLocale() {
         return this.locale;
     }
+
 }

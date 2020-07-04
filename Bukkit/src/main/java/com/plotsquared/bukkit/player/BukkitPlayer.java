@@ -28,8 +28,10 @@ package com.plotsquared.bukkit.player;
 import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.VariableReplacement;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -225,7 +227,12 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return this.player.isPermissionSet(permission);
     }
 
-    @Override public void sendMessage(String message) {
+    @Override public void sendMessage(@NotNull final Caption caption,
+        @NotNull final VariableReplacement... replacements) {
+
+    }
+
+    @Deprecated @Override public void sendMessage(String message) {
         message = message.replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&');
         if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
             System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {

@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class PerUserLocaleCaptionMap extends LocalizedCaptionMap {
+
     private final Map<Locale, CaptionMap> localeMap;
 
     public PerUserLocaleCaptionMap(Map<Locale, CaptionMap> localeMap) {

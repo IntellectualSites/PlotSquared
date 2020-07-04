@@ -35,6 +35,7 @@ dependencies {
     implementation("net.luckperms:api:5.1")
     implementation("net.ess3:EssentialsX:2.17.2")
     implementation("net.alpenblock:BungeePerms:4.0-dev-106")
+    implementation("net.kyori:adventure-text-platform-bukkit:4.0.0-SNAPSHOT")
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile('com.sk89q:squirrelid:1.0.0-SNAPSHOT'){ transitive = false }
 }
@@ -91,7 +92,7 @@ shadowJar {
     dependencies {
         include(dependency(":PlotSquared-Core"))
         include(dependency("io.papermc:paperlib:1.0.2"))
-        include(dependency("net.kyori:text-adapter-bukkit:3.0.3"))
+        include(dependency("net.kyori:adventure-text-platform-bukkit:4.0.0-SNAPSHOT"))
         include(dependency("org.bstats:bstats-bukkit:1.7"))
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))
