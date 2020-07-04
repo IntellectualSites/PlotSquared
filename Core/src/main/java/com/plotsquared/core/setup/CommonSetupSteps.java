@@ -216,7 +216,7 @@ public enum CommonSetupSteps implements SetupStep {
             }
             if (WorldUtil.IMP.isWorld(argument)) {
                 if (PlotSquared.get().hasPlotArea(argument)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_NAME_TAKEN);
+                    MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_TAKEN, argument);
                     return this;
                 }
                 MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_APPLY_PLOTSQUARED);
