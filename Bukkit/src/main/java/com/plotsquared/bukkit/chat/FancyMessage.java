@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -74,6 +75,7 @@ public class FancyMessage
     private static Constructor<?> nmsPacketPlayOutChatConstructor;
     // The ChatSerializer's instance of Gson
     private static Object nmsChatSerializerGsonInstance;
+    private static Object chatMessageType;
     private static Method fromJsonMethod;
     private static JsonParser _stringParser = new JsonParser();
 
@@ -101,8 +103,16 @@ public class FancyMessage
         dirty = false;
         if (nmsPacketPlayOutChatConstructor == null) {
             try {
-                nmsPacketPlayOutChatConstructor = Reflection.getNMSClass("PacketPlayOutChat")
-                    .getDeclaredConstructor(Reflection.getNMSClass("IChatBaseComponent"));
+                Class<?> componentClass = Reflection.getNMSClass("IChatBaseComponent");
+                if (!Reflection.getVersion().startsWith("v1_16")) { // < 1.16 TODO needs to be fixed before 1.17 :P
+                    nmsPacketPlayOutChatConstructor = Reflection.getNMSClass("PacketPlayOutChat")
+                            .getDeclaredConstructor(componentClass);
+                } else {
+                    Class<Enum> chatMessageTypeClass = (Class<Enum>) Reflection.getNMSClass("ChatMessageType");
+                    nmsPacketPlayOutChatConstructor = Reflection.getNMSClass("PacketPlayOutChat")
+                            .getDeclaredConstructor(componentClass, chatMessageTypeClass, UUID.class);
+                    chatMessageType = Enum.valueOf(chatMessageTypeClass, "SYSTEM");
+                }
                 nmsPacketPlayOutChatConstructor.setAccessible(true);
             } catch (NoSuchMethodException e) {
                 Bukkit.getLogger()
@@ -773,7 +783,7 @@ public class FancyMessage
                 Reflection.getField(handle.getClass(), "playerConnection").get(handle);
             Reflection
                 .getMethod(connection.getClass(), "sendPacket", Reflection.getNMSClass("Packet"))
-                .invoke(connection, createChatPacket(jsonString));
+                .invoke(connection, createChatPacket(jsonString, ((Player) sender).getUniqueId()));
         } catch (IllegalArgumentException e) {
             Bukkit.getLogger().log(Level.WARNING, "Argument could not be passed.", e);
         } catch (IllegalAccessException e) {
@@ -790,7 +800,7 @@ public class FancyMessage
         }
     }
 
-    private Object createChatPacket(String json)
+    private Object createChatPacket(String json, UUID receiver)
         throws IllegalArgumentException, IllegalAccessException, InstantiationException,
         InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
         if (nmsChatSerializerGsonInstance == null) {
@@ -838,7 +848,11 @@ public class FancyMessage
         Object serializedChatComponent = fromJsonMethod.invoke(nmsChatSerializerGsonInstance, json,
             Reflection.getNMSClass("IChatBaseComponent"));
 
-        return nmsPacketPlayOutChatConstructor.newInstance(serializedChatComponent);
+        if (!Reflection.getVersion().startsWith("v1_16")) {
+            return nmsPacketPlayOutChatConstructor.newInstance(serializedChatComponent);
+        } else {
+            return nmsPacketPlayOutChatConstructor.newInstance(serializedChatComponent, chatMessageType, receiver);
+        }
     }
 
     /**
