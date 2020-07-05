@@ -33,6 +33,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -64,6 +65,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -245,8 +247,15 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     @Override public void sendMessage(@NotNull final Caption caption,
         @NotNull final Template... replacements) {
-        // TODO: Inject the prefix here
-        final Component component = MINI_MESSAGE.parse(caption.getComponent(this), replacements);
+        final String message = caption.getComponent(this);
+        if (message.isEmpty()) {
+            return;
+        }
+        // Create the template list, and add the prefix as a replacement
+        final List<Template> templates = Arrays.asList(replacements);
+        templates.add(Template.of("prefix", MINI_MESSAGE.parse(TranslatableCaption.of("core.prefix").getComponent(this))));
+        // Parse the message
+        final Component component = MINI_MESSAGE.parse(message, templates);
         if (!Objects.equal(component, this.getMeta("lastMessage")) || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
             setMeta("lastMessage", component);
             setMeta("lastMessageTime", System.currentTimeMillis());
