@@ -99,11 +99,11 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return 0;
     }
 
-    @Override public boolean hasPermission(String permission) {
+    @Override public boolean hasPermission(@NotNull String permission) {
         return true;
     }
 
-    @Override public boolean isPermissionSet(String permission) {
+    @Override public boolean isPermissionSet(@NotNull String permission) {
         return true;
     }
 
@@ -137,7 +137,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     @Override public void removeAttribute(String key) {
     }
 
-    @Override public RequiredType getSuperCaller() {
+    @Override @NotNull public RequiredType getSuperCaller() {
         return RequiredType.CONSOLE;
     }
 

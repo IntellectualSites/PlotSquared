@@ -29,6 +29,10 @@ import com.plotsquared.core.configuration.Caption;
 import net.kyori.adventure.text.minimessage.Template;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Any entity that is able to execute commands, receive messages &amp; and have
+ * permission nodes
+ */
 public interface CommandCaller {
 
     /**
@@ -44,9 +48,22 @@ public interface CommandCaller {
      *
      * @param permission the name of the permission
      */
-    boolean hasPermission(String permission);
+    boolean hasPermission(@NotNull String permission);
 
-    boolean isPermissionSet(String permission);
+    /**
+     * Checks if this object contains an override for the specified
+     * permission, by fully qualified name
+     *
+     * @param permission Name of the permission
+     * @return true if the permission is set, otherwise false
+     */
+    boolean isPermissionSet(@NotNull String permission);
 
-    RequiredType getSuperCaller();
+    /**
+     * Get the type of the caller
+     *
+     * @return Caller type
+     */
+    @NotNull RequiredType getSuperCaller();
+
 }

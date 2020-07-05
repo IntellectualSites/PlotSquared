@@ -164,7 +164,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public boolean hasPermission(final String permission) {
+    @Override public boolean hasPermission(@NotNull final String permission) {
         if (this.offline && EconHandler.getEconHandler() != null) {
             return EconHandler.getEconHandler().hasPermission(getName(), permission);
         }
@@ -231,7 +231,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return max;
     }
 
-    @Override public boolean isPermissionSet(final String permission) {
+    @Override public boolean isPermissionSet(@NotNull final String permission) {
         return this.player.isPermissionSet(permission);
     }
 

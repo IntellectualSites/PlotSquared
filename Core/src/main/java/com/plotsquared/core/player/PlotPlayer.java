@@ -361,7 +361,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return PlotSquared.get().getApplicablePlotArea(getLocation());
     }
 
-    @Override public RequiredType getSuperCaller() {
+    @Override @NotNull public RequiredType getSuperCaller() {
         return RequiredType.PLAYER;
     }
 
