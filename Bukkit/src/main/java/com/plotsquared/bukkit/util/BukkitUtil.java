@@ -52,6 +52,7 @@ import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
 import lombok.NonNull;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -109,6 +110,8 @@ import java.util.stream.Stream;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class BukkitUtil extends WorldUtil {
+
+    public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitMain.getPlugin(BukkitMain.class));
 
     private static String lastString = null;
     private static World lastWorld = null;

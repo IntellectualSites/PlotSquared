@@ -27,7 +27,6 @@ package com.plotsquared.bukkit.player;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
-import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Caption;
@@ -46,7 +45,6 @@ import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
@@ -78,7 +76,6 @@ import static com.sk89q.worldedit.world.gamemode.GameModes.SURVIVAL;
 public class BukkitPlayer extends PlotPlayer<Player> {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
-    private static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitMain.getPlugin(BukkitMain.class));
 
     private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
@@ -240,7 +237,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         final int fadeIn, final int stay, final int fadeOut, @NotNull final Template ... replacements) {
         final Component titleComponent = MINI_MESSAGE.parse(title.getComponent(this), replacements);
         final Component subtitleComponent = MINI_MESSAGE.parse(subtitle.getComponent(this), replacements);
-        final Audience audience = BUKKIT_AUDIENCES.player(this.player);
+        final Audience audience = BukkitUtil.BUKKIT_AUDIENCES.player(this.player);
         audience.showTitle(Title.of(titleComponent, subtitleComponent, Duration.of(fadeIn * 50,
             ChronoUnit.MILLIS), Duration.of(stay * 50, ChronoUnit.MILLIS), Duration.of(fadeOut * 50, ChronoUnit.MILLIS)));
     }
@@ -259,7 +256,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         if (!Objects.equal(component, this.getMeta("lastMessage")) || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
             setMeta("lastMessage", component);
             setMeta("lastMessageTime", System.currentTimeMillis());
-            BUKKIT_AUDIENCES.player(player).sendMessage(component);
+            BukkitUtil.BUKKIT_AUDIENCES.player(player).sendMessage(component);
         }
     }
 

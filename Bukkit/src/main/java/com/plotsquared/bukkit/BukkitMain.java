@@ -41,7 +41,6 @@ import com.plotsquared.bukkit.placeholder.Placeholders;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitLocalQueue;
 import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
-import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
 import com.plotsquared.bukkit.util.BukkitEconHandler;
 import com.plotsquared.bukkit.util.BukkitInventoryUtil;
@@ -81,7 +80,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.message.PlainChatManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
@@ -112,6 +110,7 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
+import net.kyori.adventure.audience.Audience;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -1101,14 +1100,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         return name.substring(name.lastIndexOf('.') + 1);
     }
 
-    @Override public ChatManager<?> initChatManager() {
-        if (Settings.Chat.INTERACTIVE) {
-            return new BukkitChatManager();
-        } else {
-            return new PlainChatManager();
-        }
-    }
-
     @Override public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world,
         @NonNull final IndependentPlotGenerator generator) {
         return new BukkitPlotGenerator(world, generator);
@@ -1134,6 +1125,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
     @Override @NotNull
     public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
         return this.playerManager;
+    }
+
+    @Override @NotNull public Audience getConsoleAudience() {
+        return BukkitUtil.BUKKIT_AUDIENCES.audience(Bukkit.getConsoleSender());
     }
 
 }

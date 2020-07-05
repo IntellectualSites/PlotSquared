@@ -27,6 +27,8 @@ package com.plotsquared.core.player;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.RequiredType;
+import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
@@ -37,12 +39,17 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer<Actor> {
 
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static ConsolePlayer instance;
 
     private ConsolePlayer() {
@@ -80,7 +87,8 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override
-    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
+        final int fadeIn, final int stay, final int fadeOut, @NotNull final Template... replacements) {
     }
 
     @NotNull @Override public Location getLocation() {
@@ -107,8 +115,17 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return true;
     }
 
-    @Override public void sendMessage(String message) {
-        PlotSquared.log(message);
+    @Override public void sendMessage(@NotNull final Caption caption, @NotNull final Template... replacements) {
+        final String message = caption.getComponent(this);
+        if (message.isEmpty()) {
+            return;
+        }
+        // Create the template list, and add the prefix as a replacement
+        final List<Template> templates = Arrays.asList(replacements);
+        templates.add(Template.of("prefix", MINI_MESSAGE.parse(
+            TranslatableCaption.of("core.prefix").getComponent(this))));
+        // Parse the message
+        PlotSquared.imp().getConsoleAudience().sendMessage(MINI_MESSAGE.parse(message, templates));
     }
 
     @Override public void teleport(Location location, TeleportCause cause) {

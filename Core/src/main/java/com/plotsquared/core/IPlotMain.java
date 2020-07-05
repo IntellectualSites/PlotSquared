@@ -43,6 +43,7 @@ import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
+import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,13 +133,6 @@ public interface IPlotMain<P> extends ILogger {
      * @return The {@link SchematicHandler}
      */
     SchematicHandler initSchematicHandler();
-
-    /**
-     * Starts the {@link ChatManager}.
-     *
-     * @return the ChatManager
-     */
-    ChatManager initChatManager();
 
     /**
      * The task manager will run and manage Minecraft tasks.
@@ -292,5 +286,12 @@ public interface IPlotMain<P> extends ILogger {
      * @return Player manager
      */
     @NotNull PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager();
+
+    /**
+     * Get the platform specific console {@link Audience}
+     *
+     * @return Console audience
+     */
+    @NotNull Audience getConsoleAudience();
 
 }
