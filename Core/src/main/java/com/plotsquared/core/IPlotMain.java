@@ -31,7 +31,6 @@ import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.QueueProvider;
-import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;

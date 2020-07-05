@@ -88,7 +88,6 @@ import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.QueueProvider;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
-import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;

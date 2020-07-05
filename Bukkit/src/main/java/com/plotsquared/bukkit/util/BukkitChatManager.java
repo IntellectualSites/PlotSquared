@@ -32,7 +32,6 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.message.PlotMessage;
-import com.plotsquared.core.util.ChatManager;
 import org.bukkit.ChatColor;
 
 import java.util.Arrays;
