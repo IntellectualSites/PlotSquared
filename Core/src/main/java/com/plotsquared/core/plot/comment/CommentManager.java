@@ -26,12 +26,14 @@
 package com.plotsquared.core.plot.comment;
 
 import com.google.common.annotations.Beta;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,8 +68,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                             total = count.get();
                         }
                         if ((size.decrementAndGet() == 0) && (total > 0)) {
-                            player.sendTitle("", Captions.INBOX_NOTIFICATION.getTranslated()
-                                .replaceAll("%s", "" + total));
+                            player.sendTitle(
+                                StaticCaption.of(""),
+                                TranslatableCaption.of("comment.inbox_notification"),
+                                Template.of("amount", Integer.toString(total))
+                            );
                         }
                     }
                 });

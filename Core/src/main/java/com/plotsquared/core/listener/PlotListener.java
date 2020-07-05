@@ -29,6 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.ByteArrayUtilities;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
@@ -65,6 +66,7 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -259,20 +261,16 @@ public class PlotListener {
                     TaskManager.runTaskLaterAsync(() -> {
                         Plot lastPlot = player.getMeta(PlotPlayer.META_LAST_PLOT);
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
-                            Map<String, String> replacements = new HashMap<>();
-                            replacements.put("%x%", String.valueOf(lastPlot.getId().x));
-                            replacements.put("%z%", lastPlot.getId().y + "");
-                            replacements.put("%world%", plot.getArea().toString());
-                            replacements.put("%greeting%", greeting);
-                            replacements.put("%alias", plot.toString());
-                            replacements.put("%s", MainUtil.getName(plot.getOwner()));
-                            String main = StringMan
-                                .replaceFromMap(Captions.TITLE_ENTERED_PLOT.getTranslated(),
-                                    replacements);
-                            String sub = StringMan
-                                .replaceFromMap(Captions.TITLE_ENTERED_PLOT_SUB.getTranslated(),
-                                    replacements);
-                            player.sendTitle(main, sub);
+                            player.sendTitle(
+                                TranslatableCaption.of("titles.title_entered_plot"),
+                                TranslatableCaption.of("titles.title_entered_plot_sub"),
+                                Template.of("x", Integer.toString(lastPlot.getId().getX())),
+                                Template.of("z", Integer.toString(lastPlot.getId().getY())),
+                                Template.of("world", plot.getArea().toString()),
+                                Template.of("greeting", greeting),
+                                Template.of("alias", plot.toString()),
+                                Template.of("owner", MainUtil.getName(plot.getOwner()))
+                            );
                         }
                     }, 20);
                 }

@@ -44,10 +44,12 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import io.papermc.lib.PaperLib;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.title.Title;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.WeatherType;
@@ -59,6 +61,8 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -144,11 +148,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return true;
     }
 
-    @Override
-    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
-    }
-
     private void callEvent(@NotNull final Event event) {
         final RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (final RegisteredListener listener : listeners) {
@@ -232,6 +231,16 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     @Override public boolean isPermissionSet(final String permission) {
         return this.player.isPermissionSet(permission);
+    }
+
+    @Override
+    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
+        final int fadeIn, final int stay, final int fadeOut, @NotNull final Template ... replacements) {
+        final Component titleComponent = MINI_MESSAGE.parse(title.getComponent(this), replacements);
+        final Component subtitleComponent = MINI_MESSAGE.parse(subtitle.getComponent(this), replacements);
+        final Audience audience = BUKKIT_AUDIENCES.player(this.player);
+        audience.showTitle(Title.of(titleComponent, subtitleComponent, Duration.of(fadeIn * 50,
+            ChronoUnit.MILLIS), Duration.of(stay * 50, ChronoUnit.MILLIS), Duration.of(fadeOut * 50, ChronoUnit.MILLIS)));
     }
 
     @Override public void sendMessage(@NotNull final Caption caption,

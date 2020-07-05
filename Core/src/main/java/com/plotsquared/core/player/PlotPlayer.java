@@ -29,6 +29,7 @@ import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
+import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -54,6 +55,7 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
 import lombok.NonNull;
+import net.kyori.adventure.text.minimessage.Template;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
@@ -79,7 +81,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     public static final String META_LOCATION = "location";
 
     // Used to track debug mode
-    private static final Set<PlotPlayer<?>> debugModeEnabled = Collections.synchronizedSet(new HashSet<>());
+    private static final Set<PlotPlayer<?>> debugModeEnabled =
+        Collections.synchronizedSet(new HashSet<>());
 
     private static final Map<Class, PlotPlayerConverter> converters = new HashMap<>();
     private Map<String, byte[]> metaMap = new HashMap<>();
@@ -408,12 +411,31 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return result;
     }
 
-    public void sendTitle(String title, String subtitle) {
-        sendTitle(title, subtitle, 10, 50, 10);
+    /**
+     * Send a title to the player that fades in, in 10 ticks, stays for 50 ticks and fades
+     * out in 20 ticks
+     *
+     * @param title    Title text
+     * @param subtitle Subtitle text
+     * @param replacements Variable replacements
+     */
+    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
+        @NotNull final Template ... replacements) {
+        sendTitle(title, subtitle, 10, 50, 10, replacements);
     }
 
-    public abstract void sendTitle(String title, String subtitle, int fadeIn, int stay,
-        int fadeOut);
+    /**
+     * Send a title to the player
+     *
+     * @param title    Title text
+     * @param subtitle Subtitle text
+     * @param fadeIn   time in ticks for titles to fade in. Defaults to 10
+     * @param stay     time in ticks for titles to stay. Defaults to 70
+     * @param fadeOut  time in ticks for titles to fade out. Defaults to 20
+     * @param replacements Variable replacements
+     */
+    public abstract void sendTitle(@NotNull Caption title, @NotNull Caption subtitle, int fadeIn,
+        int stay, int fadeOut, @NotNull final Template ... replacements);
 
     /**
      * Teleport this player to a location.
@@ -774,7 +796,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * The amount of money this Player has.
      */
     public double getMoney() {
-        return EconHandler.getEconHandler() == null ? 0 : EconHandler.getEconHandler().getMoney(this);
+        return EconHandler.getEconHandler() == null ?
+            0 :
+            EconHandler.getEconHandler().getMoney(this);
     }
 
     public void withdraw(double amount) {

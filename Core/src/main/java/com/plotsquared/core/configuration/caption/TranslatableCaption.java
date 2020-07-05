@@ -48,7 +48,7 @@ public final class TranslatableCaption implements KeyedCaption {
      * @param key Caption key
      * @return Caption instance
      */
-    @NotNull public static TranslatableCaption keyed(@NotNull final String key) {
+    @NotNull public static TranslatableCaption of(@NotNull final String key) {
         return new TranslatableCaption(key.toLowerCase(Locale.ENGLISH));
     }
 
