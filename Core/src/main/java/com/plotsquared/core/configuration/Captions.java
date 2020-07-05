@@ -195,7 +195,7 @@ public enum Captions implements Caption {
     //<editor-fold desc="Confirm">
     EXPIRED_CONFIRM("$2Confirmation has expired, please run the command again!", "Confirm"),
     FAILED_CONFIRM("$2You have no pending actions to confirm!", "Confirm"),
-    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?&-$2This cannot be undone! If you are sure: $1/plot confirm", "Confirm"),
+    REQUIRES_CONFIRM("$2Are you sure you wish to execute: $1%s$2?&-$2This cannot be undone! If you are sure: $1/plot confirm", "Confirm", "command"),
     //</editor-fold>
     //<editor-fold desc="Move">
     MOVE_SUCCESS("$4Successfully moved plot.", "Move"),
@@ -205,7 +205,7 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="Area Create">
     REQUIRES_UNMERGED("$2The plot cannot be merged", "debug"),
-    SET_ATTRIBUTE("$4Successfully set %s0 set to %s1", "Set"),
+    SET_ATTRIBUTE("$4Successfully set %s0 set to %s1", "Set", "attribute", "value"),
     //</editor-fold>
     //<editor-fold desc="Web">
     GENERATING_LINK("$1Processing plot...", "Web"),
@@ -223,19 +223,19 @@ public enum Captions implements Caption {
     CLUSTER_AVAILABLE_ARGS(
         "$1The following sub commands are available: $4list$2, $4create$2, $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, "
             + "$4members$2, $4info$2, $4tp$2, $4sethome", "Cluster"),
-    CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster"),
-    CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster"),
-    CLUSTER_INTERSECTION("$2The proposed area overlaps with: %s0", "Cluster"),
-    CLUSTER_OUTSIDE("$2The proposed area is outside the plot area: %s0", "Cluster"),
+    CLUSTER_LIST_HEADING("$2There are $1%s$2 clusters in this world", "Cluster", "amount"),
+    CLUSTER_LIST_ELEMENT("$2 - $1%s&-", "Cluster", "cluster"),
+    CLUSTER_INTERSECTION("$2The proposed area overlaps with: %s0", "Cluster", "cluster"),
+    CLUSTER_OUTSIDE("$2The proposed area is outside the plot area: %s0", "Cluster", "area"),
     CLUSTER_ADDED("$4Successfully created the cluster.", "Cluster"),
     CLUSTER_DELETED("$4Successfully deleted the cluster.", "Cluster"),
     CLUSTER_RESIZED("$4Successfully resized the cluster.", "Cluster"),
     CLUSTER_ADDED_USER("$4Successfully added user to the cluster.", "Cluster"),
     CANNOT_KICK_PLAYER("$2You cannot kick that player", "Cluster"),
-    CLUSTER_INVITED("$1You have been invited to the following cluster: $2%s", "Cluster"),
-    CLUSTER_REMOVED("$1You have been removed from cluster: $2%s", "Cluster"),
+    CLUSTER_INVITED("$1You have been invited to the following cluster: $2%s", "Cluster", "cluster"),
+    CLUSTER_REMOVED("$1You have been removed from cluster: $2%s", "Cluster", "cluster"),
     CLUSTER_KICKED_USER("$4Successfully kicked the user", "Cluster"),
-    INVALID_CLUSTER("$1Invalid cluster name: $2%s", "Cluster"),
+    INVALID_CLUSTER("$1Invalid cluster name: $2%s", "Cluster", "cluster"),
     CLUSTER_NOT_ADDED("$2That player was not added to the plot cluster", "Cluster"),
     CLUSTER_CANNOT_LEAVE("$1You must delete or transfer ownership before leaving", "Cluster"),
     CLUSTER_ADDED_HELPER("$4Successfully added a helper to the cluster", "Cluster"),
@@ -262,14 +262,14 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="Comments">
     INBOX_NOTIFICATION("%s unread messages. Use /plot inbox", "Comment"),
-    NOT_VALID_INBOX_INDEX("$2No comment at index %s", "Comment"),
-    INBOX_ITEM("$2 - $4%s", "Comment"),
-    COMMENT_SYNTAX("$2Use /plot comment [X;Z] <%s> <comment>", "Comment"),
-    INVALID_INBOX("$2That is not a valid inbox.&-$1Accepted values: %s", "Comment"),
+    NOT_VALID_INBOX_INDEX("$2No comment at index %s", "Comment", "number"),
+    INBOX_ITEM("$2 - $4%s", "Comment", "value"),
+    COMMENT_SYNTAX("$2Use /plot comment [X;Z] <%s> <comment>", "Comment", "list"),
+    INVALID_INBOX("$2That is not a valid inbox.&-$1Accepted values: %s", "Comment", "list"),
     NO_PERM_INBOX("$2You do not have permission for that inbox", "Comment"),
     NO_PERM_INBOX_MODIFY("$2You do not have permission to modify that inbox", "Comment"),
     NO_PLOT_INBOX("$2You must stand in or supply a plot argument", "Comment"),
-    COMMENT_REMOVED_SUCCESS("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment"),
+    COMMENT_REMOVED_SUCCESS("$4Successfully deleted comment/s:n$2 - '$3%s$2'", "Comment", "value"),
     COMMENT_REMOVED_FAILURE("$4Failed to delete comment!", "Comment"),
     COMMENT_ADDED("$4A comment has been left", "Comment"),
     INBOX_EMPTY("$2No comments", "Comment"),
@@ -279,11 +279,11 @@ public enum Captions implements Caption {
     IS_CONSOLE("$2This command can only be executed by a player.", "Console"),
     //</editor-fold>
     //<editor-fold desc="Clipboard">
-    PASTE_FAILED("$2Failed to paste the selection. Reason: $2%s", "Clipboard"),
+    PASTE_FAILED("$2Failed to paste the selection. Reason: $2%s", "Clipboard", "reason"),
     //</editor-fold>
     //<editor-fold desc="Toggle">
-    TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle"),
-    TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle"),
+    TOGGLE_ENABLED("$2Enabled setting: %s", "Toggle", "setting"),
+    TOGGLE_DISABLED("$2Disabled setting: %s", "Toggle", "setting"),
     COMMAND_BLOCKED("$2That command is not allowed in this plot", "Blocked Command"),
     //</editor-fold>
     //<editor-fold desc="Done">
@@ -296,39 +296,39 @@ public enum Captions implements Caption {
     //<editor-fold desc="Ratings">
     RATINGS_PURGED("$2Purged ratings for this plot", "Ratings"),
     RATING_NOT_VALID("$2You need to specify a number between 1 and 10", "Ratings"),
-    RATING_ALREADY_EXISTS("$2You have already rated plot $2%s", "Ratings"),
-    RATING_APPLIED("$4You successfully rated plot $2%s", "Ratings"),
-    RATING_DISLIKED("$4You successfully disliked plot $2%s", "Ratings"),
-    RATING_LIKED("$4You successfully liked plot $2%s", "Ratings"),
+    RATING_ALREADY_EXISTS("$2You have already rated plot $2%s", "Ratings", "plot"),
+    RATING_APPLIED("$4You successfully rated plot $2%s", "Ratings", "plot"),
+    RATING_DISLIKED("$4You successfully disliked plot $2%s", "Ratings", "plot"),
+    RATING_LIKED("$4You successfully liked plot $2%s", "Ratings", "plot"),
     RATING_NOT_YOUR_OWN("$2You cannot rate your own plot", "Ratings"),
     RATING_NOT_DONE("$2You can only rate finished plots.", "Ratings"),
     RATING_NOT_OWNED("$2You cannot rate a plot that is not claimed by anyone", "Ratings"),
     //</editor-fold>
     //<editor-fold desc="Tutorial">
     RATE_THIS("$2Rate this plot!", "Tutorial"),
-    COMMENT_THIS("$2Leave some feedback on this plot: %s", "Tutorial"),
+    COMMENT_THIS("$2Leave some feedback on this plot: %s", "Tutorial", "plot"),
     //</editor-fold>
     //<editor-fold desc="Economy">
     ECON_DISABLED("$2Economy is not enabled", "Economy"),
-    CANNOT_AFFORD_PLOT("$2You cannot afford to buy this plot. It costs $1%s", "Economy"),
+    CANNOT_AFFORD_PLOT("$2You cannot afford to buy this plot. It costs $1%s", "Economy", "money"),
     NOT_FOR_SALE("$2This plot is not for sale", "Economy"),
     CANNOT_BUY_OWN("$2You cannot buy your own plot", "Economy"),
-    PLOT_SOLD("$4Your plot; $1%s0$4, has been sold to $1%s1$4 for $1$%s2", "Economy"),
-    CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s","Economy"),
-    ADDED_BALANCE("$1%s $2has been added to your balance", "Economy"),
-    REMOVED_BALANCE("$1%s $2has been taken from your balance", "Economy"),
-    REMOVED_GRANTED_PLOT("$2You used %s0 plot grant(s), you've got $1%s1 $2left", "Economy"),
+    PLOT_SOLD("$4Your plot; $1%s0$4, has been sold to $1%s1$4 for $1$%s2", "Economy", "plot", "player", "money"),
+    CANNOT_AFFORD_MERGE("$2You cannot afford to merge the plots. It costs $1%s","Economy", "money"),
+    ADDED_BALANCE("$1%s $2has been added to your balance", "Economy", "money"),
+    REMOVED_BALANCE("$1%s $2has been taken from your balance", "Economy", "money"),
+    REMOVED_GRANTED_PLOT("$2You used %s0 plot grant(s), you've got $1%s1 $2left", "Economy", "usedGrants", "remainingGrants"),
     //</editor-fold>
     //<editor-fold desc="Setup">
     SETUP_NOT_STARTED("$1No setup started. Use $2/plot setup $1to start a setup process.", "Setup"),
     SETUP_INIT("$1Usage: $2/plot setup <value>", "Setup"),
-    SETUP_STEP("$3[$1Step %s0$3] $1%s1 $2- $1Expecting: $2%s2 $1Default: $2%s3", "Setup"),
-    SETUP_INVALID_ARG("$2%s0 is not a valid argument for step %s1. To cancel setup use: $1/plot setup cancel", "Setup"),
-    SETUP_VALID_ARG("$2Value $1%s0 $2set to %s1", "Setup"),
+    SETUP_STEP("$3[$1Step %s0$3] $1%s1 $2- $1Expecting: $2%s2 $1Default: $2%s3", "Setup", "step", "description", "type", "value"),
+    SETUP_INVALID_ARG("$2%s0 is not a valid argument for step %s1. To cancel setup use: $1/plot setup cancel", "Setup", "value", "step"),
+    SETUP_VALID_ARG("$2Value $1%s0 $2set to %s1", "Setup", "description", "value"),
     SETUP_FINISHED(
         "$4You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or "
             + "your chosen world management plugin.", "Setup"),
-    SETUP_WORLD_TAKEN("$2%s is already a world", "Setup"),
+    SETUP_WORLD_TAKEN("$2%s is already a world", "Setup", "value"),
     SETUP_CANCELLED("$7Cancelled setup.", "Setup"),
     SETUP_WORLD_NAME("$1What do you want your world to be called?", "Setup"),
     SETUP_WORLD_NAME_ERROR("$7You need to choose a world name!", "Setup"),
@@ -367,11 +367,11 @@ public enum Captions implements Caption {
     //<editor-fold desc="Schematic">
     SCHEMATIC_TOO_LARGE("$2The plot is too large for this action!", "Schematics"),
     SCHEMATIC_MISSING_ARG("$2You need to specify an argument. Possible values: $1save$2, $1paste $2, $1exportall$2, $1list", "Schematics"),
-    SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s", "Schematics"),
+    SCHEMATIC_INVALID("$2That is not a valid schematic. Reason: $2%s", "Schematics", "reason"),
     SCHEMATIC_PASTE_MERGED("$2Schematics cannot be pasted onto merged plots. Please unmerge the plot before performing the paste.", "Schematics"),
     SCHEMATIC_PASTE_FAILED("$2Failed to paste the schematic", "Schematics"),
     SCHEMATIC_PASTE_SUCCESS("$4The schematic pasted successfully", "Schematics"),
-    SCHEMATIC_LIST("$4Saved Schematics: $1%s", "Schematics"),
+    SCHEMATIC_LIST("$4Saved Schematics: $1%s", "Schematics", "list"),
     SCHEMATIC_ROAD_CREATED("$1Saved new road schematic. To test the schematic, fly to a few other plots and run /plot debugroadregen", "Schematics"),
     MCA_FILE_SIZE("$1Note: The `.mca` files are 512x512", "Schematics"),
     SCHEMATIC_EXPORTALL_STARTED("$1Starting export...", "Schematics"),
@@ -383,13 +383,13 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="Titles">
     TITLE_ENTERED_PLOT("$1Plot: %world%;%x%;%z%", "Titles"),
-    TITLE_ENTERED_PLOT_SUB("$4Owned by %s", "Titles"),
+    TITLE_ENTERED_PLOT_SUB("$4Owned by %s", "Titles", "owner"),
     PREFIX_GREETING("$1%id%$2> ", "Titles"),
     PREFIX_FAREWELL("$1%id%$2> ", "Titles"),
     //</editor-fold>
     //<editor-fold desc="Core">
     PREFIX("$3[$1P2$3] $2", "Core"),
-    ENABLED("$1%s0 is now enabled", "Core"),
+    ENABLED("$1%s0 is now enabled", "Core", "value"),
     //</editor-fold>
     //<editor-fold desc="Reload">
     RELOADED_CONFIGS("$1Translations and world settings have been reloaded", "Reload"),
@@ -411,21 +411,21 @@ public enum Captions implements Caption {
     HOME_ARGUMENT("$2Use /plot set home [none]", "Position"),
     //</editor-fold>
     //<editor-fold desc="Permission">
-    NO_SCHEMATIC_PERMISSION("$2You don't have the permission required to use schematic $1%s", "Permission"),
-    NO_PERMISSION("$2You are lacking the permission node: $1%s", "Permission"),
+    NO_SCHEMATIC_PERMISSION("$2You don't have the permission required to use schematic $1%s", "Permission", "value"),
+    NO_PERMISSION("$2You are lacking the permission node: $1%s", "Permission", "node"),
     NO_PERMISSION_EVENT("$2You are lacking the permission node: $1%s", "Permission"),
     NO_PLOT_PERMS("$2You must be the plot owner to perform this action", "Permission"),
     CANT_CLAIM_MORE_PLOTS("$2You can't claim more plots.", "Permission"),
     CANT_CLAIM_MORE_CLUSTERS("$2You can't claim more clusters.", "Permission"),
     CANT_TRANSFER_MORE_PLOTS("$2You can't send more plots to that user", "Permission"),
-    CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once", "Permission"),
+    CANT_CLAIM_MORE_PLOTS_NUM("$2You can't claim more than $1%s $2plots at once", "Permission", "amount"),
     //</editor-fold>
     //<editor-fold desc="Merge">
     MERGE_NOT_VALID("$2This merge request is no longer valid.", "Merge"),
     MERGE_ACCEPTED("$2The merge request has been accepted", "Merge"),
     SUCCESS_MERGE("$2Plots have been merged!", "Merge"),
     MERGE_REQUESTED("$2Successfully sent a merge request", "Merge"),
-    MERGE_REQUEST_CONFIRM("Merge request from %s", "Permission"),
+    MERGE_REQUEST_CONFIRM("Merge request from %s", "Permission", "player"),
     NO_AVAILABLE_AUTOMERGE("$2You do not own any adjacent plots in the specified direction or are not allowed to merge to the required size.", "Merge"),
     UNLINK_IMPOSSIBLE("$2You can only unlink a mega-plot", "Merge"),
     UNMERGE_CANCELLED("$1Unlink has been cancelled", "Merge"),
@@ -433,16 +433,16 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="CommandConfig">
     NOT_VALID_SUBCOMMAND("$2That is not a valid subcommand", "CommandConfig"),
-    DID_YOU_MEAN("$2Did you mean: $1%s", "CommandConfig"),
+    DID_YOU_MEAN("$2Did you mean: $1%s", "CommandConfig", "value"),
     SUBCOMMAND_SET_OPTIONS_HEADER("$2Possible Values: ", "CommandConfig"),
-    COMMAND_SYNTAX("$1Usage: $2%s", "CommandConfig"),
+    COMMAND_SYNTAX("$1Usage: $2%s", "CommandConfig", "value"),
     //</editor-fold>
     //<editor-fold desc="Errors">
-    COMPONENT_ILLEGAL_BLOCK("$2You are not allowed to generate a component containg the block '%s'", "Invalid"),
-    INVALID_PLAYER("$2Player not found: $1%s$2.", "Errors"),
-    INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors"),
-    INVALID_COMMAND_FLAG("$2Invalid command flag: %s0", "Errors"),
-    ERROR("$2An error occurred: %s", "Errors"),
+    COMPONENT_ILLEGAL_BLOCK("$2You are not allowed to generate a component containg the block '%s'", "Invalid", "value"),
+    INVALID_PLAYER("$2Player not found: $1%s$2.", "Errors", "player"),
+    INVALID_PLAYER_OFFLINE("$2The player must be online: $1%s.", "Errors", "player"),
+    INVALID_COMMAND_FLAG("$2Invalid command flag: %s0", "Errors", "value"),
+    ERROR("$2An error occurred: %s", "Errors", "value"),
     COMMAND_WENT_WRONG("$2Something went wrong when executing that command...", "Errors"),
     NO_FREE_PLOTS("$2There are no free plots available", "Errors"),
     NOT_IN_PLOT("$2You're not in a plot", "Errors"),
@@ -454,10 +454,10 @@ public enum Captions implements Caption {
     NO_PLOTS("$2You don't have any plots", "Errors"),
     PLAYER_NO_PLOTS("$2That player does not own any plots", "Errors"),
     WAIT_FOR_TIMER("$2A set block timer is bound to either the current plot or you. Please wait for it to finish", "Errors"),
-    TILE_ENTITY_CAP_REACHED("$2The total number of tile entities in this chunk may not exceed $1%s", "Errors"),
+    TILE_ENTITY_CAP_REACHED("$2The total number of tile entities in this chunk may not exceed $1%s", "Errors", "amount"),
     //</editor-fold>
     DEBUG_REPORT_CREATED("$1Uploaded a full debug to: $1%url%", "Paste"),
-    PURGE_SUCCESS("$4Successfully purged %s plots", "Purge"),
+    PURGE_SUCCESS("$4Successfully purged %s plots", "Purge", "amount"),
     FETCHING_PLAYER("$1PlotSquared is attempting to find the specified player from your argument(s). This may take a while.", "Players"),
     FETCHING_PLAYERS_TIMEOUT("$2The specified users did not exist in the cache and will be fetched in the background. Please wait a couple of minutes.", "Players"),
     //<editor-fold desc="Trim">
@@ -473,7 +473,7 @@ public enum Captions implements Caption {
     //<editor-fold desc="Teleport">
     TELEPORTED_TO_PLOT("$1You have been teleported", "Teleport"),
     TELEPORTED_TO_ROAD("$2You got teleported to the road", "Teleport"),
-    TELEPORT_IN_SECONDS("$1Teleporting in %s seconds. Do not move...", "Teleport"),
+    TELEPORT_IN_SECONDS("$1Teleporting in %s seconds. Do not move...", "Teleport", "amount"),
     TELEPORT_FAILED("$2Teleportation cancelled due to movement or damage", "Teleport"),
     //</editor-fold>
     //<editor-fold desc="Set Block">
@@ -489,20 +489,20 @@ public enum Captions implements Caption {
     DEBUG_LINE("$2>> $1%var%$2:$1 %val%&-", "Debug"),
     //</editor-fold>
     //<editor-fold desc="Invalid">
-    NOT_VALID_BLOCK("$2That's not a valid block: %s", "Invalid"),
-    NOT_ALLOWED_BLOCK("$2That block is not allowed: %s", "Invalid"),
-    NOT_VALID_NUMBER("$2That's not a valid number within the range: %s", "Invalid"),
+    NOT_VALID_BLOCK("$2That's not a valid block: %s", "Invalid", "value"),
+    NOT_ALLOWED_BLOCK("$2That block is not allowed: %s", "Invalid", "value"),
+    NOT_VALID_NUMBER("$2That's not a valid number within the range: %s", "Invalid", "min", "max"),
     NOT_VALID_PLOT_ID("$2That's not a valid plot id.", "Invalid"),
     FOUND_NO_PLOTS("$2Found no plots with your search query", "Invalid"),
     NUMBER_NOT_IN_RANGE("That's not a valid number within the range: (%s, %s)", "Invalid"),
-    NUMBER_NOT_POSITIVE("That's not a positive number: %s", "Invalid"),
-    NOT_A_NUMBER("%s is not a valid number.", "Invalid"),
+    NUMBER_NOT_POSITIVE("That's not a positive number: %s", "Invalid", "value"),
+    NOT_A_NUMBER("%s is not a valid number.", "Invalid", "value"),
     //</editor-fold>
     //<editor-fold desc="Need">
     NEED_BLOCK("$2You've got to specify a block", "Need"),
     //</editor-fold>
     //<editor-fold desc="Near">
-    PLOT_NEAR("$1Players: %s0", "Near"),
+    PLOT_NEAR("$1Players: %s0", "Near", "list"),
     //</editor-fold>
     //<editor-fold desc="Info">
     NONE(" None", "Info"),
@@ -512,7 +512,7 @@ public enum Captions implements Caption {
     SERVER("Server", "Info"),
     EVERYONE("Everyone", "Info"),
     PLOT_UNOWNED("$2The current plot must have an owner to perform this action", "Info"),
-    PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info"),
+    PLOT_INFO_UNCLAIMED("$2Plot $1%s$2 is not yet claimed", "Info", "plot"),
     PLOT_INFO_HEADER("$3&m---------&r $1INFO $3&m---------", false, "Info"),
     PLOT_INFO_HIDDEN("$2You cannot view the information about this plot", "Info"),
     PLOT_INFO_FORMAT("$1ID: $2%id%$1&-" + "$1Area: $2%area%$1&-"
@@ -534,14 +534,14 @@ public enum Captions implements Caption {
     PLOT_INFO_SIZE("$1Size:$2 %size%", "Info"),
     PLOT_INFO_SEEN("$1Seen:$2 %seen%", "Info"),
     PLOT_USER_LIST(" $1%user%$2,", "Info"),
-    PLOT_FLAG_LIST("$2%s0:%s1$3", "Info"),
+    PLOT_FLAG_LIST("$2%s0:%s1$3", "Info", "flag", "value"),
     PLOT_NO_DESCRIPTION("No description set.", "Info"),
     INFO_SYNTAX_CONSOLE("$2/plot info X;Z", "Info"),
     //</editor-fold>
     //<editor-fold desc="Working">
     GENERATING_COMPONENT("$1Started generating component from your settings", "Working"),
-    CLEARING_DONE("$4Clear completed! Took %sms.", "Working"),
-    DELETING_DONE("$4Delete completed! Took %sms.", "Working"),
+    CLEARING_DONE("$4Clear completed! Took %sms.", "Working", "amount"),
+    DELETING_DONE("$4Delete completed! Took %sms.", "Working", "amount"),
     PLOT_NOT_CLAIMED("$2Plot not claimed", "Working"),
     PLOT_IS_CLAIMED("$2This plot is already claimed", "Working"),
     CLAIMED("$4You successfully claimed the plot", "Working"),
@@ -565,17 +565,17 @@ public enum Captions implements Caption {
     //</editor-fold>
     YOU_GOT_KICKED("$4You got kicked!", "Kick"),
     //<editor-fold desc="Flag">
-    FLAG_KEY("$2Key: %s", "Flag"),
-    FLAG_DESC("$2Desc: %s", "Flag"),
+    FLAG_KEY("$2Key: %s", "Flag", "key"),
+    FLAG_DESC("$2Desc: %s", "Flag", "value"),
     NOT_VALID_FLAG("$2That is not a valid flag", "Flag"),
-    NOT_VALID_FLAG_SUGGESTED("$2That is not a valid flag. Did you mean: $1%s", "Flag"),
+    NOT_VALID_FLAG_SUGGESTED("$2That is not a valid flag. Did you mean: $1%s", "Flag", "value"),
     NOT_VALID_VALUE("$2Flag values must be alphanumerical", "Flag"),
     FLAG_NOT_REMOVED("$2The flag could not be removed", "Flag"),
     FLAG_NOT_ADDED("$2The flag could not be added", "Flag"),
     FLAG_REMOVED("$4Successfully removed flag", "Flag"),
     FLAG_PARTIALLY_REMOVED("$4Successfully removed flag value(s)", "Flag"),
     FLAG_ADDED("$4Successfully added flag", "Flag"),
-    FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig"),
+    FLAG_TUTORIAL_USAGE("$1Have an admin set the flag: $2%s", "CommandConfig", "flag"),
     FLAG_LIST_SEE_INFO("Click to view information about the flag", "Flag"),
     FLAG_PARSE_ERROR("$2Failed to parse flag '%flag_name%', value '%flag_value%': %error%", "Flag"),
     //</editor-fold>
@@ -690,7 +690,7 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="Flag category errors">
     FLAG_ERROR_BOOLEAN("Flag value must be a boolean (true|false)", false, "Flags"),
-    FLAG_ERROR_ENUM("Must be one of: %s", false, "Flags"),
+    FLAG_ERROR_ENUM("Must be one of: %s", false, "Flags", "list"),
     FLAG_ERROR_GAMEMODE("Flag value must be a gamemode: 'survival', 'creative', 'adventure' or 'spectator.", false, "Flags"),
     FLAG_ERROR_INTEGER("Flag value must be a whole number", false, "Flags"),
     FLAG_ERROR_INTEGER_LIST("Flag value must be an integer list", false, "Flags"),
@@ -707,12 +707,12 @@ public enum Captions implements Caption {
     //</editor-fold>
     //<editor-fold desc="Trusted">
     TRUSTED_ADDED("$4You successfully trusted a user to the plot", "Trusted"),
-    PLOT_REMOVED_USER("$1Plot %s of which you were added to has been deleted due to owner inactivity", "Trusted"),
+    PLOT_REMOVED_USER("$1Plot %s of which you were added to has been deleted due to owner inactivity", "Trusted", "plot"),
     //</editor-fold>
     //<editor-fold desc="Member">
-    REMOVED_PLAYERS("$2Removed %s player(s) from this plot.", "Member"),
-    PLOT_LEFT("$2%s left the plot.", "Member"),
-    ALREADY_OWNER("$2That user is already the plot owner: %s0", "Member"),
+    REMOVED_PLAYERS("$2Removed %s player(s) from this plot.", "Member", "amount"),
+    PLOT_LEFT("$2%s left the plot.", "Member", "player"),
+    ALREADY_OWNER("$2That user is already the plot owner: %s0", "Member", "player"),
     ALREADY_ADDED("$2That user is already added to that category: %s0", "Member"),
     MEMBER_ADDED("$4That user can now build while the plot owner is online", "Member"),
     PLOT_MAX_MEMBERS("$2You are not allowed to add any more players to this plot", "Member"),
@@ -722,7 +722,7 @@ public enum Captions implements Caption {
     SET_OWNER("$4You successfully set the plot owner", "Owner"),
     SET_OWNER_CANCELLED("$2The set owner action was cancelled", "Owner"),
     SET_OWNER_MISSING_PLAYER("$1You need to specify a new owner. Correct usage is: $2/plot setowner <owner>", "Owner"),
-    NOW_OWNER("$4You are now owner of plot %s", "Owner"),
+    NOW_OWNER("$4You are now owner of plot %s", "Owner", "plot"),
     //</editor-fold>
     //<editor-fold desc="Signs">
     OWNER_SIGN_LINE_1("$1ID: $1%id%", "Signs"),
@@ -751,11 +751,11 @@ public enum Captions implements Caption {
     COMMAND_CATEGORY_ADMINISTRATION("Admin", "Category"),
     //</editor-fold>
     //<editor-fold desc="Grants">
-    GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants"),
+    GRANTED_PLOTS("$1Result: $2%s $1grants left", "Grants", "amount"),
     GRANTED_PLOT("$1You granted %s0 plot to $2%s1", "Grants"),
     //</editor-fold>
     //<editor-fold desc="Events">
-    EVENT_DENIED("$1%s $2Cancelled by external plugin.", "Events"),
+    EVENT_DENIED("$1%s $2Cancelled by external plugin.", "Events", "value"),
     //</editor-fold>
     //<editor-fold desc="Caps">
     PLOT_CAPS_HEADER("$3&m---------&r $1CAPS $3&m---------", false, "Info"),
@@ -765,18 +765,18 @@ public enum Captions implements Caption {
 
     //<editor-fold desc="Backups">
     BACKUP_USAGE("$1Usage: $2/plot backup save/list/load", "Backups"),
-    BACKUP_IMPOSSIBLE("$2Backups are not enabled for this plot: %s", "Backups"),
+    BACKUP_IMPOSSIBLE("$2Backups are not enabled for this plot: %s", "Backups", "plot"),
     BACKUP_SAVE_SUCCESS("$1The backup was created successfully", "Backups"),
-    BACKUP_SAVE_FAILED("$2The backup could not be created: %s", "Backups"),
+    BACKUP_SAVE_FAILED("$2The backup could not be created: %s", "Backups", "reason"),
     BACKUP_LOAD_SUCCESS("$1The backup was restored successfully", "Backups"),
     BACKUP_LOAD_FAILURE("$2The backup could not be restored: %s", "Backups"),
     BACKUP_LOAD_USAGE("$1Usage: $2/plot backup load [#]", "Backups"),
-    BACKUP_LIST_HEADER("$1Available backups for plot $2%s", "Backups"),
-    BACKUP_LIST_ENTRY("$3- $1#%s0 $2%s1", "Backups"),
-    BACKUP_LIST_FAILED("$2Backup listing failed: %s", "Backups"),
+    BACKUP_LIST_HEADER("$1Available backups for plot $2%s", "Backups", "plot"),
+    BACKUP_LIST_ENTRY("$3- $1#%s0 $2%s1", "Backups", "number", "value"),
+    BACKUP_LIST_FAILED("$2Backup listing failed: %s", "Backups", "reason"),
     BACKUP_AUTOMATIC_STARTED("$1Backing up the plot...", "Backups"),
     BACKUP_AUTOMATIC_FINISHED("$1The automatic backup process finished successfully!", "Backups"),
-    BACKUP_AUTOMATIC_FAILURE("$2The automatic backup process failed. Your pending action has been canceled. Reason: %s", "Backups"),
+    BACKUP_AUTOMATIC_FAILURE("$2The automatic backup process failed. Your pending action has been canceled. Reason: %s", "Backups", "reason"),
     //</editor-fold>
 
     //<editor-fold desc="Preset">
@@ -833,16 +833,18 @@ public enum Captions implements Caption {
     private final String category;
     private final boolean prefix;
     private String translatedString;
+    private String[] replacementKeys;
 
-    Captions(String defaultString, boolean prefix, String category) {
+    Captions(String defaultString, boolean prefix, String category, String... replacementKeys) {
         this.defaultString = defaultString;
         this.translatedString = defaultString;
         this.prefix = prefix;
         this.category = category.toLowerCase();
+        this.replacementKeys = replacementKeys;
     }
 
-    Captions(String defaultString, String category) {
-        this(defaultString, true, category.toLowerCase());
+    Captions(String defaultString, String category, String... replacementKeys) {
+        this(defaultString, true, category.toLowerCase(), replacementKeys);
     }
 
     public static String color(String string) {
