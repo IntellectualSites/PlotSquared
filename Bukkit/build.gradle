@@ -14,6 +14,7 @@ repositories {
     maven { url = "https://ci.ender.zone/plugin/repository/everything/" }
     maven { url = "https://mvn.intellectualsites.com/content/repositories/snapshots" }
     maven { url = "https://repo.wea-ondara.net/repository/public/" }
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     mavenLocal()
 }
 
@@ -35,7 +36,8 @@ dependencies {
     implementation("net.luckperms:api:5.1")
     implementation("net.ess3:EssentialsX:2.17.2")
     implementation("net.alpenblock:BungeePerms:4.0-dev-106")
-    implementation("net.kyori:adventure-text-platform-bukkit:4.0.0-SNAPSHOT")
+    implementation("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
+    implementation('net.kyori:adventure-text-minimessage:3.0.0-SNAPSHOT')
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile('com.sk89q:squirrelid:1.0.0-SNAPSHOT'){ transitive = false }
 }
@@ -92,7 +94,8 @@ shadowJar {
     dependencies {
         include(dependency(":PlotSquared-Core"))
         include(dependency("io.papermc:paperlib:1.0.2"))
-        include(dependency("net.kyori:adventure-text-platform-bukkit:4.0.0-SNAPSHOT"))
+        include(dependency("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT"))
+        include(dependency("net.kyori:adventure-text-minimessage:3.0.0-SNAPSHOT"))
         include(dependency("org.bstats:bstats-bukkit:1.7"))
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))

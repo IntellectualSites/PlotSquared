@@ -25,32 +25,20 @@
  */
 package com.plotsquared.core.configuration;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Any message that can be sent to a player, the console, etc.
+ */
 public interface Caption {
 
-    String getTranslated();
-
-    @Deprecated default String formatted() {
-        return StringMan.replaceFromMap(getTranslated(), Captions.replacements);
-    }
-
-    default boolean send(PlotPlayer caller, String... args) {
-        return send(caller, (Object[]) args);
-    }
-
-    default boolean send(PlotPlayer caller, Object... args) {
-        String msg = CaptionUtility.format(caller, this, args);
-        if (caller == null) {
-            PlotSquared.log(msg);
-        } else {
-            caller.sendMessage(msg);
-        }
-        return true;
-    }
-
-    boolean usePrefix();
+    /**
+     * Get the message that should be sent to the recipient
+     *
+     * @param localeHolder Locale holder
+     * @return Message
+     */
+    @NotNull String getComponent(@NotNull LocaleHolder localeHolder);
 
 }

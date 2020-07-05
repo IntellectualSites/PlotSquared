@@ -32,6 +32,7 @@ import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
@@ -72,7 +73,7 @@ import java.util.stream.Collectors;
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
  */
-public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer {
+public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer, LocaleHolder {
 
     public static final String META_LAST_PLOT = "lastplot";
     public static final String META_LOCATION = "location";
@@ -739,14 +740,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return this.getAttribute("debug");
     }
 
-    @NotNull public Locale getLocale() {
+    @NotNull @Override public Locale getLocale() {
         if (this.locale == null) {
             this.locale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
         }
         return this.locale;
     }
 
-    public void setLocale(@NotNull final Locale locale) {
+    @Override public void setLocale(@NotNull final Locale locale) {
         if (!PlotSquared.get().getCaptionMap().supportsLocale(locale)) {
             this.locale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
         } else {

@@ -26,18 +26,10 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.caption.VariableReplacement;
+import net.kyori.adventure.text.minimessage.Template;
 import org.jetbrains.annotations.NotNull;
 
 public interface CommandCaller {
-
-    /**
-     * Send the player a message.
-     *
-     * @param message the message to send
-     * @deprecated Use static captions instead
-     */
-    @Deprecated void sendMessage(String message);
 
     /**
      * Send a message to the command caller
@@ -45,7 +37,7 @@ public interface CommandCaller {
      * @param caption      Caption to send
      * @param replacements Variable replacements
      */
-    void sendMessage(@NotNull Caption caption, @NotNull VariableReplacement... replacements);
+    void sendMessage(@NotNull Caption caption, @NotNull Template... replacements);
 
     /**
      * Check the player's permissions. <i>Will be cached if permission caching is enabled.</i>

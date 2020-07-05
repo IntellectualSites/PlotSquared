@@ -25,17 +25,57 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import com.plotsquared.core.player.PlotPlayer;
+import net.kyori.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+/**
+ * Map containing mappings between {@link TranslatableCaption captions} and
+ * {@link Component components}
+ */
 public interface CaptionMap {
 
-    String getMessage(TranslatableCaption caption);
+    /**
+     * Get a message using the server locale
+     *
+     * @param caption Caption containing the caption key
+     * @return Component
+     * @throws NoSuchCaptionException if no caption with the given key exists
+     */
+    @NotNull String getMessage(@NotNull TranslatableCaption caption) throws NoSuchCaptionException;
 
-    String getMessage(TranslatableCaption caption, PlotPlayer<?> context);
+    /**
+     * Get a message using a specific locale
+     *
+     * @param caption Caption containing the caption key
+     * @param localeHolder Holder that determines the message locale
+     * @return Component
+     * @throws NoSuchCaptionException if no caption with the given key exists
+     */
+    String getMessage(@NotNull TranslatableCaption caption, @NotNull LocaleHolder localeHolder) throws NoSuchCaptionException;
 
-    boolean supportsLocale(Locale locale);
+    /**
+     * Check if the map supports a given locale
+     *
+     * @param locale Locale
+     * @return True if the map supports the locale
+     */
+    boolean supportsLocale(@NotNull Locale locale);
 
-    Locale getLocale();
+    /**
+     * Get the locale of the messages stored in the map
+     *
+     * @return Message locale
+     */
+    @NotNull Locale getLocale();
+
+    class NoSuchCaptionException extends IllegalArgumentException {
+
+        public NoSuchCaptionException(@NotNull final KeyedCaption caption) {
+            super(String.format("No caption with the key '%s' exists in the map", caption.getKey()));
+        }
+
+    }
+
 }

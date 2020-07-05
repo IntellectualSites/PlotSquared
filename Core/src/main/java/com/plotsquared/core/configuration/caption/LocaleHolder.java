@@ -25,55 +25,27 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+import java.util.Locale;
 
 /**
- * Key-value pair used as replacement of variables in {@link com.plotsquared.core.configuration.Caption captions}
+ * Any entity that has a locale
  */
-@ToString
-@EqualsAndHashCode
-public final class VariableReplacement {
-
-    private final String key;
-    private final String value;
-
-    private VariableReplacement(@NotNull final String key, @NotNull final String value) {
-        this.key = Objects.requireNonNull(key, "Key may not be null");
-        this.value = Objects.requireNonNull(value, "Value may not be null");
-    }
+public interface LocaleHolder {
 
     /**
-     * Create a new variable replacement from a key-value pair
+     * Get the locale used by the holder
      *
-     * @param key   Replacement key
-     * @param value Replacement value
-     * @return Replacement instance
+     * @return Locale
      */
-    @NotNull public static VariableReplacement keyed(@NotNull final String key,
-        @NotNull final String value) {
-        return new VariableReplacement(key, value);
-    }
+    @NotNull Locale getLocale();
 
     /**
-     * Get the replacement key
+     * Set the locale for the holder
      *
-     * @return Replacement key
+     * @param locale New locale
      */
-    @NotNull public String getKey() {
-        return this.key;
-    }
-
-    /**
-     * Get the replacement value
-     *
-     * @return Replacement value
-     */
-    @NotNull public String getValue() {
-        return this.value;
-    }
+    void setLocale(@NotNull Locale locale);
 
 }

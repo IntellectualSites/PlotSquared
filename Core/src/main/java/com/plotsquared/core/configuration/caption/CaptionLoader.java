@@ -78,7 +78,7 @@ public final class CaptionLoader {
                 JsonObject.class);
         Map<TranslatableCaption, String> captions = new HashMap<>();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-            TranslatableCaption key = TranslatableCaption.of(entry.getKey());
+            TranslatableCaption key = TranslatableCaption.keyed(entry.getKey());
             captions.put(key, entry.getValue().getAsString());
         }
         return new LocalizedCaptionMap(locale, captions);

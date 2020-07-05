@@ -26,31 +26,34 @@
 package com.plotsquared.core.configuration.caption;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Caption;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-public final class TranslatableCaption implements Caption {
+import java.util.Locale;
 
-    @NotNull private final String key;
+/**
+ * Caption that is user modifiable
+ */
+public final class TranslatableCaption implements KeyedCaption {
 
-    private TranslatableCaption(@NotNull String key) {
+    @Getter private final String key;
+
+    private TranslatableCaption(@NotNull final String key) {
         this.key = key;
     }
 
-    public static TranslatableCaption of(@NotNull final String key) {
-        return new TranslatableCaption(key);
+    /**
+     * Get a new {@link TranslatableCaption} instance
+     *
+     * @param key Caption key
+     * @return Caption instance
+     */
+    @NotNull public static TranslatableCaption keyed(@NotNull final String key) {
+        return new TranslatableCaption(key.toLowerCase(Locale.ENGLISH));
     }
 
-    @Override public String getTranslated() {
-        return null;
-    }
-
-    @Override public boolean usePrefix() {
-        return false;
-    }
-
-    @NotNull public String getKey() {
-        return this.key;
+    @Override @NotNull public String getComponent(@NotNull final LocaleHolder localeHolder) {
+        return PlotSquared.get().getCaptionMap().getMessage(this, localeHolder);
     }
 
 }

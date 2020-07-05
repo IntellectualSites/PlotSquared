@@ -1,6 +1,7 @@
 repositories {
     maven { url = "https://jitpack.io" }
     maven { url = "https://mvn.intellectualsites.com/content/repositories/snapshots" }
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 def textVersion = "3.0.2"
 
