@@ -56,6 +56,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +99,7 @@ import java.util.stream.IntStream;
  */
 public class MainUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(MainUtil.class);
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
 
     static {
@@ -516,11 +519,11 @@ public class MainUtil {
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
      */
-    @Nullable public static Plot getPlotFromString(PlotPlayer player, String arg, boolean message) {
+    @Nullable public static Plot getPlotFromString(PlotPlayer<?> player, String arg, boolean message) {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    PlotSquared.log(Captions.NOT_VALID_PLOT_WORLD);
+                    logger.info("No plot area string was supplied");
                 }
                 return null;
             }
@@ -643,7 +646,7 @@ public class MainUtil {
             if (player == null) {
                 String message = CaptionUtility
                     .format(null, (prefix ? Captions.PREFIX.getTranslated() : "") + msg);
-                PlotSquared.log(message);
+                logger.info(message);
             } else {
                 player.sendMessage(CaptionUtility.format(player,
                     (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg)));
@@ -678,7 +681,7 @@ public class MainUtil {
         TaskManager.runTaskAsync(() -> {
             String m = CaptionUtility.format(player, caption, args);
             if (player == null) {
-                PlotSquared.log(m);
+                logger.info(m);
             } else {
                 player.sendMessage(m);
             }

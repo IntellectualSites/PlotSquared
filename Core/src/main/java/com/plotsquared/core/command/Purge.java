@@ -36,6 +36,8 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +54,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
     requiredType = RequiredType.CONSOLE,
     confirmation = true)
 public class Purge extends SubCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger(Purge.class);
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -170,6 +174,7 @@ public class Purge extends SubCommand {
             "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
         boolean finalClear = clear;
         Runnable run = () -> {
+            logger.debug("Calculating plots to purge, please wait...");
             PlotSquared.debug("Calculating plots to purge, please wait...");
             HashSet<Integer> ids = new HashSet<>();
             Iterator<Plot> iterator = toDelete.iterator();
@@ -183,22 +188,18 @@ public class Purge extends SubCommand {
                             try {
                                 ids.add(plot.temp);
                                 if (finalClear) {
-                                    plot.clear(false, true, () -> PlotSquared
-                                        .debug("Plot " + plot.getId() + " cleared by purge."));
+                                    plot.clear(false, true, () ->
+                                        logger.debug("Plot {} cleared by purge", plot.getId()));
                                 } else {
                                     plot.removeSign();
                                 }
                                 plot.getArea().removePlot(plot.getId());
-                                for (PlotPlayer pp : plot.getPlayersInPlot()) {
+                                for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
                                     PlotListener.plotEntry(pp, plot);
                                 }
                             } catch (NullPointerException e) {
-                                PlotSquared.log(
-                                    "NullPointer during purge detected. This is likely because you are "
-                                        + "deleting a world that has been removed.");
-                                if (Settings.DEBUG) {
-                                    e.printStackTrace();
-                                }
+                                logger.error("NullPointer during purge detected. This is likely"
+                                    + " because you are deleting a world that has been removed", e);
                             }
                         }
                         cleared.set(true);

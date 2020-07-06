@@ -42,6 +42,8 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +64,7 @@ import java.util.Set;
     category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
 
+    private static final Logger logger = LoggerFactory.getLogger(Trim.class);
     public static ArrayList<Plot> expired = null;
     private static volatile boolean TASK = false;
 
@@ -179,14 +182,15 @@ public class Trim extends SubCommand {
             @Override public void run(Set<BlockVector2> viable, final Set<BlockVector2> nonViable) {
                 Runnable regenTask;
                 if (regen) {
-                    PlotSquared.log("Starting regen task:");
-                    PlotSquared.log(" - This is a VERY slow command");
-                    PlotSquared.log(" - It will say `Trim done!` when complete");
+                    logger.info("Starting regen task");
+                    logger.info(" - This is a VERY slow command");
+                    logger.info(" - It will say 'Trim done!' when complete");
                     regenTask = new Runnable() {
                         @Override public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
                                 player.sendMessage("Trim done!");
+                                logger.info("Trim done!");
                                 return;
                             }
                             Iterator<BlockVector2> iterator = nonViable.iterator();

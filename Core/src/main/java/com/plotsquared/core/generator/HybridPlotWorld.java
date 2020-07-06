@@ -51,6 +51,8 @@ import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -59,7 +61,8 @@ import java.util.Locale;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
-    private static AffineTransform transform = new AffineTransform().rotateY(90);
+    private static final Logger logger = LoggerFactory.getLogger(HybridPlotWorld.class);
+    private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
     public int PLOT_SCHEMATIC_HEIGHT = -1;
@@ -158,13 +161,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             setupSchematics();
         } catch (Exception event) {
             event.printStackTrace();
-            PlotSquared.debug("&c - road schematics are disabled for this world.");
+            logger.debug("- road schematics are disabled for this world");
         }
 
         // Dump world settings
         if (Settings.DEBUG) {
-            PlotSquared.debug(String.format("- Dumping settings for ClassicPlotWorld with name %s",
-                this.getWorldName()));
+            logger.debug("- Dumping settings for ClassicPlotWorld with name {}", this.getWorldName());
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);
@@ -180,7 +182,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 } catch (final IllegalAccessException e) {
                     value = String.format("Failed to parse: %s", e.getMessage());
                 }
-                PlotSquared.debug(String.format("-- %s = %s", name, value));
+                logger.debug("-- {} = {}", name, value);
             }
         }
     }
@@ -360,7 +362,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         if (y >= height) {
-            PlotSquared.log("Error adding overlay block. `y > height` ");
+            logger.error("Error adding overlay block. `y > height`");
             return;
         }
         existing[y] = id;

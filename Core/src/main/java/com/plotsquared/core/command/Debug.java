@@ -36,6 +36,8 @@ import com.plotsquared.core.util.entity.EntityCategory;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -47,6 +49,8 @@ import java.util.Map;
     usage = "/plot debug [msg]",
     permission = "plots.admin")
 public class Debug extends SubCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger(Debug.class);
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length > 0) {
@@ -77,6 +81,13 @@ public class Debug extends SubCommand {
             for (final PlotPlayer<?> pp : PlotPlayer.getDebugModePlayers()) {
                 MainUtil.sendMessage(player, "- " + pp.getName());
             }
+            return true;
+        }
+        if (args.length > 0 && "logging".equalsIgnoreCase(args[0])) {
+            logger.info("Info!");
+            logger.warn("Warning!");
+            logger.error("Error!", new RuntimeException());
+            logger.debug("Debug!");
             return true;
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {

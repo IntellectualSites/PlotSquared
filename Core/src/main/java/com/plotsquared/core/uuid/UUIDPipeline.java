@@ -33,6 +33,8 @@ import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,6 +63,8 @@ import java.util.function.Function;
  * consumers, that can then be used to cache them, etc
  */
 public class UUIDPipeline {
+
+    private static final Logger logger = LoggerFactory.getLogger(UUIDPipeline.class);
 
     private final Executor executor;
     private final List<UUIDService> serviceList;
@@ -164,7 +168,7 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            PlotSquared.log(Captions.PREFIX + " (UUID) Request for " + username + " timed out");
+            logger.warn("(UUID) Request for {} timed out", username);
             // This is completely valid, we just don't care anymore
         }
         return null;
@@ -187,7 +191,7 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            PlotSquared.log(Captions.PREFIX + " (UUID) Request for " + uuid + " timed out");
+            logger.warn("(UUID) Request for {} timed out", uuid);
             // This is completely valid, we just don't care anymore
         }
         return null;
@@ -321,7 +325,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                PlotSquared.log("Failed to find all usernames");
+                logger.debug("Failed to find all usernames");
             }
 
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
@@ -384,7 +388,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                PlotSquared.log("Failed to find all UUIDs");
+                logger.debug("Failed to find all UUIDs");
             }
 
             throw new ServiceError("End of pipeline");

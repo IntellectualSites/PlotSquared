@@ -59,6 +59,8 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -81,6 +83,9 @@ import java.util.concurrent.CompletableFuture;
     aliases = {"exec", "$"},
     category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger(DebugExec.class);
+
     private ScriptEngine engine;
     private Bindings scope;
 
@@ -459,14 +464,12 @@ public class DebugExec extends SubCommand {
                         } catch (ScriptException e) {
                             e.printStackTrace();
                         }
-                        PlotSquared
-                            .log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                        logger.info("> {}ms -> {}", System.currentTimeMillis() - start, result);
                     });
                 } else {
                     long start = System.currentTimeMillis();
                     Object result = this.engine.eval(script, this.scope);
-                    PlotSquared
-                        .log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                    logger.info("> {}ms -> {}", System.currentTimeMillis() - start, result);
                 }
                 return true;
             } catch (ScriptException e) {
