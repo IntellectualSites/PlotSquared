@@ -40,12 +40,11 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.uuid.UUIDMapping;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -54,7 +53,7 @@ import java.util.concurrent.TimeoutException;
 @CommandDeclaration(command = "visit",
     permission = "plots.visit",
     description = "Visit someones plot",
-    usage = "/plot visit <<player>|<alias>|<world>> [#]",
+    usage = "/plot visit <player>|<alias>|<plot> [area]|[#] [#]",
     aliases = {"v", "tp", "teleport", "goto", "warp"},
     requiredType = RequiredType.PLAYER,
     category = CommandCategory.TELEPORT)
@@ -153,7 +152,7 @@ public class Visit extends Command {
         int page = Integer.MIN_VALUE;
 
         switch (args.length) {
-            // /p v [...] [...] <page>
+            // /p v <user> <area> <page>
             case 3:
                 if (!MathMan.isInteger(args[2])) {
                     Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
@@ -228,24 +227,32 @@ public class Visit extends Command {
     }
 
     @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
-        final List<Command> completions = new LinkedList<>();
+        final List<Command> completions = new ArrayList<>();
         switch (args.length - 1) {
             case 0:
-                this.completeNumbers(completions, args[0], 0);
                 completions.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
-            break;
+                break;
             case 1:
-                if (MathMan.isInteger(args[0])) {
+                completions.addAll(
+                        TabCompletions.completeAreas(args[1]));
+                if (args[1].isEmpty()) {
+                    // if no input is given, only suggest 1 - 3
+                    completions.addAll(
+                            TabCompletions.asCompletions("1", "2", "3"));
                     break;
                 }
-                this.completeNumbers(completions, args[1], 0);
-                this.completeAreas(completions, args[1]);
+                completions.addAll(
+                        TabCompletions.completeNumbers(args[1], 10, 999));
                 break;
             case 2:
-                if (MathMan.isInteger(args[1])) {
+                if (args[2].isEmpty()) {
+                    // if no input is given, only suggest 1 - 3
+                    completions.addAll(
+                            TabCompletions.asCompletions("1", "2", "3"));
                     break;
                 }
-                this.completeNumbers(completions, args[2], 0);
+                completions.addAll(
+                        TabCompletions.completeNumbers(args[2], 10, 999));
                 break;
         }
 

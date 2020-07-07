@@ -34,19 +34,22 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "home",
                     description = "Teleport to your plot(s)",
                     permission = "plots.home",
-                    usage = "/plot home [<page>|<alias>|<area;x;y>|<area> <x;y>]",
+                    usage = "/plot home [<page>|<alias>|<area;x;y>|<area> <x;y>|<area> <page>]",
                     aliases = {"h"},
                     requiredType = RequiredType.PLAYER,
                     category = CommandCategory.TELEPORT)
@@ -166,4 +169,28 @@ public class HomeCommand extends Command {
         return CompletableFuture.completedFuture(true);
     }
 
+    @Override
+    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+        final List<Command> completions = new ArrayList<>();
+        switch (args.length - 1) {
+            case 0:
+                completions.addAll(
+                        TabCompletions.completeAreas(args[0]));
+                if (args[0].isEmpty()) {
+                    // if no input is given, only suggest 1 - 3
+                    completions.addAll(
+                            TabCompletions.asCompletions("1", "2", "3"));
+                    break;
+                }
+                // complete more numbers from the already given input
+                completions.addAll(
+                        TabCompletions.completeNumbers(args[0], 10, 999));
+                break;
+            case 1:
+                completions.addAll(
+                        TabCompletions.completeNumbers(args[1], 10, 999));
+                break;
+        }
+        return completions;
+    }
 }
