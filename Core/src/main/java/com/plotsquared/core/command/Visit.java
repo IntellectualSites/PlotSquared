@@ -165,7 +165,7 @@ public class Visit extends Command {
             // /p v <name> [page]
             case 2:
                 if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
-                    sortByArea = PlotSquared.get().getPlotAreaByString(args[1]);
+                    sortByArea = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
                         Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                         Captions.COMMAND_SYNTAX.send(player, getUsage());
@@ -305,7 +305,7 @@ public class Visit extends Command {
     }
 
     private void completeAreas(final List<Command> commands, final String arg) {
-        for (final PlotArea area : PlotSquared.get().getPlotAreas()) {
+        for (final PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
             final String areaName = area.getWorldName() + ";" + area.getId();
             if (!areaName.toLowerCase().startsWith(arg.toLowerCase())) {
                 continue;

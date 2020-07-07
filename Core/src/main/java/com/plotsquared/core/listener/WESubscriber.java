@@ -83,19 +83,19 @@ public class WESubscriber {
                     if (Permissions.hasPermission(plotPlayer, "plots.worldedit.bypass")) {
                         MainUtil.sendMessage(plotPlayer, Captions.WORLDEDIT_BYPASS);
                     }
-                    if (PlotSquared.get().hasPlotArea(world)) {
+                    if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
                         event.setExtent(new NullExtent());
                     }
                     return;
                 }
             }
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
-                if (PlotSquared.get().hasPlotArea(world)) {
+                if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
                     event.setExtent(
                         new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(),
                             event.getExtent()));
                 }
-            } else if (PlotSquared.get().hasPlotArea(world)) {
+            } else if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
                 event.setExtent(new WEExtent(mask, event.getExtent()));
             }
         }

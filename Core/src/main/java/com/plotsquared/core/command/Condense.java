@@ -59,7 +59,7 @@ public class Condense extends SubCommand {
             MainUtil.sendMessage(player, getUsage());
             return false;
         }
-        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.getWorldName())) {
             MainUtil.sendMessage(player, "INVALID AREA");
             return false;

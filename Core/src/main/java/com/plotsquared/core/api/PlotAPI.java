@@ -157,7 +157,7 @@ import java.util.UUID;
         if (world == null) {
             return Collections.emptySet();
         }
-        return PlotSquared.get().getPlotAreas(world);
+        return PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world);
     }
 
     /**

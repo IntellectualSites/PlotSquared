@@ -134,7 +134,7 @@ public enum CommonSetupSteps implements SetupStep {
                 MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_NON_ALPHANUMERICAL);
                 return this;
             }
-            for (PlotArea area : PlotSquared.get().getPlotAreas()) {
+            for (PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
                 if (area.getId() != null && area.getId().equalsIgnoreCase(argument)) {
                     MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_INVALID_ID);
                     return this;
@@ -215,7 +215,7 @@ public enum CommonSetupSteps implements SetupStep {
                 return this;
             }
             if (WorldUtil.IMP.isWorld(argument)) {
-                if (PlotSquared.get().hasPlotArea(argument)) {
+                if (PlotSquared.get().getPlotAreaManager().hasPlotArea(argument)) {
                     MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_NAME_TAKEN);
                     return this;
                 }

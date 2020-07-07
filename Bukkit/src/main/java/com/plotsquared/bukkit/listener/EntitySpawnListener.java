@@ -78,7 +78,7 @@ public class EntitySpawnListener implements Listener {
         if (areaName == world.getName()) {
         } else {
             areaName = world.getName();
-            hasPlotArea = PlotSquared.get().hasPlotArea(areaName);
+            hasPlotArea = PlotSquared.get().getPlotAreaManager().hasPlotArea(areaName);
         }
         if (!hasPlotArea) {
             return;
@@ -90,7 +90,7 @@ public class EntitySpawnListener implements Listener {
         @NotNull World world = entity.getWorld();
         List<MetadataValue> meta = entity.getMetadata(KEY);
         if (meta.isEmpty()) {
-            if (PlotSquared.get().hasPlotArea(world.getName())) {
+            if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world.getName())) {
                 entity.setMetadata(KEY,
                     new FixedMetadataValue((Plugin) PlotSquared.platform(), entity.getLocation()));
             }

@@ -59,7 +59,7 @@ public class RegenAllRoads extends SubCommand {
                 "/plot regenallroads <world> [height]");
             return false;
         }
-        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
         if (area == null) {
             Captions.NOT_VALID_PLOT_WORLD.send(player, args[0]);
             return false;

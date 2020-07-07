@@ -118,7 +118,7 @@ public class Debug extends SubCommand {
         information.append(header);
         information.append(getSection(section, "PlotArea"));
         information.append(
-            getLine(line, "Plot Worlds", StringMan.join(PlotSquared.get().getPlotAreas(), ", ")));
+            getLine(line, "Plot Worlds", StringMan.join(PlotSquared.get().getPlotAreaManager().getAllPlotAreas(), ", ")));
         information.append(getLine(line, "Owned Plots", PlotSquared.get().getPlots().size()));
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", Captions.values().length));

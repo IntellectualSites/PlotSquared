@@ -259,7 +259,7 @@ public class DebugExec extends SubCommand {
                             "&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
-                    PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
+                    PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
                     if (area == null) {
                         MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;

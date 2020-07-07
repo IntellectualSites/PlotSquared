@@ -115,7 +115,7 @@ public abstract class HybridUtils {
             final int width = tx - bx + 1;
             final int length = tz - bz + 1;
 
-            PlotArea area = PlotSquared.get().getPlotArea(world, null);
+            PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(world, null);
 
             if (!(area instanceof HybridPlotWorld)) {
                 return;

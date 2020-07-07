@@ -90,7 +90,7 @@ public class ChunkListener implements Listener {
                 HashSet<Chunk> toUnload = new HashSet<>();
                 for (World world : Bukkit.getWorlds()) {
                     String worldName = world.getName();
-                    if (!PlotSquared.get().hasPlotArea(worldName)) {
+                    if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(worldName)) {
                         continue;
                     }
                     Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
@@ -177,7 +177,7 @@ public class ChunkListener implements Listener {
         Chunk chunk = event.getChunk();
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             String world = chunk.getWorld().getName();
-            if (PlotSquared.get().hasPlotArea(world)) {
+            if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
                 if (unloadChunk(world, chunk, true)) {
                     return;
                 }
@@ -200,7 +200,7 @@ public class ChunkListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
+            if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(chunk.getWorld().getName())) {
                 return;
             }
             Entity[] entities = chunk.getEntities();
@@ -230,7 +230,7 @@ public class ChunkListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
+            if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(chunk.getWorld().getName())) {
                 return;
             }
             Entity[] entities = chunk.getEntities();
@@ -281,7 +281,7 @@ public class ChunkListener implements Listener {
     }
 
     public boolean processChunk(Chunk chunk, boolean unload) {
-        if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
+        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(chunk.getWorld().getName())) {
             return false;
         }
         Entity[] entities = chunk.getEntities();

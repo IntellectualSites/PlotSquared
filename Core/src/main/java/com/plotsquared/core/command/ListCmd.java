@@ -297,7 +297,7 @@ public class ListCmd extends SubCommand {
                 plotConsumer.accept(PlotQuery.newQuery().plotsBySearch(term));
                 break;
             default:
-                if (PlotSquared.get().hasPlotArea(args[0])) {
+                if (PlotSquared.get().getPlotAreaManager().hasPlotArea(args[0])) {
                     if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_WORLD)) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION,
                             Captions.PERMISSION_LIST_WORLD);

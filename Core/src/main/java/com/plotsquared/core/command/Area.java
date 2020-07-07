@@ -70,6 +70,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -102,7 +104,7 @@ public class Area extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NEEDS_NAME);
                     return false;
                 }
-                final PlotArea existingArea = PlotSquared.get().getPlotArea(player.getLocation().getWorld(), args[1]);
+                final PlotArea existingArea = PlotSquared.get().getPlotAreaManager().getPlotArea(player.getLocation().getWorld(), args[1]);
                 if (existingArea != null && existingArea.getId().equalsIgnoreCase(args[1])) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NAME_TAKEN);
                     return false;
@@ -274,8 +276,8 @@ public class Area extends SubCommand {
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final CuboidRegion region = RegionUtil.createRegion(bx, tx, bz, tz);
-                                Set<PlotArea> areas =
-                                    PlotSquared.get().getPlotAreas(area.getWorldName(), region);
+                                final Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager()
+                                    .getPlotAreasSet(area.getWorldName(), region);
                                 if (!areas.isEmpty()) {
                                     Captions.CLUSTER_INTERSECTION
                                         .send(player, areas.iterator().next().toString());
@@ -340,12 +342,12 @@ public class Area extends SubCommand {
                         builder.worldName(split[0]);
                         final HybridPlotWorld pa = new HybridPlotWorld(builder.worldName(), id,
                             PlotSquared.platform().getDefaultGenerator(), null, null);
-                        PlotArea other = PlotSquared.get().getPlotArea(pa.getWorldName(), id);
+                        PlotArea other = PlotSquared.get().getPlotAreaManager().getPlotArea(pa.getWorldName(), id);
                         if (other != null && Objects.equals(pa.getId(), other.getId())) {
                             Captions.SETUP_WORLD_TAKEN.send(player, pa.toString());
                             return false;
                         }
-                        Set<PlotArea> areas = PlotSquared.get().getPlotAreas(pa.getWorldName());
+                        Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager().getPlotAreasSet(pa.getWorldName());
                         if (!areas.isEmpty()) {
                             PlotArea area = areas.iterator().next();
                             pa.setType(area.getType());
@@ -490,7 +492,7 @@ public class Area extends SubCommand {
                         area = player.getApplicablePlotArea();
                         break;
                     case 2:
-                        area = PlotSquared.get().getPlotAreaByString(args[1]);
+                        area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
                         break;
                     default:
                         Captions.COMMAND_SYNTAX.send(player, getCommandString() + " info [area]");
@@ -552,7 +554,7 @@ public class Area extends SubCommand {
                         Captions.COMMAND_SYNTAX.send(player, getCommandString() + " list [#]");
                         return false;
                 }
-                ArrayList<PlotArea> areas = new ArrayList<>(PlotSquared.get().getPlotAreas());
+                final List<PlotArea> areas = new ArrayList<>(Arrays.asList(PlotSquared.get().getPlotAreaManager().getAllPlotAreas()));
                 paginate(player, areas, 8, page,
                     new RunnableVal3<Integer, PlotArea, PlotMessage>() {
                         @Override public void run(Integer i, PlotArea area, PlotMessage message) {
@@ -635,7 +637,7 @@ public class Area extends SubCommand {
                     Captions.COMMAND_SYNTAX.send(player, "/plot visit [area]");
                     return false;
                 }
-                PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
+                PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
                 if (area == null) {
                     Captions.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;

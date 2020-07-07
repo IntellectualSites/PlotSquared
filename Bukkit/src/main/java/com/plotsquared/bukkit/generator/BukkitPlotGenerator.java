@@ -108,7 +108,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
             if (!this.loaded) {
                 String name = world.getName();
                 PlotSquared.get().loadWorld(name, this);
-                Set<PlotArea> areas = PlotSquared.get().getPlotAreas(name);
+                final Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager().getPlotAreasSet(name);
                 if (!areas.isEmpty()) {
                     PlotArea area = areas.iterator().next();
                     if (!area.isMobSpawning()) {
@@ -198,8 +198,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
         if (ChunkManager.preProcessChunk(loc, result)) {
             return;
         }
-        PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
-        if (area == null && (area = PlotSquared.get().getPlotArea(this.levelName, null)) == null) {
+        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(world.getName(), null);
+        if (area == null && (area = PlotSquared.get().getPlotAreaManager().getPlotArea(this.levelName, null)) == null) {
             throw new IllegalStateException(
                 "Cannot regenerate chunk that does not belong to a plot area." + " Location: " + loc
                     + ", world: " + world);

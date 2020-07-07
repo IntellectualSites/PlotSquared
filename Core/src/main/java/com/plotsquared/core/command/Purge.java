@@ -78,7 +78,7 @@ public class Purge extends SubCommand {
                     break;
                 case "area":
                 case "a":
-                    area = PlotSquared.get().getPlotAreaByString(split[1]);
+                    area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(split[1]);
                     if (area == null) {
                         Captions.NOT_VALID_PLOT_WORLD.send(player, split[1]);
                         return false;

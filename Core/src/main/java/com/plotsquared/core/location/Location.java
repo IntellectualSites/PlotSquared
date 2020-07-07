@@ -34,6 +34,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.SimpleMBR;
 
@@ -103,8 +104,8 @@ public class Location implements Cloneable, Comparable<Location> {
         }
     }
 
-    public PlotArea getPlotArea() {
-        return PlotSquared.get().getPlotAreaAbs(this);
+    @Nullable public PlotArea getPlotArea() {
+        return PlotSquared.get().getPlotAreaManager().getPlotArea(this);
     }
 
     public Plot getOwnedPlot() {

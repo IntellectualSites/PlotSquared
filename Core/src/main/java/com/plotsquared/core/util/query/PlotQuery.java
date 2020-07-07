@@ -95,7 +95,7 @@ public final class PlotQuery {
      */
     @NotNull public PlotQuery inWorld(@NotNull final String world) {
         Preconditions.checkNotNull(world, "World may not be null");
-        this.plotProvider = new AreaLimitedPlotProvider(PlotSquared.get().getPlotAreas(world));
+        this.plotProvider = new AreaLimitedPlotProvider(PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world));
         return this;
     }
 

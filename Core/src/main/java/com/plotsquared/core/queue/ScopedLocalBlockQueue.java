@@ -110,7 +110,7 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     public void mapByType2D(RunnableVal3<Plot, Integer, Integer> task) {
         int bx = minX;
         int bz = minZ;
-        PlotArea area = PlotSquared.get().getPlotArea(getWorld(), null);
+        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(getWorld(), null);
         Location location = new Location(getWorld(), bx, 0, bz);
         if (area != null) {
             PlotManager manager = area.getPlotManager();

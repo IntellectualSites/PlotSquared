@@ -159,7 +159,7 @@ public class Template extends SubCommand {
                         "/plot template import <world> <template>");
                     return false;
                 }
-                if (PlotSquared.get().hasPlotArea(world)) {
+                if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
                     MainUtil.sendMessage(player, Captions.SETUP_WORLD_TAKEN, world);
                     return false;
                 }
@@ -203,7 +203,7 @@ public class Template extends SubCommand {
                         "/plot template export <world>");
                     return false;
                 }
-                final PlotArea area = PlotSquared.get().getPlotAreaByString(world);
+                final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(world);
                 if (area == null) {
                     MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
                     return false;

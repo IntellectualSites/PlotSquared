@@ -80,7 +80,7 @@ public class DatabaseCommand extends SubCommand {
             return false;
         }
         List<Plot> plots;
-        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
         if (area != null) {
             plots = PlotSquared.get().sortPlotsByTemp(area.getPlots());
             args = Arrays.copyOfRange(args, 1, args.length);
@@ -116,7 +116,7 @@ public class DatabaseCommand extends SubCommand {
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
                         String areaName = entry.getKey();
-                        PlotArea pa = PlotSquared.get().getPlotAreaByString(areaName);
+                        PlotArea pa = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(areaName);
                         if (pa != null) {
                             for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                                 Plot plot = entry2.getValue();

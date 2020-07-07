@@ -46,7 +46,13 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     private static ConsolePlayer instance;
 
     private ConsolePlayer() {
-        PlotArea area = PlotSquared.get().getFirstPlotArea();
+        final PlotArea[] areas = PlotSquared.get().getPlotAreaManager().getAllPlotAreas();
+        final PlotArea area;
+        if (areas.length > 0) {
+            area = areas[0];
+        } else {
+            area = null;
+        }
         Location location;
         if (area != null) {
             CuboidRegion region = area.getRegion();

@@ -52,7 +52,7 @@ public class Download extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String world = player.getLocation().getWorld();
-        if (!PlotSquared.get().hasPlotArea(world)) {
+        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         final Plot plot = player.getCurrentPlot();

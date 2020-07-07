@@ -87,7 +87,6 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -387,11 +386,17 @@ public class PlotSquared<P> {
         return PlotSquared.instance;
     }
 
+
+    /**
+     * Get the platform specific implementation of PlotSquared
+     *
+     * @return Platform implementation
+     */
     @NotNull public static PlotPlatform<?> platform() {
         if (instance != null && instance.platform != null) {
             return instance.platform;
         }
-        throw new IllegalStateException("Plot main implementation is missing");
+        throw new IllegalStateException("Plot platform implementation is missing");
     }
 
     /**
@@ -480,9 +485,12 @@ public class PlotSquared<P> {
         return plot.getArea().getPlotManager();
     }
 
-    public PlotManager getPlotManager(Location location) {
-        PlotArea pa = getPlotAreaAbs(location);
-        return pa != null ? pa.getPlotManager() : null;
+    @Nullable public PlotManager getPlotManager(@NotNull final Location location) {
+        final PlotArea plotArea = this.getPlotAreaManager().getPlotArea(location);
+        if (plotArea == null) {
+            return null;
+        }
+        return plotArea.getPlotManager();
     }
 
     /**
@@ -586,8 +594,8 @@ public class PlotSquared<P> {
         setPlotsTmp(area);
     }
 
-    public void removePlotAreas(String world) {
-        for (PlotArea area : getPlotAreas(world)) {
+    public void removePlotAreas(@NotNull final String world) {
+        for (final PlotArea area : this.getPlotAreaManager().getPlotAreasSet(world)) {
             if (area.getWorldName().equals(world)) {
                 removePlotArea(area);
             }
@@ -609,9 +617,9 @@ public class PlotSquared<P> {
         this.clusters_tmp.put(area.toString(), area.getClusters());
     }
 
-    public Set<PlotCluster> getClusters(String world) {
-        Set<PlotCluster> set = new HashSet<>();
-        for (PlotArea area : getPlotAreas(world)) {
+    public Set<PlotCluster> getClusters(@NotNull final String world) {
+        final Set<PlotCluster> set = new HashSet<>();
+        for (final PlotArea area : this.getPlotAreaManager().getPlotAreasSet(world)) {
             set.addAll(area.getClusters());
         }
         return Collections.unmodifiableSet(set);
@@ -882,7 +890,7 @@ public class PlotSquared<P> {
      */
     @Deprecated public Set<Plot> getPlots(final PlotFilter... filters) {
         final List<PlotArea> areas = new LinkedList<>();
-        for (final PlotArea plotArea : this.getPlotAreas()) {
+        for (final PlotArea plotArea : this.getPlotAreaManager().getAllPlotAreas()) {
             for (final PlotFilter filter : filters) {
                 if (filter.allowsArea(plotArea)) {
                     areas.add(plotArea);
@@ -911,21 +919,20 @@ public class PlotSquared<P> {
         return result;
     }
 
-    public void setPlots(HashMap<String, HashMap<PlotId, Plot>> plots) {
+    public void setPlots(@NotNull final Map<String, HashMap<PlotId, Plot>> plots) {
         if (this.plots_tmp == null) {
             this.plots_tmp = new HashMap<>();
         }
-        for (Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
-            String world = entry.getKey();
-            PlotArea area = getPlotArea(world, null);
-            if (area == null) {
-                HashMap<PlotId, Plot> map =
-                    this.plots_tmp.computeIfAbsent(world, k -> new HashMap<>());
+        for (final Entry<String, HashMap<PlotId, Plot>> entry : plots.entrySet()) {
+            final String world = entry.getKey();
+            final PlotArea plotArea = this.getPlotAreaManager().getPlotArea(world, null);
+            if (plotArea == null) {
+                Map<PlotId, Plot> map = this.plots_tmp.computeIfAbsent(world, k -> new HashMap<>());
                 map.putAll(entry.getValue());
             } else {
                 for (Plot plot : entry.getValue().values()) {
-                    plot.setArea(area);
-                    area.addPlot(plot);
+                    plot.setArea(plotArea);
+                    plotArea.addPlot(plot);
                 }
             }
         }
@@ -962,7 +969,7 @@ public class PlotSquared<P> {
      * @param player the plot owner
      * @return Set of plot
      */
-    public Set<Plot> getPlots(String world, PlotPlayer player) {
+    public Set<Plot> getPlots(String world, PlotPlayer<?> player) {
         return PlotQuery.newQuery().inWorld(world).ownedBy(player).asSet();
     }
 
@@ -973,7 +980,7 @@ public class PlotSquared<P> {
      * @param player the plot owner
      * @return Set of plot
      */
-    public Set<Plot> getPlots(PlotArea area, PlotPlayer player) {
+    public Set<Plot> getPlots(PlotArea area, PlotPlayer<?> player) {
         return PlotQuery.newQuery().inArea(area).ownedBy(player).asSet();
     }
 
@@ -999,17 +1006,6 @@ public class PlotSquared<P> {
         return PlotQuery.newQuery().inArea(area).ownedBy(uuid).asSet();
     }
 
-    /**
-     * Check if a plot world.
-     *
-     * @param world the world
-     * @return if a plot world is registered
-     * @see #getPlotAreaByString(String) to get the PlotArea object
-     */
-    public boolean hasPlotArea(String world) {
-        return plotAreaManager.getPlotAreas(world, null).length != 0;
-    }
-
     public Collection<Plot> getPlots(String world) {
         return PlotQuery.newQuery().inWorld(world).asCollection();
     }
@@ -1020,7 +1016,7 @@ public class PlotSquared<P> {
      * @param player the player to retrieve the plots for
      * @return Set of Plot
      */
-    public Set<Plot> getPlots(PlotPlayer player) {
+    public Set<Plot> getPlots(PlotPlayer<?> player) {
         return PlotQuery.newQuery().ownedBy(player).asSet();
     }
 
@@ -1032,7 +1028,7 @@ public class PlotSquared<P> {
         return area == null ? null : id == null ? null : area.getPlot(id);
     }
 
-    public Set<Plot> getBasePlots(PlotPlayer player) {
+    public Set<Plot> getBasePlots(PlotPlayer<?> player) {
         return getBasePlots(player.getUUID());
     }
 
@@ -1276,7 +1272,7 @@ public class PlotSquared<P> {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId
                         + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }
-                PlotArea existing = getPlotArea(world, name);
+                final PlotArea existing = this.getPlotAreaManager().getPlotArea(world, name);
                 if (existing != null && name.equals(existing.getId())) {
                     continue;
                 }
@@ -1937,11 +1933,6 @@ public class PlotSquared<P> {
         }
     }
 
-    public PlotArea getFirstPlotArea() {
-        PlotArea[] areas = plotAreaManager.getAllPlotAreas();
-        return areas.length > 0 ? areas[0] : null;
-    }
-
     public int getPlotAreaCount() {
         return this.plotAreaManager.getAllPlotAreas().length;
     }
@@ -1949,12 +1940,6 @@ public class PlotSquared<P> {
     public int getPlotCount() {
         return Arrays.stream(this.plotAreaManager.getAllPlotAreas())
             .mapToInt(PlotArea::getPlotCount).sum();
-    }
-
-    public Set<PlotArea> getPlotAreas() {
-        final Set<PlotArea> set = new HashSet<>();
-        Collections.addAll(set, plotAreaManager.getAllPlotAreas());
-        return Collections.unmodifiableSet(set);
     }
 
     /**
@@ -1980,81 +1965,6 @@ public class PlotSquared<P> {
     }
 
     /**
-     * Gets a list of PlotArea objects.
-     *
-     * @param world the world
-     * @return Collection of PlotArea objects
-     */
-    public Set<PlotArea> getPlotAreas(@NonNull final String world) {
-        final Set<PlotArea> set = new HashSet<>();
-        Collections.addAll(set, plotAreaManager.getPlotAreas(world, null));
-        return set;
-    }
-
-    /**
-     * Gets the relevant plot area for a specified location.
-     * <ul>
-     * <li>If there is only one plot area globally that will be returned.
-     * <li>If there is only one plot area in the world, it will return that.
-     * <li>If the plot area for a location cannot be unambiguously
-     * resolved, null will be returned.
-     * </ul>
-     * Note: An applicable plot area may not include the location i.e. clusters
-     *
-     * @param location the location
-     * @return
-     */
-    public PlotArea getApplicablePlotArea(@NonNull final Location location) {
-        return plotAreaManager.getApplicablePlotArea(location);
-    }
-
-    public PlotArea getPlotArea(@NonNull final String world, final String id) {
-        return plotAreaManager.getPlotArea(world, id);
-    }
-
-    /**
-     * Gets the {@code PlotArea} which contains a location.
-     * <ul>
-     * <li>If the plot area does not contain a location, null
-     * will be returned.
-     * </ul>
-     *
-     * @param location the location
-     * @return the {@link PlotArea} in the location, null if non existent
-     */
-    public PlotArea getPlotAreaAbs(@NonNull final Location location) {
-        return plotAreaManager.getPlotArea(location);
-    }
-
-    public PlotArea getPlotAreaByString(@NonNull final String search) {
-        String[] split = search.split("[;,]");
-        PlotArea[] areas = plotAreaManager.getPlotAreas(split[0], null);
-        if (areas == null) {
-            for (PlotArea area : plotAreaManager.getAllPlotAreas()) {
-                if (area.getWorldName().equalsIgnoreCase(split[0])) {
-                    if (area.getId() == null || split.length == 2 && area.getId()
-                        .equalsIgnoreCase(split[1])) {
-                        return area;
-                    }
-                }
-            }
-            return null;
-        }
-        if (areas.length == 1) {
-            return areas[0];
-        } else if (split.length == 1) {
-            return null;
-        } else {
-            for (PlotArea area : areas) {
-                if (StringMan.isEqual(split[1], area.getId())) {
-                    return area;
-                }
-            }
-            return null;
-        }
-    }
-
-    /**
      * Gets Plots based on alias
      *
      * @param alias     to search plots
@@ -2064,13 +1974,6 @@ public class PlotSquared<P> {
     public Set<Plot> getPlotsByAlias(@Nullable final String alias,
         @NonNull final String worldname) {
         return PlotQuery.newQuery().inWorld(worldname).withAlias(alias).asSet();
-    }
-
-    public Set<PlotArea> getPlotAreas(final String world, final CuboidRegion region) {
-        final PlotArea[] areas = plotAreaManager.getPlotAreas(world, region);
-        final Set<PlotArea> set = new HashSet<>();
-        Collections.addAll(set, areas);
-        return Collections.unmodifiableSet(set);
     }
 
     public YamlConfiguration getConfig() {

@@ -70,7 +70,7 @@ public class Move extends SubCommand {
             Captions.COMMAND_SYNTAX.send(player, getUsage());
             return CompletableFuture.completedFuture(false);
         }
-        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
+        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
         Plot plot2;
         if (area == null) {
             plot2 = MainUtil.getPlotFromString(player, args[0], true);

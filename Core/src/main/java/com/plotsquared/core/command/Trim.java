@@ -165,7 +165,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final String world = args[0];
-        if (!WorldUtil.IMP.isWorld(world) || !PlotSquared.get().hasPlotArea(world)) {
+        if (!WorldUtil.IMP.isWorld(world) || !PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
             MainUtil.sendMessage(player, Captions.NOT_VALID_WORLD);
             return false;
         }

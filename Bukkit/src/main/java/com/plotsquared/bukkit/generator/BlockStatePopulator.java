@@ -54,7 +54,10 @@ final class BlockStatePopulator extends BlockPopulator {
         if (this.queue == null) {
             this.queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
         }
-        final PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
+        final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(world.getName(), null);
+        if (area == null) {
+            return;
+        }
         final ChunkWrapper wrap =
             new ChunkWrapper(area.getWorldName(), source.getX(), source.getZ());
         final ScopedLocalBlockQueue chunk = this.queue.getForChunk(wrap.x, wrap.z);

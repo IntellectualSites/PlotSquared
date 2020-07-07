@@ -528,7 +528,7 @@ public class MainUtil {
         }
         PlotArea area;
         if (player != null) {
-            area = PlotSquared.get().getPlotAreaByString(arg);
+            area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(arg);
             if (area == null) {
                 area = player.getApplicablePlotArea();
             }
@@ -538,10 +538,10 @@ public class MainUtil {
         String[] split = arg.split(";|,");
         PlotId id;
         if (split.length == 4) {
-            area = PlotSquared.get().getPlotAreaByString(split[0] + ';' + split[1]);
+            area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(split[0] + ';' + split[1]);
             id = PlotId.fromString(split[2] + ';' + split[3]);
         } else if (split.length == 3) {
-            area = PlotSquared.get().getPlotAreaByString(split[0]);
+            area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(split[0]);
             id = PlotId.fromString(split[1] + ';' + split[2]);
         } else if (split.length == 2) {
             id = PlotId.fromString(arg);

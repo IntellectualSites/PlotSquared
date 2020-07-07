@@ -1010,7 +1010,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
                 map.put(plotAreaType.name().toLowerCase(), terrainTypes);
             }
-            for (final PlotArea plotArea : PlotSquared.get().getPlotAreas()) {
+            for (final PlotArea plotArea : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
                 final Map<String, Integer> terrainTypeMap =
                     map.get(plotArea.getType().name().toLowerCase());
                 terrainTypeMap.put(plotArea.getTerrain().name().toLowerCase(),
@@ -1071,7 +1071,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             world = Bukkit.getWorld(worldName);
         } else {
             try {
-                if (!PlotSquared.get().hasPlotArea(worldName)) {
+                if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(worldName)) {
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
             } catch (Exception e) {

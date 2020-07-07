@@ -150,7 +150,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD_ARGS);
                     return false;
                 }
-                PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
+                PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
                 if (area == null) {
                     Captions.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;

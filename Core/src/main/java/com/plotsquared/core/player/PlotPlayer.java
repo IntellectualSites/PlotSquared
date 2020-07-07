@@ -54,6 +54,7 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
@@ -307,7 +308,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     public int getPlotCount(String world) {
         UUID uuid = getUUID();
         int count = 0;
-        for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
+        for (PlotArea area : PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 count +=
                     area.getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
@@ -321,7 +322,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     public int getClusterCount(String world) {
         UUID uuid = getUUID();
         int count = 0;
-        for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
+        for (PlotArea area : PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world)) {
             for (PlotCluster cluster : area.getClusters()) {
                 if (cluster.isOwner(getUUID())) {
                     count++;
@@ -345,14 +346,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     /**
      * Return the PlotArea this player is currently in, or null.
      *
-     * @return
+     * @return Plot area the player is currently in, or {@code null}
      */
-    public PlotArea getPlotAreaAbs() {
-        return PlotSquared.get().getPlotAreaAbs(getLocation());
+    @Nullable public PlotArea getPlotAreaAbs() {
+        return PlotSquared.get().getPlotAreaManager().getPlotArea(getLocation());
     }
 
     public PlotArea getApplicablePlotArea() {
-        return PlotSquared.get().getApplicablePlotArea(getLocation());
+        return PlotSquared.get().getPlotAreaManager().getApplicablePlotArea(getLocation());
     }
 
     @Override public RequiredType getSuperCaller() {

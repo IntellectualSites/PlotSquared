@@ -278,13 +278,13 @@ public class Plot {
                 return defaultArea.getPlotAbs(id);
             }
         } else if (split.length == 3) {
-            PlotArea pa = PlotSquared.get().getPlotArea(split[0], null);
+            PlotArea pa = PlotSquared.get().getPlotAreaManager().getPlotArea(split[0], null);
             if (pa != null) {
                 PlotId id = PlotId.fromString(split[1] + ';' + split[2]);
                 return pa.getPlotAbs(id);
             }
         } else if (split.length == 4) {
-            PlotArea pa = PlotSquared.get().getPlotArea(split[0], split[1]);
+            PlotArea pa = PlotSquared.get().getPlotAreaManager().getPlotArea(split[0], split[1]);
             if (pa != null) {
                 PlotId id = PlotId.fromString(split[1] + ';' + split[2]);
                 return pa.getPlotAbs(id);
