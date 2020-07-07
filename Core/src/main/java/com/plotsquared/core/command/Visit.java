@@ -189,10 +189,10 @@ public class Visit extends Command {
             // /p v <name> [page]
             // /p v <uuid> [page]
             // /p v <plot> [page]
+            // /p v <alias>
             case 1:
                 final String[] finalArgs = args;
                 int finalPage = page;
-
                 if (args[0].length() >= 2 && !args[0].contains(";") && !args[0].contains(",")) {
                     PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
@@ -202,8 +202,12 @@ public class Visit extends Command {
                             // It was a valid UUID but the player has no plots
                             MainUtil.sendMessage(player, Captions.PLAYER_NO_PLOTS);
                         } else if (uuid == null) {
-                            // player not found
-                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, finalArgs[0]);
+                            // player not found, so we assume it's an alias if no page was provided
+                            if (finalPage == Integer.MIN_VALUE) {
+                                this.visit(player, PlotQuery.newQuery().withAlias(finalArgs[0]), player.getApplicablePlotArea(), confirm, whenDone, 1);
+                            } else {
+                                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, finalArgs[0]);
+                            }
                         } else {
                             this.visit(player, PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(), null, confirm, whenDone, finalPage);
                         }
