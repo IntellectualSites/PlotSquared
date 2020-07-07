@@ -257,6 +257,9 @@ public class Settings extends Config {
         public static boolean LEGACY_DATABASE_SUPPORT = true;
         @Comment("Whether or not PlotSquared should return Unknown if it fails to fulfill a request")
         public static boolean UNKNOWN_AS_DEFAULT = true;
+        @Comment("Whether or not automatic background caching should be enabled. It is HIGHLY recommended to keep this turned on."
+            + " This should only be disabled if the server has a very large number of plots (>100k)")
+        public static boolean BACKGROUND_CACHING_ENABLED = true;
     }
 
 
