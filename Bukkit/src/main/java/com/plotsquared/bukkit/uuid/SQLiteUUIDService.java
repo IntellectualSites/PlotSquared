@@ -51,7 +51,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
 
     public SQLiteUUIDService(final String fileName) {
         this.sqlite =
-            new SQLite(MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), fileName));
+            new SQLite(MainUtil.getFile(PlotSquared.platform().getDirectory(), fileName));
         try {
             this.sqlite.openConnection();
         } catch (ClassNotFoundException | SQLException e) {

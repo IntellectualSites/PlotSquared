@@ -383,7 +383,7 @@ public class ListCmd extends SubCommand {
                         final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline()
                             .getNames(plot.getOwners()).get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
                         for (final UUIDMapping uuidMapping : names) {
-                            PlotPlayer pp = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
+                            PlotPlayer pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
                             if (pp != null) {
                                 message = message.text(prefix).color("$4").text(uuidMapping.getUsername()).color("$1")
                                     .tooltip(new PlotMessage("Online").color("$4"));
@@ -415,7 +415,7 @@ public class ListCmd extends SubCommand {
             completions.add("shared");
         }
         if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_WORLD)) {
-            completions.addAll(PlotSquared.imp().getWorldManager().getWorlds());
+            completions.addAll(PlotSquared.platform().getWorldManager().getWorlds());
         }
         if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_TOP)) {
             completions.add("top");

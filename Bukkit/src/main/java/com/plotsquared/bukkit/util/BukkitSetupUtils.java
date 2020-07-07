@@ -200,7 +200,7 @@ public class BukkitSetupUtils extends SetupUtils {
             e.printStackTrace();
         }
 
-        Objects.requireNonNull(PlotSquared.imp()).getWorldManager()
+        Objects.requireNonNull(PlotSquared.platform()).getWorldManager()
             .handleWorldCreation(object.world, object.setupGenerator);
 
         if (Bukkit.getWorld(world) != null) {
@@ -313,7 +313,7 @@ public class BukkitSetupUtils extends SetupUtils {
             e.printStackTrace();
         }
 
-        Objects.requireNonNull(PlotSquared.imp()).getWorldManager()
+        Objects.requireNonNull(PlotSquared.platform()).getWorldManager()
                 .handleWorldCreation(builder.worldName(), builder.generatorName());
 
         if (Bukkit.getWorld(world) != null) {

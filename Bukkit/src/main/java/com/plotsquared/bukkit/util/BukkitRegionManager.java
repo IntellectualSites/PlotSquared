@@ -25,7 +25,7 @@
  */
 package com.plotsquared.bukkit.util;
 
-import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.location.Location;
@@ -94,7 +94,7 @@ public class BukkitRegionManager extends RegionManager {
                 PlotSquared.debug("Attempting to make an asynchronous call to getLoadedChunks."
                     + " Will halt the calling thread until completed.");
                 semaphore.acquire();
-                Bukkit.getScheduler().runTask(BukkitMain.getPlugin(BukkitMain.class), () -> {
+                Bukkit.getScheduler().runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> {
                     for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))
                         .getLoadedChunks()) {
                         BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);

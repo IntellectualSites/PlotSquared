@@ -31,7 +31,6 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
-import com.plotsquared.core.setup.SetupProcess;
 
 /**
  * This class allows for implementation independent world generation.
@@ -104,7 +103,7 @@ public abstract class IndependentPlotGenerator {
      * @return
      */
     public <T> GeneratorWrapper<T> specify(String world) {
-        return (GeneratorWrapper<T>) PlotSquared.get().IMP.wrapPlotGenerator(world, this);
+        return (GeneratorWrapper<T>) PlotSquared.platform().wrapPlotGenerator(world, this);
     }
 
     @Override public String toString() {

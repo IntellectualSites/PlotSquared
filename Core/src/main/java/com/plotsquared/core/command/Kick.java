@@ -86,7 +86,7 @@ public class Kick extends SubCommand {
                         }
                         continue;
                     }
-                    PlotPlayer<?> pp = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                    PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                     if (pp != null) {
                         players.add(pp);
                     }

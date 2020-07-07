@@ -143,7 +143,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     private void callEvent(@NotNull final Event event) {
         final RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (final RegisteredListener listener : listeners) {
-            if (listener.getPlugin().getName().equals(PlotSquared.imp().getPluginName())) {
+            if (listener.getPlugin().getName().equals(PlotSquared.platform().getPluginName())) {
                 continue;
             }
             try {

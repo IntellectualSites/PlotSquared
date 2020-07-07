@@ -212,7 +212,7 @@ public class Merge extends SubCommand {
         java.util.Set<UUID> uuids = adjacent.getOwners();
         boolean isOnline = false;
         for (final UUID owner : uuids) {
-            final PlotPlayer accepter = PlotSquared.imp().getPlayerManager().getPlayerIfExists(owner);
+            final PlotPlayer accepter = PlotSquared.platform().getPlayerManager().getPlayerIfExists(owner);
             if (!force && accepter == null) {
                 continue;
             }
@@ -221,7 +221,7 @@ public class Merge extends SubCommand {
             Runnable run = () -> {
                 MainUtil.sendMessage(accepter, Captions.MERGE_ACCEPTED);
                 plot.autoMerge(dir, maxSize - size, owner, terrain);
-                PlotPlayer plotPlayer = PlotSquared.imp().getPlayerManager().getPlayerIfExists(player.getUUID());
+                PlotPlayer plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(player.getUUID());
                 if (plotPlayer == null) {
                     sendMessage(accepter, Captions.MERGE_NOT_VALID);
                     return;

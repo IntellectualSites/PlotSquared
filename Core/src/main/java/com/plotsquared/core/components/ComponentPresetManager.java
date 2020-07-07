@@ -61,7 +61,7 @@ public class ComponentPresetManager {
     private final String guiName;
 
     public ComponentPresetManager() {
-        final File file = new File(Objects.requireNonNull(PlotSquared.imp()).getDirectory(), "components.yml");
+        final File file = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "components.yml");
         if (!file.exists()) {
             boolean created = false;
             try {

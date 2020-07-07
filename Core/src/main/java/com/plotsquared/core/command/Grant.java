@@ -99,7 +99,7 @@ public class Grant extends Command {
                                     String key = "grantedPlots";
                                     byte[] rawData = Ints.toByteArray(amount);
 
-                                    PlotPlayer online = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                                    PlotPlayer online = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                                     if (online != null) {
                                         online.setPersistentMeta(key, rawData);
                                     } else {

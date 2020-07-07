@@ -73,7 +73,7 @@ public class ChunkListener implements Listener {
                 this.mustSave = classChunk.getField("mustSave");
                 this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
             } catch (Throwable ignored) {
-                PlotSquared.debug(PlotSquared.get().IMP.getPluginName()
+                PlotSquared.debug(PlotSquared.platform().getPluginName()
                     + "/Server not compatible for chunk processor trim/gc");
 
                 Settings.Chunk_Processor.AUTO_TRIM = false;

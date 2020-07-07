@@ -969,7 +969,7 @@ public class MainUtil {
 
     public static void getPersistentMeta(UUID uuid, final String key,
         final RunnableVal<byte[]> result) {
-        PlotPlayer player = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+        PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
         if (player != null) {
             result.run(player.getPersistentMeta(key));
         } else {

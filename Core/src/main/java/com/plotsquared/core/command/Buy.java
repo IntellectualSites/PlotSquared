@@ -82,9 +82,9 @@ public class Buy extends Command {
         confirm.run(this, () -> {
             Captions.REMOVED_BALANCE.send(player, price);
 
-            EconHandler.getEconHandler().depositMoney(PlotSquared.imp().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
+            EconHandler.getEconHandler().depositMoney(PlotSquared.platform().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
 
-            PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
+            PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {
                 Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }

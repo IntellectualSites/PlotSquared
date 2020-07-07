@@ -129,7 +129,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @return Wrapped player
      */
     public static PlotPlayer<?> wrap(Object player) {
-        return PlotSquared.get().IMP.wrapPlayer(player);
+        return PlotSquared.platform().wrapPlayer(player);
     }
 
     public abstract Actor toActor();
@@ -588,8 +588,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         if (ExpireManager.IMP != null) {
             ExpireManager.IMP.storeDate(getUUID(), System.currentTimeMillis());
         }
-        PlotSquared.imp().getPlayerManager().removePlayer(this);
-        PlotSquared.get().IMP.unregister(this);
+        PlotSquared.platform().getPlayerManager().removePlayer(this);
+        PlotSquared.platform().unregister(this);
 
         debugModeEnabled.remove(this);
     }

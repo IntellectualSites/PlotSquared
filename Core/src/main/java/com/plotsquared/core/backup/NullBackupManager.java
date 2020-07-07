@@ -49,7 +49,7 @@ public class NullBackupManager implements BackupManager {
     }
 
     @Override @NotNull public Path getBackupPath() {
-        return Objects.requireNonNull(PlotSquared.imp()).getDirectory().toPath();
+        return Objects.requireNonNull(PlotSquared.platform()).getDirectory().toPath();
     }
 
     @Override public int getBackupLimit() {

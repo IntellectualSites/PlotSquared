@@ -102,7 +102,7 @@ public class DatabaseCommand extends SubCommand {
                             .sendMessage(player, "/plot database import <sqlite file> [prefix]");
                         return false;
                     }
-                    File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+                    File file = MainUtil.getFile(PlotSquared.platform().getDirectory(),
                         args[1].endsWith(".db") ? args[1] : args[1] + ".db");
                     if (!file.exists()) {
                         MainUtil.sendMessage(player, "&6Database does not exist: " + file);
@@ -127,11 +127,11 @@ public class DatabaseCommand extends SubCommand {
                                             PlotId newId = newPlot.getId();
                                             PlotId id = plot.getId();
                                             File worldFile =
-                                                new File(PlotSquared.imp().getWorldContainer(),
+                                                new File(PlotSquared.platform().getWorldContainer(),
                                                     id.toCommaSeparatedString());
                                             if (worldFile.exists()) {
                                                 File newFile =
-                                                    new File(PlotSquared.imp().getWorldContainer(),
+                                                    new File(PlotSquared.platform().getWorldContainer(),
                                                         newId.toCommaSeparatedString());
                                                 worldFile.renameTo(newFile);
                                             }
@@ -179,7 +179,7 @@ public class DatabaseCommand extends SubCommand {
                         return MainUtil.sendMessage(player, "/plot database sqlite [file]");
                     }
                     File sqliteFile =
-                        MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), args[1] + ".db");
+                        MainUtil.getFile(PlotSquared.platform().getDirectory(), args[1] + ".db");
                     implementation = new SQLite(sqliteFile);
                     break;
                 default:

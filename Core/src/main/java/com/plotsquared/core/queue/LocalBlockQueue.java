@@ -123,7 +123,7 @@ public abstract class LocalBlockQueue {
         fixChunkLighting(x, z);
         BlockVector2 loc = BlockVector2.at(x, z);
 
-        for (final PlotPlayer pp : PlotSquared.imp().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
             Location pLoc = pp.getLocation();
             if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getBlockVector2()
                 .equals(loc)) {

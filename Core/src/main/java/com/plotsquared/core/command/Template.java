@@ -64,11 +64,11 @@ public class Template extends SubCommand {
     public static boolean extractAllFiles(String world, String template) {
         try {
             File folder =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+                MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
             if (!folder.exists()) {
                 return false;
             }
-            File output = PlotSquared.get().IMP.getDirectory();
+            File output = PlotSquared.platform().getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
@@ -120,7 +120,7 @@ public class Template extends SubCommand {
 
     public static void zipAll(String world, Set<FileBytes> files) throws IOException {
         File output =
-            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+            MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(
             output + File.separator + world + ".template");
@@ -169,7 +169,7 @@ public class Template extends SubCommand {
                         .sendMessage(player, "&cInvalid template file: " + args[2] + ".template");
                     return false;
                 }
-                File worldFile = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+                File worldFile = MainUtil.getFile(PlotSquared.platform().getDirectory(),
                     Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml");
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
                 PlotSquared.get().worlds.set("worlds." + world, worldConfig.get(""));
@@ -180,7 +180,7 @@ public class Template extends SubCommand {
                     e.printStackTrace();
                 }
                 String manager =
-                    worldConfig.getString("generator.plugin", PlotSquared.imp().getPluginName());
+                    worldConfig.getString("generator.plugin", PlotSquared.platform().getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
                 PlotAreaBuilder builder = new PlotAreaBuilder()
                         .plotAreaType(MainUtil.getType(worldConfig))

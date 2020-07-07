@@ -63,7 +63,7 @@ public class SinglePlotManager extends PlotManager {
     @Override public boolean clearPlot(Plot plot, final Runnable whenDone) {
         SetupUtils.manager.unload(plot.getWorldName(), false);
         final File worldFolder =
-            new File(PlotSquared.get().IMP.getWorldContainer(), plot.getWorldName());
+            new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
         TaskManager.IMP.taskAsync(() -> {
             MainUtil.deleteDirectory(worldFolder);
             if (whenDone != null) {

@@ -52,7 +52,7 @@ public class Setup extends SubCommand {
         StringBuilder message = new StringBuilder();
         message.append("&6What generator do you want?");
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
-            if (entry.getKey().equals(PlotSquared.imp().getPluginName())) {
+            if (entry.getKey().equals(PlotSquared.platform().getPluginName())) {
                 message.append("\n&8 - &2").append(entry.getKey()).append(" (Default Generator)");
             } else if (entry.getValue().isFull()) {
                 message.append("\n&8 - &7").append(entry.getKey()).append(" (Plot Generator)");

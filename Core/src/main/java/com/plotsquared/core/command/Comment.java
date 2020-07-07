@@ -96,7 +96,7 @@ public class Comment extends SubCommand {
             return false;
         }
 
-        for (final PlotPlayer pp : PlotSquared.imp().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
             if (pp.getAttribute("chatspy")) {
                 MainUtil.sendMessage(pp, "/plot comment " + StringMan.join(args, " "));
             }

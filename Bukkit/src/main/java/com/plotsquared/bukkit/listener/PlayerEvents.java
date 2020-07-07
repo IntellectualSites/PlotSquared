@@ -253,7 +253,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             int z = bloc.getBlockZ();
             int distance = Bukkit.getViewDistance() * 16;
 
-            for (final PlotPlayer<?> player : PlotSquared.imp().getPlayerManager().getPlayers()) {
+            for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager().getPlayers()) {
                 Location location = player.getLocation();
                 if (location.getWorld().equals(world)) {
                     if (16 * Math.abs(location.getX() - x) / 16 > distance
@@ -355,18 +355,18 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (plot.isMerged()) {
                     disable = true;
                     for (UUID owner : plot.getOwners()) {
-                        if (PlotSquared.imp().getPlayerManager().getPlayerIfExists(owner) != null) {
+                        if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(owner) != null) {
                             disable = false;
                             break;
                         }
                     }
                 } else {
-                    disable = PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs()) == null;
+                    disable = PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs()) == null;
                 }
             }
             if (disable) {
                 for (UUID trusted : plot.getTrusted()) {
-                    if (PlotSquared.imp().getPlayerManager().getPlayerIfExists(trusted) != null) {
+                    if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(trusted) != null) {
                         disable = false;
                         break;
                     }
@@ -379,7 +379,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         }
         if (Settings.Redstone.DISABLE_UNOCCUPIED) {
-            for (final PlotPlayer<?> player : PlotSquared.imp().getPlayerManager().getPlayers()) {
+            for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager().getPlayers()) {
                 if (plot.equals(player.getCurrentPlot())) {
                     return;
                 }
@@ -794,7 +794,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                             }
                         } else if (toPlot != null) {
                             vehicle.setMetadata("plot",
-                                new FixedMetadataValue((Plugin) PlotSquared.get().IMP, toPlot));
+                                new FixedMetadataValue((Plugin) PlotSquared.platform(), toPlot));
                         }
                     }
                 }
@@ -960,7 +960,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Set<Player> recipients = event.getRecipients();
         recipients.clear();
         Set<Player> spies = new HashSet<>();
-        for (final PlotPlayer<?> pp : PlotSquared.imp().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer<?> pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
             if (pp.getAttribute("chatspy")) {
                 spies.add(((BukkitPlayer) pp).player);
             } else {
@@ -1092,7 +1092,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                             .equals(EntityType.MINECART_TNT)) {
                             if (!near.hasMetadata("plot")) {
                                 near.setMetadata("plot",
-                                    new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot));
+                                    new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
                             }
                         }
                     }
@@ -2185,7 +2185,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         } else if (event.getTo() == Material.AIR) {
             event.getEntity()
-                .setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot));
+                .setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
         }
     }
 
@@ -2426,7 +2426,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
             entity
-                .setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot));
+                .setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
         }
     }
 

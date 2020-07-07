@@ -39,8 +39,8 @@ public class PlotMessage {
             reset(ChatManager.manager);
         } catch (Throwable e) {
             PlotSquared.debug(
-                PlotSquared.imp().getPluginName() + " doesn't support fancy chat for " + PlotSquared
-                    .get().IMP.getServerVersion());
+                PlotSquared.platform().getPluginName() + " doesn't support fancy chat for " + PlotSquared
+                    .platform().getServerVersion());
             ChatManager.manager = new PlainChatManager();
             reset(ChatManager.manager);
         }

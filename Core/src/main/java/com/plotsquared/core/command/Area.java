@@ -138,7 +138,7 @@ public class Area extends SubCommand {
                 // There's only one plot in the area...
                 final PlotId plotId = new PlotId(1, 1);
                 final HybridPlotWorld hybridPlotWorld = new HybridPlotWorld(player.getLocation().getWorld(), args[1],
-                    Objects.requireNonNull(PlotSquared.imp()).getDefaultGenerator(), plotId, plotId);
+                    Objects.requireNonNull(PlotSquared.platform()).getDefaultGenerator(), plotId, plotId);
                 // Plot size is the same as the region width
                 hybridPlotWorld.PLOT_WIDTH = hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
                 // We use a schematic generator
@@ -153,7 +153,7 @@ public class Area extends SubCommand {
                 hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT = hybridPlotWorld.WALL_HEIGHT = playerSelectionMin.getBlockY();
                 // No sign plz
                 hybridPlotWorld.setAllowSigns(false);
-                final File parentFile = MainUtil.getFile(PlotSquared.imp().getDirectory(), "schematics" + File.separator +
+                final File parentFile = MainUtil.getFile(PlotSquared.platform().getDirectory(), "schematics" + File.separator +
                     "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld.getWorldName() + File.separator +
                     hybridPlotWorld.getId());
                 if (!parentFile.exists() && !parentFile.mkdirs()) {
@@ -187,8 +187,8 @@ public class Area extends SubCommand {
 
                 // Now the schematic is saved, which is wonderful!
                 PlotAreaBuilder singleBuilder = PlotAreaBuilder.ofPlotArea(hybridPlotWorld)
-                        .plotManager(PlotSquared.imp().getPluginName())
-                        .generatorName(PlotSquared.imp().getPluginName())
+                        .plotManager(PlotSquared.platform().getPluginName())
+                        .generatorName(PlotSquared.platform().getPluginName())
                         .maximumId(plotId)
                         .minimumId(plotId);
                 Runnable singleRun = () -> {
@@ -282,8 +282,8 @@ public class Area extends SubCommand {
                                     return false;
                                 }
                                 PlotAreaBuilder builder = PlotAreaBuilder.ofPlotArea(area)
-                                        .plotManager(PlotSquared.imp().getPluginName())
-                                        .generatorName(PlotSquared.imp().getPluginName())
+                                        .plotManager(PlotSquared.platform().getPluginName())
+                                        .generatorName(PlotSquared.platform().getPluginName())
                                         .minimumId(new PlotId(1, 1))
                                         .maximumId(new PlotId(numX, numZ));
                                 final String path =
@@ -339,7 +339,7 @@ public class Area extends SubCommand {
                         PlotAreaBuilder builder = new PlotAreaBuilder();
                         builder.worldName(split[0]);
                         final HybridPlotWorld pa = new HybridPlotWorld(builder.worldName(), id,
-                            PlotSquared.get().IMP.getDefaultGenerator(), null, null);
+                            PlotSquared.platform().getDefaultGenerator(), null, null);
                         PlotArea other = PlotSquared.get().getPlotArea(pa.getWorldName(), id);
                         if (other != null && Objects.equals(pa.getId(), other.getId())) {
                             Captions.SETUP_WORLD_TAKEN.send(player, pa.toString());
@@ -428,8 +428,8 @@ public class Area extends SubCommand {
                                     PlotSquared.get().worlds.getConfigurationSection(path);
                                 pa.saveConfiguration(section);
                                 pa.loadConfiguration(section);
-                                builder.plotManager(PlotSquared.imp().getPluginName());
-                                builder.generatorName(PlotSquared.imp().getPluginName());
+                                builder.plotManager(PlotSquared.platform().getPluginName());
+                                builder.generatorName(PlotSquared.platform().getPluginName());
                                 String world = SetupUtils.manager.setupWorld(builder);
                                 if (WorldUtil.IMP.isWorld(world)) {
                                     Captions.SETUP_FINISHED.send(player);
@@ -661,7 +661,7 @@ public class Area extends SubCommand {
             case "remove":
                 MainUtil.sendMessage(player,
                     "$1World creation settings may be stored in multiple locations:"
-                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.imp()
+                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.platform()
                         .getPluginName() + " settings.yml"
                         + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
                         + "\n$1Stop the server and delete it from these locations.");

@@ -409,13 +409,13 @@ public class ExpireManager {
             }
         }
         for (UUID helper : plot.getTrusted()) {
-            PlotPlayer player = PlotSquared.imp().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
         }
         for (UUID helper : plot.getMembers()) {
-            PlotPlayer player = PlotSquared.imp().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
@@ -438,12 +438,12 @@ public class ExpireManager {
     }
 
     public long getAge(UUID uuid) {
-        if (PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid) != null) {
+        if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid) != null) {
             return 0;
         }
         Long last = this.dates_cache.get(uuid);
         if (last == null) {
-            OfflinePlotPlayer opp = PlotSquared.imp().getPlayerManager().getOfflinePlayer(uuid);
+            OfflinePlotPlayer opp = PlotSquared.platform().getPlayerManager().getOfflinePlayer(uuid);
             if (opp != null && (last = opp.getLastPlayed()) != 0) {
                 this.dates_cache.put(uuid, last);
             } else {
@@ -458,7 +458,7 @@ public class ExpireManager {
 
     public long getAge(Plot plot) {
         if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
-            || PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
+            || PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
             return 0;
         }
 

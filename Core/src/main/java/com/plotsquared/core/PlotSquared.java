@@ -137,11 +137,13 @@ import java.util.zip.ZipInputStream;
  * An implementation of the core, with a static getter for easy access.
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class PlotSquared {
+public class PlotSquared<P> {
+
     private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
-    private static PlotSquared instance;
+    private static PlotSquared<?> instance;
+
     // Implementation
-    public final IPlotMain<?> IMP;
+    private final PlotPlatform<P> platform;
     // Current thread
     private final Thread thread;
     // UUID pipelines
@@ -177,17 +179,17 @@ public class PlotSquared {
     /**
      * Initialize PlotSquared with the desired Implementation class.
      *
-     * @param iPlotMain Implementation of {@link IPlotMain} used
+     * @param iPlotMain Implementation of {@link PlotPlatform} used
      * @param platform  The platform being used
      */
-    public PlotSquared(final IPlotMain iPlotMain, final String platform) {
+    public PlotSquared(final PlotPlatform<P> iPlotMain, final String platform) {
         if (instance != null) {
             throw new IllegalStateException("Cannot re-initialize the PlotSquared singleton");
         }
         instance = this;
 
         this.thread = Thread.currentThread();
-        this.IMP = iPlotMain;
+        this.platform = iPlotMain;
         this.logger = iPlotMain;
         Settings.PLATFORM = platform;
 
@@ -197,7 +199,7 @@ public class PlotSquared {
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
         try {
-            new ReflectionUtils(this.IMP.getNMSPackage());
+            new ReflectionUtils(this.platform.getNMSPackage());
             try {
                 URL url = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
                 this.jarFile = new File(
@@ -205,22 +207,22 @@ public class PlotSquared {
                         .toURI().getPath());
             } catch (MalformedURLException | URISyntaxException | SecurityException e) {
                 e.printStackTrace();
-                this.jarFile = new File(this.IMP.getDirectory().getParentFile(), "PlotSquared.jar");
+                this.jarFile = new File(this.platform.getDirectory().getParentFile(), "PlotSquared.jar");
                 if (!this.jarFile.exists()) {
-                    this.jarFile = new File(this.IMP.getDirectory().getParentFile(),
+                    this.jarFile = new File(this.platform.getDirectory().getParentFile(),
                         "PlotSquared-" + platform + ".jar");
                 }
             }
-            TaskManager.IMP = this.IMP.getTaskManager();
+            TaskManager.IMP = this.platform.getTaskManager();
 
             // World Util. Has to be done before config files are loaded
-            WorldUtil.IMP = this.IMP.initWorldUtil();
+            WorldUtil.IMP = this.platform.initWorldUtil();
 
             if (!setupConfigs()) {
                 return;
             }
-            this.translationFile = MainUtil.getFile(this.IMP.getDirectory(),
-                Settings.Paths.TRANSLATIONS + File.separator + IMP.getPluginName()
+            this.translationFile = MainUtil.getFile(this.platform.getDirectory(),
+                Settings.Paths.TRANSLATIONS + File.separator + this.platform.getPluginName()
                     + ".use_THIS.yml");
             Captions.load(this.translationFile);
 
@@ -251,44 +253,44 @@ public class PlotSquared {
             // Kill entities
             if (Settings.Enabled_Components.KILL_ROAD_MOBS
                 || Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-                this.IMP.runEntityTask();
+                this.platform.runEntityTask();
             }
             if (Settings.Enabled_Components.EVENTS) {
-                this.IMP.registerPlayerEvents();
+                this.platform.registerPlayerEvents();
             }
             // Required
-            this.IMP.registerWorldEvents();
+            this.platform.registerWorldEvents();
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
-                this.IMP.registerChunkProcessor();
+                this.platform.registerChunkProcessor();
             }
             // Create Event utility class
             eventDispatcher = new EventDispatcher();
             // create Hybrid utility class
-            HybridUtils.manager = this.IMP.initHybridUtils();
+            HybridUtils.manager = this.platform.initHybridUtils();
             // Inventory utility class
-            InventoryUtil.manager = this.IMP.initInventoryUtil();
+            InventoryUtil.manager = this.platform.initInventoryUtil();
             // create setup util class
-            SetupUtils.manager = this.IMP.initSetupUtils();
+            SetupUtils.manager = this.platform.initSetupUtils();
             // Set block
             GlobalBlockQueue.IMP =
-                new GlobalBlockQueue(IMP.initBlockQueue(), 1, Settings.QUEUE.TARGET_TIME);
+                new GlobalBlockQueue(this.platform.initBlockQueue(), 1, Settings.QUEUE.TARGET_TIME);
             GlobalBlockQueue.IMP.runTask();
             // Set chunk
-            ChunkManager.manager = this.IMP.initChunkManager();
-            RegionManager.manager = this.IMP.initRegionManager();
+            ChunkManager.manager = this.platform.initChunkManager();
+            RegionManager.manager = this.platform.initRegionManager();
             // Schematic handler
-            SchematicHandler.manager = this.IMP.initSchematicHandler();
+            SchematicHandler.manager = this.platform.initSchematicHandler();
             // Chat
-            ChatManager.manager = this.IMP.initChatManager();
+            ChatManager.manager = this.platform.initChatManager();
             // Commands
             if (Settings.Enabled_Components.COMMANDS) {
-                this.IMP.registerCommands();
+                this.platform.registerCommands();
             }
             // WorldEdit
             if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
                 try {
-                    if (this.IMP.initWorldEdit()) {
-                        PlotSquared.log(Captions.PREFIX.getTranslated() + "&6" + IMP.getPluginName()
+                    if (this.platform.initWorldEdit()) {
+                        PlotSquared.log(Captions.PREFIX.getTranslated() + "&6" + this.platform.getPluginName()
                             + " hooked into WorldEdit.");
                         this.worldedit = WorldEdit.getInstance();
                         WorldEdit.getInstance().getEventBus().register(new WESubscriber());
@@ -324,7 +326,7 @@ public class PlotSquared {
                         continue;
                     }
                     if (WorldUtil.IMP.isWorld(world)) {
-                        this.IMP.setGenerator(world);
+                        this.platform.setGenerator(world);
                     }
                 }
                 TaskManager.runTaskLater(() -> {
@@ -333,7 +335,7 @@ public class PlotSquared {
                             continue;
                         }
                         if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
-                            debug("`" + world + "` was not properly loaded - " + IMP.getPluginName()
+                            debug("`" + world + "` was not properly loaded - " + this.platform.getPluginName()
                                 + " will now try to load it properly: ");
                             debug(
                                 " - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
@@ -341,7 +343,7 @@ public class PlotSquared {
                                 " - Your world management plugin may be faulty (or non existent)");
                             debug(
                                 " This message may also be a false positive and could be ignored.");
-                            PlotSquared.this.IMP.setGenerator(world);
+                            PlotSquared.this.platform.setGenerator(world);
                         }
                     }
                 }, 1);
@@ -373,7 +375,7 @@ public class PlotSquared {
 
         PlotSquared.log(Captions.PREFIX + CaptionUtility
             .format(ConsolePlayer.getConsole(), Captions.ENABLED.getTranslated(),
-                IMP.getPluginName()));
+                this.platform.getPluginName()));
     }
 
     /**
@@ -381,13 +383,13 @@ public class PlotSquared {
      *
      * @return instance of PlotSquared
      */
-    public static PlotSquared get() {
+    public static PlotSquared<?> get() {
         return PlotSquared.instance;
     }
 
-    @NotNull public static IPlotMain<?> imp() {
-        if (instance != null && instance.IMP != null) {
-            return instance.IMP;
+    @NotNull public static PlotPlatform<?> platform() {
+        if (instance != null && instance.platform != null) {
+            return instance.platform;
         }
         throw new IllegalStateException("Plot main implementation is missing");
     }
@@ -396,7 +398,7 @@ public class PlotSquared {
      * Log a message to the IPlotMain logger.
      *
      * @param message Message to log
-     * @see IPlotMain#log(String)
+     * @see PlotPlatform#log(String)
      */
     public static void log(Object message) {
         if (message == null || (message instanceof Caption ?
@@ -415,7 +417,7 @@ public class PlotSquared {
      * Log a message to the IPlotMain logger.
      *
      * @param message Message to log
-     * @see IPlotMain#log(String)
+     * @see PlotPlatform#log(String)
      */
     public static void debug(@Nullable Object message) {
         if (Settings.DEBUG) {
@@ -539,7 +541,7 @@ public class PlotSquared {
             return;
         }
         File file = new File(
-            this.IMP.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.getId()
+            this.platform.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.getId()
                 + "_" + plotArea.getWorldName());
         if (!file.exists()) {
             return;
@@ -1137,13 +1139,13 @@ public class PlotSquared {
             } else if (worldSection != null) {
                 String secondaryGeneratorName = worldSection.getString("generator.plugin");
                 GeneratorWrapper<?> secondaryGenerator =
-                    this.IMP.getGenerator(world, secondaryGeneratorName);
+                    this.platform.getGenerator(world, secondaryGeneratorName);
                 if (secondaryGenerator != null && secondaryGenerator.isFull()) {
                     plotGenerator = secondaryGenerator.getPlotGenerator();
                 } else {
                     String primaryGeneratorName = worldSection.getString("generator.init");
                     GeneratorWrapper<?> primaryGenerator =
-                        this.IMP.getGenerator(world, primaryGeneratorName);
+                        this.platform.getGenerator(world, primaryGeneratorName);
                     if (primaryGenerator != null && primaryGenerator.isFull()) {
                         plotGenerator = primaryGenerator.getPlotGenerator();
                     } else {
@@ -1187,7 +1189,7 @@ public class PlotSquared {
                     return;
                 }
                 PlotSquared.log(Captions.PREFIX + "&aDetected world load for '" + world + "'");
-                String gen_string = worldSection.getString("generator.plugin", IMP.getPluginName());
+                String gen_string = worldSection.getString("generator.plugin", platform.getPluginName());
                 if (type == PlotAreaType.PARTIAL) {
                     Set<PlotCluster> clusters =
                         this.clusters_tmp != null ? this.clusters_tmp.get(world) : new HashSet<>();
@@ -1204,7 +1206,7 @@ public class PlotSquared {
                         DBFunc.replaceWorld(world, world + ";" + name, pos1, pos2); // NPE
 
                         PlotSquared.log(Captions.PREFIX + "&3 - " + name + "-" + pos1 + "-" + pos2);
-                        GeneratorWrapper<?> areaGen = this.IMP.getGenerator(world, gen_string);
+                        GeneratorWrapper<?> areaGen = this.platform.getGenerator(world, gen_string);
                         if (areaGen == null) {
                             throw new IllegalArgumentException("Invalid Generator: " + gen_string);
                         }
@@ -1234,7 +1236,7 @@ public class PlotSquared {
                     }
                     return;
                 }
-                GeneratorWrapper<?> areaGen = this.IMP.getGenerator(world, gen_string);
+                GeneratorWrapper<?> areaGen = this.platform.getGenerator(world, gen_string);
                 if (areaGen == null) {
                     throw new IllegalArgumentException("Invalid Generator: " + gen_string);
                 }
@@ -1296,8 +1298,8 @@ public class PlotSquared {
                         clone.set(key, worldSection.get(key));
                     }
                 }
-                String gen_string = clone.getString("generator.plugin", IMP.getPluginName());
-                GeneratorWrapper<?> areaGen = this.IMP.getGenerator(world, gen_string);
+                String gen_string = clone.getString("generator.plugin", platform.getPluginName());
+                GeneratorWrapper<?> areaGen = this.platform.getGenerator(world, gen_string);
                 if (areaGen == null) {
                     throw new IllegalArgumentException("Invalid Generator: " + gen_string);
                 }
@@ -1485,7 +1487,7 @@ public class PlotSquared {
      */
     public void copyFile(String file, String folder) {
         try {
-            File output = this.IMP.getDirectory();
+            File output = this.platform.getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
@@ -1493,7 +1495,7 @@ public class PlotSquared {
             if (newFile.exists()) {
                 return;
             }
-            try (InputStream stream = this.IMP.getClass().getResourceAsStream(file)) {
+            try (InputStream stream = this.platform.getClass().getResourceAsStream(file)) {
                 byte[] buffer = new byte[2048];
                 if (stream == null) {
                     try (ZipInputStream zis = new ZipInputStream(
@@ -1593,7 +1595,7 @@ public class PlotSquared {
         list.add(chunks);
         list.add(HybridUtils.height);
         File file = new File(
-            this.IMP.getDirectory() + File.separator + "persistent_regen_data_" + HybridUtils.area
+            this.platform.getDirectory() + File.separator + "persistent_regen_data_" + HybridUtils.area
                 .getId() + "_" + HybridUtils.area.getWorldName());
         if (file.exists() && !file.delete()) {
             PlotSquared.log(Captions.PREFIX
@@ -1622,11 +1624,11 @@ public class PlotSquared {
                 database = new MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
                     Storage.MySQL.USER, Storage.MySQL.PASSWORD);
             } else if (Storage.SQLite.USE) {
-                File file = MainUtil.getFile(IMP.getDirectory(), Storage.SQLite.DB + ".db");
+                File file = MainUtil.getFile(platform.getDirectory(), Storage.SQLite.DB + ".db");
                 database = new SQLite(file);
             } else {
                 PlotSquared.log(Captions.PREFIX + "&cNo storage type is set!");
-                this.IMP.shutdown(); //shutdown used instead of disable because no database is set
+                this.platform.shutdown(); //shutdown used instead of disable because no database is set
                 return;
             }
             DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, false);
@@ -1654,9 +1656,9 @@ public class PlotSquared {
                 "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
             e.printStackTrace();
             PlotSquared.log("&d==== End of stacktrace ====");
-            PlotSquared.log("&6Please go to the " + IMP.getPluginName()
+            PlotSquared.log("&6Please go to the " + platform.getPluginName()
                 + " 'storage.yml' and configure the database correctly.");
-            this.IMP.shutdown(); //shutdown used instead of disable because of database error
+            this.platform.shutdown(); //shutdown used instead of disable because of database error
         }
     }
 
@@ -1680,7 +1682,7 @@ public class PlotSquared {
                     try {
                         worlds.save(worldsFile);
                     } catch (IOException e) {
-                        PlotSquared.debug("Failed to save " + IMP.getPluginName() + " worlds.yml");
+                        PlotSquared.debug("Failed to save " + platform.getPluginName() + " worlds.yml");
                         e.printStackTrace();
                     }
                 }
@@ -1711,7 +1713,7 @@ public class PlotSquared {
      * - Translation: PlotSquared.use_THIS.yml, style.yml<br>
      */
     public boolean setupConfigs() {
-        File folder = new File(this.IMP.getDirectory(), "config");
+        File folder = new File(this.platform.getDirectory(), "config");
         if (!folder.exists() && !folder.mkdirs()) {
             PlotSquared.log(Captions.PREFIX
                 + "&cFailed to create the /plugins/config folder. Please create it manually.");
@@ -1747,7 +1749,7 @@ public class PlotSquared {
                         e.printStackTrace();
                     }
                     // Disable plugin
-                    this.IMP.shutdown();
+                    this.platform.shutdown();
                     return false;
                 }
             } else {
@@ -1768,7 +1770,7 @@ public class PlotSquared {
             PlotSquared.log("Failed to save settings.yml");
         }
         try {
-            this.styleFile = MainUtil.getFile(IMP.getDirectory(),
+            this.styleFile = MainUtil.getFile(platform.getDirectory(),
                 Settings.Paths.TRANSLATIONS + File.separator + "style.yml");
             if (!this.styleFile.exists()) {
                 if (!this.styleFile.getParentFile().exists()) {

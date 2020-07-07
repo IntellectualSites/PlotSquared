@@ -57,7 +57,7 @@ import java.util.Map;
  *
  * @param <P> Player type
  */
-public interface IPlotMain<P> extends ILogger {
+public interface PlotPlatform<P> extends ILogger {
 
     /**
      * Logs a message to console.

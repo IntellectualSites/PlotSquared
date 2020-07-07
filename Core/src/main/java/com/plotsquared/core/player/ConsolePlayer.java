@@ -68,7 +68,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override public Actor toActor() {
-        return PlotSquared.get().IMP.getConsole();
+        return PlotSquared.platform().getConsole();
     }
 
     @Override public Actor getPlatformPlayer() {

@@ -200,9 +200,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         // Try to determine root. This means that plot areas can have separate schematic
         // directories
-        if (!(root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" +
+        if (!(root = MainUtil.getFile(PlotSquared.platform().getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" +
             this.getWorldName() + "/" + this.getId())).exists()) {
-            root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+            root = MainUtil.getFile(PlotSquared.platform().getDirectory(),
                 "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName());
         }
 

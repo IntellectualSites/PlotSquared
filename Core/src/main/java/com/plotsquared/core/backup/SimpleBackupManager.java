@@ -57,7 +57,7 @@ import java.util.concurrent.TimeUnit;
         .expireAfterAccess(3, TimeUnit.MINUTES).build();
 
     public SimpleBackupManager() throws Exception {
-        this.backupPath = Objects.requireNonNull(PlotSquared.imp()).getDirectory().toPath().resolve("backups");
+        this.backupPath = Objects.requireNonNull(PlotSquared.platform()).getDirectory().toPath().resolve("backups");
         if (!Files.exists(backupPath)) {
             Files.createDirectory(backupPath);
         }

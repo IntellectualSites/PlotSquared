@@ -87,7 +87,7 @@ public class SinglePlotArea extends GridPlotWorld {
                 .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                 .worldName(worldName);
 
-        File container = PlotSquared.imp().getWorldContainer();
+        File container = PlotSquared.platform().getWorldContainer();
         File destination = new File(container, worldName);
 
         {// convert old

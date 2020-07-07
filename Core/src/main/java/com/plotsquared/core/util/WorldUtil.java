@@ -187,7 +187,7 @@ public abstract class WorldUtil {
 
     public File getDat(String world) {
         File file = new File(
-            PlotSquared.get().IMP.getWorldContainer() + File.separator + world + File.separator
+            PlotSquared.platform().getWorldContainer() + File.separator + world + File.separator
                 + "level.dat");
         if (file.exists()) {
             return file;
@@ -196,7 +196,7 @@ public abstract class WorldUtil {
     }
 
     public File getMcr(String world, int x, int z) {
-        File file = new File(PlotSquared.get().IMP.getWorldContainer(),
+        File file = new File(PlotSquared.platform().getWorldContainer(),
             world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
         if (file.exists()) {
             return file;

@@ -107,7 +107,7 @@ public abstract class RegionManager {
 
     public Set<BlockVector2> getChunkChunks(String world) {
         File folder =
-            new File(PlotSquared.get().IMP.getWorldContainer(), world + File.separator + "region");
+            new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region");
         File[] regionFiles = folder.listFiles();
         if (regionFiles == null) {
             throw new RuntimeException(
@@ -141,7 +141,7 @@ public abstract class RegionManager {
                 String directory =
                     world + File.separator + "region" + File.separator + "r." + loc.getX() + "."
                         + loc.getZ() + ".mca";
-                File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
+                File file = new File(PlotSquared.platform().getWorldContainer(), directory);
                 PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
                 if (file.exists()) {
                     file.delete();

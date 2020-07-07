@@ -56,8 +56,8 @@ public class SQLite extends Database {
         if (checkConnection()) {
             return this.connection;
         }
-        if (!PlotSquared.get().IMP.getDirectory().exists()) {
-            PlotSquared.get().IMP.getDirectory().mkdirs();
+        if (!PlotSquared.platform().getDirectory().exists()) {
+            PlotSquared.platform().getDirectory().mkdirs();
         }
         File file = new File(this.dbLocation);
         if (!file.exists()) {

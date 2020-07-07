@@ -73,7 +73,7 @@ public class Trim extends SubCommand {
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 String directory = world + File.separator + "region";
-                File folder = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
+                File folder = new File(PlotSquared.platform().getWorldContainer(), directory);
                 File[] regionFiles = folder.listFiles();
                 for (File file : regionFiles) {
                     String name = file.getName();

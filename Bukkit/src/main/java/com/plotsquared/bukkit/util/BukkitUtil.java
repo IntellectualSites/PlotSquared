@@ -25,7 +25,7 @@
  */
 package com.plotsquared.bukkit.util;
 
-import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.core.PlotSquared;
@@ -120,7 +120,7 @@ public class BukkitUtil extends WorldUtil {
         lastPlayer = null;
         lastPlotPlayer = null;
         // Make sure that it's removed internally
-        PlotSquared.imp().getPlayerManager().removePlayer(uuid);
+        PlotSquared.platform().getPlayerManager().removePlayer(uuid);
     }
 
     public static PlotPlayer<Player> getPlayer(@NonNull final OfflinePlayer op) {
@@ -271,7 +271,7 @@ public class BukkitUtil extends WorldUtil {
         if (player == lastPlayer) {
             return lastPlotPlayer;
         }
-        final PlayerManager<?, ?> playerManager = PlotSquared.imp().getPlayerManager();
+        final PlayerManager<?, ?> playerManager = PlotSquared.platform().getPlayerManager();
         return ((BukkitPlayerManager) playerManager).getPlayer(player);
     }
 
@@ -458,7 +458,7 @@ public class BukkitUtil extends WorldUtil {
                 } else if (world.getBlockAt(x, y, z - 1).getType().isSolid()) {
                     facing = BlockFace.SOUTH;
                 }
-                if (PlotSquared.get().IMP.getServerVersion()[1] == 13) {
+                if (PlotSquared.platform().getServerVersion()[1] == 13) {
                     block.setType(Material.valueOf("WALL_SIGN"), false);
                 } else {
                     block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
@@ -688,7 +688,7 @@ public class BukkitUtil extends WorldUtil {
             consumer.accept(value);
         } else {
             Bukkit.getScheduler()
-                .runTask(BukkitMain.getPlugin(BukkitMain.class), () -> consumer.accept(value));
+                .runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> consumer.accept(value));
         }
     }
 

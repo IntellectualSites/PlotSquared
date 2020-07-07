@@ -74,7 +74,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 .getWorldName() + File.separator;
         try {
             File sideRoad =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "sideroad.schem");
+                MainUtil.getFile(PlotSquared.platform().getDirectory(), dir + "sideroad.schem");
             String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
                 + "__TEMP_DIR__" + File.separator;
             if (sideRoad.exists()) {
@@ -82,12 +82,12 @@ public class HybridPlotManager extends ClassicPlotManager {
                     Files.readAllBytes(sideRoad.toPath())));
             }
             File intersection =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "intersection.schem");
+                MainUtil.getFile(PlotSquared.platform().getDirectory(), dir + "intersection.schem");
             if (intersection.exists()) {
                 files.add(new FileBytes(newDir + "intersection.schem",
                     Files.readAllBytes(intersection.toPath())));
             }
-            File plot = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "plot.schem");
+            File plot = MainUtil.getFile(PlotSquared.platform().getDirectory(), dir + "plot.schem");
             if (plot.exists()) {
                 files.add(new FileBytes(newDir + "plot.schem", Files.readAllBytes(plot.toPath())));
             }

@@ -401,7 +401,7 @@ public class Plot {
      */
     public List<PlotPlayer<?>> getPlayersInPlot() {
         final List<PlotPlayer<?>> players = new ArrayList<>();
-        for (final PlotPlayer<?> player : PlotSquared.imp().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager().getPlayers()) {
             if (this.equals(player.getCurrentPlot())) {
                 players.add(player);
             }
@@ -1330,7 +1330,7 @@ public class Plot {
 
             if (Settings.Backup.DELETE_ON_UNCLAIM) {
                 // Destroy all backups when the plot is unclaimed
-                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(current)
+                Objects.requireNonNull(PlotSquared.platform()).getBackupManager().getProfile(current)
                     .destroy();
             }
 
@@ -3039,11 +3039,11 @@ public class Plot {
             return false;
         }
         if (!isMerged()) {
-            return PlotSquared.imp().getPlayerManager()
+            return PlotSquared.platform().getPlayerManager()
                 .getPlayerIfExists(Objects.requireNonNull(this.getOwnerAbs())) != null;
         }
         for (final Plot current : getConnectedPlots()) {
-            if (current.hasOwner() && PlotSquared.imp().getPlayerManager()
+            if (current.hasOwner() && PlotSquared.platform().getPlayerManager()
                 .getPlayerIfExists(Objects.requireNonNull(current.getOwnerAbs())) != null) {
                 return true;
             }

@@ -160,7 +160,7 @@ public class PlotListener {
             if (plot.getFlag(NotifyEnterFlag.class)) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
-                        final PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                        final PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID())) {
                             MainUtil.sendMessage(owner, Captions.NOTIFY_ENTER.getTranslated()
                                 .replace("%player", player.getName())
@@ -336,7 +336,7 @@ public class PlotListener {
             if (plot.getFlag(NotifyLeaveFlag.class)) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
-                        final PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                        final PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                         if ((owner != null) && !owner.getUUID().equals(player.getUUID())) {
                             MainUtil.sendMessage(owner, Captions.NOTIFY_LEAVE.getTranslated()
                                 .replace("%player", player.getName())

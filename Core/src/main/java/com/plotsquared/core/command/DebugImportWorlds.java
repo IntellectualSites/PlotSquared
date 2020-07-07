@@ -63,7 +63,7 @@ public class DebugImportWorlds extends Command {
         }
         SinglePlotArea area = ((SinglePlotAreaManager) pam).getArea();
         PlotId id = new PlotId(0, 0);
-        File container = PlotSquared.imp().getWorldContainer();
+        File container = PlotSquared.platform().getWorldContainer();
         if (container.equals(new File("."))) {
             player.sendMessage(
                 "World container must be configured to be a separate directory to your base files!");

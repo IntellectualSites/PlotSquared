@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 public class HybridGen extends IndependentPlotGenerator {
 
     @Override public String getName() {
-        return PlotSquared.imp().getPluginName();
+        return PlotSquared.platform().getPluginName();
     }
 
     private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX,

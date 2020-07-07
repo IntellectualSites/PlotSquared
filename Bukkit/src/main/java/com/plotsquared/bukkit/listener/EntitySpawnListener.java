@@ -92,7 +92,7 @@ public class EntitySpawnListener implements Listener {
         if (meta.isEmpty()) {
             if (PlotSquared.get().hasPlotArea(world.getName())) {
                 entity.setMetadata(KEY,
-                    new FixedMetadataValue((Plugin) PlotSquared.get().IMP, entity.getLocation()));
+                    new FixedMetadataValue((Plugin) PlotSquared.platform(), entity.getLocation()));
             }
         } else {
             org.bukkit.Location origin = (org.bukkit.Location) meta.get(0).value();
@@ -161,7 +161,7 @@ public class EntitySpawnListener implements Listener {
             case SHULKER:
                 if (!entity.hasMetadata("shulkerPlot")) {
                     entity.setMetadata("shulkerPlot",
-                        new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot.getId()));
+                        new FixedMetadataValue((Plugin) PlotSquared.platform(), plot.getId()));
                 }
         }
     }

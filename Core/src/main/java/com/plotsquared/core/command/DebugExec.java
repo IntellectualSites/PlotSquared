@@ -89,12 +89,12 @@ public class DebugExec extends SubCommand {
 /*
         try {
             if (PlotSquared.get() != null) {
-                File file = new File(PlotSquared.get().IMP.getDirectory(),
+                File file = new File(PlotSquared.imp().getDirectory(),
                     Settings.Paths.SCRIPTS + File.separator + "start.js");
                 if (file.exists()) {
                     init();
                     String script = StringMan.join(Files.readLines(new File(new File(
-                            PlotSquared.get().IMP.getDirectory() + File.separator
+                            PlotSquared.imp().getDirectory() + File.separator
                                 + Settings.Paths.SCRIPTS), "start.js"), StandardCharsets.UTF_8),
                         System.getProperty("line.separator"));
                     this.scope.put("THIS", this);
@@ -169,7 +169,7 @@ public class DebugExec extends SubCommand {
         this.scope.put("EconHandler", EconHandler.getEconHandler());
         this.scope.put("DBFunc", DBFunc.dbManager);
         this.scope.put("HybridUtils", HybridUtils.manager);
-        this.scope.put("IMP", PlotSquared.get().IMP);
+        this.scope.put("IMP", PlotSquared.platform());
         this.scope.put("MainCommand", MainCommand.getInstance());
 
         // enums
@@ -306,7 +306,7 @@ public class DebugExec extends SubCommand {
                 case "addcmd":
                     try {
                         final String cmd = StringMan.join(Files.readLines(MainUtil.getFile(new File(
-                                PlotSquared.get().IMP.getDirectory() + File.separator
+                                PlotSquared.platform().getDirectory() + File.separator
                                     + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
@@ -338,7 +338,7 @@ public class DebugExec extends SubCommand {
                 case "run":
                     try {
                         script = StringMan.join(Files.readLines(MainUtil.getFile(new File(
-                                PlotSquared.get().IMP.getDirectory() + File.separator
+                                PlotSquared.platform().getDirectory() + File.separator
                                     + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                         if (args.length > 2) {
@@ -354,7 +354,7 @@ public class DebugExec extends SubCommand {
                     }
                     break;
                 case "list-scripts":
-                    String path = PlotSquared.get().IMP.getDirectory() + File.separator
+                    String path = PlotSquared.platform().getDirectory() + File.separator
                         + Settings.Paths.SCRIPTS;
                     File folder = new File(path);
                     File[] filesArray = folder.listFiles();

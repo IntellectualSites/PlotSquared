@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.IPlotMain;
+import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
@@ -36,27 +36,27 @@ public abstract class EconHandler {
 
     /**
      * @deprecated This will be removed in the future,
-     * call {@link IPlotMain#getEconomyHandler()} instead.
+     * call {@link PlotPlatform#getEconomyHandler()} instead.
      */
     @Deprecated @Nullable public static EconHandler manager;
 
     /**
-     * Initialize the economy handler using {@link IPlotMain#getEconomyHandler()}
-     * @deprecated Call {@link #init} instead or use {@link IPlotMain#getEconomyHandler()}
+     * Initialize the economy handler using {@link PlotPlatform#getEconomyHandler()}
+     * @deprecated Call {@link #init} instead or use {@link PlotPlatform#getEconomyHandler()}
      * which does this already.
      */
     @Deprecated public static void initializeEconHandler() {
-        manager = PlotSquared.get().IMP.getEconomyHandler();
+        manager = PlotSquared.platform().getEconomyHandler();
     }
 
     /**
      * Return the econ handler instance, if one exists
      *
      * @return Economy handler instance
-     * @deprecated Call {@link IPlotMain#getEconomyHandler()} instead
+     * @deprecated Call {@link PlotPlatform#getEconomyHandler()} instead
      */
     @Deprecated @Nullable public static EconHandler getEconHandler() {
-        manager = PlotSquared.get().IMP.getEconomyHandler();
+        manager = PlotSquared.platform().getEconomyHandler();
         return manager;
     }
 

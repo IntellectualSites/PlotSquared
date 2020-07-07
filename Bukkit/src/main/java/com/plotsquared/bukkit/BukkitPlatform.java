@@ -59,7 +59,7 @@ import com.plotsquared.bukkit.uuid.OfflinePlayerUUIDService;
 import com.plotsquared.bukkit.uuid.PaperUUIDService;
 import com.plotsquared.bukkit.uuid.SQLiteUUIDService;
 import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
-import com.plotsquared.core.IPlotMain;
+import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.backup.NullBackupManager;
@@ -159,7 +159,7 @@ import static com.plotsquared.core.util.PremiumVerification.getResourceID;
 import static com.plotsquared.core.util.PremiumVerification.getUserID;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
-public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<Player> {
+public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
 
     private static final int BSTATS_ID = 1404;
     @Getter private static WorldEdit worldEdit;
@@ -214,7 +214,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
 
         new PlotSquared(this, "Bukkit");
 
-        if (PlotSquared.get().IMP.getServerVersion()[1] < 13) {
+        if (PlotSquared.platform().getServerVersion()[1] < 13) {
             System.out.println(
                 "You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
             System.out
@@ -267,7 +267,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
 
         final SQLiteUUIDService legacyUUIDService;
         if (Settings.UUID.LEGACY_DATABASE_SUPPORT && MainUtil
-            .getFile(PlotSquared.get().IMP.getDirectory(), "usercache.db").exists()) {
+            .getFile(PlotSquared.platform().getDirectory(), "usercache.db").exists()) {
             legacyUUIDService = new SQLiteUUIDService("usercache.db");
         } else {
             legacyUUIDService = null;
@@ -758,7 +758,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                                         if (currentPlotId != null) {
                                             entity.setMetadata("shulkerPlot",
                                                 new FixedMetadataValue(
-                                                    (Plugin) PlotSquared.get().IMP, currentPlotId));
+                                                    (Plugin) PlotSquared.platform(), currentPlotId));
                                         }
                                     }
                                 }
@@ -884,7 +884,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         if (id != null && id.equalsIgnoreCase("single")) {
             result = new SingleWorldGenerator();
         } else {
-            result = PlotSquared.get().IMP.getDefaultGenerator();
+            result = PlotSquared.platform().getDefaultGenerator();
             if (!PlotSquared.get().setupPlotWorld(worldName, id, result)) {
                 return null;
             }
@@ -983,7 +983,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             }
             return new BukkitPlotGenerator(world, gen);
         } else {
-            return new BukkitPlotGenerator(world, PlotSquared.get().IMP.getDefaultGenerator());
+            return new BukkitPlotGenerator(world, PlotSquared.platform().getDefaultGenerator());
         }
     }
 
@@ -1118,11 +1118,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             return BukkitUtil.getPlayer((OfflinePlayer) player);
         }
         if (player instanceof String) {
-            return (PlotPlayer<Player>) PlotSquared.imp().getPlayerManager()
+            return (PlotPlayer<Player>) PlotSquared.platform().getPlayerManager()
                 .getPlayerIfExists((String) player);
         }
         if (player instanceof UUID) {
-            return (PlotPlayer<Player>) PlotSquared.imp().getPlayerManager()
+            return (PlotPlayer<Player>) PlotSquared.platform().getPlayerManager()
                 .getPlayerIfExists((UUID) player);
         }
         return null;

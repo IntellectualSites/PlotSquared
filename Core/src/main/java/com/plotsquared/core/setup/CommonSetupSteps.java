@@ -59,8 +59,8 @@ public enum CommonSetupSteps implements SetupStep {
                 String prefix = "\n&8 - &7";
                 sendMessage(plotPlayer, Captions.SETUP_WORLD_GENERATOR_ERROR + prefix + StringMan
                         .join(SetupUtils.generators.keySet(), prefix)
-                        .replaceAll(PlotSquared.imp().getPluginName(),
-                                "&2" + PlotSquared.imp().getPluginName()));
+                        .replaceAll(PlotSquared.platform().getPluginName(),
+                                "&2" + PlotSquared.platform().getPluginName()));
                 return this; // invalid input -> same setup step
             }
             builder.generatorName(arg);
@@ -72,7 +72,7 @@ public enum CommonSetupSteps implements SetupStep {
         }
 
         @Nullable @Override public String getDefaultValue() {
-            return PlotSquared.imp().getPluginName();
+            return PlotSquared.platform().getPluginName();
         }
     },
     CHOOSE_PLOT_AREA_TYPE(PlotAreaType.class, Captions.SETUP_WORLD_TYPE) {
@@ -110,7 +110,7 @@ public enum CommonSetupSteps implements SetupStep {
                     SetupUtils.generators.get(builder.plotManager()).getPlotGenerator()
                             .processAreaSetup(builder);
                 } else {
-                    builder.plotManager(PlotSquared.imp().getPluginName());
+                    builder.plotManager(PlotSquared.platform().getPluginName());
                     MainUtil.sendMessage(plotPlayer, Captions.SETUP_WRONG_GENERATOR);
                     builder.settingsNodesWrapper(CommonSetupSteps.wrap(builder.plotManager()));
                     // TODO why is processSetup not called here?

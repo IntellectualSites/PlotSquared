@@ -91,7 +91,7 @@ public final class Backup extends Command {
             final Plot plot = player.getCurrentPlot();
             if (plot != null) {
                 final BackupProfile backupProfile =
-                    Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+                    Objects.requireNonNull(PlotSquared.platform()).getBackupManager().getProfile(plot);
                 if (backupProfile instanceof PlayerBackupProfile) {
                     final CompletableFuture<List<com.plotsquared.core.backup.Backup>> backupList =
                         backupProfile.listBackups();
@@ -136,7 +136,7 @@ public final class Backup extends Command {
             sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
         } else {
             final BackupProfile backupProfile =
-                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+                Objects.requireNonNull(PlotSquared.platform()).getBackupManager().getProfile(plot);
             if (backupProfile instanceof NullBackupProfile) {
                 sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
                     Captions.GENERIC_OTHER.getTranslated());
@@ -176,7 +176,7 @@ public final class Backup extends Command {
             sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
         } else {
             final BackupProfile backupProfile =
-                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+                Objects.requireNonNull(PlotSquared.platform()).getBackupManager().getProfile(plot);
             if (backupProfile instanceof NullBackupProfile) {
                 sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
                     Captions.GENERIC_OTHER.getTranslated());
@@ -238,7 +238,7 @@ public final class Backup extends Command {
                 return;
             }
             final BackupProfile backupProfile =
-                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+                Objects.requireNonNull(PlotSquared.platform()).getBackupManager().getProfile(plot);
             if (backupProfile instanceof NullBackupProfile) {
                 sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
                     Captions.GENERIC_OTHER.getTranslated());

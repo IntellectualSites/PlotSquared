@@ -87,13 +87,13 @@ public class DebugPaste extends SubCommand {
                 b.append("This PlotSquared version is licensed to the spigot user ")
                     .append(PremiumVerification.getUserID()).append("\n\n");
                 b.append("# Server Information\n");
-                b.append("Server Version: ").append(PlotSquared.get().IMP.getServerImplementation())
+                b.append("Server Version: ").append(PlotSquared.platform().getServerImplementation())
                     .append("\n");
                 b.append("online_mode: ").append(!Settings.UUID.OFFLINE).append(';')
                     .append(!Settings.UUID.OFFLINE).append('\n');
                 b.append("Plugins:");
                 for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared
-                    .get().IMP.getPluginIds()) {
+                    .platform().getPluginIds()) {
                     Map.Entry<String, String> nameVersion = pluginInfo.getKey();
                     String name = nameVersion.getKey();
                     String version = nameVersion.getValue();
@@ -129,7 +129,7 @@ public class DebugPaste extends SubCommand {
 
                 try {
                     final File logFile =
-                        new File(PlotSquared.get().IMP.getDirectory(), "../../logs/latest.log");
+                        new File(PlotSquared.platform().getDirectory(), "../../logs/latest.log");
                     if (Files.size(logFile.toPath()) > 14_000_000) {
                         throw new IOException("Too big...");
                     }
@@ -161,7 +161,7 @@ public class DebugPaste extends SubCommand {
                 }
 
                 try {
-                    final File MultiverseWorlds = new File(PlotSquared.get().IMP.getDirectory(),
+                    final File MultiverseWorlds = new File(PlotSquared.platform().getDirectory(),
                         "../Multiverse-Core/worlds.yml");
                     incendoPaster.addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml",
                         readFile(MultiverseWorlds)));

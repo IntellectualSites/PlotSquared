@@ -83,8 +83,8 @@ public class BukkitEconHandler extends EconHandler {
      * @deprecated Use {@link PermHandler#hasPermission(String, String, String)} instead
      */
     @Deprecated @Override public boolean hasPermission(String world, String player, String perm) {
-        if (PlotSquared.imp().getPermissionHandler() != null) {
-            return PlotSquared.imp().getPermissionHandler().hasPermission(world, player, perm);
+        if (PlotSquared.platform().getPermissionHandler() != null) {
+            return PlotSquared.platform().getPermissionHandler().hasPermission(world, player, perm);
         } else {
             return false;
         }

@@ -314,7 +314,7 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(String name) throws UnsupportedFormatException {
         File parent =
-            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+            MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
         if (!parent.exists()) {
             if (!parent.mkdir()) {
                 throw new RuntimeException("Could not create schematic parent directory");
@@ -323,10 +323,10 @@ public abstract class SchematicHandler {
         if (!name.endsWith(".schem") && !name.endsWith(".schematic")) {
             name = name + ".schem";
         }
-        File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+        File file = MainUtil.getFile(PlotSquared.platform().getDirectory(),
             Settings.Paths.SCHEMATICS + File.separator + name);
         if (!file.exists()) {
-            file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+            file = MainUtil.getFile(PlotSquared.platform().getDirectory(),
                 Settings.Paths.SCHEMATICS + File.separator + name);
         }
         return getSchematic(file);
@@ -339,7 +339,7 @@ public abstract class SchematicHandler {
      */
     public Collection<String> getSchematicNames() {
         final File parent =
-            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+            MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
         final List<String> names = new ArrayList<>();
         if (parent.exists()) {
             final String[] rawNames =
@@ -467,7 +467,7 @@ public abstract class SchematicHandler {
             return false;
         }
         try {
-            File tmp = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), path);
+            File tmp = MainUtil.getFile(PlotSquared.platform().getDirectory(), path);
             tmp.getParentFile().mkdirs();
             try (NBTOutputStream nbtStream = new NBTOutputStream(
                 new GZIPOutputStream(new FileOutputStream(tmp)))) {
