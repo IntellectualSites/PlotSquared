@@ -111,7 +111,7 @@ public class Set extends SubCommand {
                                     }
                                 } catch (final Throwable ignored) {
                                 }
-                            } else if (!blockType.contains(forbiddenType)) {
+                            } else if (!blockType.equals(forbiddenType)) {
                                 continue;
                             }
                             Captions.COMPONENT_ILLEGAL_BLOCK.send(player, forbiddenType);
