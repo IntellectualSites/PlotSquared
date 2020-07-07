@@ -34,6 +34,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
@@ -94,6 +95,11 @@ public class HomeCommand extends Command {
         // /plot home <[area;]x;y>
         // /plot home <area> <x;y>
         // /plot home <area> <page>
+        if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions
+                .hasPermission(player, Captions.PERMISSION_HOME)) {
+            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OWNED);
+            return CompletableFuture.completedFuture(false);
+        }
         if (args.length > 2) {
             Captions.COMMAND_SYNTAX.send(player, getUsage());
             return CompletableFuture.completedFuture(false);
