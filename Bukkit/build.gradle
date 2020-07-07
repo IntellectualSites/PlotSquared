@@ -36,7 +36,9 @@ dependencies {
     }
     implementation("me.clip:placeholderapi:2.10.6")
     implementation("net.luckperms:api:5.1")
-    implementation("net.ess3:EssentialsX:2.17.2")
+    implementation("net.ess3:EssentialsX:2.17.2") {
+        exclude(group: "io.papermc", module: "paperlib")
+    }
     implementation("net.alpenblock:BungeePerms:4.0-dev-106")
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile('com.sk89q:squirrelid:1.0.0-SNAPSHOT'){ transitive = false }
