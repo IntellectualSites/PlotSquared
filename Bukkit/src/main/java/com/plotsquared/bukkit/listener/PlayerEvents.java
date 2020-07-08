@@ -1864,8 +1864,8 @@ public class PlayerEvents extends PlotListener implements Listener {
         Plot plot = location.getPlotAbs();
         BukkitPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
-            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class)
-                && !Permissions.hasPermission(pp, "plots.admin.interact.road")) {
+            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class) && !Permissions
+                .hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
             }
@@ -2601,8 +2601,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                     Captions.PERMISSION_ADMIN_INTERACT_UNOWNED);
                 event.setCancelled(true);
             }
-        } else if ((plot != null && !plot.isAdded(pp.getUUID())) || area
-            .isRoadFlags()) {
+        } else if ((plot != null && !plot.isAdded(pp.getUUID())) || (plot == null && area
+            .isRoadFlags())) {
             final Entity entity = event.getRightClicked();
             final com.sk89q.worldedit.world.entity.EntityType entityType =
                 BukkitAdapter.adapt(entity.getType());
