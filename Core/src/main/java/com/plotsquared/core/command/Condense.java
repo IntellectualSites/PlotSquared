@@ -80,7 +80,8 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
-                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots(area));
+
+                final List<Plot> plots = new ArrayList<>(area.getPlots());
                 // remove non base plots
                 Iterator<Plot> iterator = plots.iterator();
                 int maxSize = 0;

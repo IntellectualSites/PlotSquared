@@ -173,7 +173,7 @@ public class TabCompletions {
      */
     @NotNull public List<Command> completeAreas(@NotNull final String input) {
         final List<Command> completions = new ArrayList<>();
-        for (final PlotArea area : PlotSquared.get().getPlotAreas()) {
+        for (final PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
             String areaName = area.getWorldName();
             if (area.getId() != null) {
                 areaName += ";" + area.getId();

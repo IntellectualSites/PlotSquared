@@ -49,14 +49,12 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.listener.WESubscriber;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotCluster;
-import com.plotsquared.core.plot.PlotFilter;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.comment.CommentManager;
@@ -88,7 +86,6 @@ import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,25 +114,21 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
  * An implementation of the core, with a static getter for easy access.
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"WeakerAccess"})
 public class PlotSquared<P> {
 
     private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
@@ -481,18 +474,6 @@ public class PlotSquared<P> {
         return Settings.PLATFORM;
     }
 
-    public PlotManager getPlotManager(Plot plot) {
-        return plot.getArea().getPlotManager();
-    }
-
-    @Nullable public PlotManager getPlotManager(@NotNull final Location location) {
-        final PlotArea plotArea = this.getPlotAreaManager().getPlotArea(location);
-        if (plotArea == null) {
-            return null;
-        }
-        return plotArea.getPlotManager();
-    }
-
     /**
      * Add a global reference to a plot world.
      *
@@ -826,7 +807,7 @@ public class PlotSquared<P> {
         // group by world
         // sort each
         HashMap<PlotArea, Collection<Plot>> map = new HashMap<>();
-        int totalSize = getPlotCount();
+        int totalSize = Arrays.stream(this.plotAreaManager.getAllPlotAreas()).mapToInt(PlotArea::getPlotCount).sum();
         if (plots.size() == totalSize) {
             for (PlotArea area : plotAreaManager.getAllPlotAreas()) {
                 map.put(area, area.getPlots());
@@ -880,45 +861,6 @@ public class PlotSquared<P> {
         return toReturn;
     }
 
-    /**
-     * A more generic way to filter plots - make your own method
-     * if you need complex filters.
-     *
-     * @param filters the filter
-     * @return a filtered set of plots
-     * @deprecated Use {@link PlotQuery}
-     */
-    @Deprecated public Set<Plot> getPlots(final PlotFilter... filters) {
-        final List<PlotArea> areas = new LinkedList<>();
-        for (final PlotArea plotArea : this.getPlotAreaManager().getAllPlotAreas()) {
-            for (final PlotFilter filter : filters) {
-                if (filter.allowsArea(plotArea)) {
-                    areas.add(plotArea);
-                }
-            }
-        }
-        return PlotQuery.newQuery().inAreas(areas).thatPasses(plot -> {
-            for (final PlotFilter filter : filters) {
-                if (!filter.allowsPlot(plot)) {
-                    return false;
-                }
-            }
-            return true;
-        }).asSet();
-    }
-
-    /**
-     * Gets all the plots across all plotworlds in one {@code Set}.
-     *
-     * @return all the plots on the server loaded by this plugin
-     */
-    public Set<Plot> getPlots() {
-        int size = getPlotCount();
-        final Set<Plot> result = new HashSet<>(size);
-        forEachPlotArea(value -> result.addAll(value.getPlots()));
-        return result;
-    }
-
     public void setPlots(@NotNull final Map<String, HashMap<PlotId, Plot>> plots) {
         if (this.plots_tmp == null) {
             this.plots_tmp = new HashMap<>();
@@ -936,129 +878,6 @@ public class PlotSquared<P> {
                 }
             }
         }
-    }
-
-    /**
-     * Gets all the plots owned by a player name.
-     *
-     * @param world  the world
-     * @param player the plot owner
-     * @return Set of Plot
-     */
-    public Set<Plot> getPlots(String world, String player) {
-        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, Settings.UUID.BLOCKING_TIMEOUT);
-        return getPlots(world, uuid);
-    }
-
-    /**
-     * Gets all the plots owned by a player name.
-     *
-     * @param area   the PlotArea
-     * @param player the plot owner
-     * @return Set of Plot
-     */
-    public Set<Plot> getPlots(PlotArea area, String player) {
-        final UUID uuid = this.impromptuUUIDPipeline.getSingle(player, Settings.UUID.BLOCKING_TIMEOUT);
-        return getPlots(area, uuid);
-    }
-
-    /**
-     * Gets all plots by a PlotPlayer.
-     *
-     * @param world  the world
-     * @param player the plot owner
-     * @return Set of plot
-     */
-    public Set<Plot> getPlots(String world, PlotPlayer<?> player) {
-        return PlotQuery.newQuery().inWorld(world).ownedBy(player).asSet();
-    }
-
-    /**
-     * Gets all plots by a PlotPlayer.
-     *
-     * @param area   the PlotArea
-     * @param player the plot owner
-     * @return Set of plot
-     */
-    public Set<Plot> getPlots(PlotArea area, PlotPlayer<?> player) {
-        return PlotQuery.newQuery().inArea(area).ownedBy(player).asSet();
-    }
-
-    /**
-     * Gets all plots by a UUID in a world.
-     *
-     * @param world the world
-     * @param uuid  the plot owner
-     * @return Set of plot
-     */
-    public Set<Plot> getPlots(String world, UUID uuid) {
-        return PlotQuery.newQuery().inWorld(world).ownedBy(uuid).asSet();
-    }
-
-    /**
-     * Gets all plots by a UUID in an area.
-     *
-     * @param area the {@code PlotArea}
-     * @param uuid the plot owner
-     * @return Set of plots
-     */
-    public Set<Plot> getPlots(PlotArea area, UUID uuid) {
-        return PlotQuery.newQuery().inArea(area).ownedBy(uuid).asSet();
-    }
-
-    public Collection<Plot> getPlots(String world) {
-        return PlotQuery.newQuery().inWorld(world).asCollection();
-    }
-
-    /**
-     * Gets the plots for a PlotPlayer.
-     *
-     * @param player the player to retrieve the plots for
-     * @return Set of Plot
-     */
-    public Set<Plot> getPlots(PlotPlayer<?> player) {
-        return PlotQuery.newQuery().ownedBy(player).asSet();
-    }
-
-    public Collection<Plot> getPlots(PlotArea area) {
-        return area == null ? EMPTY_SET : area.getPlots();
-    }
-
-    public Plot getPlot(PlotArea area, PlotId id) {
-        return area == null ? null : id == null ? null : area.getPlot(id);
-    }
-
-    public Set<Plot> getBasePlots(PlotPlayer<?> player) {
-        return getBasePlots(player.getUUID());
-    }
-
-    /**
-     * Gets the plots for a UUID.
-     *
-     * @param uuid the plot owner
-     * @return Set of Plot's owned by the player
-     */
-    public Set<Plot> getPlots(final UUID uuid) {
-        return PlotQuery.newQuery().ownedBy(uuid).asSet();
-    }
-
-    public boolean hasPlot(final UUID uuid) {
-        return Arrays.stream(plotAreaManager.getAllPlotAreas())
-            .anyMatch(area -> area.hasPlot(uuid));
-    }
-
-    public Set<Plot> getBasePlots(final UUID uuid) {
-        return PlotQuery.newQuery().ownedBy(uuid).whereBasePlot().asSet();
-    }
-
-    /**
-     * Gets the plots for a UUID.
-     *
-     * @param uuid the UUID of the owner
-     * @return Set of Plot
-     */
-    public Set<Plot> getPlotsAbs(final UUID uuid) {
-        return PlotQuery.newQuery().ownedBy(uuid).asSet();
     }
 
     /**
@@ -1464,17 +1283,6 @@ public class PlotSquared<P> {
         return true;
     }
 
-    public boolean canUpdate(@NonNull final String current, @NonNull final String other) {
-        final String s1 = normalisedVersion(current);
-        final String s2 = normalisedVersion(other);
-        return s1.compareTo(s2) < 0;
-    }
-
-    public String normalisedVersion(@NonNull final String version) {
-        final String[] split = Pattern.compile(".", Pattern.LITERAL).split(version);
-        return Arrays.stream(split).map(s -> String.format("%4s", s)).collect(Collectors.joining());
-    }
-
     /**
      * Copies a file from inside the jar to a location
      *
@@ -1528,19 +1336,6 @@ public class PlotSquared<P> {
             e.printStackTrace();
             PlotSquared.log("&cCould not save " + file);
         }
-    }
-
-    private Map<String, Map<PlotId, Plot>> getPlotsRaw() {
-        HashMap<String, Map<PlotId, Plot>> map = new HashMap<>();
-        for (PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            Map<PlotId, Plot> map2 = map.get(area.toString());
-            if (map2 == null) {
-                map.put(area.toString(), area.getPlotsMap());
-            } else {
-                map2.putAll(area.getPlotsMap());
-            }
-        }
-        return map;
     }
 
     /**
@@ -1885,37 +1680,6 @@ public class PlotSquared<P> {
         }
     }
 
-    /**
-     * Gets the Java version.
-     *
-     * @return the java version
-     */
-    private double getJavaVersion() {
-        return Double.parseDouble(System.getProperty("java.specification.version"));
-    }
-
-    public void forEachPlotArea(Consumer<? super PlotArea> action) {
-        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            action.accept(area);
-        }
-    }
-
-    public void forEachPlotArea(@NonNull final String world, Consumer<PlotArea> consumer) {
-        final PlotArea[] array = this.plotAreaManager.getPlotAreas(world, null);
-        if (array == null) {
-            return;
-        }
-        for (final PlotArea area : array) {
-            consumer.accept(area);
-        }
-    }
-
-    public void forEachPlot(Consumer<Plot> consumer) {
-        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.getPlots().forEach(consumer);
-        }
-    }
-
     public void forEachPlotRaw(Consumer<Plot> consumer) {
         for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
             area.getPlots().forEach(consumer);
@@ -1925,21 +1689,6 @@ public class PlotSquared<P> {
                 entry.values().forEach(consumer);
             }
         }
-    }
-
-    public void forEachBasePlot(Consumer<Plot> consumer) {
-        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-            area.forEachBasePlot(consumer);
-        }
-    }
-
-    public int getPlotAreaCount() {
-        return this.plotAreaManager.getAllPlotAreas().length;
-    }
-
-    public int getPlotCount() {
-        return Arrays.stream(this.plotAreaManager.getAllPlotAreas())
-            .mapToInt(PlotArea::getPlotCount).sum();
     }
 
     /**
@@ -1957,23 +1706,6 @@ public class PlotSquared<P> {
             return true;
         }
         return area.getTerrain() != PlotAreaTerrainType.NONE;
-    }
-
-    public boolean isAugmented(@NonNull final String world) {
-        final PlotArea[] areas = plotAreaManager.getPlotAreas(world, null);
-        return areas != null && (areas.length > 1 || areas[0].getType() != PlotAreaType.NORMAL);
-    }
-
-    /**
-     * Gets Plots based on alias
-     *
-     * @param alias     to search plots
-     * @param worldname to filter alias to a specific world [optional] null means all worlds
-     * @return Set&lt;{@link Plot }&gt; empty if nothing found
-     */
-    public Set<Plot> getPlotsByAlias(@Nullable final String alias,
-        @NonNull final String worldname) {
-        return PlotQuery.newQuery().inWorld(worldname).withAlias(alias).asSet();
     }
 
     public YamlConfiguration getConfig() {

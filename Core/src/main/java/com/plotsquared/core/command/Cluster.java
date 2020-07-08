@@ -39,8 +39,8 @@ import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.query.PlotQuery;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -453,8 +453,8 @@ public class Cluster extends SubCommand {
                                     MainUtil.sendMessage(player2, Captions.CLUSTER_REMOVED,
                                         cluster.getName());
                                 }
-                                for (Plot plot : new ArrayList<>(PlotSquared.get()
-                                    .getPlots(player2.getLocation().getWorld(), uuid))) {
+                                for (final Plot plot : PlotQuery.newQuery().inWorld(player2.getLocation()
+                                    .getWorld()).ownedBy(uuid).asCollection()) {
                                     PlotCluster current = plot.getCluster();
                                     if (current != null && current.equals(cluster)) {
                                         plot.unclaim();
@@ -512,8 +512,8 @@ public class Cluster extends SubCommand {
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
                 MainUtil.sendMessage(player, Captions.CLUSTER_REMOVED, cluster.getName());
-                for (Plot plot : new ArrayList<>(
-                    PlotSquared.get().getPlots(player.getLocation().getWorld(), uuid))) {
+                for (final Plot plot : PlotQuery.newQuery().inWorld(player.getLocation().getWorld())
+                    .ownedBy(uuid).asCollection()) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {
                         plot.unclaim();

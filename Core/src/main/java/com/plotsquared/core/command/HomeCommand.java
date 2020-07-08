@@ -132,7 +132,7 @@ public class HomeCommand extends Command {
                 break;
             case 2:
                 // we assume args[0] is a plot area and args[1] an identifier
-                PlotArea plotArea = PlotSquared.get().getPlotAreaByString(args[0]);
+                PlotArea plotArea = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
                 identifier = args[1];
                 if (plotArea == null) {
                     // invalid command, therefore no plots

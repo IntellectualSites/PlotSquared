@@ -33,6 +33,7 @@ import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.entity.EntityCategory;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
@@ -119,7 +120,7 @@ public class Debug extends SubCommand {
         information.append(getSection(section, "PlotArea"));
         information.append(
             getLine(line, "Plot Worlds", StringMan.join(PlotSquared.get().getPlotAreaManager().getAllPlotAreas(), ", ")));
-        information.append(getLine(line, "Owned Plots", PlotSquared.get().getPlots().size()));
+        information.append(getLine(line, "Owned Plots", PlotQuery.newQuery().allPlots().count()));
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", Captions.values().length));
         information.append(getLine(line, "View all captions", "/plot debug msg"));

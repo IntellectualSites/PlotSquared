@@ -51,7 +51,7 @@ public class Reload extends SubCommand {
             // loaded during startup unfortunately.
             PlotSquared.get().setupConfigs();
             Captions.load(PlotSquared.get().translationFile);
-            PlotSquared.get().forEachPlotArea(area -> {
+            PlotSquared.get().getPlotAreaManager().forEachPlotArea(area -> {
                 ConfigurationSection worldSection = PlotSquared.get().worlds
                     .getConfigurationSection("worlds." + area.getWorldName());
                 if (worldSection == null) {

@@ -44,6 +44,7 @@ import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
@@ -295,7 +296,7 @@ public class ExpireManager {
         }
         this.running = 2;
         final ConcurrentLinkedDeque<Plot> plots =
-            new ConcurrentLinkedDeque<>(PlotSquared.get().getPlots());
+            new ConcurrentLinkedDeque<>(PlotQuery.newQuery().allPlots().asList());
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 final Runnable task = this;

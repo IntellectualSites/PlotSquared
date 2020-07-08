@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -374,6 +375,25 @@ public final class PlotQuery {
      */
     @NotNull public Collection<Plot> asCollection() {
         return this.asList();
+    }
+
+    /**
+     * Perform an action on each plot returned by the query
+     *
+     * @param consumer Plot consumer
+     */
+    public void forEach(@NotNull final Consumer<Plot> consumer) {
+        Preconditions.checkNotNull(consumer, "Consumer may not be null");
+        this.asCollection().forEach(consumer);
+    }
+
+    /**
+     * Get the amount of plots contained in the query result
+     *
+     * @return Result count
+     */
+    public int count() {
+        return this.asList().size();
     }
 
     /**

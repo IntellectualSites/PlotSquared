@@ -47,6 +47,7 @@ import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -67,7 +68,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
@@ -270,7 +270,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
-        PlotSquared.get().forEachPlotArea(value -> {
+        PlotSquared.get().getPlotAreaManager().forEachPlotArea(value -> {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 for (Plot plot : value.getPlotsAbs(uuid)) {
                     if (!DoneFlag.isDone(plot)) {
@@ -289,7 +289,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
             return getClusterCount(getLocation().getWorld());
         }
         final AtomicInteger count = new AtomicInteger(0);
-        PlotSquared.get().forEachPlotArea(value -> {
+        PlotSquared.get().getPlotAreaManager().forEachPlotArea(value -> {
             for (PlotCluster cluster : value.getClusters()) {
                 if (cluster.isOwner(getUUID())) {
                     count.incrementAndGet();
@@ -340,7 +340,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @see #getPlotCount() for the number of plots
      */
     public Set<Plot> getPlots() {
-        return PlotSquared.get().getPlots(this);
+        return PlotQuery.newQuery().ownedBy(this).asSet();
     }
 
     /**
@@ -614,7 +614,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     public int getPlayerClusterCount() {
         final AtomicInteger count = new AtomicInteger();
-        PlotSquared.get().forEachPlotArea(value -> count.addAndGet(value.getClusters().size()));
+        PlotSquared.get().getPlotAreaManager().forEachPlotArea(value -> count.addAndGet(value.getClusters().size()));
         return count.get();
     }
 
@@ -625,9 +625,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @return a {@code Set} of plots this player owns in the provided world
      */
     public Set<Plot> getPlots(String world) {
-        UUID uuid = getUUID();
-        return PlotSquared.get().getPlots(world).stream().filter(plot -> plot.isOwner(uuid))
-            .collect(Collectors.toCollection(HashSet::new));
+        return PlotQuery.newQuery().inWorld(world).ownedBy(getUUID()).asSet();
     }
 
     public void populatePersistentMetaMap() {

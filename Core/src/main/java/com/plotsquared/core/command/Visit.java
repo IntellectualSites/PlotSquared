@@ -198,7 +198,7 @@ public class Visit extends Command {
                         if (throwable instanceof TimeoutException) {
                             // The request timed out
                             MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
-                        } else if (uuid != null && !PlotSquared.get().hasPlot(uuid)) {
+                        } else if (uuid != null && !PlotQuery.newQuery().ownedBy(uuid).anyMatch()) {
                             // It was a valid UUID but the player has no plots
                             MainUtil.sendMessage(player, Captions.PLAYER_NO_PLOTS);
                         } else if (uuid == null) {

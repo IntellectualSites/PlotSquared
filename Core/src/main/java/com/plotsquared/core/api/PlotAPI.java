@@ -38,6 +38,7 @@ import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.query.PlotQuery;
 import lombok.NoArgsConstructor;
 
 import java.util.Collections;
@@ -64,10 +65,9 @@ import java.util.UUID;
      * Gets all plots.
      *
      * @return all plots
-     * @see PlotSquared#getPlots()
      */
     public Set<Plot> getAllPlots() {
-        return PlotSquared.get().getPlots();
+        return PlotQuery.newQuery().allPlots().asSet();
     }
 
     /**
@@ -76,8 +76,8 @@ import java.util.UUID;
      * @param player Player, whose plots to search for
      * @return all plots that a player owns
      */
-    public Set<Plot> getPlayerPlots(PlotPlayer player) {
-        return PlotSquared.get().getPlots(player);
+    public Set<Plot> getPlayerPlots(PlotPlayer<?> player) {
+        return PlotQuery.newQuery().ownedBy(player).asSet();
     }
 
     /**

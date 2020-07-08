@@ -623,7 +623,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override @SuppressWarnings("deprecation") public void runEntityTask() {
         PlotSquared.log(Captions.PREFIX + "KillAllEntities started.");
-        TaskManager.runTaskRepeat(() -> PlotSquared.get().forEachPlotArea(plotArea -> {
+        TaskManager.runTaskRepeat(() -> PlotSquared.get().getPlotAreaManager().forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.getWorldName());
             try {
                 if (world == null) {

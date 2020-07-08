@@ -25,13 +25,13 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.query.PlotQuery;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @CommandDeclaration(command = "debugsavetest",
     permission = "plots.debugsavetest",
@@ -42,7 +42,7 @@ import java.util.ArrayList;
 public class DebugSaveTest extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
+        final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
         MainUtil.sendMessage(player, "&6Starting `DEBUGSAVETEST`");
         DBFunc.createPlotsAndData(plots,
             () -> MainUtil.sendMessage(player, "&6Database sync finished!"));

@@ -27,14 +27,17 @@ package com.plotsquared.core.plot.world;
 
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public interface PlotAreaManager {
 
@@ -198,6 +201,28 @@ public interface PlotAreaManager {
      */
     default boolean hasPlotArea(@NotNull final String world) {
         return this.getPlotAreas(world, null).length != 0;
+    }
+
+    /**
+     * Check if a given world is an augmented plot world
+     *
+     * @param world World name
+     * @return {@code true} if the world is augmented plot world, {@code false} if not
+     */
+    default boolean isAugmented(@NonNull final String world) {
+        final PlotArea[] areas = this.getPlotAreas(world, null);
+        return areas != null && (areas.length > 1 || areas[0].getType() != PlotAreaType.NORMAL);
+    }
+
+    /**
+     * Perform an action on each recognized plot area
+     *
+     * @param action Action to perform
+     */
+    default void forEachPlotArea(@NotNull final Consumer<? super PlotArea> action) {
+        for (final PlotArea area : this.getAllPlotAreas()) {
+            action.accept(area);
+        }
     }
 
 }

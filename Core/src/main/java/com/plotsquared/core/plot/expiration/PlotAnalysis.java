@@ -31,6 +31,7 @@ import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 
@@ -101,7 +102,7 @@ public class PlotAnalysis {
         }
         running = true;
         PlotSquared.debug(" - Fetching all plots");
-        final ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
+        final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 Iterator<Plot> iterator = plots.iterator();

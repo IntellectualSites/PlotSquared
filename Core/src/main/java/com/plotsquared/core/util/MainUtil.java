@@ -47,6 +47,7 @@ import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.util.net.AbstractDelegateOutputStream;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
@@ -472,7 +473,7 @@ public class MainUtil {
 
         PlotArea area = null;
         String alias = null;
-        for (Plot plot : PlotSquared.get().getPlots()) {
+        for (Plot plot : PlotQuery.newQuery().allPlots().asList()) {
             int count = 0;
             if (!uuids.isEmpty()) {
                 for (UUID uuid : uuids) {
@@ -516,7 +517,7 @@ public class MainUtil {
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
      */
-    @Nullable public static Plot getPlotFromString(PlotPlayer player, String arg, boolean message) {
+    @Nullable public static Plot getPlotFromString(PlotPlayer<?> player, String arg, boolean message) {
         if (arg == null) {
             if (player == null) {
                 if (message) {
@@ -548,7 +549,7 @@ public class MainUtil {
         } else {
             Collection<Plot> plots;
             if (area == null) {
-                plots = PlotSquared.get().getPlots();
+                plots = PlotQuery.newQuery().allPlots().asList();
             } else {
                 plots = area.getPlots();
             }

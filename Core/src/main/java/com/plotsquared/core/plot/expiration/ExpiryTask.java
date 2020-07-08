@@ -29,10 +29,12 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotFilter;
+import com.plotsquared.core.util.query.PlotQuery;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -119,11 +121,13 @@ public class ExpiryTask {
     }
 
     public Set<Plot> getPlotsToCheck() {
-        return PlotSquared.get().getPlots(new PlotFilter() {
-            @Override public boolean allowsArea(PlotArea area) {
-                return ExpiryTask.this.allowsArea(area);
+        final Collection<PlotArea> areas = new LinkedList<>();
+        for (final PlotArea plotArea : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
+            if (this.allowsArea(plotArea)) {
+                areas.add(plotArea);
             }
-        });
+        }
+        return PlotQuery.newQuery().inAreas(areas).asSet();
     }
 
     public boolean applies(long diff) {

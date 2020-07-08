@@ -27,13 +27,20 @@ package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 class GlobalPlotProvider implements PlotProvider {
 
     @Override public Collection<Plot> getPlots() {
-        return PlotSquared.get().getPlots();
+        final Set<Plot> plots = new HashSet<>();
+        for (final PlotArea plotArea : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
+            plots.addAll(plotArea.getPlots());
+        }
+        return plots;
     }
 
 }

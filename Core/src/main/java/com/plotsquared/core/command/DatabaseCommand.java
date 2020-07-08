@@ -37,6 +37,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 
 import java.io.File;
@@ -85,7 +86,7 @@ public class DatabaseCommand extends SubCommand {
             plots = PlotSquared.get().sortPlotsByTemp(area.getPlots());
             args = Arrays.copyOfRange(args, 1, args.length);
         } else {
-            plots = PlotSquared.get().sortPlotsByTemp(PlotSquared.get().getPlots());
+            plots = PlotSquared.get().sortPlotsByTemp(PlotQuery.newQuery().allPlots().asList());
         }
         if (args.length < 1) {
             MainUtil.sendMessage(player, getUsage());

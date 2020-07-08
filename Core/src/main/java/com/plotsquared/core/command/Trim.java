@@ -37,6 +37,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.TaskManager;
@@ -52,6 +53,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 @CommandDeclaration(command = "trim",
@@ -129,7 +131,7 @@ public class Trim extends SubCommand {
             return false;
         }
         MainUtil.sendMessage(null, "Collecting region data...");
-        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots(world));
+        final List<Plot> plots = PlotQuery.newQuery().inWorld(world).asList();
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
@@ -206,7 +208,7 @@ public class Trim extends SubCommand {
                             int bz = cbz << 4;
                             CuboidRegion region =
                                 RegionUtil.createRegion(bx, bx + 511, bz, bz + 511);
-                            for (Plot plot : PlotSquared.get().getPlots(world)) {
+                            for (Plot plot : PlotQuery.newQuery().inWorld(world).asCollection()) {
                                 Location bot = plot.getBottomAbs();
                                 Location top = plot.getExtendedTopAbs();
                                 CuboidRegion plotReg = RegionUtil
