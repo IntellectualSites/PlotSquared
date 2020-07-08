@@ -84,7 +84,7 @@ public class HomeCommand extends Command {
 
     @NotNull private PlotQuery query(@NotNull final PlotPlayer<?> player) {
         // everything plots need to have in common here
-        return PlotQuery.newQuery().ownedBy(player).whereBasePlot();
+        return PlotQuery.newQuery().ownedBy(player);
     }
 
     @Override public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
@@ -107,6 +107,7 @@ public class HomeCommand extends Command {
         PlotQuery query = query(player);
         int page = 1; // page = index + 1
         String identifier;
+        boolean basePlotOnly = true;
         switch (args.length) {
             case 1:
                 identifier = args[0];
@@ -124,6 +125,7 @@ public class HomeCommand extends Command {
                 Plot fromId = MainUtil.getPlotFromString(player, identifier, false);
                 if (fromId != null && fromId.isOwner(player.getUUID())) {
                     // it was a valid plot id
+                    basePlotOnly = false;
                     query.withPlot(fromId);
                     break;
                 }
@@ -165,11 +167,15 @@ public class HomeCommand extends Command {
                     break;
                 }
                 // as the query already filters by owner, this is fine
+                basePlotOnly = false;
                 query.withPlot(plot);
                 break;
             case 0:
                 query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
                 break;
+        }
+        if (basePlotOnly) {
+            query.whereBasePlot();
         }
         home(player, query, page, confirm, whenDone);
         return CompletableFuture.completedFuture(true);
