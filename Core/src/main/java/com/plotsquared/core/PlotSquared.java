@@ -1779,6 +1779,7 @@ public class PlotSquared {
             }
             this.style = YamlConfiguration.loadConfiguration(this.styleFile);
             setupStyle();
+            this.style.save(this.styleFile);
         } catch (IOException err) {
             err.printStackTrace();
             PlotSquared.log("Failed to save style.yml");
