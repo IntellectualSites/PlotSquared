@@ -39,16 +39,15 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
+import com.sk89q.worldedit.LocalConfiguration;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.function.pattern.Pattern;
-import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockType;
-import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -82,42 +81,37 @@ public class Set extends SubCommand {
                 String material =
                     StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
 
-                final List<String> forbiddenTypes = new ArrayList<>(Settings.General.INVALID_BLOCKS);
+                final java.util.Set<String> forbiddenTypes = new HashSet<>();
+
+                for (String invalidType : Settings.General.INVALID_BLOCKS) {
+                    if (!invalidType.contains(":")) {
+                        // prefix with "minecraft:", so WorldEdit pattern
+                        // parsers correctly match against disallowed blocks set
+                        invalidType = "minecraft:" + invalidType;
+                    }
+                    forbiddenTypes.add(invalidType);
+                }
 
                 if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                     forbiddenTypes.addAll(WorldUtil.IMP.getTileEntityTypes().stream().map(
-                        BlockType::getName).collect(Collectors.toList()));
+                        BlockType::getId).collect(Collectors.toList()));
                 }
+
+                LocalConfiguration worldEditConfig = WorldEdit.getInstance().getConfiguration();
+                java.util.Set<String> worldEditDisallowedBlocks = worldEditConfig.disallowedBlocks;
 
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_ALLOW_UNSAFE) &&
                     !forbiddenTypes.isEmpty()) {
-                    for (String forbiddenType : forbiddenTypes) {
-                        forbiddenType = forbiddenType.toLowerCase(Locale.ENGLISH);
-                        if (forbiddenType.startsWith("minecraft:")) {
-                            forbiddenType = forbiddenType.substring(10);
-                        }
-                        for (String blockType : material.split(",")) {
-                            blockType = blockType.toLowerCase(Locale.ENGLISH);
-                            if (blockType.startsWith("minecraft:")) {
-                                blockType = blockType.substring(10);
-                            }
+                    // Swap out disallowed blocks for ours, so the WorldEdit
+                    // pattern parsers know which blocks to disallow
+                    worldEditConfig.disallowedBlocks = forbiddenTypes;
+                }
 
-                            if (blockType.startsWith("##")) {
-                                try {
-                                    final BlockCategory category = BlockCategory.REGISTRY.get(blockType.substring(2)
-                                        .replaceAll("[*^|]+", "").toLowerCase(Locale.ENGLISH));
-                                    if (category == null || !category.contains(BlockTypes.get(forbiddenType))) {
-                                        continue;
-                                    }
-                                } catch (final Throwable ignored) {
-                                }
-                            } else if (!blockType.equals(forbiddenType)) {
-                                continue;
-                            }
-                            Captions.COMPONENT_ILLEGAL_BLOCK.send(player, forbiddenType);
-                            return true;
-                        }
-                    }
+                Pattern pattern;
+                try {
+                    pattern = PatternUtil.parse(player, material, false);
+                } finally {
+                    worldEditConfig.disallowedBlocks = worldEditDisallowedBlocks;
                 }
 
                 for (String component : components) {
@@ -134,8 +128,6 @@ public class Set extends SubCommand {
                             MainUtil.sendMessage(player, Captions.NEED_BLOCK);
                             return true;
                         }
-
-                        Pattern pattern = PatternUtil.parse(player, material, false);
 
                         if (plot.getRunning() > 0) {
                             MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
