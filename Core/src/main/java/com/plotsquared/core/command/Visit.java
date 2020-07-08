@@ -40,12 +40,11 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.uuid.UUIDMapping;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -54,8 +53,8 @@ import java.util.concurrent.TimeoutException;
 @CommandDeclaration(command = "visit",
     permission = "plots.visit",
     description = "Visit someones plot",
-    usage = "/plot visit [<player>|<alias>|<world>|<id>] [#]",
-    aliases = {"v", "tp", "teleport", "goto", "home", "h", "warp"},
+    usage = "/plot visit <player>|<alias>|<plot> [area]|[#] [#]",
+    aliases = {"v", "tp", "teleport", "goto", "warp"},
     requiredType = RequiredType.PLAYER,
     category = CommandCategory.TELEPORT)
 public class Visit extends Command {
@@ -153,9 +152,9 @@ public class Visit extends Command {
         int page = Integer.MIN_VALUE;
 
         switch (args.length) {
-            // /p v [...] [...] <page>
+            // /p v <user> <area> <page>
             case 3:
-                if (!MathMan.isInteger(args[1])) {
+                if (!MathMan.isInteger(args[2])) {
                     Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                     Captions.COMMAND_SYNTAX.send(player, getUsage());
                     return CompletableFuture.completedFuture(false);
@@ -188,24 +187,13 @@ public class Visit extends Command {
                 }
                 page = Integer.parseInt(args[1]);
             // /p v <name> [page]
-            // /p v <page> [page]
             // /p v <uuid> [page]
             // /p v <plot> [page]
+            // /p v <alias>
             case 1:
                 final String[] finalArgs = args;
                 int finalPage = page;
-                // Try to determine whether the given argument is a username
-                // or an ordinal
-                boolean isNumber = false;
-                if (args[0].length() < 2) {
-                    isNumber = true;
-                } else if (args[0].length() <= 4 && MathMan.isInteger(args[0])) {
-                    // Check if it's an all-digit username that is stored in cache
-                    final UUIDMapping mapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(args[0]);
-                    // If no UUID could be found, then we assume it's a number and not a username
-                    isNumber = mapping == null;
-                }
-                if (!isNumber && args[0].length() >= 2 && !args[0].contains(";") && !args[0].contains(",")) {
+                if (args[0].length() >= 2 && !args[0].contains(";") && !args[0].contains(",")) {
                     PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
                             // The request timed out
@@ -214,79 +202,61 @@ public class Visit extends Command {
                             // It was a valid UUID but the player has no plots
                             MainUtil.sendMessage(player, Captions.PLAYER_NO_PLOTS);
                         } else if (uuid == null) {
-                            if (finalPage == Integer.MIN_VALUE && MathMan.isInteger(finalArgs[0])) {
-                                // The argument was a number, so we assume it's the page number
-                                int parsedPage;
-                                try {
-                                    parsedPage = Integer.parseInt(finalArgs[0]);
-                                } catch (final Throwable t) {
-                                    MainUtil.sendMessage(player, Captions.NOT_A_NUMBER, finalArgs[0]);
-                                    return;
-                                }
-                                this.visit(player, PlotQuery.newQuery().ownedBy(player).whereBasePlot(), null,
-                                    confirm, whenDone, parsedPage);
+                            // player not found, so we assume it's an alias if no page was provided
+                            if (finalPage == Integer.MIN_VALUE) {
+                                this.visit(player, PlotQuery.newQuery().withAlias(finalArgs[0]), player.getApplicablePlotArea(), confirm, whenDone, 1);
                             } else {
-                                // Try to parse a plot
-                                final Plot plot = MainUtil.getPlotFromString(player, finalArgs[0], true);
-                                if (plot == null) {
-                                    MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
-                                    return;
-                                }
-                                this.visit(player, PlotQuery.newQuery().withPlot(plot), null, confirm, whenDone, 1);
+                                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, finalArgs[0]);
                             }
                         } else {
                             this.visit(player, PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(), null, confirm, whenDone, finalPage);
                         }
                     });
                 } else {
-                    if (finalPage == Integer.MIN_VALUE && MathMan.isInteger(finalArgs[0])) {
-                        // The argument was a number, so we assume it's the page number
-                        int parsedPage;
-                        try {
-                            parsedPage = Integer.parseInt(finalArgs[0]);
-                            this.visit(player, PlotQuery.newQuery().ownedBy(player).whereBasePlot(), null, confirm,
-                                whenDone, parsedPage);
-                        } catch (final Throwable throwable) {
-                            MainUtil.sendMessage(player, Captions.NOT_A_NUMBER, finalArgs[0]);
-                        }
-                    } else {
-                        // Try to parse a plot
-                        final Plot plot = MainUtil.getPlotFromString(player, finalArgs[0], true);
-                        if (plot != null) {
-                            this.visit(player, PlotQuery.newQuery().withPlot(plot), null, confirm, whenDone, 1);
-                        }
+                    // Try to parse a plot
+                    final Plot plot = MainUtil.getPlotFromString(player, finalArgs[0], true);
+                    if (plot != null) {
+                        this.visit(player, PlotQuery.newQuery().withPlot(plot), null, confirm, whenDone, 1);
                     }
                 }
                 break;
             case 0:
-                // /p v
-                this.visit(player, PlotQuery.newQuery().ownedBy(player), null, confirm, whenDone);
-                break;
+                // /p v is invalid
+                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                return CompletableFuture.completedFuture(false);
             default:
         }
 
         return CompletableFuture.completedFuture(true);
     }
 
-    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
-        final List<Command> completions = new LinkedList<>();
+    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+        final List<Command> completions = new ArrayList<>();
         switch (args.length - 1) {
             case 0:
-                this.completeNumbers(completions, args[0], 0);
                 completions.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
-            break;
+                break;
             case 1:
-                if (MathMan.isInteger(args[0])) {
+                completions.addAll(
+                        TabCompletions.completeAreas(args[1]));
+                if (args[1].isEmpty()) {
+                    // if no input is given, only suggest 1 - 3
+                    completions.addAll(
+                            TabCompletions.asCompletions("1", "2", "3"));
                     break;
                 }
-                this.completeNumbers(completions, args[1], 0);
-                this.completeAreas(completions, args[1]);
+                completions.addAll(
+                        TabCompletions.completeNumbers(args[1], 10, 999));
                 break;
             case 2:
-                if (MathMan.isInteger(args[1])) {
+                if (args[2].isEmpty()) {
+                    // if no input is given, only suggest 1 - 3
+                    completions.addAll(
+                            TabCompletions.asCompletions("1", "2", "3"));
                     break;
                 }
-                this.completeNumbers(completions, args[2], 0);
+                completions.addAll(
+                        TabCompletions.completeNumbers(args[2], 10, 999));
                 break;
         }
 

@@ -50,6 +50,7 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -69,6 +70,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public HashMap<Integer, BiomeType> G_SCH_B;
     public int SCHEM_Y;
     private Location SIGN_LOCATION;
+    @Getter private File root = null;
 
     public HybridPlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
         PlotId min, PlotId max) {
@@ -198,7 +200,6 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         // Try to determine root. This means that plot areas can have separate schematic
         // directories
-        File root;
         if (!(root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" +
             this.getWorldName() + "/" + this.getId())).exists()) {
             root = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),

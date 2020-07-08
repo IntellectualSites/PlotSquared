@@ -77,9 +77,15 @@ public abstract class EconHandler {
 
     public abstract void depositMoney(OfflinePlotPlayer player, double amount);
 
-    public abstract boolean hasPermission(String world, String player, String perm);
+    /**
+     * @deprecated Use {@link PermHandler#hasPermission(String, String, String)} instead
+     */
+    @Deprecated public abstract boolean hasPermission(String world, String player, String perm);
 
-    public boolean hasPermission(String player, String perm) {
+    /**
+     * @deprecated Use {@link PermHandler#hasPermission(String, String)} instead
+     */
+    @Deprecated public boolean hasPermission(String player, String perm) {
         return hasPermission(null, player, perm);
     }
 }
