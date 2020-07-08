@@ -153,12 +153,10 @@ public class PlotSquared {
         new UUIDPipeline(Executors.newSingleThreadExecutor());
     // WorldEdit instance
     public WorldEdit worldedit;
-    public File styleFile;
     public File configFile;
     public File worldsFile;
     public File commandsFile;
     public File translationFile;
-    public YamlConfiguration style;
     public YamlConfiguration worlds;
     public YamlConfiguration storage;
     public YamlConfiguration commands;
@@ -1778,24 +1776,6 @@ public class PlotSquared {
             PlotSquared.log("Failed to save settings.yml");
         }
         try {
-            this.styleFile = MainUtil.getFile(IMP.getDirectory(),
-                Settings.Paths.TRANSLATIONS + File.separator + "style.yml");
-            if (!this.styleFile.exists()) {
-                if (!this.styleFile.getParentFile().exists()) {
-                    this.styleFile.getParentFile().mkdirs();
-                }
-                if (!this.styleFile.createNewFile()) {
-                    PlotSquared.log(
-                        "Could not create the style file, please create \"translations/style.yml\" manually");
-                }
-            }
-            this.style = YamlConfiguration.loadConfiguration(this.styleFile);
-            setupStyle();
-        } catch (IOException err) {
-            err.printStackTrace();
-            PlotSquared.log("Failed to save style.yml");
-        }
-        try {
             this.storageFile = new File(folder, "storage.yml");
             if (!this.storageFile.exists() && !this.storageFile.createNewFile()) {
                 PlotSquared.log(
@@ -1817,7 +1797,6 @@ public class PlotSquared {
             PlotSquared.log("Failed to save commands.yml");
         }
         try {
-            this.style.save(this.styleFile);
             this.commands.save(this.commandsFile);
         } catch (IOException e) {
             PlotSquared.log("Configuration file saving failed");
@@ -1856,44 +1835,6 @@ public class PlotSquared {
                     .format("&cKey: &6%s&c, Value: &6%s", component.getKey(),
                         component.getValue()));
             }
-        }
-    }
-
-    /**
-     * Setup the style.yml file
-     */
-    private void setupStyle() {
-        if (this.version != null) {
-            this.style.set("Version", this.version.toString());
-        }
-        this.style.set("Information",
-            "Left Row: PlotSquared color codes ($), right row: Minecraft color codes (&)");
-        Map<String, Object> object = new HashMap<>(16);
-        object.put("color.1", "6");
-        object.put("color.2", "7");
-        object.put("color.3", "8");
-        object.put("color.4", "3");
-        object.put("color.5", "1");
-        object.put("color.6", "2");
-        object.put("color.7", "4");
-        object.put("color.8", "5");
-        object.put("color.9", "9");
-        object.put("color.10", "0");
-        object.put("color.11", "a");
-        object.put("color.12", "b");
-        object.put("color.13", "c");
-        object.put("color.14", "d");
-        object.put("color.15", "e");
-        object.put("color.16", "f");
-        if (!this.style.contains("color")
-            || this.style.getConfigurationSection("color").getValues(false).size() != object
-            .size()) {
-            for (Entry<String, Object> node : object.entrySet()) {
-                this.style.set(node.getKey(), node.getValue());
-            }
-        }
-        if (this.style.contains("version")) {
-            this.style.set("version", null);
         }
     }
 
