@@ -25,9 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.util.MainUtil;
@@ -40,7 +38,6 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -190,36 +187,16 @@ public abstract class Command {
         this.permission = declaration.permission();
         this.required = declaration.requiredType();
         this.category = declaration.category();
+
         List<String> aliasOptions = new ArrayList<>();
         aliasOptions.add(this.id);
         aliasOptions.addAll(Arrays.asList(declaration.aliases()));
-        HashMap<String, Object> options = new HashMap<>();
-        options.put("aliases", aliasOptions);
-        options.put("description", declaration.description());
-        options.put("usage", declaration.usage());
-        options.put("confirmation", declaration.confirmation());
-        boolean set = false;
-        YamlConfiguration commands =
-            PlotSquared.get() == null ? new YamlConfiguration() : PlotSquared.get().commands;
-        for (Map.Entry<String, Object> entry : options.entrySet()) {
-            String key = this.getFullId() + "." + entry.getKey();
-            if (!commands.contains(key)) {
-                commands.set(key, entry.getValue());
-                set = true;
-            }
-        }
-        if (set && PlotSquared.get() != null) {
-            try {
-                commands.save(PlotSquared.get().commandsFile);
-            } catch (IOException e) {
-                e.printStackTrace();
 
-            }
-        }
-        this.aliases = commands.getStringList(this.getFullId() + ".aliases");
-        this.description = commands.getString(this.getFullId() + ".description");
-        this.usage = commands.getString(this.getFullId() + ".usage");
-        this.confirmation = commands.getBoolean(this.getFullId() + ".confirmation");
+        this.aliases = aliasOptions;
+        this.description = declaration.description();
+        this.usage = declaration.usage();
+        this.confirmation = declaration.confirmation();
+
         if (this.parent != null) {
             this.parent.register(this);
         }
