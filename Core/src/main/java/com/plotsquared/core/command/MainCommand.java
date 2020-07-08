@@ -77,6 +77,7 @@ public class MainCommand extends Command {
             new RegenAllRoads();
             new Claim();
             new Auto();
+            new HomeCommand();
             new Visit();
             new Set();
             new Clear();

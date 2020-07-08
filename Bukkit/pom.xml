@@ -21,7 +21,7 @@
     <dependency>
       <groupId>com.plotsquared</groupId>
       <artifactId>PlotSquared-Core</artifactId>
-      <version>5.12.2</version>
+      <version>5.12.3</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -163,6 +163,12 @@
       <artifactId>EssentialsX</artifactId>
       <version>2.17.2</version>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>paperlib</artifactId>
+          <groupId>io.papermc</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>net.alpenblock</groupId>
