@@ -26,13 +26,10 @@
 package com.plotsquared.bukkit.player;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Objects;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -45,10 +42,6 @@ import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
-import net.kyori.adventure.title.Title;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.WeatherType;
@@ -60,10 +53,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -74,8 +64,6 @@ import static com.sk89q.worldedit.world.gamemode.GameModes.SPECTATOR;
 import static com.sk89q.worldedit.world.gamemode.GameModes.SURVIVAL;
 
 public class BukkitPlayer extends PlotPlayer<Player> {
-
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
@@ -233,34 +221,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     }
 
     @Override
-    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
-        final int fadeIn, final int stay, final int fadeOut, @NotNull final Template ... replacements) {
-        final Component titleComponent = MINI_MESSAGE.parse(title.getComponent(this), replacements);
-        final Component subtitleComponent = MINI_MESSAGE.parse(subtitle.getComponent(this), replacements);
-        final Audience audience = BukkitUtil.BUKKIT_AUDIENCES.player(this.player);
-        audience.showTitle(Title.of(titleComponent, subtitleComponent, Duration.of(fadeIn * 50,
-            ChronoUnit.MILLIS), Duration.of(stay * 50, ChronoUnit.MILLIS), Duration.of(fadeOut * 50, ChronoUnit.MILLIS)));
-    }
-
-    @Override public void sendMessage(@NotNull final Caption caption,
-        @NotNull final Template... replacements) {
-        final String message = caption.getComponent(this);
-        if (message.isEmpty()) {
-            return;
-        }
-        // Create the template list, and add the prefix as a replacement
-        final List<Template> templates = Arrays.asList(replacements);
-        templates.add(Template.of("prefix", MINI_MESSAGE.parse(TranslatableCaption.of("core.prefix").getComponent(this))));
-        // Parse the message
-        final Component component = MINI_MESSAGE.parse(message, templates);
-        if (!Objects.equal(component, this.getMeta("lastMessage")) || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
-            setMeta("lastMessage", component);
-            setMeta("lastMessageTime", System.currentTimeMillis());
-            BukkitUtil.BUKKIT_AUDIENCES.player(player).sendMessage(component);
-        }
-    }
-
-    @Override
     public void teleport(@NotNull final Location location, @NotNull final TeleportCause cause) {
         if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
             return;
@@ -377,6 +337,10 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     @Override public boolean isBanned() {
         return this.player.isBanned();
+    }
+
+    @Override @NotNull public Audience getAudience() {
+        return BukkitUtil.BUKKIT_AUDIENCES.player(this.player);
     }
 
 

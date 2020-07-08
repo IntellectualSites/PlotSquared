@@ -25,15 +25,16 @@
  */
 package com.plotsquared.core.player;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
@@ -55,15 +56,23 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
 import lombok.NonNull;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.title.Title;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -77,6 +86,7 @@ import java.util.stream.Collectors;
  */
 public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer, LocaleHolder {
 
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     public static final String META_LAST_PLOT = "lastplot";
     public static final String META_LOCATION = "location";
 
@@ -412,32 +422,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     /**
-     * Send a title to the player that fades in, in 10 ticks, stays for 50 ticks and fades
-     * out in 20 ticks
-     *
-     * @param title    Title text
-     * @param subtitle Subtitle text
-     * @param replacements Variable replacements
-     */
-    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
-        @NotNull final Template ... replacements) {
-        sendTitle(title, subtitle, 10, 50, 10, replacements);
-    }
-
-    /**
-     * Send a title to the player
-     *
-     * @param title    Title text
-     * @param subtitle Subtitle text
-     * @param fadeIn   time in ticks for titles to fade in. Defaults to 10
-     * @param stay     time in ticks for titles to stay. Defaults to 70
-     * @param fadeOut  time in ticks for titles to fade out. Defaults to 20
-     * @param replacements Variable replacements
-     */
-    public abstract void sendTitle(@NotNull Caption title, @NotNull Caption subtitle, int fadeIn,
-        int stay, int fadeOut, @NotNull final Template ... replacements);
-
-    /**
      * Teleport this player to a location.
      *
      * @param location the target location
@@ -704,9 +688,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                             TaskManager.runTask(() -> {
                                 if (getMeta("teleportOnLogin", true)) {
                                     teleport(location);
-                                    sendMessage(CaptionUtility.format(PlotPlayer.this,
-                                        Captions.TELEPORTED_TO_PLOT.getTranslated())
-                                        + " (quitLoc) (" + plotX + "," + plotZ + ")");
+                                    sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
                                 }
                             });
                         } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
@@ -716,10 +698,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                                         if (getMeta("teleportOnLogin", true)) {
                                             if (plot.isLoaded()) {
                                                 teleport(location);
-                                                sendMessage(CaptionUtility.format(PlotPlayer.this,
-                                                    Captions.TELEPORTED_TO_PLOT.getTranslated())
-                                                    + " (quitLoc-unloaded) (" + plotX + "," + plotZ
-                                                    + ")");
+                                                sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
                                             }
                                         }
                                     }));
@@ -749,6 +728,41 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         this.metaMap.put(key, value);
         if (Settings.Enabled_Components.PERSISTENT_META) {
             DBFunc.addPersistentMeta(getUUID(), key, value, delete);
+        }
+    }
+
+    /**
+     * Send a title to the player that fades in, in 10 ticks, stays for 50 ticks and fades
+     * out in 20 ticks
+     *
+     * @param title    Title text
+     * @param subtitle Subtitle text
+     * @param replacements Variable replacements
+     */
+    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
+        final int fadeIn, final int stay, final int fadeOut, @NotNull final Template ... replacements) {
+        final Component titleComponent = MINI_MESSAGE.parse(title.getComponent(this), replacements);
+        final Component subtitleComponent = MINI_MESSAGE.parse(subtitle.getComponent(this), replacements);
+        getAudience().showTitle(Title.of(titleComponent, subtitleComponent, Duration.of(fadeIn * 50,
+            ChronoUnit.MILLIS), Duration.of(stay * 50, ChronoUnit.MILLIS), Duration.of(fadeOut * 50, ChronoUnit.MILLIS)));
+    }
+
+    @Override public void sendMessage(@NotNull final Caption caption,
+        @NotNull final Template... replacements) {
+        final String message = caption.getComponent(this);
+        if (message.isEmpty()) {
+            return;
+        }
+        // Create the template list, and add the prefix as a replacement
+        final List<Template> templates = Arrays.asList(replacements);
+        templates.add(Template.of("prefix", MINI_MESSAGE.parse(
+            TranslatableCaption.of("core.prefix").getComponent(this))));
+        // Parse the message
+        final Component component = MINI_MESSAGE.parse(message, templates);
+        if (!Objects.equal(component, this.getMeta("lastMessage")) || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
+            setMeta("lastMessage", component);
+            setMeta("lastMessageTime", System.currentTimeMillis());
+            getAudience().sendMessage(component);
         }
     }
 
@@ -791,6 +805,13 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         final PlotPlayer<?> other = (PlotPlayer<?>) obj;
         return this.getUUID().equals(other.getUUID());
     }
+
+    /**
+     * Get the {@link Audience} that represents this plot player
+     *
+     * @return Player audience
+     */
+    @NotNull public abstract Audience getAudience();
 
     /**
      * The amount of money this Player has.

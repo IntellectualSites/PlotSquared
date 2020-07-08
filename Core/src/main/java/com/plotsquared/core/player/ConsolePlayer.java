@@ -39,6 +39,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.jetbrains.annotations.NotNull;
@@ -189,6 +190,10 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
 
     @Override public boolean isBanned() {
         return false;
+    }
+
+    @Override @NotNull public Audience getAudience() {
+        return PlotSquared.imp().getConsoleAudience();
     }
 
 }

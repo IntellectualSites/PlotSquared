@@ -25,10 +25,9 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.TaskManager;
 
 @CommandDeclaration(command = "confirm",
@@ -40,13 +39,13 @@ public class Confirm extends SubCommand {
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         CmdInstance command = CmdConfirm.getPending(player);
         if (command == null) {
-            MainUtil.sendMessage(player, Captions.FAILED_CONFIRM);
+            player.sendMessage(TranslatableCaption.of("confirm.failed_confirm"));
             return false;
         }
         CmdConfirm.removePending(player);
         if ((System.currentTimeMillis() - command.timestamp)
             > Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS * 1000) {
-            MainUtil.sendMessage(player, Captions.EXPIRED_CONFIRM);
+            player.sendMessage(TranslatableCaption.of("confirm.expired_confirm"));
             return false;
         }
         TaskManager.runTask(command.command);
