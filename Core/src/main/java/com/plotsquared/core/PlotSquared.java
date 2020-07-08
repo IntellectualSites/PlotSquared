@@ -259,6 +259,7 @@ public class PlotSquared {
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
             }
+            startExpiryTasks();
             // Create Event utility class
             eventDispatcher = new EventDispatcher();
             // create Hybrid utility class
