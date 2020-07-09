@@ -622,9 +622,6 @@ public abstract class HybridUtils {
                         if (condition) {
                             BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
                             int minY = plotWorld.SCHEM_Y;
-                            if (!Settings.Schematics.PASTE_ON_TOP) {
-                                minY = 1;
-                            }
                             int maxY = Math.max(extend, blocks.length);
                             for (int y = 0; y < maxY; y++) {
                                 if (y > blocks.length - 1) {
