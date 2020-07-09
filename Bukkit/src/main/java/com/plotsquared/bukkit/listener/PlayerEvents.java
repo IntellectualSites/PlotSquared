@@ -1513,10 +1513,18 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             for (Block block1 : event.getBlocks()) {
-                if (BukkitUtil.getLocation(block1.getLocation().add(relative)).isPlotArea()) {
+                Location bloc = BukkitUtil.getLocation(block1.getLocation());
+                if (bloc.isPlotArea() || bloc.add(relative.getBlockX(),
+                    relative.getBlockY(), relative.getBlockZ()).isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
+            }
+            if (location.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())
+                .isPlotArea()) {
+                // Prevent pistons from extending if they are: bordering a plot
+                // area, facing inside plot area, and not pushing any blocks
+                event.setCancelled(true);
             }
             return;
         }
@@ -1559,7 +1567,9 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             for (Block block1 : event.getBlocks()) {
-                if (BukkitUtil.getLocation(block1.getLocation().add(relative)).isPlotArea()) {
+                Location bloc = BukkitUtil.getLocation(block1.getLocation());
+                if (bloc.isPlotArea() || bloc.add(relative.getBlockX(),
+                    relative.getBlockY(), relative.getBlockZ()).isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
