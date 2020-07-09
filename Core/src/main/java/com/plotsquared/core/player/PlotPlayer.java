@@ -673,7 +673,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
                             return;
                         }
 
-                        final Location location = new Location(plot.getWorldName(), x, y, z);
+                        final Location location = Location.at(plot.getWorldName(), x, y, z);
                         if (plot.isLoaded()) {
                             TaskManager.runTask(() -> {
                                 if (getMeta("teleportOnLogin", true)) {

@@ -232,10 +232,11 @@ public abstract class SchematicHandler {
                 } else {
                     y_offset_actual = yOffset;
                 }
-                Location pos1 =
-                    new Location(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset,
-                        y_offset_actual, region.getMinimumPoint().getZ() + zOffset);
-                Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
+
+                final Location pos1 = Location.at(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual,
+                    region.getMinimumPoint().getZ() + zOffset);
+                final Location pos2 = pos1.add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
+
                 final int p1x = pos1.getX();
                 final int p1z = pos1.getZ();
                 final int p2x = pos2.getX();
@@ -554,10 +555,10 @@ public abstract class SchematicHandler {
                     }
                     final Runnable regionTask = this;
                     CuboidRegion region = queue.poll();
-                    Location pos1 = new Location(world, region.getMinimumPoint().getX(),
-                        region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
-                    Location pos2 = new Location(world, region.getMaximumPoint().getX(),
-                        region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
+
+                    final Location pos1 = Location.at(world, region.getMinimumPoint());
+                    final Location pos2 = Location.at(world, region.getMaximumPoint());
+
                     final int p1x = pos1.getX();
                     final int sy = pos1.getY();
                     final int p1z = pos1.getZ();

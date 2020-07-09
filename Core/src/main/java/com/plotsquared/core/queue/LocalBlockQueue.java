@@ -59,8 +59,8 @@ public abstract class LocalBlockQueue {
     public ScopedLocalBlockQueue getForChunk(int x, int z) {
         int bx = x << 4;
         int bz = z << 4;
-        return new ScopedLocalBlockQueue(this, new Location(getWorld(), bx, 0, bz),
-            new Location(getWorld(), bx + 15, 255, bz + 15));
+        return new ScopedLocalBlockQueue(this, Location.at(getWorld(), bx, 0, bz),
+            Location.at(getWorld(), bx + 15, 255, bz + 255));
     }
 
     public abstract boolean next();
@@ -125,13 +125,11 @@ public abstract class LocalBlockQueue {
 
         for (final PlotPlayer pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
             Location pLoc = pp.getLocation();
-            if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getBlockVector2()
+            if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getChunkLocation()
                 .equals(loc)) {
                 continue;
             }
-            pLoc.setY(
-                WorldUtil.IMP.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ()));
-            pp.teleport(pLoc);
+            pp.teleport(pLoc.withY(WorldUtil.IMP.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ())));
         }
     }
 

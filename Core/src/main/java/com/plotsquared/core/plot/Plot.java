@@ -1359,8 +1359,7 @@ public class Plot {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
-        Location location =
-            new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
+        Location location = Location.at(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
                 MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
         if (!isLoaded()) {
             result.accept(location);
@@ -1371,8 +1370,7 @@ public class Plot {
             if (area.allowSigns()) {
                 height = Math.max(y, getManager().getSignLoc(this).getY());
             }
-            location.setY(1 + height);
-            result.accept(location);
+            result.accept(location.withY(1 + height));
         });
     }
 
@@ -1383,9 +1381,8 @@ public class Plot {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
-        Location location =
-            new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
-                MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
+        Location location = Location.at(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
+            MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
         if (!isLoaded()) {
             return location;
         }
@@ -1394,8 +1391,7 @@ public class Plot {
         if (area.allowSigns()) {
             y = Math.max(y, getManager().getSignLoc(this).getY());
         }
-        location.setY(1 + y);
-        return location;
+        return location.withY(1 + y);
     }
 
     /**
@@ -1411,7 +1407,7 @@ public class Plot {
         if (area.allowSigns() && (y <= 0 || y >= 255)) {
             y = Math.max(y, manager.getSignLoc(this).getY() - 1);
         }
-        return new Location(getWorldName(), x, y + 1, z);
+        return Location.at(getWorldName(), x, y + 1, z);
     }
 
     public void getSide(Consumer<Location> result) {
@@ -1426,14 +1422,14 @@ public class Plot {
                 if (area.allowSigns() && (y <= 0 || y >= 255)) {
                     height = Math.max(y, manager.getSignLoc(this).getY() - 1);
                 }
-                result.accept(new Location(getWorldName(), x, height + 1, z));
+                result.accept(Location.at(getWorldName(), x, height + 1, z));
             });
         } else {
             int y = 62;
             if (area.allowSigns()) {
                 y = Math.max(y, manager.getSignLoc(this).getY() - 1);
             }
-            result.accept(new Location(getWorldName(), x, y + 1, z));
+            result.accept(Location.at(getWorldName(), x, y + 1, z));
         }
     }
 
@@ -1446,14 +1442,14 @@ public class Plot {
             return this.getDefaultHomeSynchronous(true);
         } else {
             Location bottom = this.getBottomAbs();
-            Location location = new Location(bottom.getWorld(), bottom.getX() + home.getX(),
+            Location location = Location.at(bottom.getWorld(), bottom.getX() + home.getX(),
                 bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
                 home.getPitch());
             if (!isLoaded()) {
                 return location;
             }
             if (!WorldUtil.IMP.getBlockSynchronous(location).getBlockType().getMaterial().isAir()) {
-                location.setY(Math.max(1 + WorldUtil.IMP
+                location = location.withY(Math.max(1 + WorldUtil.IMP
                     .getHighestBlockSynchronous(this.getWorldName(), location.getX(),
                         location.getZ()), bottom.getY()));
             }
@@ -1470,7 +1466,7 @@ public class Plot {
             this.getDefaultHome(result);
         } else {
             Location bottom = this.getBottomAbs();
-            Location location = new Location(bottom.getWorld(), bottom.getX() + home.getX(),
+            Location location = Location.at(bottom.getWorld(), bottom.getX() + home.getX(),
                 bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
                 home.getPitch());
             if (!isLoaded()) {
@@ -1481,10 +1477,7 @@ public class Plot {
                 if (!block.getBlockType().getMaterial().isAir()) {
                     WorldUtil.IMP
                         .getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
-                            y -> {
-                                location.setY(Math.max(1 + y, bottom.getY()));
-                                result.accept(location);
-                            });
+                            y -> result.accept(location.withY(Math.max(1 + y, bottom.getY()))));
                 } else {
                     result.accept(location);
                 }
@@ -1545,7 +1538,7 @@ public class Plot {
                     WorldUtil.IMP.getHighestBlockSynchronous(plot.getWorldName(), x, z) + 1 :
                     63) :
                 loc.getY();
-            return new Location(plot.getWorldName(), x, y, z);
+            return Location.at(plot.getWorldName(), x, y, z);
         }
         // Side
         return plot.getSideSynchronous();
@@ -1573,12 +1566,12 @@ public class Plot {
             if (loc.getY() < 1) {
                 if (isLoaded()) {
                     WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z,
-                        y -> result.accept(new Location(plot.getWorldName(), x, y + 1, z)));
+                        y -> result.accept(Location.at(plot.getWorldName(), x, y + 1, z)));
                 } else {
-                    result.accept(new Location(plot.getWorldName(), x, 63, z));
+                    result.accept(Location.at(plot.getWorldName(), x, 63, z));
                 }
             } else {
-                result.accept(new Location(plot.getWorldName(), x, loc.getY(), z));
+                result.accept(Location.at(plot.getWorldName(), x, loc.getY(), z));
             }
             return;
         }
@@ -1875,9 +1868,7 @@ public class Plot {
      * Returns the top location for the plot.
      */
     public Location getTopAbs() {
-        Location top = getManager().getPlotTopLocAbs(this.id);
-        top.setWorld(getWorldName());
-        return top;
+        return this.getManager().getPlotTopLocAbs(this.id).withWorld(this.getWorldName());
     }
 
     //TODO Better documentation needed.
@@ -1886,9 +1877,7 @@ public class Plot {
      * Returns the bottom location for the plot.
      */
     public Location getBottomAbs() {
-        Location location = getManager().getPlotBottomLocAbs(this.id);
-        location.setWorld(getWorldName());
-        return location;
+        return this.getManager().getPlotBottomLocAbs(this.id).withWorld(this.getWorldName());
     }
 
     /**
@@ -1965,10 +1954,10 @@ public class Plot {
             return top;
         }
         if (this.getMerged(Direction.SOUTH)) {
-            top.setZ(this.getRelative(Direction.SOUTH).getBottomAbs().getZ() - 1);
+            top = top.withZ(this.getRelative(Direction.SOUTH).getBottomAbs().getZ() - 1);
         }
         if (this.getMerged(Direction.EAST)) {
-            top.setX(this.getRelative(Direction.EAST).getBottomAbs().getX() - 1);
+            top = top.withX(this.getRelative(Direction.EAST).getBottomAbs().getX() - 1);
         }
         return top;
     }
@@ -1986,10 +1975,10 @@ public class Plot {
             return bot;
         }
         if (this.getMerged(Direction.NORTH)) {
-            bot.setZ(this.getRelative(Direction.NORTH).getTopAbs().getZ() + 1);
+            bot = bot.withZ(this.getRelative(Direction.NORTH).getTopAbs().getZ() + 1);
         }
         if (this.getMerged(Direction.WEST)) {
-            bot.setX(this.getRelative(Direction.WEST).getTopAbs().getX() + 1);
+            bot = bot.withX(this.getRelative(Direction.WEST).getTopAbs().getX() + 1);
         }
         return bot;
     }
@@ -2019,8 +2008,8 @@ public class Plot {
             Plot other = this.getRelative(Direction.EAST);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
-            Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
-            Location pos2 = new Location(this.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
+            Location pos1 = Location.at(this.getWorldName(), top.getX(), 0, bot.getZ());
+            Location pos2 = Location.at(this.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
             RegionManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain()
             != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
@@ -2391,8 +2380,8 @@ public class Plot {
             Plot other = this.getRelative(Direction.SOUTH);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
-            Location pos1 = new Location(this.getWorldName(), bot.getX(), 0, top.getZ());
-            Location pos2 = new Location(this.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
+            Location pos1 = Location.at(this.getWorldName(), bot.getX(), 0, top.getZ());
+            Location pos2 = Location.at(this.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
             RegionManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain()
             != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
@@ -2567,10 +2556,8 @@ public class Plot {
         if (this.area.getType() != PlotAreaType.NORMAL
             && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(1, 1);
-            Location pos1 = this.getTopAbs().add(1, 0, 1);
-            Location pos2 = other.getBottomAbs().subtract(1, 0, 1);
-            pos1.setY(0);
-            pos2.setY(MAX_HEIGHT);
+            Location pos1 = this.getTopAbs().add(1, 0, 1).withY(0);
+            Location pos2 = other.getBottomAbs().subtract(1, 0, 1).withY(MAX_HEIGHT);
             RegionManager.manager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain()
             != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
@@ -2963,7 +2950,7 @@ public class Plot {
             int x = (int) MathMan.inverseRound(coords[0]);
             int z = (int) MathMan.inverseRound(coords[1]);
             if (type != 4) {
-                locs.add(new Location(this.getWorldName(), x, 0, z));
+                locs.add(Location.at(this.getWorldName(), x, 0, z));
             }
         }
         return locs;
@@ -3229,10 +3216,8 @@ public class Plot {
                             Location[] corners = MainUtil.getCorners(getWorldName(), region);
                             Location pos1 = corners[0];
                             Location pos2 = corners[1];
-                            Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
-                            Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
-                            pos3.setWorld(destination.getWorldName());
-                            pos4.setWorld(destination.getWorldName());
+                            Location pos3 = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
+                            Location pos4 = pos2.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
                             RegionManager.manager.swap(pos1, pos2, pos3, pos4, this);
                         }
                     }
@@ -3263,8 +3248,7 @@ public class Plot {
                         Location[] corners = MainUtil.getCorners(getWorldName(), region);
                         final Location pos1 = corners[0];
                         final Location pos2 = corners[1];
-                        Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
-                        newPos.setWorld(destination.getWorldName());
+                        Location newPos = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
                         RegionManager.manager.copyRegion(pos1, pos2, newPos, task);
                     }
                 }.run();
@@ -3358,8 +3342,7 @@ public class Plot {
                 Location[] corners = MainUtil.getCorners(getWorldName(), region);
                 Location pos1 = corners[0];
                 Location pos2 = corners[1];
-                Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
-                newPos.setWorld(destination.getWorldName());
+                Location newPos = pos1 .add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
                 RegionManager.manager.copyRegion(pos1, pos2, newPos, this);
             }
         };

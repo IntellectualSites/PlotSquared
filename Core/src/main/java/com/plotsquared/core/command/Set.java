@@ -31,6 +31,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.MainUtil;
@@ -75,7 +76,12 @@ public class Set extends SubCommand {
             }
 
             @Override public boolean set(PlotPlayer player, final Plot plot, String value) {
-                PlotManager manager = player.getLocation().getPlotManager();
+                final PlotArea plotArea = player.getLocation().getPlotArea();
+                if (plotArea == null) {
+                    return false;
+                }
+                final PlotManager manager = plotArea.getPlotManager();
+
                 String[] components = manager.getPlotComponents(plot.getId());
 
                 String[] args = value.split(" ");
