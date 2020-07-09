@@ -822,7 +822,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             Player player = event.getPlayer();
             BukkitPlayer pp = BukkitUtil.getPlayer(player);
             // Cancel teleport
-            TaskManager.TELEPORT_QUEUE.remove(pp.getName());
+            if (TaskManager.TELEPORT_QUEUE.remove(pp.getName())) {
+                MainUtil.sendMessage(pp, Captions.TELEPORT_FAILED);
+            }
             // Set last location
             Location location = BukkitUtil.getLocation(to);
             pp.setMeta(PlotPlayer.META_LOCATION, location);
@@ -882,7 +884,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             Player player = event.getPlayer();
             BukkitPlayer pp = BukkitUtil.getPlayer(player);
             // Cancel teleport
-            TaskManager.TELEPORT_QUEUE.remove(pp.getName());
+            if (TaskManager.TELEPORT_QUEUE.remove(pp.getName())) {
+                MainUtil.sendMessage(pp, Captions.TELEPORT_FAILED);
+            }
             // Set last location
             Location location = BukkitUtil.getLocation(to);
             pp.setMeta(PlotPlayer.META_LOCATION, location);
