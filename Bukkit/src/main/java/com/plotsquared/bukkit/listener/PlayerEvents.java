@@ -1878,8 +1878,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             }
-            if (!plot.hasOwner() && !area.isRoadFlags() && !area
-                .getRoadFlag(MiscInteractFlag.class)) {
+            if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                         "plots.admin.interact.unowned");
@@ -3145,7 +3144,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(ItemDropFlag.class)) {
+            if (area.isRoadFlags() && !area.getRoadFlag(ItemDropFlag.class)) {
                 event.setCancelled(true);
             }
             return;
