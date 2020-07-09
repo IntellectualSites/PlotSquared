@@ -21,7 +21,7 @@
     <dependency>
       <groupId>com.plotsquared</groupId>
       <artifactId>PlotSquared-Core</artifactId>
-      <version>5.12.3</version>
+      <version>5.12.4</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

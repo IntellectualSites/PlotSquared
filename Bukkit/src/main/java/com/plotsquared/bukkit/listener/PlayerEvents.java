@@ -1618,6 +1618,35 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onBlockDispense(BlockDispenseEvent event) {
         Material type = event.getItem().getType();
         switch (type) {
+            case SHULKER_BOX:
+            case WHITE_SHULKER_BOX:
+            case ORANGE_SHULKER_BOX:
+            case MAGENTA_SHULKER_BOX:
+            case LIGHT_BLUE_SHULKER_BOX:
+            case YELLOW_SHULKER_BOX:
+            case LIME_SHULKER_BOX:
+            case PINK_SHULKER_BOX:
+            case GRAY_SHULKER_BOX:
+            case LIGHT_GRAY_SHULKER_BOX:
+            case CYAN_SHULKER_BOX:
+            case PURPLE_SHULKER_BOX:
+            case BLUE_SHULKER_BOX:
+            case BROWN_SHULKER_BOX:
+            case GREEN_SHULKER_BOX:
+            case RED_SHULKER_BOX:
+            case BLACK_SHULKER_BOX:
+            case CARVED_PUMPKIN:
+            case WITHER_SKELETON_SKULL:
+            case FLINT_AND_STEEL:
+            case BONE_MEAL:
+            case SHEARS:
+            case GLASS_BOTTLE:
+            case GLOWSTONE:
+            case COD_BUCKET:
+            case PUFFERFISH_BUCKET:
+            case SALMON_BUCKET:
+            case TROPICAL_FISH_BUCKET:
+            case BUCKET:
             case WATER_BUCKET:
             case LAVA_BUCKET: {
                 if (event.getBlock().getType() == Material.DROPPER) {
@@ -1864,8 +1893,8 @@ public class PlayerEvents extends PlotListener implements Listener {
         Plot plot = location.getPlotAbs();
         BukkitPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
-            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class)
-                && !Permissions.hasPermission(pp, "plots.admin.interact.road")) {
+            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class) && !Permissions
+                .hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
             }
@@ -2601,8 +2630,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                     Captions.PERMISSION_ADMIN_INTERACT_UNOWNED);
                 event.setCancelled(true);
             }
-        } else if ((plot != null && !plot.isAdded(pp.getUUID())) || area
-            .isRoadFlags()) {
+        } else if ((plot != null && !plot.isAdded(pp.getUUID())) || (plot == null && area
+            .isRoadFlags())) {
             final Entity entity = event.getRightClicked();
             final com.sk89q.worldedit.world.entity.EntityType entityType =
                 BukkitAdapter.adapt(entity.getType());
