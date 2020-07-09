@@ -388,6 +388,9 @@ public class Settings extends Config {
         @Comment(
             "Whether schematic based generation should paste schematic on top of plots, or from Y=1")
         public static boolean PASTE_ON_TOP = true;
+        @Comment(
+            "Whether schematic based road generation should paste schematic on top of roads, or from Y=1")
+        public static boolean PASTE_ROAD_ON_TOP = true;
     }
 
 

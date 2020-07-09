@@ -112,15 +112,17 @@ public class HybridPlotManager extends ClassicPlotManager {
             return true;
         }
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
-        createSchemAbs(queue, pos1, pos2);
+        createSchemAbs(queue, pos1, pos2, true);
         queue.enqueue();
         return true;
     }
 
-    private void createSchemAbs(LocalBlockQueue queue, Location pos1, Location pos2) {
+    private void createSchemAbs(LocalBlockQueue queue, Location pos1, Location pos2,
+        boolean isRoad) {
         int size = hybridPlotWorld.SIZE;
         int minY;
-        if (Settings.Schematics.PASTE_ON_TOP) {
+        if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad
+            && Settings.Schematics.PASTE_ON_TOP)) {
             minY = hybridPlotWorld.SCHEM_Y;
         } else {
             minY = 1;
@@ -172,7 +174,7 @@ public class HybridPlotManager extends ClassicPlotManager {
             return true;
         }
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
-        createSchemAbs(queue, pos1, pos2);
+        createSchemAbs(queue, pos1, pos2, true);
         queue.enqueue();
         return true;
     }
@@ -186,9 +188,9 @@ public class HybridPlotManager extends ClassicPlotManager {
         pos1.setY(0);
         pos2.setY(Math.min(getWorldHeight(), 255));
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
-        createSchemAbs(queue, pos1, pos2);
+        createSchemAbs(queue, pos1, pos2, true);
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-            createSchemAbs(queue, pos1, pos2);
+            createSchemAbs(queue, pos1, pos2, true);
         }
         return queue.enqueue();
     }
@@ -267,7 +269,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hybridPlotWorld.PLOT_SCHEMATIC) {
             return;
         }
-        createSchemAbs(queue, bottom, top);
+        createSchemAbs(queue, bottom, top, false);
     }
 
     /**
