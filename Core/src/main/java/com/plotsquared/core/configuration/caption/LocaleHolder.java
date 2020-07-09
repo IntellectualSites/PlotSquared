@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import com.plotsquared.core.player.ConsolePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -33,6 +34,16 @@ import java.util.Locale;
  * Any entity that has a locale
  */
 public interface LocaleHolder {
+
+    /**
+     * Get the console locale holder
+     *
+     * @return Console locale holder
+     * @see ConsolePlayer#getConsole() for direct access to the {@link ConsolePlayer}
+     */
+    @NotNull static LocaleHolder console() {
+        return ConsolePlayer.getConsole();
+    }
 
     /**
      * Get the locale used by the holder

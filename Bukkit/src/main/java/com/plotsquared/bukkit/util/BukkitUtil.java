@@ -29,12 +29,13 @@ import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.BlockUtil;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.StringComparison;
@@ -53,6 +54,9 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
 import lombok.NonNull;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -112,6 +116,8 @@ import java.util.stream.Stream;
 public class BukkitUtil extends WorldUtil {
 
     public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitMain.getPlugin(BukkitMain.class));
+    public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacy();
+    public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private static String lastString = null;
     private static World lastWorld = null;
@@ -236,17 +242,6 @@ public class BukkitUtil extends WorldUtil {
     }
 
     /**
-     * Send a message to a player. The message supports color codes.
-     *
-     * @param player the recipient of the message
-     * @param string the message
-     * @see MainUtil#sendMessage(PlotPlayer, String)
-     */
-    public static void sendMessage(Player player, String string) {
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), string);
-    }
-
-    /**
      * Gets the player plot count.
      *
      * @param world  Specify the world we want to select the plots from
@@ -258,16 +253,6 @@ public class BukkitUtil extends WorldUtil {
             return 0;
         }
         return BukkitUtil.getPlayer(player).getPlotCount(world);
-    }
-
-    /**
-     * Send a message to a player.
-     *
-     * @param player  the recipient of the message
-     * @param caption the message
-     */
-    public static void sendMessage(Player player, Captions caption) {
-        MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
     }
 
     public static BukkitPlayer getPlayer(@NonNull final Player player) {
@@ -445,20 +430,20 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override @SuppressWarnings("deprecation")
-    public void setSign(@NonNull final String worldName, final int x, final int y, final int z,
-        @NonNull final String[] lines) {
-        ensureLoaded(worldName, x, z, chunk -> {
-            final World world = getWorld(worldName);
-            final Block block = world.getBlockAt(x, y, z);
+    public void setSign(@NotNull final Location location, @NotNull final Caption[] lines,
+        @NotNull final Template ... replacements) {
+        ensureLoaded(location.getWorld(), location.getX(), location.getZ(), chunk -> {
+            final World world = getWorld(location.getWorld());
+            final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
             //        block.setType(Material.AIR);
             final Material type = block.getType();
             if (type != Material.LEGACY_SIGN && type != Material.LEGACY_WALL_SIGN) {
                 BlockFace facing = BlockFace.EAST;
-                if (world.getBlockAt(x, y, z + 1).getType().isSolid()) {
+                if (world.getBlockAt(location.getX(), location.getY(), location.getZ() + 1).getType().isSolid()) {
                     facing = BlockFace.NORTH;
-                } else if (world.getBlockAt(x + 1, y, z).getType().isSolid()) {
+                } else if (world.getBlockAt(location.getX() + 1, location.getY(), location.getZ()).getType().isSolid()) {
                     facing = BlockFace.WEST;
-                } else if (world.getBlockAt(x, y, z - 1).getType().isSolid()) {
+                } else if (world.getBlockAt(location.getX(), location.getY(), location.getZ() - 1).getType().isSolid()) {
                     facing = BlockFace.SOUTH;
                 }
                 if (PlotSquared.get().IMP.getServerVersion()[1] == 13) {
@@ -478,7 +463,8 @@ public class BukkitUtil extends WorldUtil {
             if (blockstate instanceof Sign) {
                 final Sign sign = (Sign) blockstate;
                 for (int i = 0; i < lines.length; i++) {
-                    sign.setLine(i, lines[i]);
+                    sign.setLine(i, LEGACY_COMPONENT_SERIALIZER
+                        .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()))));
                 }
                 sign.update(true);
             }

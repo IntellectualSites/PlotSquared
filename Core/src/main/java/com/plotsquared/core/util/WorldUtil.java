@@ -26,6 +26,7 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -41,6 +42,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.entity.EntityType;
+import net.kyori.adventure.text.minimessage.Template;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
@@ -107,7 +109,15 @@ public abstract class WorldUtil {
      */
     @Deprecated public abstract int getHighestBlockSynchronous(String world, int x, int z);
 
-    public abstract void setSign(String world, int x, int y, int z, String[] lines);
+    /**
+     * Set the block at the specified location to a sign, with given text
+     *
+     * @param location     Block location
+     * @param lines        Sign text
+     * @param replacements Text replacements
+     */
+    public abstract void setSign(@NotNull Location location, @NotNull Caption[] lines,
+        @NotNull Template ... replacements);
 
     public abstract void setBiomes(String world, CuboidRegion region, BiomeType biome);
 
