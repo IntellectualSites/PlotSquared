@@ -230,7 +230,6 @@ public class PlayerEvents extends PlotListener implements Listener {
     public static final com.sk89q.worldedit.world.entity.EntityType FAKE_ENTITY_TYPE =
         new com.sk89q.worldedit.world.entity.EntityType("plotsquared:fake");
 
-    private boolean pistonBlocks = true;
     private float lastRadius;
     // To prevent recursion
     private boolean tmpTeleport = true;
@@ -1539,35 +1538,28 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
         }
+        if (!plot.equals(area.getOwnedPlot(location.add(
+            relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
+            // This branch is only necessary to prevent pistons from extending
+            // if they are: on a plot edge, facing outside the plot, and not
+            // pushing any blocks
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.getLocation(block.getLocation());
+        BlockFace face = event.getDirection();
+        Vector relative = new Vector(face.getModX(), face.getModY(), face.getModZ());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
                 return;
             }
-            if (this.pistonBlocks) {
-                try {
-                    for (Block pulled : event.getBlocks()) {
-                        location = BukkitUtil.getLocation(pulled.getLocation());
-                        if (location.isPlotArea()) {
-                            event.setCancelled(true);
-                            return;
-                        }
-                    }
-                } catch (Throwable ignored) {
-                    this.pistonBlocks = false;
-                }
-            }
-            if (!this.pistonBlocks && !block.getType().toString().contains("PISTON")) {
-                BlockFace dir = event.getDirection();
-                location = BukkitUtil.getLocation(block.getLocation()
-                    .add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
-                if (location.isPlotArea()) {
+            for (Block block1 : event.getBlocks()) {
+                if (BukkitUtil.getLocation(block1.getLocation().add(relative)).isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1575,45 +1567,21 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Plot plot = area.getOwnedPlot(location);
-        BlockFace dir = event.getDirection();
-        //        Location head = location.add(-dir.getModX(), -dir.getModY(), -dir.getModZ());
-        //
-        //        if (!Objects.equals(plot, area.getOwnedPlot(head))) {
-        //            // FIXME: cancelling the event doesn't work here. See issue #1484
-        //            event.setCancelled(true);
-        //            return;
-        //        }
-        if (this.pistonBlocks) {
-            try {
-                for (Block pulled : event.getBlocks()) {
-                    Location from = BukkitUtil.getLocation(
-                        pulled.getLocation().add(dir.getModX(), dir.getModY(), dir.getModZ()));
-                    Location to = BukkitUtil.getLocation(pulled.getLocation());
-                    if (!area.contains(to.getX(), to.getZ())) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                    Plot fromPlot = area.getOwnedPlot(from);
-                    Plot toPlot = area.getOwnedPlot(to);
-                    if (!Objects.equals(fromPlot, toPlot)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-            } catch (Throwable ignored) {
-                this.pistonBlocks = false;
-            }
+        if (plot == null) {
+            event.setCancelled(true);
+            return;
         }
-        if (!this.pistonBlocks && !block.getType().toString().contains("PISTON")) {
-            location = BukkitUtil.getLocation(
-                block.getLocation().add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
-            if (!area.contains(location)) {
+        for (Block block1 : event.getBlocks()) {
+            Location bloc = BukkitUtil.getLocation(block1.getLocation());
+            if (!area.contains(bloc.getX(), bloc.getZ()) || !area
+                .contains(bloc.getX() + relative.getBlockX(), bloc.getZ() + relative.getBlockZ())) {
                 event.setCancelled(true);
                 return;
             }
-            Plot newPlot = area.getOwnedPlot(location);
-            if (!Objects.equals(plot, newPlot)) {
+            if (!plot.equals(area.getOwnedPlot(bloc)) || !plot.equals(area.getOwnedPlot(
+                bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
                 event.setCancelled(true);
+                return;
             }
         }
     }
