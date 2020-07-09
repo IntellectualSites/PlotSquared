@@ -179,6 +179,7 @@ public class Location implements Cloneable, Comparable<Location> {
         this.x += x;
         this.y += y;
         this.z += z;
+        this.blockVector3 = BlockVector3.at(this.x, this.y, this.z);
         return this;
     }
 
@@ -220,6 +221,7 @@ public class Location implements Cloneable, Comparable<Location> {
         this.x -= x;
         this.y -= y;
         this.z -= z;
+        this.blockVector3 = BlockVector3.at(this.x, this.y, this.z);
         return this;
     }
 
