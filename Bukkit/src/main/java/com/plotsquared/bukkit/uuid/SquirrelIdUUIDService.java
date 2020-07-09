@@ -26,6 +26,8 @@
 package com.plotsquared.bukkit.uuid;
 
 import com.google.common.util.concurrent.RateLimiter;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import com.sk89q.squirrelid.Profile;
@@ -35,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,8 +68,27 @@ public class SquirrelIdUUIDService implements UUIDService {
         final List<UUIDMapping> results = new ArrayList<>(uuids.size());
         this.rateLimiter.acquire(uuids.size());
         try {
-            for (final Profile profile : this.profileService.findAllById(uuids)) {
-                results.add(new UUIDMapping(profile.getUniqueId(), profile.getName()));
+            try {
+                for (final Profile profile : this.profileService.findAllById(uuids)) {
+                    results.add(new UUIDMapping(profile.getUniqueId(), profile.getName()));
+                }
+            } catch (final IllegalArgumentException illegalArgumentException) {
+                //
+                // This means that the UUID was invalid for whatever reason, we'll try to
+                // go through them one by one
+                //
+                if (uuids.size() >= 2) {
+                    PlotSquared.debug(Captions.PREFIX + "(UUID) Found invalid UUID in batch. Will try each UUID individually.");
+                    for (final UUID uuid : uuids) {
+                        final List<UUIDMapping> result = this.getNames(Collections.singletonList(uuid));
+                        if (result.isEmpty()) {
+                            continue;
+                        }
+                        results.add(result.get(0));
+                    }
+                } else if (uuids.size() == 1) {
+                    PlotSquared.debug(Captions.PREFIX + "(UUID) Found invalid UUID: " + uuids.get(0));
+                }
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
