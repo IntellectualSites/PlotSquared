@@ -34,6 +34,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.SimpleMBR;
 
@@ -101,6 +102,16 @@ public class Location implements Cloneable, Comparable<Location> {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError(); //can't happen
         }
+    }
+
+    /**
+     * Return a copy of the location. This will pass {@link #equals(Object)}
+     * but will have a different identity.
+     *
+     * @return Copy of the location
+     */
+    @NotNull public Location copy() {
+        return new Location(this.world, this.x, this.y, this.z, this.yaw, this.pitch);
     }
 
     public PlotArea getPlotArea() {
@@ -179,6 +190,7 @@ public class Location implements Cloneable, Comparable<Location> {
         this.x += x;
         this.y += y;
         this.z += z;
+        this.blockVector3 = BlockVector3.at(this.x, this.y, this.z);
         return this;
     }
 
@@ -220,6 +232,7 @@ public class Location implements Cloneable, Comparable<Location> {
         this.x -= x;
         this.y -= y;
         this.z -= z;
+        this.blockVector3 = BlockVector3.at(this.x, this.y, this.z);
         return this;
     }
 
