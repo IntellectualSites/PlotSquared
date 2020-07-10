@@ -377,7 +377,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     @NotNull public Location getLocation() {
         Location location = getMeta("location");
         if (location != null) {
-            return location;
+            return location.copy(); // Always return a copy of the location
         }
         return getLocationFull();
     }

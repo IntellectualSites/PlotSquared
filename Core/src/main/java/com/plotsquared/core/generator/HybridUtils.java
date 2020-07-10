@@ -91,6 +91,11 @@ public abstract class HybridUtils {
         this.plotAreaManager = plotAreaManager;
     }
 
+    public static boolean regeneratePlotWalls(final PlotArea area) {
+        PlotManager plotManager = area.getPlotManager();
+        return plotManager.regenerateAllPlotWalls();
+    }
+
     public void analyzeRegion(final String world, final CuboidRegion region,
         final RunnableVal<PlotAnalysis> whenDone) {
         // int diff, int variety, int vertices, int rotation, int height_sd
@@ -509,7 +514,7 @@ public abstract class HybridUtils {
         PlotManager plotManager = plotworld.getPlotManager();
         int sx = bot.getX() - plotworld.ROAD_WIDTH + 1;
         int sz = bot.getZ() + 1;
-        int sy = plotworld.ROAD_HEIGHT;
+        int sy = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotworld.ROAD_HEIGHT : 1;
         int ex = bot.getX();
         int ez = top.getZ();
         int ey = get_ey(plotManager, queue, sx, ex, sz, ez, sy);
@@ -629,10 +634,7 @@ public abstract class HybridUtils {
                         }
                         if (condition) {
                             BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                            int minY = plotWorld.SCHEM_Y;
-                            if (!Settings.Schematics.PASTE_ON_TOP) {
-                                minY = 1;
-                            }
+                            int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : 1;
                             int maxY = Math.max(extend, blocks.length);
                             for (int y = 0; y < maxY; y++) {
                                 if (y > blocks.length - 1) {
@@ -666,10 +668,5 @@ public abstract class HybridUtils {
             return true;
         }
         return false;
-    }
-
-    public static boolean regeneratePlotWalls(final PlotArea area) {
-        PlotManager plotManager = area.getPlotManager();
-        return plotManager.regenerateAllPlotWalls();
     }
 }

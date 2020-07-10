@@ -844,7 +844,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "HOGLIN":
                         case "PIGLIN":
                         case "ZOGLIN":
-                            break;
                         default: {
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                 Location location = entity.getLocation();

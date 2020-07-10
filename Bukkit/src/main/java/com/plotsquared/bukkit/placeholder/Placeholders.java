@@ -26,17 +26,16 @@
 package com.plotsquared.bukkit.placeholder;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.util.MainUtil;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Set;
 import java.util.UUID;
 
 public class Placeholders extends PlaceholderExpansion {
@@ -117,23 +116,16 @@ public class Placeholders extends PlaceholderExpansion {
                 return plot.getAlias();
             }
             case "currentplot_owner": {
-                final Set<UUID> o = plot.getOwners();
-                if (o == null || o.isEmpty()) {
-                    return "";
-                }
-                final UUID uid = (UUID) o.toArray()[0];
-                if (uid == null) {
+                final UUID plotOwner = plot.getOwnerAbs();
+                if (plotOwner == null) {
                     return "";
                 }
 
-                String name = PlotSquared.get().getImpromptuUUIDPipeline()
-                    .getSingle(uid, Settings.UUID.BLOCKING_TIMEOUT);
+                try {
+                    return MainUtil.getName(plotOwner, false);
+                } catch (final Exception ignored) {}
 
-                if (name != null) {
-                    return name;
-                }
-
-                name = Bukkit.getOfflinePlayer(uid).getName();
+                final String name = Bukkit.getOfflinePlayer(plotOwner).getName();
                 return name != null ? name : "unknown";
             }
             case "currentplot_members": {
