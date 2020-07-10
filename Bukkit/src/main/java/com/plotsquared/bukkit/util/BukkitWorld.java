@@ -78,7 +78,7 @@ import java.util.Map;
         return this.world;
     }
 
-    @Override public @NotNull String getName() {
+    @Override @NotNull public String getName() {
         return this.world.getName();
     }
 
