@@ -25,6 +25,8 @@
  */
 package com.plotsquared.bukkit.util;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.AugmentedUtils;
@@ -56,6 +58,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -74,7 +77,11 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
-public class BukkitRegionManager extends RegionManager {
+@Singleton public class BukkitRegionManager extends RegionManager {
+
+    @Inject public BukkitRegionManager(@NotNull ChunkManager chunkManager) {
+        super(chunkManager);
+    }
 
     public static boolean isIn(CuboidRegion region, int x, int z) {
         return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX()

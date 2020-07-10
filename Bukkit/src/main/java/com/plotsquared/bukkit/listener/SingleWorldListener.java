@@ -37,7 +37,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -50,7 +50,7 @@ public class SingleWorldListener implements Listener {
     private Method methodGetHandleChunk;
     private Field mustSave;
 
-    public SingleWorldListener(Plugin plugin) throws Exception {
+    public SingleWorldListener(JavaPlugin plugin) throws Exception {
         ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.backup;
 
+import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -37,7 +38,7 @@ import java.util.Objects;
 /**
  * {@inheritDoc}
  */
-public class NullBackupManager implements BackupManager {
+@Singleton public class NullBackupManager implements BackupManager {
 
     @Override @NotNull public BackupProfile getProfile(@NotNull Plot plot) {
         return new NullBackupProfile();

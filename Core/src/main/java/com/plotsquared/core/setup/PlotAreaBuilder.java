@@ -49,6 +49,13 @@ public class PlotAreaBuilder {
     @Getter @Setter private SettingsNodesWrapper settingsNodesWrapper;
     @Getter @Setter private SetupUtils setupManager;
 
+    private PlotAreaBuilder() {
+    }
+
+    public static PlotAreaBuilder newBuilder() {
+        return new PlotAreaBuilder();
+    }
+
     public static PlotAreaBuilder ofPlotArea(PlotArea area) {
         return new PlotAreaBuilder()
                 .worldName(area.getWorldName())

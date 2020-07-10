@@ -28,7 +28,6 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -47,11 +46,10 @@ public abstract class ChunkManager {
         new ConcurrentHashMap<>();
     private static final Map<BlockVector2, RunnableVal<ScopedLocalBlockQueue>> addChunks =
         new ConcurrentHashMap<>();
-    public static ChunkManager manager = null;
 
     public static void setChunkInPlotArea(RunnableVal<ScopedLocalBlockQueue> force,
         RunnableVal<ScopedLocalBlockQueue> add, String world, BlockVector2 loc) {
-        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+        LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
         if (PlotSquared.get().getPlotAreaManager().isAugmented(world) && PlotSquared.get().isNonStandardGeneration(world, loc)) {
             int blockX = loc.getX() << 4;
             int blockZ = loc.getZ() << 4;

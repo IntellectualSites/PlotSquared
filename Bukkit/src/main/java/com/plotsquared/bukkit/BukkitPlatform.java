@@ -25,29 +25,24 @@
  */
 package com.plotsquared.bukkit;
 
-import com.plotsquared.bukkit.generator.BukkitHybridUtils;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Stage;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
+import com.plotsquared.bukkit.inject.BackupModule;
+import com.plotsquared.bukkit.inject.BukkitModule;
+import com.plotsquared.bukkit.inject.WorldManagerModule;
 import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
 import com.plotsquared.bukkit.listener.PaperListener;
 import com.plotsquared.bukkit.listener.PlayerEvents;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
-import com.plotsquared.bukkit.managers.BukkitWorldManager;
-import com.plotsquared.bukkit.managers.HyperverseWorldManager;
-import com.plotsquared.bukkit.managers.MultiverseWorldManager;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.Placeholders;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
-import com.plotsquared.bukkit.queue.BukkitLocalQueue;
-import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChatManager;
-import com.plotsquared.bukkit.util.BukkitChunkManager;
-import com.plotsquared.bukkit.util.BukkitEconHandler;
-import com.plotsquared.bukkit.util.BukkitInventoryUtil;
-import com.plotsquared.bukkit.util.BukkitPermHandler;
-import com.plotsquared.bukkit.util.BukkitRegionManager;
-import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
@@ -63,8 +58,8 @@ import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.backup.NullBackupManager;
-import com.plotsquared.core.backup.SimpleBackupManager;
+import com.plotsquared.core.command.WE_Anywhere;
+import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -73,11 +68,16 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.generator.GeneratorWrapper;
-import com.plotsquared.core.generator.HybridGen;
-import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.inject.annotations.BackgroundPipeline;
+import com.plotsquared.core.inject.annotations.DefaultGenerator;
+import com.plotsquared.core.inject.annotations.ImpromptuPipeline;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldFile;
+import com.plotsquared.core.inject.modules.PlotSquaredModule;
 import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.listener.WESubscriber;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -88,23 +88,18 @@ import com.plotsquared.core.plot.message.PlainChatManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.queue.QueueProvider;
+import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.ChatManager;
-import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
-import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.ReflectionUtils;
-import com.plotsquared.core.util.RegionManager;
-import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
@@ -113,8 +108,6 @@ import com.plotsquared.core.uuid.CacheUUIDService;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.extension.platform.Actor;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
@@ -125,7 +118,6 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -162,10 +154,9 @@ import static com.plotsquared.core.util.PremiumVerification.getResourceID;
 import static com.plotsquared.core.util.PremiumVerification.getUserID;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
-public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
+@SuppressWarnings("unused") public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
 
     private static final int BSTATS_ID = 1404;
-    @Getter private static WorldEdit worldEdit;
 
     static {
         try {
@@ -180,17 +171,21 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private Method methodUnloadChunk0;
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
-    @Getter private BackupManager backupManager;
-    @Getter private PlatformWorldManager<World> worldManager;
-    private BukkitPlayerManager playerManager;
     private EconHandler econ;
     private PermHandler perm;
+
+    @Getter private Injector injector;
 
     private PlotAreaManager plotAreaManager;
     private EventDispatcher eventDispatcher;
     private PlotListener plotListener;
-    private YamlConfiguration worldConfiguration;
-    private File worldfile;
+    @WorldConfig private YamlConfiguration worldConfiguration;
+    @WorldFile private File worldfile;
+    private BukkitPlayerManager playerManager;
+    private BackupManager backupManager;
+    @ImpromptuPipeline private UUIDPipeline impromptuPipeline;
+    @BackgroundPipeline private UUIDPipeline backgroundPipeline;
+    private PlatformWorldManager<World> worldManager;
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -219,16 +214,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override public void onEnable() {
         this.pluginName = getDescription().getName();
+
+        // Stuff that needs to be created before the PlotSquared instance
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
+        TaskManager.setImplementation(new BukkitTaskManager(this));
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
-
-        this.plotAreaManager = plotSquared.getPlotAreaManager();
-        this.eventDispatcher = plotSquared.getEventDispatcher();
-        this.plotListener = plotSquared.getPlotListener();
-        this.playerManager = new BukkitPlayerManager(this.plotAreaManager, this.eventDispatcher);
-        this.worldConfiguration = plotSquared.getWorldConfiguration();
-        this.worldfile = plotSquared.getWorldsFile();
 
         if (PlotSquared.platform().getServerVersion()[1] < 13) {
             System.out.println(
@@ -240,8 +231,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             return;
         }
 
+        // We create the injector after PlotSquared has been initialized, so that we have access
+        // to generated instances and settings
+        this.injector = Guice.createInjector(Stage.PRODUCTION, new PlotSquaredModule(),
+            new BukkitModule(this), new BackupModule(), new WorldManagerModule());
+        this.injector.injectMembers(this);
+
         if (PremiumVerification.isPremium() && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
-            new UpdateUtility(this).updateChecker();
+            injector.getInstance(UpdateUtility.class).updateChecker();
         }
 
         if (PremiumVerification.isPremium()) {
@@ -255,29 +252,121 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             PlotSquared.log(Captions.PREFIX + "&6Couldn't verify purchase :(");
         }
 
-        final UUIDPipeline impromptuPipeline = PlotSquared.get().getImpromptuUUIDPipeline();
-        final UUIDPipeline backgroundPipeline = PlotSquared.get().getBackgroundUUIDPipeline();
+        // Do stuff that was previously done in PlotSquared
+        // Kill entities
+        if (Settings.Enabled_Components.KILL_ROAD_MOBS
+            || Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
+            this.runEntityTask();
+        }
+
+        // WorldEdit
+        if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
+            try {
+                PlotSquared.log(Captions.PREFIX.getTranslated() + "&6" + this.getPluginName()
+                    + " hooked into WorldEdit.");
+                WorldEdit.getInstance().getEventBus().register(this.getInjector().getInstance(WESubscriber.class));
+                if (Settings.Enabled_Components.COMMANDS) {
+                    new WE_Anywhere();
+                }
+            } catch (Throwable e) {
+                PlotSquared.debug(
+                    "Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
+            }
+        }
+
+        if (Settings.Enabled_Components.EVENTS) {
+            getServer().getPluginManager().registerEvents(getInjector().getInstance(PlayerEvents.class), this);
+            getServer().getPluginManager().registerEvents(getInjector().getInstance(EntitySpawnListener.class), this);
+            if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
+                getServer().getPluginManager().registerEvents(getInjector().getInstance(PaperListener.class), this);
+            }
+            this.plotListener.startRunnable();
+        }
+
+        // Required
+        getServer().getPluginManager().registerEvents(getInjector().getInstance(WorldEvents.class), this);
+        if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
+            getServer().getPluginManager().registerEvents(getInjector().getInstance(ChunkListener.class), this);
+        }
+
+        // Start the global block queue
+        final GlobalBlockQueue globalBlockQueue = this.injector.getInstance(GlobalBlockQueue.class);
+        globalBlockQueue.runTask();
+
+        // Commands
+        if (Settings.Enabled_Components.COMMANDS) {
+            this.registerCommands();
+        }
+
+        // Economy
+        if (Settings.Enabled_Components.ECONOMY) {
+            TaskManager.runTask(() -> {
+                getInjector().getInstance(PermHandler.class).init();
+                getInjector().getInstance(EconHandler.class).init();
+            });
+        }
+
+        if (Settings.Enabled_Components.COMPONENT_PRESETS) {
+            try {
+                new ComponentPresetManager();
+            } catch (final Exception e) {
+                PlotSquared.log(Captions.PREFIX + "Failed to initialize the preset system");
+                e.printStackTrace();
+            }
+        }
+
+        // World generators:
+        final ConfigurationSection section = this.worldConfiguration.getConfigurationSection("worlds");
+        final WorldUtil worldUtil = getInjector().getInstance(WorldUtil.class);
+
+        if (section != null) {
+            for (String world : section.getKeys(false)) {
+                if (world.equals("CheckingPlotSquaredGenerator")) {
+                    continue;
+                }
+                if (worldUtil.isWorld(world)) {
+                    this.setGenerator(world);
+                }
+            }
+            TaskManager.runTaskLater(() -> {
+                for (String world : section.getKeys(false)) {
+                    if (world.equals("CheckingPlotSquaredGenerator")) {
+                        continue;
+                    }
+                    if (!worldUtil.isWorld(world) && !world.equals("*")) {
+                        PlotSquared.debug("`" + world + "` was not properly loaded - " + this.getPluginName()
+                            + " will now try to load it properly: ");
+                        PlotSquared.debug(
+                            " - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
+                        PlotSquared.debug(
+                            " - Your world management plugin may be faulty (or non existent)");
+                        PlotSquared.debug(
+                            " This message may also be a false positive and could be ignored.");
+                        this.setGenerator(world);
+                    }
+                }
+            }, 1);
+        }
 
         // Services are accessed in order
-        final CacheUUIDService cacheUUIDService =
-            new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
-        impromptuPipeline.registerService(cacheUUIDService);
-        backgroundPipeline.registerService(cacheUUIDService);
-        impromptuPipeline.registerConsumer(cacheUUIDService);
-        backgroundPipeline.registerConsumer(cacheUUIDService);
+        final CacheUUIDService cacheUUIDService = new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
+        this.impromptuPipeline.registerService(cacheUUIDService);
+        this.backgroundPipeline.registerService(cacheUUIDService);
+        this.impromptuPipeline.registerConsumer(cacheUUIDService);
+        this.backgroundPipeline.registerConsumer(cacheUUIDService);
 
         // Now, if the server is in offline mode we can only use profiles and direct UUID
         // access, and so we skip the player profile stuff as well as SquirrelID (Mojang lookups)
         if (Settings.UUID.OFFLINE) {
             final OfflineModeUUIDService offlineModeUUIDService = new OfflineModeUUIDService();
-            impromptuPipeline.registerService(offlineModeUUIDService);
-            backgroundPipeline.registerService(offlineModeUUIDService);
+            this.impromptuPipeline.registerService(offlineModeUUIDService);
+            this.backgroundPipeline.registerService(offlineModeUUIDService);
             PlotSquared.log(Captions.PREFIX + "(UUID) Using the offline mode UUID service");
         }
 
         final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
-        impromptuPipeline.registerService(offlinePlayerUUIDService);
-        backgroundPipeline.registerService(offlinePlayerUUIDService);
+        this.impromptuPipeline.registerService(offlinePlayerUUIDService);
+        this.backgroundPipeline.registerService(offlinePlayerUUIDService);
 
         final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService("user_cache.db");
 
@@ -320,64 +409,64 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             // If running Paper we'll also try to use their profiles
             if (PaperLib.isPaper()) {
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
-                impromptuPipeline.registerService(paperUUIDService);
-                backgroundPipeline.registerService(paperUUIDService);
+                this.impromptuPipeline.registerService(paperUUIDService);
+                this.backgroundPipeline.registerService(paperUUIDService);
                 PlotSquared
                     .log(Captions.PREFIX + "(UUID) Using Paper as a complementary UUID service");
             }
 
-            impromptuPipeline.registerService(sqLiteUUIDService);
-            backgroundPipeline.registerService(sqLiteUUIDService);
-            impromptuPipeline.registerConsumer(sqLiteUUIDService);
-            backgroundPipeline.registerConsumer(sqLiteUUIDService);
+            this.impromptuPipeline.registerService(sqLiteUUIDService);
+            this.backgroundPipeline.registerService(sqLiteUUIDService);
+            this.impromptuPipeline.registerConsumer(sqLiteUUIDService);
+            this.backgroundPipeline.registerConsumer(sqLiteUUIDService);
 
             if (legacyUUIDService != null) {
-                impromptuPipeline.registerService(legacyUUIDService);
-                backgroundPipeline.registerService(legacyUUIDService);
+                this.impromptuPipeline.registerService(legacyUUIDService);
+                this.backgroundPipeline.registerService(legacyUUIDService);
             }
 
             // Plugin providers
             if (luckPermsUUIDService != null) {
-                impromptuPipeline.registerService(luckPermsUUIDService);
-                backgroundPipeline.registerService(luckPermsUUIDService);
+                this.impromptuPipeline.registerService(luckPermsUUIDService);
+                this.backgroundPipeline.registerService(luckPermsUUIDService);
             }
             if (bungeePermsUUIDService != null) {
-                impromptuPipeline.registerService(bungeePermsUUIDService);
-                backgroundPipeline.registerService(bungeePermsUUIDService);
+                this.impromptuPipeline.registerService(bungeePermsUUIDService);
+                this.backgroundPipeline.registerService(bungeePermsUUIDService);
             }
             if (essentialsUUIDService != null) {
-                impromptuPipeline.registerService(essentialsUUIDService);
-                backgroundPipeline.registerService(essentialsUUIDService);
+                this.impromptuPipeline.registerService(essentialsUUIDService);
+                this.backgroundPipeline.registerService(essentialsUUIDService);
             }
 
             final SquirrelIdUUIDService impromptuMojangService =
                 new SquirrelIdUUIDService(Settings.UUID.IMPROMPTU_LIMIT);
-            impromptuPipeline.registerService(impromptuMojangService);
+            this.impromptuPipeline.registerService(impromptuMojangService);
             final SquirrelIdUUIDService backgroundMojangService =
                 new SquirrelIdUUIDService(Settings.UUID.BACKGROUND_LIMIT);
-            backgroundPipeline.registerService(backgroundMojangService);
+            this.backgroundPipeline.registerService(backgroundMojangService);
         } else {
-            impromptuPipeline.registerService(sqLiteUUIDService);
-            backgroundPipeline.registerService(sqLiteUUIDService);
-            impromptuPipeline.registerConsumer(sqLiteUUIDService);
-            backgroundPipeline.registerConsumer(sqLiteUUIDService);
+            this.impromptuPipeline.registerService(sqLiteUUIDService);
+            this.backgroundPipeline.registerService(sqLiteUUIDService);
+            this.impromptuPipeline.registerConsumer(sqLiteUUIDService);
+            this.backgroundPipeline.registerConsumer(sqLiteUUIDService);
 
             if (legacyUUIDService != null) {
-                impromptuPipeline.registerService(legacyUUIDService);
-                backgroundPipeline.registerService(legacyUUIDService);
+                this.impromptuPipeline.registerService(legacyUUIDService);
+                this.backgroundPipeline.registerService(legacyUUIDService);
             }
         }
 
-        impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
+        this.impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
 
         if (Settings.UUID.BACKGROUND_CACHING_ENABLED) {
             this.startUuidCaching(sqLiteUUIDService, cacheUUIDService);
         }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new Placeholders().register();
+            injector.getInstance(Placeholders.class).register();
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
-                ChatFormatter.formatters.add(new PlaceholderFormatter());
+                ChatFormatter.formatters.add(getInjector().getInstance(PlaceholderFormatter.class));
             }
             PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into PlaceholderAPI");
         } else {
@@ -387,29 +476,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         this.startMetrics();
         if (Settings.Enabled_Components.WORLDS) {
-            TaskManager.IMP.taskRepeat(this::unload, 20);
+            TaskManager.getImplementation().taskRepeat(this::unload, 20);
             try {
-                singleWorldListener = new SingleWorldListener(this);
+                singleWorldListener = getInjector().getInstance(SingleWorldListener.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-
-        try {
-            this.backupManager = new SimpleBackupManager();
-        } catch (final Exception e) {
-            PlotSquared.log(Captions.PREFIX + "&6Failed to initialize backup manager");
-            e.printStackTrace();
-            PlotSquared.log(Captions.PREFIX + "&6Backup features will be disabled");
-            this.backupManager = new NullBackupManager();
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("Hyperverse") != null) {
-            this.worldManager = new HyperverseWorldManager();
-        } else if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
-            this.worldManager = new MultiverseWorldManager();
-        } else {
-            this.worldManager = new BukkitWorldManager();
         }
 
         PlotSquared.log(
@@ -601,21 +673,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         this.getServer().getPluginManager().disablePlugin(this);
     }
 
-    @Override public int[] getPluginVersion() {
-        String ver = getDescription().getVersion();
-        if (ver.contains("-")) {
-            ver = ver.split("-")[0];
-        }
-        String[] split = ver.split("\\.");
-        return new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
-            Integer.parseInt(split[2])};
-    }
-
-    @Override public String getPluginVersionString() {
-        return getDescription().getVersion();
-    }
-
-    @Override public void registerCommands() {
+    private void registerCommands() {
         final BukkitCommand bukkitCommand = new BukkitCommand();
         final PluginCommand plotCommand = getCommand("plots");
         if (plotCommand != null) {
@@ -633,11 +691,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return Bukkit.getWorldContainer();
     }
 
-    @Override public TaskManager getTaskManager() {
-        return new BukkitTaskManager(this);
-    }
-
-    @Override @SuppressWarnings("deprecation") public void runEntityTask() {
+    @SuppressWarnings("deprecation") private void runEntityTask() {
         PlotSquared.log(Captions.PREFIX + "KillAllEntities started.");
         TaskManager.runTaskRepeat(() -> this.plotAreaManager.forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.getWorldName());
@@ -897,92 +951,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final String id) {
         final IndependentPlotGenerator result;
         if (id != null && id.equalsIgnoreCase("single")) {
-            result = new SingleWorldGenerator(this.plotAreaManager);
+            result = getInjector().getInstance(SingleWorldGenerator.class);
         } else {
-            result = PlotSquared.platform().getDefaultGenerator();
+            result = getInjector().getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class));
             if (!PlotSquared.get().setupPlotWorld(worldName, id, result)) {
                 return null;
             }
         }
         return (ChunkGenerator) result.specify(worldName);
-    }
-
-    @Override public void registerPlayerEvents() {
-        final PlayerEvents main = new PlayerEvents(this.plotAreaManager, this.eventDispatcher, worldEdit);
-        getServer().getPluginManager().registerEvents(main, this);
-        getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
-        if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
-            getServer().getPluginManager().registerEvents(new PaperListener(this.plotAreaManager), this);
-        }
-        this.plotListener.startRunnable();
-    }
-
-    @Override public void registerForceFieldEvents() {
-    }
-
-    @Override public boolean initWorldEdit() {
-        if (getServer().getPluginManager().getPlugin("WorldEdit") != null) {
-            worldEdit = WorldEdit.getInstance();
-            return true;
-        }
-        return false;
-    }
-
-    @Override public EconHandler getEconomyHandler() {
-        if (econ != null) {
-            if (econ.init() /* is inited */) {
-                return econ;
-            } else {
-                return null;
-            }
-        }
-
-        try {
-            econ = new BukkitEconHandler();
-            if (econ.init()) {
-                return econ;
-            }
-        } catch (Throwable ignored) {
-            PlotSquared.debug("No economy detected!");
-        }
-        return null;
-    }
-
-    @Override public PermHandler getPermissionHandler() {
-        if (perm != null) {
-            if (perm.init() /* is inited */) {
-                return perm;
-            } else {
-                return null;
-            }
-        }
-
-        try {
-            perm = new BukkitPermHandler();
-            if (perm.init()) {
-                return perm;
-            }
-        } catch (Throwable ignored) {
-            PlotSquared.debug("No permissions detected!");
-        }
-        return null;
-    }
-
-    @Override public QueueProvider initBlockQueue() {
-        //TODO Figure out why this code is still here yet isn't being called anywhere.
-        //        try {
-        //            new SendChunk();
-        //            MainUtil.canSendChunk = true;
-        //        } catch (ClassNotFoundException | NoSuchFieldException | NoSuchMethodException e) {
-        //            PlotSquared.debug(
-        //                SendChunk.class + " does not support " + StringMan.getString(getServerVersion()));
-        //            MainUtil.canSendChunk = false;
-        //        }
-        return QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class);
-    }
-
-    @Override public WorldUtil initWorldUtil() {
-        return new BukkitUtil();
     }
 
     @Override @Nullable public GeneratorWrapper<?> getGenerator(@NonNull final String world,
@@ -998,16 +974,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
             return new BukkitPlotGenerator(world, gen, this.plotAreaManager);
         } else {
-            return new BukkitPlotGenerator(world, PlotSquared.platform().getDefaultGenerator(), this.plotAreaManager);
+            return new BukkitPlotGenerator(world, getInjector()
+                .getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class)), this.plotAreaManager);
         }
-    }
-
-    @Override public HybridUtils initHybridUtils() {
-        return new BukkitHybridUtils(this.plotAreaManager);
-    }
-
-    @Override public SetupUtils initSetupUtils() {
-        return new BukkitSetupUtils(this.plotAreaManager, this.worldConfiguration, this.worldfile);
     }
 
     @Override public void startMetrics() {
@@ -1041,32 +1010,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 "WorldEdit"));
     }
 
-    @Override public ChunkManager initChunkManager() {
-        return new BukkitChunkManager();
-    }
-
-    @Override public RegionManager initRegionManager() {
-        return new BukkitRegionManager();
-    }
-
     @Override public void unregister(@NonNull final PlotPlayer player) {
         BukkitUtil.removePlayer(player.getUUID());
-    }
-
-    @Override public void registerChunkProcessor() {
-        getServer().getPluginManager().registerEvents(new ChunkListener(this.plotAreaManager), this);
-    }
-
-    @Override public void registerWorldEvents() {
-        getServer().getPluginManager().registerEvents(new WorldEvents(this.plotAreaManager), this);
-    }
-
-    @NotNull @Override public IndependentPlotGenerator getDefaultGenerator() {
-        return new HybridGen(this.eventDispatcher, this.plotListener, this.worldConfiguration);
-    }
-
-    @Override public InventoryUtil initInventoryUtil() {
-        return new BukkitInventoryUtil();
     }
 
     @Override public void setGenerator(@NonNull final String worldName) {
@@ -1075,13 +1020,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             // create world
             ConfigurationSection worldConfig = this.worldConfiguration.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", getPluginName());
-            PlotAreaBuilder builder = new PlotAreaBuilder().plotManager(manager)
+            PlotAreaBuilder builder = PlotAreaBuilder.newBuilder().plotManager(manager)
                 .generatorName(worldConfig.getString("generator.init", manager))
                 .plotAreaType(MainUtil.getType(worldConfig))
                 .terrainType(MainUtil.getTerrain(worldConfig))
                 .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                 .worldName(worldName);
-            SetupUtils.manager.setupWorld(builder);
+            getInjector().getInstance(SetupUtils.class).setupWorld(builder);
             world = Bukkit.getWorld(worldName);
         } else {
             try {
@@ -1103,10 +1048,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         } else if (this.worldConfiguration.contains("worlds." + worldName)) {
             PlotSquared.get().loadWorld(worldName, null);
         }
-    }
-
-    @Override public SchematicHandler initSchematicHandler() {
-        return new BukkitSchematicHandler();
     }
 
     /**
@@ -1168,18 +1109,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             names.add(new AbstractMap.SimpleEntry<>(id, plugin.isEnabled()));
         }
         return names;
-    }
-
-    @Override public Actor getConsole() {
-        @NotNull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-        WorldEditPlugin wePlugin =
-            ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
-        return wePlugin.wrapCommandSender(console);
-    }
-
-    @Override @NotNull
-    public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
-        return this.playerManager;
     }
 
     @Override @NotNull public com.plotsquared.core.location.World<?> getPlatformWorld(@NotNull final String worldName) {

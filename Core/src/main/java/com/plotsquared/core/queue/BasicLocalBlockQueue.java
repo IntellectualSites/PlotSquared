@@ -51,6 +51,8 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
     private int lastZ = Integer.MIN_VALUE;
     private boolean setbiome = false;
 
+    private GlobalBlockQueue globalBlockQueue;
+
     public BasicLocalBlockQueue(String world) {
         super(world);
         this.world = world;
@@ -182,8 +184,8 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
     }
 
     @Override public void flush() {
-        GlobalBlockQueue.IMP.dequeue(this);
-        TaskManager.IMP.sync(new RunnableVal<Object>() {
+        this.globalBlockQueue.dequeue(this);
+        TaskManager.getImplementation().sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 while (next()) {
                 }

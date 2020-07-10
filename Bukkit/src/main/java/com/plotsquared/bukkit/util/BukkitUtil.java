@@ -25,6 +25,8 @@
  */
 package com.plotsquared.bukkit.util;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
@@ -37,6 +39,7 @@ import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlayerManager;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -108,13 +111,17 @@ import java.util.function.IntConsumer;
 import java.util.stream.Stream;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class BukkitUtil extends WorldUtil {
+@Singleton public class BukkitUtil extends WorldUtil {
 
     private static String lastString = null;
     private static World lastWorld = null;
 
     private static Player lastPlayer = null;
     private static BukkitPlayer lastPlotPlayer = null;
+
+    @Inject public BukkitUtil(@NotNull final RegionManager regionManager) {
+        super(regionManager);
+    }
 
     public static void removePlayer(UUID uuid) {
         lastPlayer = null;
@@ -412,7 +419,7 @@ public class BukkitUtil extends WorldUtil {
     @Override @Nullable public String[] getSignSynchronous(@NonNull final Location location) {
         Block block = getWorld(location.getWorldName())
             .getBlockAt(location.getX(), location.getY(), location.getZ());
-        return TaskManager.IMP.sync(new RunnableVal<String[]>() {
+        return TaskManager.getImplementation().sync(new RunnableVal<String[]>() {
             @Override public void run(String[] value) {
                 if (block.getState() instanceof Sign) {
                     Sign sign = (Sign) block.getState();

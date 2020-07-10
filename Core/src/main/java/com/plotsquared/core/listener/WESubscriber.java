@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
@@ -33,6 +34,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.WEManager;
+import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.event.extent.EditSessionEvent;
@@ -50,9 +52,11 @@ import java.util.Set;
 public class WESubscriber {
     
     private final PlotAreaManager plotAreaManager;
-    
-    public WESubscriber(@NotNull final PlotAreaManager plotAreaManager) {
+    private final WorldUtil worldUtil;
+
+    @Inject public WESubscriber(@NotNull final PlotAreaManager plotAreaManager, @NotNull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
+        this.worldUtil = worldUtil;
     }
 
     @Subscribe(priority = Priority.VERY_EARLY) public void onEditSession(EditSessionEvent event) {
@@ -99,7 +103,7 @@ public class WESubscriber {
                 if (this.plotAreaManager.hasPlotArea(world)) {
                     event.setExtent(
                         new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(),
-                            event.getExtent()));
+                            event.getExtent(), this.worldUtil));
                 }
             } else if (this.plotAreaManager.hasPlotArea(world)) {
                 event.setExtent(new WEExtent(mask, event.getExtent()));

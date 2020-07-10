@@ -25,13 +25,14 @@
  */
 package com.plotsquared.core.backup;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -51,12 +52,20 @@ import java.util.concurrent.CompletableFuture;
  * plot, which is used to store and retrieve plot backups
  * {@inheritDoc}
  */
-@RequiredArgsConstructor
 public class PlayerBackupProfile implements BackupProfile {
 
     private final UUID owner;
     private final Plot plot;
     private final BackupManager backupManager;
+    private final SchematicHandler schematicHandler;
+
+    @Inject public PlayerBackupProfile(@Assisted @NotNull final UUID owner, @Assisted @NotNull final Plot plot,
+        @NotNull final BackupManager backupManager, @NotNull final SchematicHandler schematicHandler) {
+        this.owner = owner;
+        this.plot = plot;
+        this.backupManager = backupManager;
+        this.schematicHandler = schematicHandler;
+    }
 
     private volatile List<Backup> backupCache;
     private final Object backupLock = new Object();
@@ -141,7 +150,7 @@ public class PlayerBackupProfile implements BackupProfile {
                     backups.get(backups.size() - 1).delete();
                 }
                 final List<Plot> plots = Collections.singletonList(plot);
-                final boolean result = SchematicHandler.manager.exportAll(plots, getBackupDirectory().toFile(),
+                final boolean result = this.schematicHandler.exportAll(plots, getBackupDirectory().toFile(),
                     "%world%-%id%-" + System.currentTimeMillis(), () ->
                     future.complete(new Backup(this, System.currentTimeMillis(), null)));
                 if (!result) {
@@ -161,14 +170,14 @@ public class PlayerBackupProfile implements BackupProfile {
             TaskManager.runTaskAsync(() -> {
                 Schematic schematic = null;
                 try {
-                    schematic = SchematicHandler.manager.getSchematic(backup.getFile().toFile());
+                    schematic = this.schematicHandler.getSchematic(backup.getFile().toFile());
                 } catch (SchematicHandler.UnsupportedFormatException e) {
                     e.printStackTrace();
                 }
                 if (schematic == null) {
                     future.completeExceptionally(new IllegalArgumentException("The backup is non-existent or not in the correct format"));
                 } else {
-                    SchematicHandler.manager.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
+                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
                         @Override public void run(Boolean value) {
                             if (value) {
                                 future.complete(null);

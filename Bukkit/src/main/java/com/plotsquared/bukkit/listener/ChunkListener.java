@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -69,7 +70,7 @@ public class ChunkListener implements Listener {
     private Chunk lastChunk;
     private boolean ignoreUnload = false;
     
-    public ChunkListener(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public ChunkListener(@NotNull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             try {

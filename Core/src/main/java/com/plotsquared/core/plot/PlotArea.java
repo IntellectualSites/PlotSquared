@@ -28,7 +28,7 @@ package com.plotsquared.core.plot;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.annoations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -140,15 +140,21 @@ public abstract class PlotArea {
     private final EventDispatcher eventDispatcher;
     private final PlotListener plotListener;
     private final YamlConfiguration worldConfiguration;
+    private final GlobalBlockQueue globalBlockQueue;
+    private final EconHandler econHandler;
 
     public PlotArea(@NotNull final String worldName, @Nullable final String id,
         @NotNull IndependentPlotGenerator generator, @Nullable final PlotId min,
         @Nullable final PlotId max, @NotNull final EventDispatcher eventDispatcher,
-        @NotNull final PlotListener plotListener, @WorldConfig @Nullable final YamlConfiguration worldConfiguration) {
+        @NotNull final PlotListener plotListener,
+        @WorldConfig @Nullable final YamlConfiguration worldConfiguration,
+        @NotNull final GlobalBlockQueue blockQueue,
+        @Nullable final EconHandler econHandler) {
         this.worldName = worldName;
         this.id = id;
         this.plotManager = createManager();
         this.generator = generator;
+        this.globalBlockQueue = blockQueue;
         if (min == null || max == null) {
             if (min != max) {
                 throw new IllegalArgumentException(
@@ -164,12 +170,13 @@ public abstract class PlotArea {
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
         this.worldConfiguration = worldConfiguration;
+        this.econHandler = econHandler;
     }
 
     @NotNull protected abstract PlotManager createManager();
 
     public LocalBlockQueue getQueue(final boolean autoQueue) {
-        return GlobalBlockQueue.IMP.getNewQueue(worldName, autoQueue);
+        return this.globalBlockQueue.getNewQueue(worldName, autoQueue);
     }
 
     /**
@@ -288,7 +295,7 @@ public abstract class PlotArea {
         this.schematicClaimSpecify = config.getBoolean("schematic.specify_on_claim");
         this.schematics = new ArrayList<>(config.getStringList("schematic.schematics"));
         this.schematics.replaceAll(String::toLowerCase);
-        this.useEconomy = config.getBoolean("economy.use") && EconHandler.getEconHandler() != null;
+        this.useEconomy = config.getBoolean("economy.use") && this.econHandler != null;
         ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
         if (this.useEconomy) {
             this.prices = new HashMap<>();
@@ -650,7 +657,7 @@ public abstract class PlotArea {
 
     //todo check if this method is needed in this class
 
-    public int getPlotCount(@Nullable final PlotPlayer player) {
+    public int getPlotCount(@Nullable final PlotPlayer<?> player) {
         return player != null ? getPlotCount(player.getUUID()) : 0;
     }
 
@@ -661,7 +668,7 @@ public abstract class PlotArea {
                 || id.y > this.max.y)) {
                 return null;
             }
-            return new Plot(this, id, this.eventDispatcher, this.plotListener);
+            return new Plot(this, id);
         }
         return plot;
     }
@@ -673,7 +680,7 @@ public abstract class PlotArea {
                 || id.y > this.max.y)) {
                 return null;
             }
-            return new Plot(this, id, this.eventDispatcher, this.plotListener);
+            return new Plot(this, id);
         }
         return plot.getBasePlot(false);
     }

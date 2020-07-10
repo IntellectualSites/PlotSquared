@@ -93,9 +93,14 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
-    public static SchematicHandler manager;
 
     private boolean exportAll = false;
+
+    private final WorldUtil worldUtil;
+
+    public SchematicHandler(@NotNull final WorldUtil worldUtil) {
+        this.worldUtil = worldUtil;
+    }
 
     public boolean exportAll(Collection<Plot> collection, final File outputDir,
         final String namingScheme, final Runnable ifSuccess) {
@@ -144,15 +149,14 @@ public abstract class SchematicHandler {
                 }
 
                 final Runnable THIS = this;
-                SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
+                getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                     @Override public void run(final CompoundTag value) {
                         if (value == null) {
                             MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.getId());
                         } else {
                             TaskManager.runTaskAsync(() -> {
                                 MainUtil.sendMessage(null, "&6ID: " + plot.getId());
-                                boolean result = SchematicHandler.manager
-                                    .save(value, directory + File.separator + name + ".schem");
+                                boolean result = save(value, directory + File.separator + name + ".schem");
                                 if (!result) {
                                     MainUtil
                                         .sendMessage(null, "&7 - Failed to save &c" + plot.getId());
@@ -223,7 +227,7 @@ public abstract class SchematicHandler {
                         if (pw instanceof ClassicPlotWorld) {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
-                            y_offset_actual = yOffset + 1 + WorldUtil.IMP
+                            y_offset_actual = yOffset + 1 +  this.worldUtil
                                 .getHighestBlockSynchronous(plot.getWorldName(),
                                     region.getMinimumPoint().getX() + 1,
                                     region.getMinimumPoint().getZ() + 1);
@@ -493,7 +497,7 @@ public abstract class SchematicHandler {
             final Location top = corners[1];
 
             CuboidRegion cuboidRegion =
-                new CuboidRegion(WorldUtil.IMP.getWeWorld(world), bot.getBlockVector3(),
+                new CuboidRegion(this.worldUtil.getWeWorld(world), bot.getBlockVector3(),
                     top.getBlockVector3());
 
             final int width = cuboidRegion.getWidth();

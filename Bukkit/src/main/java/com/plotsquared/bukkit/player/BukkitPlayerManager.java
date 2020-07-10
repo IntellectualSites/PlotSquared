@@ -25,10 +25,11 @@
  */
 package com.plotsquared.bukkit.player;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -39,10 +40,16 @@ import java.util.UUID;
 /**
  * Player manager providing {@link BukkitPlayer Bukkit players}
  */
-@RequiredArgsConstructor public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
+@Singleton public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
+
+    @Inject public BukkitPlayerManager(@NotNull final PlotAreaManager plotAreaManager,
+                               @NotNull final EventDispatcher eventDispatcher) {
+        this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
+    }
 
     @NotNull @Override public BukkitPlayer getPlayer(@NotNull final Player object) {
         try {

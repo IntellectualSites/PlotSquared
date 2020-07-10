@@ -99,12 +99,15 @@ shadowJar {
         include(dependency("org.bstats:bstats-bukkit:1.7"))
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))
+        include(dependency("com.google.inject:guice:4.2.3"))
+        include(dependency("com.google.inject.extensions:guice-assistedinject:4.2.3"))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
     relocate('com.sk89q.squirrelid', 'com.plotsquared.squirrelid')
     relocate('org.khelekore.prtree', 'com.plotsquared.prtree')
+    relocate('com.google', 'com.plotsquared.google')
     archiveFileName = "${project.name}-${parent.version}.jar"
     destinationDirectory = file "../target"
 }

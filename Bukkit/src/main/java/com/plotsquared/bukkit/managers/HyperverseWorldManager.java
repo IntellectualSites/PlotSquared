@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.managers;
 
+import com.google.inject.Singleton;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +39,7 @@ import se.hyperver.hyperverse.world.WorldType;
  * Hyperverse specific manager that creates worlds
  * using Hyperverse's API
  */
-public class HyperverseWorldManager extends BukkitWorldManager {
+@Singleton public class HyperverseWorldManager extends BukkitWorldManager {
 
     @Override @Nullable
     public World handleWorldCreation(@NotNull String worldName, @Nullable String generator) {

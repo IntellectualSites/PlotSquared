@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.managers;
 
+import com.google.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  * Multiverse specific manager that informs Multiverse of
  * world creation by executing a console command
  */
-public class MultiverseWorldManager extends BukkitWorldManager {
+@Singleton public class MultiverseWorldManager extends BukkitWorldManager {
 
     @Override @Nullable
     public World handleWorldCreation(@NotNull final String worldName, @Nullable final String generator) {

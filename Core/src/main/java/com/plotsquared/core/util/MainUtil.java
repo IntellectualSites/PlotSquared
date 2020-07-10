@@ -240,8 +240,7 @@ public class MainUtil {
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
         BiomeType biome = area.getPlotBiome();
-        if (!Objects.equals(WorldUtil.IMP
-            .getBiomeSynchronous(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
+        if (!Objects.equals(PlotSquared.platform().getWorldUtil().getBiomeSynchronous(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
                 (pos1.getZ() + pos2.getZ()) / 2), biome)) {
             MainUtil
                 .setBiome(area.getWorldName(), pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
@@ -613,14 +612,14 @@ public class MainUtil {
         BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
         BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(Plot.MAX_HEIGHT - 1);
         CuboidRegion region = new CuboidRegion(pos1, pos2);
-        WorldUtil.IMP.setBiomes(world, region, biome);
+        PlotSquared.platform().getWorldUtil().setBiomes(world, region, biome);
     }
 
     /**
      * Get the highest block at a location.
      */
     public static void getHighestBlock(String world, int x, int z, IntConsumer result) {
-        WorldUtil.IMP.getHighestBlock(world, x, z, highest -> {
+        PlotSquared.platform().getWorldUtil().getHighestBlock(world, x, z, highest -> {
             if (highest == 0) {
                 result.accept(63);
             } else {
@@ -802,7 +801,7 @@ public class MainUtil {
         int num = plot.getConnectedPlots().size();
         String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.getTranslated();
         Location bot = plot.getCorners()[0];
-        WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ(), biome -> {
+        PlotSquared.platform().getWorldUtil().getBiome(plot.getWorldName(), bot.getX(), bot.getZ(), biome -> {
             String info = iInfo;
             String trusted = getPlayerList(plot.getTrusted());
             String members = getPlayerList(plot.getMembers());

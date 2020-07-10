@@ -25,12 +25,13 @@
  */
 package com.plotsquared.bukkit.util;
 
+import com.google.inject.Singleton;
 import com.plotsquared.core.util.PermHandler;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-public class BukkitPermHandler extends PermHandler {
+@Singleton public class BukkitPermHandler extends PermHandler {
 
     private Permission perms;
 

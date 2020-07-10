@@ -23,14 +23,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.annoations;
+package com.plotsquared.bukkit.inject;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.google.inject.AbstractModule;
+import com.plotsquared.bukkit.managers.BukkitWorldManager;
+import com.plotsquared.bukkit.managers.HyperverseWorldManager;
+import com.plotsquared.bukkit.managers.MultiverseWorldManager;
+import com.plotsquared.core.util.PlatformWorldManager;
+import org.bukkit.Bukkit;
 
-@Target(ElementType.PARAMETER)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigFile {
+public class WorldManagerModule extends AbstractModule {
+
+    @Override protected void configure() {
+        if (Bukkit.getPluginManager().getPlugin("Hyperverse") != null) {
+            bind(PlatformWorldManager.class).to(HyperverseWorldManager.class);
+        } else if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
+            bind(PlatformWorldManager.class).to(MultiverseWorldManager.class);
+        } else {
+            bind(PlatformWorldManager.class).to(BukkitWorldManager.class);
+        }
+    }
+
 }

@@ -37,6 +37,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collection;
@@ -45,19 +46,23 @@ import java.util.Set;
 
 public abstract class RegionManager {
 
-    public static RegionManager manager = null;
-
     public static BlockVector2 getRegion(Location location) {
         int x = location.getX() >> 9;
         int z = location.getZ() >> 9;
         return BlockVector2.at(x, z);
     }
 
-    public static void largeRegionTask(final String world, final CuboidRegion region,
+    private final ChunkManager chunkManager;
+
+    public RegionManager(@NotNull final ChunkManager chunkManager) {
+        this.chunkManager = chunkManager;
+    }
+
+    public void largeRegionTask(final String world, final CuboidRegion region,
         final RunnableVal<BlockVector2> task, final Runnable whenDone) {
         TaskManager.runTaskAsync(() -> {
             HashSet<BlockVector2> chunks = new HashSet<>();
-            Set<BlockVector2> mcrs = manager.getChunkChunks(world);
+            Set<BlockVector2> mcrs = this.getChunkChunks(world);
             for (BlockVector2 mcr : mcrs) {
                 int bx = mcr.getX() << 9;
                 int bz = mcr.getZ() << 9;
@@ -85,7 +90,7 @@ public abstract class RegionManager {
             }
             TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
                 @Override public void run(BlockVector2 value) {
-                    ChunkManager.manager.loadChunk(world, value, false)
+                    chunkManager.loadChunk(world, value, false)
                         .thenRun(() -> task.run(value));
                 }
             }, whenDone);

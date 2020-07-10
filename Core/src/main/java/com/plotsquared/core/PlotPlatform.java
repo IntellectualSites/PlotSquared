@@ -25,27 +25,21 @@
  */
 package com.plotsquared.core;
 
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.inject.annotations.DefaultGenerator;
 import com.plotsquared.core.location.World;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.queue.QueueProvider;
+import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChatManager;
-import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.InventoryUtil;
-import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
-import com.plotsquared.core.util.RegionManager;
-import com.plotsquared.core.util.SchematicHandler;
-import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
-import com.plotsquared.core.util.task.TaskManager;
-import com.sk89q.worldedit.extension.platform.Actor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,20 +88,6 @@ public interface PlotPlatform<P> extends ILogger {
      */
     void shutdown();
 
-    /**
-     * Gets the version of the PlotSquared being used.
-     *
-     * @return the plugin version
-     */
-    int[] getPluginVersion();
-
-    /**
-     * Gets the version of the PlotSquared being used as a string.
-     *
-     * @return the plugin version as a string
-     */
-    String getPluginVersionString();
-
     default String getPluginName() {
         return "PlotSquared";
     }
@@ -130,98 +110,11 @@ public interface PlotPlatform<P> extends ILogger {
     String getNMSPackage();
 
     /**
-     * Gets the schematic handler.
-     *
-     * @return The {@link SchematicHandler}
-     */
-    SchematicHandler initSchematicHandler();
-
-    /**
      * Starts the {@link ChatManager}.
      *
      * @return the ChatManager
      */
     ChatManager initChatManager();
-
-    /**
-     * The task manager will run and manage Minecraft tasks.
-     *
-     * @return the PlotSquared task manager
-     */
-    TaskManager getTaskManager();
-
-    /**
-     * Run the task that will kill road mobs.
-     */
-    void runEntityTask();
-
-    /**
-     * Registerss the implementation specific commands.
-     */
-    void registerCommands();
-
-    /**
-     * Register the protection system.
-     */
-    void registerPlayerEvents();
-
-    /**
-     * Register force field events.
-     */
-    void registerForceFieldEvents();
-
-    /**
-     * Registers the WorldEdit hook.
-     */
-    boolean initWorldEdit();
-
-    /**
-     * Gets the economy provider, if there is one
-     *
-     * @return the PlotSquared economy manager
-     */
-    @Nullable EconHandler getEconomyHandler();
-
-    /**
-     * Gets the permission provider, if there is one
-     *
-     * @return the PlotSquared permission manager
-     */
-    @Nullable PermHandler getPermissionHandler();
-
-    /**
-     * Gets the {@link QueueProvider} class.
-     */
-    QueueProvider initBlockQueue();
-
-    /**
-     * Gets the {@link WorldUtil} class.
-     */
-    WorldUtil initWorldUtil();
-
-    /**
-     * Gets the chunk manager.
-     *
-     * @return the PlotSquared chunk manager
-     */
-    ChunkManager initChunkManager();
-
-    /**
-     * Gets the region manager.
-     *
-     * @return the PlotSquared region manager
-     */
-    RegionManager initRegionManager();
-
-    /**
-     * Gets the {@link SetupUtils} class.
-     */
-    SetupUtils initSetupUtils();
-
-    /**
-     * Gets {@link HybridUtils} class.
-     */
-    HybridUtils initHybridUtils();
 
     /**
      * Start Metrics.
@@ -234,12 +127,6 @@ public interface PlotPlatform<P> extends ILogger {
      * @param world The world to set the generator
      */
     void setGenerator(String world);
-
-    /**
-     * Gets the {@link InventoryUtil} class (used for implementation specific
-     * inventory guis).
-     */
-    InventoryUtil initInventoryUtil();
 
     /**
      * Unregisters a {@link PlotPlayer} from cache e.g. if they have logged off.
@@ -260,48 +147,42 @@ public interface PlotPlatform<P> extends ILogger {
     GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator);
 
     /**
-     * Register the chunk processor which will clean out chunks that have too
-     * many block states or entities.
-     */
-    void registerChunkProcessor();
-
-    /**
-     * Register the world initialization events (used to keep track of worlds
-     * being generated).
-     */
-    void registerWorldEvents();
-
-    /**
      * Usually HybridGen
      *
      * @return Default implementation generator
      */
-    @NotNull IndependentPlotGenerator getDefaultGenerator();
+    @NotNull default IndependentPlotGenerator getDefaultGenerator() {
+        return getInjector().getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class));
+    }
 
     List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds();
-
-    Actor getConsole();
 
     /**
      * Get the backup manager instance
      *
      * @return Backup manager
      */
-    @NotNull BackupManager getBackupManager();
+    @NotNull default BackupManager getBackupManager() {
+        return getInjector().getInstance(BackupManager.class);
+    }
 
     /**
      * Get the platform specific world manager
      *
      * @return World manager
      */
-    @NotNull PlatformWorldManager<?> getWorldManager();
+    @NotNull default PlatformWorldManager<?> getWorldManager() {
+        return getInjector().getInstance(PlatformWorldManager.class);
+    }
 
     /**
      * Get the player manager implementation for the platform
      *
      * @return Player manager
      */
-    @NotNull PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager();
+    @NotNull default PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager() {
+        return getInjector().getInstance(PlayerManager.class);
+    }
 
     /**
      * Get a platform world wrapper from a world name
@@ -310,5 +191,39 @@ public interface PlotPlatform<P> extends ILogger {
      * @return Platform world wrapper
      */
     @NotNull World<?> getPlatformWorld(@NotNull final String worldName);
+
+    /**
+     * Get the {@link com.google.inject.Injector} instance used by PlotSquared
+     *
+     * @return Injector instance
+     */
+    @NotNull Injector getInjector();
+
+    /**
+     * Get the world utility implementation
+     *
+     * @return World utility
+     */
+    @NotNull default WorldUtil getWorldUtil() {
+        return getInjector().getInstance(WorldUtil.class);
+    }
+
+    /**
+     * Get the global block queue implementation
+     *
+     * @return Global block queue implementation
+     */
+    @NotNull default GlobalBlockQueue getGlobalBlockQueue() {
+        return getInjector().getInstance(GlobalBlockQueue.class);
+    }
+
+    /**
+     * Get the hybrid utility class
+     *
+     * @return Hybrid utility class
+     */
+    @NotNull default HybridUtils getHybridUtils() {
+        return getInjector().getInstance(HybridUtils.class);
+    }
 
 }

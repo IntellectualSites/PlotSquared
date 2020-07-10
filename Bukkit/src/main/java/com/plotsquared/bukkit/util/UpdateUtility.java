@@ -28,6 +28,7 @@ package com.plotsquared.bukkit.util;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.PlotVersion;
 import com.plotsquared.core.configuration.Captions;
@@ -51,7 +52,7 @@ public class UpdateUtility implements Listener {
     public final JavaPlugin javaPlugin;
     private boolean notify = true;
 
-    public UpdateUtility(final JavaPlugin javaPlugin) {
+    @Inject public UpdateUtility(final JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
         internalVersion = PlotSquared.get().getVersion();
     }

@@ -23,16 +23,14 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.generator;
+package com.plotsquared.core.inject.annotations;
 
-import com.plotsquared.core.generator.HybridUtils;
-import com.plotsquared.core.plot.world.PlotAreaManager;
-import org.jetbrains.annotations.NotNull;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class BukkitHybridUtils extends HybridUtils {
-
-    public BukkitHybridUtils(@NotNull PlotAreaManager plotAreaManager) {
-        super(plotAreaManager);
-    }
-
+@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface BackgroundPipeline {
 }

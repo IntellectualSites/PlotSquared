@@ -32,7 +32,6 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.AreaBoundDelegateLocalBlockQueue;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.LocationOffsetDelegateLocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
@@ -87,7 +86,7 @@ public class AugmentedUtils {
             IndependentPlotGenerator generator = area.getGenerator();
             // Mask
             if (queue == null) {
-                queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+                queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
                 queue.setChunkObject(chunkObject);
             }
             LocalBlockQueue primaryMask;

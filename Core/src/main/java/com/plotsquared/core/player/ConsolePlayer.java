@@ -25,14 +25,17 @@
  */
 package com.plotsquared.core.player;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.inject.annotations.ConsoleActor;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -40,6 +43,7 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -47,8 +51,14 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
 
     private static ConsolePlayer instance;
 
-    private ConsolePlayer(final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
-        super(plotAreaManager, eventDispatcher);
+    private final Actor actor;
+
+    @Inject private ConsolePlayer(@NotNull final PlotAreaManager plotAreaManager,
+                                  @NotNull final EventDispatcher eventDispatcher,
+                                  @ConsoleActor @NotNull final Actor actor,
+                                  @Nullable final EconHandler econHandler) {
+        super(plotAreaManager, eventDispatcher, econHandler);
+        this.actor = actor;
         final PlotArea[] areas = plotAreaManager.getAllPlotAreas();
         final PlotArea area;
         if (areas.length > 0) {
@@ -70,14 +80,14 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
 
     public static ConsolePlayer getConsole() {
         if (instance == null) {
-            instance = new ConsolePlayer(PlotSquared.get().getPlotAreaManager(), PlotSquared.get().getEventDispatcher());
+            instance = PlotSquared.platform().getInjector().getInstance(ConsolePlayer.class);
             instance.teleport(instance.getLocation());
         }
         return instance;
     }
 
     @Override public Actor toActor() {
-        return PlotSquared.platform().getConsole();
+        return this.actor;
     }
 
     @Override public Actor getPlatformPlayer() {

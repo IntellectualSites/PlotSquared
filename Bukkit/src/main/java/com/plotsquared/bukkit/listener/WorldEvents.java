@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -43,7 +44,7 @@ public class WorldEvents implements Listener {
 
     private final PlotAreaManager plotAreaManager;
 
-    public WorldEvents(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public WorldEvents(@NotNull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
 

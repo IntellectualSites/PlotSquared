@@ -25,40 +25,11 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.PlotPlatform;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class EconHandler {
-
-    /**
-     * @deprecated This will be removed in the future,
-     * call {@link PlotPlatform#getEconomyHandler()} instead.
-     */
-    @Deprecated @Nullable public static EconHandler manager;
-
-    /**
-     * Initialize the economy handler using {@link PlotPlatform#getEconomyHandler()}
-     * @deprecated Call {@link #init} instead or use {@link PlotPlatform#getEconomyHandler()}
-     * which does this already.
-     */
-    @Deprecated public static void initializeEconHandler() {
-        manager = PlotSquared.platform().getEconomyHandler();
-    }
-
-    /**
-     * Return the econ handler instance, if one exists
-     *
-     * @return Economy handler instance
-     * @deprecated Call {@link PlotPlatform#getEconomyHandler()} instead
-     */
-    @Deprecated @Nullable public static EconHandler getEconHandler() {
-        manager = PlotSquared.platform().getEconomyHandler();
-        return manager;
-    }
 
     public abstract boolean init();
 
@@ -88,4 +59,5 @@ public abstract class EconHandler {
     @Deprecated public boolean hasPermission(String player, String perm) {
         return hasPermission(null, player, perm);
     }
+
 }

@@ -27,9 +27,12 @@ package com.plotsquared.core.backup;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.TaskManager;
@@ -48,15 +51,17 @@ import java.util.concurrent.TimeUnit;
 /**
  * {@inheritDoc}
  */
-@RequiredArgsConstructor public class SimpleBackupManager implements BackupManager {
+@RequiredArgsConstructor @Singleton public class SimpleBackupManager implements BackupManager {
 
     @Getter private final Path backupPath;
     private final boolean automaticBackup;
     @Getter private final int backupLimit;
     private final Cache<PlotCacheKey, BackupProfile> backupProfileCache = CacheBuilder.newBuilder()
         .expireAfterAccess(3, TimeUnit.MINUTES).build();
+    private final PlayerBackupProfileFactory playerBackupProfileFactory;
 
-    public SimpleBackupManager() throws Exception {
+    @Inject public SimpleBackupManager(@NotNull final PlayerBackupProfileFactory playerBackupProfileFactory) throws Exception {
+        this.playerBackupProfileFactory = playerBackupProfileFactory;
         this.backupPath = Objects.requireNonNull(PlotSquared.platform()).getDirectory().toPath().resolve("backups");
         if (!Files.exists(backupPath)) {
             Files.createDirectory(backupPath);
@@ -68,9 +73,9 @@ import java.util.concurrent.TimeUnit;
     @Override @NotNull public BackupProfile getProfile(@NotNull final Plot plot) {
         if (plot.hasOwner() && !plot.isMerged()) {
             try {
-                return backupProfileCache.get(new PlotCacheKey(plot), () -> new PlayerBackupProfile(plot.getOwnerAbs(), plot, this));
+                return backupProfileCache.get(new PlotCacheKey(plot), () -> this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot));
             } catch (ExecutionException e) {
-                final BackupProfile profile = new PlayerBackupProfile(plot.getOwnerAbs(), plot, this);
+                final BackupProfile profile = this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot);
                 this.backupProfileCache.put(new PlotCacheKey(plot), profile);
                 return profile;
             }

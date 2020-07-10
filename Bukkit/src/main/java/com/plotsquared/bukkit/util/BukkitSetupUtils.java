@@ -25,10 +25,12 @@
  */
 package com.plotsquared.bukkit.util;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.annoations.WorldConfig;
-import com.plotsquared.core.annoations.WorldFile;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
@@ -54,13 +56,13 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-public class BukkitSetupUtils extends SetupUtils {
+@Singleton public class BukkitSetupUtils extends SetupUtils {
 
     private final PlotAreaManager plotAreaManager;
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
 
-    public BukkitSetupUtils(@NotNull final PlotAreaManager plotAreaManager,
+    @Inject public BukkitSetupUtils(@NotNull final PlotAreaManager plotAreaManager,
                             @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
                             @WorldFile @NotNull final File worldFile) {
         this.plotAreaManager = plotAreaManager;
@@ -117,7 +119,7 @@ public class BukkitSetupUtils extends SetupUtils {
     }
 
     @Deprecated @Override public String setupWorld(SetupObject object) {
-        SetupUtils.manager.updateGenerators();
+        this.updateGenerators();
         ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
         String world = object.world;
         PlotAreaType type = object.type;
@@ -222,7 +224,7 @@ public class BukkitSetupUtils extends SetupUtils {
     }
 
     @Override public String setupWorld(PlotAreaBuilder builder) {
-        SetupUtils.manager.updateGenerators();
+        this.updateGenerators();
         ConfigurationNode[] steps = builder.settingsNodesWrapper() == null ?
                 new ConfigurationNode[0] : builder.settingsNodesWrapper().getSettingsNodes();
         String world = builder.worldName();

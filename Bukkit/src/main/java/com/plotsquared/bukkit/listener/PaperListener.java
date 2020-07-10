@@ -32,6 +32,7 @@ import com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent;
 import com.destroystokyo.paper.event.entity.SlimePathfindEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.MainCommand;
@@ -75,7 +76,7 @@ public class PaperListener implements Listener {
     private final PlotAreaManager plotAreaManager;
     private Chunk lastChunk;
 
-    public PaperListener(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public PaperListener(@NotNull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
     

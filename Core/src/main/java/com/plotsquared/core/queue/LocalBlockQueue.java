@@ -48,12 +48,17 @@ public abstract class LocalBlockQueue {
     @Getter @Setter private boolean forceSync = false;
     @Getter @Setter @Nullable private Object chunkObject;
 
+    private SchematicHandler schematicHandler;
+    private WorldUtil worldUtil;
+    private GlobalBlockQueue blockQueue;
+
     /**
      * Needed for compatibility with FAWE.
      *
      * @param world unused
      */
     @Deprecated public LocalBlockQueue(String world) {
+        PlotSquared.platform().getInjector().injectMembers(this);
     }
 
     public ScopedLocalBlockQueue getForChunk(int x, int z) {
@@ -94,7 +99,7 @@ public abstract class LocalBlockQueue {
     }
 
     public boolean setTile(int x, int y, int z, CompoundTag tag) {
-        SchematicHandler.manager.restoreTile(this, tag, x, y, z);
+        this.schematicHandler.restoreTile(this, tag, x, y, z);
         return true;
     }
 
@@ -123,18 +128,18 @@ public abstract class LocalBlockQueue {
         fixChunkLighting(x, z);
         BlockVector2 loc = BlockVector2.at(x, z);
 
-        for (final PlotPlayer pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer<?> pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
             Location pLoc = pp.getLocation();
             if (!StringMan.isEqual(getWorld(), pLoc.getWorldName()) || !pLoc.getChunkLocation()
                 .equals(loc)) {
                 continue;
             }
-            pp.teleport(pLoc.withY(WorldUtil.IMP.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ())));
+            pp.teleport(pLoc.withY(this.worldUtil.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ())));
         }
     }
 
     public boolean enqueue() {
-        return GlobalBlockQueue.IMP.enqueue(this);
+        return blockQueue.enqueue(this);
     }
 
     public void setCuboid(Location pos1, Location pos2, BlockState block) {

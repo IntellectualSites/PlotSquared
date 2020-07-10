@@ -38,7 +38,6 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.WorldUtil;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -214,7 +213,7 @@ public enum CommonSetupSteps implements SetupStep {
                 MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_NAME_FORMAT + argument);
                 return this;
             }
-            if (WorldUtil.IMP.isWorld(argument)) {
+            if (PlotSquared.platform().getWorldUtil().isWorld(argument)) {
                 if (PlotSquared.get().getPlotAreaManager().hasPlotArea(argument)) {
                     MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_NAME_TAKEN);
                     return this;
@@ -225,12 +224,12 @@ public enum CommonSetupSteps implements SetupStep {
             plotPlayer.deleteMeta("setup");
             String world;
             if (builder.setupManager() == null) {
-                world = SetupUtils.manager.setupWorld(builder);
+                world = PlotSquared.platform().getInjector().getInstance(SetupUtils.class).setupWorld(builder);
             } else {
                 world = builder.setupManager().setupWorld(builder);
             }
             try {
-                plotPlayer.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
+                plotPlayer.teleport(PlotSquared.platform().getWorldUtil().getSpawn(world), TeleportCause.COMMAND);
             } catch (Exception e) {
                 plotPlayer.sendMessage("&cAn error occurred. See console for more information");
                 e.printStackTrace();

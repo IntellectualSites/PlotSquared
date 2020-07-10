@@ -59,27 +59,30 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-@RequiredArgsConstructor public class PlotListener {
+public class PlotListener {
 
     private final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
     private final HashMap<UUID, Interval> healRunnable = new HashMap<>();
 
     private final EventDispatcher eventDispatcher;
-    
+
+    public PlotListener(@Nullable final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+
     public void startRunnable() {
         TaskManager.runTaskRepeat(() -> {
             if (!healRunnable.isEmpty()) {
@@ -90,15 +93,14 @@ import java.util.UUID;
                     ++value.count;
                     if (value.count == value.interval) {
                         value.count = 0;
-                        PlotPlayer player = WorldUtil.IMP.wrapPlayer(entry.getKey());
+                        PlotPlayer<?> player = PlotPlayer.wrap(entry.getKey());
                         if (player == null) {
                             iterator.remove();
                             continue;
                         }
-                        double level = WorldUtil.IMP.getHealth(player);
+                        double level = PlotSquared.platform().getWorldUtil().getHealth(player);
                         if (level != value.max) {
-                            WorldUtil.IMP
-                                .setHealth(player, Math.min(level + value.amount, value.max));
+                            PlotSquared.platform().getWorldUtil().setHealth(player, Math.min(level + value.amount, value.max));
                         }
                     }
                 }
@@ -111,15 +113,14 @@ import java.util.UUID;
                     ++value.count;
                     if (value.count == value.interval) {
                         value.count = 0;
-                        PlotPlayer player = WorldUtil.IMP.wrapPlayer(entry.getKey());
+                        PlotPlayer<?> player = PlotSquared.platform().getWorldUtil().wrapPlayer(entry.getKey());
                         if (player == null) {
                             iterator.remove();
                             continue;
                         }
-                        int level = WorldUtil.IMP.getFoodLevel(player);
+                        int level = PlotSquared.platform().getWorldUtil().getFoodLevel(player);
                         if (level != value.max) {
-                            WorldUtil.IMP
-                                .setFoodLevel(player, Math.min(level + value.amount, value.max));
+                            PlotSquared.platform().getWorldUtil().setFoodLevel(player, Math.min(level + value.amount, value.max));
                         }
                     }
                 }

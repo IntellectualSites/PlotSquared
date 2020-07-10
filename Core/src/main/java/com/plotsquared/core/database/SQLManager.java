@@ -27,7 +27,7 @@ package com.plotsquared.core.database;
 
 import com.google.common.base.Charsets;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.annoations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
@@ -1842,7 +1842,7 @@ public class SQLManager implements AbstractDB {
                         }
                         Plot p = new Plot(plot_id, user, new HashSet<>(), new HashSet<>(),
                             new HashSet<>(), "", null, null, null,
-                            new boolean[] {false, false, false, false}, time, id, this.eventDispatcher, this.plotListener);
+                            new boolean[] {false, false, false, false}, time, id);
                         HashMap<PlotId, Plot> map = newPlots.get(areaID);
                         if (map != null) {
                             Plot last = map.put(p.getId(), p);

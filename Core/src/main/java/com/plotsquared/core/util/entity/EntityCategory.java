@@ -41,15 +41,17 @@ public class EntityCategory extends Category<EntityType> implements Keyed {
     public static final NamespacedRegistry<EntityCategory> REGISTRY =
         new NamespacedRegistry<>("entity type");
 
+    private final WorldUtil worldUtil;
     private final String key;
 
-    protected EntityCategory(final String id) {
+    protected EntityCategory(final WorldUtil worldUtil, final String id) {
         super("plotsquared:" + id);
         this.key = id;
+        this.worldUtil = worldUtil;
     }
 
     @Override protected Set<EntityType> load() {
-        return WorldUtil.IMP.getTypesInCategory(this.key);
+        return this.worldUtil.getTypesInCategory(this.key);
     }
 
 }

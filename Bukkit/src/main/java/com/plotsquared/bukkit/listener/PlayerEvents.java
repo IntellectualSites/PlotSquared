@@ -27,6 +27,7 @@ package com.plotsquared.bukkit.listener;
 
 import com.destroystokyo.paper.MaterialTags;
 import com.google.common.base.Charsets;
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.UpdateUtility;
@@ -107,6 +108,7 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.RegExUtil;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.WorldEdit;
@@ -245,10 +247,11 @@ import java.util.regex.Pattern;
     private PlayerMoveEvent moveTmp;
     private String internalVersion;
 
-    public PlayerEvents(@NotNull final PlotAreaManager plotAreaManager,
-                        @NotNull final EventDispatcher eventDispatcher,
-                        @NotNull final WorldEdit worldEdit) {
-        super(eventDispatcher);
+    @Inject public PlayerEvents(@NotNull final PlotAreaManager plotAreaManager,
+                                @NotNull final EventDispatcher eventDispatcher,
+                                @NotNull final WorldEdit worldEdit,
+                                @NotNull final WorldUtil worldUtil) {
+        super(eventDispatcher, worldUtil);
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.worldEdit = worldEdit;

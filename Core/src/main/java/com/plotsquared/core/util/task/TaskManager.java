@@ -27,6 +27,8 @@ package com.plotsquared.core.util.task;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.util.RuntimeExceptionRunnableVal;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,46 +41,47 @@ public abstract class TaskManager {
 
     public static final HashSet<String> TELEPORT_QUEUE = new HashSet<>();
     public static final HashMap<Integer, Integer> tasks = new HashMap<>();
-    public static TaskManager IMP;
     public static AtomicInteger index = new AtomicInteger(0);
+
+    @Getter @Setter private static TaskManager implementation;
 
     public static int runTaskRepeat(Runnable runnable, int interval) {
         if (runnable != null) {
-            if (IMP == null) {
+            if (getImplementation() == null) {
                 throw new IllegalArgumentException("disabled");
             }
-            return IMP.taskRepeat(runnable, interval);
+            return getImplementation().taskRepeat(runnable, interval);
         }
         return -1;
     }
 
     public static int runTaskRepeatAsync(Runnable runnable, int interval) {
         if (runnable != null) {
-            if (IMP == null) {
+            if (getImplementation() == null) {
                 throw new IllegalArgumentException("disabled");
             }
-            return IMP.taskRepeatAsync(runnable, interval);
+            return getImplementation().taskRepeatAsync(runnable, interval);
         }
         return -1;
     }
 
     public static void runTaskAsync(Runnable runnable) {
         if (runnable != null) {
-            if (IMP == null) {
+            if (getImplementation() == null) {
                 runnable.run();
                 return;
             }
-            IMP.taskAsync(runnable);
+            getImplementation().taskAsync(runnable);
         }
     }
 
     public static void runTask(Runnable runnable) {
         if (runnable != null) {
-            if (IMP == null) {
+            if (getImplementation() == null) {
                 runnable.run();
                 return;
             }
-            IMP.task(runnable);
+            getImplementation().task(runnable);
         }
     }
 
@@ -90,21 +93,21 @@ public abstract class TaskManager {
      */
     public static void runTaskLater(Runnable runnable, int delay) {
         if (runnable != null) {
-            if (IMP == null) {
+            if (getImplementation() == null) {
                 runnable.run();
                 return;
             }
-            IMP.taskLater(runnable, delay);
+            getImplementation().taskLater(runnable, delay);
         }
     }
 
     public static void runTaskLaterAsync(Runnable runnable, int delay) {
         if (runnable != null) {
-            if (IMP == null) {
+            if (getImplementation() == null) {
                 runnable.run();
                 return;
             }
-            IMP.taskLaterAsync(runnable, delay);
+            getImplementation().taskLaterAsync(runnable, delay);
         }
     }
 
@@ -133,7 +136,7 @@ public abstract class TaskManager {
         final AtomicBoolean running = new AtomicBoolean(true);
         final RuntimeExceptionRunnableVal<T> run =
             new RuntimeExceptionRunnableVal<>(function, running);
-        TaskManager.IMP.task(run);
+        TaskManager.getImplementation().task(run);
         try {
             synchronized (function) {
                 while (running.get()) {

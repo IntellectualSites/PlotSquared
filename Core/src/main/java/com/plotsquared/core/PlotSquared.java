@@ -25,8 +25,6 @@
  */
 package com.plotsquared.core;
 
-import com.plotsquared.core.command.WE_Anywhere;
-import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -47,7 +45,6 @@ import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.listener.PlotListener;
-import com.plotsquared.core.listener.WESubscriber;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
@@ -65,21 +62,13 @@ import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChatManager;
-import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.LegacyConverter;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
-import com.plotsquared.core.util.RegionManager;
-import com.plotsquared.core.util.SchematicHandler;
-import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
@@ -202,10 +191,6 @@ public class PlotSquared {
                         "PlotSquared-" + platform + ".jar");
                 }
             }
-            TaskManager.IMP = this.platform.getTaskManager();
-
-            // World Util. Has to be done before config files are loaded
-            WorldUtil.IMP = this.platform.initWorldUtil();
 
             if (!setupConfigs()) {
                 return;
@@ -215,24 +200,7 @@ public class PlotSquared {
                     + ".use_THIS.yml");
             Captions.load(this.translationFile);
 
-            // WorldEdit
-            if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
-                try {
-                    if (this.platform.initWorldEdit()) {
-                        PlotSquared.log(Captions.PREFIX.getTranslated() + "&6" + this.platform.getPluginName()
-                            + " hooked into WorldEdit.");
-                        this.worldedit = WorldEdit.getInstance();
-                        WorldEdit.getInstance().getEventBus().register(new WESubscriber(this.plotAreaManager));
-                        if (Settings.Enabled_Components.COMMANDS) {
-                            new WE_Anywhere();
-                        }
-
-                    }
-                } catch (Throwable e) {
-                    PlotSquared.debug(
-                        "Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
-                }
-            }
+            this.worldedit = WorldEdit.getInstance();
 
             // Create Event utility class
             this.eventDispatcher = new EventDispatcher(this.worldedit);
@@ -263,85 +231,11 @@ public class PlotSquared {
 
             // Comments
             CommentManager.registerDefaultInboxes();
-            // Kill entities
-            if (Settings.Enabled_Components.KILL_ROAD_MOBS
-                || Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-                this.platform.runEntityTask();
-            }
-            if (Settings.Enabled_Components.EVENTS) {
-                this.platform.registerPlayerEvents();
-            }
-            // Required
-            this.platform.registerWorldEvents();
-            if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
-                this.platform.registerChunkProcessor();
-            }
+
             startExpiryTasks();
-            // create Hybrid utility class
-            HybridUtils.manager = this.platform.initHybridUtils();
-            // Inventory utility class
-            InventoryUtil.manager = this.platform.initInventoryUtil();
-            // create setup util class
-            SetupUtils.manager = this.platform.initSetupUtils();
-            // Set block
-            GlobalBlockQueue.IMP =
-                new GlobalBlockQueue(this.platform.initBlockQueue(), 1, Settings.QUEUE.TARGET_TIME);
-            GlobalBlockQueue.IMP.runTask();
-            // Set chunk
-            ChunkManager.manager = this.platform.initChunkManager();
-            RegionManager.manager = this.platform.initRegionManager();
-            // Schematic handler
-            SchematicHandler.manager = this.platform.initSchematicHandler();
-            // Chat
+
+            // This is getting removed so I won't even bother migrating it
             ChatManager.manager = this.platform.initChatManager();
-            // Commands
-            if (Settings.Enabled_Components.COMMANDS) {
-                this.platform.registerCommands();
-            }
-            // Economy
-            if (Settings.Enabled_Components.ECONOMY) {
-                TaskManager.runTask(() -> EconHandler.initializeEconHandler());
-            }
-
-            if (Settings.Enabled_Components.COMPONENT_PRESETS) {
-                try {
-                    new ComponentPresetManager();
-                } catch (final Exception e) {
-                    PlotSquared.log(Captions.PREFIX + "Failed to initialize the preset system");
-                    e.printStackTrace();
-                }
-            }
-
-            // World generators:
-            final ConfigurationSection section = this.worldConfiguration.getConfigurationSection("worlds");
-            if (section != null) {
-                for (String world : section.getKeys(false)) {
-                    if (world.equals("CheckingPlotSquaredGenerator")) {
-                        continue;
-                    }
-                    if (WorldUtil.IMP.isWorld(world)) {
-                        this.platform.setGenerator(world);
-                    }
-                }
-                TaskManager.runTaskLater(() -> {
-                    for (String world : section.getKeys(false)) {
-                        if (world.equals("CheckingPlotSquaredGenerator")) {
-                            continue;
-                        }
-                        if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
-                            debug("`" + world + "` was not properly loaded - " + this.platform.getPluginName()
-                                + " will now try to load it properly: ");
-                            debug(
-                                " - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
-                            debug(
-                                " - Your world management plugin may be faulty (or non existent)");
-                            debug(
-                                " This message may also be a false positive and could be ignored.");
-                            PlotSquared.this.platform.setGenerator(world);
-                        }
-                    }
-                }, 1);
-            }
 
             // Copy files
             copyFile("addplots.js", Settings.Paths.SCRIPTS);
@@ -552,7 +446,7 @@ public class PlotSquared {
                 PlotSquared.debug("   Regions: " + regions.size());
                 PlotSquared.debug("   Chunks: " + chunks.size());
                 HybridUtils.UPDATE = true;
-                HybridUtils.manager.scheduleRoadUpdate(plotArea, regions, height, chunks);
+                PlotSquared.platform().getHybridUtils().scheduleRoadUpdate(plotArea, regions, height, chunks);
             } catch (IOException | ClassNotFoundException e) {
                 PlotSquared.log(Captions.PREFIX + "Error restarting road regeneration.");
                 e.printStackTrace();

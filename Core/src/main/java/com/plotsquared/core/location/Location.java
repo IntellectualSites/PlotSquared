@@ -267,7 +267,7 @@ public final class Location implements Comparable<Location> {
     /**
      * Check whether or not the location belongs to a plot area
      *
-     * @return {@code true} if the location belongs to a plot area, else {@link false}
+     * @return {@code true} if the location belongs to a plot area, else {@code false}
      */
     public boolean isPlotArea() {
         return this.getPlotArea() != null;
@@ -276,7 +276,7 @@ public final class Location implements Comparable<Location> {
     /**
      * Check whether or not the location belongs to a plot road
      *
-     * @return {@code true} if the location belongs to a plot road, else {@link false}
+     * @return {@code true} if the location belongs to a plot road, else {@code false}
      */
     public boolean isPlotRoad() {
         final PlotArea area = this.getPlotArea();
@@ -286,7 +286,7 @@ public final class Location implements Comparable<Location> {
     /**
      * Checks if anyone owns a plot at the current location.
      *
-     * @return {@link true} if the location is a road, not a plot area, or if the plot is unclaimed.
+     * @return {@code true} if the location is a road, not a plot area, or if the plot is unclaimed.
      */
     public boolean isUnownedPlotArea() {
         final PlotArea area = this.getPlotArea();

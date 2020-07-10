@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.world;
 
-import com.plotsquared.core.annoations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.collection.ArrayUtil;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.SingleWorldGenerator;

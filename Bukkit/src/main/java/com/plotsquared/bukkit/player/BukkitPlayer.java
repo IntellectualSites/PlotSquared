@@ -54,6 +54,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -68,9 +69,12 @@ import static com.sk89q.worldedit.world.gamemode.GameModes.SURVIVAL;
 public class BukkitPlayer extends PlotPlayer<Player> {
 
     private static boolean CHECK_EFFECTIVE = true;
+
+    private final EconHandler econHandler;
     public final Player player;
     private boolean offline;
     private String name;
+
 
     /**
      * <p>Please do not use this method. Instead use
@@ -79,20 +83,22 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      * @param player Bukkit player instance
      */
     public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher,
-        @NotNull final Player player) {
-        this(plotAreaManager, eventDispatcher, player, false);
+        @NotNull final Player player, @Nullable final EconHandler econHandler) {
+        this(plotAreaManager, eventDispatcher, player, false, econHandler);
     }
 
     public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher,
-        @NotNull final Player player, final boolean offline) {
-        this(plotAreaManager, eventDispatcher, player, offline, true);
+        @NotNull final Player player, final boolean offline, @Nullable final EconHandler econHandler) {
+        this(plotAreaManager, eventDispatcher, player, offline, true, econHandler);
     }
 
     public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final
-        EventDispatcher eventDispatcher, @NotNull final Player player, final boolean offline, final boolean realPlayer) {
-        super(plotAreaManager, eventDispatcher);
+        EventDispatcher eventDispatcher, @NotNull final Player player, final boolean offline,
+        final boolean realPlayer, @Nullable final EconHandler econHandler) {
+        super(plotAreaManager, eventDispatcher, econHandler);
         this.player = player;
         this.offline = offline;
+        this.econHandler = econHandler;
         if (realPlayer) {
             super.populatePersistentMetaMap();
         }
@@ -161,8 +167,8 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     }
 
     @Override public boolean hasPermission(final String permission) {
-        if (this.offline && EconHandler.getEconHandler() != null) {
-            return EconHandler.getEconHandler().hasPermission(getName(), permission);
+        if (this.offline && this.econHandler != null) {
+            return this.econHandler.hasPermission(getName(), permission);
         }
         return this.player.hasPermission(permission);
     }

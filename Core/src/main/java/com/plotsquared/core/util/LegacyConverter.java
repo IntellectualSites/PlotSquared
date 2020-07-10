@@ -64,7 +64,7 @@ public final class LegacyConverter {
     }
 
     private BlockBucket blockToBucket(@NonNull final String block) {
-        final BlockState plotBlock = WorldUtil.IMP.getClosestBlock(block).best;
+        final BlockState plotBlock = PlotSquared.platform().getWorldUtil().getClosestBlock(block).best;
         return BlockBucket.withSingle(plotBlock);
     }
 
@@ -101,7 +101,7 @@ public final class LegacyConverter {
     }
 
     private BlockState[] splitBlockList(@NonNull final List<String> list) {
-        return list.stream().map(s -> WorldUtil.IMP.getClosestBlock(s).best)
+        return list.stream().map(s -> PlotSquared.platform().getWorldUtil().getClosestBlock(s).best)
             .toArray(BlockState[]::new);
     }
 

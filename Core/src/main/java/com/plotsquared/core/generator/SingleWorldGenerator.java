@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.generator;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
@@ -47,7 +48,7 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
 
     private final PlotAreaManager plotAreaManager;
 
-    public SingleWorldGenerator(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public SingleWorldGenerator(@NotNull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
 

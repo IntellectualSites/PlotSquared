@@ -80,7 +80,7 @@ public class PlotAnalysis {
     }
 
     public static void analyzePlot(Plot plot, RunnableVal<PlotAnalysis> whenDone) {
-        HybridUtils.manager.analyzePlot(plot, whenDone);
+        PlotSquared.platform().getInjector().getInstance(HybridUtils.class).analyzePlot(plot, whenDone);
     }
 
     /**

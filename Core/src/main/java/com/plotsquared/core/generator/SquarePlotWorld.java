@@ -26,7 +26,7 @@
 package com.plotsquared.core.generator;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.annoations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.listener.PlotListener;

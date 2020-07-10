@@ -61,7 +61,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public abstract class WorldUtil {
-    public static WorldUtil IMP;
+
+    private final RegionManager regionManager;
+
+    public WorldUtil(@NotNull final RegionManager regionManager) {
+        this.regionManager = regionManager;
+    }
 
     public abstract String getMainWorld();
 
@@ -150,8 +155,7 @@ public abstract class WorldUtil {
                         int brz = bot.getZ() >> 9;
                         int trx = top.getX() >> 9;
                         int trz = top.getZ() >> 9;
-                        Set<BlockVector2> files =
-                            RegionManager.manager.getChunkChunks(bot.getWorldName());
+                        Set<BlockVector2> files = regionManager.getChunkChunks(bot.getWorldName());
                         for (BlockVector2 mca : files) {
                             if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz
                                 && mca.getZ() <= trz) {

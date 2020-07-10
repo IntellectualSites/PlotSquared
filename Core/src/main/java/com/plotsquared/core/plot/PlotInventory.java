@@ -29,6 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.InventoryUtil;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class PlotInventory {
 
@@ -38,19 +39,14 @@ public class PlotInventory {
     private final PlotItemStack[] items;
     private String title;
     private boolean open = false;
-
-    public PlotInventory(PlotPlayer<?> player) {
-        this.size = 4;
-        this.title = null;
-        this.player = player;
-        this.items = InventoryUtil.manager.getItems(player);
-    }
-
-    public PlotInventory(PlotPlayer<?> player, int size, String name) {
+    private final InventoryUtil inventoryUtil;
+    
+    public PlotInventory(@NotNull final InventoryUtil inventoryUtil, PlotPlayer<?> player, int size, String name) {
         this.size = size;
         this.title = name == null ? "" : name;
         this.player = player;
         this.items = new PlotItemStack[size * 9];
+        this.inventoryUtil = inventoryUtil;
     }
 
     public static boolean hasPlotInventoryOpen(@NonNull final PlotPlayer<?> plotPlayer) {
@@ -84,7 +80,7 @@ public class PlotInventory {
         } else {
             this.open = true;
             setPlotInventoryOpen(player, this);
-            InventoryUtil.manager.open(this);
+            this.inventoryUtil.open(this);
         }
     }
 
@@ -93,13 +89,13 @@ public class PlotInventory {
             return;
         }
         removePlotInventoryOpen(player);
-        InventoryUtil.manager.close(this);
+        this.inventoryUtil.close(this);
         this.open = false;
     }
 
     public void setItem(int index, PlotItemStack item) {
         this.items[index] = item;
-        InventoryUtil.manager.setItem(this, index, item);
+        this.inventoryUtil.setItem(this, index, item);
     }
 
     public PlotItemStack getItem(int index) {

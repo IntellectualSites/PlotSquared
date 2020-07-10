@@ -26,8 +26,9 @@
 package com.plotsquared.core.generator;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.annoations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.listener.PlotListener;
@@ -48,7 +49,7 @@ public class HybridGen extends IndependentPlotGenerator {
     private final PlotListener plotListener;
     private final YamlConfiguration worldConfiguration;
 
-    public HybridGen(@NotNull final EventDispatcher eventDispatcher,
+    @Inject public HybridGen(@NotNull final EventDispatcher eventDispatcher,
                      @NotNull final PlotListener plotListener,
                      @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
         this.eventDispatcher = eventDispatcher;

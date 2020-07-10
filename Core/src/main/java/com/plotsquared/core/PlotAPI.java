@@ -102,7 +102,7 @@ import java.util.UUID;
      * @see ChunkManager
      */
     public ChunkManager getChunkManager() {
-        return ChunkManager.manager;
+        return PlotSquared.platform().getInjector().getInstance(ChunkManager.class);
     }
 
     /**
@@ -111,7 +111,7 @@ import java.util.UUID;
      * @return GlobalBlockQueue.IMP
      */
     public GlobalBlockQueue getBlockQueue() {
-        return GlobalBlockQueue.IMP;
+        return PlotSquared.platform().getGlobalBlockQueue();
     }
 
     /**
@@ -122,7 +122,7 @@ import java.util.UUID;
      * @see SchematicHandler
      */
     public SchematicHandler getSchematicHandler() {
-        return SchematicHandler.manager;
+        return PlotSquared.platform().getInjector().getInstance(SchematicHandler.class);
     }
 
     /**

@@ -91,10 +91,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
+    private final EconHandler econHandler;
     
-    public PlotPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
+    public PlotPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
     }
 
     public static <T> PlotPlayer<T> from(@NonNull final T object) {
@@ -764,23 +766,24 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * The amount of money this Player has.
      */
     public double getMoney() {
-        return EconHandler.getEconHandler() == null ? 0 : EconHandler.getEconHandler().getMoney(this);
+        return this.econHandler == null ? 0 : this.econHandler.getMoney(this);
     }
 
     public void withdraw(double amount) {
-        if (EconHandler.getEconHandler() != null) {
-            EconHandler.getEconHandler().withdrawMoney(this, amount);
+        if (this.econHandler != null) {
+            this.econHandler.withdrawMoney(this, amount);
         }
     }
 
     public void deposit(double amount) {
-        if (EconHandler.getEconHandler() != null) {
-            EconHandler.getEconHandler().depositMoney(this, amount);
+        if (this.econHandler != null) {
+            this.econHandler.depositMoney(this, amount);
         }
     }
 
     @FunctionalInterface
     public interface PlotPlayerConverter<BaseObject> {
-        PlotPlayer convert(BaseObject object);
+        PlotPlayer<?> convert(BaseObject object);
     }
+
 }

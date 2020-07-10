@@ -25,14 +25,22 @@
  */
 package com.plotsquared.bukkit.schematic;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.jnbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Schematic Handler.
  */
-public class BukkitSchematicHandler extends SchematicHandler {
+@Singleton public class BukkitSchematicHandler extends SchematicHandler {
+
+    @Inject public BukkitSchematicHandler(@NotNull final WorldUtil worldUtil) {
+        super(worldUtil);
+    }
 
     @Override
     public boolean restoreTile(LocalBlockQueue queue, CompoundTag ct, int x, int y, int z) {
