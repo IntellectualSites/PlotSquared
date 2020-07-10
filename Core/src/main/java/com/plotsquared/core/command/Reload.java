@@ -26,6 +26,8 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.annoations.WorldConfig;
+import com.plotsquared.core.annoations.WorldFile;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.MemorySection;
@@ -36,6 +38,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -48,9 +51,15 @@ import java.util.Objects;
 public class Reload extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final YamlConfiguration worldConfiguration;
+    private final File worldFile;
 
-    public Reload(@NotNull final PlotAreaManager plotAreaManager) {
+    public Reload(@NotNull final PlotAreaManager plotAreaManager,
+                  @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
+                  @WorldFile @NotNull final File  worldFile) {
         this.plotAreaManager = plotAreaManager;
+        this.worldConfiguration = worldConfiguration;
+        this.worldFile = worldFile;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -60,7 +69,7 @@ public class Reload extends SubCommand {
             PlotSquared.get().setupConfigs();
             Captions.load(PlotSquared.get().translationFile);
             this.plotAreaManager.forEachPlotArea(area -> {
-                ConfigurationSection worldSection = PlotSquared.get().worlds
+                ConfigurationSection worldSection = this.worldConfiguration
                     .getConfigurationSection("worlds." + area.getWorldName());
                 if (worldSection == null) {
                     return;
@@ -106,7 +115,7 @@ public class Reload extends SubCommand {
                     area.loadDefaultConfiguration(clone);
                 }
             });
-            PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
+            this.worldConfiguration.save(this.worldFile);
             MainUtil.sendMessage(player, Captions.RELOADED_CONFIGS);
         } catch (IOException e) {
             e.printStackTrace();

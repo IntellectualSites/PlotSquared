@@ -23,23 +23,14 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.generator;
+package com.plotsquared.core.annoations;
 
-import com.plotsquared.core.annoations.WorldConfig;
-import com.plotsquared.core.configuration.file.YamlConfiguration;
-import com.plotsquared.core.listener.PlotListener;
-import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.util.EventDispatcher;
-import org.jetbrains.annotations.NotNull;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public abstract class GridPlotWorld extends PlotArea {
-
-    public short SIZE;
-
-    public GridPlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
-        PlotId min, PlotId max, @NotNull final EventDispatcher eventDispatcher, @NotNull final
-        PlotListener plotListener, @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
-        super(worldName, id, generator, min, max, eventDispatcher, plotListener, worldConfiguration);
-    }
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface WorldFile {
 }

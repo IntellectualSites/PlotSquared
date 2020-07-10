@@ -27,7 +27,6 @@ package com.plotsquared.core;
 
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -87,26 +86,6 @@ import java.util.UUID;
      */
     public void addPlotArea(PlotArea plotArea) {
         PlotSquared.get().addPlotArea(plotArea);
-    }
-
-    /**
-     * Gets the configuration file for this plugin.
-     *
-     * @return the configuration file for PlotSquared
-     * =
-     */
-    public YamlConfiguration getConfig() {
-        return PlotSquared.get().getConfig();
-    }
-
-    /**
-     * Gets the PlotSquared storage file.
-     *
-     * @return storage configuration
-     * @see PlotSquared#storage
-     */
-    public YamlConfiguration getStorage() {
-        return PlotSquared.get().storage;
     }
 
     /**

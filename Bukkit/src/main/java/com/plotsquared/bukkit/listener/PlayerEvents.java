@@ -109,6 +109,7 @@ import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.RegExUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
@@ -234,6 +235,7 @@ import java.util.regex.Pattern;
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
+    private final WorldEdit worldEdit;
 
     private boolean pistonBlocks = true;
     private float lastRadius;
@@ -243,10 +245,13 @@ import java.util.regex.Pattern;
     private PlayerMoveEvent moveTmp;
     private String internalVersion;
 
-    public PlayerEvents(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
+    public PlayerEvents(@NotNull final PlotAreaManager plotAreaManager,
+                        @NotNull final EventDispatcher eventDispatcher,
+                        @NotNull final WorldEdit worldEdit) {
         super(eventDispatcher);
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
+        this.worldEdit = worldEdit;
         try {
             fieldPlayer = PlayerEvent.class.getDeclaredField("player");
             fieldPlayer.setAccessible(true);
@@ -1077,9 +1082,9 @@ import java.util.regex.Pattern;
         if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
-        if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
+        if (this.worldEdit!= null && pp.getAttribute("worldedit")) {
             if (player.getInventory().getItemInMainHand().getType() == Material
-                .getMaterial(PlotSquared.get().worldedit.getConfiguration().wandItem)) {
+                .getMaterial(this.worldEdit.getConfiguration().wandItem)) {
                 return;
             }
         }
@@ -1150,7 +1155,7 @@ import java.util.regex.Pattern;
         if (plot != null) {
             plotExit(pp, plot);
         }
-        if (PlotSquared.get().worldedit != null) {
+        if (this.worldEdit != null) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_WORLDEDIT_BYPASS)) {
                 if (pp.getAttribute("worldedit")) {
                     pp.removeAttribute("worldedit");
@@ -2114,9 +2119,9 @@ import java.util.regex.Pattern;
             default:
                 return;
         }
-        if (PlotSquared.get().worldedit != null && pp.getAttribute("worldedit")) {
+        if (this.worldEdit != null && pp.getAttribute("worldedit")) {
             if (event.getMaterial() == Material
-                .getMaterial(PlotSquared.get().worldedit.getConfiguration().wandItem)) {
+                .getMaterial(this.worldEdit.getConfiguration().wandItem)) {
                 return;
             }
         }

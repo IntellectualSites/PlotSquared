@@ -25,7 +25,9 @@
  */
 package com.plotsquared.core.plot.world;
 
+import com.plotsquared.core.annoations.WorldConfig;
 import com.plotsquared.core.collection.ArrayUtil;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
@@ -42,9 +44,10 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     private SinglePlotArea area;
     private PlotArea[] all;
 
-    public SinglePlotAreaManager(@NotNull final EventDispatcher eventDispatcher, @NotNull final
-        PlotListener plotListener) {
-        this.area = new SinglePlotArea(this, eventDispatcher, plotListener);
+    public SinglePlotAreaManager(@NotNull final EventDispatcher eventDispatcher,
+                                 @NotNull final PlotListener plotListener,
+                                 @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
+        this.area = new SinglePlotArea(this, eventDispatcher, plotListener, worldConfiguration);
         this.array = new SinglePlotArea[] {area};
         this.all = new PlotArea[] {area};
         SetupUtils.generators.put("PlotSquared:single",

@@ -28,6 +28,7 @@ package com.plotsquared.core.plot;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.annoations.WorldConfig;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -35,6 +36,7 @@ import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.listener.PlotListener;
@@ -137,11 +139,12 @@ public abstract class PlotArea {
 
     private final EventDispatcher eventDispatcher;
     private final PlotListener plotListener;
+    private final YamlConfiguration worldConfiguration;
 
     public PlotArea(@NotNull final String worldName, @Nullable final String id,
         @NotNull IndependentPlotGenerator generator, @Nullable final PlotId min,
         @Nullable final PlotId max, @NotNull final EventDispatcher eventDispatcher,
-        @NotNull final PlotListener plotListener) {
+        @NotNull final PlotListener plotListener, @WorldConfig @Nullable final YamlConfiguration worldConfiguration) {
         this.worldName = worldName;
         this.id = id;
         this.plotManager = createManager();
@@ -160,6 +163,7 @@ public abstract class PlotArea {
         this.worldHash = worldName.hashCode();
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
+        this.worldConfiguration = worldConfiguration;
     }
 
     @NotNull protected abstract PlotManager createManager();
@@ -242,8 +246,8 @@ public abstract class PlotArea {
      * @param plotArea the {@code PlotArea} to compare
      * @return true if both areas are compatible
      */
-    public boolean isCompatible(PlotArea plotArea) {
-        ConfigurationSection section = PlotSquared.get().worlds.getConfigurationSection("worlds");
+    public boolean isCompatible(@NotNull final PlotArea plotArea) {
+        final ConfigurationSection section = this.worldConfiguration.getConfigurationSection("worlds");
         for (ConfigurationNode setting : plotArea.getSettingNodes()) {
             Object constant = section.get(plotArea.worldName + '.' + setting.getConstant());
             if (constant == null || !constant

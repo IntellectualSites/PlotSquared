@@ -60,8 +60,10 @@ import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -87,12 +89,15 @@ public class DebugExec extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
+    private final WorldEdit worldEdit;
     private ScriptEngine engine;
     private Bindings scope;
 
-    public DebugExec(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
+    public DebugExec(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher,
+        @Nullable final WorldEdit worldEdit) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
+        this.worldEdit = worldEdit;
         init();
 /*
         try {
@@ -164,7 +169,7 @@ public class DebugExec extends SubCommand {
         this.scope.put("PS", PlotSquared.get());
         this.scope.put("GlobalBlockQueue", GlobalBlockQueue.IMP);
         this.scope.put("ExpireManager", ExpireManager.IMP);
-        if (PlotSquared.get().worldedit != null) {
+        if (this.worldEdit != null) {
             this.scope.put("WEManager", new WEManager());
         }
         this.scope.put("TaskManager", TaskManager.IMP);

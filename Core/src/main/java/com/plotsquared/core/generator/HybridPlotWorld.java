@@ -26,9 +26,11 @@
 package com.plotsquared.core.generator;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.annoations.WorldConfig;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
@@ -74,10 +76,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private Location SIGN_LOCATION;
     @Getter private File root = null;
 
-    public HybridPlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
-        PlotId min, PlotId max, @NotNull final EventDispatcher eventDispatcher, @NotNull final
-        PlotListener plotListener) {
-        super(worldName, id, generator, min, max, eventDispatcher, plotListener);
+    public HybridPlotWorld(final String worldName,
+                           final String id,
+                           @NotNull final IndependentPlotGenerator generator,
+                           final PlotId min,
+                           final PlotId max,
+                           @NotNull final EventDispatcher eventDispatcher,
+                           @NotNull final PlotListener plotListener,
+                           @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
+        super(worldName, id, generator, min, max, eventDispatcher, plotListener, worldConfiguration);
     }
 
     public static byte wrap(byte data, int start) {
@@ -188,7 +195,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
     }
 
-    @Override public boolean isCompatible(PlotArea plotArea) {
+    @Override public boolean isCompatible(@NotNull final PlotArea plotArea) {
         if (!(plotArea instanceof SquarePlotWorld)) {
             return false;
         }

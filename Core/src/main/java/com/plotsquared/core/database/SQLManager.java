@@ -27,10 +27,12 @@ package com.plotsquared.core.database;
 
 import com.google.common.base.Charsets;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.annoations.WorldConfig;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.plot.Plot;
@@ -132,6 +134,7 @@ public class SQLManager implements AbstractDB {
 
     private final EventDispatcher eventDispatcher;
     private final PlotListener plotListener;
+    private final YamlConfiguration worldConfiguration;
 
     /**
      * Constructor
@@ -141,12 +144,16 @@ public class SQLManager implements AbstractDB {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public SQLManager(final Database database, String prefix,
-        @NotNull final EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener)
+    public SQLManager(@NotNull final Database database,
+                      @NotNull final String prefix,
+                      @NotNull final EventDispatcher eventDispatcher,
+                      @NotNull final PlotListener plotListener,
+                      @WorldConfig @NotNull final YamlConfiguration worldConfiguration)
         throws SQLException, ClassNotFoundException {
         // Private final
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
+        this.worldConfiguration = worldConfiguration;
         this.database = database;
         this.connection = database.openConnection();
         this.mySQL = database instanceof MySQL;
@@ -1750,9 +1757,8 @@ public class SQLManager implements AbstractDB {
         HashMap<Integer, Plot> plots = new HashMap<>();
         try {
             HashSet<String> areas = new HashSet<>();
-            if (PlotSquared.get().worlds.contains("worlds")) {
-                ConfigurationSection worldSection =
-                    PlotSquared.get().worlds.getConfigurationSection("worlds");
+            if (this.worldConfiguration.contains("worlds")) {
+                ConfigurationSection worldSection = this.worldConfiguration.getConfigurationSection("worlds");
                 if (worldSection != null) {
                     for (String worldKey : worldSection.getKeys(false)) {
                         areas.add(worldKey);
@@ -2714,9 +2720,8 @@ public class SQLManager implements AbstractDB {
         HashMap<Integer, PlotCluster> clusters = new HashMap<>();
         try {
             HashSet<String> areas = new HashSet<>();
-            if (PlotSquared.get().worlds.contains("worlds")) {
-                ConfigurationSection worldSection =
-                    PlotSquared.get().worlds.getConfigurationSection("worlds");
+            if (this.worldConfiguration.contains("worlds")) {
+                ConfigurationSection worldSection = this.worldConfiguration.getConfigurationSection("worlds");
                 if (worldSection != null) {
                     for (String worldKey : worldSection.getKeys(false)) {
                         areas.add(worldKey);

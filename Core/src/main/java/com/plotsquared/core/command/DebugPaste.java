@@ -28,6 +28,8 @@ package com.plotsquared.core.command;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.annoations.ConfigFile;
+import com.plotsquared.core.annoations.WorldFile;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
@@ -36,6 +38,7 @@ import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.task.TaskManager;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,6 +61,15 @@ import java.util.stream.Collectors;
     confirmation = true,
     requiredType = RequiredType.NONE)
 public class DebugPaste extends SubCommand {
+
+    private final File configFile;
+    private final File worldfile;
+
+    public DebugPaste(@ConfigFile @NotNull final File configFile,
+                      @WorldFile @NotNull final File worldFile) {
+        this.configFile = configFile;
+        this.worldfile = worldFile;
+    }
 
     private static String readFile(@NonNull final File file) throws IOException {
         final List<String> lines;
@@ -142,13 +154,13 @@ public class DebugPaste extends SubCommand {
 
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml",
-                        readFile(PlotSquared.get().configFile)));
+                        readFile(this.configFile)));
                 } catch (final IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, "&cSkipping settings.yml because it's empty");
                 }
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml",
-                        readFile(PlotSquared.get().worldsFile)));
+                        readFile(this.worldfile)));
                 } catch (final IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, "&cSkipping worlds.yml because it's empty");
                 }

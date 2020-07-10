@@ -26,6 +26,8 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.annoations.WorldConfig;
+import com.plotsquared.core.annoations.WorldFile;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -64,9 +66,15 @@ import java.util.zip.ZipOutputStream;
 public class Template extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final YamlConfiguration worldConfiguration;
+    private final File worldFile;
 
-    public Template(@NotNull final PlotAreaManager plotAreaManager) {
+    public Template(@NotNull final PlotAreaManager plotAreaManager,
+                    @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
+                    @WorldFile @NotNull final File worldFile) {
         this.plotAreaManager = plotAreaManager;
+        this.worldConfiguration = worldConfiguration;
+        this.worldFile = worldFile;
     }
 
     public static boolean extractAllFiles(String world, String template) {
@@ -113,8 +121,7 @@ public class Template extends SubCommand {
     }
 
     public static byte[] getBytes(PlotArea plotArea) {
-        ConfigurationSection section =
-            PlotSquared.get().worlds.getConfigurationSection("worlds." + plotArea.getWorldName());
+        ConfigurationSection section = PlotSquared.get().getWorldConfiguration().getConfigurationSection("worlds." + plotArea.getWorldName());
         YamlConfiguration config = new YamlConfiguration();
         String generator = SetupUtils.manager.getGenerator(plotArea);
         if (generator != null) {
@@ -180,10 +187,10 @@ public class Template extends SubCommand {
                 File worldFile = MainUtil.getFile(PlotSquared.platform().getDirectory(),
                     Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml");
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
-                PlotSquared.get().worlds.set("worlds." + world, worldConfig.get(""));
+                this.worldConfiguration.set("worlds." + world, worldConfig.get(""));
                 try {
-                    PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
-                    PlotSquared.get().worlds.load(PlotSquared.get().worldsFile);
+                    this.worldConfiguration.save(this.worldFile);
+                    this.worldConfiguration.load(this.worldFile);
                 } catch (InvalidConfigurationException | IOException e) {
                     e.printStackTrace();
                 }

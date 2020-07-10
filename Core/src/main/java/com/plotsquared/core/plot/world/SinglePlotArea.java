@@ -26,9 +26,11 @@
 package com.plotsquared.core.plot.world;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.annoations.WorldConfig;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.listener.PlotListener;
@@ -61,8 +63,11 @@ public class SinglePlotArea extends GridPlotWorld {
     private final EventDispatcher eventDispatcher;
     private final PlotListener plotListener;
 
-    public SinglePlotArea(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener) {
-        super("*", null, new SingleWorldGenerator(plotAreaManager), null, null, eventDispatcher, plotListener);
+    public SinglePlotArea(@NotNull final PlotAreaManager plotAreaManager,
+                          @NotNull final EventDispatcher eventDispatcher,
+                          @NotNull final PlotListener plotListener,
+                          @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
+        super("*", null, new SingleWorldGenerator(plotAreaManager), null, null, eventDispatcher, plotListener, worldConfiguration);
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
         this.setAllowSigns(false);

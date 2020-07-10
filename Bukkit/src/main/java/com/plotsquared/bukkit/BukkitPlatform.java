@@ -70,6 +70,7 @@ import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridGen;
@@ -188,7 +189,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private PlotAreaManager plotAreaManager;
     private EventDispatcher eventDispatcher;
     private PlotListener plotListener;
-    
+    private YamlConfiguration worldConfiguration;
+    private File worldfile;
+
     @Override public int[] getServerVersion() {
         if (this.version == null) {
             try {
@@ -224,6 +227,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         this.eventDispatcher = plotSquared.getEventDispatcher();
         this.plotListener = plotSquared.getPlotListener();
         this.playerManager = new BukkitPlayerManager(this.plotAreaManager, this.eventDispatcher);
+        this.worldConfiguration = plotSquared.getWorldConfiguration();
+        this.worldfile = plotSquared.getWorldsFile();
 
         if (PlotSquared.platform().getServerVersion()[1] < 13) {
             System.out.println(
@@ -903,7 +908,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override public void registerPlayerEvents() {
-        final PlayerEvents main = new PlayerEvents(this.plotAreaManager, this.eventDispatcher);
+        final PlayerEvents main = new PlayerEvents(this.plotAreaManager, this.eventDispatcher, worldEdit);
         getServer().getPluginManager().registerEvents(main, this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
         if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
@@ -1002,7 +1007,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override public SetupUtils initSetupUtils() {
-        return new BukkitSetupUtils(this.plotAreaManager);
+        return new BukkitSetupUtils(this.plotAreaManager, this.worldConfiguration, this.worldfile);
     }
 
     @Override public void startMetrics() {
@@ -1057,7 +1062,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @NotNull @Override public IndependentPlotGenerator getDefaultGenerator() {
-        return new HybridGen(this.eventDispatcher, this.plotListener);
+        return new HybridGen(this.eventDispatcher, this.plotListener, this.worldConfiguration);
     }
 
     @Override public InventoryUtil initInventoryUtil() {
@@ -1068,8 +1073,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         World world = BukkitUtil.getWorld(worldName);
         if (world == null) {
             // create world
-            ConfigurationSection worldConfig =
-                PlotSquared.get().worlds.getConfigurationSection("worlds." + worldName);
+            ConfigurationSection worldConfig = this.worldConfiguration.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", getPluginName());
             PlotAreaBuilder builder = new PlotAreaBuilder().plotManager(manager)
                 .generatorName(worldConfig.getString("generator.init", manager))
@@ -1096,7 +1100,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             PlotSquared.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
         } else if (gen != null) {
             PlotSquared.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen, this.plotAreaManager));
-        } else if (PlotSquared.get().worlds.contains("worlds." + worldName)) {
+        } else if (this.worldConfiguration.contains("worlds." + worldName)) {
             PlotSquared.get().loadWorld(worldName, null);
         }
     }

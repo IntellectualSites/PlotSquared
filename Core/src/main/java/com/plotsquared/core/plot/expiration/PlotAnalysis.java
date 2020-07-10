@@ -390,7 +390,7 @@ public class PlotAnalysis {
                 // Save calibration
                 PlotSquared.debug(" $1Saving calibration");
                 Settings.AUTO_CLEAR.put("auto-calibrated", settings);
-                Settings.save(PlotSquared.get().worldsFile);
+                Settings.save(PlotSquared.get().getWorldsFile());
                 PlotSquared.debug("$1Done!");
                 running = false;
                 for (Plot plot : plots) {

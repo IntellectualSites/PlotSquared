@@ -26,7 +26,9 @@
 package com.plotsquared.core.generator;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.annoations.WorldConfig;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.EventDispatcher;
@@ -41,8 +43,8 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
 
     public SquarePlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
         PlotId min, PlotId max, @NotNull final EventDispatcher eventDispatcher, @NotNull final
-        PlotListener plotListener) {
-        super(worldName, id, generator, min, max, eventDispatcher, plotListener);
+        PlotListener plotListener, @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
+        super(worldName, id, generator, min, max, eventDispatcher, plotListener, worldConfiguration);
     }
 
     @Override public void loadConfiguration(ConfigurationSection config) {
