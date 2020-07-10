@@ -1514,8 +1514,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             for (Block block1 : event.getBlocks()) {
                 Location bloc = BukkitUtil.getLocation(block1.getLocation());
-                if (bloc.isPlotArea() || bloc.add(relative.getBlockX(),
-                    relative.getBlockY(), relative.getBlockZ()).isPlotArea()) {
+                if (bloc.isPlotArea() || bloc
+                    .add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())
+                    .isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1546,8 +1547,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
         }
-        if (!plot.equals(area.getOwnedPlot(location.add(
-            relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
+        if (!plot.equals(area.getOwnedPlot(
+            location.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
             // This branch is only necessary to prevent pistons from extending
             // if they are: on a plot edge, facing outside the plot, and not
             // pushing any blocks
@@ -1568,8 +1569,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             for (Block block1 : event.getBlocks()) {
                 Location bloc = BukkitUtil.getLocation(block1.getLocation());
-                if (bloc.isPlotArea() || bloc.add(relative.getBlockX(),
-                    relative.getBlockY(), relative.getBlockZ()).isPlotArea()) {
+                if (bloc.isPlotArea() || bloc
+                    .add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())
+                    .isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1955,7 +1957,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
             if (event.getAction() == Action.RIGHT_CLICK_AIR) {
                 Material item = event.getMaterial();
-                if (item.toString().toLowerCase().endsWith("egg")) {
+                if (item.toString().toLowerCase().endsWith("_egg")) {
                     event.setCancelled(true);
                     event.setUseItemInHand(Event.Result.DENY);
                 }
@@ -1967,7 +1969,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             if (type == Material.AIR) {
                 type = offType;
             }
-            if (type.toString().toLowerCase().endsWith("egg")) {
+            if (type.toString().toLowerCase().endsWith("_egg")) {
                 Block block = player.getTargetBlockExact(5, FluidCollisionMode.SOURCE_ONLY);
                 if (block != null && block.getType() != Material.AIR) {
                     Location location = BukkitUtil.getLocation(block.getLocation());
