@@ -129,7 +129,8 @@ public class BukkitUtil extends WorldUtil {
         }
         final Player player = OfflinePlayerUtil.loadPlayer(op);
         player.loadData();
-        return new BukkitPlayer(PlotSquared.get().getPlotAreaManager(), player, true);
+        return new BukkitPlayer(PlotSquared.get().getPlotAreaManager(),
+            PlotSquared.get().getEventDispatcher(), player, true);
     }
 
     /**

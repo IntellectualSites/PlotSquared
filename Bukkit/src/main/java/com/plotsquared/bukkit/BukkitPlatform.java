@@ -94,6 +94,7 @@ import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PermHandler;
@@ -183,7 +184,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private BukkitPlayerManager playerManager;
     private EconHandler econ;
     private PermHandler perm;
+
     private PlotAreaManager plotAreaManager;
+    private EventDispatcher eventDispatcher;
+    private PlotListener plotListener;
     
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -215,8 +219,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
+
         this.plotAreaManager = plotSquared.getPlotAreaManager();
-        this.playerManager = new BukkitPlayerManager(this.plotAreaManager);
+        this.eventDispatcher = plotSquared.getEventDispatcher();
+        this.plotListener = plotSquared.getPlotListener();
+        this.playerManager = new BukkitPlayerManager(this.plotAreaManager, this.eventDispatcher);
 
         if (PlotSquared.platform().getServerVersion()[1] < 13) {
             System.out.println(
@@ -897,13 +904,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override public void registerPlayerEvents() {
-        final PlayerEvents main = new PlayerEvents(this.plotAreaManager);
+        final PlayerEvents main = new PlayerEvents(this.plotAreaManager, this.eventDispatcher);
         getServer().getPluginManager().registerEvents(main, this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
         if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
             getServer().getPluginManager().registerEvents(new PaperListener(this.plotAreaManager), this);
         }
-        PlotListener.startRunnable();
+        this.plotListener.startRunnable();
     }
 
     @Override public void registerForceFieldEvents() {
@@ -1051,7 +1058,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @NotNull @Override public IndependentPlotGenerator getDefaultGenerator() {
-        return new HybridGen();
+        return new HybridGen(this.eventDispatcher, this.plotListener);
     }
 
     @Override public InventoryUtil initInventoryUtil() {

@@ -46,6 +46,7 @@ import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.listener.WESubscriber;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
@@ -166,6 +167,7 @@ public class PlotSquared {
     private File storageFile;
     @Getter private PlotAreaManager plotAreaManager;
     @Getter private EventDispatcher eventDispatcher;
+    @Getter private PlotListener plotListener;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -217,9 +219,14 @@ public class PlotSquared {
                     + ".use_THIS.yml");
             Captions.load(this.translationFile);
 
+            // Create Event utility class
+            this.eventDispatcher = new EventDispatcher();
+            // Create plot listener
+            this.plotListener = new PlotListener(this.eventDispatcher);
+
             // Setup plotAreaManager
             if (Settings.Enabled_Components.WORLDS) {
-                this.plotAreaManager = new SinglePlotAreaManager();
+                this.plotAreaManager = new SinglePlotAreaManager(this.eventDispatcher, this.plotListener);
             } else {
                 this.plotAreaManager = new DefaultPlotAreaManager();
             }
@@ -254,8 +261,6 @@ public class PlotSquared {
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.platform.registerChunkProcessor();
             }
-            // Create Event utility class
-            eventDispatcher = new EventDispatcher();
             // create Hybrid utility class
             HybridUtils.manager = this.platform.initHybridUtils();
             // Inventory utility class
@@ -427,7 +432,7 @@ public class PlotSquared {
 
     private void startExpiryTasks() {
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
-            ExpireManager.IMP = new ExpireManager();
+            ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
             ExpireManager.IMP.runAutomatedTask();
             for (Settings.Auto_Clear settings : Settings.AUTO_CLEAR.getInstances()) {
                 ExpiryTask task = new ExpiryTask(settings, this.plotAreaManager);
@@ -1207,7 +1212,8 @@ public class PlotSquared {
                 split = combinedArgs;
             }
 
-            HybridPlotWorld plotworld = new HybridPlotWorld(world, null, generator, null, null);
+            HybridPlotWorld plotworld = new HybridPlotWorld(world, null, generator,
+                null, null, this.eventDispatcher, this.plotListener);
             for (String element : split) {
                 String[] pair = element.split("=");
                 if (pair.length != 2) {
@@ -1420,7 +1426,7 @@ public class PlotSquared {
                 this.platform.shutdown(); //shutdown used instead of disable because no database is set
                 return;
             }
-            DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, false);
+            DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, this.eventDispatcher, this.plotListener);
             this.plots_tmp = DBFunc.getPlots();
             if (plotAreaManager instanceof SinglePlotAreaManager) {
                 SinglePlotArea area = ((SinglePlotAreaManager) plotAreaManager).getArea();

@@ -32,6 +32,7 @@ import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.generator.HybridPlotWorld;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -42,6 +43,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -66,6 +68,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -85,13 +88,12 @@ import java.util.Set;
     aliases = "world",
     usage = "/plot area <create|info|list|tp|regen>",
     confirmation = true)
+@RequiredArgsConstructor
 public class Area extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
-    
-    public Area(@NotNull final PlotAreaManager plotAreaManager) {
-        this.plotAreaManager = plotAreaManager;
-    }
+    private final EventDispatcher eventDispatcher;
+    private final PlotListener plotListener;
     
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -148,7 +150,7 @@ public class Area extends SubCommand {
                 // There's only one plot in the area...
                 final PlotId plotId = new PlotId(1, 1);
                 final HybridPlotWorld hybridPlotWorld = new HybridPlotWorld(player.getLocation().getWorldName(), args[1],
-                    Objects.requireNonNull(PlotSquared.platform()).getDefaultGenerator(), plotId, plotId);
+                    Objects.requireNonNull(PlotSquared.platform()).getDefaultGenerator(), plotId, plotId, this.eventDispatcher, this.plotListener);
                 // Plot size is the same as the region width
                 hybridPlotWorld.PLOT_WIDTH = hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
                 // We use a schematic generator
@@ -349,7 +351,7 @@ public class Area extends SubCommand {
                         PlotAreaBuilder builder = new PlotAreaBuilder();
                         builder.worldName(split[0]);
                         final HybridPlotWorld pa = new HybridPlotWorld(builder.worldName(), id,
-                            PlotSquared.platform().getDefaultGenerator(), null, null);
+                            PlotSquared.platform().getDefaultGenerator(), null, null, this.eventDispatcher, this.plotListener);
                         PlotArea other = this.plotAreaManager.getPlotArea(pa.getWorldName(), id);
                         if (other != null && Objects.equals(pa.getId(), other.getId())) {
                             Captions.SETUP_WORLD_TAKEN.send(player, pa.toString());

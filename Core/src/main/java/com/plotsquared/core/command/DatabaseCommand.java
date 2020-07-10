@@ -31,12 +31,14 @@ import com.plotsquared.core.database.Database;
 import com.plotsquared.core.database.MySQL;
 import com.plotsquared.core.database.SQLManager;
 import com.plotsquared.core.database.SQLite;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
@@ -60,9 +62,14 @@ import java.util.Map.Entry;
 public class DatabaseCommand extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
+    private final PlotListener plotListener;
 
-    public DatabaseCommand(@NotNull final PlotAreaManager plotAreaManager) {
+    public DatabaseCommand(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher,
+        @NotNull final PlotListener plotListener) {
         this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
+        this.plotListener = plotListener;
     }
 
     public static void insertPlots(final SQLManager manager, final List<Plot> plots,
@@ -119,8 +126,8 @@ public class DatabaseCommand extends SubCommand {
                     }
                     MainUtil.sendMessage(player, "&6Starting...");
                     implementation = new SQLite(file);
-                    SQLManager manager =
-                        new SQLManager(implementation, args.length == 3 ? args[2] : "", true);
+                    SQLManager manager = new SQLManager(implementation, args.length == 3 ? args[2] : "",
+                        this.eventDispatcher, this.plotListener);
                     HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
@@ -195,7 +202,7 @@ public class DatabaseCommand extends SubCommand {
                     return MainUtil.sendMessage(player, "/plot database [sqlite/mysql]");
             }
             try {
-                SQLManager manager = new SQLManager(implementation, prefix, true);
+                SQLManager manager = new SQLManager(implementation, prefix, this.eventDispatcher, this.plotListener);
                 DatabaseCommand.insertPlots(manager, plots, player);
                 return true;
             } catch (ClassNotFoundException | SQLException e) {

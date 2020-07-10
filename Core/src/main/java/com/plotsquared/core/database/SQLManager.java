@@ -31,6 +31,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -43,6 +44,7 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -128,6 +130,9 @@ public class SQLManager implements AbstractDB {
     private Connection connection;
     private boolean closed = false;
 
+    private final EventDispatcher eventDispatcher;
+    private final PlotListener plotListener;
+
     /**
      * Constructor
      *
@@ -136,9 +141,12 @@ public class SQLManager implements AbstractDB {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public SQLManager(final Database database, String prefix, boolean debug)
+    public SQLManager(final Database database, String prefix,
+        @NotNull final EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener)
         throws SQLException, ClassNotFoundException {
         // Private final
+        this.eventDispatcher = eventDispatcher;
+        this.plotListener = plotListener;
         this.database = database;
         this.connection = database.openConnection();
         this.mySQL = database instanceof MySQL;
@@ -1828,7 +1836,7 @@ public class SQLManager implements AbstractDB {
                         }
                         Plot p = new Plot(plot_id, user, new HashSet<>(), new HashSet<>(),
                             new HashSet<>(), "", null, null, null,
-                            new boolean[] {false, false, false, false}, time, id);
+                            new boolean[] {false, false, false, false}, time, id, this.eventDispatcher, this.plotListener);
                         HashMap<PlotId, Plot> map = newPlots.get(areaID);
                         if (map != null) {
                             Plot last = map.put(p.getId(), p);

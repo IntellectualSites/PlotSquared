@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotDoneEvent;
@@ -39,9 +38,11 @@ import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
+import org.jetbrains.annotations.NotNull;
 
 @CommandDeclaration(command = "done",
     aliases = {"submit"},
@@ -51,13 +52,19 @@ import com.plotsquared.core.util.task.RunnableVal;
     requiredType = RequiredType.NONE)
 public class Done extends SubCommand {
 
+    private final EventDispatcher eventDispatcher;
+    
+    public Done(@NotNull final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+    
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
             return !sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        PlotDoneEvent event = PlotSquared.get().getEventDispatcher().callDone(plot);
+        PlotDoneEvent event = this.eventDispatcher.callDone(plot);
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Done");
             return true;

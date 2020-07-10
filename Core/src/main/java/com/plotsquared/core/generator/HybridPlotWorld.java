@@ -29,12 +29,14 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.schematic.Schematic;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
@@ -73,8 +75,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     @Getter private File root = null;
 
     public HybridPlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
-        PlotId min, PlotId max) {
-        super(worldName, id, generator, min, max);
+        PlotId min, PlotId max, @NotNull final EventDispatcher eventDispatcher, @NotNull final
+        PlotListener plotListener) {
+        super(worldName, id, generator, min, max, eventDispatcher, plotListener);
     }
 
     public static byte wrap(byte data, int start) {

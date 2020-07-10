@@ -26,7 +26,6 @@
 package com.plotsquared.core.player;
 
 import com.google.common.base.Preconditions;
-import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
@@ -47,6 +46,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -90,9 +90,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     private int hash;
     
     private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
     
-    public PlotPlayer(@NotNull final PlotAreaManager plotAreaManager) {
+    public PlotPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
         this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
     }
 
     public static <T> PlotPlayer<T> from(@NonNull final T object) {
@@ -583,7 +585,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
             removePersistentMeta("quitLoc");
         }
         if (plot != null) {
-            PlotSquared.get().getEventDispatcher().callLeave(this, plot);
+            this.eventDispatcher.callLeave(this, plot);
         }
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {

@@ -55,6 +55,7 @@ import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -123,6 +124,9 @@ public class Plot {
     private static Set<CuboidRegion> regions_cache;
 
     @NotNull private final PlotId id;
+    @NotNull private final EventDispatcher eventDispatcher;
+    @NotNull private final PlotListener plotListener;
+    
     /**
      * Plot flag container
      */
@@ -193,8 +197,9 @@ public class Plot {
      * @param owner the plot owner
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(PlotArea area, @NotNull PlotId id, UUID owner) {
-        this(area, id, owner, 0);
+    public Plot(final PlotArea area, @NotNull final PlotId id, final UUID owner,
+        @NotNull final EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener) {
+        this(area, id, owner, 0, eventDispatcher, plotListener);
     }
 
     /**
@@ -205,8 +210,9 @@ public class Plot {
      * @param id   the plot id
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(@NotNull PlotArea area, @NotNull PlotId id) {
-        this(area, id, null, 0);
+    public Plot(@NotNull final PlotArea area, @NotNull final PlotId id,
+        @NotNull final EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener) {
+        this(area, id, null, 0, eventDispatcher, plotListener);
     }
 
     /**
@@ -220,12 +226,15 @@ public class Plot {
      * @param temp  Represents whatever the database manager needs it to
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(PlotArea area, @NotNull PlotId id, UUID owner, int temp) {
+    public Plot(final PlotArea area, @NotNull final PlotId id, final UUID owner, final int temp,
+        @NotNull final EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener) {
         this.area = area;
         this.id = id;
         this.owner = owner;
         this.temp = temp;
         this.flagContainer.setParentContainer(area.getFlagContainer());
+        this.eventDispatcher = eventDispatcher;
+        this.plotListener = plotListener;
     }
 
     /**
@@ -240,7 +249,8 @@ public class Plot {
      */
     public Plot(@NotNull PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
         HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
-        PlotArea area, boolean[] merged, long timestamp, int temp) {
+        PlotArea area, boolean[] merged, long timestamp, int temp,
+        @NotNull final EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener) {
         this.id = id;
         this.area = area;
         this.owner = owner;
@@ -261,6 +271,8 @@ public class Plot {
                 }
             }
         }
+        this.eventDispatcher = eventDispatcher;
+        this.plotListener = plotListener;
     }
 
     /**
@@ -925,7 +937,7 @@ public class Plot {
         if (isDelete) {
             this.removeSign();
         }
-        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+        PlotUnlinkEvent event = this.eventDispatcher
             .callUnlink(getArea(), this, true, !isDelete,
                 isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR);
         if (event.getEventResult() != Result.DENY) {
@@ -1325,7 +1337,7 @@ public class Plot {
         for (Plot current : getConnectedPlots()) {
             List<PlotPlayer<?>> players = current.getPlayersInPlot();
             for (PlotPlayer<?> pp : players) {
-                PlotListener.plotExit(pp, current);
+                this.plotListener.plotExit(pp, current);
             }
 
             if (Settings.Backup.DELETE_ON_UNCLAIM) {
@@ -1339,7 +1351,7 @@ public class Plot {
             current.setOwnerAbs(null);
             current.settings = null;
             for (PlotPlayer pp : players) {
-                PlotListener.plotEntry(pp, current);
+                this.plotListener.plotEntry(pp, current);
             }
         }
         return true;
@@ -1816,7 +1828,7 @@ public class Plot {
                 PlotArea plotworld = Plot.this.area;
                 if (notify && plotworld.isAutoMerge()) {
                     PlotPlayer player = WorldUtil.IMP.wrapPlayer(uuid);
-                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
+                    PlotMergeEvent event = this.eventDispatcher
                         .callMerge(this, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {
                         sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
@@ -2906,8 +2918,8 @@ public class Plot {
     public void reEnter() {
         TaskManager.runTaskLater(() -> {
             for (PlotPlayer<?> pp : Plot.this.getPlayersInPlot()) {
-                PlotListener.plotExit(pp, Plot.this);
-                PlotListener.plotEntry(pp, Plot.this);
+                this.plotListener.plotExit(pp, Plot.this);
+                this.plotListener.plotEntry(pp, Plot.this);
             }
         }, 1);
     }
@@ -2977,7 +2989,7 @@ public class Plot {
         Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
         Result result =
-            PlotSquared.get().getEventDispatcher().callTeleport(player, player.getLocation(), plot)
+            this.eventDispatcher.callTeleport(player, player.getLocation(), plot)
                 .getEventResult();
         if (result == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Teleport");
@@ -3049,7 +3061,7 @@ public class Plot {
      */
     public boolean setComponent(String component, Pattern blocks) {
         PlotComponentSetEvent event =
-            PlotSquared.get().getEventDispatcher().callComponentSet(this, component, blocks);
+            this.eventDispatcher.callComponentSet(this, component, blocks);
         component = event.getComponent();
         blocks = event.getPattern();
         return this.getManager().setComponent(this.getId(), component, blocks);

@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -35,6 +36,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
@@ -62,9 +64,13 @@ public class MainCommand extends Command {
     public static MainCommand getInstance() {
         if (instance == null) {
             instance = new MainCommand();
+
             final PlotAreaManager plotAreaManager = PlotSquared.get().getPlotAreaManager();
+            final EventDispatcher eventDispatcher = PlotSquared.get().getEventDispatcher();
+            final PlotListener plotListener = PlotSquared.get().getPlotListener();
+
             new Caps();
-            new Buy();
+            new Buy(eventDispatcher);
             new Save(plotAreaManager);
             new Load(plotAreaManager);
             new Confirm();
@@ -72,45 +78,45 @@ public class MainCommand extends Command {
             new Download(plotAreaManager);
             new Template(plotAreaManager);
             new Setup();
-            new Area(plotAreaManager);
+            new Area(plotAreaManager, eventDispatcher, plotListener);
             new DebugSaveTest();
             new DebugLoadTest();
             new CreateRoadSchematic();
             new DebugAllowUnsafe();
             new RegenAllRoads(plotAreaManager);
-            new Claim();
-            new Auto(plotAreaManager);
+            new Claim(eventDispatcher);
+            new Auto(plotAreaManager, eventDispatcher);
             new HomeCommand(plotAreaManager);
             new Visit(plotAreaManager);
             new Set();
-            new Clear();
-            new Delete();
-            new Trust();
-            new Add();
-            new Leave();
-            new Deny(plotAreaManager);
-            new Remove();
+            new Clear(eventDispatcher);
+            new Delete(eventDispatcher);
+            new Trust(eventDispatcher);
+            new Add(eventDispatcher);
+            new Leave(eventDispatcher);
+            new Deny(plotAreaManager, eventDispatcher);
+            new Remove(eventDispatcher);
             new Info();
             new Near();
             new ListCmd(plotAreaManager);
             new Debug(plotAreaManager);
             new SchematicCmd(plotAreaManager);
             new PluginCmd();
-            new Purge(plotAreaManager);
+            new Purge(plotAreaManager, plotListener);
             new Reload(plotAreaManager);
             new Relight();
-            new Merge();
+            new Merge(eventDispatcher);
             new DebugPaste();
-            new Unlink();
+            new Unlink(eventDispatcher);
             new Kick(plotAreaManager);
             new Inbox();
             new Comment();
-            new DatabaseCommand(plotAreaManager);
+            new DatabaseCommand(plotAreaManager, eventDispatcher, plotListener);
             new Swap();
             new Music();
             new DebugRoadRegen();
-            new Trust();
-            new DebugExec(plotAreaManager);
+            new Trust(eventDispatcher);
+            new DebugExec(plotAreaManager, eventDispatcher);
             new FlagCommand();
             new Target();
             new Move(plotAreaManager);
@@ -118,13 +124,13 @@ public class MainCommand extends Command {
             new Copy();
             new Chat();
             new Trim(plotAreaManager);
-            new Done();
-            new Continue();
+            new Done(eventDispatcher);
+            new Continue(eventDispatcher);
             new Middle();
             new Grant();
             // Set commands
-            new Owner();
-            new Desc();
+            new Owner(eventDispatcher);
+            new Desc(eventDispatcher);
             new Biome();
             new Alias();
             new SetHome();
@@ -133,10 +139,10 @@ public class MainCommand extends Command {
             new Backup();
 
             if (Settings.Ratings.USE_LIKES) {
-                new Like();
-                new Dislike();
+                final Like like = new Like(eventDispatcher);
+                new Dislike(like);
             } else {
-                new Rate();
+                new Rate(eventDispatcher);
             }
 
             // Referenced commands

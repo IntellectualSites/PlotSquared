@@ -36,6 +36,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -77,16 +78,19 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      *
      * @param player Bukkit player instance
      */
-    public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final Player player) {
-        this(plotAreaManager, player, false);
+    public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher,
+        @NotNull final Player player) {
+        this(plotAreaManager, eventDispatcher, player, false);
     }
 
-    public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final Player player, final boolean offline) {
-        this(plotAreaManager, player, offline, true);
+    public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher,
+        @NotNull final Player player, final boolean offline) {
+        this(plotAreaManager, eventDispatcher, player, offline, true);
     }
 
-    public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final Player player, final boolean offline, final boolean realPlayer) {
-        super(plotAreaManager);
+    public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final
+        EventDispatcher eventDispatcher, @NotNull final Player player, final boolean offline, final boolean realPlayer) {
+        super(plotAreaManager, eventDispatcher);
         this.player = player;
         this.offline = offline;
         if (realPlayer) {

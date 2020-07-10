@@ -35,9 +35,11 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,7 +55,13 @@ import java.util.UUID;
     requiredType = RequiredType.PLAYER)
 public class Like extends SubCommand {
 
-    protected static boolean handleLike(final PlotPlayer player, String[] args,
+    private final EventDispatcher eventDispatcher;
+    
+    public Like(@NotNull final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+    
+    protected boolean handleLike(final PlotPlayer<?> player, String[] args,
         final boolean like) {
         final UUID uuid = player.getUUID();
         if (args.length == 1) {
@@ -125,7 +133,7 @@ public class Like extends SubCommand {
             }
             plot.addRating(uuid, new Rating(rating));
             final PlotRateEvent event =
-                PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
+                this.eventDispatcher.callRating(player, plot, new Rating(rating));
             if (event.getRating() != null) {
                 plot.addRating(uuid, event.getRating());
                 if (like) {

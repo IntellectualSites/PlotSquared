@@ -28,8 +28,10 @@ package com.plotsquared.core.generator;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.util.EventDispatcher;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,8 +56,9 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public boolean PLOT_BEDROCK = true;
 
     public ClassicPlotWorld(String worldName, String id,
-        @NotNull IndependentPlotGenerator generator, PlotId min, PlotId max) {
-        super(worldName, id, generator, min, max);
+        @NotNull IndependentPlotGenerator generator, PlotId min, PlotId max, @NotNull final
+        EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener) {
+        super(worldName, id, generator, min, max, eventDispatcher, plotListener);
     }
 
     /**

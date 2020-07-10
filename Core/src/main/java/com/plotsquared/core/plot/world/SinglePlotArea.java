@@ -31,6 +31,7 @@ import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.plot.Plot;
@@ -41,6 +42,7 @@ import com.plotsquared.core.plot.PlotSettings;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -56,8 +58,13 @@ public class SinglePlotArea extends GridPlotWorld {
 
     public boolean VOID = false;
 
-    public SinglePlotArea(@NotNull final PlotAreaManager plotAreaManager) {
-        super("*", null, new SingleWorldGenerator(plotAreaManager), null, null);
+    private final EventDispatcher eventDispatcher;
+    private final PlotListener plotListener;
+
+    public SinglePlotArea(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener) {
+        super("*", null, new SingleWorldGenerator(plotAreaManager), null, null, eventDispatcher, plotListener);
+        this.eventDispatcher = eventDispatcher;
+        this.plotListener = plotListener;
         this.setAllowSigns(false);
         this.setDefaultHome(new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
@@ -200,7 +207,7 @@ public class SinglePlotArea extends GridPlotWorld {
         final FlagContainer oldContainer = p.getFlagContainer();
         p = new SinglePlot(p.getId(), p.getOwnerAbs(), p.getTrusted(), p.getMembers(),
             p.getDenied(), s.getAlias(), s.getPosition(), null, this, s.getMerged(),
-            p.getTimestamp(), p.temp);
+            p.getTimestamp(), p.temp, this.eventDispatcher, this.plotListener);
         p.getFlagContainer().addAll(oldContainer);
 
         return p;
@@ -209,7 +216,7 @@ public class SinglePlotArea extends GridPlotWorld {
     @Nullable public Plot getPlotAbs(@NotNull final PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
-            return new SinglePlot(this, id);
+            return new SinglePlot(this, id, this.eventDispatcher, this.plotListener);
         }
         return plot;
     }
@@ -218,7 +225,7 @@ public class SinglePlotArea extends GridPlotWorld {
         // TODO
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
-            return new SinglePlot(this, id);
+            return new SinglePlot(this, id, this.eventDispatcher, this.plotListener);
         }
         return plot.getBasePlot(false);
     }

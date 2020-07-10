@@ -27,8 +27,10 @@ package com.plotsquared.core.plot.world;
 
 import com.plotsquared.core.collection.ArrayUtil;
 import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SetupUtils;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
@@ -40,8 +42,9 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     private SinglePlotArea area;
     private PlotArea[] all;
 
-    public SinglePlotAreaManager() {
-        this.area = new SinglePlotArea(this);
+    public SinglePlotAreaManager(@NotNull final EventDispatcher eventDispatcher, @NotNull final
+        PlotListener plotListener) {
+        this.area = new SinglePlotArea(this, eventDispatcher, plotListener);
         this.array = new SinglePlotArea[] {area};
         this.all = new PlotArea[] {area};
         SetupUtils.generators.put("PlotSquared:single",

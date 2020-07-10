@@ -33,6 +33,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EventDispatcher;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.gamemode.GameMode;
@@ -46,8 +47,8 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
 
     private static ConsolePlayer instance;
 
-    private ConsolePlayer(final PlotAreaManager plotAreaManager) {
-        super(plotAreaManager);
+    private ConsolePlayer(final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
+        super(plotAreaManager, eventDispatcher);
         final PlotArea[] areas = plotAreaManager.getAllPlotAreas();
         final PlotArea area;
         if (areas.length > 0) {
@@ -69,7 +70,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
 
     public static ConsolePlayer getConsole() {
         if (instance == null) {
-            instance = new ConsolePlayer(PlotSquared.get().getPlotAreaManager());
+            instance = new ConsolePlayer(PlotSquared.get().getPlotAreaManager(), PlotSquared.get().getEventDispatcher());
             instance.teleport(instance.getLocation());
         }
         return instance;

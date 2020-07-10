@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -34,8 +33,10 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import org.jetbrains.annotations.NotNull;
 
 @CommandDeclaration(command = "continue",
     description = "Continue a plot that was previously marked as done",
@@ -44,6 +45,12 @@ import com.plotsquared.core.util.Permissions;
     requiredType = RequiredType.PLAYER)
 public class Continue extends SubCommand {
 
+    private final EventDispatcher eventDispatcher;
+    
+    public Continue(@NotNull final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+    
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
@@ -71,7 +78,7 @@ public class Continue extends SubCommand {
         }
         PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
         PlotFlagRemoveEvent event =
-            PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+            this.eventDispatcher.callFlagRemove(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Done flag removal");
             return true;

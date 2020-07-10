@@ -32,6 +32,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
@@ -53,10 +54,12 @@ import java.util.concurrent.TimeoutException;
 public class Deny extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
 
-    public Deny(@NotNull final PlotAreaManager plotAreaManager) {
+    public Deny(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
         super(Argument.PlayerName);
         this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -99,7 +102,7 @@ public class Deny extends SubCommand {
                             plot.removeTrusted(uuid);
                         }
                         plot.addDenied(uuid);
-                        PlotSquared.get().getEventDispatcher().callDenied(player, plot, uuid, true);
+                        this.eventDispatcher.callDenied(player, plot, uuid, true);
                         if (!uuid.equals(DBFunc.EVERYONE)) {
                             handleKick(PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid), plot);
                         } else {

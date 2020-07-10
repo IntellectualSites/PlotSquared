@@ -34,9 +34,11 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -49,8 +51,11 @@ import java.util.concurrent.CompletableFuture;
     requiredType = RequiredType.NONE)
 public class Buy extends Command {
 
-    public Buy() {
+    private final EventDispatcher eventDispatcher;
+    
+    public Buy(@NotNull final EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
@@ -89,8 +94,7 @@ public class Buy extends Command {
                 Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }
             PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(PriceFlag.class);
-            PlotFlagRemoveEvent event =
-                PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+            PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plotFlag, plot);
             if (event.getEventResult() != Result.DENY) {
                 plot.removeFlag(event.getFlag());
             }

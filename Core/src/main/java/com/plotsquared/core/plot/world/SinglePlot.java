@@ -25,12 +25,14 @@
  */
 package com.plotsquared.core.plot.world;
 
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
@@ -47,23 +49,17 @@ public class SinglePlot extends Plot {
         new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
             BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)));
 
-    public SinglePlot(PlotArea area, PlotId id, UUID owner) {
-        super(area, id, owner);
-    }
-
-    public SinglePlot(PlotArea area, PlotId id) {
-        super(area, id);
-    }
-
-    public SinglePlot(PlotArea area, PlotId id, UUID owner, int temp) {
-        super(area, id, owner, temp);
+    public SinglePlot(PlotArea area, PlotId id, @NotNull final EventDispatcher eventDispatcher, @NotNull final
+        PlotListener plotListener) {
+        super(area, id, eventDispatcher, plotListener);
     }
 
     public SinglePlot(PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
         HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
-        PlotArea area, boolean[] merged, long timestamp, int temp) {
+        PlotArea area, boolean[] merged, long timestamp, int temp,
+        @NotNull final EventDispatcher eventDispatcher, @NotNull final PlotListener plotListener) {
         super(id, owner, trusted, members, denied, alias, position, flags, area, merged, timestamp,
-            temp);
+            temp, eventDispatcher, plotListener);
     }
 
     @Override public String getWorldName() {

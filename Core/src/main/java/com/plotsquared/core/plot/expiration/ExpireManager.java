@@ -42,12 +42,14 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -66,17 +68,20 @@ public class ExpireManager {
     public static ExpireManager IMP;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
     private final ConcurrentHashMap<UUID, Long> account_age_cache;
+    private final EventDispatcher eventDispatcher;
     private volatile HashSet<Plot> plotsToDelete;
     private ArrayDeque<ExpiryTask> tasks;
+    
     /**
      * 0 = stopped, 1 = stopping, 2 = running
      */
     private int running;
 
-    public ExpireManager() {
-        tasks = new ArrayDeque<>();
-        dates_cache = new ConcurrentHashMap<>();
-        account_age_cache = new ConcurrentHashMap<>();
+    public ExpireManager(@NotNull final EventDispatcher eventDispatcher) {
+        this.tasks = new ArrayDeque<>();
+        this.dates_cache = new ConcurrentHashMap<>();
+        this.account_age_cache = new ConcurrentHashMap<>();
+        this.eventDispatcher = eventDispatcher;
     }
 
     public void addTask(ExpiryTask task) {
@@ -402,7 +407,7 @@ public class ExpireManager {
 
     public void deleteWithMessage(Plot plot, Runnable whenDone) {
         if (plot.isMerged()) {
-            PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+            PlotUnlinkEvent event = this.eventDispatcher
                 .callUnlink(plot.getArea(), plot, true, false,
                     PlotUnlinkEvent.REASON.EXPIRE_DELETE);
             if (event.getEventResult() != Result.DENY) {

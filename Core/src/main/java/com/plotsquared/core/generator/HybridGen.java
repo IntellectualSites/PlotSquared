@@ -28,17 +28,23 @@ package com.plotsquared.core.generator;
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
-public class HybridGen extends IndependentPlotGenerator {
+@RequiredArgsConstructor public class HybridGen extends IndependentPlotGenerator {
+
+    private final EventDispatcher eventDispatcher;
+    private final PlotListener plotListener;
 
     @Override public String getName() {
         return PlotSquared.platform().getPluginName();
@@ -220,7 +226,7 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-        return new HybridPlotWorld(world, id, this, min, max);
+        return new HybridPlotWorld(world, id, this, min, max, this.eventDispatcher, this.plotListener);
     }
 
     @Override public void initialize(PlotArea area) {

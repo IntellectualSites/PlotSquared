@@ -36,10 +36,12 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -56,6 +58,12 @@ public class Merge extends SubCommand {
     public static final String[] values = new String[] {"north", "east", "south", "west"};
     public static final String[] aliases = new String[] {"n", "e", "s", "w"};
 
+    private final EventDispatcher eventDispatcher;
+    
+    public Merge(@NotNull final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+    
     public static String direction(float yaw) {
         yaw = yaw / 90;
         int i = Math.round(yaw);
@@ -126,7 +134,7 @@ public class Merge extends SubCommand {
         final int size = plot.getConnectedPlots().size();
         int max = Permissions.hasPermissionRange(player, "plots.merge", Settings.Limit.MAX_PLOTS);
         PlotMergeEvent event =
-            PlotSquared.get().getEventDispatcher().callMerge(plot, direction, max, player);
+            this.eventDispatcher.callMerge(plot, direction, max, player);
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Merge");
             return false;

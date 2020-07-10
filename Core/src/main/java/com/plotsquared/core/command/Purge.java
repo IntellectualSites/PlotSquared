@@ -56,9 +56,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Purge extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final PlotListener plotListener;
 
-    public Purge(@NotNull final PlotAreaManager plotAreaManager) {
+    public Purge(@NotNull final PlotAreaManager plotAreaManager, @NotNull final PlotListener plotListener) {
         this.plotAreaManager = plotAreaManager;
+        this.plotListener = plotListener;
     }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -197,8 +199,8 @@ public class Purge extends SubCommand {
                                     plot.removeSign();
                                 }
                                 plot.getArea().removePlot(plot.getId());
-                                for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                                    PlotListener.plotEntry(pp, plot);
+                                for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
+                                    Purge.this.plotListener.plotEntry(pp, plot);
                                 }
                             } catch (NullPointerException e) {
                                 PlotSquared.log(

@@ -40,10 +40,12 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 @CommandDeclaration(command = "claim",
     aliases = "c",
@@ -54,18 +56,23 @@ import com.plotsquared.core.util.task.TaskManager;
     usage = "/plot claim")
 public class Claim extends SubCommand {
 
+    private final EventDispatcher eventDispatcher;
+    
+    public Claim(@NotNull final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+    
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String schematic = null;
         if (args.length >= 1) {
             schematic = args[0];
         }
         Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        Plot plot = location.getPlotAbs();
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        PlayerClaimPlotEvent event =
-            PlotSquared.get().getEventDispatcher().callClaim(player, plot, schematic);
+        final PlayerClaimPlotEvent event = this.eventDispatcher.callClaim(player, plot, schematic);
         schematic = event.getSchematic();
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Claim");
@@ -138,7 +145,7 @@ public class Claim extends SubCommand {
                     sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                     plot.setOwnerAbs(null);
                 } else if (area.isAutoMerge()) {
-                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
+                    PlotMergeEvent event = Claim.this.eventDispatcher
                         .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {
                         sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");

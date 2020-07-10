@@ -27,7 +27,9 @@ package com.plotsquared.core.generator;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
@@ -38,8 +40,9 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     public int ROAD_OFFSET_Z = 0;
 
     public SquarePlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
-        PlotId min, PlotId max) {
-        super(worldName, id, generator, min, max);
+        PlotId min, PlotId max, @NotNull final EventDispatcher eventDispatcher, @NotNull final
+        PlotListener plotListener) {
+        super(worldName, id, generator, min, max, eventDispatcher, plotListener);
     }
 
     @Override public void loadConfiguration(ConfigurationSection config) {

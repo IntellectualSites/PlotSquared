@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -37,10 +36,12 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -56,11 +57,11 @@ import static com.plotsquared.core.command.SubCommand.sendMessage;
     confirmation = true)
 public class Clear extends Command {
 
-    // Note: To clear a specific plot use /plot <plot> clear
-    // The syntax also works with any command: /plot <plot> <command>
-
-    public Clear() {
+    private final EventDispatcher eventDispatcher;
+    
+    public Clear(@NotNull final EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
@@ -69,8 +70,7 @@ public class Clear extends Command {
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
         final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
-        Result eventResult =
-            PlotSquared.get().getEventDispatcher().callClear(plot).getEventResult();
+        Result eventResult = this.eventDispatcher.callClear(plot).getEventResult();
         if (eventResult == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Clear");
             return CompletableFuture.completedFuture(true);
@@ -93,7 +93,7 @@ public class Clear extends Command {
                         if (DoneFlag.isDone(plot)) {
                             PlotFlag<?, ?> plotFlag =
                                 plot.getFlagContainer().getFlag(DoneFlag.class);
-                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
+                            PlotFlagRemoveEvent event = this.eventDispatcher
                                 .callFlagRemove(plotFlag, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
@@ -102,7 +102,7 @@ public class Clear extends Command {
                         if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
                             PlotFlag<?, ?> plotFlag =
                                 plot.getFlagContainer().getFlag(AnalysisFlag.class);
-                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
+                            PlotFlagRemoveEvent event = this.eventDispatcher
                                 .callFlagRemove(plotFlag, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());

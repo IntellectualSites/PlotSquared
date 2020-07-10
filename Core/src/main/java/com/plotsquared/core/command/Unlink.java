@@ -25,17 +25,18 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 @CommandDeclaration(command = "unlink",
     aliases = {"u", "unmerge"},
@@ -46,6 +47,12 @@ import com.plotsquared.core.util.task.TaskManager;
     confirmation = true)
 public class Unlink extends SubCommand {
 
+    private final EventDispatcher eventDispatcher;
+    
+    public Unlink(@NotNull final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+    
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
@@ -69,7 +76,7 @@ public class Unlink extends SubCommand {
             createRoad = true;
         }
 
-        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+        PlotUnlinkEvent event = this.eventDispatcher
             .callUnlink(plot.getArea(), plot, createRoad, createRoad,
                 PlotUnlinkEvent.REASON.PLAYER_COMMAND);
         if (event.getEventResult() == Result.DENY) {

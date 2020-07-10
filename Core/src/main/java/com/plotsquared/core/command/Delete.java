@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.Result;
@@ -34,10 +33,12 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 
 @CommandDeclaration(command = "delete",
@@ -50,9 +51,12 @@ import com.plotsquared.core.util.task.TaskManager;
     confirmation = true)
 public class Delete extends SubCommand {
 
-    // Note: To delete a specific plot use /plot <plot> delete
-    // The syntax also works with any command: /plot <plot> <command>
-
+    private final EventDispatcher eventDispatcher;
+    
+    public Delete(@NotNull final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+    
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
@@ -62,8 +66,7 @@ public class Delete extends SubCommand {
         if (!plot.hasOwner()) {
             return !sendMessage(player, Captions.PLOT_UNOWNED);
         }
-        Result eventResult =
-            PlotSquared.get().getEventDispatcher().callDelete(plot).getEventResult();
+        Result eventResult = this.eventDispatcher.callDelete(plot).getEventResult();
         if (eventResult == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Delete");
             return true;

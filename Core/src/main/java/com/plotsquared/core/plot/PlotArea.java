@@ -37,6 +37,7 @@ import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
@@ -49,6 +50,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
@@ -133,9 +135,13 @@ public abstract class PlotArea {
     @Getter private final FlagContainer roadFlagContainer =
         new FlagContainer(GlobalFlagContainer.getInstance());
 
+    private final EventDispatcher eventDispatcher;
+    private final PlotListener plotListener;
+
     public PlotArea(@NotNull final String worldName, @Nullable final String id,
         @NotNull IndependentPlotGenerator generator, @Nullable final PlotId min,
-        @Nullable final PlotId max) {
+        @Nullable final PlotId max, @NotNull final EventDispatcher eventDispatcher,
+        @NotNull final PlotListener plotListener) {
         this.worldName = worldName;
         this.id = id;
         this.plotManager = createManager();
@@ -152,6 +158,8 @@ public abstract class PlotArea {
             this.max = max;
         }
         this.worldHash = worldName.hashCode();
+        this.eventDispatcher = eventDispatcher;
+        this.plotListener = plotListener;
     }
 
     @NotNull protected abstract PlotManager createManager();
@@ -649,7 +657,7 @@ public abstract class PlotArea {
                 || id.y > this.max.y)) {
                 return null;
             }
-            return new Plot(this, id);
+            return new Plot(this, id, this.eventDispatcher, this.plotListener);
         }
         return plot;
     }
@@ -661,7 +669,7 @@ public abstract class PlotArea {
                 || id.y > this.max.y)) {
                 return null;
             }
-            return new Plot(this, id);
+            return new Plot(this, id, this.eventDispatcher, this.plotListener);
         }
         return plot.getBasePlot(false);
     }

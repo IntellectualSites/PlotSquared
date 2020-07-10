@@ -42,6 +42,7 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
@@ -64,9 +65,11 @@ import java.util.Set;
 public class Auto extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
     
-    public Auto(@NotNull final PlotAreaManager plotAreaManager) {
+    public Auto(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
         this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
     }
     
     @Deprecated public static PlotId getNextPlotId(PlotId id, int step) {
@@ -144,7 +147,8 @@ public class Auto extends SubCommand {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
-                TaskManager.IMP.sync(new AutoClaimFinishTask(player, plot, area, schematic));
+                TaskManager.IMP.sync(new AutoClaimFinishTask(player, plot, area, schematic,
+                    PlotSquared.get().getEventDispatcher()));
             }
         });
     }
@@ -221,7 +225,7 @@ public class Auto extends SubCommand {
                 // return false;
             }
         }
-        PlayerAutoPlotEvent event = PlotSquared.get().getEventDispatcher()
+        PlayerAutoPlotEvent event = this.eventDispatcher
             .callAuto(player, plotarea, schematic, size_x, size_z);
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Auto claim");
@@ -302,7 +306,7 @@ public class Auto extends SubCommand {
                     }
                     ArrayList<PlotId> plotIds = MainUtil.getPlotSelectionIds(start, end);
                     final PlotId pos1 = plotIds.get(0);
-                    final PlotAutoMergeEvent mergeEvent = PlotSquared.get().getEventDispatcher()
+                    final PlotAutoMergeEvent mergeEvent = this.eventDispatcher
                         .callAutoMerge(plotarea.getPlotAbs(pos1), plotIds);
                     if (!force && mergeEvent.getEventResult() == Result.DENY) {
                         sendMessage(player, Captions.EVENT_DENIED, "Auto merge");

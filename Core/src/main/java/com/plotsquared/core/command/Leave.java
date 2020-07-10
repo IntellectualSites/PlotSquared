@@ -25,13 +25,14 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -43,8 +44,12 @@ import java.util.concurrent.CompletableFuture;
     category = CommandCategory.CLAIMING,
     requiredType = RequiredType.PLAYER)
 public class Leave extends Command {
-    public Leave() {
+    
+    private final EventDispatcher eventDispatcher;
+    
+    public Leave(@NotNull final EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
@@ -62,10 +67,10 @@ public class Leave extends Command {
             UUID uuid = player.getUUID();
             if (plot.isAdded(uuid)) {
                 if (plot.removeTrusted(uuid)) {
-                    PlotSquared.get().getEventDispatcher().callTrusted(player, plot, uuid, false);
+                    this.eventDispatcher.callTrusted(player, plot, uuid, false);
                 }
                 if (plot.removeMember(uuid)) {
-                    PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, false);
+                    this.eventDispatcher.callMember(player, plot, uuid, false);
                 }
                 MainUtil.sendMessage(player, Captions.PLOT_LEFT, player.getName());
             } else {

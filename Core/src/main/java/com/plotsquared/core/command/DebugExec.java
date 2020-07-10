@@ -48,6 +48,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
@@ -85,11 +86,13 @@ import java.util.concurrent.CompletableFuture;
 public class DebugExec extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
     private ScriptEngine engine;
     private Bindings scope;
 
-    public DebugExec(@NotNull final PlotAreaManager plotAreaManager) {
+    public DebugExec(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
         this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
         init();
 /*
         try {
@@ -170,7 +173,7 @@ public class DebugExec extends SubCommand {
         this.scope.put("ChunkManager", ChunkManager.manager);
         this.scope.put("BlockManager", WorldUtil.IMP);
         this.scope.put("SetupUtils", SetupUtils.manager);
-        this.scope.put("EventUtil", PlotSquared.get().getEventDispatcher());
+        this.scope.put("EventUtil", this.eventDispatcher);
         this.scope.put("EconHandler", EconHandler.getEconHandler());
         this.scope.put("DBFunc", DBFunc.dbManager);
         this.scope.put("HybridUtils", HybridUtils.manager);
@@ -250,7 +253,7 @@ public class DebugExec extends SubCommand {
                         GlobalFlagContainer.getInstance().getFlagFromString(flag);
                     if (flagInstance != null) {
                         for (Plot plot : PlotSquared.get().getBasePlots()) {
-                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
+                            PlotFlagRemoveEvent event = this.eventDispatcher
                                 .callFlagRemove(flagInstance, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
@@ -293,7 +296,7 @@ public class DebugExec extends SubCommand {
                     return true;
                 case "start-expire":
                     if (ExpireManager.IMP == null) {
-                        ExpireManager.IMP = new ExpireManager();
+                        ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
                     }
                     if (ExpireManager.IMP.runAutomatedTask()) {
                         return MainUtil.sendMessage(player, "Started plot expiry task");
