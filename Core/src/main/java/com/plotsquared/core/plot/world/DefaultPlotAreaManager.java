@@ -58,7 +58,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         if (location == null) {
             return null;
         }
-        final PlotWorld world = this.plotWorlds.get(location.getWorld());
+        final PlotWorld world = this.plotWorlds.get(location.getWorldName());
         if (world == null) {
             return null;
         }

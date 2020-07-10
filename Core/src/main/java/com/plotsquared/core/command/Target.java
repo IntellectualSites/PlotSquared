@@ -54,7 +54,7 @@ public class Target extends SubCommand {
         Plot target = null;
         if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
             int distance = Integer.MAX_VALUE;
-            for (Plot plot : PlotQuery.newQuery().inWorld(location.getWorld()).asCollection()) {
+            for (Plot plot : PlotQuery.newQuery().inWorld(location.getWorldName()).asCollection()) {
                 double current = plot.getCenterSynchronous().getEuclideanDistanceSquared(location);
                 if (current < distance) {
                     distance = (int) current;

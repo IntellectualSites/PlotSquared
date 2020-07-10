@@ -129,13 +129,13 @@ import java.util.zip.ZipInputStream;
  * An implementation of the core, with a static getter for easy access.
  */
 @SuppressWarnings({"WeakerAccess"})
-public class PlotSquared<P> {
+public class PlotSquared {
 
     private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
-    private static PlotSquared<?> instance;
+    private static PlotSquared instance;
 
     // Implementation
-    private final PlotPlatform<P> platform;
+    private final PlotPlatform<?> platform;
     // Current thread
     private final Thread thread;
     // UUID pipelines
@@ -174,7 +174,7 @@ public class PlotSquared<P> {
      * @param iPlotMain Implementation of {@link PlotPlatform} used
      * @param platform  The platform being used
      */
-    public PlotSquared(final PlotPlatform<P> iPlotMain, final String platform) {
+    public PlotSquared(final PlotPlatform<?> iPlotMain, final String platform) {
         if (instance != null) {
             throw new IllegalStateException("Cannot re-initialize the PlotSquared singleton");
         }
@@ -375,10 +375,9 @@ public class PlotSquared<P> {
      *
      * @return instance of PlotSquared
      */
-    public static PlotSquared<?> get() {
+    public static PlotSquared get() {
         return PlotSquared.instance;
     }
-
 
     /**
      * Get the platform specific implementation of PlotSquared
@@ -1700,7 +1699,7 @@ public class PlotSquared<P> {
      */
     public boolean isNonStandardGeneration(@NotNull final String world,
         @NotNull final BlockVector2 chunkCoordinates) {
-        final Location location = new Location(world, chunkCoordinates.getBlockX() << 4, 64, chunkCoordinates.getBlockZ() << 4);
+        final Location location = Location.at(world, chunkCoordinates.getBlockX() << 4, 64, chunkCoordinates.getBlockZ() << 4);
         final PlotArea area = plotAreaManager.getApplicablePlotArea(location);
         if (area == null) {
             return true;

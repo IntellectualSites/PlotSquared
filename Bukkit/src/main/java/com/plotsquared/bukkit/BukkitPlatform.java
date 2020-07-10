@@ -50,6 +50,7 @@ import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.BukkitWorld;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.bukkit.uuid.BungeePermsUUIDService;
@@ -1166,6 +1167,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override @NotNull
     public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
         return this.playerManager;
+    }
+
+    @Override @NotNull public com.plotsquared.core.location.World<?> getPlatformWorld(@NotNull final String worldName) {
+        return BukkitWorld.of(worldName);
     }
 
 }

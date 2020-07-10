@@ -305,7 +305,7 @@ public class PaperListener implements Listener {
             return;
         }
         Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorld())) {
+        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorldName())) {
             return;
         }
         PlotPlayer<?> pp = BukkitUtil.getPlayer((Player) shooter);

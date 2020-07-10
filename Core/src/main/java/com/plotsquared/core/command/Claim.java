@@ -74,7 +74,7 @@ public class Claim extends SubCommand {
         boolean force = event.getEventResult() == Result.FORCE;
         int currentPlots = Settings.Limit.GLOBAL ?
             player.getPlotCount() :
-            player.getPlotCount(location.getWorld());
+            player.getPlotCount(location.getWorldName());
         int grants = 0;
         if (currentPlots >= player.getAllowedPlots() && !force) {
             if (player.hasPersistentMeta("grantedPlots")) {

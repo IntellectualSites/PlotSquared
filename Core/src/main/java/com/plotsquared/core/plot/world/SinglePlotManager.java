@@ -35,6 +35,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
@@ -52,12 +53,12 @@ public class SinglePlotManager extends PlotManager {
         return new PlotId(0, 0);
     }
 
-    @Override public Location getPlotBottomLocAbs(PlotId plotId) {
-        return new Location(plotId.toCommaSeparatedString(), -30000000, 0, -30000000);
+    @Override public Location getPlotBottomLocAbs(@NotNull final PlotId plotId) {
+        return Location.at(plotId.toCommaSeparatedString(), -30000000, 0, -30000000);
     }
 
-    @Override public Location getPlotTopLocAbs(PlotId plotId) {
-        return new Location(plotId.toCommaSeparatedString(), 30000000, 0, 30000000);
+    @Override public Location getPlotTopLocAbs(@NotNull final PlotId plotId) {
+        return Location.at(plotId.toCommaSeparatedString(), 30000000, 0, 30000000);
     }
 
     @Override public boolean clearPlot(Plot plot, final Runnable whenDone) {

@@ -198,9 +198,9 @@ public class BukkitRegionManager extends RegionManager {
 
         final CuboidRegion region =
             RegionUtil.createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-        final World oldWorld = Bukkit.getWorld(pos1.getWorld());
+        final World oldWorld = Bukkit.getWorld(pos1.getWorldName());
         final BukkitWorld oldBukkitWorld = new BukkitWorld(oldWorld);
-        final World newWorld = Bukkit.getWorld(newPos.getWorld());
+        final World newWorld = Bukkit.getWorld(newPos.getWorldName());
         assert newWorld != null;
         assert oldWorld != null;
         final String newWorldName = newWorld.getName();
@@ -248,7 +248,7 @@ public class BukkitRegionManager extends RegionManager {
     @Override
     public boolean regenerateRegion(final Location pos1, final Location pos2,
         final boolean ignoreAugment, final Runnable whenDone) {
-        final String world = pos1.getWorld();
+        final String world = pos1.getWorldName();
 
         final int p1x = pos1.getX();
         final int p1z = pos1.getZ();
@@ -401,7 +401,7 @@ public class BukkitRegionManager extends RegionManager {
     }
 
     @Override public void clearAllEntities(Location pos1, Location pos2) {
-        String world = pos1.getWorld();
+        String world = pos1.getWorldName();
         List<Entity> entities = BukkitUtil.getEntities(world);
         int bx = pos1.getX();
         int bz = pos1.getZ();
@@ -428,8 +428,8 @@ public class BukkitRegionManager extends RegionManager {
             RegionUtil.createRegion(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
         CuboidRegion region2 =
             RegionUtil.createRegion(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
-        final World world1 = Bukkit.getWorld(bot1.getWorld());
-        final World world2 = Bukkit.getWorld(bot2.getWorld());
+        final World world1 = Bukkit.getWorld(bot1.getWorldName());
+        final World world2 = Bukkit.getWorld(bot2.getWorldName());
         checkNotNull(world1, "Critical error during swap.");
         checkNotNull(world2, "Critical error during swap.");
         int relX = bot2.getX() - bot1.getX();
@@ -456,9 +456,9 @@ public class BukkitRegionManager extends RegionManager {
     @Override
     public void setBiome(final CuboidRegion region, final int extendBiome, final BiomeType biome,
         final String world, final Runnable whenDone) {
-        Location pos1 = new Location(world, region.getMinimumPoint().getX() - extendBiome,
+        Location pos1 = Location.at(world, region.getMinimumPoint().getX() - extendBiome,
             region.getMinimumPoint().getY(), region.getMinimumPoint().getZ() - extendBiome);
-        Location pos2 = new Location(world, region.getMaximumPoint().getX() + extendBiome,
+        Location pos2 = Location.at(world, region.getMaximumPoint().getX() + extendBiome,
             region.getMaximumPoint().getY(), region.getMaximumPoint().getZ() + extendBiome);
         final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
 

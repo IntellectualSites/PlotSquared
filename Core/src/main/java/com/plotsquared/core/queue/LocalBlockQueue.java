@@ -125,7 +125,7 @@ public abstract class LocalBlockQueue {
 
         for (final PlotPlayer pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
             Location pLoc = pp.getLocation();
-            if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getChunkLocation()
+            if (!StringMan.isEqual(getWorld(), pLoc.getWorldName()) || !pLoc.getChunkLocation()
                 .equals(loc)) {
                 continue;
             }

@@ -276,18 +276,18 @@ public class BukkitUtil extends WorldUtil {
     }
 
     public static Location getLocation(@NonNull final org.bukkit.Location location) {
-        return new Location(location.getWorld().getName(), MathMan.roundInt(location.getX()),
-            MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()));
+        return Location.at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
+            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()));
     }
 
     public static Location getLocationFull(@NonNull final org.bukkit.Location location) {
-        return new Location(location.getWorld().getName(), MathMan.roundInt(location.getX()),
-            MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()), location.getYaw(),
+        return Location.at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
+            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()), location.getYaw(),
             location.getPitch());
     }
 
     public static org.bukkit.Location getLocation(@NonNull final Location location) {
-        return new org.bukkit.Location(getWorld(location.getWorld()), location.getX(),
+        return new org.bukkit.Location((World) location.getWorld().getPlatformWorld(), location.getX(),
             location.getY(), location.getZ());
     }
 
@@ -311,13 +311,13 @@ public class BukkitUtil extends WorldUtil {
     public static Location getLocation(@NonNull final Entity entity) {
         final org.bukkit.Location location = entity.getLocation();
         String world = location.getWorld().getName();
-        return new Location(world, location.getBlockX(), location.getBlockY(),
+        return Location.at(world, location.getBlockX(), location.getBlockY(),
             location.getBlockZ());
     }
 
     @NotNull public static Location getLocationFull(@NonNull final Entity entity) {
         final org.bukkit.Location location = entity.getLocation();
-        return new Location(location.getWorld().getName(), MathMan.roundInt(location.getX()),
+        return Location.at(location.getWorld().getName(), MathMan.roundInt(location.getX()),
             MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()), location.getYaw(),
             location.getPitch());
     }
@@ -409,7 +409,7 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override @Nullable public String[] getSignSynchronous(@NonNull final Location location) {
-        Block block = getWorld(location.getWorld())
+        Block block = getWorld(location.getWorldName())
             .getBlockAt(location.getX(), location.getY(), location.getZ());
         return TaskManager.IMP.sync(new RunnableVal<String[]>() {
             @Override public void run(String[] value) {
@@ -423,12 +423,12 @@ public class BukkitUtil extends WorldUtil {
 
     @Override public Location getSpawn(@NonNull final String world) {
         final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
-        return new Location(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(),
+        return Location.at(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(),
             temp.getYaw(), temp.getPitch());
     }
 
     @Override public void setSpawn(@NonNull final Location location) {
-        final World world = getWorld(location.getWorld());
+        final World world = getWorld(location.getWorldName());
         if (world != null) {
             world.setSpawnLocation(location.getX(), location.getY(), location.getZ());
         }
@@ -526,14 +526,14 @@ public class BukkitUtil extends WorldUtil {
     @Override
     public void getBlock(@NonNull final Location location, final Consumer<BlockState> result) {
         ensureLoaded(location, chunk -> {
-            final World world = getWorld(location.getWorld());
+            final World world = getWorld(location.getWorldName());
             final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
             result.accept(BukkitAdapter.asBlockType(block.getType()).getDefaultState());
         });
     }
 
     @Override public BlockState getBlockSynchronous(@NonNull final Location location) {
-        final World world = getWorld(location.getWorld());
+        final World world = getWorld(location.getWorldName());
         final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
         return BukkitAdapter.asBlockType(block.getType()).getDefaultState();
     }

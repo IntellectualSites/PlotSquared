@@ -1442,7 +1442,7 @@ public class Plot {
             return this.getDefaultHomeSynchronous(true);
         } else {
             Location bottom = this.getBottomAbs();
-            Location location = Location.at(bottom.getWorld(), bottom.getX() + home.getX(),
+            Location location = Location.at(bottom.getWorldName(), bottom.getX() + home.getX(),
                 bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
                 home.getPitch());
             if (!isLoaded()) {
@@ -1466,7 +1466,7 @@ public class Plot {
             this.getDefaultHome(result);
         } else {
             Location bottom = this.getBottomAbs();
-            Location location = Location.at(bottom.getWorld(), bottom.getX() + home.getX(),
+            Location location = Location.at(bottom.getWorldName(), bottom.getX() + home.getX(),
                 bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
                 home.getPitch());
             if (!isLoaded()) {
@@ -1850,7 +1850,7 @@ public class Plot {
      */
     public void getBiome(Consumer<BiomeType> result) {
         this.getCenter(location -> WorldUtil.IMP
-            .getBiome(location.getWorld(), location.getX(), location.getZ(), result));
+            .getBiome(location.getWorldName(), location.getX(), location.getZ(), result));
     }
 
     /**
@@ -1859,7 +1859,7 @@ public class Plot {
     @Deprecated public BiomeType getBiomeSynchronous() {
         final Location location = this.getCenterSynchronous();
         return WorldUtil.IMP
-            .getBiomeSynchronous(location.getWorld(), location.getX(), location.getZ());
+            .getBiomeSynchronous(location.getWorldName(), location.getX(), location.getZ());
     }
 
     //TODO Better documentation needed.

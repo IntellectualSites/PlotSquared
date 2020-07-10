@@ -155,9 +155,9 @@ public abstract class RegionManager {
         final Pattern blocks, int minY, int maxY) {
         LocalBlockQueue queue = area.getQueue(false);
         for (CuboidRegion region : regions) {
-            Location pos1 = new Location(area.getWorldName(), region.getMinimumPoint().getX(), minY,
+            Location pos1 = Location.at(area.getWorldName(), region.getMinimumPoint().getX(), minY,
                 region.getMinimumPoint().getZ());
-            Location pos2 = new Location(area.getWorldName(), region.getMaximumPoint().getX(), maxY,
+            Location pos2 = Location.at(area.getWorldName(), region.getMaximumPoint().getX(), maxY,
                 region.getMaximumPoint().getZ());
             queue.setCuboid(pos1, pos2, blocks);
         }

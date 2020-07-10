@@ -117,7 +117,7 @@ public class Cluster extends SubCommand {
                 }
                 int currentClusters = Settings.Limit.GLOBAL ?
                     player.getClusterCount() :
-                    player.getPlotCount(player.getLocation().getWorld());
+                    player.getPlotCount(player.getLocation().getWorldName());
                 if (currentClusters >= player.getAllowedPlots()) {
                     return sendMessage(player, Captions.CANT_CLAIM_MORE_CLUSTERS);
                 }
@@ -173,7 +173,7 @@ public class Cluster extends SubCommand {
                 if (Settings.Limit.GLOBAL) {
                     current = player.getPlayerClusterCount();
                 } else {
-                    current = player.getPlayerClusterCount(player.getLocation().getWorld());
+                    current = player.getPlayerClusterCount(player.getLocation().getWorldName());
                 }
                 int allowed = Permissions
                     .hasPermissionRange(player, Captions.PERMISSION_CLUSTER_SIZE,
@@ -324,7 +324,7 @@ public class Cluster extends SubCommand {
                 if (Settings.Limit.GLOBAL) {
                     current = player.getPlayerClusterCount();
                 } else {
-                    current = player.getPlayerClusterCount(player.getLocation().getWorld());
+                    current = player.getPlayerClusterCount(player.getLocation().getWorldName());
                 }
                 current -= cluster.getArea() + (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
                 int allowed = Permissions.hasPermissionRange(player, Captions.PERMISSION_CLUSTER,
@@ -454,7 +454,7 @@ public class Cluster extends SubCommand {
                                         cluster.getName());
                                 }
                                 for (final Plot plot : PlotQuery.newQuery().inWorld(player2.getLocation()
-                                    .getWorld()).ownedBy(uuid).asCollection()) {
+                                    .getWorldName()).ownedBy(uuid).asCollection()) {
                                     PlotCluster current = plot.getCluster();
                                     if (current != null && current.equals(cluster)) {
                                         plot.unclaim();
@@ -512,7 +512,7 @@ public class Cluster extends SubCommand {
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
                 MainUtil.sendMessage(player, Captions.CLUSTER_REMOVED, cluster.getName());
-                for (final Plot plot : PlotQuery.newQuery().inWorld(player.getLocation().getWorld())
+                for (final Plot plot : PlotQuery.newQuery().inWorld(player.getLocation().getWorldName())
                     .ownedBy(uuid).asCollection()) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {

@@ -62,10 +62,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 Iterator<CuboidRegion> iterator = regions.iterator();
                 CuboidRegion region = iterator.next();
                 iterator.remove();
-                Location pos1 = new Location(plot.getWorldName(), region.getMinimumPoint().getX(),
-                    region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
-                Location pos2 = new Location(plot.getWorldName(), region.getMaximumPoint().getX(),
-                    region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
+                final Location pos1 = Location.at(plot.getWorldName(), region.getMinimumPoint());
+                final Location pos2 = Location.at(plot.getWorldName(), region.getMaximumPoint());
                 RegionManager.manager.regenerateRegion(pos1, pos2, false, this);
             }
         };
@@ -80,7 +78,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             + squarePlotWorld.PLOT_WIDTH))) - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
             + squarePlotWorld.PLOT_WIDTH))) - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
-        return new Location(squarePlotWorld.getWorldName(), x, Math.min(getWorldHeight(), 255), z);
+        return Location.at(squarePlotWorld.getWorldName(), x, Math.min(getWorldHeight(), 255), z);
     }
 
     @Override public PlotId getPlotIdAbs(int x, int y, int z) {
@@ -247,7 +245,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
             + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH - (int) Math
             .floor(squarePlotWorld.ROAD_WIDTH / 2);
-        return new Location(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinBuildHeight(),
-            z);
+        return Location.at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinBuildHeight(), z);
     }
 }

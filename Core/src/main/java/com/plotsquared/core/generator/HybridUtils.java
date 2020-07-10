@@ -222,8 +222,8 @@ public abstract class HybridUtils {
             });
             System.gc();
             MainUtil.initCache();
-            Location botLoc = new Location(world, bot.getX(), bot.getY(), bot.getZ());
-            Location topLoc = new Location(world, top.getX(), top.getY(), top.getZ());
+            Location botLoc = Location.at(world, bot.getX(), bot.getY(), bot.getZ());
+            Location topLoc = Location.at(world, top.getX(), top.getY(), top.getZ());
             ChunkManager.chunkTask(botLoc, topLoc, new RunnableVal<int[]>() {
                 @Override public void run(int[] value) {
                     int X = value[0];

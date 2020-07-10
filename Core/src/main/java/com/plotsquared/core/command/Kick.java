@@ -105,7 +105,7 @@ public class Kick extends SubCommand {
                         Captions.CANNOT_KICK_PLAYER.send(player, player2.getName());
                         return;
                     }
-                    Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
+                    Location spawn = WorldUtil.IMP.getSpawn(location.getWorldName());
                     Captions.YOU_GOT_KICKED.send(player2);
                     if (plot.equals(spawn.getPlot())) {
                         Location newSpawn = WorldUtil.IMP

@@ -153,8 +153,8 @@ public class AugmentedUtils {
             secondaryMask.setForceSync(true);
 
             ScopedLocalBlockQueue scoped =
-                new ScopedLocalBlockQueue(secondaryMask, new Location(world, blockX, 0, blockZ),
-                    new Location(world, blockX + 15, 255, blockZ + 15));
+                new ScopedLocalBlockQueue(secondaryMask, Location.at(world, blockX, 0, blockZ),
+                    Location.at(world, blockX + 15, 255, blockZ + 15));
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
         }

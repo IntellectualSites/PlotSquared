@@ -266,7 +266,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     public int getPlotCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getPlotCount(getLocation().getWorld());
+            return getPlotCount(getLocation().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
@@ -286,7 +286,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
 
     public int getClusterCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getClusterCount(getLocation().getWorld());
+            return getClusterCount(getLocation().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         PlotSquared.get().getPlotAreaManager().forEachPlotArea(value -> {

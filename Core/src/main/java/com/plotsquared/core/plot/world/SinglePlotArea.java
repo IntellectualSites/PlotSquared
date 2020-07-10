@@ -156,23 +156,23 @@ public class SinglePlotArea extends GridPlotWorld {
     }
 
     @Nullable @Override public Plot getOwnedPlot(@NotNull final Location location) {
-        PlotId pid = PlotId.fromStringOrNull(location.getWorld());
+        PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         Plot plot = pid == null ? null : this.plots.get(pid);
         return plot == null ? null : plot.getBasePlot(false);
     }
 
     @Nullable @Override public Plot getOwnedPlotAbs(@NotNull Location location) {
-        PlotId pid = PlotId.fromStringOrNull(location.getWorld());
+        PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         return pid == null ? null : plots.get(pid);
     }
 
     @Nullable @Override public Plot getPlot(@NotNull final Location location) {
-        PlotId pid = PlotId.fromStringOrNull(location.getWorld());
+        PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         return pid == null ? null : getPlot(pid);
     }
 
     @Nullable @Override public Plot getPlotAbs(@NotNull final Location location) {
-        final PlotId pid = PlotId.fromStringOrNull(location.getWorld());
+        final PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         return pid == null ? null : getPlotAbs(pid);
     }
 

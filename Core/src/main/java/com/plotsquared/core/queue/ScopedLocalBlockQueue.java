@@ -35,6 +35,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     private final int minX;
@@ -92,11 +93,11 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     }
 
     public Location getMin() {
-        return new Location(getWorld(), minX, minY, minZ);
+        return Location.at(this.getWorld(), this.minX, this.minY, this.minZ);
     }
 
     public Location getMax() {
-        return new Location(getWorld(), maxX, maxY, maxZ);
+        return Location.at(this.getWorld(), this.maxX, this.maxY, this.maxZ);
     }
 
     /**
@@ -107,26 +108,22 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
      *
      * @param task
      */
-    public void mapByType2D(RunnableVal3<Plot, Integer, Integer> task) {
-        int bx = minX;
-        int bz = minZ;
-        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(getWorld(), null);
-        Location location = new Location(getWorld(), bx, 0, bz);
+    public void mapByType2D(@NotNull final RunnableVal3<Plot, Integer, Integer> task) {
+        final int bx = minX;
+        final int bz = minZ;
+        final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(getWorld(), null);
+        final Location location = Location.at(getWorld(), bx, 0, bz);
         if (area != null) {
             PlotManager manager = area.getPlotManager();
             for (int x = 0; x < 16; x++) {
-                location.setX(bx + x);
                 for (int z = 0; z < 16; z++) {
-                    location.setZ(bz + z);
-                    task.run(area.getPlotAbs(location), x, z);
+                    task.run(area.getPlotAbs(location.withX(bx + x).withZ(bz + z)), x, z);
                 }
             }
         } else {
             for (int x = 0; x < 16; x++) {
-                location.setX(bx + x);
                 for (int z = 0; z < 16; z++) {
-                    location.setZ(bz + z);
-                    task.run(location.getPlotAbs(), x, z);
+                    task.run(location.withX(bx + x).withZ(bz + z).getPlotAbs(), x, z);
                 }
             }
         }

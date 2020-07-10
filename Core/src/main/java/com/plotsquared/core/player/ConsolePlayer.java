@@ -56,11 +56,11 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         Location location;
         if (area != null) {
             CuboidRegion region = area.getRegion();
-            location = new Location(area.getWorldName(),
+            location = Location.at(area.getWorldName(),
                 region.getMinimumPoint().getX() + region.getMaximumPoint().getX() / 2, 0,
                 region.getMinimumPoint().getZ() + region.getMaximumPoint().getZ() / 2);
         } else {
-            location = new Location("world", 0, 0, 0);
+            location = Location.at("world", 0, 0, 0);
         }
         setMeta("location", location);
     }

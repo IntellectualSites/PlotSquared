@@ -585,7 +585,7 @@ public abstract class PlotArea {
     }
 
     public boolean contains(@NotNull final Location location) {
-        return StringMan.isEqual(location.getWorld(), this.getWorldName()) && (
+        return StringMan.isEqual(location.getWorldName(), this.getWorldName()) && (
             getRegionAbs() == null || this.region.contains(location.getBlockVector3()));
     }
 

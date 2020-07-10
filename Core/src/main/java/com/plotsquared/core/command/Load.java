@@ -53,7 +53,7 @@ import java.util.List;
 public class Load extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        String world = player.getLocation().getWorld();
+        String world = player.getLocation().getWorldName();
         if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }

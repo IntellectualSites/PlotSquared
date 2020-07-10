@@ -103,9 +103,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x + 1, id.y);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
-        Location pos1 =
-            new Location(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
-        Location pos2 = new Location(hybridPlotWorld.getWorldName(), bot.getX(),
+        Location pos1 = Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
+        Location pos2 = Location.at(hybridPlotWorld.getWorldName(), bot.getX(),
             Math.min(getWorldHeight(), 255), top.getZ() + 1);
         MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
@@ -163,9 +162,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x, id.y + 1);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
-        Location pos1 =
-            new Location(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
-        Location pos2 = new Location(hybridPlotWorld.getWorldName(), top.getX() + 1,
+        Location pos1 = Location.at(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
+        Location pos2 = Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1,
             Math.min(getWorldHeight(), 255), bot.getZ());
         MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
@@ -181,10 +179,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         super.createRoadSouthEast(plot);
         PlotId id = plot.getId();
         PlotId id2 = new PlotId(id.x + 1, id.y + 1);
-        Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1);
-        Location pos2 = getPlotBottomLocAbs(id2);
-        pos1.setY(0);
-        pos2.setY(Math.min(getWorldHeight(), 255));
+        Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1).withY(0);
+        Location pos2 = getPlotBottomLocAbs(id2).withY(Math.min(getWorldHeight(), 255));
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
         createSchemAbs(queue, pos1, pos2);
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
@@ -239,18 +235,18 @@ public class HybridPlotManager extends ClassicPlotManager {
                 // Set the biome
                 MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
                 // These two locations are for each component (e.g. bedrock, main block, floor, air)
-                Location bot = new Location(world, value[2], 0, value[3]);
-                Location top = new Location(world, value[4], 1, value[5]);
+                Location bot = Location.at(world, value[2], 0, value[3]);
+                Location top = Location.at(world, value[4], 1, value[5]);
                 queue.setCuboid(bot, top, bedrock);
                 // Each component has a different layer
-                bot.setY(1);
-                top.setY(hybridPlotWorld.PLOT_HEIGHT);
+                bot = bot.withY(1);
+                top = top.withY(hybridPlotWorld.PLOT_HEIGHT);
                 queue.setCuboid(bot, top, filling);
-                bot.setY(hybridPlotWorld.PLOT_HEIGHT);
-                top.setY(hybridPlotWorld.PLOT_HEIGHT + 1);
+                bot = bot.withY(hybridPlotWorld.PLOT_HEIGHT);
+                top = top.withY(hybridPlotWorld.PLOT_HEIGHT + 1);
                 queue.setCuboid(bot, top, plotfloor);
-                bot.setY(hybridPlotWorld.PLOT_HEIGHT + 1);
-                top.setY(getWorldHeight());
+                bot = bot.withY(hybridPlotWorld.PLOT_HEIGHT + 1);
+                top = top.withY(getWorldHeight());
                 queue.setCuboid(bot, top, air);
                 // And finally set the schematic, the y value is unimportant for this function
                 pastePlotSchematic(queue, bot, top);

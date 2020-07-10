@@ -138,7 +138,7 @@ public class ListCmd extends SubCommand {
             page = 0;
         }
 
-        String world = player.getLocation().getWorld();
+        String world = player.getLocation().getWorldName();
         PlotArea area = player.getApplicablePlotArea();
         String arg = args[0].toLowerCase();
         final boolean[] sort = new boolean[] {true};

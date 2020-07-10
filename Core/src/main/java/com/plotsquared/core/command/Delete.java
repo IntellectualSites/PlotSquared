@@ -77,7 +77,7 @@ public class Delete extends SubCommand {
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
         final int currentPlots = Settings.Limit.GLOBAL ?
             player.getPlotCount() :
-            player.getPlotCount(location.getWorld());
+            player.getPlotCount(location.getWorldName());
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
                 MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);

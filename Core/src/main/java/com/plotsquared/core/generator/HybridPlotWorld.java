@@ -128,15 +128,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         return new HybridPlotManager(this);
     }
 
-    public Location getSignLocation(Plot plot) {
+    public Location getSignLocation(@NotNull Plot plot) {
         plot = plot.getBasePlot(false);
-        Location bot = plot.getBottomAbs();
+        final Location bot = plot.getBottomAbs();
         if (SIGN_LOCATION == null) {
-            bot.setY(ROAD_HEIGHT + 1);
-            return bot.add(-1, 0, -2);
+            return bot.withY(ROAD_HEIGHT + 1).add(-1, 0, -2);
         } else {
-            bot.setY(0);
-            return bot.add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
+            return bot.withY(0).add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
         }
     }
 

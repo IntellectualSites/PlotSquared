@@ -75,7 +75,7 @@ public class OperationUtil {
             weWorld = ((Player) actor).getWorld();
         } else {
             @NotNull Location loc = plotPlayer.getLocation();
-            String world = loc.getWorld();
+            String world = loc.getWorldName();
             weWorld = getWorld(world);
         }
         return weWorld;

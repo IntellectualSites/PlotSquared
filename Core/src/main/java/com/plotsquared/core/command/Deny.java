@@ -133,7 +133,7 @@ public class Deny extends SubCommand {
             player.stopSpectating();
         }
         Location location = player.getLocation();
-        Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
+        Location spawn = WorldUtil.IMP.getSpawn(location.getWorldName());
         MainUtil.sendMessage(player, Captions.YOU_GOT_DENIED);
         if (plot.equals(spawn.getPlot())) {
             Location newSpawn =

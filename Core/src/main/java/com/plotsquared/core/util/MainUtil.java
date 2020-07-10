@@ -397,12 +397,10 @@ public class MainUtil {
         return plot.getFlag(ServerPlotFlag.class);
     }
 
-    @NotNull public static Location[] getCorners(String world, CuboidRegion region) {
-        BlockVector3 min = region.getMinimumPoint();
-        BlockVector3 max = region.getMaximumPoint();
-        Location pos1 = new Location(world, min.getX(), min.getY(), min.getZ());
-        Location pos2 = new Location(world, max.getX(), max.getY(), max.getZ());
-        return new Location[] {pos1, pos2};
+    @NotNull public static Location[] getCorners(@NotNull final String world, @NotNull final CuboidRegion region) {
+        final BlockVector3 min = region.getMinimumPoint();
+        final BlockVector3 max = region.getMaximumPoint();
+        return new Location[] {Location.at(world, min), Location.at(world, max)};
     }
 
     /**
@@ -426,16 +424,16 @@ public class MainUtil {
             Location pos1 = corners[0];
             Location pos2 = corners[1];
             if (pos2.getX() > max.getX()) {
-                max.setX(pos2.getX());
+                max = max.withX(pos2.getX());
             }
             if (pos1.getX() < min.getX()) {
-                min.setX(pos1.getX());
+                min = min.withX(pos1.getX());
             }
             if (pos2.getZ() > max.getZ()) {
-                max.setZ(pos2.getZ());
+                max = max.withZ(pos2.getZ());
             }
             if (pos1.getZ() < min.getZ()) {
-                min.setZ(pos1.getZ());
+                min = min.withZ(pos1.getZ());
             }
         }
         return new Location[] {min, max};

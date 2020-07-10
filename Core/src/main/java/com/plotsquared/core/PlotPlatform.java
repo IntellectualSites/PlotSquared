@@ -29,6 +29,7 @@ import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.location.World;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.QueueProvider;
 import com.plotsquared.core.util.ChatManager;
@@ -301,5 +302,13 @@ public interface PlotPlatform<P> extends ILogger {
      * @return Player manager
      */
     @NotNull PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager();
+
+    /**
+     * Get a platform world wrapper from a world name
+     *
+     * @param worldName World name
+     * @return Platform world wrapper
+     */
+    @NotNull World<?> getPlatformWorld(@NotNull final String worldName);
 
 }

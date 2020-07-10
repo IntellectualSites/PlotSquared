@@ -150,23 +150,23 @@ public class ChunkListener implements Listener {
         int z = chunkZ << 4;
         int x2 = x + 15;
         int z2 = z + 15;
-        Plot plot = new Location(world, x, 1, z).getOwnedPlotAbs();
+        Plot plot = Location.at(world, x, 1, z).getOwnedPlotAbs();
         if (plot != null && plot.hasOwner()) {
             return true;
         }
-        plot = new Location(world, x2, 1, z2).getOwnedPlotAbs();
+        plot = Location.at(world, x2, 1, z2).getOwnedPlotAbs();
         if (plot != null && plot.hasOwner()) {
             return true;
         }
-        plot = new Location(world, x2, 1, z).getOwnedPlotAbs();
+        plot = Location.at(world, x2, 1, z).getOwnedPlotAbs();
         if (plot != null && plot.hasOwner()) {
             return true;
         }
-        plot = new Location(world, x, 1, z2).getOwnedPlotAbs();
+        plot = Location.at(world, x, 1, z2).getOwnedPlotAbs();
         if (plot != null && plot.hasOwner()) {
             return true;
         }
-        plot = new Location(world, x + 7, 1, z + 7).getOwnedPlotAbs();
+        plot = Location.at(world, x + 7, 1, z + 7).getOwnedPlotAbs();
         return plot != null && plot.hasOwner();
     }
 

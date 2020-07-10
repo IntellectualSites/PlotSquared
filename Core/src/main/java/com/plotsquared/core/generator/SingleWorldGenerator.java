@@ -36,12 +36,13 @@ import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
 public class SingleWorldGenerator extends IndependentPlotGenerator {
-    private Location bedrock1 = new Location(null, 0, 0, 0);
-    private Location bedrock2 = new Location(null, 15, 0, 15);
-    private Location dirt1 = new Location(null, 0, 1, 0);
-    private Location dirt2 = new Location(null, 15, 2, 15);
-    private Location grass1 = new Location(null, 0, 3, 0);
-    private Location grass2 = new Location(null, 15, 3, 15);
+
+    private static final Location bedrock1 = Location.at("", 0, 0, 0);
+    private static final Location bedrock2 = Location.at("", 15, 0, 15);
+    private static final  Location dirt1 = Location.at("", 0, 1, 0);
+    private static final  Location dirt2 = Location.at("", 15, 2, 15);
+    private static final  Location grass1 = Location.at("", 0, 3, 0);
+    private static final  Location grass2 = Location.at("", 15, 3, 15);
 
     @Override public String getName() {
         return "PlotSquared:single";

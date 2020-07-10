@@ -99,7 +99,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         if (location == null) {
             return null;
         }
-        String world = location.getWorld();
+        String world = location.getWorldName();
         return isWorld(world) || world.equals("*") || super.getAllPlotAreas().length == 0 ?
             area :
             super.getApplicablePlotArea(location);
@@ -118,7 +118,7 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         if (found != null) {
             return found;
         }
-        return isWorld(location.getWorld()) || location.getWorld().equals("*") ? area : null;
+        return isWorld(location.getWorldName()) || location.getWorldName().equals("*") ? area : null;
     }
 
     @Override @NotNull public PlotArea[] getPlotAreas(@NotNull final String world, @NotNull final CuboidRegion region) {

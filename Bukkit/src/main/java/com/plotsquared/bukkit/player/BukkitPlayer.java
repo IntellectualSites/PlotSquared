@@ -241,7 +241,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             return;
         }
         final org.bukkit.Location bukkitLocation =
-            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX() + 0.5,
+            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX() + 0.5,
                 location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch());
         PaperLib.teleportAsync(player, bukkitLocation, getTeleportCause(cause));
     }
@@ -259,7 +259,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     @Override public void setCompassTarget(Location location) {
         this.player.setCompassTarget(
-            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorld()), location.getX(),
+            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX(),
                 location.getY(), location.getZ()));
     }
 

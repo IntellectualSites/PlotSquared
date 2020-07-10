@@ -104,7 +104,7 @@ public class Area extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NEEDS_NAME);
                     return false;
                 }
-                final PlotArea existingArea = PlotSquared.get().getPlotAreaManager().getPlotArea(player.getLocation().getWorld(), args[1]);
+                final PlotArea existingArea = PlotSquared.get().getPlotAreaManager().getPlotArea(player.getLocation().getWorldName(), args[1]);
                 if (existingArea != null && existingArea.getId().equalsIgnoreCase(args[1])) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NAME_TAKEN);
                     return false;
@@ -139,7 +139,7 @@ public class Area extends SubCommand {
                     BlockVector3.at(playerSelectionMax.getX(), 255, playerSelectionMax.getZ()));
                 // There's only one plot in the area...
                 final PlotId plotId = new PlotId(1, 1);
-                final HybridPlotWorld hybridPlotWorld = new HybridPlotWorld(player.getLocation().getWorld(), args[1],
+                final HybridPlotWorld hybridPlotWorld = new HybridPlotWorld(player.getLocation().getWorldName(), args[1],
                     Objects.requireNonNull(PlotSquared.platform()).getDefaultGenerator(), plotId, plotId);
                 // Plot size is the same as the region width
                 hybridPlotWorld.PLOT_WIDTH = hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
@@ -462,7 +462,7 @@ public class Area extends SubCommand {
                             return false;
                         }
                         if (WorldUtil.IMP.isWorld(pa.getWorldName())) {
-                            if (!player.getLocation().getWorld().equals(pa.getWorldName())) {
+                            if (!player.getLocation().getWorldName().equals(pa.getWorldName())) {
                                 player.teleport(WorldUtil.IMP.getSpawn(pa.getWorldName()),
                                     TeleportCause.COMMAND);
                             }
@@ -648,15 +648,13 @@ public class Area extends SubCommand {
                     player.teleport(center, TeleportCause.COMMAND);
                 } else {
                     CuboidRegion region = area.getRegion();
-                    center = new Location(area.getWorldName(), region.getMinimumPoint().getX()
+                    center = Location.at(area.getWorldName(), region.getMinimumPoint().getX()
                         + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
                         0, region.getMinimumPoint().getZ()
                         + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
                     WorldUtil.IMP
-                        .getHighestBlock(area.getWorldName(), center.getX(), center.getZ(), y -> {
-                            center.setY(1 + y);
-                            player.teleport(center, TeleportCause.COMMAND);
-                        });
+                        .getHighestBlock(area.getWorldName(), center.getX(), center.getZ(), y ->
+                            player.teleport(center.withY(1 + y), TeleportCause.COMMAND));
                 }
                 return true;
             case "delete":

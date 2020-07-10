@@ -41,17 +41,30 @@ import org.khelekore.prtree.SimpleMBR;
 /**
  * An unmodifiable 6-tuple (world,x,y,z,yaw,pitch)
  */
-@EqualsAndHashCode
+@EqualsAndHashCode @SuppressWarnings("unused")
 public final class Location implements Comparable<Location> {
 
     @Getter private final float yaw;
     @Getter private final float pitch;
-    @Getter private final String world;
     @Getter private final BlockVector3 blockVector3;
+    private final World<?> world;
 
-    private Location(@NotNull final String world, @NotNull final BlockVector3 blockVector3,
+    private Location(@NotNull final World<?> world, @NotNull final BlockVector3 blockVector3,
         final float yaw, final float pitch) {
         this.world = Preconditions.checkNotNull(world, "World may not be null");
+        this.blockVector3 = Preconditions.checkNotNull(blockVector3, "Vector may not be null");
+        this.yaw = yaw;
+        this.pitch = pitch;
+    }
+
+    private Location(@NotNull final String worldName, @NotNull final BlockVector3 blockVector3,
+        final float yaw, final float pitch) {
+        Preconditions.checkNotNull(worldName, "World name may not be null");
+        if (worldName.isEmpty()) {
+            this.world = World.nullWorld();
+        } else {
+            this.world = PlotSquared.platform().getPlatformWorld(worldName);
+        }
         this.blockVector3 = Preconditions.checkNotNull(blockVector3, "Vector may not be null");
         this.yaw = yaw;
         this.pitch = pitch;
@@ -111,6 +124,80 @@ public final class Location implements Comparable<Location> {
     @NotNull public static Location at(@NotNull final String world, final int x, final int y,
         final int z) {
         return at(world, BlockVector3.at(x, y, z));
+    }
+
+    /**
+     * Construct a new location
+     *
+     * @param world        World
+     * @param blockVector3 (x,y,z) vector
+     * @param yaw          yaw
+     * @param pitch        pitch
+     * @return New location
+     */
+    @NotNull public static Location at(@NotNull final World<?> world,
+        @NotNull final BlockVector3 blockVector3, final float yaw, final float pitch) {
+        return new Location(world, blockVector3, yaw, pitch);
+    }
+
+    /**
+     * Construct a new location with yaw and pitch equal to 0
+     *
+     * @param world        World
+     * @param blockVector3 (x,y,z) vector
+     * @return New location
+     */
+    @NotNull public static Location at(@NotNull final World<?> world,
+        @NotNull final BlockVector3 blockVector3) {
+        return at(world, blockVector3, 0f, 0f);
+    }
+
+    /**
+     * Construct a new location
+     *
+     * @param world World
+     * @param x     X coordinate
+     * @param y     Y coordinate
+     * @param z     Z coordinate
+     * @param yaw   Yaw
+     * @param pitch Pitch
+     * @return New location
+     */
+    @NotNull public static Location at(@NotNull final World<?> world, final int x, final int y,
+        final int z, final float yaw, final float pitch) {
+        return at(world, BlockVector3.at(x, y, z), yaw, pitch);
+    }
+
+    /**
+     * Construct a new location with yaw and pitch equal to 0
+     *
+     * @param world World
+     * @param x     X coordinate
+     * @param y     Y coordinate
+     * @param z     Z coordinate
+     * @return New location
+     */
+    @NotNull public static Location at(@NotNull final World<?> world, final int x, final int y,
+        final int z) {
+        return at(world, BlockVector3.at(x, y, z));
+    }
+
+    /**
+     * Get the world object
+     *
+     * @return World object
+     */
+    @NotNull public World<?> getWorld() {
+        return this.world;
+    }
+
+    /**
+     * Get the name of the world this location is in
+     *
+     * @return World name
+     */
+    @NotNull public String getWorldName() {
+        return this.world.getName();
     }
 
     /**

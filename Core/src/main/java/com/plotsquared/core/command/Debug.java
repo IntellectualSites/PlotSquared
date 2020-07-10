@@ -63,7 +63,7 @@ public class Debug extends SubCommand {
             MainUtil.sendMessage(player, "Fetching loaded chunks...");
             TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,
                 "Loaded chunks: " + RegionManager.manager
-                    .getChunkChunks(player.getLocation().getWorld()).size() + "(" + (
+                    .getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (
                     System.currentTimeMillis() - start) + "ms) using thread: " + Thread
                     .currentThread().getName()));
             return true;

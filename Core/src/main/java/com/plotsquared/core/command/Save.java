@@ -50,7 +50,7 @@ import java.util.UUID;
 public class Save extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        String world = player.getLocation().getWorld();
+        String world = player.getLocation().getWorldName();
         if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
@@ -77,8 +77,8 @@ public class Save extends SubCommand {
                 TaskManager.runTaskAsync(() -> {
                     String time = (System.currentTimeMillis() / 1000) + "";
                     Location[] corners = plot.getCorners();
-                    corners[0].setY(0);
-                    corners[1].setY(255);
+                    corners[0] = corners[0].withY(0);
+                    corners[1] = corners[1].withY(255);
                     int size = (corners[1].getX() - corners[0].getX()) + 1;
                     PlotId id = plot.getId();
                     String world1 = plot.getArea().toString().replaceAll(";", "-")
