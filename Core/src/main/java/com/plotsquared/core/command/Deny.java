@@ -31,11 +31,13 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -50,8 +52,11 @@ import java.util.concurrent.TimeoutException;
     requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
 
-    public Deny() {
+    private final PlotAreaManager plotAreaManager;
+
+    public Deny(@NotNull final PlotAreaManager plotAreaManager) {
         super(Argument.PlayerName);
+        this.plotAreaManager = plotAreaManager;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -136,8 +141,7 @@ public class Deny extends SubCommand {
         Location spawn = WorldUtil.IMP.getSpawn(location.getWorldName());
         MainUtil.sendMessage(player, Captions.YOU_GOT_DENIED);
         if (plot.equals(spawn.getPlot())) {
-            Location newSpawn =
-                WorldUtil.IMP.getSpawn(PlotSquared.get().getPlotAreaManager().getAllWorlds()[0]);
+            Location newSpawn = WorldUtil.IMP.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
                 player.kick(Captions.YOU_GOT_DENIED.getTranslated());

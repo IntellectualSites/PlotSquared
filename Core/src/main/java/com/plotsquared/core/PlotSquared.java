@@ -131,7 +131,6 @@ import java.util.zip.ZipInputStream;
 @SuppressWarnings({"WeakerAccess"})
 public class PlotSquared {
 
-    private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
     private static PlotSquared instance;
 
     // Implementation
@@ -285,7 +284,7 @@ public class PlotSquared {
                         PlotSquared.log(Captions.PREFIX.getTranslated() + "&6" + this.platform.getPluginName()
                             + " hooked into WorldEdit.");
                         this.worldedit = WorldEdit.getInstance();
-                        WorldEdit.getInstance().getEventBus().register(new WESubscriber());
+                        WorldEdit.getInstance().getEventBus().register(new WESubscriber(this.plotAreaManager));
                         if (Settings.Enabled_Components.COMMANDS) {
                             new WE_Anywhere();
                         }
@@ -431,7 +430,7 @@ public class PlotSquared {
             ExpireManager.IMP = new ExpireManager();
             ExpireManager.IMP.runAutomatedTask();
             for (Settings.Auto_Clear settings : Settings.AUTO_CLEAR.getInstances()) {
-                ExpiryTask task = new ExpiryTask(settings);
+                ExpiryTask task = new ExpiryTask(settings, this.plotAreaManager);
                 ExpireManager.IMP.addTask(task);
             }
         }

@@ -41,11 +41,11 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
     private PlotArea[] all;
 
     public SinglePlotAreaManager() {
-        this.area = new SinglePlotArea();
+        this.area = new SinglePlotArea(this);
         this.array = new SinglePlotArea[] {area};
         this.all = new PlotArea[] {area};
         SetupUtils.generators.put("PlotSquared:single",
-            new SingleWorldGenerator().specify("CheckingPlotSquaredGenerator"));
+            new SingleWorldGenerator(this).specify("CheckingPlotSquaredGenerator"));
     }
 
     public SinglePlotArea getArea() {

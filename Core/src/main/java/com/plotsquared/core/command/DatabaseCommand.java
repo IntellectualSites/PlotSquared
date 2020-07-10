@@ -35,10 +35,12 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -56,6 +58,12 @@ import java.util.Map.Entry;
     requiredType = RequiredType.CONSOLE,
     usage = "/plot database [area] <sqlite|mysql|import>")
 public class DatabaseCommand extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public DatabaseCommand(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     public static void insertPlots(final SQLManager manager, final List<Plot> plots,
         final PlotPlayer player) {
@@ -81,7 +89,7 @@ public class DatabaseCommand extends SubCommand {
             return false;
         }
         List<Plot> plots;
-        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
+        PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
         if (area != null) {
             plots = PlotSquared.get().sortPlotsByTemp(area.getPlots());
             args = Arrays.copyOfRange(args, 1, args.length);
@@ -117,7 +125,7 @@ public class DatabaseCommand extends SubCommand {
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
                         String areaName = entry.getKey();
-                        PlotArea pa = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(areaName);
+                        PlotArea pa = this.plotAreaManager.getPlotAreaByString(areaName);
                         if (pa != null) {
                             for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                                 Plot plot = entry2.getValue();

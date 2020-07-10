@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -32,6 +33,7 @@ import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
@@ -60,61 +62,62 @@ public class MainCommand extends Command {
     public static MainCommand getInstance() {
         if (instance == null) {
             instance = new MainCommand();
+            final PlotAreaManager plotAreaManager = PlotSquared.get().getPlotAreaManager();
             new Caps();
             new Buy();
-            new Save();
-            new Load();
+            new Save(plotAreaManager);
+            new Load(plotAreaManager);
             new Confirm();
-            new Template();
-            new Download();
-            new Template();
+            new Template(plotAreaManager);
+            new Download(plotAreaManager);
+            new Template(plotAreaManager);
             new Setup();
-            new Area();
+            new Area(plotAreaManager);
             new DebugSaveTest();
             new DebugLoadTest();
             new CreateRoadSchematic();
             new DebugAllowUnsafe();
-            new RegenAllRoads();
+            new RegenAllRoads(plotAreaManager);
             new Claim();
-            new Auto();
-            new HomeCommand();
-            new Visit();
+            new Auto(plotAreaManager);
+            new HomeCommand(plotAreaManager);
+            new Visit(plotAreaManager);
             new Set();
             new Clear();
             new Delete();
             new Trust();
             new Add();
             new Leave();
-            new Deny();
+            new Deny(plotAreaManager);
             new Remove();
             new Info();
             new Near();
-            new ListCmd();
-            new Debug();
-            new SchematicCmd();
+            new ListCmd(plotAreaManager);
+            new Debug(plotAreaManager);
+            new SchematicCmd(plotAreaManager);
             new PluginCmd();
-            new Purge();
-            new Reload();
+            new Purge(plotAreaManager);
+            new Reload(plotAreaManager);
             new Relight();
             new Merge();
             new DebugPaste();
             new Unlink();
-            new Kick();
+            new Kick(plotAreaManager);
             new Inbox();
             new Comment();
-            new DatabaseCommand();
+            new DatabaseCommand(plotAreaManager);
             new Swap();
             new Music();
             new DebugRoadRegen();
             new Trust();
-            new DebugExec();
+            new DebugExec(plotAreaManager);
             new FlagCommand();
             new Target();
-            new Move();
-            new Condense();
+            new Move(plotAreaManager);
+            new Condense(plotAreaManager);
             new Copy();
             new Chat();
-            new Trim();
+            new Trim(plotAreaManager);
             new Done();
             new Continue();
             new Middle();
@@ -126,7 +129,7 @@ public class MainCommand extends Command {
             new Alias();
             new SetHome();
             new Cluster();
-            new DebugImportWorlds();
+            new DebugImportWorlds(plotAreaManager);
             new Backup();
 
             if (Settings.Ratings.USE_LIKES) {
@@ -143,7 +146,7 @@ public class MainCommand extends Command {
         return instance;
     }
 
-    public static boolean onCommand(final PlotPlayer player, String... args) {
+    public static boolean onCommand(final PlotPlayer<?> player, String... args) {
         if (args.length >= 1 && args[0].contains(":")) {
             String[] split2 = args[0].split(":");
             if (split2.length == 2) {

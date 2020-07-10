@@ -33,6 +33,7 @@ import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.SetupObject;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.util.SetupUtils;
 import io.papermc.lib.PaperLib;
@@ -42,6 +43,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -49,6 +51,12 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 public class BukkitSetupUtils extends SetupUtils {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public BukkitSetupUtils(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @Override public void updateGenerators() {
         if (!SetupUtils.generators.isEmpty()) {
@@ -66,7 +74,7 @@ public class BukkitSetupUtils extends SetupUtils {
                         if (generator instanceof GeneratorWrapper<?>) {
                             wrapped = (GeneratorWrapper<?>) generator;
                         } else {
-                            wrapped = new BukkitPlotGenerator(testWorld, generator);
+                            wrapped = new BukkitPlotGenerator(testWorld, generator, this.plotAreaManager);
                         }
                         SetupUtils.generators.put(name, wrapped);
                     }

@@ -180,10 +180,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private boolean metricsStarted;
     @Getter private BackupManager backupManager;
     @Getter private PlatformWorldManager<World> worldManager;
-    private final BukkitPlayerManager playerManager = new BukkitPlayerManager();
+    private BukkitPlayerManager playerManager;
     private EconHandler econ;
     private PermHandler perm;
-
+    private PlotAreaManager plotAreaManager;
+    
     @Override public int[] getServerVersion() {
         if (this.version == null) {
             try {
@@ -213,7 +214,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         this.pluginName = getDescription().getName();
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
 
-        new PlotSquared(this, "Bukkit");
+        final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
+        this.plotAreaManager = plotSquared.getPlotAreaManager();
+        this.playerManager = new BukkitPlayerManager(this.plotAreaManager);
 
         if (PlotSquared.platform().getServerVersion()[1] < 13) {
             System.out.println(
@@ -427,10 +430,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 event.printStackTrace();
             }
         }
-        final PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
-        if (manager instanceof SinglePlotAreaManager) {
+
+        if (this.plotAreaManager instanceof SinglePlotAreaManager) {
             long start = System.currentTimeMillis();
-            final SinglePlotArea area = ((SinglePlotAreaManager) manager).getArea();
+            final SinglePlotArea area = ((SinglePlotAreaManager) this.plotAreaManager).getArea();
 
             outer:
             for (final World world : Bukkit.getWorlds()) {
@@ -624,7 +627,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override @SuppressWarnings("deprecation") public void runEntityTask() {
         PlotSquared.log(Captions.PREFIX + "KillAllEntities started.");
-        TaskManager.runTaskRepeat(() -> PlotSquared.get().getPlotAreaManager().forEachPlotArea(plotArea -> {
+        TaskManager.runTaskRepeat(() -> this.plotAreaManager.forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.getWorldName());
             try {
                 if (world == null) {
@@ -883,7 +886,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final String id) {
         final IndependentPlotGenerator result;
         if (id != null && id.equalsIgnoreCase("single")) {
-            result = new SingleWorldGenerator();
+            result = new SingleWorldGenerator(this.plotAreaManager);
         } else {
             result = PlotSquared.platform().getDefaultGenerator();
             if (!PlotSquared.get().setupPlotWorld(worldName, id, result)) {
@@ -894,11 +897,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override public void registerPlayerEvents() {
-        final PlayerEvents main = new PlayerEvents();
+        final PlayerEvents main = new PlayerEvents(this.plotAreaManager);
         getServer().getPluginManager().registerEvents(main, this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
         if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
-            getServer().getPluginManager().registerEvents(new PaperListener(), this);
+            getServer().getPluginManager().registerEvents(new PaperListener(this.plotAreaManager), this);
         }
         PlotListener.startRunnable();
     }
@@ -982,18 +985,18 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             if (gen instanceof GeneratorWrapper<?>) {
                 return (GeneratorWrapper<?>) gen;
             }
-            return new BukkitPlotGenerator(world, gen);
+            return new BukkitPlotGenerator(world, gen, this.plotAreaManager);
         } else {
-            return new BukkitPlotGenerator(world, PlotSquared.platform().getDefaultGenerator());
+            return new BukkitPlotGenerator(world, PlotSquared.platform().getDefaultGenerator(), this.plotAreaManager);
         }
     }
 
     @Override public HybridUtils initHybridUtils() {
-        return new BukkitHybridUtils();
+        return new BukkitHybridUtils(this.plotAreaManager);
     }
 
     @Override public SetupUtils initSetupUtils() {
-        return new BukkitSetupUtils();
+        return new BukkitSetupUtils(this.plotAreaManager);
     }
 
     @Override public void startMetrics() {
@@ -1011,7 +1014,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
                 map.put(plotAreaType.name().toLowerCase(), terrainTypes);
             }
-            for (final PlotArea plotArea : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
+            for (final PlotArea plotArea : this.plotAreaManager.getAllPlotAreas()) {
                 final Map<String, Integer> terrainTypeMap =
                     map.get(plotArea.getType().name().toLowerCase());
                 terrainTypeMap.put(plotArea.getTerrain().name().toLowerCase(),
@@ -1040,11 +1043,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override public void registerChunkProcessor() {
-        getServer().getPluginManager().registerEvents(new ChunkListener(), this);
+        getServer().getPluginManager().registerEvents(new ChunkListener(this.plotAreaManager), this);
     }
 
     @Override public void registerWorldEvents() {
-        getServer().getPluginManager().registerEvents(new WorldEvents(), this);
+        getServer().getPluginManager().registerEvents(new WorldEvents(this.plotAreaManager), this);
     }
 
     @NotNull @Override public IndependentPlotGenerator getDefaultGenerator() {
@@ -1072,7 +1075,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             world = Bukkit.getWorld(worldName);
         } else {
             try {
-                if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(worldName)) {
+                if (!this.plotAreaManager.hasPlotArea(worldName)) {
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
             } catch (Exception e) {
@@ -1086,7 +1089,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         if (gen instanceof BukkitPlotGenerator) {
             PlotSquared.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
         } else if (gen != null) {
-            PlotSquared.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen));
+            PlotSquared.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen, this.plotAreaManager));
         } else if (PlotSquared.get().worlds.contains("worlds." + worldName)) {
             PlotSquared.get().loadWorld(worldName, null);
         }
@@ -1144,7 +1147,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world,
         @NonNull final IndependentPlotGenerator generator) {
-        return new BukkitPlotGenerator(world, generator);
+        return new BukkitPlotGenerator(world, generator, this.plotAreaManager);
     }
 
     @Override public List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds() {

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.player;
 
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,11 +39,17 @@ import java.util.UUID;
  */
 public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
 
+    private final PlotAreaManager plotAreaManager;
+
+    public BukkitPlayerManager(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
     @NotNull @Override public BukkitPlayer getPlayer(@NotNull final Player object) {
         try {
             return getPlayer(object.getUniqueId());
         } catch (final NoSuchPlayerException exception) {
-            return new BukkitPlayer(object, object.isOnline(), false);
+            return new BukkitPlayer(this.plotAreaManager, object, object.isOnline(), false);
         }
     }
 
@@ -51,7 +58,7 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
         if (player == null || !player.isOnline()) {
             throw new NoSuchPlayerException(uuid);
         }
-        return new BukkitPlayer(player);
+        return new BukkitPlayer(this.plotAreaManager, player);
     }
 
     @Nullable @Override public BukkitOfflinePlayer getOfflinePlayer(@Nullable final UUID uuid) {

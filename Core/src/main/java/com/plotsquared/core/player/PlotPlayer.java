@@ -26,6 +26,7 @@
 package com.plotsquared.core.player;
 
 import com.google.common.base.Preconditions;
+import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
@@ -87,6 +88,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     private ConcurrentHashMap<String, Object> meta;
     private int hash;
+    
+    private final PlotAreaManager plotAreaManager;
+    
+    public PlotPlayer(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     public static <T> PlotPlayer<T> from(@NonNull final T object) {
         if (!converters.containsKey(object.getClass())) {
@@ -270,7 +277,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
-        PlotSquared.get().getPlotAreaManager().forEachPlotArea(value -> {
+        this.plotAreaManager.forEachPlotArea(value -> {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 for (Plot plot : value.getPlotsAbs(uuid)) {
                     if (!DoneFlag.isDone(plot)) {
@@ -289,7 +296,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
             return getClusterCount(getLocation().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
-        PlotSquared.get().getPlotAreaManager().forEachPlotArea(value -> {
+        this.plotAreaManager.forEachPlotArea(value -> {
             for (PlotCluster cluster : value.getClusters()) {
                 if (cluster.isOwner(getUUID())) {
                     count.incrementAndGet();
@@ -308,7 +315,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     public int getPlotCount(String world) {
         UUID uuid = getUUID();
         int count = 0;
-        for (PlotArea area : PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world)) {
+        for (PlotArea area : this.plotAreaManager.getPlotAreasSet(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 count +=
                     area.getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
@@ -322,7 +329,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     public int getClusterCount(String world) {
         UUID uuid = getUUID();
         int count = 0;
-        for (PlotArea area : PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world)) {
+        for (PlotArea area : this.plotAreaManager.getPlotAreasSet(world)) {
             for (PlotCluster cluster : area.getClusters()) {
                 if (cluster.isOwner(getUUID())) {
                     count++;
@@ -349,11 +356,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @return Plot area the player is currently in, or {@code null}
      */
     @Nullable public PlotArea getPlotAreaAbs() {
-        return PlotSquared.get().getPlotAreaManager().getPlotArea(getLocation());
+        return this.plotAreaManager.getPlotArea(getLocation());
     }
 
     public PlotArea getApplicablePlotArea() {
-        return PlotSquared.get().getPlotAreaManager().getApplicablePlotArea(getLocation());
+        return this.plotAreaManager.getApplicablePlotArea(getLocation());
     }
 
     @Override public RequiredType getSuperCaller() {
@@ -614,7 +621,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     public int getPlayerClusterCount() {
         final AtomicInteger count = new AtomicInteger();
-        PlotSquared.get().getPlotAreaManager().forEachPlotArea(value -> count.addAndGet(value.getClusters().size()));
+        this.plotAreaManager.forEachPlotArea(value -> count.addAndGet(value.getClusters().size()));
         return count.get();
     }
 
@@ -645,7 +652,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
                         if (!Settings.Teleport.ON_LOGIN) {
                             return;
                         }
-                        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
+                        PlotAreaManager manager = PlotPlayer.this.plotAreaManager;
 
                         if (!(manager instanceof SinglePlotAreaManager)) {
                             return;

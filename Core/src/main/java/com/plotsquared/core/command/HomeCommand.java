@@ -25,13 +25,13 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -55,8 +55,12 @@ import java.util.concurrent.CompletableFuture;
                     requiredType = RequiredType.PLAYER,
                     category = CommandCategory.TELEPORT)
 public class HomeCommand extends Command {
-    public HomeCommand() {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public HomeCommand(@NotNull final PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
+        this.plotAreaManager = plotAreaManager;
     }
 
     private void home(@NotNull final PlotPlayer<?> player,
@@ -132,7 +136,7 @@ public class HomeCommand extends Command {
                 break;
             case 2:
                 // we assume args[0] is a plot area and args[1] an identifier
-                PlotArea plotArea = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
+                final PlotArea plotArea = this.plotAreaManager.getPlotAreaByString(args[0]);
                 identifier = args[1];
                 if (plotArea == null) {
                     // invalid command, therefore no plots

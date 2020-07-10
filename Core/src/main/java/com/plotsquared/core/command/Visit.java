@@ -32,6 +32,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -59,8 +60,11 @@ import java.util.concurrent.TimeoutException;
     category = CommandCategory.TELEPORT)
 public class Visit extends Command {
 
-    public Visit() {
+    private final PlotAreaManager plotAreaManager;
+    
+    public Visit(@NotNull final PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
+        this.plotAreaManager = plotAreaManager;
     }
 
     private void visit(@NotNull final PlotPlayer player, @NotNull final PlotQuery query, final PlotArea sortByArea,
@@ -164,7 +168,7 @@ public class Visit extends Command {
             // /p v <name> [page]
             case 2:
                 if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
-                    sortByArea = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
+                    sortByArea = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
                         Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                         Captions.COMMAND_SYNTAX.send(player, getUsage());
@@ -275,7 +279,7 @@ public class Visit extends Command {
     }
 
     private void completeAreas(final List<Command> commands, final String arg) {
-        for (final PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
+        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
             final String areaName = area.getWorldName() + ";" + area.getId();
             if (!areaName.toLowerCase().startsWith(arg.toLowerCase())) {
                 continue;

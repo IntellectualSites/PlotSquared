@@ -32,7 +32,9 @@ import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotAreaType;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -45,13 +47,19 @@ import java.util.Objects;
     category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {
 
+    private final PlotAreaManager plotAreaManager;
+
+    public Reload(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
             PlotSquared.get().setupConfigs();
             Captions.load(PlotSquared.get().translationFile);
-            PlotSquared.get().getPlotAreaManager().forEachPlotArea(area -> {
+            this.plotAreaManager.forEachPlotArea(area -> {
                 ConfigurationSection worldSection = PlotSquared.get().worlds
                     .getConfigurationSection("worlds." + area.getWorldName());
                 if (worldSection == null) {

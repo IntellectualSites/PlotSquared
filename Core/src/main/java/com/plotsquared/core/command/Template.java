@@ -36,6 +36,7 @@ import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
@@ -44,6 +45,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,6 +62,12 @@ import java.util.zip.ZipOutputStream;
     usage = "/plot template [import|export] <world> <template>",
     category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public Template(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     public static boolean extractAllFiles(String world, String template) {
         try {
@@ -159,7 +167,7 @@ public class Template extends SubCommand {
                         "/plot template import <world> <template>");
                     return false;
                 }
-                if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+                if (this.plotAreaManager.hasPlotArea(world)) {
                     MainUtil.sendMessage(player, Captions.SETUP_WORLD_TAKEN, world);
                     return false;
                 }
@@ -203,7 +211,7 @@ public class Template extends SubCommand {
                         "/plot template export <world>");
                     return false;
                 }
-                final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(world);
+                final PlotArea area = this.plotAreaManager.getPlotAreaByString(world);
                 if (area == null) {
                     MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
                     return false;

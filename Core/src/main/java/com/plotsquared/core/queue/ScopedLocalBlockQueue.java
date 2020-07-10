@@ -25,17 +25,11 @@
  */
 package com.plotsquared.core.queue;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.util.task.RunnableVal3;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import org.jetbrains.annotations.NotNull;
 
 public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     private final int minX;
@@ -100,32 +94,4 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
         return Location.at(this.getWorld(), this.maxX, this.maxY, this.maxZ);
     }
 
-    /**
-     * Run a task for each x,z value corresponding to the plot at that location<br>
-     * - Plot: The plot at the x,z (may be null)<br>
-     * - Location: The location in the chunk (y = 0)<br>
-     * - PlotChunk: Reference to this chunk object<br>
-     *
-     * @param task
-     */
-    public void mapByType2D(@NotNull final RunnableVal3<Plot, Integer, Integer> task) {
-        final int bx = minX;
-        final int bz = minZ;
-        final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(getWorld(), null);
-        final Location location = Location.at(getWorld(), bx, 0, bz);
-        if (area != null) {
-            PlotManager manager = area.getPlotManager();
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    task.run(area.getPlotAbs(location.withX(bx + x).withZ(bz + z)), x, z);
-                }
-            }
-        } else {
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    task.run(location.withX(bx + x).withZ(bz + z).getPlotAbs(), x, z);
-                }
-            }
-        }
-    }
 }

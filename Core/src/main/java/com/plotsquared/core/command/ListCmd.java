@@ -36,6 +36,7 @@ import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
@@ -47,6 +48,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.uuid.UUIDMapping;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +70,12 @@ import java.util.stream.Collectors;
     category = CommandCategory.INFO,
     usage = "/plot list <forsale|mine|shared|world|top|all|unowned|player|world|done|fuzzy <search...>> [#]")
 public class ListCmd extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public ListCmd(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     private String[] getArgumentList(PlotPlayer player) {
         List<String> args = new ArrayList<>();
@@ -297,7 +305,7 @@ public class ListCmd extends SubCommand {
                 plotConsumer.accept(PlotQuery.newQuery().plotsBySearch(term));
                 break;
             default:
-                if (PlotSquared.get().getPlotAreaManager().hasPlotArea(args[0])) {
+                if (this.plotAreaManager.hasPlotArea(args[0])) {
                     if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_WORLD)) {
                         MainUtil.sendMessage(player, Captions.NO_PERMISSION,
                             Captions.PERMISSION_LIST_WORLD);

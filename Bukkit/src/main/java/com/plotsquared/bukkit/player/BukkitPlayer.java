@@ -34,6 +34,7 @@ import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotWeather;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
@@ -76,15 +77,16 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      *
      * @param player Bukkit player instance
      */
-    public BukkitPlayer(@NotNull final Player player) {
-        this(player, false);
+    public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final Player player) {
+        this(plotAreaManager, player, false);
     }
 
-    public BukkitPlayer(@NotNull final Player player, final boolean offline) {
-        this(player, offline, true);
+    public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final Player player, final boolean offline) {
+        this(plotAreaManager, player, offline, true);
     }
 
-    public BukkitPlayer(@NotNull final Player player, final boolean offline, final boolean realPlayer) {
+    public BukkitPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final Player player, final boolean offline, final boolean realPlayer) {
+        super(plotAreaManager);
         this.player = player;
         this.offline = offline;
         if (realPlayer) {

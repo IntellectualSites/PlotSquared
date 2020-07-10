@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.StringMan;
@@ -37,6 +38,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -48,6 +50,12 @@ import java.util.Map;
     usage = "/plot debug [msg]",
     permission = "plots.admin")
 public class Debug extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public Debug(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length > 0) {
@@ -119,7 +127,7 @@ public class Debug extends SubCommand {
         information.append(header);
         information.append(getSection(section, "PlotArea"));
         information.append(
-            getLine(line, "Plot Worlds", StringMan.join(PlotSquared.get().getPlotAreaManager().getAllPlotAreas(), ", ")));
+            getLine(line, "Plot Worlds", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", ")));
         information.append(getLine(line, "Owned Plots", PlotQuery.newQuery().allPlots().count()));
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", Captions.values().length));

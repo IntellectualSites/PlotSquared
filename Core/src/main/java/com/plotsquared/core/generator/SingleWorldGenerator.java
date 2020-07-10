@@ -25,24 +25,31 @@
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.jetbrains.annotations.NotNull;
 
 public class SingleWorldGenerator extends IndependentPlotGenerator {
 
     private static final Location bedrock1 = Location.at("", 0, 0, 0);
     private static final Location bedrock2 = Location.at("", 15, 0, 15);
-    private static final  Location dirt1 = Location.at("", 0, 1, 0);
-    private static final  Location dirt2 = Location.at("", 15, 2, 15);
-    private static final  Location grass1 = Location.at("", 0, 3, 0);
-    private static final  Location grass2 = Location.at("", 15, 3, 15);
+    private static final Location dirt1 = Location.at("", 0, 1, 0);
+    private static final Location dirt2 = Location.at("", 15, 2, 15);
+    private static final Location grass1 = Location.at("", 0, 3, 0);
+    private static final Location grass2 = Location.at("", 15, 3, 15);
+
+    private final PlotAreaManager plotAreaManager;
+
+    public SingleWorldGenerator(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @Override public String getName() {
         return "PlotSquared:single";
@@ -64,10 +71,10 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
     }
 
     @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-        return ((SinglePlotAreaManager) PlotSquared.get().getPlotAreaManager()).getArea();
+        return ((SinglePlotAreaManager) this.plotAreaManager).getArea();
     }
 
     @Override public void initialize(PlotArea area) {
-
     }
+
 }

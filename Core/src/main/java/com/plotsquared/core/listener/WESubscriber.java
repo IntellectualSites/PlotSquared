@@ -25,11 +25,11 @@
  */
 package com.plotsquared.core.listener;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.WEManager;
@@ -43,10 +43,17 @@ import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 public class WESubscriber {
+    
+    private final PlotAreaManager plotAreaManager;
+    
+    public WESubscriber(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @Subscribe(priority = Priority.VERY_EARLY) public void onEditSession(EditSessionEvent event) {
         if (!Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
@@ -82,19 +89,19 @@ public class WESubscriber {
                     if (Permissions.hasPermission(plotPlayer, "plots.worldedit.bypass")) {
                         MainUtil.sendMessage(plotPlayer, Captions.WORLDEDIT_BYPASS);
                     }
-                    if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+                    if (this.plotAreaManager.hasPlotArea(world)) {
                         event.setExtent(new NullExtent());
                     }
                     return;
                 }
             }
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
-                if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+                if (this.plotAreaManager.hasPlotArea(world)) {
                     event.setExtent(
                         new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(),
                             event.getExtent()));
                 }
-            } else if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+            } else if (this.plotAreaManager.hasPlotArea(world)) {
                 event.setExtent(new WEExtent(mask, event.getExtent()));
             }
         }

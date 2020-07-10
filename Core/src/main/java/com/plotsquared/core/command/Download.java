@@ -25,12 +25,12 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
@@ -38,6 +38,7 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.jnbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 
@@ -50,9 +51,15 @@ import java.net.URL;
     permission = "plots.download")
 public class Download extends SubCommand {
 
+    private final PlotAreaManager plotAreaManager;
+
+    public Download(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String world = player.getLocation().getWorldName();
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+        if (!this.plotAreaManager.hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         final Plot plot = player.getCurrentPlot();

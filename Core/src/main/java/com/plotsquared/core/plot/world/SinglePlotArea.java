@@ -56,8 +56,8 @@ public class SinglePlotArea extends GridPlotWorld {
 
     public boolean VOID = false;
 
-    public SinglePlotArea() {
-        super("*", null, new SingleWorldGenerator(), null, null);
+    public SinglePlotArea(@NotNull final PlotAreaManager plotAreaManager) {
+        super("*", null, new SingleWorldGenerator(plotAreaManager), null, null);
         this.setAllowSigns(false);
         this.setDefaultHome(new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE));
     }

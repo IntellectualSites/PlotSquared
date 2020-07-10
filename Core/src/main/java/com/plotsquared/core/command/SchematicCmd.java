@@ -26,7 +26,6 @@
 package com.plotsquared.core.command;
 
 import com.google.common.collect.Lists;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -35,12 +34,14 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.schematic.Schematic;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,7 +56,12 @@ import java.util.UUID;
     usage = "/plot schematic <save|saveall|paste>")
 public class SchematicCmd extends SubCommand {
 
+    private final PlotAreaManager plotAreaManager;
     private boolean running = false;
+
+    public SchematicCmd(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
@@ -150,7 +156,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD_ARGS);
                     return false;
                 }
-                PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
+                PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                 if (area == null) {
                     Captions.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;

@@ -25,10 +25,10 @@
  */
 package com.plotsquared.bukkit.generator;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
@@ -42,10 +42,14 @@ import java.util.Random;
 final class BlockStatePopulator extends BlockPopulator {
 
     private final IndependentPlotGenerator plotGenerator;
+    private final PlotAreaManager plotAreaManager;
+
     private LocalBlockQueue queue;
 
-    public BlockStatePopulator(IndependentPlotGenerator plotGenerator) {
+    public BlockStatePopulator(@NotNull final IndependentPlotGenerator plotGenerator,
+        @NotNull final PlotAreaManager plotAreaManager) {
         this.plotGenerator = plotGenerator;
+        this.plotAreaManager = plotAreaManager;
     }
 
     @Override
@@ -54,7 +58,7 @@ final class BlockStatePopulator extends BlockPopulator {
         if (this.queue == null) {
             this.queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
         }
-        final PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(world.getName(), null);
+        final PlotArea area = this.plotAreaManager.getPlotArea(world.getName(), null);
         if (area == null) {
             return;
         }

@@ -25,16 +25,17 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -45,6 +46,12 @@ import java.util.concurrent.CompletableFuture;
     category = CommandCategory.CLAIMING,
     requiredType = RequiredType.PLAYER)
 public class Move extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public Move(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @Override
     public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
@@ -70,7 +77,7 @@ public class Move extends SubCommand {
             Captions.COMMAND_SYNTAX.send(player, getUsage());
             return CompletableFuture.completedFuture(false);
         }
-        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
+        PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
         Plot plot2;
         if (area == null) {
             plot2 = MainUtil.getPlotFromString(player, args[0], true);

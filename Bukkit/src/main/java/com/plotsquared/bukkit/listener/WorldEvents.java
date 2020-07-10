@@ -36,17 +36,23 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.generator.ChunkGenerator;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class WorldEvents implements Listener {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public WorldEvents(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldInit(WorldInitEvent event) {
         World world = event.getWorld();
         String name = world.getName();
-        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
-        if (manager instanceof SinglePlotAreaManager) {
-            SinglePlotAreaManager single = (SinglePlotAreaManager) manager;
+        if (this.plotAreaManager instanceof SinglePlotAreaManager) {
+            final SinglePlotAreaManager single = (SinglePlotAreaManager) this.plotAreaManager;
             if (single.isWorld(name)) {
                 world.setKeepSpawnInMemory(false);
                 return;
@@ -56,7 +62,7 @@ public class WorldEvents implements Listener {
         if (gen instanceof GeneratorWrapper) {
             PlotSquared.get().loadWorld(name, (GeneratorWrapper<?>) gen);
         } else {
-            PlotSquared.get().loadWorld(name, new BukkitPlotGenerator(name, gen));
+            PlotSquared.get().loadWorld(name, new BukkitPlotGenerator(name, gen, this.plotAreaManager));
         }
     }
 }

@@ -44,6 +44,7 @@ import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
@@ -59,6 +60,7 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -81,10 +83,13 @@ import java.util.concurrent.CompletableFuture;
     aliases = {"exec", "$"},
     category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
     private ScriptEngine engine;
     private Bindings scope;
 
-    public DebugExec() {
+    public DebugExec(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
         init();
 /*
         try {
@@ -259,7 +264,7 @@ public class DebugExec extends SubCommand {
                             "&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
-                    PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
+                    PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (area == null) {
                         MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;

@@ -26,8 +26,13 @@
 package com.plotsquared.bukkit.generator;
 
 import com.plotsquared.core.generator.HybridUtils;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import org.jetbrains.annotations.NotNull;
 
 public class BukkitHybridUtils extends HybridUtils {
 
+    public BukkitHybridUtils(@NotNull PlotAreaManager plotAreaManager) {
+        super(plotAreaManager);
+    }
 
 }

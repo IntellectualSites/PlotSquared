@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
@@ -33,11 +32,13 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.schematic.Schematic;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,9 +53,15 @@ import java.util.List;
     usage = "/plot load")
 public class Load extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        String world = player.getLocation().getWorldName();
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+    private final PlotAreaManager plotAreaManager;
+
+    public Load(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
+    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
+        final String world = player.getLocation().getWorldName();
+        if (!this.plotAreaManager.hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         final Plot plot = player.getCurrentPlot();

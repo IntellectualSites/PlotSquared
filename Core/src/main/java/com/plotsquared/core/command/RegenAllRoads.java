@@ -25,14 +25,15 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.generator.HybridPlotManager;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
+import org.jetbrains.annotations.NotNull;
 
 @CommandDeclaration(command = "regenallroads",
     description = "Regenerate all roads in the map using the set road schematic",
@@ -42,6 +43,12 @@ import com.plotsquared.core.util.MainUtil;
     requiredType = RequiredType.CONSOLE,
     permission = "plots.regenallroads")
 public class RegenAllRoads extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public RegenAllRoads(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         int height = 0;
@@ -59,7 +66,7 @@ public class RegenAllRoads extends SubCommand {
                 "/plot regenallroads <world> [height]");
             return false;
         }
-        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
+        PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
         if (area == null) {
             Captions.NOT_VALID_PLOT_WORLD.send(player, args[0]);
             return false;

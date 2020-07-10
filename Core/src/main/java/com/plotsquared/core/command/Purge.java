@@ -34,8 +34,10 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +54,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
     requiredType = RequiredType.CONSOLE,
     confirmation = true)
 public class Purge extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+
+    public Purge(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -78,7 +86,7 @@ public class Purge extends SubCommand {
                     break;
                 case "area":
                 case "a":
-                    area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(split[1]);
+                    area = this.plotAreaManager.getPlotAreaByString(split[1]);
                     if (area == null) {
                         Captions.NOT_VALID_PLOT_WORLD.send(player, split[1]);
                         return false;

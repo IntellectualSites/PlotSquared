@@ -32,6 +32,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MathMan;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,12 +60,15 @@ import java.util.stream.Stream;
 public final class PlotQuery {
 
     private final Collection<PlotFilter> filters = new LinkedList<>();
-    private PlotProvider plotProvider = new GlobalPlotProvider();
+    private final PlotAreaManager plotAreaManager;
+    private PlotProvider plotProvider;
     private SortingStrategy sortingStrategy = SortingStrategy.NO_SORTING;
     private PlotArea priorityArea;
     private Comparator<Plot> plotComparator;
 
-    private PlotQuery() {
+    private PlotQuery(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+        this.plotProvider = new GlobalPlotProvider(plotAreaManager);
     }
 
     /**
@@ -73,7 +77,7 @@ public final class PlotQuery {
      * @return New query
      */
     public static PlotQuery newQuery() {
-        return new PlotQuery();
+        return new PlotQuery(PlotSquared.get().getPlotAreaManager());
     }
 
     /**
@@ -96,7 +100,7 @@ public final class PlotQuery {
      */
     @NotNull public PlotQuery inWorld(@NotNull final String world) {
         Preconditions.checkNotNull(world, "World may not be null");
-        this.plotProvider = new AreaLimitedPlotProvider(PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world));
+        this.plotProvider = new AreaLimitedPlotProvider(this.plotAreaManager.getPlotAreasSet(world));
         return this;
     }
 
@@ -129,7 +133,7 @@ public final class PlotQuery {
      * @return The query instance
      */
     @NotNull public PlotQuery allPlots() {
-        this.plotProvider = new GlobalPlotProvider();
+        this.plotProvider = new GlobalPlotProvider(this.plotAreaManager);
         return this;
     }
 

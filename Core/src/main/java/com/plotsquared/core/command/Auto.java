@@ -40,6 +40,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
@@ -47,6 +48,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -61,6 +63,12 @@ import java.util.Set;
     usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
 
+    private final PlotAreaManager plotAreaManager;
+    
+    public Auto(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+    
     @Deprecated public static PlotId getNextPlotId(PlotId id, int step) {
         return id.getNextId(step);
     }
@@ -158,7 +166,7 @@ public class Auto extends SubCommand {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
             if (EconHandler.getEconHandler() != null) {
-                for (PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
+                for (PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
                     if (EconHandler.getEconHandler()
                         .hasPermission(area.getWorldName(), player.getName(), "plots.auto")) {
                         if (plotarea != null) {
@@ -169,8 +177,8 @@ public class Auto extends SubCommand {
                     }
                 }
             }
-            if (PlotSquared.get().getPlotAreaManager().getAllPlotAreas().length == 1) {
-                plotarea = PlotSquared.get().getPlotAreaManager().getAllPlotAreas()[0];
+            if (this.plotAreaManager.getAllPlotAreas().length == 1) {
+                plotarea = this.plotAreaManager.getAllPlotAreas()[0];
             }
             if (plotarea == null) {
                 MainUtil.sendMessage(player, Captions.NOT_IN_PLOT_WORLD);

@@ -25,11 +25,12 @@
  */
 package com.plotsquared.core.plot.expiration;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.query.PlotQuery;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,11 +42,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ExpiryTask {
+    
     private final Settings.Auto_Clear settings;
+    private final PlotAreaManager plotAreaManager;
     private long cutoffThreshold = Long.MIN_VALUE;
-
-    public ExpiryTask(Settings.Auto_Clear settings) {
+    
+    public ExpiryTask(@NotNull final Settings.Auto_Clear settings, @NotNull final PlotAreaManager plotAreaManager) {
         this.settings = settings;
+        this.plotAreaManager = plotAreaManager;
     }
 
     public Settings.Auto_Clear getSettings() {
@@ -122,7 +126,7 @@ public class ExpiryTask {
 
     public Set<Plot> getPlotsToCheck() {
         final Collection<PlotArea> areas = new LinkedList<>();
-        for (final PlotArea plotArea : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
+        for (final PlotArea plotArea : this.plotAreaManager.getAllPlotAreas()) {
             if (this.allowsArea(plotArea)) {
                 areas.add(plotArea);
             }

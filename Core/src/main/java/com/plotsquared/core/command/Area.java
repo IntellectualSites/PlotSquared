@@ -40,6 +40,7 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
@@ -65,6 +66,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -85,6 +87,12 @@ import java.util.Set;
     confirmation = true)
 public class Area extends SubCommand {
 
+    private final PlotAreaManager plotAreaManager;
+    
+    public Area(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+    
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             Captions.COMMAND_SYNTAX.send(player, getUsage());
@@ -104,7 +112,7 @@ public class Area extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NEEDS_NAME);
                     return false;
                 }
-                final PlotArea existingArea = PlotSquared.get().getPlotAreaManager().getPlotArea(player.getLocation().getWorldName(), args[1]);
+                final PlotArea existingArea = this.plotAreaManager.getPlotArea(player.getLocation().getWorldName(), args[1]);
                 if (existingArea != null && existingArea.getId().equalsIgnoreCase(args[1])) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NAME_TAKEN);
                     return false;
@@ -126,7 +134,7 @@ public class Area extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NOT_SQUARE);
                     return false;
                 }
-                if (PlotSquared.get().getPlotAreaManager().getPlotAreas(
+                if (this.plotAreaManager.getPlotAreas(
                     Objects.requireNonNull(playerSelectedRegion.getWorld()).getName(), CuboidRegion.makeCuboid(playerSelectedRegion)).length != 0) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_OVERLAPPING);
                 }
@@ -276,7 +284,7 @@ public class Area extends SubCommand {
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final CuboidRegion region = RegionUtil.createRegion(bx, tx, bz, tz);
-                                final Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager()
+                                final Set<PlotArea> areas = this.plotAreaManager
                                     .getPlotAreasSet(area.getWorldName(), region);
                                 if (!areas.isEmpty()) {
                                     Captions.CLUSTER_INTERSECTION
@@ -342,12 +350,12 @@ public class Area extends SubCommand {
                         builder.worldName(split[0]);
                         final HybridPlotWorld pa = new HybridPlotWorld(builder.worldName(), id,
                             PlotSquared.platform().getDefaultGenerator(), null, null);
-                        PlotArea other = PlotSquared.get().getPlotAreaManager().getPlotArea(pa.getWorldName(), id);
+                        PlotArea other = this.plotAreaManager.getPlotArea(pa.getWorldName(), id);
                         if (other != null && Objects.equals(pa.getId(), other.getId())) {
                             Captions.SETUP_WORLD_TAKEN.send(player, pa.toString());
                             return false;
                         }
-                        Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager().getPlotAreasSet(pa.getWorldName());
+                        Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(pa.getWorldName());
                         if (!areas.isEmpty()) {
                             PlotArea area = areas.iterator().next();
                             pa.setType(area.getType());
@@ -492,7 +500,7 @@ public class Area extends SubCommand {
                         area = player.getApplicablePlotArea();
                         break;
                     case 2:
-                        area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
+                        area = this.plotAreaManager.getPlotAreaByString(args[1]);
                         break;
                     default:
                         Captions.COMMAND_SYNTAX.send(player, getCommandString() + " info [area]");
@@ -554,7 +562,7 @@ public class Area extends SubCommand {
                         Captions.COMMAND_SYNTAX.send(player, getCommandString() + " list [#]");
                         return false;
                 }
-                final List<PlotArea> areas = new ArrayList<>(Arrays.asList(PlotSquared.get().getPlotAreaManager().getAllPlotAreas()));
+                final List<PlotArea> areas = new ArrayList<>(Arrays.asList(this.plotAreaManager.getAllPlotAreas()));
                 paginate(player, areas, 8, page,
                     new RunnableVal3<Integer, PlotArea, PlotMessage>() {
                         @Override public void run(Integer i, PlotArea area, PlotMessage message) {
@@ -637,7 +645,7 @@ public class Area extends SubCommand {
                     Captions.COMMAND_SYNTAX.send(player, "/plot visit [area]");
                     return false;
                 }
-                PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[1]);
+                PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                 if (area == null) {
                     Captions.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;

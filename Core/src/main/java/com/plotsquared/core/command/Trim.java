@@ -31,6 +31,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.expiration.ExpireManager;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.MainUtil;
@@ -43,14 +44,8 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -64,59 +59,13 @@ import java.util.Set;
     category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
 
-    public static ArrayList<Plot> expired = null;
-    private static volatile boolean TASK = false;
+    private final PlotAreaManager plotAreaManager;
 
-    public static boolean getBulkRegions(final ArrayList<BlockVector2> empty, final String world,
-        final Runnable whenDone) {
-        if (Trim.TASK) {
-            return false;
-        }
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                String directory = world + File.separator + "region";
-                File folder = new File(PlotSquared.platform().getWorldContainer(), directory);
-                File[] regionFiles = folder.listFiles();
-                for (File file : regionFiles) {
-                    String name = file.getName();
-                    if (name.endsWith("mca")) {
-                        if (file.getTotalSpace() <= 8192) {
-                            checkMca(name);
-                        } else {
-                            Path path = Paths.get(file.getPath());
-                            try {
-                                BasicFileAttributes attr =
-                                    Files.readAttributes(path, BasicFileAttributes.class);
-                                long creation = attr.creationTime().toMillis();
-                                long modification = file.lastModified();
-                                long diff = Math.abs(creation - modification);
-                                if (diff < 10000) {
-                                    checkMca(name);
-                                }
-                            } catch (IOException ignored) {
-                            }
-                        }
-                    }
-                }
-                Trim.TASK = false;
-                TaskManager.runTaskAsync(whenDone);
-            }
-
-            private void checkMca(String name) {
-                try {
-                    String[] split = name.split("\\.");
-                    int x = Integer.parseInt(split[1]);
-                    int z = Integer.parseInt(split[2]);
-                    BlockVector2 loc = BlockVector2.at(x, z);
-                    empty.add(loc);
-                } catch (NumberFormatException ignored) {
-                    PlotSquared.debug("INVALID MCA: " + name);
-                }
-            }
-        });
-        Trim.TASK = true;
-        return true;
+    public Trim(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
     }
+
+    private static volatile boolean TASK = false;
 
     /**
      * Runs the result task with the parameters (viable, nonViable).
@@ -167,7 +116,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final String world = args[0];
-        if (!WorldUtil.IMP.isWorld(world) || !PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+        if (!WorldUtil.IMP.isWorld(world) || !this.plotAreaManager.hasPlotArea(world)) {
             MainUtil.sendMessage(player, Captions.NOT_VALID_WORLD);
             return false;
         }

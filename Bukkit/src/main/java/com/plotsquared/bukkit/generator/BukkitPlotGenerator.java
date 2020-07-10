@@ -33,6 +33,7 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
@@ -54,6 +55,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
 
     @SuppressWarnings("unused") public final boolean PAPER_ASYNC_SAFE = true;
 
+    private final PlotAreaManager plotAreaManager;
     private final IndependentPlotGenerator plotGenerator;
     private final ChunkGenerator platformGenerator;
     private final boolean full;
@@ -62,24 +64,24 @@ public class BukkitPlotGenerator extends ChunkGenerator
 
     @Getter private final String levelName;
 
-    public BukkitPlotGenerator(String name, IndependentPlotGenerator generator) {
-        if (generator == null) {
-            throw new IllegalArgumentException("Generator may not be null!");
-        }
+    public BukkitPlotGenerator(@NotNull final  String name,
+        @NotNull final IndependentPlotGenerator generator, @NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
         this.levelName = name;
         this.plotGenerator = generator;
         this.platformGenerator = this;
         this.populators = new ArrayList<>();
-        this.populators.add(new BlockStatePopulator(this.plotGenerator));
+        this.populators.add(new BlockStatePopulator(this.plotGenerator, this.plotAreaManager));
         this.full = true;
         MainUtil.initCache();
     }
 
-    public BukkitPlotGenerator(final String world, final ChunkGenerator cg) {
+    public BukkitPlotGenerator(final String world, final ChunkGenerator cg, @NotNull final PlotAreaManager plotAreaManager) {
         if (cg instanceof BukkitPlotGenerator) {
             throw new IllegalArgumentException("ChunkGenerator: " + cg.getClass().getName()
                 + " is already a BukkitPlotGenerator!");
         }
+        this.plotAreaManager = plotAreaManager;
         this.levelName = world;
         this.full = false;
         this.platformGenerator = cg;
@@ -108,7 +110,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
             if (!this.loaded) {
                 String name = world.getName();
                 PlotSquared.get().loadWorld(name, this);
-                final Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager().getPlotAreasSet(name);
+                final Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(name);
                 if (!areas.isEmpty()) {
                     PlotArea area = areas.iterator().next();
                     if (!area.isMobSpawning()) {
@@ -198,8 +200,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
         if (ChunkManager.preProcessChunk(loc, result)) {
             return;
         }
-        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(world.getName(), null);
-        if (area == null && (area = PlotSquared.get().getPlotAreaManager().getPlotArea(this.levelName, null)) == null) {
+        PlotArea area = this.plotAreaManager.getPlotArea(world.getName(), null);
+        if (area == null && (area = this.plotAreaManager.getPlotArea(this.levelName, null)) == null) {
             throw new IllegalStateException(
                 "Cannot regenerate chunk that does not belong to a plot area." + " Location: " + loc
                     + ", world: " + world);

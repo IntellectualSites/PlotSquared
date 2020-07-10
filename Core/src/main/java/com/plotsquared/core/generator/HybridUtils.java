@@ -40,6 +40,7 @@ import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.ChunkBlockQueue;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
@@ -61,6 +62,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -82,6 +84,12 @@ public abstract class HybridUtils {
     public static Set<BlockVector2> chunks = new HashSet<>();
     public static PlotArea area;
     public static boolean UPDATE = false;
+
+    private final PlotAreaManager plotAreaManager;
+
+    public HybridUtils(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     public void analyzeRegion(final String world, final CuboidRegion region,
         final RunnableVal<PlotAnalysis> whenDone) {
@@ -115,7 +123,7 @@ public abstract class HybridUtils {
             final int width = tx - bx + 1;
             final int length = tz - bz + 1;
 
-            PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotArea(world, null);
+            final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
 
             if (!(area instanceof HybridPlotWorld)) {
                 return;

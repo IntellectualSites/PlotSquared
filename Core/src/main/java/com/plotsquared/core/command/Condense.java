@@ -25,15 +25,16 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,12 +55,18 @@ public class Condense extends SubCommand {
 
     public static boolean TASK = false;
 
+    private final PlotAreaManager plotAreaManager;
+
+    public Condense(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {
             MainUtil.sendMessage(player, getUsage());
             return false;
         }
-        PlotArea area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(args[0]);
+        PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
         if (area == null || !WorldUtil.IMP.isWorld(area.getWorldName())) {
             MainUtil.sendMessage(player, "INVALID AREA");
             return false;

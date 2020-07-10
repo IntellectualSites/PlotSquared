@@ -99,6 +99,7 @@ import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EntityUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
@@ -210,6 +211,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -224,12 +226,13 @@ import java.util.regex.Pattern;
 /**
  * Player Events involving plots.
  */
-@SuppressWarnings("unused")
-public class PlayerEvents extends PlotListener implements Listener {
+@SuppressWarnings("unused") public class PlayerEvents extends PlotListener implements Listener {
 
     public static final com.sk89q.worldedit.world.entity.EntityType FAKE_ENTITY_TYPE =
         new com.sk89q.worldedit.world.entity.EntityType("plotsquared:fake");
 
+    private final PlotAreaManager plotAreaManager;
+    
     private boolean pistonBlocks = true;
     private float lastRadius;
     // To prevent recursion
@@ -237,8 +240,9 @@ public class PlayerEvents extends PlotListener implements Listener {
     private Field fieldPlayer;
     private PlayerMoveEvent moveTmp;
     private String internalVersion;
-
-    {
+    
+    public PlayerEvents(@NotNull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
         try {
             fieldPlayer = PlayerEvent.class.getDeclaredField("player");
             fieldPlayer.setAccessible(true);
@@ -246,7 +250,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             e.printStackTrace();
         }
     }
-
+    
     public static void sendBlockChange(final org.bukkit.Location bloc, final BlockData data) {
         TaskManager.runTaskLater(() -> {
             String world = bloc.getWorld().getName();
@@ -254,7 +258,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             int z = bloc.getBlockZ();
             int distance = Bukkit.getViewDistance() * 16;
 
-            for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager().getPlayers()) {
+            for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager()
+                .getPlayers()) {
                 Location location = player.getLocation();
                 if (location.getWorldName().equals(world)) {
                     if (16 * Math.abs(location.getX() - x) / 16 > distance
@@ -359,19 +364,21 @@ public class PlayerEvents extends PlotListener implements Listener {
                 if (plot.isMerged()) {
                     disable = true;
                     for (UUID owner : plot.getOwners()) {
-                        if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(owner) != null) {
+                        if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(owner)
+                            != null) {
                             disable = false;
                             break;
                         }
                     }
                 } else {
-                    disable = PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs())
-                            == null;
+                    disable = PlotSquared.platform().getPlayerManager()
+                        .getPlayerIfExists(plot.getOwnerAbs()) == null;
                 }
             }
             if (disable) {
                 for (UUID trusted : plot.getTrusted()) {
-                    if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(trusted) != null) {
+                    if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(trusted)
+                        != null) {
                         disable = false;
                         break;
                     }
@@ -385,7 +392,8 @@ public class PlayerEvents extends PlotListener implements Listener {
             }
         }
         if (Settings.Redstone.DISABLE_UNOCCUPIED) {
-            for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager().getPlayers()) {
+            for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager()
+                .getPlayers()) {
                 if (plot.equals(player.getCurrentPlot())) {
                     return;
                 }
@@ -490,7 +498,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }
         Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorldName())) {
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
         PlotPlayer<Player> pp = BukkitUtil.getPlayer((Player) shooter);
@@ -504,7 +512,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler public boolean onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
         Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorldName())) {
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return true;
         }
         PlotArea area = location.getPlotArea();
@@ -1078,7 +1086,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         PlotArea area = location.getPlotArea();
         boolean plotArea = location.isPlotArea();
         if (!plotArea) {
-            if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorldName())) {
+            if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
                 return;
             }
             return;
@@ -1174,7 +1182,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityBlockForm(EntityBlockFormEvent event) {
         String world = event.getBlock().getWorld().getName();
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+        if (!this.plotAreaManager.hasPlotArea(world)) {
             return;
         }
         Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
@@ -1505,7 +1513,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Vector relative = new Vector(face.getModX(), face.getModY(), face.getModZ());
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorldName())) {
+            if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
                 return;
             }
             for (Block block1 : event.getBlocks()) {
@@ -1542,7 +1550,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Location location = BukkitUtil.getLocation(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorldName())) {
+            if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
                 return;
             }
             if (this.pistonBlocks) {
@@ -1635,7 +1643,7 @@ public class PlayerEvents extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onStructureGrow(StructureGrowEvent event) {
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(event.getWorld().getName())) {
+        if (!this.plotAreaManager.hasPlotArea(event.getWorld().getName())) {
             return;
         }
         List<org.bukkit.block.BlockState> blocks = event.getBlocks();
@@ -1698,7 +1706,7 @@ public class PlayerEvents extends PlotListener implements Listener {
             return;
         }*/
         HumanEntity entity = event.getWhoClicked();
-        if (!(entity instanceof Player) || !PlotSquared.get().getPlotAreaManager()
+        if (!(entity instanceof Player) || !this.plotAreaManager
             .hasPlotArea(entity.getWorld().getName())) {
             return;
         }
@@ -1840,7 +1848,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onPotionSplash(LingeringPotionSplashEvent event) {
         Projectile entity = event.getEntity();
         Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorldName())) {
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
         if (!this.onProjectileHit(event)) {
@@ -1863,8 +1871,8 @@ public class PlayerEvents extends PlotListener implements Listener {
         Plot plot = location.getPlotAbs();
         BukkitPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
-            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class)
-                && !Permissions.hasPermission(pp, "plots.admin.interact.road")) {
+            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class) && !Permissions
+                .hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
             }
@@ -1908,7 +1916,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Block block = event.getBlock();
         Location location = BukkitUtil.getLocation(block.getLocation());
         String world = location.getWorldName();
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
+        if (!this.plotAreaManager.hasPlotArea(world)) {
             return;
         }
         PlotArea area = location.getPlotArea();
@@ -2182,7 +2190,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         Block block = event.getBlock();
         World world = block.getWorld();
         String worldName = world.getName();
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(worldName)) {
+        if (!this.plotAreaManager.hasPlotArea(worldName)) {
             return;
         }
         Location location = BukkitUtil.getLocation(block.getLocation());
@@ -2600,8 +2608,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     Captions.PERMISSION_ADMIN_INTERACT_UNOWNED);
                 event.setCancelled(true);
             }
-        } else if ((plot != null && !plot.isAdded(pp.getUUID())) || area
-            .isRoadFlags()) {
+        } else if ((plot != null && !plot.isAdded(pp.getUUID())) || area.isRoadFlags()) {
             final Entity entity = event.getRightClicked();
             final com.sk89q.worldedit.world.entity.EntityType entityType =
                 BukkitAdapter.adapt(entity.getType());
@@ -2707,7 +2714,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onPotionSplash(PotionSplashEvent event) {
         ThrownPotion damager = event.getPotion();
         Location location = BukkitUtil.getLocation(damager);
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorldName())) {
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
         int count = 0;
@@ -2737,7 +2744,7 @@ public class PlayerEvents extends PlotListener implements Listener {
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
         Location location = BukkitUtil.getLocation(damager);
-        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(location.getWorldName())) {
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
         Entity victim = event.getEntity();
