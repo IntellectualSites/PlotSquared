@@ -207,13 +207,6 @@ public class PlotSquared {
             // Create plot listener
             this.plotListener = new PlotListener(this.eventDispatcher);
 
-            // Setup plotAreaManager
-            if (Settings.Enabled_Components.WORLDS) {
-                this.plotAreaManager = new SinglePlotAreaManager(this.eventDispatcher, this.plotListener, this.worldConfiguration);
-            } else {
-                this.plotAreaManager = new DefaultPlotAreaManager();
-            }
-
             // Database
             if (Settings.Enabled_Components.DATABASE) {
                 setupDatabase();

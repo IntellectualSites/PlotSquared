@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.plot.world;
 
+import com.google.inject.Singleton;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
@@ -41,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DefaultPlotAreaManager implements PlotAreaManager {
+@Singleton public class DefaultPlotAreaManager implements PlotAreaManager {
 
     final PlotArea[] noPlotAreas = new PlotArea[0];
     private final Map<String, PlotWorld> plotWorlds = new HashMap<>();

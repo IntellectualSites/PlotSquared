@@ -40,10 +40,12 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.HybridGen;
-import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.annotations.ConsoleActor;
 import com.plotsquared.core.inject.annotations.DefaultGenerator;
+import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueProvider;
 import com.plotsquared.core.util.ChunkManager;
@@ -76,7 +78,6 @@ import org.jetbrains.annotations.NotNull;
         @NotNull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
         WorldEditPlugin wePlugin = ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
         bind(Actor.class).annotatedWith(ConsoleActor.class).toInstance(wePlugin.wrapCommandSender(console));
-        bind(HybridUtils.class).to(BukkitHybridUtils.class);
         bind(InventoryUtil.class).to(BukkitInventoryUtil.class);
         bind(SetupUtils.class).to(BukkitSetupUtils.class);
         bind(WorldUtil.class).to(BukkitUtil.class);
@@ -87,6 +88,11 @@ import org.jetbrains.annotations.NotNull;
         bind(SchematicHandler.class).to(BukkitSchematicHandler.class);
         bind(PermHandler.class).to(BukkitPermHandler.class);
         bind(EconHandler.class).to(BukkitEconHandler.class);
+        if (Settings.Enabled_Components.WORLDS) {
+            bind(PlotAreaManager.class).to(SinglePlotAreaManager.class);
+        } else {
+            bind(PlotAreaManager.class).to(DefaultPlotAreaManager.class);
+        }
     }
 
 }

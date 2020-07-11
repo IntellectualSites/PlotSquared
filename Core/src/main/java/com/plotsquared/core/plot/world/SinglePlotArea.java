@@ -26,13 +26,13 @@
 package com.plotsquared.core.plot.world;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
@@ -42,11 +42,11 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.PlotSettings;
 import com.plotsquared.core.plot.flag.FlagContainer;
+import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
+import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.SetupUtils;
-import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import org.jetbrains.annotations.NotNull;
@@ -66,8 +66,11 @@ public class SinglePlotArea extends GridPlotWorld {
     public SinglePlotArea(@NotNull final PlotAreaManager plotAreaManager,
                           @NotNull final EventDispatcher eventDispatcher,
                           @NotNull final PlotListener plotListener,
-                          @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
-        super("*", null, new SingleWorldGenerator(plotAreaManager), null, null, eventDispatcher, plotListener, worldConfiguration);
+                          @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
+                          @NotNull final GlobalBlockQueue globalBlockQueue,
+                          @NotNull final EconHandler econHandler) {
+        super("*", null, new SingleWorldGenerator(plotAreaManager), null, null,
+            eventDispatcher, plotListener, worldConfiguration, globalBlockQueue, econHandler);
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
         this.setAllowSigns(false);
@@ -88,10 +91,10 @@ public class SinglePlotArea extends GridPlotWorld {
 
     public void loadWorld(final PlotId id) {
         String worldName = id.getX() + "." + id.getY();
-        if (WorldUtil.IMP.isWorld(worldName)) {
+        if (PlotSquared.platform().getWorldUtil().isWorld(worldName)) {
             return;
         }
-        PlotAreaBuilder builder = new PlotAreaBuilder()
+        PlotAreaBuilder builder = PlotAreaBuilder.newBuilder()
                 .plotManager("PlotSquared:single")
                 .generatorName("PlotSquared:single")
                 .plotAreaType(getType())
@@ -138,14 +141,13 @@ public class SinglePlotArea extends GridPlotWorld {
             }
         }
 
-        TaskManager.IMP.sync(new RunnableVal<Object>() {
+        TaskManager.getImplementation().sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 String worldName = id.getX() + "." + id.getY();
-                if (WorldUtil.IMP.isWorld(worldName)) {
+                if (PlotSquared.platform().getWorldUtil().isWorld(worldName)) {
                     return;
                 }
-
-                SetupUtils.manager.setupWorld(builder);
+                PlotSquared.platform().getSetupUtils().setupWorld(builder);
             }
         });
         //        String worldName = plot.getWorldName();

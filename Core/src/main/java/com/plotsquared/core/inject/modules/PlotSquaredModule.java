@@ -34,7 +34,6 @@ import com.plotsquared.core.inject.annotations.ImpromptuPipeline;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.listener.PlotListener;
-import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
@@ -48,7 +47,6 @@ public class PlotSquaredModule extends AbstractModule {
         bind(YamlConfiguration.class).annotatedWith(WorldConfig.class).toInstance(plotSquared.getWorldConfiguration());
         bind(File.class).annotatedWith(WorldFile.class).toInstance(plotSquared.getWorldsFile());
         bind(File.class).annotatedWith(ConfigFile.class).toInstance(plotSquared.getConfigFile());
-        bind(PlotAreaManager.class).toInstance(plotSquared.getPlotAreaManager());
         bind(PlotListener.class).toInstance(plotSquared.getPlotListener());
         bind(UUIDPipeline.class).annotatedWith(ImpromptuPipeline.class).toInstance(plotSquared.getImpromptuUUIDPipeline());
         bind(UUIDPipeline.class).annotatedWith(BackgroundPipeline.class).toInstance(plotSquared.getBackgroundUUIDPipeline());

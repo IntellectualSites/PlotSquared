@@ -31,7 +31,6 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -325,7 +324,7 @@ public class ExpireManager {
                     }
                     for (ExpiryTask expiryTask : expired) {
                         if (!expiryTask.needsAnalysis()) {
-                            expiredTask.run(newPlot, () -> TaskManager.IMP.taskLaterAsync(task, 1),
+                            expiredTask.run(newPlot, () -> TaskManager.getImplementation().taskLaterAsync(task, 1),
                                 expiryTask.requiresConfirmation());
                             return;
                         }
@@ -336,7 +335,7 @@ public class ExpireManager {
                                 passesComplexity(changed, expired, new RunnableVal<Boolean>() {
                                     @Override public void run(Boolean confirmation) {
                                         expiredTask.run(newPlot,
-                                            () -> TaskManager.IMP.taskLaterAsync(task, 1),
+                                            () -> TaskManager.getImplementation().taskLaterAsync(task, 1),
                                             confirmation);
                                     }
                                 }, () -> {
@@ -354,7 +353,7 @@ public class ExpireManager {
                             }
                         };
                     final Runnable doAnalysis =
-                        () -> HybridUtils.manager.analyzePlot(newPlot, handleAnalysis);
+                        () -> PlotSquared.platform().getHybridUtils().analyzePlot(newPlot, handleAnalysis);
 
                     PlotAnalysis analysis = newPlot.getComplexity(null);
                     if (analysis != null) {
@@ -362,7 +361,7 @@ public class ExpireManager {
                             @Override public void run(Boolean value) {
                                 doAnalysis.run();
                             }
-                        }, () -> TaskManager.IMP.taskLaterAsync(task, 1));
+                        }, () -> TaskManager.getImplementation().taskLaterAsync(task, 1));
                     } else {
                         doAnalysis.run();
                     }

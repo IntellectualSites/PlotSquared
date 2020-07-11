@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.plot.world;
 
+import com.google.inject.Singleton;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.collection.ArrayUtil;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
@@ -32,22 +33,29 @@ import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SetupUtils;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SinglePlotAreaManager extends DefaultPlotAreaManager {
+import javax.inject.Inject;
+
+@Singleton public class SinglePlotAreaManager extends DefaultPlotAreaManager {
 
     private final SinglePlotArea[] array;
     private SinglePlotArea area;
     private PlotArea[] all;
 
-    public SinglePlotAreaManager(@NotNull final EventDispatcher eventDispatcher,
-                                 @NotNull final PlotListener plotListener,
-                                 @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
-        this.area = new SinglePlotArea(this, eventDispatcher, plotListener, worldConfiguration);
+    @Inject public SinglePlotAreaManager(@NotNull final EventDispatcher eventDispatcher,
+                                         @NotNull final PlotListener plotListener,
+                                         @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
+                                         @NotNull final GlobalBlockQueue blockQueue,
+                                         @NotNull final EconHandler econHandler) {
+        this.area = new SinglePlotArea(this, eventDispatcher, plotListener,
+            worldConfiguration, blockQueue, econHandler);
         this.array = new SinglePlotArea[] {area};
         this.all = new PlotArea[] {area};
         SetupUtils.generators.put("PlotSquared:single",

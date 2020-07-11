@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.generator;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
@@ -32,7 +33,6 @@ import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MathMan;
@@ -40,6 +40,7 @@ import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,10 +51,13 @@ import java.util.Optional;
 public class ClassicPlotManager extends SquarePlotManager {
 
     private final ClassicPlotWorld classicPlotWorld;
+    private final RegionManager regionManager;
 
-    public ClassicPlotManager(ClassicPlotWorld classicPlotWorld) {
-        super(classicPlotWorld);
+    public ClassicPlotManager(@NotNull final ClassicPlotWorld classicPlotWorld,
+                              @NotNull final RegionManager regionManager) {
+        super(classicPlotWorld, regionManager);
         this.classicPlotWorld = classicPlotWorld;
+        this.regionManager = regionManager;
     }
 
     @Override public boolean setComponent(PlotId plotId, String component, Pattern blocks) {
@@ -88,13 +92,13 @@ public class ClassicPlotManager extends SquarePlotManager {
             .equals(classicPlotWorld.CLAIMED_WALL_BLOCK)) {
             setWall(plot.getId(), classicPlotWorld.WALL_BLOCK.toPattern());
         }
-        return GlobalBlockQueue.IMP.addEmptyTask(whenDone);
+        return PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(whenDone);
     }
 
     public boolean setFloor(PlotId plotId, Pattern blocks) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot.isBasePlot()) {
-            return RegionManager.manager.setCuboids(classicPlotWorld, plot.getRegions(), blocks,
+            return this.regionManager.setCuboids(classicPlotWorld, plot.getRegions(), blocks,
                 classicPlotWorld.PLOT_HEIGHT, classicPlotWorld.PLOT_HEIGHT);
         }
         return false;
@@ -103,8 +107,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     public boolean setAll(PlotId plotId, Pattern blocks) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot.isBasePlot()) {
-            return RegionManager.manager
-                .setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1, getWorldHeight());
+            return this.regionManager.setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1, getWorldHeight());
         }
         return false;
     }
@@ -112,7 +115,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     public boolean setAir(PlotId plotId, Pattern blocks) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot.isBasePlot()) {
-            return RegionManager.manager.setCuboids(classicPlotWorld, plot.getRegions(), blocks,
+            return this.regionManager.setCuboids(classicPlotWorld, plot.getRegions(), blocks,
                 classicPlotWorld.PLOT_HEIGHT + 1, getWorldHeight());
         }
         return false;
@@ -121,7 +124,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     public boolean setMain(PlotId plotId, Pattern blocks) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot.isBasePlot()) {
-            return RegionManager.manager.setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1,
+            return this.regionManager.setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1,
                 classicPlotWorld.PLOT_HEIGHT - 1);
         }
         return false;

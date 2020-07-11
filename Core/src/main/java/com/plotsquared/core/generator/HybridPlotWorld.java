@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.generator;
 
+import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.configuration.Captions;
@@ -41,6 +42,7 @@ import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.CompoundTagBuilder;
@@ -57,6 +59,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -76,15 +79,22 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private Location SIGN_LOCATION;
     @Getter private File root = null;
 
-    public HybridPlotWorld(final String worldName,
-                           final String id,
-                           @NotNull final IndependentPlotGenerator generator,
-                           final PlotId min,
-                           final PlotId max,
-                           @NotNull final EventDispatcher eventDispatcher,
-                           @NotNull final PlotListener plotListener,
-                           @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
+    private final RegionManager regionManager;
+    private final SchematicHandler schematicHandler;
+
+    @Inject public HybridPlotWorld(@Assisted final String worldName,
+                                   @Assisted final String id,
+                                   @Assisted @NotNull final IndependentPlotGenerator generator,
+                                   @Assisted final PlotId min,
+                                   @Assisted final PlotId max,
+                                   @NotNull final EventDispatcher eventDispatcher,
+                                   @NotNull final PlotListener plotListener,
+                                   @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
+                                   @NotNull final RegionManager regionManager,
+                                   @NotNull final SchematicHandler schematicHandler) {
         super(worldName, id, generator, min, max, eventDispatcher, plotListener, worldConfiguration);
+        this.regionManager = regionManager;
+        this.schematicHandler = schematicHandler;
     }
 
     public static byte wrap(byte data, int start) {
@@ -135,7 +145,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     @NotNull @Override protected PlotManager createManager() {
-        return new HybridPlotManager(this);
+        return new HybridPlotManager(this, this.regionManager);
     }
 
     public Location getSignLocation(@NotNull Plot plot) {
@@ -223,9 +233,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         File schematic3File = new File(root, "plot.schem");
         if (!schematic3File.exists())
             schematic3File = new File(root, "plot.schematic");
-        Schematic schematic1 = SchematicHandler.manager.getSchematic(schematic1File);
-        Schematic schematic2 = SchematicHandler.manager.getSchematic(schematic2File);
-        Schematic schematic3 = SchematicHandler.manager.getSchematic(schematic3File);
+        Schematic schematic1 = this.schematicHandler.getSchematic(schematic1File);
+        Schematic schematic2 = this.schematicHandler.getSchematic(schematic2File);
+        Schematic schematic3 = this.schematicHandler.getSchematic(schematic3File);
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = (this.ROAD_WIDTH & 1) == 0 ? 0 : 1;
 

@@ -50,8 +50,8 @@ public class HybridGen extends IndependentPlotGenerator {
     private final YamlConfiguration worldConfiguration;
 
     @Inject public HybridGen(@NotNull final EventDispatcher eventDispatcher,
-                     @NotNull final PlotListener plotListener,
-                     @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
+                             @NotNull final PlotListener plotListener,
+                             @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
         this.worldConfiguration = worldConfiguration;

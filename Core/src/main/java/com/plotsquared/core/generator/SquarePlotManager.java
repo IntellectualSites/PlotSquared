@@ -34,6 +34,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -45,10 +46,12 @@ import java.util.Set;
 public abstract class SquarePlotManager extends GridPlotManager {
 
     private final SquarePlotWorld squarePlotWorld;
+    private final RegionManager regionManager;
 
-    public SquarePlotManager(SquarePlotWorld squarePlotWorld) {
+    public SquarePlotManager(@NotNull final SquarePlotWorld squarePlotWorld, @NotNull final RegionManager regionManager) {
         super(squarePlotWorld);
         this.squarePlotWorld = squarePlotWorld;
+        this.regionManager = regionManager;
     }
 
     @Override public boolean clearPlot(final Plot plot, final Runnable whenDone) {
@@ -64,7 +67,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 iterator.remove();
                 final Location pos1 = Location.at(plot.getWorldName(), region.getMinimumPoint());
                 final Location pos2 = Location.at(plot.getWorldName(), region.getMaximumPoint());
-                RegionManager.manager.regenerateRegion(pos1, pos2, false, this);
+                regionManager.regenerateRegion(pos1, pos2, false, this);
             }
         };
         run.run();

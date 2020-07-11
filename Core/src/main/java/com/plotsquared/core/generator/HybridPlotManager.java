@@ -34,7 +34,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.FileBytes;
@@ -48,6 +47,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,10 +59,13 @@ public class HybridPlotManager extends ClassicPlotManager {
     public static boolean REGENERATIVE_CLEAR = true;
 
     @Getter private final HybridPlotWorld hybridPlotWorld;
+    private final RegionManager regionManager;
 
-    public HybridPlotManager(HybridPlotWorld hybridPlotWorld) {
-        super(hybridPlotWorld);
+    public HybridPlotManager(@NotNull final HybridPlotWorld hybridPlotWorld,
+                             @NotNull final RegionManager regionManager) {
+        super(hybridPlotWorld, regionManager);
         this.hybridPlotWorld = hybridPlotWorld;
+        this.regionManager = regionManager;
     }
 
     @Override public void exportTemplate() throws IOException {
@@ -199,9 +202,9 @@ public class HybridPlotManager extends ClassicPlotManager {
      * </p>
      */
     @Override public boolean clearPlot(Plot plot, final Runnable whenDone) {
-        if (RegionManager.manager.notifyClear(this)) {
+        if (this.regionManager.notifyClear(this)) {
             //If this returns false, the clear didn't work
-            if (RegionManager.manager.handleClear(plot, whenDone, this)) {
+            if (this.regionManager.handleClear(plot, whenDone, this)) {
                 return true;
             }
         }
@@ -256,7 +259,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         }, () -> {
             queue.enqueue();
             // And notify whatever called this when plot clearing is done
-            GlobalBlockQueue.IMP.addEmptyTask(whenDone);
+            PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(whenDone);
         }, 10);
         return true;
     }

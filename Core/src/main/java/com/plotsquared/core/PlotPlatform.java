@@ -36,8 +36,10 @@ import com.plotsquared.core.location.World;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChatManager;
+import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
+import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
 import org.jetbrains.annotations.NotNull;
@@ -218,12 +220,30 @@ public interface PlotPlatform<P> extends ILogger {
     }
 
     /**
-     * Get the hybrid utility class
+     * Get the {@link HybridUtils} implementation for the platform
      *
-     * @return Hybrid utility class
+     * @return Hybrid utils
      */
     @NotNull default HybridUtils getHybridUtils() {
         return getInjector().getInstance(HybridUtils.class);
+    }
+
+    /**
+     * Get the {@link SetupUtils} implementation for the platform
+     *
+     * @return Setup utils
+     */
+    @NotNull default SetupUtils getSetupUtils() {
+        return getInjector().getInstance(SetupUtils.class);
+    }
+
+    /**
+     * Get the {@link EconHandler} implementation for the platform
+     *
+     * @return Econ handler
+     */
+    @NotNull default EconHandler getEconHandler() {
+        return getInjector().getInstance(EconHandler.class);
     }
 
 }
