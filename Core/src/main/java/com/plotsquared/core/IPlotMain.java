@@ -162,7 +162,7 @@ public interface IPlotMain<P> extends ILogger {
     /**
      * Register the protection system.
      */
-    void registerPlayerEvents();
+    void registerEvents();
 
     /**
      * Register force field events.
