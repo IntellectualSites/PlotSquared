@@ -25,14 +25,12 @@
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
-import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,10 +39,9 @@ public abstract class GridPlotWorld extends PlotArea {
     public short SIZE;
 
     public GridPlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
-        PlotId min, PlotId max, @NotNull final EventDispatcher eventDispatcher, @NotNull final
-        PlotListener plotListener, @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
+        PlotId min, PlotId max, @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
         @NotNull final GlobalBlockQueue blockQueue,
         @Nullable final EconHandler econHandler) {
-        super(worldName, id, generator, min, max, eventDispatcher, plotListener, worldConfiguration, blockQueue, econHandler);
+        super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
     }
 }

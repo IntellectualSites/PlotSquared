@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
@@ -55,11 +56,15 @@ public class Deny extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
+    private final WorldUtil worldUtil;
 
-    public Deny(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
+    @Inject public Deny(@NotNull final PlotAreaManager plotAreaManager,
+                        @NotNull final EventDispatcher eventDispatcher,
+                        @NotNull final WorldUtil worldUtil) {
         super(Argument.PlayerName);
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
+        this.worldUtil = worldUtil;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -141,10 +146,10 @@ public class Deny extends SubCommand {
             player.stopSpectating();
         }
         Location location = player.getLocation();
-        Location spawn = WorldUtil.IMP.getSpawn(location.getWorldName());
+        Location spawn = this.worldUtil.getSpawn(location.getWorldName());
         MainUtil.sendMessage(player, Captions.YOU_GOT_DENIED);
         if (plot.equals(spawn.getPlot())) {
-            Location newSpawn = WorldUtil.IMP.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
+            Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
                 player.kick(Captions.YOU_GOT_DENIED.getTranslated());

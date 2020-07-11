@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.generator.HybridPlotManager;
 import com.plotsquared.core.generator.HybridUtils;
@@ -45,9 +46,12 @@ import org.jetbrains.annotations.NotNull;
 public class RegenAllRoads extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final HybridUtils hybridUtils;
 
-    public RegenAllRoads(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public RegenAllRoads(@NotNull final PlotAreaManager plotAreaManager,
+                                 @NotNull final HybridUtils hybridUtils) {
         this.plotAreaManager = plotAreaManager;
+        this.hybridUtils = hybridUtils;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -84,7 +88,7 @@ public class RegenAllRoads extends SubCommand {
             "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
         //MainUtil.sendMessage(player, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
         //MainUtil.sendMessage(player, "&6Estimated time: &7" + chunks.size() + " seconds");
-        boolean result = HybridUtils.manager.scheduleRoadUpdate(area, height);
+        boolean result = this.hybridUtils.scheduleRoadUpdate(area, height);
         if (!result) {
             MainUtil.sendMessage(player,
                 "&cCannot schedule mass schematic update! (Is one already in progress?)");

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -58,10 +59,13 @@ import static com.plotsquared.core.command.SubCommand.sendMessage;
 public class Clear extends Command {
 
     private final EventDispatcher eventDispatcher;
-    
-    public Clear(@NotNull final EventDispatcher eventDispatcher) {
+    private final GlobalBlockQueue blockQueue;
+
+    @Inject public Clear(@NotNull final EventDispatcher eventDispatcher,
+                         @NotNull final GlobalBlockQueue blockQueue) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
+        this.blockQueue = blockQueue;
     }
 
     @Override
@@ -87,7 +91,7 @@ public class Clear extends Command {
                 final long start = System.currentTimeMillis();
                 boolean result = plot.clear(true, false, () -> {
                     plot.unlink();
-                    GlobalBlockQueue.IMP.addEmptyTask(() -> {
+                    this.blockQueue.addEmptyTask(() -> {
                         plot.removeRunning();
                         // If the state changes, then mark it as no longer done
                         if (DoneFlag.isDone(plot)) {

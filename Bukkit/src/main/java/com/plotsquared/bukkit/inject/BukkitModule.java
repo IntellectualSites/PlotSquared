@@ -26,6 +26,7 @@
 package com.plotsquared.bukkit.inject;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitLocalQueue;
@@ -43,6 +44,7 @@ import com.plotsquared.core.generator.HybridGen;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.annotations.ConsoleActor;
 import com.plotsquared.core.inject.annotations.DefaultGenerator;
+import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
@@ -93,6 +95,7 @@ import org.jetbrains.annotations.NotNull;
         } else {
             bind(PlotAreaManager.class).to(DefaultPlotAreaManager.class);
         }
+        install(new FactoryModuleBuilder().build(HybridPlotWorldFactory.class));
     }
 
 }

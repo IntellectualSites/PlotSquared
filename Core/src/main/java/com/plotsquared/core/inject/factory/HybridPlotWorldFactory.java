@@ -23,14 +23,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.inject.annotations;
+package com.plotsquared.core.inject.factory;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.plotsquared.core.generator.HybridPlotWorld;
+import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.plot.PlotId;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@Target({ElementType.PARAMETER, ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface DefaultGenerator {
+public interface HybridPlotWorldFactory {
+
+    @NotNull HybridPlotWorld create(@NotNull String worldName, @Nullable String id,
+        @NotNull IndependentPlotGenerator plotGenerator, @Nullable PlotId min, @Nullable PlotId max);
+
 }

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -36,7 +37,9 @@ import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.MusicFlag;
+import com.plotsquared.core.util.InventoryUtil;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,6 +58,12 @@ public class Music extends SubCommand {
             "music_disc_far", "music_disc_mall", "music_disc_mellohi", "music_disc_stal",
             "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait");
 
+    private final InventoryUtil inventoryUtil;
+
+    @Inject public Music(@Nullable final InventoryUtil inventoryUtil) {
+        this.inventoryUtil = inventoryUtil;
+    }
+
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
@@ -65,7 +74,7 @@ public class Music extends SubCommand {
             sendMessage(player, Captions.NO_PLOT_PERMS);
             return true;
         }
-        PlotInventory inv = new PlotInventory(player, 2, "Plot Jukebox") {
+        PlotInventory inv = new PlotInventory(this.inventoryUtil, player, 2, "Plot Jukebox") {
             @Override public boolean onClick(int index) {
                 PlotItemStack item = getItem(index);
                 if (item == null) {

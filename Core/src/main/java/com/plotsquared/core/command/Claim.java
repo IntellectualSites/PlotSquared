@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.primitives.Ints;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -46,6 +47,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @CommandDeclaration(command = "claim",
     aliases = "c",
@@ -57,9 +59,12 @@ import org.jetbrains.annotations.NotNull;
 public class Claim extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
+    private final EconHandler econHandler;
     
-    public Claim(@NotNull final EventDispatcher eventDispatcher) {
+    @Inject public Claim(@NotNull final EventDispatcher eventDispatcher,
+                         @Nullable final EconHandler econHandler) {
         this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
     }
     
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -112,14 +117,14 @@ public class Claim extends SubCommand {
                 }
             }
         }
-        if ((EconHandler.getEconHandler() != null) && area.useEconomy() && !force) {
+        if ((this.econHandler != null) && area.useEconomy() && !force) {
             Expression<Double> costExr = area.getPrices().get("claim");
             double cost = costExr.evaluate((double) currentPlots);
             if (cost > 0d) {
-                if (EconHandler.getEconHandler().getMoney(player) < cost) {
+                if (this.econHandler.getMoney(player) < cost) {
                     return sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
                 }
-                EconHandler.getEconHandler().withdrawMoney(player, cost);
+                this.econHandler.withdrawMoney(player, cost);
                 sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
             }
         }
@@ -137,7 +142,7 @@ public class Claim extends SubCommand {
         }
         plot.setOwnerAbs(player.getUUID());
         final String finalSchematic = schematic;
-        DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
+        DBFunc.createPlotSafe(plot, () -> TaskManager.getImplementation().sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 if (!plot.claim(player, true, finalSchematic, false)) {
                     PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() + String

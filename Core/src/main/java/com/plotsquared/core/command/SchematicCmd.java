@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -57,10 +58,13 @@ import java.util.UUID;
 public class SchematicCmd extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final SchematicHandler schematicHandler;
     private boolean running = false;
 
-    public SchematicCmd(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public SchematicCmd(@NotNull final PlotAreaManager plotAreaManager,
+                                @NotNull final SchematicHandler schematicHandler) {
         this.plotAreaManager = plotAreaManager;
+        this.schematicHandler = schematicHandler;
     }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -111,7 +115,7 @@ public class SchematicCmd extends SubCommand {
                             UUID uuid = UUID.fromString(location.substring(4));
                             URL base = new URL(Settings.Web.URL);
                             URL url = new URL(base, "uploads/" + uuid + ".schematic");
-                            schematic = SchematicHandler.manager.getSchematic(url);
+                            schematic = this.schematicHandler.getSchematic(url);
                         } catch (Exception e) {
                             e.printStackTrace();
                             sendMessage(player, Captions.SCHEMATIC_INVALID,
@@ -121,7 +125,7 @@ public class SchematicCmd extends SubCommand {
                         }
                     } else {
                         try {
-                            schematic = SchematicHandler.manager.getSchematic(location);
+                            schematic = this.schematicHandler.getSchematic(location);
                         } catch (SchematicHandler.UnsupportedFormatException e) {
                             e.printStackTrace();
                         }
@@ -132,8 +136,7 @@ public class SchematicCmd extends SubCommand {
                             "non-existent or not in gzip format");
                         return;
                     }
-                    SchematicHandler.manager
-                        .paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
+                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
                             @Override public void run(Boolean value) {
                                 SchematicCmd.this.running = false;
                                 if (value) {
@@ -166,7 +169,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD);
                     return false;
                 }
-                boolean result = SchematicHandler.manager.exportAll(plots, null, null,
+                boolean result = this.schematicHandler.exportAll(plots, null, null,
                     () -> MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_FINISHED));
                 if (!result) {
                     MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
@@ -204,7 +207,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 ArrayList<Plot> plots = Lists.newArrayList(plot);
-                boolean result = SchematicHandler.manager.exportAll(plots, null, null, () -> {
+                boolean result = this.schematicHandler.exportAll(plots, null, null, () -> {
                     MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_SINGLE_FINISHED);
                     SchematicCmd.this.running = false;
                 });
@@ -221,8 +224,7 @@ public class SchematicCmd extends SubCommand {
                         Captions.PERMISSION_SCHEMATIC_LIST);
                     return false;
                 }
-                final String string =
-                    StringMan.join(SchematicHandler.manager.getSchematicNames(), "$2, $1");
+                final String string = StringMan.join(this.schematicHandler.getSchematicNames(), "$2, $1");
                 Captions.SCHEMATIC_LIST.send(player, string);
             }
             break;

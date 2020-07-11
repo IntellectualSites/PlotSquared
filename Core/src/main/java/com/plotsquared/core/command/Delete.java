@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.Result;
@@ -39,6 +40,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 @CommandDeclaration(command = "delete",
@@ -52,9 +54,12 @@ import org.jetbrains.annotations.NotNull;
 public class Delete extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
-    
-    public Delete(@NotNull final EventDispatcher eventDispatcher) {
+    private final EconHandler econHandler;
+
+    @Inject public Delete(@NotNull final EventDispatcher eventDispatcher,
+                          @Nullable final EconHandler econHandler) {
         this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
     }
     
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -89,11 +94,11 @@ public class Delete extends SubCommand {
             final long start = System.currentTimeMillis();
             boolean result = plot.deletePlot(() -> {
                 plot.removeRunning();
-                if ((EconHandler.getEconHandler() != null) && plotArea.useEconomy()) {
+                if ((this.econHandler != null) && plotArea.useEconomy()) {
                     Expression<Double> valueExr = plotArea.getPrices().get("sell");
                     double value = plots.size() * valueExr.evaluate((double) currentPlots);
                     if (value > 0d) {
-                        EconHandler.getEconHandler().depositMoney(player, value);
+                        this.econHandler.depositMoney(player, value);
                         sendMessage(player, Captions.ADDED_BALANCE, String.valueOf(value));
                     }
                 }

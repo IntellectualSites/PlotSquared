@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -49,6 +50,7 @@ import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.uuid.UUIDMapping;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,14 +74,17 @@ import java.util.stream.Collectors;
 public class ListCmd extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final EconHandler econHandler;
 
-    public ListCmd(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public ListCmd(@NotNull final PlotAreaManager plotAreaManager,
+                           @Nullable final EconHandler econHandler) {
         this.plotAreaManager = plotAreaManager;
+        this.econHandler = econHandler;
     }
 
     private String[] getArgumentList(PlotPlayer player) {
         List<String> args = new ArrayList<>();
-        if (EconHandler.getEconHandler() != null && Permissions
+        if (this.econHandler != null && Permissions
             .hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
             args.add("forsale");
         }
@@ -272,7 +277,7 @@ public class ListCmd extends SubCommand {
                         Captions.PERMISSION_LIST_FOR_SALE);
                     return false;
                 }
-                if (EconHandler.getEconHandler() == null) {
+                if (this.econHandler == null) {
                     break;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().allPlots().thatPasses(plot -> plot.getFlag(PriceFlag.class) > 0));
@@ -412,7 +417,7 @@ public class ListCmd extends SubCommand {
 
     @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         final List<String> completions = new LinkedList<>();
-        if (EconHandler.getEconHandler() != null && Permissions
+        if (this.econHandler != null && Permissions
             .hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
             completions.add("forsale");
         }

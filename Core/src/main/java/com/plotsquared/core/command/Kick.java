@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
@@ -55,10 +56,13 @@ import java.util.concurrent.TimeoutException;
 public class Kick extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final WorldUtil worldUtil;
 
-    public Kick(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public Kick(@NotNull final PlotAreaManager plotAreaManager,
+                        @NotNull final WorldUtil worldUtil) {
         super(Argument.PlayerName);
         this.plotAreaManager = plotAreaManager;
+        this.worldUtil = worldUtil;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -110,10 +114,10 @@ public class Kick extends SubCommand {
                         Captions.CANNOT_KICK_PLAYER.send(player, player2.getName());
                         return;
                     }
-                    Location spawn = WorldUtil.IMP.getSpawn(location.getWorldName());
+                    Location spawn = this.worldUtil.getSpawn(location.getWorldName());
                     Captions.YOU_GOT_KICKED.send(player2);
                     if (plot.equals(spawn.getPlot())) {
-                        Location newSpawn = WorldUtil.IMP.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
+                        Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
                         if (plot.equals(newSpawn.getPlot())) {
                             // Kick from server if you can't be teleported to spawn
                             player2.kick(Captions.YOU_GOT_KICKED.getTranslated());

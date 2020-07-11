@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Injector;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -46,6 +47,8 @@ import com.sk89q.worldedit.WorldEdit;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -68,92 +71,88 @@ public class MainCommand extends Command {
         if (instance == null) {
             instance = new MainCommand();
 
-            final PlotAreaManager plotAreaManager = PlotSquared.get().getPlotAreaManager();
-            final EventDispatcher eventDispatcher = PlotSquared.get().getEventDispatcher();
-            final PlotListener plotListener = PlotSquared.get().getPlotListener();
-            final YamlConfiguration worldconfiguration = PlotSquared.get().getWorldConfiguration();
-            final File worldFile = PlotSquared.get().getWorldsFile();
-            final WorldEdit worldEdit = PlotSquared.get().getWorldedit();
-
-            new Caps();
-            new Buy(eventDispatcher);
-            new Save(plotAreaManager);
-            new Load(plotAreaManager);
-            new Confirm();
-            new Template(plotAreaManager, worldconfiguration, worldFile);
-            new Download(plotAreaManager);
-            new Template(plotAreaManager, worldconfiguration, worldFile);
-            new Setup();
-            new Area(plotAreaManager, eventDispatcher, plotListener, worldconfiguration, worldFile);
-            new DebugSaveTest();
-            new DebugLoadTest();
-            new CreateRoadSchematic();
-            new DebugAllowUnsafe();
-            new RegenAllRoads(plotAreaManager);
-            new Claim(eventDispatcher);
-            new Auto(plotAreaManager, eventDispatcher);
-            new HomeCommand(plotAreaManager);
-            new Visit(plotAreaManager);
-            new Set();
-            new Clear(eventDispatcher);
-            new Delete(eventDispatcher);
-            new Trust(eventDispatcher);
-            new Add(eventDispatcher);
-            new Leave(eventDispatcher);
-            new Deny(plotAreaManager, eventDispatcher);
-            new Remove(eventDispatcher);
-            new Info();
-            new Near();
-            new ListCmd(plotAreaManager);
-            new Debug(plotAreaManager);
-            new SchematicCmd(plotAreaManager);
-            new PluginCmd();
-            new Purge(plotAreaManager, plotListener);
-            new Reload(plotAreaManager, worldconfiguration, worldFile);
-            new Relight();
-            new Merge(eventDispatcher);
-            new DebugPaste(PlotSquared.get().getConfigFile(), PlotSquared.get().getWorldsFile());
-            new Unlink(eventDispatcher);
-            new Kick(plotAreaManager);
-            new Inbox();
-            new Comment();
-            new DatabaseCommand(plotAreaManager, eventDispatcher, plotListener, worldconfiguration);
-            new Swap();
-            new Music();
-            new DebugRoadRegen();
-            new Trust(eventDispatcher);
-            new DebugExec(plotAreaManager, eventDispatcher, worldEdit);
-            new FlagCommand();
-            new Target();
-            new Move(plotAreaManager);
-            new Condense(plotAreaManager);
-            new Copy();
-            new Chat();
-            new Trim(plotAreaManager);
-            new Done(eventDispatcher);
-            new Continue(eventDispatcher);
-            new Middle();
-            new Grant();
-            // Set commands
-            new Owner(eventDispatcher);
-            new Desc(eventDispatcher);
-            new Biome();
-            new Alias();
-            new SetHome();
-            new Cluster();
-            new DebugImportWorlds(plotAreaManager);
-            new Backup();
+            private final Injector injector = PlotSquared.platform().getInjector();
+            final List<Class<? extends Command>> commands = new LinkedList<>();
+            commands.add(Caps.class);
+            commands.add(Buy.class);
+            commands.add(Save.class);
+            commands.add(Load.class);
+            commands.add(Confirm.class);
+            commands.add(Template.class);
+            commands.add(Download.class);
+            commands.add(Setup.class);
+            commands.add(Area.class);
+            commands.add(DebugSaveTest.class);
+            commands.add(DebugLoadTest.class);
+            commands.add(CreateRoadSchematic.class);
+            commands.add(DebugAllowUnsafe.class);
+            commands.add(RegenAllRoads.class);
+            commands.add(Claim.class);
+            commands.add(Auto.class);
+            commands.add(HomeCommand.class);
+            commands.add(Visit.class);
+            commands.add(Set.class);
+            commands.add(Clear.class);
+            commands.add(Delete.class);
+            commands.add(Trust.class);
+            commands.add(Add.class);
+            commands.add(Leave.class);
+            commands.add(Deny.class);
+            commands.add(Remove.class);
+            commands.add(Info.class);
+            commands.add(Near.class);
+            commands.add(ListCmd.class);
+            commands.add(Debug.class);
+            commands.add(SchematicCmd.class);
+            commands.add(PluginCmd.class);
+            commands.add(Purge.class);
+            commands.add(Reload.class);
+            commands.add(Relight.class);
+            commands.add(Merge.class);
+            commands.add(DebugPaste.class);
+            commands.add(Unlink.class);
+            commands.add(Kick.class);
+            commands.add(Inbox.class);
+            commands.add(Comment.class);
+            commands.add(DatabaseCommand.class);
+            commands.add(Swap.class);
+            commands.add(Music.class);
+            commands.add(DebugRoadRegen.class);
+            commands.add(DebugExec.class);
+            commands.add(FlagCommand.class);
+            commands.add(Target.class);
+            commands.add(Move.class);
+            commands.add(Condense.class);
+            commands.add(Copy.class);
+            commands.add(Chat.class);
+            commands.add(Trim.class);
+            commands.add(Done.class);
+            commands.add(Continue.class);
+            commands.add(Middle.class);
+            commands.add(Grant.class);
+            commands.add(Owner.class);
+            commands.add(Desc.class);
+            commands.add(Biome.class);
+            commands.add(Alias.class);
+            commands.add(SetHome.class);
+            commands.add(Cluster.class);
+            commands.add(DebugImportWorlds.class);
+            commands.add(Backup.class);
 
             if (Settings.Ratings.USE_LIKES) {
-                final Like like = new Like(eventDispatcher);
-                new Dislike(like);
+                commands.add(Like.class);
+                commands.add(Dislike.class);
             } else {
-                new Rate(eventDispatcher);
+                commands.add(Rate.class);
+            }
+
+            for (final Class<? extends Command> command : commands) {
+                injector.getInstance(command);
             }
 
             // Referenced commands
-            instance.toggle = new Toggle();
-            instance.help = new Help(instance);
+            instance.toggle = injector.getInstance(Toggle.class);
+            instance.help = injector.getInstance(Help.class);
         }
         return instance;
     }

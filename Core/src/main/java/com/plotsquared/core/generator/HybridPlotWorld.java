@@ -27,19 +27,19 @@ package com.plotsquared.core.generator;
 
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
-import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.schematic.Schematic;
-import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
@@ -58,6 +58,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -87,12 +88,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                                    @Assisted @NotNull final IndependentPlotGenerator generator,
                                    @Assisted final PlotId min,
                                    @Assisted final PlotId max,
-                                   @NotNull final EventDispatcher eventDispatcher,
-                                   @NotNull final PlotListener plotListener,
                                    @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
                                    @NotNull final RegionManager regionManager,
-                                   @NotNull final SchematicHandler schematicHandler) {
-        super(worldName, id, generator, min, max, eventDispatcher, plotListener, worldConfiguration);
+                                   @NotNull final SchematicHandler schematicHandler,
+                                   @NotNull final GlobalBlockQueue blockQueue,
+                                   @Nullable final EconHandler econHandler) {
+        super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
         this.regionManager = regionManager;
         this.schematicHandler = schematicHandler;
     }

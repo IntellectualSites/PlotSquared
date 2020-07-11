@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
@@ -68,13 +69,22 @@ public class Template extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
+    private final SetupUtils setupUtils;
+    private final GlobalBlockQueue globalBlockQueue;
+    private final WorldUtil worldUtil;
 
-    public Template(@NotNull final PlotAreaManager plotAreaManager,
-                    @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
-                    @WorldFile @NotNull final File worldFile) {
+    @Inject public Template(@NotNull final PlotAreaManager plotAreaManager,
+                            @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
+                            @WorldFile @NotNull final File worldFile,
+                            @NotNull final SetupUtils setupUtils,
+                            @NotNull final GlobalBlockQueue globalBlockQueue,
+                            @NotNull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;
+        this.setupUtils = setupUtils;
+        this.globalBlockQueue = globalBlockQueue;
+        this.worldUtil = worldUtil;
     }
 
     public static boolean extractAllFiles(String world, String template) {
@@ -123,7 +133,7 @@ public class Template extends SubCommand {
     public static byte[] getBytes(PlotArea plotArea) {
         ConfigurationSection section = PlotSquared.get().getWorldConfiguration().getConfigurationSection("worlds." + plotArea.getWorldName());
         YamlConfiguration config = new YamlConfiguration();
-        String generator = SetupUtils.manager.getGenerator(plotArea);
+        String generator = PlotSquared.platform().getSetupUtils().getGenerator(plotArea);
         if (generator != null) {
             config.set("generator.plugin", generator);
         }
@@ -197,7 +207,7 @@ public class Template extends SubCommand {
                 String manager =
                     worldConfig.getString("generator.plugin", PlotSquared.platform().getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
-                PlotAreaBuilder builder = new PlotAreaBuilder()
+                PlotAreaBuilder builder = PlotAreaBuilder.newBuilder()
                         .plotAreaType(MainUtil.getType(worldConfig))
                         .terrainType(MainUtil.getTerrain(worldConfig))
                         .plotManager(manager)
@@ -205,10 +215,10 @@ public class Template extends SubCommand {
                         .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                         .worldName(world);
 
-                SetupUtils.manager.setupWorld(builder);
-                GlobalBlockQueue.IMP.addEmptyTask(() -> {
+                this.setupUtils.setupWorld(builder);
+                this.globalBlockQueue.addEmptyTask(() -> {
                     MainUtil.sendMessage(player, "Done!");
-                    player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
+                    player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
                 });
                 return true;
             }

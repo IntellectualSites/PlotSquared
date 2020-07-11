@@ -44,6 +44,7 @@ import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
@@ -58,7 +59,6 @@ import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.ExpiryTask;
-import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
@@ -1097,8 +1097,9 @@ public class PlotSquared {
                 split = combinedArgs;
             }
 
-            HybridPlotWorld plotworld = new HybridPlotWorld(world, null, generator,
-                null, null, this.eventDispatcher, this.plotListener, this.worldConfiguration);
+            final HybridPlotWorldFactory hybridPlotWorldFactory = this.platform.getInjector().getInstance(HybridPlotWorldFactory.class);
+            final HybridPlotWorld plotWorld = hybridPlotWorldFactory.create(world, null, generator, null, null);
+
             for (String element : split) {
                 String[] pair = element.split("=");
                 if (pair.length != 2) {
@@ -1162,8 +1163,8 @@ public class PlotSquared {
             try {
                 ConfigurationSection section =
                     this.worldConfiguration.getConfigurationSection("worlds." + world);
-                plotworld.saveConfiguration(section);
-                plotworld.loadDefaultConfiguration(section);
+                plotWorld.saveConfiguration(section);
+                plotWorld.loadDefaultConfiguration(section);
                 this.worldConfiguration.save(this.worldsFile);
             } catch (IOException e) {
                 e.printStackTrace();

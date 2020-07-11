@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -39,6 +40,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -52,10 +54,13 @@ import java.util.concurrent.CompletableFuture;
 public class Buy extends Command {
 
     private final EventDispatcher eventDispatcher;
-    
-    public Buy(@NotNull final EventDispatcher eventDispatcher) {
+    private final EconHandler econHandler;
+
+    @Inject public Buy(@NotNull final EventDispatcher eventDispatcher,
+                       @Nullable final EconHandler econHandler) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
     }
 
     @Override
@@ -63,7 +68,7 @@ public class Buy extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
 
-        check(EconHandler.getEconHandler(), Captions.ECON_DISABLED);
+        check(this.econHandler, Captions.ECON_DISABLED);
         final Plot plot;
         if (args.length != 0) {
             checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
@@ -87,7 +92,7 @@ public class Buy extends Command {
         confirm.run(this, () -> {
             Captions.REMOVED_BALANCE.send(player, price);
 
-            EconHandler.getEconHandler().depositMoney(PlotSquared.platform().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
+            this.econHandler.depositMoney(PlotSquared.platform().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
 
             PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {

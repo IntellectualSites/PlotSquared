@@ -28,7 +28,6 @@ package com.plotsquared.core.plot;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -39,7 +38,7 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
-import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
@@ -52,7 +51,6 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
@@ -137,16 +135,13 @@ public abstract class PlotArea {
     @Getter private final FlagContainer roadFlagContainer =
         new FlagContainer(GlobalFlagContainer.getInstance());
 
-    private final EventDispatcher eventDispatcher;
-    private final PlotListener plotListener;
     private final YamlConfiguration worldConfiguration;
     private final GlobalBlockQueue globalBlockQueue;
     private final EconHandler econHandler;
 
     public PlotArea(@NotNull final String worldName, @Nullable final String id,
         @NotNull IndependentPlotGenerator generator, @Nullable final PlotId min,
-        @Nullable final PlotId max, @NotNull final EventDispatcher eventDispatcher,
-        @NotNull final PlotListener plotListener,
+        @Nullable final PlotId max,
         @WorldConfig @Nullable final YamlConfiguration worldConfiguration,
         @NotNull final GlobalBlockQueue blockQueue,
         @Nullable final EconHandler econHandler) {
@@ -167,8 +162,6 @@ public abstract class PlotArea {
             this.max = max;
         }
         this.worldHash = worldName.hashCode();
-        this.eventDispatcher = eventDispatcher;
-        this.plotListener = plotListener;
         this.worldConfiguration = worldConfiguration;
         this.econHandler = econHandler;
     }

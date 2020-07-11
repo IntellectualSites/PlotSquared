@@ -26,13 +26,14 @@
 package com.plotsquared.core.generator;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
-import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.util.EconHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
 
@@ -41,10 +42,15 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     public int ROAD_OFFSET_X = 0;
     public int ROAD_OFFSET_Z = 0;
 
-    public SquarePlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
-        PlotId min, PlotId max, @NotNull final EventDispatcher eventDispatcher, @NotNull final
-        PlotListener plotListener, @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
-        super(worldName, id, generator, min, max, eventDispatcher, plotListener, worldConfiguration);
+    public SquarePlotWorld(final String worldName,
+                           @Nullable final String id,
+                           @NotNull final IndependentPlotGenerator generator,
+                           @Nullable final PlotId min,
+                           @Nullable final PlotId max,
+                           @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
+                           @NotNull final GlobalBlockQueue blockQueue,
+                           @Nullable final EconHandler econHandler) {
+        super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
     }
 
     @Override public void loadConfiguration(ConfigurationSection config) {

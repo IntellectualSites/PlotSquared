@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
@@ -54,9 +55,12 @@ import java.util.List;
 public class Load extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final SchematicHandler schematicHandler;
 
-    public Load(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public Load(@NotNull final PlotAreaManager plotAreaManager,
+                        @NotNull final SchematicHandler schematicHandler) {
         this.plotAreaManager = plotAreaManager;
+        this.schematicHandler = schematicHandler;
     }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
@@ -110,7 +114,7 @@ public class Load extends SubCommand {
                 plot.addRunning();
                 MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
                 TaskManager.runTaskAsync(() -> {
-                    Schematic taskSchematic = SchematicHandler.manager.getSchematic(url);
+                    Schematic taskSchematic = this.schematicHandler.getSchematic(url);
                     if (taskSchematic == null) {
                         plot.removeRunning();
                         sendMessage(player, Captions.SCHEMATIC_INVALID,
@@ -118,8 +122,7 @@ public class Load extends SubCommand {
                         return;
                     }
                     PlotArea area = plot.getArea();
-                    SchematicHandler.manager
-                        .paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false,
+                    this.schematicHandler.paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false,
                             new RunnableVal<Boolean>() {
                                 @Override public void run(Boolean value) {
                                     plot.removeRunning();
@@ -144,7 +147,7 @@ public class Load extends SubCommand {
         if (schematics == null) {
             plot.addRunning();
             TaskManager.runTaskAsync(() -> {
-                List<String> schematics1 = SchematicHandler.manager.getSaves(player.getUUID());
+                List<String> schematics1 = this.schematicHandler.getSaves(player.getUUID());
                 plot.removeRunning();
                 if ((schematics1 == null) || schematics1.isEmpty()) {
                     MainUtil.sendMessage(player, Captions.LOAD_FAILED);

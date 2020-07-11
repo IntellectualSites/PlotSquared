@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;
@@ -32,6 +33,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
+import org.jetbrains.annotations.NotNull;
 
 @CommandDeclaration(command = "createroadschematic",
     aliases = {"crs"},
@@ -42,6 +44,12 @@ import com.plotsquared.core.util.MainUtil;
     usage = "/plot createroadschematic")
 public class CreateRoadSchematic extends SubCommand {
 
+    private final HybridUtils hybridUtils;
+
+    @Inject public CreateRoadSchematic(@NotNull final HybridUtils hybridUtils) {
+        this.hybridUtils = hybridUtils;
+    }
+
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
@@ -51,7 +59,7 @@ public class CreateRoadSchematic extends SubCommand {
         if (!(location.getPlotArea() instanceof HybridPlotWorld)) {
             return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
-        HybridUtils.manager.setupRoadSchematic(plot);
+        this.hybridUtils.setupRoadSchematic(plot);
         MainUtil.sendMessage(player, Captions.SCHEMATIC_ROAD_CREATED);
         return true;
     }
