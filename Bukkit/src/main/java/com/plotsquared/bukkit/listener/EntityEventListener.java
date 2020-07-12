@@ -200,7 +200,7 @@ public class EntityEventListener implements Listener {
         if (plot == null || plot.getFlag(DisablePhysicsFlag.class)) {
             event.setCancelled(true);
             if (plot != null) {
-                plot.debug("Fallin block event was cancelled because disable-physics = true");
+                plot.debug("Falling block event was cancelled because disable-physics = true");
             }
             return;
         }

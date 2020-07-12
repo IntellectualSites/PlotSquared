@@ -661,7 +661,7 @@ public class BlockEventListener implements Listener {
             if (plot != null
                 && plot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event
                 .getBlock().isLiquid()) {
-                plot.debug("Liquid could now flow because liquid-flow = disabled");
+                plot.debug("Liquid could not flow because liquid-flow = disabled");
                 event.setCancelled(true);
                 return;
             }
