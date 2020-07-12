@@ -114,7 +114,7 @@
   "economy.cannot_afford_merge": "<red>You cannot afford to merge the plots. It costs <gold><money></gold>.</red>",
   "economy.added_balance": "<gold><money> </gold><gray>has been added to your balance.</gray>",
   "economy.removed_balance": "<gold><money> </gold><gray>has been taken from your balance.</gray>",
-  "ecomomy.removed_granted_plot": "<gray>You used <usedGrants> plot grant(s), you've got </gray><gold><remainingGrants></gold> <gray>left.</gray>",
+  "economy.removed_granted_plot": "<gray>You used <usedGrants> plot grant(s), you've got </gray><gold><remainingGrants></gold> <gray>left.</gray>",
   
   "setup.setup_not_started": "<gold>No setup started. Use </gold><gray>/plot setup</gray> <gold>to start a setup process.</gold>",
   "setup.setup_init": "<gold>Usage: </gold><gray>/plot setup </gray><value>",
@@ -233,7 +233,7 @@
   "errors.not_in_plot_world": "<red>You're not in a plot area.</red>",
   "errors.plotworld_incompatible": "<red>The two worlds must be compatible.</red>",
   "errors.not_valid_world": "<red>That is not a valid world (case sensitive).</red>",
-  "errors.not_valid_plot_world": "<red>That is not a valid plot area (case sensitive).</red>",
+  "errors.not_valid_plot_world": "<red><value> is not a valid plot area (case sensitive).</red>",
   "errors.no_plots": "<gray>You don't have any plots.</gray>",
   "errors.player_no_plots": "<gray>That player does not own any plots.</gray>",
   "errors.wait_for_timer": "<gray>A set block timer is bound to either the current plot or you. Please wait for it to finish.</gray>",
