@@ -26,6 +26,7 @@
 package com.plotsquared.core.configuration;
 
 import com.google.common.base.Preconditions;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,12 +53,8 @@ public final class StaticCaption implements Caption {
         return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
     }
 
-    @Override public String getTranslated() {
-        return this.value;
+    @Override
+    public @NotNull String getComponent(@NotNull LocaleHolder localeHolder) {
+        return this.value; // can't be translated
     }
-
-    @Override public boolean usePrefix() {
-        return this.usePrefix;
-    }
-
 }

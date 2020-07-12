@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
@@ -47,6 +48,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -81,10 +83,10 @@ public class Auto extends SubCommand {
             if (player.hasPersistentMeta("grantedPlots")) {
                 int grantedPlots = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
                 if (diff < 0 && grantedPlots < sizeX * sizeZ) {
-                    MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
                     return false;
                 } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
-                    MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
                     return false;
                 } else {
                     int left = grantedPlots + diff < 0 ? 0 : diff - sizeX * sizeZ;
@@ -93,11 +95,12 @@ public class Auto extends SubCommand {
                     } else {
                         player.setPersistentMeta("grantedPlots", Ints.toByteArray(left));
                     }
-                    MainUtil.sendMessage(player, Captions.REMOVED_GRANTED_PLOT,
-                        "" + (grantedPlots - left), "" + left);
+                    player.sendMessage(TranslatableCaption.of("economy.removed_granted_plot"),
+                            Template.of("usedGrants", String.valueOf(grantedPlots - left)),
+                            Template.of("remainingGrants", String.valueOf(left)));
                 }
             } else {
-                MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
                 return false;
             }
         }
@@ -173,7 +176,7 @@ public class Auto extends SubCommand {
                 plotarea = PlotSquared.get().getPlotAreaManager().getAllPlotAreas()[0];
             }
             if (plotarea == null) {
-                MainUtil.sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
+                player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 return false;
             }
         }
@@ -224,12 +227,12 @@ public class Auto extends SubCommand {
         size_z = event.getSize_z();
         schematic = event.getSchematic();
         if (!force && mega && !Permissions.hasPermission(player, Captions.PERMISSION_AUTO_MEGA)) {
-            MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                CaptionUtility.format(player, Captions.PERMISSION_AUTO_MEGA));
+            player.sendMessage(TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Captions.PERMISSION_AUTO_MEGA.getTranslated()));
         }
         if (!force && size_x * size_z > Settings.Claim.MAX_AUTO_AREA) {
-            MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS_NUM,
-                Settings.Claim.MAX_AUTO_AREA + "");
+            player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots_num"),
+                    Template.of("amount", String.valueOf(Settings.Claim.MAX_AUTO_AREA)));
             return false;
         }
         final int allowed_plots = player.getAllowedPlots();
@@ -274,7 +277,7 @@ public class Auto extends SubCommand {
             return true;
         } else {
             if (plotarea.getType() == PlotAreaType.PARTIAL) {
-                MainUtil.sendMessage(player, Captions.NO_FREE_PLOTS);
+                player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
                 return false;
             }
             while (true) {

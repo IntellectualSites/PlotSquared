@@ -25,13 +25,30 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import org.jetbrains.annotations.NotNull;
+
 public enum RequiredType {
-    CONSOLE, PLAYER, NONE;
+    CONSOLE(TranslatableCaption.of("console.is_console")),
+    PLAYER(TranslatableCaption.of("console.not_console")),
+    NONE(StaticCaption.of("Something went wrong: RequiredType=NONE")); // this caption should never be sent
+
+    private final Caption caption;
+
+    RequiredType(Caption caption) {
+        this.caption = caption;
+    }
 
     public boolean allows(CommandCaller player) {
         if (this == RequiredType.NONE) {
             return true;
         }
         return this == player.getSuperCaller();
+    }
+
+    @NotNull public Caption getErrorMessage() {
+        return this.caption;
     }
 }

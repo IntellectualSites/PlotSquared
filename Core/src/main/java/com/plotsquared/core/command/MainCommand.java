@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -244,7 +245,7 @@ public class MainCommand extends Command {
                     player.setMeta(PlotPlayer.META_LOCATION, newLoc);
                     player.setMeta(PlotPlayer.META_LAST_PLOT, newPlot);
                 } else {
-                    Captions.BORDER.send(player);
+                    player.sendMessage(TranslatableCaption.of("border.border"));
                 }
                 // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);
@@ -275,7 +276,7 @@ public class MainCommand extends Command {
                     };
                     args = Arrays.copyOfRange(args, 1, args.length);
                 } else {
-                    Captions.INVALID_COMMAND_FLAG.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.invalid_command_flag"));
                     return CompletableFuture.completedFuture(false);
                 }
             }
@@ -288,9 +289,10 @@ public class MainCommand extends Command {
             e.printStackTrace();
             String message = e.getLocalizedMessage();
             if (message != null) {
-                Captions.ERROR.send(player, message);
+                player.sendMessage(TranslatableCaption.of("errors.error"),
+                        net.kyori.adventure.text.minimessage.Template.of("value", message));
             } else {
-                Captions.ERROR.send(player);
+                player.sendMessage(TranslatableCaption.of("errors.error"));
             }
         }
         // Reset command scope //

@@ -26,10 +26,12 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -38,6 +40,7 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import lombok.SneakyThrows;
+import net.kyori.adventure.text.minimessage.Template;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -247,7 +250,7 @@ public abstract class Command {
     }
 
     public <T> void paginate(PlotPlayer player, List<T> c, int size, int page,
-        RunnableVal3<Integer, T, PlotMessage> add, String baseCommand, String header) {
+                             RunnableVal3<Integer, T, Caption> add, String baseCommand, String header) {
         // Calculate pages & index
         if (page < 0) {
             page = 0;
@@ -307,19 +310,19 @@ public abstract class Command {
             if (this.parent == null) {
                 MainCommand.getInstance().help.displayHelp(player, null, 0);
             } else {
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
             }
             return CompletableFuture.completedFuture(false);
         }
         if (this.allCommands.isEmpty()) {
             player.sendMessage(
-                "Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues/new");
+                    StaticCaption.of("Not Implemented: https://issues.intellectualsites.com/newIssue?project=PS"));
             return CompletableFuture.completedFuture(false);
         }
         Command cmd = getCommand(args[0]);
         if (cmd == null) {
             if (this.parent != null) {
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
                 return CompletableFuture.completedFuture(false);
             }
             // Help command
@@ -334,11 +337,11 @@ public abstract class Command {
             } catch (IllegalArgumentException ignored) {
             }
             // Command recommendation
-            MainUtil.sendMessage(player, Captions.NOT_VALID_SUBCOMMAND);
+            player.sendMessage(TranslatableCaption.of("commandconfig.not_valid_subcommand"));
             List<Command> commands = getCommands(player);
             if (commands.isEmpty()) {
-                MainUtil.sendMessage(player, Captions.DID_YOU_MEAN,
-                    MainCommand.getInstance().help.getUsage());
+                player.sendMessage(TranslatableCaption.of("commandconfig.did_you_mean"),
+                        Template.of("value", MainCommand.getInstance().help.getUsage()));
                 return CompletableFuture.completedFuture(false);
             }
             HashSet<String> setArgs = new HashSet<>(args.length);
@@ -356,7 +359,8 @@ public abstract class Command {
             if (cmd == null) {
                 cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
             }
-            MainUtil.sendMessage(player, Captions.DID_YOU_MEAN, cmd.getUsage());
+            player.sendMessage(TranslatableCaption.of("commandconfig.did_you_mean"),
+                    Template.of("value", cmd.getUsage()));
             return CompletableFuture.completedFuture(false);
         }
         String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -388,7 +392,9 @@ public abstract class Command {
                 failed = failed || reqArgs[i].parse(args[i]) == null;
             }
             if (failed) {
-                Captions.COMMAND_SYNTAX.send(player, StringMan.join(fullSplit, " "));
+                // TODO improve or remove the Argument system
+                player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", StringMan.join(fullSplit, " ")));
                 return false;
             }
         }
@@ -470,13 +476,12 @@ public abstract class Command {
         }
         if (!this.required.allows(player)) {
             if (message) {
-                MainUtil.sendMessage(player, this.required == RequiredType.PLAYER ?
-                    Captions.IS_CONSOLE :
-                    Captions.NOT_CONSOLE);
+                player.sendMessage(this.required.getErrorMessage());
             }
         } else if (!Permissions.hasPermission(player, getPermission())) {
             if (message) {
-                Captions.NO_PERMISSION.send(player, getPermission());
+                player.sendMessage(TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", getPermission()));
             }
         } else {
             return true;
@@ -495,6 +500,11 @@ public abstract class Command {
         } else {
             return this.parent.getCommandString() + " " + toString();
         }
+    }
+
+    public void sendUsage(PlotPlayer<?> player) {
+        player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
+                Template.of("value", getUsage()));
     }
 
     public String getUsage() {
@@ -592,13 +602,13 @@ public abstract class Command {
         return this.getFullId().hashCode();
     }
 
-    public void checkTrue(boolean mustBeTrue, Captions message, Object... args) {
+    public void checkTrue(boolean mustBeTrue, Captions message, Template... args) {
         if (!mustBeTrue) {
             throw new CommandException(message, args);
         }
     }
 
-    public <T extends Object> T check(T object, Captions message, Object... args) {
+    public <T extends Object> T check(T object, Captions message, Template... args) {
         if (object == null) {
             throw new CommandException(message, args);
         }
@@ -615,17 +625,17 @@ public abstract class Command {
 
 
     public static class CommandException extends RuntimeException {
-        private final Object[] args;
-        private final Captions message;
+        private final Template[] args;
+        private final Caption message;
 
-        public CommandException(Captions message, Object... args) {
+        public CommandException(Caption message, Template... args) {
             this.message = message;
             this.args = args;
         }
 
         public void perform(PlotPlayer player) {
             if (player != null && message != null) {
-                message.send(player, args);
+                player.sendMessage(message, args);
             }
         }
     }
