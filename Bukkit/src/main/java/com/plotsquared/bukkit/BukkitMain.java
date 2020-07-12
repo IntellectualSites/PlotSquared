@@ -296,10 +296,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
 
         final EssentialsUUIDService essentialsUUIDService;
-        if (Settings.UUID.SERVICE_ESSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
+        if (Settings.UUID.SERVICE_ESSENTIALSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
             PlotSquared
-                .log(Captions.PREFIX + "(UUID) Using Essentials as a complementary UUID service");
+                .log(Captions.PREFIX + "(UUID) Using EssentialsX as a complementary UUID service");
         } else {
             essentialsUUIDService = null;
         }

@@ -260,14 +260,14 @@ public class Settings extends Config {
         @Comment("Whether or not automatic background caching should be enabled. It is HIGHLY recommended to keep this turned on."
             + " This should only be disabled if the server has a very large number of plots (>100k)")
         public static boolean BACKGROUND_CACHING_ENABLED = true;
-        @Comment("Whether the paper service is enabled")
+        @Comment("Whether the PaperMC service is enabled")
         public static boolean SERVICE_PAPER = true;
-        @Comment("Whether the LP service is enabled")
+        @Comment("Whether the LuckPerms service is enabled")
         public static boolean SERVICE_LUCKPERMS = true;
         @Comment("Whether the Bukkit service is enabled")
         public static boolean SERVICE_BUKKIT = true;
-        @Comment("Whether the EssX service is enabled")
-        public static boolean SERVICE_ESSX = true;
+        @Comment("Whether the EssentialsX service is enabled")
+        public static boolean SERVICE_ESSENTIALSX = true;
         @Comment("Whether the BungeePerms service is enabled")
         public static boolean SERVICE_BUNGEE_PERMS = true;
     }
