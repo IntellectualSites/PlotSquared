@@ -71,7 +71,7 @@ public class MainCommand extends Command {
         if (instance == null) {
             instance = new MainCommand();
 
-            private final Injector injector = PlotSquared.platform().getInjector();
+            final Injector injector = PlotSquared.platform().getInjector();
             final List<Class<? extends Command>> commands = new LinkedList<>();
             commands.add(Caps.class);
             commands.add(Buy.class);
