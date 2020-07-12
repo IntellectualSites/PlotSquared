@@ -252,7 +252,7 @@ public class PlotSquared {
                 this.IMP.runEntityTask();
             }
             if (Settings.Enabled_Components.EVENTS) {
-                this.IMP.registerPlayerEvents();
+                this.IMP.registerEvents();
             }
             // Required
             this.IMP.registerWorldEvents();
