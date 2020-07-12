@@ -259,9 +259,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             PlotSquared.log(Captions.PREFIX + "(UUID) Using the offline mode UUID service");
         }
 
-        final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
-        impromptuPipeline.registerService(offlinePlayerUUIDService);
-        backgroundPipeline.registerService(offlinePlayerUUIDService);
+        if (Settings.UUID.SERVICE_BUKKIT) {
+            final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
+            impromptuPipeline.registerService(offlinePlayerUUIDService);
+            backgroundPipeline.registerService(offlinePlayerUUIDService);
+        }
 
         final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService("user_cache.db");
 
@@ -274,7 +276,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
 
         final LuckPermsUUIDService luckPermsUUIDService;
-        if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+        if (Settings.UUID.SERVICE_LUCKPERMS &&
+            Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
             PlotSquared
                 .log(Captions.PREFIX + "(UUID) Using LuckPerms as a complementary UUID service");
@@ -283,7 +286,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
 
         final BungeePermsUUIDService bungeePermsUUIDService;
-        if (Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
+        if (Settings.UUID.SERVICE_BUNGEE_PERMS &&
+            Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
             bungeePermsUUIDService = new BungeePermsUUIDService();
             PlotSquared
                 .log(Captions.PREFIX + "(UUID) Using BungeePerms as a complementary UUID service");
@@ -292,7 +296,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
 
         final EssentialsUUIDService essentialsUUIDService;
-        if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
+        if (Settings.UUID.SERVICE_ESSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
             PlotSquared
                 .log(Captions.PREFIX + "(UUID) Using Essentials as a complementary UUID service");
@@ -302,7 +306,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
 
         if (!Settings.UUID.OFFLINE) {
             // If running Paper we'll also try to use their profiles
-            if (PaperLib.isPaper()) {
+            if (Bukkit.getOnlineMode() && PaperLib.isPaper() && Settings.UUID.SERVICE_PAPER) {
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 impromptuPipeline.registerService(paperUUIDService);
                 backgroundPipeline.registerService(paperUUIDService);
