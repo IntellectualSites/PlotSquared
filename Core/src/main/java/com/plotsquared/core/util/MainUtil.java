@@ -156,7 +156,7 @@ public class MainUtil {
     public static void upload(UUID uuid, String file, String extension,
         final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
-            PlotSquared.debug("&cWrite task cannot be null");
+            logger.debug("Write task cannot be null");
             TaskManager.runTask(whenDone);
             return;
         }
@@ -218,7 +218,6 @@ public class MainUtil {
                     content = scanner.next().trim();
                 }
                 if (!content.startsWith("<")) {
-                    PlotSquared.debug(content);
                 }
                 int responseCode = ((HttpURLConnection) con).getResponseCode();
                 if (responseCode == 200) {
@@ -899,7 +898,7 @@ public class MainUtil {
                     if (file.isDirectory()) {
                         deleteDirectory(file);
                     } else {
-                        PlotSquared.debug("Deleting file: " + file + " | " + file.delete());
+                        logger.debug("Deleting file: {} | {}", file, file.delete());
                     }
                 }
             }

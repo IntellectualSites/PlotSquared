@@ -111,7 +111,6 @@ public class Trim extends SubCommand {
                     BlockVector2 loc = BlockVector2.at(x, z);
                     empty.add(loc);
                 } catch (NumberFormatException ignored) {
-                    PlotSquared.debug("INVALID MCA: " + name);
                 }
             }
         });

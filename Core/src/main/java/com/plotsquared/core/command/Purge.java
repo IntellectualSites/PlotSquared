@@ -175,7 +175,6 @@ public class Purge extends SubCommand {
         boolean finalClear = clear;
         Runnable run = () -> {
             logger.debug("Calculating plots to purge, please wait...");
-            PlotSquared.debug("Calculating plots to purge, please wait...");
             HashSet<Integer> ids = new HashSet<>();
             Iterator<Plot> iterator = toDelete.iterator();
             AtomicBoolean cleared = new AtomicBoolean(true);

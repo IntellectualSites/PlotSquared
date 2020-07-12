@@ -29,8 +29,12 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.InventoryUtil;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlotInventory {
+
+    private static final Logger logger = LoggerFactory.getLogger(PlotInventory.class);
 
     private static final String META_KEY = "inventory";
     public final PlotPlayer<?> player;
@@ -79,8 +83,8 @@ public class PlotInventory {
             return;
         }
         if (hasPlotInventoryOpen(player)) {
-            PlotSquared.debug(String.format("Failed to open plot inventory for %s "
-                + "because the player already has an open plot inventory", player.getName()));
+            logger.debug("Failed to open plot inventory for {} because"
+                + " the player already has an open plot inventory", player.getName());
         } else {
             this.open = true;
             setPlotInventoryOpen(player, this);

@@ -626,9 +626,7 @@ public class SQLManager implements AbstractDB {
                                         }
                                     })))));
                     } catch (SQLException e) {
-                        e.printStackTrace();
-                        PlotSquared
-                            .debug("&7[WARN] Failed to set all flags and member tiers for plots");
+                        logger.error("Failed to set all flags and member tiers for plots", e);
                         try {
                             SQLManager.this.connection.commit();
                         } catch (SQLException e1) {
@@ -2496,8 +2494,7 @@ public class SQLManager implements AbstractDB {
                 }
             }
         } catch (SQLException e) {
-            PlotSquared
-                .debug("&7[WARN] Failed to fetch rating for plot " + plot.getId().toString());
+            logger.error("Failed to fetch rating for plot {}", plot.getId().toString());
             e.printStackTrace();
         }
         return map;

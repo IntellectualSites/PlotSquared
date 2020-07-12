@@ -26,6 +26,8 @@
 package com.plotsquared.core.database;
 
 import com.plotsquared.core.PlotSquared;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +41,8 @@ import java.sql.Statement;
  * Connects to and uses a SQLite database.
  */
 public class SQLite extends Database {
+
+    private static final Logger logger = LoggerFactory.getLogger(SQLite.class);
 
     private final String dbLocation;
     private Connection connection;
@@ -64,7 +68,7 @@ public class SQLite extends Database {
             try {
                 file.createNewFile();
             } catch (IOException ignored) {
-                PlotSquared.debug("&cUnable to create database!");
+                logger.error("Unable to create database");
             }
         }
         Class.forName("org.sqlite.JDBC");

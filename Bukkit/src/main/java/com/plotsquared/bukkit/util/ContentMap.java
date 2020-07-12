@@ -27,7 +27,6 @@ package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.entity.EntityWrapper;
 import com.plotsquared.bukkit.entity.ReplicatingEntityWrapper;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
@@ -38,6 +37,8 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +46,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class ContentMap {
+
+    private static final Logger logger = LoggerFactory.getLogger(ContentMap.class);
 
     final Set<EntityWrapper> entities;
     final Map<PlotLoc, BaseBlock[]> allBlocks;
@@ -123,8 +126,7 @@ public class ContentMap {
             try {
                 entity.spawn(world, xOffset, zOffset);
             } catch (Exception e) {
-                PlotSquared.debug("Failed to restore entity (e): " + e.toString());
-                e.printStackTrace();
+                logger.error("Failed to restore entity", e);
             }
         }
         this.entities.clear();

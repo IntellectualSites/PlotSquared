@@ -47,6 +47,8 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -61,6 +63,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ExpireManager {
+
+    private final Logger logger = LoggerFactory.getLogger(ExpireManager.class);
 
     public static ExpireManager IMP;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
@@ -79,7 +83,7 @@ public class ExpireManager {
     }
 
     public void addTask(ExpiryTask task) {
-        PlotSquared.debug("Adding new expiry task!");
+        logger.debug("Adding new expiry task!");
         this.tasks.add(task);
     }
 
@@ -425,15 +429,13 @@ public class ExpireManager {
         PlotAnalysis changed = plot.getComplexity(null);
         int changes = changed == null ? 0 : changed.changes_sd;
         int modified = changed == null ? 0 : changed.changes;
-        PlotSquared.debug(
-            "$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.getOwner()
-                + " Delta:" + changes + "/" + modified + " Connected: " + StringMan
-                .getString(plots));
-        PlotSquared.debug("$4 - Area: " + plot.getArea());
+        logger.debug("Deleted expired plot: {} | User: {} | Delta: {}/{} | Connected: {}",
+            plot, plot.getOwner(), changes, modified, StringMan.getString(plots));
+        logger.debug(" - Area: {}", plot.getArea());
         if (plot.hasOwner()) {
-            PlotSquared.debug("$4 - Owner: " + plot.getOwner());
+            logger.debug(" - Owner: {}", plot.getOwner());
         } else {
-            PlotSquared.debug("$4 - Owner: Unowned");
+            logger.debug(" - Owner: Unowned");
         }
     }
 

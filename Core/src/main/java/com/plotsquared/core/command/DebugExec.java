@@ -452,7 +452,6 @@ public class DebugExec extends SubCommand {
             }
             init();
             this.scope.put("PlotPlayer", player);
-            PlotSquared.debug("> " + script);
             try {
                 if (async) {
                     final String toExec = script;

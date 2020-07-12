@@ -61,6 +61,8 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -93,6 +95,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(SchematicHandler.class);
     public static SchematicHandler manager;
 
     private boolean exportAll = false;
@@ -187,7 +191,6 @@ public abstract class SchematicHandler {
                 whenDone.value = false;
             }
             if (schematic == null) {
-                PlotSquared.debug("Schematic == null :|");
                 TaskManager.runTask(whenDone);
                 return;
             }
@@ -203,12 +206,7 @@ public abstract class SchematicHandler {
                     + 1) < WIDTH) || (
                     (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset
                         + 1) < LENGTH) || (HEIGHT > 256)) {
-                    PlotSquared.debug("Schematic is too large");
-                    PlotSquared.debug(
-                        "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
-                            region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) + ','
-                            + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ())
-                            + ",256)");
+                    logger.debug("Schematic is too large");
                     TaskManager.runTask(whenDone);
                     return;
                 }
@@ -405,8 +403,6 @@ public abstract class SchematicHandler {
                 return new Schematic(clip);
             } catch (IOException e) {
                 e.printStackTrace();
-                PlotSquared.debug(is.toString() + " | " + is.getClass().getCanonicalName()
-                    + " is not in GZIP format : " + e.getMessage());
             }
         }
         return null;
@@ -432,14 +428,12 @@ public abstract class SchematicHandler {
             return schematics;
         } catch (JSONException | IOException e) {
             e.printStackTrace();
-            PlotSquared.debug("ERROR PARSING: " + rawJSON);
         }
         return null;
     }
 
     public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (tag == null) {
-            PlotSquared.debug("&cCannot save empty tag");
             TaskManager.runTask(whenDone);
             return;
         }
@@ -464,7 +458,6 @@ public abstract class SchematicHandler {
      */
     public boolean save(CompoundTag tag, String path) {
         if (tag == null) {
-            PlotSquared.debug("&cCannot save empty tag");
             return false;
         }
         try {

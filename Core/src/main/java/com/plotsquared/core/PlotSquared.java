@@ -383,35 +383,6 @@ public class PlotSquared {
         throw new IllegalStateException("Plot main implementation is missing");
     }
 
-    /**
-     * Log a message to the IPlotMain logger.
-     *
-     * @param message Message to log
-     * @see IPlotMain#log(String)
-     * @deprecated Use slf4j
-     */
-    @Deprecated public static void log(Object message) {
-        if (message == null || (message instanceof Caption ?
-            ((Caption) message).getTranslated().isEmpty() :
-            message.toString().isEmpty())) {
-            return;
-        }
-        logger.info(StringMan.getString(message));
-    }
-
-    /**
-     * Log a message to the IPlotMain logger.
-     *
-     * @param message Message to log
-     * @see IPlotMain#log(String)
-     * @deprecated Use sl4j
-     */
-    @Deprecated public static void debug(@Nullable Object message) {
-        if (Settings.DEBUG) {
-            logger.debug(StringMan.getString(message));
-        }
-    }
-
     private void startExpiryTasks() {
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
             ExpireManager.IMP = new ExpireManager();
@@ -540,8 +511,8 @@ public class PlotSquared {
                 chunkInts.forEach(l -> chunks.add(BlockVector2.at(l[0], l[1])));
                 int height = (int) list.get(2);
                 logger.info("Incomplete road regeneration found. Restarting in world {} with height {}", plotArea.getWorldName(), height);
-                PlotSquared.debug("   Regions: " + regions.size());
-                PlotSquared.debug("   Chunks: " + chunks.size());
+                logger.debug("  Regions: {}", regions.size());
+                logger.debug("  Chunks: {}", chunks.size());
                 HybridUtils.UPDATE = true;
                 HybridUtils.manager.scheduleRoadUpdate(plotArea, regions, height, chunks);
             } catch (IOException | ClassNotFoundException e) {
@@ -1108,7 +1079,7 @@ public class PlotSquared {
         }
         if (type == PlotAreaType.NORMAL) {
             if (plotAreaManager.getPlotAreas(world, null).length != 0) {
-                debug("World possibly already loaded: " + world);
+                logger.debug("Would possibly already loaded: {}", world);
                 return;
             }
             IndependentPlotGenerator plotGenerator;

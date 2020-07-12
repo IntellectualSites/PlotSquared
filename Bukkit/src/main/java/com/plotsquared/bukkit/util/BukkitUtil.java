@@ -468,7 +468,6 @@ public class BukkitUtil extends WorldUtil {
                     block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
                 }
                 if (!(block.getBlockData() instanceof WallSign)) {
-                    PlotSquared.debug(block.getBlockData().getAsString());
                     throw new RuntimeException("Something went wrong generating a sign");
                 }
                 final Directional sign = (Directional) block.getBlockData();

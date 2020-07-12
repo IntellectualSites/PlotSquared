@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
@@ -34,8 +33,9 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -43,6 +43,8 @@ import java.util.Set;
  * A plot manager with a square grid layout, with square shaped plots.
  */
 public abstract class SquarePlotManager extends GridPlotManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(SquarePlotManager.class);
 
     private final SquarePlotWorld squarePlotWorld;
 
@@ -226,11 +228,9 @@ public abstract class SquarePlotManager extends GridPlotManager {
                     // northwest
                     return plot.getMerged(Direction.NORTHWEST) ? id : null;
             }
-            PlotSquared.debug("invalid location: " + Arrays.toString(merged));
         } catch (Exception ignored) {
-            PlotSquared.debug(
-                "Invalid plot / road width in settings.yml for world: " + squarePlotWorld
-                    .getWorldName());
+            logger.debug( "Invalid plot / road width in settings.yml for world: {}", squarePlotWorld
+                .getWorldName());
         }
         return null;
     }

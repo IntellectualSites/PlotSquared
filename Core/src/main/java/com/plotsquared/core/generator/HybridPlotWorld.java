@@ -26,7 +26,6 @@
 package com.plotsquared.core.generator;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -283,10 +282,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
 
-            PlotSquared.debug(Captions.PREFIX + "&3 - plot schematic: &7"  + schematic3File.getPath());
+            logger.debug(" - plot schematic: {}", schematic3File.getPath());
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
-            PlotSquared.debug(Captions.PREFIX + "&3 - schematic: &7false");
+            logger.debug(" - schematic: false");
             return;
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
