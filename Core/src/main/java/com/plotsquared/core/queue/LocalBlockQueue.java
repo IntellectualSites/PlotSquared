@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -48,9 +49,9 @@ public abstract class LocalBlockQueue {
     @Getter @Setter private boolean forceSync = false;
     @Getter @Setter @Nullable private Object chunkObject;
 
-    private SchematicHandler schematicHandler;
-    private WorldUtil worldUtil;
-    private GlobalBlockQueue blockQueue;
+    @Inject private SchematicHandler schematicHandler;
+    @Inject private WorldUtil worldUtil;
+    @Inject private GlobalBlockQueue blockQueue;
 
     /**
      * Needed for compatibility with FAWE.
