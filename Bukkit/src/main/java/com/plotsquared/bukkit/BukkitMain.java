@@ -536,7 +536,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                     uuidList.clear();
                     // Print progress
                     final double percentage = ((double) read / (double) totalSize) * 100.0D;
-                    logger.info("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
+                    logger.debug("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
                 } catch (final InterruptedException | ExecutionException e) {
                     logger.error("(UUID) Failed to retrieve last batch. Will try again", e);
                     e.printStackTrace();

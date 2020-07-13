@@ -152,17 +152,16 @@ public abstract class SchematicHandler {
                 SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                     @Override public void run(final CompoundTag value) {
                         if (value == null) {
-                            MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.getId());
+                            logger.debug("Skipped plot {}", plot.getId());
                         } else {
                             TaskManager.runTaskAsync(() -> {
-                                MainUtil.sendMessage(null, "&6ID: " + plot.getId());
+                                logger.debug("ID: {}", plot.getId());
                                 boolean result = SchematicHandler.manager
                                     .save(value, directory + File.separator + name + ".schem");
                                 if (!result) {
-                                    MainUtil
-                                        .sendMessage(null, "&7 - Failed to save &c" + plot.getId());
+                                    logger.error("Failed to save {}", plot.getId());
                                 } else {
-                                    MainUtil.sendMessage(null, "&7 - &a  success: " + plot.getId());
+                                    logger.debug("success: {}", plot.getId());
                                 }
                                 TaskManager.runTask(THIS);
                             });

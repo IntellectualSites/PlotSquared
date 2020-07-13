@@ -325,7 +325,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.debug("Failed to find all usernames");
+                logger.debug("(UUID) Failed to find all usernames");
             }
 
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
@@ -388,7 +388,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.debug("Failed to find all UUIDs");
+                logger.debug("(UUID) Failed to find all UUIDs");
             }
 
             throw new ServiceError("End of pipeline");
