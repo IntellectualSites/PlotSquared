@@ -373,10 +373,21 @@ public class MainUtil {
     /**
      * Get the name from a UUID.
      *
-     * @param owner
+     * @param owner Owner UUID
      * @return The player's name, None, Everyone or Unknown
      */
-    @NotNull public static String getName(UUID owner) {
+    @NotNull public static String getName(@Nullable UUID owner) {
+        return getName(owner, true);
+    }
+
+    /**
+     * Get the name from a UUID.
+     *
+     * @param owner Owner UUID
+     * @param blocking Whether or not the operation can be blocking
+     * @return The player's name, None, Everyone or Unknown
+     */
+    @NotNull public static String getName(@Nullable final UUID owner, final boolean blocking) {
         if (owner == null) {
             return Captions.NONE.getTranslated();
         }
@@ -386,7 +397,17 @@ public class MainUtil {
         if (owner.equals(DBFunc.SERVER)) {
             return Captions.SERVER.getTranslated();
         }
-        String name = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
+        final String name;
+        if (blocking) {
+            name = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
+        } else {
+            final UUIDMapping uuidMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(owner);
+            if (uuidMapping != null) {
+                name = uuidMapping.getUsername();
+            } else {
+                name = null;
+            }
+        }
         if (name == null) {
             return Captions.UNKNOWN.getTranslated();
         }

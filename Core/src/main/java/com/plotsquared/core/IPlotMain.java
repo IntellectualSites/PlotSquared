@@ -35,6 +35,7 @@ import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
+import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
@@ -174,11 +175,18 @@ public interface IPlotMain<P> extends ILogger {
     boolean initWorldEdit();
 
     /**
-     * Gets the economy provider.
+     * Gets the economy provider, if there is one
      *
      * @return the PlotSquared economy manager
      */
-    EconHandler getEconomyHandler();
+    @Nullable EconHandler getEconomyHandler();
+
+    /**
+     * Gets the permission provider, if there is one
+     *
+     * @return the PlotSquared permission manager
+     */
+    @Nullable PermHandler getPermissionHandler();
 
     /**
      * Gets the {@link QueueProvider} class.

@@ -77,6 +77,7 @@ public class MainCommand extends Command {
             new RegenAllRoads();
             new Claim();
             new Auto();
+            new HomeCommand();
             new Visit();
             new Set();
             new Clear();
@@ -164,14 +165,14 @@ public class MainCommand extends Command {
                 public void run(final Command cmd, final Runnable success, final Runnable failure) {
                     if (cmd.hasConfirmation(player)) {
                         CmdConfirm.addPending(player, cmd.getUsage(), () -> {
-                            if (EconHandler.manager != null) {
+                            if (EconHandler.getEconHandler() != null) {
                                 PlotArea area = player.getApplicablePlotArea();
                                 if (area != null) {
                                     Expression<Double> priceEval =
                                         area.getPrices().get(cmd.getFullId());
                                     Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                     if (price != null
-                                        && EconHandler.manager.getMoney(player) < price) {
+                                        && EconHandler.getEconHandler().getMoney(player) < price) {
                                         if (failure != null) {
                                             failure.run();
                                         }
@@ -185,12 +186,12 @@ public class MainCommand extends Command {
                         });
                         return;
                     }
-                    if (EconHandler.manager != null) {
+                    if (EconHandler.getEconHandler() != null) {
                         PlotArea area = player.getApplicablePlotArea();
                         if (area != null) {
                             Expression<Double> priceEval = area.getPrices().get(cmd.getFullId());
                             Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                            if (price != 0d && EconHandler.manager.getMoney(player) < price) {
+                            if (price != 0d && EconHandler.getEconHandler().getMoney(player) < price) {
                                 if (failure != null) {
                                     failure.run();
                                 }
@@ -252,14 +253,14 @@ public class MainCommand extends Command {
                 if ("f".equals(args[0].substring(1))) {
                     confirm = new RunnableVal3<Command, Runnable, Runnable>() {
                         @Override public void run(Command cmd, Runnable success, Runnable failure) {
-                            if (EconHandler.manager != null) {
+                            if (EconHandler.getEconHandler() != null) {
                                 PlotArea area = player.getApplicablePlotArea();
                                 if (area != null) {
                                     Expression<Double> priceEval =
                                         area.getPrices().get(cmd.getFullId());
                                     Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                     if (price != 0d
-                                        && EconHandler.manager.getMoney(player) < price) {
+                                        && EconHandler.getEconHandler().getMoney(player) < price) {
                                         if (failure != null) {
                                             failure.run();
                                         }

@@ -40,12 +40,14 @@ import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.FileBytes;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +58,7 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     public static boolean REGENERATIVE_CLEAR = true;
 
-    private final HybridPlotWorld hybridPlotWorld;
+    @Getter private final HybridPlotWorld hybridPlotWorld;
 
     public HybridPlotManager(HybridPlotWorld hybridPlotWorld) {
         super(hybridPlotWorld);
@@ -110,15 +112,17 @@ public class HybridPlotManager extends ClassicPlotManager {
             return true;
         }
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
-        createSchemAbs(queue, pos1, pos2);
+        createSchemAbs(queue, pos1, pos2, true);
         queue.enqueue();
         return true;
     }
 
-    private void createSchemAbs(LocalBlockQueue queue, Location pos1, Location pos2) {
+    private void createSchemAbs(LocalBlockQueue queue, Location pos1, Location pos2,
+        boolean isRoad) {
         int size = hybridPlotWorld.SIZE;
         int minY;
-        if (Settings.Schematics.PASTE_ON_TOP) {
+        if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad
+            && Settings.Schematics.PASTE_ON_TOP)) {
             minY = hybridPlotWorld.SCHEM_Y;
         } else {
             minY = 1;
@@ -170,7 +174,7 @@ public class HybridPlotManager extends ClassicPlotManager {
             return true;
         }
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
-        createSchemAbs(queue, pos1, pos2);
+        createSchemAbs(queue, pos1, pos2, true);
         queue.enqueue();
         return true;
     }
@@ -184,9 +188,9 @@ public class HybridPlotManager extends ClassicPlotManager {
         pos1.setY(0);
         pos2.setY(Math.min(getWorldHeight(), 255));
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
-        createSchemAbs(queue, pos1, pos2);
+        createSchemAbs(queue, pos1, pos2, true);
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-            createSchemAbs(queue, pos1, pos2);
+            createSchemAbs(queue, pos1, pos2, true);
         }
         return queue.enqueue();
     }
@@ -199,6 +203,12 @@ public class HybridPlotManager extends ClassicPlotManager {
      * </p>
      */
     @Override public boolean clearPlot(Plot plot, final Runnable whenDone) {
+        if (RegionManager.manager.notifyClear(this)) {
+            //If this returns false, the clear didn't work
+            if (RegionManager.manager.handleClear(plot, whenDone, this)) {
+                return true;
+            }
+        }
         final String world = hybridPlotWorld.getWorldName();
         Location pos1 = plot.getBottomAbs();
         Location pos2 = plot.getExtendedTopAbs();
@@ -259,7 +269,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hybridPlotWorld.PLOT_SCHEMATIC) {
             return;
         }
-        createSchemAbs(queue, bottom, top);
+        createSchemAbs(queue, bottom, top, false);
     }
 
     /**

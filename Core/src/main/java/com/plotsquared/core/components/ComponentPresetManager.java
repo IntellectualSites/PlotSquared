@@ -172,12 +172,12 @@ public class ComponentPresetManager {
                     return false;
                 }
 
-                if (componentPreset.getCost() > 0.0D && EconHandler.manager != null && plot.getArea().useEconomy()) {
-                    if (EconHandler.manager.getMoney(player) < componentPreset.getCost()) {
+                if (componentPreset.getCost() > 0.0D && EconHandler.getEconHandler() != null && plot.getArea().useEconomy()) {
+                    if (EconHandler.getEconHandler().getMoney(player) < componentPreset.getCost()) {
                         Captions.PRESET_CANNOT_AFFORD.send(player);
                         return false;
                     } else {
-                        EconHandler.manager.withdrawMoney(player, componentPreset.getCost());
+                        EconHandler.getEconHandler().withdrawMoney(player, componentPreset.getCost());
                         Captions.REMOVED_BALANCE.send(player, componentPreset.getCost() + "");
                     }
                 }
@@ -198,7 +198,7 @@ public class ComponentPresetManager {
         for (int i = 0; i < allowedPresets.size(); i++) {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
-            if (preset.getCost() > 0 && EconHandler.manager != null && plot.getArea().useEconomy()){
+            if (preset.getCost() > 0 && EconHandler.getEconHandler() != null && plot.getArea().useEconomy()){
                 lore.add(Captions.PRESET_LORE_COST.getTranslated().replace("%cost%",
                     String.format("%.2f", preset.getCost())));
             }

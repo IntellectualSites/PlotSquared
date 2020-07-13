@@ -58,7 +58,7 @@ public class Buy extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
 
-        check(EconHandler.manager, Captions.ECON_DISABLED);
+        check(EconHandler.getEconHandler(), Captions.ECON_DISABLED);
         final Plot plot;
         if (args.length != 0) {
             checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
@@ -82,7 +82,7 @@ public class Buy extends Command {
         confirm.run(this, () -> {
             Captions.REMOVED_BALANCE.send(player, price);
 
-            EconHandler.manager.depositMoney(PlotSquared.imp().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
+            EconHandler.getEconHandler().depositMoney(PlotSquared.imp().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
 
             PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {

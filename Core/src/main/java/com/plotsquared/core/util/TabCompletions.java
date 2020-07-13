@@ -34,6 +34,7 @@ import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.uuid.UUIDMapping;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +57,9 @@ import java.util.stream.Collectors;
 public class TabCompletions {
 
     private final Cache<String, List<String>> cachedCompletionValues =
-        CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.SECONDS).build();
+        CacheBuilder.newBuilder()
+                .expireAfterWrite(Settings.Tab_Completions.CACHE_EXPIRATION, TimeUnit.SECONDS)
+                .build();
 
     private final Command booleanTrueCompletion = new Command(null, false, "true", "",
             RequiredType.NONE, null) {};
@@ -132,6 +135,65 @@ public class TabCompletions {
             return Collections.singletonList(booleanFalseCompletion);
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Get a list of integer numbers matching the given input. If the input string
+     * is empty, nothing will be returned. The list is unmodifiable.
+     *
+     * @param input        Input to filter with
+     * @param amountLimit  Maximum amount of suggestions
+     * @param highestLimit Highest number to include
+     * @return Unmodifiable list of number completions
+     */
+    @NotNull public List<Command> completeNumbers(@NotNull final String input,
+                                                  final int amountLimit, final int highestLimit) {
+        if (input.isEmpty() || input.length() > highestLimit || !MathMan.isInteger(input)) {
+            return Collections.emptyList();
+        }
+        int offset;
+        try {
+            offset = Integer.parseInt(input) * 10;
+        } catch (NumberFormatException ignored) {
+            return Collections.emptyList();
+        }
+        final List<String> commands = new ArrayList<>();
+        for (int i = offset; i < highestLimit && (offset - i + amountLimit) > 0; i++) {
+            commands.add(String.valueOf(i));
+        }
+        return asCompletions(commands.toArray(new String[0]));
+    }
+
+    /**
+     * Get a list of plot areas matching the given input.
+     * The list is unmodifiable.
+     *
+     * @param input Input to filter with
+     * @return Unmodifiable list of area completions
+     */
+    @NotNull public List<Command> completeAreas(@NotNull final String input) {
+        final List<Command> completions = new ArrayList<>();
+        for (final PlotArea area : PlotSquared.get().getPlotAreas()) {
+            String areaName = area.getWorldName();
+            if (area.getId() != null) {
+                areaName += ";" + area.getId();
+            }
+            if (!areaName.toLowerCase().startsWith(input.toLowerCase())) {
+                continue;
+            }
+            completions.add(new Command(null, false, areaName, "",
+                    RequiredType.NONE, null) {});
+        }
+        return Collections.unmodifiableList(completions);
+    }
+
+    @NotNull public List<Command> asCompletions(String... toFilter) {
+        final List<Command> completions = new ArrayList<>();
+        for (String completion : toFilter) {
+            completions.add(new Command(null, false, completion, "",
+                    RequiredType.NONE, null) {});
+        }
+        return Collections.unmodifiableList(completions);
     }
 
     /**

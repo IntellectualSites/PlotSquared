@@ -25,42 +25,67 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.IPlotMain;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class EconHandler {
 
-    public static EconHandler manager;
-    private static boolean initialized;
+    /**
+     * @deprecated This will be removed in the future,
+     * call {@link IPlotMain#getEconomyHandler()} instead.
+     */
+    @Deprecated @Nullable public static EconHandler manager;
 
-    public static EconHandler getEconHandler() {
-        if (initialized) {
-            return manager;
-        }
-        initialized = true;
-        return manager = PlotSquared.get().IMP.getEconomyHandler();
+    /**
+     * Initialize the economy handler using {@link IPlotMain#getEconomyHandler()}
+     * @deprecated Call {@link #init} instead or use {@link IPlotMain#getEconomyHandler()}
+     * which does this already.
+     */
+    @Deprecated public static void initializeEconHandler() {
+        manager = PlotSquared.get().IMP.getEconomyHandler();
     }
 
-    public double getMoney(PlotPlayer player) {
+    /**
+     * Return the econ handler instance, if one exists
+     *
+     * @return Economy handler instance
+     * @deprecated Call {@link IPlotMain#getEconomyHandler()} instead
+     */
+    @Deprecated @Nullable public static EconHandler getEconHandler() {
+        manager = PlotSquared.get().IMP.getEconomyHandler();
+        return manager;
+    }
+
+    public abstract boolean init();
+
+    public double getMoney(PlotPlayer<?> player) {
         if (player instanceof ConsolePlayer) {
             return Double.MAX_VALUE;
         }
         return getBalance(player);
     }
 
-    public abstract double getBalance(PlotPlayer player);
+    public abstract double getBalance(PlotPlayer<?> player);
 
-    public abstract void withdrawMoney(PlotPlayer player, double amount);
+    public abstract void withdrawMoney(PlotPlayer<?> player, double amount);
 
-    public abstract void depositMoney(PlotPlayer player, double amount);
+    public abstract void depositMoney(PlotPlayer<?> player, double amount);
 
     public abstract void depositMoney(OfflinePlotPlayer player, double amount);
 
-    public abstract boolean hasPermission(String world, String player, String perm);
+    /**
+     * @deprecated Use {@link PermHandler#hasPermission(String, String, String)} instead
+     */
+    @Deprecated public abstract boolean hasPermission(String world, String player, String perm);
 
-    public boolean hasPermission(String player, String perm) {
+    /**
+     * @deprecated Use {@link PermHandler#hasPermission(String, String)} instead
+     */
+    @Deprecated public boolean hasPermission(String player, String perm) {
         return hasPermission(null, player, perm);
     }
 }

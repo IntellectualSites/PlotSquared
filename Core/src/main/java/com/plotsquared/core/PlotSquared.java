@@ -154,12 +154,10 @@ public class PlotSquared {
     public File styleFile;
     public File configFile;
     public File worldsFile;
-    public File commandsFile;
     public File translationFile;
     public YamlConfiguration style;
     public YamlConfiguration worlds;
     public YamlConfiguration storage;
-    public YamlConfiguration commands;
     // Temporary hold the plots/clusters before the worlds load
     public HashMap<String, Set<PlotCluster>> clusters_tmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
@@ -258,6 +256,7 @@ public class PlotSquared {
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();
             }
+            startExpiryTasks();
             // Create Event utility class
             eventDispatcher = new EventDispatcher();
             // create Hybrid utility class
@@ -300,8 +299,7 @@ public class PlotSquared {
             }
             // Economy
             if (Settings.Enabled_Components.ECONOMY) {
-                TaskManager
-                    .runTask(() -> EconHandler.manager = PlotSquared.this.IMP.getEconomyHandler());
+                TaskManager.runTask(() -> EconHandler.initializeEconHandler());
             }
 
             if (Settings.Enabled_Components.COMPONENT_PRESETS) {

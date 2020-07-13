@@ -257,6 +257,9 @@ public class Settings extends Config {
         public static boolean LEGACY_DATABASE_SUPPORT = true;
         @Comment("Whether or not PlotSquared should return Unknown if it fails to fulfill a request")
         public static boolean UNKNOWN_AS_DEFAULT = true;
+        @Comment("Whether or not automatic background caching should be enabled. It is HIGHLY recommended to keep this turned on."
+            + " This should only be disabled if the server has a very large number of plots (>100k)")
+        public static boolean BACKGROUND_CACHING_ENABLED = true;
     }
 
 
@@ -385,6 +388,9 @@ public class Settings extends Config {
         @Comment(
             "Whether schematic based generation should paste schematic on top of plots, or from Y=1")
         public static boolean PASTE_ON_TOP = true;
+        @Comment(
+            "Whether schematic based road generation should paste schematic on top of roads, or from Y=1")
+        public static boolean PASTE_ROAD_ON_TOP = true;
     }
 
 
@@ -525,6 +531,13 @@ public class Settings extends Config {
         @Comment({"Average time per tick spent completing chunk tasks in ms.",
         "Waits (chunk task time / target_time) ticks before completely the next task."})
         public static int TARGET_TIME = 65;
+    }
+
+    @Comment("Settings related to tab completion")
+    public static final class Tab_Completions {
+        @Comment({"The time in seconds how long tab completions should remain in cache.",
+                 "0 will disable caching. Lower values may be less performant."})
+        public static int CACHE_EXPIRATION = 15;
     }
 
 

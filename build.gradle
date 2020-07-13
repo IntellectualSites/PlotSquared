@@ -30,7 +30,7 @@ ext {
     git = Grgit.open(dir: new File(rootDir.toString() + "/.git"))
 }
 
-def ver = "5.12.2"
+def ver = "5.12.5"
 def versuffix = ""
 ext {
     if (project.hasProperty("versionsuffix")) {
@@ -75,6 +75,8 @@ subprojects {
     clean.doFirst {
         delete("../target")
     }
+
+    javadoc.options.encoding = 'UTF-8'
 
     dependencies {
         compile group: 'org.json', name: 'json', version: '20200518'
