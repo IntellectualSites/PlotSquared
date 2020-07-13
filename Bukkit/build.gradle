@@ -37,7 +37,10 @@ dependencies {
     implementation("net.alpenblock:BungeePerms:4.0-dev-106")
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile('com.sk89q:squirrelid:1.0.0-SNAPSHOT'){ transitive = false }
-    compile("org.slf4j:slf4j-jdk14:2.0.0-alpha1")
+    // logging
+    implementation('org.apache.logging.log4j:log4j-slf4j-impl:2.13.3')
+    implementation('org.apache.logging.log4j:log4j-core:2.13.3')
+    implementation('org.apache.logging.log4j:log4j-api:2.13.3')
 }
 
 sourceCompatibility = 1.8
@@ -97,12 +100,16 @@ shadowJar {
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))
         include(dependency("org.slf4j:slf4j-jdk14:2.0.0-alpha1"))
+        include(dependency('org.apache.logging.log4j:log4j-slf4j-impl:2.13.3'))
+        include(dependency('org.apache.logging.log4j:log4j-core:2.13.3'))
+        include(dependency('org.apache.logging.log4j:log4j-api:2.13.3'))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
     relocate('com.sk89q.squirrelid', 'com.plotsquared.squirrelid')
     relocate('org.khelekore.prtree', 'com.plotsquared.prtree')
+    relocate('org.apache.logging.log4j', 'com.plotsquared.logging')
     archiveFileName = "${project.name}-${parent.version}.jar"
     destinationDirectory = file "../target"
 }

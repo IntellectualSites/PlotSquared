@@ -99,8 +99,8 @@ public class Config {
                     field.set(instance, value);
                     return;
                 } catch (final Throwable e) {
-                    logger.atDebug().addArgument(key).addArgument(value).addArgument(root.getSimpleName())
-                        .setCause(e).log("Invalid configuration value '{}: {}' in {}");
+                    logger.debug("Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
+                    e.printStackTrace();
                 }
             }
         }
@@ -289,9 +289,10 @@ public class Config {
             Field field = instance.getClass().getField(toFieldName(split[split.length - 1]));
             setAccessible(field);
             return field;
-        } catch (Throwable e) {
-            logger.atDebug().addArgument(StringMan.join(split, ".")).setCause(e)
-                .addArgument(toNodeName(instance.getClass().getSimpleName())).log("Invalid config field: {} for {}");
+        } catch (final Throwable e) {
+            logger.debug("Invalid config field: {} for {}",
+                StringMan.join(split, "."), toNodeName(instance.getClass().getSimpleName()));
+            e.printStackTrace();
             return null;
         }
     }

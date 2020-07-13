@@ -1735,8 +1735,8 @@ public class Plot {
 
     public boolean claim(@NotNull final PlotPlayer player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
-            logger.atDebug().addArgument(player.getName()).addArgument(this.getId().toCommaSeparatedString())
-                .log("Player {} attempted to claim plot {}, but was not allowed");
+            logger.debug("Player {} attempted to claim plot {}, but was not allowed",
+                player.getName(), this.getId().toCommaSeparatedString());
             return false;
         }
         return claim(player, teleport, schematic, true);
@@ -1835,8 +1835,8 @@ public class Plot {
             });
             return true;
         }
-        logger.atInfo().addArgument(this.getId().toCommaSeparatedString())
-            .addArgument(this.area.toString()).log("Failed to add plot {} to plot area {}");
+        logger.info("Failed to add plot {} to plot area {}",
+            this.getId().toCommaSeparatedString(), this.area.toString());
         return false;
     }
 
@@ -1934,12 +1934,12 @@ public class Plot {
      */
     public boolean moveData(Plot plot, Runnable whenDone) {
         if (!this.hasOwner()) {
-            logger.atDebug().addArgument(plot).log("{} is unowned (single)");
+            logger.debug("{} is unowned (single)", plot);
             TaskManager.runTask(whenDone);
             return false;
         }
         if (plot.hasOwner()) {
-            logger.atDebug().addArgument(plot).log("{} is unowned (multi)");
+            logger.debug("{} is unowned (multi)", plot);
             TaskManager.runTask(whenDone);
             return false;
         }
@@ -2647,7 +2647,7 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.NORTH));
             if (!tmp.getMerged(Direction.SOUTH)) {
                 // invalid merge
-                logger.atDebug().addArgument(this).log("Fixing invalid merge: {}");
+                logger.debug("Fixing invalid merge: {}", this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.SOUTH, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2664,7 +2664,7 @@ public class Plot {
             assert tmp != null;
             if (!tmp.getMerged(Direction.WEST)) {
                 // invalid merge
-                logger.atDebug().addArgument(this).log("Fixing invalid merge: {}");
+                logger.debug("Fixing invalid merge: {}", this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.WEST, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2681,7 +2681,7 @@ public class Plot {
             assert tmp != null;
             if (!tmp.getMerged(Direction.NORTH)) {
                 // invalid merge
-                logger.atDebug().addArgument(this).log("Fixing invalid merge: {}");
+                logger.debug("Fixing invalid merge: {}", this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.NORTH, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2697,7 +2697,7 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.WEST));
             if (!tmp.getMerged(Direction.EAST)) {
                 // invalid merge
-                logger.atDebug().addArgument(this).log("Fixing invalid merge: {}");
+                logger.debug("Fixing invalid merge: {}", this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.EAST, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2712,10 +2712,7 @@ public class Plot {
         Plot current;
         while ((current = frontier.poll()) != null) {
             if (!current.hasOwner() || current.settings == null) {
-                // Invalid plot
-                // merged onto unclaimed plot
-                logger.atDebug().addArgument(current).addArgument(current.getOwnerAbs())
-                    .log("Ignoring invalid merged plot: {} | {}");
+                logger.debug("Ignoring invalid merged plot: {} | {}", current, current.getOwnerAbs());
                 continue;
             }
             tmpSet.add(current);
