@@ -126,7 +126,7 @@ public class ContentMap {
             try {
                 entity.spawn(world, xOffset, zOffset);
             } catch (Exception e) {
-                logger.error("Failed to restore entity", e);
+                logger.error("[P2] Failed to restore entity", e);
             }
         }
         this.entities.clear();

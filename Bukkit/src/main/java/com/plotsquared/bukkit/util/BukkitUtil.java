@@ -508,7 +508,7 @@ public class BukkitUtil extends WorldUtil {
         @NonNull final BiomeType biomeType) {
         final World world = getWorld(worldName);
         if (world == null) {
-            logger.warn("An error occured while setting the biome because the world was null", new RuntimeException());
+            logger.warn("[P2] An error occured while setting the biome because the world was null", new RuntimeException());
             return;
         }
         final Biome biome = BukkitAdapter.adapt(biomeType);
@@ -622,7 +622,7 @@ public class BukkitUtil extends WorldUtil {
             }
             break;
             default: {
-                logger.error("Unknown entity category requested: {}", category);
+                logger.error("[P2] Unknown entity category requested: {}", category);
             }
             break;
         }

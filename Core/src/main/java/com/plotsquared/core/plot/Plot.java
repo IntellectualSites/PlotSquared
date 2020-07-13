@@ -1745,7 +1745,7 @@ public class Plot {
 
         if (updateDB) {
             if (!create(player.getUUID(), true)) {
-                logger.error("Player {} attempted to claim plot {}, but the database failed to update",
+                logger.error("[P2] Player {} attempted to claim plot {}, but the database failed to update",
                     player.getName(), this.getId().toCommaSeparatedString());
                 return false;
             }
@@ -1833,7 +1833,7 @@ public class Plot {
             });
             return true;
         }
-        logger.info("Failed to add plot {} to plot area {}",
+        logger.info("[P2] Failed to add plot {} to plot area {}",
             this.getId().toCommaSeparatedString(), this.area.toString());
         return false;
     }

@@ -74,7 +74,7 @@ public class ComponentPresetManager {
                 e.printStackTrace();
             }
             if (!created) {
-                logger.error("Failed to create components.yml");
+                logger.error("[P2] Failed to create components.yml");
                 this.guiName = "&cInvalid!";
                 this.presets = new ArrayList<>();
                 return;
@@ -90,7 +90,7 @@ public class ComponentPresetManager {
             try {
                 yamlConfiguration.save(file);
             } catch (IOException e) {
-                logger.error("Failed to save default values to components.yml", e);
+                logger.error("[P2] Failed to save default values to components.yml", e);
             }
         }
         this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
@@ -108,7 +108,7 @@ public class ComponentPresetManager {
             try {
                 yamlConfiguration.save(file);
             } catch (final IOException e) {
-                logger.error("Failed to save default values to components.yml", e);
+                logger.error("[P2] Failed to save default values to components.yml", e);
             }
             this.presets = defaultPreset;
         }

@@ -49,7 +49,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     @Override public void loadConfiguration(ConfigurationSection config) {
         if (!config.contains("plot.height")) {
             if (Settings.DEBUG) {
-                logger.info(" - Configuration is null? ({})", config.getCurrentPath());
+                logger.info("[P2]  - Configuration is null? ({})", config.getCurrentPath());
             }
 
         }

@@ -82,11 +82,11 @@ public class YamlConfiguration extends FileConfiguration {
                 }
                 Files.copy(file.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 if (Settings.DEBUG) {
-                    logger.error("Could not read: {}", file);
-                    logger.error("Renamed to: {}", file);
-                    logger.error("============ Full stacktrace ============");
+                    logger.error("[P2] Could not read: {}", file);
+                    logger.error("[P2] Renamed to: {}", file);
+                    logger.error("[P2] ============ Full stacktrace ============");
                     ex.printStackTrace();
-                    logger.error("=========================================");
+                    logger.error("[P2] =========================================");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -71,22 +71,22 @@ public class UpdateUtility implements Listener {
                     .getAsJsonObject();
                 spigotVersion = result.get("current_version").getAsString();
             } catch (IOException e) {
-                logger.error("Unable to check for updates. Error: {}", e.getMessage());
+                logger.error("[P2] Unable to check for updates. Error: {}", e.getMessage());
                 return;
             }
 
             if (internalVersion.isLaterVersion(spigotVersion)) {
-                logger.info("There appears to be a PlotSquared update available!");
-                logger.info("You are running version {}, the latest version is {}",
+                logger.info("[P2] There appears to be a PlotSquared update available!");
+                logger.info("[P2] You are running version {}, the latest version is {}",
                     internalVersion.versionString(), spigotVersion);
-                logger.info("https://www.spigotmc.org/resources/77506/updates");
+                logger.info("[P2] https://www.spigotmc.org/resources/77506/updates");
                 hasUpdate = true;
                 if (Settings.UpdateChecker.NOTIFY_ONCE) {
                     cancelTask();
                 }
             } else if (notify) {
                 notify = false;
-                logger.info("Congratulations! You are running the latest PlotSquared version");
+                logger.info("[P2] Congratulations! You are running the latest PlotSquared version");
             }
         }, 0L, Settings.UpdateChecker.POLL_RATE * 60 * 20);
     }

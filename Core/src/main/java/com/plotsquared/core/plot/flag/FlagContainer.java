@@ -148,7 +148,7 @@ import java.util.Map;
             this.updateSubscribers
                 .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
         } catch (IllegalStateException e) {
-            logger.info("Flag {} (class '{}') could not be added to the container because the "
+            logger.info("[P2] Flag {} (class '{}') could not be added to the container because the "
                 + "flag name exceeded the allowed limit of 64 characters. Please tell the developer "
                 + "of the flag to fix this.", flag.getName(), flag.getClass().getName());
             e.printStackTrace();

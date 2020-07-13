@@ -181,15 +181,15 @@ public class Trim extends SubCommand {
             @Override public void run(Set<BlockVector2> viable, final Set<BlockVector2> nonViable) {
                 Runnable regenTask;
                 if (regen) {
-                    logger.info("Starting regen task");
-                    logger.info(" - This is a VERY slow command");
-                    logger.info(" - It will say 'Trim done!' when complete");
+                    logger.info("[P2] Starting regen task");
+                    logger.info("[P2]  - This is a VERY slow command");
+                    logger.info("[P2]  - It will say 'Trim done!' when complete");
                     regenTask = new Runnable() {
                         @Override public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
                                 player.sendMessage("Trim done!");
-                                logger.info("Trim done!");
+                                logger.info("[P2] Trim done!");
                                 return;
                             }
                             Iterator<BlockVector2> iterator = nonViable.iterator();

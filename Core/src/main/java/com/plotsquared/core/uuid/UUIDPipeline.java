@@ -168,7 +168,7 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            logger.warn("(UUID) Request for {} timed out", username);
+            logger.warn("[P2] (UUID) Request for {} timed out", username);
             // This is completely valid, we just don't care anymore
         }
         return null;
@@ -191,7 +191,7 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            logger.warn("(UUID) Request for {} timed out", uuid);
+            logger.warn("[P2] (UUID) Request for {} timed out", uuid);
             // This is completely valid, we just don't care anymore
         }
         return null;
@@ -325,7 +325,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.info("(UUID) Failed to find all usernames");
+                logger.info("[P2] (UUID) Failed to find all usernames");
             }
 
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
@@ -388,7 +388,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.info("(UUID) Failed to find all UUIDs");
+                logger.info("[P2] (UUID) Failed to find all UUIDs");
             }
 
             throw new ServiceError("End of pipeline");

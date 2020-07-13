@@ -156,7 +156,7 @@ public abstract class SchematicHandler {
                                 boolean result = SchematicHandler.manager
                                     .save(value, directory + File.separator + name + ".schem");
                                 if (!result) {
-                                    logger.error("Failed to save {}", plot.getId());
+                                    logger.error("[P2] Failed to save {}", plot.getId());
                                 }
                                 TaskManager.runTask(THIS);
                             });

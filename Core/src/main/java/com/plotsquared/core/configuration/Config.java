@@ -98,12 +98,12 @@ public class Config {
                     field.set(instance, value);
                     return;
                 } catch (final Throwable e) {
-                    logger.error("Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
+                    logger.error("[P2] Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
                     e.printStackTrace();
                 }
             }
         }
-        logger.error("Failed to set config option '{}: {}' | {}", key, value, instance);
+        logger.error("[P2] Failed to set config option '{}: {}' | {}", key, value, instance);
     }
 
     public static boolean load(File file, Class<? extends Config> root) {
@@ -289,7 +289,7 @@ public class Config {
             setAccessible(field);
             return field;
         } catch (final Throwable e) {
-            logger.error("Invalid config field: {} for {}",
+            logger.error("[P2] Invalid config field: {} for {}",
                 StringMan.join(split, "."), toNodeName(instance.getClass().getSimpleName()));
             e.printStackTrace();
             return null;

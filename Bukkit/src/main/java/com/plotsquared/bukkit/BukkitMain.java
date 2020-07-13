@@ -225,12 +225,12 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
 
         if (PremiumVerification.isPremium()) {
-            logger.info("PlotSquared version licensed to Spigot user {}", getUserID());
-            logger.info("https://www.spigotmc.org/resources/{}", getResourceID());
-            logger.info("Download ID: {}", getDownloadID());
-            logger.info("Thanks for supporting us :)");
+            logger.info("[P2] PlotSquared version licensed to Spigot user {}", getUserID());
+            logger.info("[P2] https://www.spigotmc.org/resources/{}", getResourceID());
+            logger.info("[P2] Download ID: {}", getDownloadID());
+            logger.info("[P2] Thanks for supporting us :)");
         } else {
-            logger.info("Couldn't verify purchase :(");
+            logger.info("[P2] Couldn't verify purchase :(");
         }
 
         final UUIDPipeline impromptuPipeline = PlotSquared.get().getImpromptuUUIDPipeline();
@@ -250,7 +250,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             final OfflineModeUUIDService offlineModeUUIDService = new OfflineModeUUIDService();
             impromptuPipeline.registerService(offlineModeUUIDService);
             backgroundPipeline.registerService(offlineModeUUIDService);
-            logger.info("(UUID) Using the offline mode UUID service");
+            logger.info("[P2] (UUID) Using the offline mode UUID service");
         }
 
         final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
@@ -270,7 +270,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         final LuckPermsUUIDService luckPermsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
-            logger.info("(UUID) Using LuckPerms as a complementary UUID service");
+            logger.info("[P2] (UUID) Using LuckPerms as a complementary UUID service");
         } else {
             luckPermsUUIDService = null;
         }
@@ -278,7 +278,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         final BungeePermsUUIDService bungeePermsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
             bungeePermsUUIDService = new BungeePermsUUIDService();
-            logger.info("(UUID) Using BungeePerms as a complementary UUID service");
+            logger.info("[P2] (UUID) Using BungeePerms as a complementary UUID service");
         } else {
             bungeePermsUUIDService = null;
         }
@@ -286,7 +286,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         final EssentialsUUIDService essentialsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
-            logger.info("(UUID) Using Essentials as a complementary UUID service");
+            logger.info("[P2] (UUID) Using Essentials as a complementary UUID service");
         } else {
             essentialsUUIDService = null;
         }
@@ -297,7 +297,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 impromptuPipeline.registerService(paperUUIDService);
                 backgroundPipeline.registerService(paperUUIDService);
-                logger.info("(UUID) Using Paper as a complementary UUID service");
+                logger.info("[P2] (UUID) Using Paper as a complementary UUID service");
             }
 
             impromptuPipeline.registerService(sqLiteUUIDService);
@@ -350,9 +350,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
                 ChatFormatter.formatters.add(new PlaceholderFormatter());
             }
-            logger.info("PlotSquared hooked into PlaceholderAPI");
+            logger.info("[P2] PlotSquared hooked into PlaceholderAPI");
         } else {
-            logger.info("PlaceholderAPI is not in use. Hook deactivated");
+            logger.info("[P2] PlaceholderAPI is not in use. Hook deactivated");
         }
 
         this.startMetrics();
@@ -368,8 +368,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         try {
             this.backupManager = new SimpleBackupManager();
         } catch (final Exception e) {
-            logger.error("Failed to initialize backup manager", e);
-            logger.error("Backup features will be disabled");
+            logger.error("[P2] Failed to initialize backup manager", e);
+            logger.error("[P2] Backup features will be disabled");
             this.backupManager = new NullBackupManager();
         }
 
@@ -381,7 +381,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             this.worldManager = new BukkitWorldManager();
         }
 
-        logger.info("Using platform world manager: {}", this.worldManager.getName());
+        logger.info("[P2] Using platform world manager: {}", this.worldManager.getName());
 
         // Clean up potential memory leak
         Bukkit.getScheduler().runTaskTimer(this, () -> {
@@ -442,7 +442,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                         final Chunk[] chunks = world.getLoadedChunks();
                         if (chunks.length == 0) {
                             if (!Bukkit.unloadWorld(world, true)) {
-                                logger.warn("Failed to unload {}", world.getName());
+                                logger.warn("[P2] Failed to unload {}", world.getName());
                             }
                             return;
                         } else {
@@ -493,7 +493,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             }
         });
 
-        logger.info("(UUID) {} UUIDs will be cached", uuidQueue.size());
+        logger.info("[P2] (UUID) {} UUIDs will be cached", uuidQueue.size());
 
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             // Begin by reading all the SQLite cache at once
@@ -501,7 +501,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             // Now fetch names for all known UUIDs
             final int totalSize = uuidQueue.size();
             int read = 0;
-            logger.info("(UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
+            logger.info("[P2] (UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
             final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
 
             // Used to indicate that the second retrieval has been attempted
@@ -509,7 +509,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
 
             while (!uuidQueue.isEmpty() || !uuidList.isEmpty()) {
                 if (!uuidList.isEmpty() && secondRun) {
-                    logger.warn("(UUID) Giving up on last batch. Fetching new batch instead");
+                    logger.warn("[P2] (UUID) Giving up on last batch. Fetching new batch instead");
                     uuidList.clear();
                 }
                 if (uuidList.isEmpty()) {
@@ -534,14 +534,13 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                     // Print progress
                     final double percentage = ((double) read / (double) totalSize) * 100.0D;
                     if (Settings.DEBUG) {
-                        logger.info("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
+                        logger.info("[P2] (UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
                     }
                 } catch (final InterruptedException | ExecutionException e) {
-                    logger.error("(UUID) Failed to retrieve last batch. Will try again", e);
-                    e.printStackTrace();
+                    logger.error("[P2] (UUID) Failed to retrieve last batch. Will try again", e);
                 }
             }
-            logger.info("(UUID) PlotSquared has cached all UUIDs");
+            logger.info("[P2] (UUID) PlotSquared has cached all UUIDs");
         }, 10, TimeUnit.SECONDS);
     }
 
@@ -603,7 +602,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
     }
 
     @Override @SuppressWarnings("deprecation") public void runEntityTask() {
-        logger.info("KillAllEntities started");
+        logger.info("[P2] KillAllEntities started");
         TaskManager.runTaskRepeat(() -> PlotSquared.get().forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.getWorldName());
             try {
@@ -1013,7 +1012,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
             } catch (final Exception e) {
-                logger.error("Failed to reload world: {} | {}", world, e.getMessage());
+                logger.error("[P2] Failed to reload world: {} | {}", world, e.getMessage());
                 Bukkit.getServer().unloadWorld(world, false);
                 return;
             }

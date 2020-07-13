@@ -145,7 +145,7 @@ public abstract class RegionManager {
                     world + File.separator + "region" + File.separator + "r." + loc.getX() + "."
                         + loc.getZ() + ".mca";
                 File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
-                logger.info("- Deleting file: {} (max 1024 chunks)", file.getName());
+                logger.info("[P2] - Deleting file: {} (max 1024 chunks)", file.getName());
                 if (file.exists()) {
                     file.delete();
                 }

@@ -521,7 +521,7 @@ public class MainUtil {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    logger.info("No plot area string was supplied");
+                    logger.info("[P2] No plot area string was supplied");
                 }
                 return null;
             }

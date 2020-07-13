@@ -1063,7 +1063,7 @@ public abstract class PlotArea {
                 try {
                     flags.add(flagInstance.parse(split[1]));
                 } catch (final FlagParseException e) {
-                    logger.warn("Failed to parse default flag with key '{}' and value '{}'. "
+                    logger.warn("[P2] Failed to parse default flag with key '{}' and value '{}'. "
                                  + "Reason: {}. This flag will not be added as a default flag.",
                                  e.getFlag().getName(),
                                  e.getValue(),

@@ -97,7 +97,7 @@ public class PlotAnalysis {
     public static void calcOptimalModifiers(final Runnable whenDone, final double threshold) {
         if (running) {
             if (Settings.DEBUG) {
-                logger.info("Calibration task already in progress!");
+                logger.info("[P2] Calibration task already in progress!");
             }
             return;
         }
@@ -114,7 +114,7 @@ public class PlotAnalysis {
             @Override public void run() {
                 Iterator<Plot> iterator = plots.iterator();
                 if (Settings.DEBUG) {
-                    logger.info("- Reducing {} plots to those with sufficient data", plots.size());
+                    logger.info("[P2] - Reducing {} plots to those with sufficient data", plots.size());
                 }
                 while (iterator.hasNext()) {
                     Plot plot = iterator.next();
@@ -139,7 +139,7 @@ public class PlotAnalysis {
                 }
 
                 if (Settings.DEBUG) {
-                    logger.info("- Analyzing plot contents (this may take a while)");
+                    logger.info("[P2] - Analyzing plot contents (this may take a while)");
                 }
 
                 int[] changes = new int[plots.size()];
@@ -167,7 +167,7 @@ public class PlotAnalysis {
                                 (plot.getAverageRating() + plot.getSettings().getRatings().size())
                                     * 100);
                             if (Settings.DEBUG) {
-                                logger.info(" | {} (rating) {}", plot, ratings[i]);
+                                logger.info("[P2]  | {} (rating) {}", plot, ratings[i]);
                             }
                         }
                     }
@@ -181,7 +181,7 @@ public class PlotAnalysis {
                         break;
                     }
                     if (Settings.DEBUG) {
-                        logger.info(" | {}", queuePlot);
+                        logger.info("[P2]  | {}", queuePlot);
                     }
                     final Object lock = new Object();
                     TaskManager.runTask(new Runnable() {
@@ -213,7 +213,7 @@ public class PlotAnalysis {
                 }
 
                 if (Settings.DEBUG) {
-                    logger.info(" - Waiting on plot rating thread: {}%", mi.intValue() * 100 / plots.size());
+                    logger.info("[P2]  - Waiting on plot rating thread: {}%", mi.intValue() * 100 / plots.size());
                 }
 
                 try {
@@ -229,7 +229,7 @@ public class PlotAnalysis {
                 for (int i = 0; i < plots.size(); i++) {
                     Plot plot = plots.get(i);
                     if (Settings.DEBUG) {
-                        logger.info(" | {}", plot);
+                        logger.info("[P2]  | {}", plot);
                     }
                     PlotAnalysis analysis = plot.getComplexity(null);
 
@@ -247,7 +247,7 @@ public class PlotAnalysis {
                 }
 
                 if (Settings.DEBUG) {
-                    logger.info(" - Calculating rankings");
+                    logger.info("[P2]  - Calculating rankings");
                 }
 
                 int[] rankRatings = rank(ratings);
@@ -256,7 +256,7 @@ public class PlotAnalysis {
                 int optimalIndex = (int) Math.round((1 - threshold) * (n - 1));
 
                 if (Settings.DEBUG) {
-                    logger.info(" - Calculating rank correlation: ");
+                    logger.info("[P2]  - Calculating rank correlation: ");
                     logger.info(
                         " - The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
                     logger.info(
@@ -275,7 +275,7 @@ public class PlotAnalysis {
                     (int) (factorChanges * 1000 / MathMan.getMean(changes));
 
                 if (Settings.DEBUG) {
-                    logger.info(" - | changes {}", factorChanges);
+                    logger.info("[P2]  - | changes {}", factorChanges);
                 }
 
                 int[] rankFaces = rank(faces);
@@ -287,7 +287,7 @@ public class PlotAnalysis {
                     factorFaces == 1 ? 0 : (int) (factorFaces * 1000 / MathMan.getMean(faces));
 
                 if (Settings.DEBUG) {
-                    logger.info(" - | faces {}", factorFaces);
+                    logger.info("[P2]  - | faces {}", factorFaces);
                 }
 
                 int[] rankData = rank(data);
@@ -299,7 +299,7 @@ public class PlotAnalysis {
                     factor_data == 1 ? 0 : (int) (factor_data * 1000 / MathMan.getMean(data));
 
                 if (Settings.DEBUG) {
-                    logger.info(" - | data {}", factor_data);
+                    logger.info("[P2]  - | data {}", factor_data);
                 }
 
                 int[] rank_air = rank(air);
@@ -311,7 +311,7 @@ public class PlotAnalysis {
                     factor_air == 1 ? 0 : (int) (factor_air * 1000 / MathMan.getMean(air));
 
                 if (Settings.DEBUG) {
-                    logger.info("- | air {}", factor_air);
+                    logger.info("[P2] - | air {}", factor_air);
                 }
 
                 int[] rank_variety = rank(variety);
@@ -324,7 +324,7 @@ public class PlotAnalysis {
                     (int) (factor_variety * 1000 / MathMan.getMean(variety));
 
                 if (Settings.DEBUG) {
-                    logger.info("- | variety {}", factor_variety);
+                    logger.info("[P2] - | variety {}", factor_variety);
                 }
 
                 int[] rank_changes_sd = rank(changes_sd);
@@ -337,7 +337,7 @@ public class PlotAnalysis {
                     (int) (factor_changes_sd * 1000 / MathMan.getMean(changes_sd));
 
                 if (Settings.DEBUG) {
-                    logger.info(" - | changed_sd {}", factor_changes_sd);
+                    logger.info("[P2]  - | changed_sd {}", factor_changes_sd);
                 }
 
                 int[] rank_faces_sd = rank(faces_sd);
@@ -350,7 +350,7 @@ public class PlotAnalysis {
                     (int) (factor_faces_sd * 1000 / MathMan.getMean(faces_sd));
 
                 if (Settings.DEBUG) {
-                    logger.info(" - | faced_sd {}", factor_faces_sd);
+                    logger.info("[P2]  - | faced_sd {}", factor_faces_sd);
                 }
 
                 int[] rank_data_sd = rank(data_sd);
@@ -363,7 +363,7 @@ public class PlotAnalysis {
                     (int) (factor_data_sd * 1000 / MathMan.getMean(data_sd));
 
                 if (Settings.DEBUG) {
-                    logger.info(" - | data_sd {}", factor_data_sd);
+                    logger.info("[P2]  - | data_sd {}", factor_data_sd);
                 }
 
                 int[] rank_air_sd = rank(air_sd);
@@ -375,7 +375,7 @@ public class PlotAnalysis {
                     factor_air_sd == 1 ? 0 : (int) (factor_air_sd * 1000 / MathMan.getMean(air_sd));
 
                 if (Settings.DEBUG) {
-                    logger.info(" - | air_sd {}", factor_air_sd);
+                    logger.info("[P2]  - | air_sd {}", factor_air_sd);
                 }
 
                 int[] rank_variety_sd = rank(variety_sd);
@@ -388,13 +388,13 @@ public class PlotAnalysis {
                     (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
 
                 if (Settings.DEBUG) {
-                    logger.info(" - | variety_sd {}", factor_variety_sd);
+                    logger.info("[P2]  - | variety_sd {}", factor_variety_sd);
                 }
 
                 int[] complexity = new int[n];
 
                 if (Settings.DEBUG) {
-                    logger.info(" Calculating threshold");
+                    logger.info("[P2]  Calculating threshold");
                 }
 
                 int max = 0;
@@ -426,7 +426,7 @@ public class PlotAnalysis {
                     logln(getCC(n, sum(square(getSD(rankComplexity, rankRatings)))));
                     if (optimalComplexity == Integer.MAX_VALUE) {
                         if (Settings.DEBUG) {
-                            logger.info("Insufficient data to determine correlation! {} | {}",
+                            logger.info("[P2] Insufficient data to determine correlation! {} | {}",
                                 optimalIndex, n);
                         }
                         running = false;
@@ -447,7 +447,7 @@ public class PlotAnalysis {
 
                 // Save calibration
                 if (Settings.DEBUG) {
-                    logger.info(" Saving calibration");
+                    logger.info("[P2]  Saving calibration");
                 }
                 Settings.AUTO_CLEAR.put("auto-calibrated", settings);
                 Settings.save(PlotSquared.get().worldsFile);
@@ -456,7 +456,7 @@ public class PlotAnalysis {
                     plot.removeRunning();
                 }
                 if (Settings.DEBUG) {
-                    logger.info(" Done!");
+                    logger.info("[P2]  Done!");
                 }
                 whenDone.run();
             }
@@ -465,7 +465,7 @@ public class PlotAnalysis {
 
     public static void logln(Object obj) {
         if (Settings.DEBUG) {
-            logger.info(log(obj));
+            logger.info("[P2] " + log(obj));
         }
     }
 

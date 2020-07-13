@@ -164,7 +164,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         // Dump world settings
         if (Settings.DEBUG) {
-            logger.info("- Dumping settings for ClassicPlotWorld with name {}", this.getWorldName());
+            logger.info("[P2] - Dumping settings for ClassicPlotWorld with name {}", this.getWorldName());
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);
@@ -180,7 +180,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 } catch (final IllegalAccessException e) {
                     value = String.format("Failed to parse: %s", e.getMessage());
                 }
-                logger.info("-- {} = {}", name, value);
+                logger.info("[P2] -- {} = {}", name, value);
             }
         }
     }
@@ -282,12 +282,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
 
             if (Settings.DEBUG) {
-                logger.info(" - plot schematic: {}", schematic3File.getPath());
+                logger.info("[P2]  - plot schematic: {}", schematic3File.getPath());
             }
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
             if (Settings.DEBUG) {
-                logger.info(" - schematic: false");
+                logger.info("[P2]  - schematic: false");
             }
             return;
         }
@@ -364,7 +364,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         if (y >= height) {
-            logger.error("Error adding overlay block. `y > height`");
+            logger.error("[P2] Error adding overlay block. `y > height`");
             return;
         }
         existing[y] = id;

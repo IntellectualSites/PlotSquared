@@ -413,24 +413,24 @@ public abstract class HybridUtils {
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend);
                         if (!regenedRoad && Settings.DEBUG) {
-                            logger.info("Failed to regenerate roads");
+                            logger.info("[P2] Failed to regenerate roads");
                         }
                         ChunkManager.manager.unloadChunk(area.getWorldName(), chunk, true);
                     }
                     if (Settings.DEBUG) {
-                        logger.info("Cancelled road task");
+                        logger.info("[P2] Cancelled road task");
                     }
                     return;
                 }
                 count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
-                    logger.info("Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
+                    logger.info("[P2] Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
                 }
                 if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    logger.info("Finished road conversion");
+                    logger.info("[P2] Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
@@ -443,9 +443,9 @@ public abstract class HybridUtils {
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
                                     if (Settings.DEBUG) {
-                                        logger.info("Updating .mcr: {}, {} (approx 1024 chunks)",
+                                        logger.info("[P2] Updating .mcr: {}, {} (approx 1024 chunks)",
                                             loc.getX(), loc.getZ());
-                                        logger.info("- Remaining: {}", HybridUtils.regions.size());
+                                        logger.info("[P2] - Remaining: {}", HybridUtils.regions.size());
                                     }
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
@@ -463,7 +463,7 @@ public abstract class HybridUtils {
                                             boolean regenedRoads =
                                                 regenerateRoad(area, chunk, extend);
                                             if (!regenedRoads && Settings.DEBUG) {
-                                                logger.info("Failed to regenerate road");
+                                                logger.info("[P2] Failed to regenerate road");
                                             }
                                         }
                                     }
@@ -474,7 +474,7 @@ public abstract class HybridUtils {
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
-                            logger.error("Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
+                            logger.error("[P2] Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
                                 area.getWorldHash(), loc.getX(), loc.getZ());
                             int sx = loc.getX() << 5;
                             int sz = loc.getZ() << 5;

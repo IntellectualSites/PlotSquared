@@ -72,7 +72,7 @@ public abstract class Expression<T> {
                     return (Double) exec.getEngine().eval(expression.replace("{arg}", "" + arg));
                 } catch (ScriptException e) {
                     if (Settings.DEBUG) {
-                        logger.info("Invalid expression: {}", expression);
+                        logger.info("[P2] Invalid expression: {}", expression);
                     }
                     e.printStackTrace();
                 }
