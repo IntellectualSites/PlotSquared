@@ -62,7 +62,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 @SuppressWarnings("unused")
 public class ChunkListener implements Listener {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChunkListener.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ChunkListener.class.getSimpleName());
 
     private RefMethod methodGetHandleChunk;
     private RefField mustSave;
@@ -294,12 +294,9 @@ public class ChunkListener implements Listener {
                     toRemove--;
                 }
             }
-
-            logger.debug("PlotSquared detected chunk and processed it: {},{}", chunk.getX() << 4, chunk.getZ() << 4);
         }
         if (tiles.length > Settings.Chunk_Processor.MAX_TILES) {
             if (unload) {
-                logger.debug("PlotSquared detected chunk: {},{}", chunk.getX() << 4, chunk.getZ() << 4);
                 cleanChunk(chunk);
                 return true;
             }

@@ -46,7 +46,7 @@ import java.util.Set;
 
 public abstract class RegionManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(RegionManager.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + RegionManager.class.getSimpleName());
 
     public static RegionManager manager = null;
 

@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 
 public class LocationOffsetDelegateLocalBlockQueue extends DelegateLocalBlockQueue {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocationOffsetDelegateLocalBlockQueue.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + LocationOffsetDelegateLocalBlockQueue.class.getSimpleName());
 
     private final boolean[][] canPlace;
     private final int blockX;
@@ -64,9 +64,6 @@ public class LocationOffsetDelegateLocalBlockQueue extends DelegateLocalBlockQue
                 return super.setBlock(x, y, z, id);
             }
         } catch (final Exception e) {
-            logger.debug("Failed set block at {},{},{} (to = {}) with offset {};{}. Translated to: {}, {}",
-                x, y, z, id, blockX, blockZ, x - blockX,
-                z - blockZ);
             throw e;
         }
         return false;

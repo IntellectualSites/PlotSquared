@@ -50,7 +50,7 @@ import java.util.Map;
     permission = "plots.admin")
 public class Debug extends SubCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger(Debug.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Debug.class.getSimpleName());
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length > 0) {

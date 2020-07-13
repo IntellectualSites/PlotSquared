@@ -48,7 +48,7 @@ import java.util.Locale;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class IncendoPaster {
 
-    private static Logger logger = LoggerFactory.getLogger(IncendoPaster.class);
+    private static Logger logger = LoggerFactory.getLogger("P2/" + IncendoPaster.class);
 
     /**
      * Upload service URL
@@ -161,7 +161,7 @@ public final class IncendoPaster {
         if (!httpURLConnection.getResponseMessage().contains("OK")) {
             if (httpURLConnection.getResponseCode() == 413) {
                 final long size = content.length;
-                logger.debug("Paste too big > size: {}MB", size / 1_000_000);
+                logger.error("Paste too big > size: {}MB", size / 1_000_000);
             }
             throw new IllegalStateException(String
                 .format("Server returned status: %d %s", httpURLConnection.getResponseCode(),

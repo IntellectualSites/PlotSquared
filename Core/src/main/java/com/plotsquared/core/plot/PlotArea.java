@@ -87,7 +87,7 @@ import java.util.function.Consumer;
  */
 public abstract class PlotArea {
 
-    private static final Logger logger = LoggerFactory.getLogger(PlotArea.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotArea.class.getSimpleName());
 
     protected final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
     @Getter @NotNull private final String worldName;

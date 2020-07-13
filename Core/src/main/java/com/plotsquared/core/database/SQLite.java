@@ -42,7 +42,7 @@ import java.sql.Statement;
  */
 public class SQLite extends Database {
 
-    private static final Logger logger = LoggerFactory.getLogger(SQLite.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + SQLite.class.getSimpleName());
 
     private final String dbLocation;
     private Connection connection;

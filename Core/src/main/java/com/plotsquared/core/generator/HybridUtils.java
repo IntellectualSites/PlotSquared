@@ -78,7 +78,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class HybridUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(HybridUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + HybridUtils.class.getSimpleName());
 
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
@@ -412,12 +412,14 @@ public abstract class HybridUtils {
                         BlockVector2 chunk = iter.next();
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend);
-                        if (!regenedRoad) {
-                            logger.debug("Failed to regenerate roads");
+                        if (!regenedRoad && Settings.DEBUG) {
+                            logger.info("Failed to regenerate roads");
                         }
                         ChunkManager.manager.unloadChunk(area.getWorldName(), chunk, true);
                     }
-                    logger.debug("Cancelled road task");
+                    if (Settings.DEBUG) {
+                        logger.info("Cancelled road task");
+                    }
                     return;
                 }
                 count.incrementAndGet();
@@ -425,7 +427,6 @@ public abstract class HybridUtils {
                     logger.info("Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
                 }
                 if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
-                    logger.debug("Regenerating plot walls");
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
@@ -441,8 +442,11 @@ public abstract class HybridUtils {
                                         HybridUtils.regions.iterator();
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
-                                    logger.debug("Updating .mcr: {}, {} (approx 1024 chunks)", loc.getX(), loc.getZ());
-                                    logger.debug("- Remaining: {}", HybridUtils.regions.size());
+                                    if (Settings.DEBUG) {
+                                        logger.info("Updating .mcr: {}, {} (approx 1024 chunks)",
+                                            loc.getX(), loc.getZ());
+                                        logger.info("- Remaining: {}", HybridUtils.regions.size());
+                                    }
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
                                 }
@@ -458,8 +462,8 @@ public abstract class HybridUtils {
                                             iterator.remove();
                                             boolean regenedRoads =
                                                 regenerateRoad(area, chunk, extend);
-                                            if (!regenedRoads) {
-                                                logger.debug("Failed to regenerate road");
+                                            if (!regenedRoads && Settings.DEBUG) {
+                                                logger.info("Failed to regenerate road");
                                             }
                                         }
                                     }
@@ -470,7 +474,7 @@ public abstract class HybridUtils {
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
-                            logger.debug("Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
+                            logger.error("Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
                                 area.getWorldHash(), loc.getX(), loc.getZ());
                             int sx = loc.getX() << 5;
                             int sz = loc.getZ() << 5;
@@ -481,7 +485,6 @@ public abstract class HybridUtils {
                                             true);
                                 }
                             }
-                            logger.debug("- Potentially skipping 1024 chunks");
                         }
                         GlobalBlockQueue.IMP.addEmptyTask(() -> TaskManager.runTaskLater(task, 20));
                     });

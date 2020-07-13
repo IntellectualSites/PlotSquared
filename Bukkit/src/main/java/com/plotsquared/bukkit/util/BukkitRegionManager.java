@@ -76,7 +76,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
 public class BukkitRegionManager extends RegionManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(BukkitRegionManager.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
 
     public static boolean isIn(CuboidRegion region, int x, int z) {
         return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX()
@@ -93,8 +93,6 @@ public class BukkitRegionManager extends RegionManager {
         } else {
             final Semaphore semaphore = new Semaphore(1);
             try {
-                logger.debug("Attempting to make an asynchronous call to getLoadedChunks."
-                    + " Will halt the calling thread until completed.");
                 semaphore.acquire();
                 Bukkit.getScheduler().runTask(BukkitMain.getPlugin(BukkitMain.class), () -> {
                     for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))

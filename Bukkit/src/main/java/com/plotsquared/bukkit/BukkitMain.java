@@ -101,7 +101,6 @@ import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
-import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.CacheUUIDService;
@@ -161,7 +160,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<Player> {
 
-    private static final Logger logger = LoggerFactory.getLogger(BukkitMain.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitMain.class.getSimpleName());
 
     private static final int BSTATS_ID = 1404;
     @Getter private static WorldEdit worldEdit;
@@ -195,8 +194,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                logger.debug(StringMan.getString(Bukkit.getBukkitVersion()));
-                logger.debug(StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
                 return new int[] {1, 13, 0};
             }
         }
@@ -445,7 +442,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                         final Chunk[] chunks = world.getLoadedChunks();
                         if (chunks.length == 0) {
                             if (!Bukkit.unloadWorld(world, true)) {
-                                logger.debug("Failed to unload {}", world.getName());
+                                logger.warn("Failed to unload {}", world.getName());
                             }
                             return;
                         } else {
@@ -536,7 +533,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                     uuidList.clear();
                     // Print progress
                     final double percentage = ((double) read / (double) totalSize) * 100.0D;
-                    logger.debug("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
+                    if (Settings.DEBUG) {
+                        logger.info("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
+                    }
                 } catch (final InterruptedException | ExecutionException e) {
                     logger.error("(UUID) Failed to retrieve last batch. Will try again", e);
                     e.printStackTrace();
@@ -897,7 +896,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 return econ;
             }
         } catch (Throwable ignored) {
-            logger.debug("No economy handler detected");
         }
         return null;
     }

@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
     usage = "/plot claim")
 public class Claim extends SubCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger(Claim.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Claim.class.getSimpleName());
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String schematic = null;

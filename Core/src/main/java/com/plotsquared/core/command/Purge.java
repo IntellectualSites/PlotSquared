@@ -55,7 +55,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
     confirmation = true)
 public class Purge extends SubCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger(Purge.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Purge.class.getSimpleName());
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -174,7 +174,9 @@ public class Purge extends SubCommand {
             "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
         boolean finalClear = clear;
         Runnable run = () -> {
-            logger.debug("Calculating plots to purge, please wait...");
+            if (Settings.DEBUG) {
+                logger.info("Calculating plots to purge, please wait...");
+            }
             HashSet<Integer> ids = new HashSet<>();
             Iterator<Plot> iterator = toDelete.iterator();
             AtomicBoolean cleared = new AtomicBoolean(true);
@@ -187,8 +189,11 @@ public class Purge extends SubCommand {
                             try {
                                 ids.add(plot.temp);
                                 if (finalClear) {
-                                    plot.clear(false, true, () ->
-                                        logger.debug("Plot {} cleared by purge", plot.getId()));
+                                    plot.clear(false, true, () -> {
+                                        if (Settings.DEBUG) {
+                                            logger.info("Plot {} cleared by purge", plot.getId());
+                                        }
+                                    });
                                 } else {
                                     plot.removeSign();
                                 }

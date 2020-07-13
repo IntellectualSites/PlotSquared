@@ -75,7 +75,7 @@ import java.util.stream.Collectors;
  */
 public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer {
 
-    private static final Logger logger = LoggerFactory.getLogger(PlotPlayer.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotPlayer.class.getSimpleName());
 
     public static final String META_LAST_PLOT = "lastplot";
     public static final String META_LOCATION = "location";
@@ -584,8 +584,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
                 owned.deletePlot(null);
-                logger.debug("Plot {} was deleted + cleared due to {} getting banned",
-                    owned.getId(), getName());
+                if (Settings.DEBUG) {
+                    logger.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
+                }
             }
         }
         if (ExpireManager.IMP != null) {

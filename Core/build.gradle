@@ -19,9 +19,7 @@ dependencies {
     implementation("org.jetbrains:annotations:19.0.0")
     implementation("org.khelekore:prtree:1.7.0-SNAPSHOT")
     // logging
-    implementation('org.apache.logging.log4j:log4j-slf4j-impl:2.13.3')
-    implementation('org.apache.logging.log4j:log4j-core:2.13.3')
-    implementation('org.apache.logging.log4j:log4j-api:2.13.3')
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1")
 }
 
 sourceCompatibility = 1.8

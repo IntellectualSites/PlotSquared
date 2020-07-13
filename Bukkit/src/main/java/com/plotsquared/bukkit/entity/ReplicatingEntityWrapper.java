@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.entity;
 
+import com.plotsquared.core.configuration.Settings;
 import org.bukkit.Art;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -61,7 +62,7 @@ import java.util.List;
 
 public final class ReplicatingEntityWrapper extends EntityWrapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReplicatingEntityWrapper.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ReplicatingEntityWrapper.class.getSimpleName());
 
     private final short depth;
     private final int hash;
@@ -331,10 +332,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                     this.dataByte = (byte) 0;
                 }
                 storeLiving((LivingEntity) entity);
-                return;
             // END LIVING //
-            default:
-                logger.debug("Could not identify entity: {}", entity.getType());
         }
     }
 
@@ -733,7 +731,9 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 restoreLiving((LivingEntity) entity);
                 return entity;
             default:
-                logger.debug("Could not identify entity: {}", entity.getType());
+                if (Settings.DEBUG) {
+                    logger.info("Could not identify entity: {}", entity.getType());
+                }
                 return entity;
             // END LIVING
         }

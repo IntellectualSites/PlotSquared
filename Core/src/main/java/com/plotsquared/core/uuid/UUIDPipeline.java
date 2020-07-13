@@ -64,7 +64,7 @@ import java.util.function.Function;
  */
 public class UUIDPipeline {
 
-    private static final Logger logger = LoggerFactory.getLogger(UUIDPipeline.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + UUIDPipeline.class.getSimpleName());
 
     private final Executor executor;
     private final List<UUIDService> serviceList;
@@ -325,7 +325,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.debug("(UUID) Failed to find all usernames");
+                logger.info("(UUID) Failed to find all usernames");
             }
 
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
@@ -388,7 +388,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.debug("(UUID) Failed to find all UUIDs");
+                logger.info("(UUID) Failed to find all UUIDs");
             }
 
             throw new ServiceError("End of pipeline");

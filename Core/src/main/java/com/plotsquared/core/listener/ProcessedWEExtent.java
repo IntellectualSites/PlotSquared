@@ -52,7 +52,7 @@ import java.util.Set;
 
 public class ProcessedWEExtent extends AbstractDelegateExtent {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProcessedWEExtent.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ProcessedWEExtent.class.getSimpleName());
 
     private final Set<CuboidRegion> mask;
     private final String world;
@@ -103,7 +103,6 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 return false;
             } else {
                 tileEntityCount[0]++;
-                logger.debug("Detected unsafe WorldEdit: {},{},{}", location.getX(), location.getY(), location.getZ());
             }
         }
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
@@ -134,7 +133,6 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         this.Ecount++;
         if (this.Ecount > Settings.Chunk_Processor.MAX_ENTITIES) {
             this.Eblocked = true;
-            logger.debug("Detected unsafe WorldEdit: {},{},{}", location.getX(), location.getY(), location.getZ());
         }
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
             location.getBlockZ())) {

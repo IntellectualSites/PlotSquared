@@ -25,9 +25,9 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.DebugExec;
 import com.plotsquared.core.command.MainCommand;
+import com.plotsquared.core.configuration.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ import javax.script.ScriptException;
 
 public abstract class Expression<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(Expression.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Expression.class.getSimpleName());
 
     public static <U> Expression<U> constant(final U value) {
         return new Expression<U>() {
@@ -71,7 +71,9 @@ public abstract class Expression<T> {
                 try {
                     return (Double) exec.getEngine().eval(expression.replace("{arg}", "" + arg));
                 } catch (ScriptException e) {
-                    logger.debug("Invalid expression: {}", expression);
+                    if (Settings.DEBUG) {
+                        logger.info("Invalid expression: {}", expression);
+                    }
                     e.printStackTrace();
                 }
                 return 0d;

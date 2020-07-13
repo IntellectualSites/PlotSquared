@@ -45,7 +45,7 @@ import java.net.URL;
 
 public class UpdateUtility implements Listener {
 
-    private static final Logger logger = LoggerFactory.getLogger(UpdateUtility.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + UpdateUtility.class.getSimpleName());
 
     public static PlotVersion internalVersion;
     public static String spigotVersion;

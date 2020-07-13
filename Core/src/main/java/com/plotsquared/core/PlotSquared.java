@@ -27,7 +27,6 @@ package com.plotsquared.core;
 
 import com.plotsquared.core.command.WE_Anywhere;
 import com.plotsquared.core.components.ComponentPresetManager;
-import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -137,7 +136,8 @@ import java.util.zip.ZipInputStream;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class PlotSquared {
 
-    private static final Logger logger = LoggerFactory.getLogger(PlotSquared.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotSquared.class.getSimpleName());
+
     private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
     private static PlotSquared instance;
     // Implementation
@@ -196,9 +196,9 @@ public class PlotSquared {
         try {
             new ReflectionUtils(this.IMP.getNMSPackage());
             try {
-                URL url = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
+                URL logurl = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
                 this.jarFile = new File(
-                    new URL(url.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
+                    new URL(logurl.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
                         .toURI().getPath());
             } catch (MalformedURLException | URISyntaxException | SecurityException e) {
                 e.printStackTrace();
@@ -329,11 +329,11 @@ public class PlotSquared {
                             continue;
                         }
                         if (!WorldUtil.IMP.isWorld(world) && !world.equals("*")) {
-                            logger.debug("`{}` was not properly loaded - {} will now try to load it properly",
+                            logger.warn("`{}` was not properly loaded - {} will now try to load it properly",
                                 world, imp().getPluginName());
-                            logger.debug(" - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
-                            logger.debug(" - Your world management plugin may be faulty (or non existent)");
-                            logger.debug(" This message may also be a false positive and could be ignored.");
+                            logger.warn(" - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
+                            logger.warn(" - Your world management plugin may be faulty (or non existent)");
+                            logger.warn(" This message may also be a false positive and could be ignored.");
                             PlotSquared.this.IMP.setGenerator(world);
                         }
                     }
@@ -364,7 +364,6 @@ public class PlotSquared {
             e.printStackTrace();
         }
 
-        logger.debug("{} is now enabled!", imp().getPluginName());
     }
 
     /**
@@ -511,8 +510,8 @@ public class PlotSquared {
                 chunkInts.forEach(l -> chunks.add(BlockVector2.at(l[0], l[1])));
                 int height = (int) list.get(2);
                 logger.info("Incomplete road regeneration found. Restarting in world {} with height {}", plotArea.getWorldName(), height);
-                logger.debug("  Regions: {}", regions.size());
-                logger.debug("  Chunks: {}", chunks.size());
+                logger.info(" - Regions: {}", regions.size());
+                logger.info(" - Chunks: {}", chunks.size());
                 HybridUtils.UPDATE = true;
                 HybridUtils.manager.scheduleRoadUpdate(plotArea, regions, height, chunks);
             } catch (IOException | ClassNotFoundException e) {
@@ -1079,7 +1078,6 @@ public class PlotSquared {
         }
         if (type == PlotAreaType.NORMAL) {
             if (plotAreaManager.getPlotAreas(world, null).length != 0) {
-                logger.debug("Would possibly already loaded: {}", world);
                 return;
             }
             IndependentPlotGenerator plotGenerator;
@@ -1132,7 +1130,6 @@ public class PlotSquared {
             ConfigurationSection areasSection = worldSection.getConfigurationSection("areas");
             if (areasSection == null) {
                 if (plotAreaManager.getPlotAreas(world, null).length != 0) {
-                    logger.debug("World possibly already loaded: {}", world);
                     return;
                 }
                 logger.info("Detected world load for '{}'", world);
@@ -1765,7 +1762,7 @@ public class PlotSquared {
         if (Settings.DEBUG) {
             Map<String, Object> components = Settings.getFields(Settings.Enabled_Components.class);
             for (Entry<String, Object> component : components.entrySet()) {
-                logger.debug("Key: {} | Value: {}", component.getKey(), component.getValue());
+                logger.info("Key: {} | Value: {}", component.getKey(), component.getValue());
             }
         }
     }

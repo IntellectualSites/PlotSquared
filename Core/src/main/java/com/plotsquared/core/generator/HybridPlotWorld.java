@@ -60,7 +60,7 @@ import java.util.Locale;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
-    private static final Logger logger = LoggerFactory.getLogger(HybridPlotWorld.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + HybridPlotWorld.class.getSimpleName());
     private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
@@ -160,12 +160,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             setupSchematics();
         } catch (Exception event) {
             event.printStackTrace();
-            logger.debug("- road schematics are disabled for this world");
         }
 
         // Dump world settings
         if (Settings.DEBUG) {
-            logger.debug("- Dumping settings for ClassicPlotWorld with name {}", this.getWorldName());
+            logger.info("- Dumping settings for ClassicPlotWorld with name {}", this.getWorldName());
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);
@@ -181,7 +180,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 } catch (final IllegalAccessException e) {
                     value = String.format("Failed to parse: %s", e.getMessage());
                 }
-                logger.debug("-- {} = {}", name, value);
+                logger.info("-- {} = {}", name, value);
             }
         }
     }
@@ -282,10 +281,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
 
-            logger.debug(" - plot schematic: {}", schematic3File.getPath());
+            if (Settings.DEBUG) {
+                logger.info(" - plot schematic: {}", schematic3File.getPath());
+            }
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
-            logger.debug(" - schematic: false");
+            if (Settings.DEBUG) {
+                logger.info(" - schematic: false");
+            }
             return;
         }
         this.ROAD_SCHEMATIC_ENABLED = true;

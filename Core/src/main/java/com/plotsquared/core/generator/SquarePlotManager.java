@@ -44,7 +44,7 @@ import java.util.Set;
  */
 public abstract class SquarePlotManager extends GridPlotManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(SquarePlotManager.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + SquarePlotManager.class.getSimpleName());
 
     private final SquarePlotWorld squarePlotWorld;
 
@@ -229,7 +229,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                     return plot.getMerged(Direction.NORTHWEST) ? id : null;
             }
         } catch (Exception ignored) {
-            logger.debug( "Invalid plot / road width in settings.yml for world: {}", squarePlotWorld
+            logger.error( "Invalid plot / road width in settings.yml for world: {}", squarePlotWorld
                 .getWorldName());
         }
         return null;

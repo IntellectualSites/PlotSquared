@@ -84,7 +84,7 @@ import java.util.concurrent.CompletableFuture;
     category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger(DebugExec.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + DebugExec.class.getSimpleName());
 
     private ScriptEngine engine;
     private Bindings scope;

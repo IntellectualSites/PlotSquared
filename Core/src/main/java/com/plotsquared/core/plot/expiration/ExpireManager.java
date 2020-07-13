@@ -43,7 +43,6 @@ import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
@@ -57,14 +56,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ExpireManager {
 
-    private final Logger logger = LoggerFactory.getLogger(ExpireManager.class);
+    private final Logger logger = LoggerFactory.getLogger("P2/" + ExpireManager.class);
 
     public static ExpireManager IMP;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
@@ -83,7 +81,6 @@ public class ExpireManager {
     }
 
     public void addTask(ExpiryTask task) {
-        logger.debug("Adding new expiry task!");
         this.tasks.add(task);
     }
 
@@ -424,19 +421,7 @@ public class ExpireManager {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
         }
-        Set<Plot> plots = plot.getConnectedPlots();
         plot.deletePlot(whenDone);
-        PlotAnalysis changed = plot.getComplexity(null);
-        int changes = changed == null ? 0 : changed.changes_sd;
-        int modified = changed == null ? 0 : changed.changes;
-        logger.debug("Deleted expired plot: {} | User: {} | Delta: {}/{} | Connected: {}",
-            plot, plot.getOwner(), changes, modified, StringMan.getString(plots));
-        logger.debug(" - Area: {}", plot.getArea());
-        if (plot.hasOwner()) {
-            logger.debug(" - Owner: {}", plot.getOwner());
-        } else {
-            logger.debug(" - Owner: Unowned");
-        }
     }
 
     public long getAge(UUID uuid) {

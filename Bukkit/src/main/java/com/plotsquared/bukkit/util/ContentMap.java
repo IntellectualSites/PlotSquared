@@ -47,7 +47,7 @@ import java.util.Set;
 
 public class ContentMap {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContentMap.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ContentMap.class.getSimpleName());
 
     final Set<EntityWrapper> entities;
     final Map<PlotLoc, BaseBlock[]> allBlocks;

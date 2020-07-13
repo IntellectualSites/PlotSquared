@@ -47,7 +47,7 @@ import java.util.Map;
 
 public class Config {
 
-    private static final Logger logger = LoggerFactory.getLogger(Config.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Config.class.getSimpleName());
 
     /**
      * Get the value for a node<br>
@@ -71,7 +71,6 @@ public class Config {
                 }
             }
         }
-        logger.debug("Failed to get config option: {}", key);
         return null;
     }
 
@@ -99,12 +98,12 @@ public class Config {
                     field.set(instance, value);
                     return;
                 } catch (final Throwable e) {
-                    logger.debug("Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
+                    logger.error("Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
                     e.printStackTrace();
                 }
             }
         }
-        logger.debug("Failed to set config option '{}: {}' | {}", key, value, instance);
+        logger.error("Failed to set config option '{}: {}' | {}", key, value, instance);
     }
 
     public static boolean load(File file, Class<? extends Config> root) {
@@ -290,7 +289,7 @@ public class Config {
             setAccessible(field);
             return field;
         } catch (final Throwable e) {
-            logger.debug("Invalid config field: {} for {}",
+            logger.error("Invalid config field: {} for {}",
                 StringMan.join(split, "."), toNodeName(instance.getClass().getSimpleName()));
             e.printStackTrace();
             return null;

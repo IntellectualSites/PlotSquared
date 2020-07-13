@@ -80,7 +80,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("SqlDialectInspection")
 public class SQLManager implements AbstractDB {
 
-    private static final Logger logger = LoggerFactory.getLogger(SQLManager.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + SQLManager.class.getSimpleName());
 
     // Public final
     public final String SET_OWNER;
@@ -358,12 +358,12 @@ public class SQLManager implements AbstractDB {
                     try {
                         task.run();
                     } catch (Throwable e) {
-                        logger.debug("============ DATABASE ERROR ============");
-                        logger.debug("============ DATABASE ERROR ============");
-                        logger.debug("There was an error updating the database.");
-                        logger.debug(" - It will be corrected on shutdown");
+                        logger.error("============ DATABASE ERROR ============");
+                        logger.error("============ DATABASE ERROR ============");
+                        logger.error("There was an error updating the database.");
+                        logger.error(" - It will be corrected on shutdown");
                         e.printStackTrace();
-                        logger.debug("========================================");
+                        logger.error("========================================");
                     }
                 }
                 commit();
@@ -413,12 +413,12 @@ public class SQLManager implements AbstractDB {
                         }
                         lastTask = task;
                     } catch (Throwable e) {
-                        logger.debug("============ DATABASE ERROR ============");
-                        logger.debug("There was an error updating the database.");
-                        logger.debug(" - It will be corrected on shutdown");
-                        logger.debug("========================================");
+                        logger.error("============ DATABASE ERROR ============");
+                        logger.error("There was an error updating the database.");
+                        logger.error(" - It will be corrected on shutdown");
+                        logger.error("========================================");
                         e.printStackTrace();
-                        logger.debug("========================================");
+                        logger.error("========================================");
                     }
                 }
                 if (statement != null && task != null) {
@@ -458,12 +458,12 @@ public class SQLManager implements AbstractDB {
                         }
                         lastTask = task;
                     } catch (Throwable e) {
-                        logger.debug("============ DATABASE ERROR ============");
-                        logger.debug("There was an error updating the database.");
-                        logger.debug(" - It will be corrected on shutdown");
-                        logger.debug("========================================");
+                        logger.error("============ DATABASE ERROR ============");
+                        logger.error("There was an error updating the database.");
+                        logger.error(" - It will be corrected on shutdown");
+                        logger.error("========================================");
                         e.printStackTrace();
-                        logger.debug("========================================");
+                        logger.error("========================================");
                     }
                 }
                 if (statement != null && task != null) {
@@ -504,12 +504,12 @@ public class SQLManager implements AbstractDB {
                         }
                         lastTask = task;
                     } catch (Throwable e) {
-                        logger.debug("============ DATABASE ERROR ============");
-                        logger.debug("There was an error updating the database.");
-                        logger.debug(" - It will be corrected on shutdown");
-                        logger.debug("========================================");
+                        logger.error("============ DATABASE ERROR ============");
+                        logger.error("There was an error updating the database.");
+                        logger.error(" - It will be corrected on shutdown");
+                        logger.error("========================================");
                         e.printStackTrace();
-                        logger.debug("========================================");
+                        logger.error("========================================");
                     }
                 }
                 if (statement != null && task != null) {
@@ -533,12 +533,12 @@ public class SQLManager implements AbstractDB {
                 this.plotTasks.clear();
             }
         } catch (Throwable e) {
-            logger.debug("============ DATABASE ERROR ============");
-            logger.debug("There was an error updating the database.");
-            logger.debug(" - It will be corrected on shutdown");
-            logger.debug("========================================");
+            logger.error("============ DATABASE ERROR ============");
+            logger.error("There was an error updating the database.");
+            logger.error(" - It will be corrected on shutdown");
+            logger.error("========================================");
             e.printStackTrace();
-            logger.debug("========================================");
+            logger.error("========================================");
         }
         return false;
     }
@@ -626,7 +626,7 @@ public class SQLManager implements AbstractDB {
                                         }
                                     })))));
                     } catch (SQLException e) {
-                        logger.error("Failed to set all flags and member tiers for plots", e);
+                        logger.warn("Failed to set all flags and member tiers for plots", e);
                         try {
                             SQLManager.this.connection.commit();
                         } catch (SQLException e1) {
@@ -635,7 +635,7 @@ public class SQLManager implements AbstractDB {
                     }
                 });
             } catch (Exception e) {
-                logger.debug("Warning! Failed to set all helper for plots", e);
+                logger.warn("Warning! Failed to set all helper for plots", e);
                 try {
                     SQLManager.this.connection.commit();
                 } catch (SQLException e1) {
@@ -704,10 +704,14 @@ public class SQLManager implements AbstractDB {
                 try {
                     preparedStatement.executeBatch();
                 } catch (final Exception e) {
-                    logger.error("Failed to store flag values for plot with entry ID: {}", e);
+                    logger.error("Failed to store flag values for plot with entry ID: {}", plot);
+                    e.printStackTrace();
                     continue;
                 }
-                logger.debug("- Finished converting flag values for plot with entry ID: {}", plot.getId());
+                if (Settings.DEBUG) {
+                    logger.info("- Finished converting flag values for plot with entry ID: {}",
+                        plot.getId());
+                }
             }
         } catch (final Exception e) {
             logger.error("Failed to store flag values", e);
@@ -820,7 +824,6 @@ public class SQLManager implements AbstractDB {
                 last = subList.size();
                 preparedStmt.addBatch();
             }
-            logger.debug("Batch 1: {} | {}", count, objList.get(0).getClass().getCanonicalName());
             preparedStmt.executeBatch();
             preparedStmt.clearParameters();
             preparedStmt.close();
@@ -863,7 +866,6 @@ public class SQLManager implements AbstractDB {
                 last = subList.size();
                 preparedStmt.addBatch();
             }
-            logger.debug("Batch 2: {} | {}", count, objList.get(0).getClass().getCanonicalName());
             preparedStmt.executeBatch();
             preparedStmt.clearParameters();
             preparedStmt.close();
@@ -877,7 +879,6 @@ public class SQLManager implements AbstractDB {
                     mod.setSQL(preparedStmt, obj);
                     preparedStmt.addBatch();
                 }
-                logger.debug("Batch 3");
                 preparedStmt.executeBatch();
             } catch (SQLException e3) {
                 logger.error("Failed to save all", e);
@@ -1129,7 +1130,6 @@ public class SQLManager implements AbstractDB {
             return;
         }
         boolean addConstraint = create == tables.length;
-        logger.debug("Creating tables");
         try (Statement stmt = this.connection.createStatement()) {
             if (this.mySQL) {
                 stmt.addBatch("CREATE TABLE IF NOT EXISTS `" + this.prefix + "plot` ("
@@ -1369,8 +1369,6 @@ public class SQLManager implements AbstractDB {
      * @param plot
      */
     @Override public void delete(final Plot plot) {
-        logger.debug("Deleting plot. ID: {} | World: {} | Owner: {} | Index: {}",
-            plot.getId(), plot.getWorldName(), plot.getOwnerAbs(), plot.temp);
         deleteSettings(plot);
         deleteDenied(plot);
         deleteHelpers(plot);
@@ -1396,8 +1394,6 @@ public class SQLManager implements AbstractDB {
      * @param plot
      */
     @Override public void createPlotSettings(final int id, Plot plot) {
-        logger.debug("Creating plot plot. ID: {} | World: {} | Owner: {} | Index: {}",
-            plot.getId(), plot.getWorldName(), plot.getOwnerAbs(), plot.temp);
         addPlotTask(plot, new UniqueStatement("createPlotSettings") {
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, id);
@@ -1555,7 +1551,6 @@ public class SQLManager implements AbstractDB {
                             "SELECT plot_plot_id, user_uuid, COUNT(*) FROM " + this.prefix + table
                                 + " GROUP BY plot_plot_id, user_uuid HAVING COUNT(*) > 1");
                         if (result.next()) {
-                            logger.debug("Backing up {}", this.prefix + table);
                             result.close();
                             statement.executeUpdate(
                                 "CREATE TABLE " + this.prefix + table + "_tmp AS SELECT * FROM "
@@ -1565,7 +1560,6 @@ public class SQLManager implements AbstractDB {
                                 "CREATE TABLE " + this.prefix + table + " AS SELECT * FROM "
                                     + this.prefix + table + "_tmp");
                             statement.executeUpdate("DROP TABLE " + this.prefix + table + "_tmp");
-                            logger.debug("Restoring {}", this.prefix + table);
                         }
                     }
                 } catch (SQLException e2) {
@@ -1682,7 +1676,10 @@ public class SQLManager implements AbstractDB {
                         String.format("%.1f", ((float) flagsProcessed / totalFlags) * 100));
                 }
 
-                logger.debug("- Finished converting flags for plot with entry ID: {}", plotFlagEntry.getKey());
+                if (Settings.DEBUG) {
+                    logger.info("- Finished converting flags for plot with entry ID: {}",
+                        plotFlagEntry.getKey());
+                }
             }
         } catch (final Exception e) {
             logger.error("Failed to store flag values", e);
@@ -1791,8 +1788,8 @@ public class SQLManager implements AbstractDB {
                             if (last != null) {
                                 if (Settings.Enabled_Components.DATABASE_PURGER) {
                                     toDelete.add(last.temp);
-                                } else {
-                                    logger.debug("Plot #{}({}) in `{}plot` is a duplicate."
+                                } else if (Settings.DEBUG) {
+                                    logger.info("Plot #{}({}) in `{}plot` is a duplicate."
                                         + " Delete this plot or set `database-purger: true` in the settings.yml", id, last, this.prefix);
                                 }
                             }
@@ -1823,8 +1820,8 @@ public class SQLManager implements AbstractDB {
                                 plot.getSettings().getRatings().put(user, r.getInt("rating"));
                             } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                                 toDelete.add(id);
-                            } else {
-                                logger.debug("Entry #{}({}) in `plot_rating` does not exist."
+                            } else if (Settings.DEBUG) {
+                                logger.info("Entry #{}({}) in `plot_rating` does not exist."
                                     + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                             }
                         }
@@ -1851,8 +1848,8 @@ public class SQLManager implements AbstractDB {
                             plot.getTrusted().add(user);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else {
-                            logger.debug("Entry #{}({}) in `plot_helpers` does not exist."
+                        } else if (Settings.DEBUG) {
+                            logger.info("Entry #{}({}) in `plot_helpers` does not exist."
                                 + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
                     }
@@ -1878,8 +1875,8 @@ public class SQLManager implements AbstractDB {
                             plot.getMembers().add(user);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else {
-                            logger.debug("Entry #{}({}) in `plot_trusted` does not exist."
+                        } else if (Settings.DEBUG) {
+                            logger.info("Entry #{}({}) in `plot_trusted` does not exist."
                                 + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
                     }
@@ -1905,8 +1902,8 @@ public class SQLManager implements AbstractDB {
                             plot.getDenied().add(user);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else {
-                            logger.debug("Entry #{}({}) in `plot_denied` does not exist."
+                        } else if (Settings.DEBUG) {
+                            logger.info("Entry #{}({}) in `plot_denied` does not exist."
                                 + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
                     }
@@ -1928,15 +1925,14 @@ public class SQLManager implements AbstractDB {
                             final PlotFlag<?, ?> plotFlag =
                                 GlobalFlagContainer.getInstance().getFlagFromString(flag);
                             if (plotFlag == null) {
-                                logger.debug("Adding unknown flag {} to plot with ID {}", flag, id);
                                 plot.getFlagContainer().addUnknownFlag(flag, value);
                             } else {
                                 try {
                                     plot.getFlagContainer().addFlag(plotFlag.parse(value));
                                 } catch (final FlagParseException e) {
                                     e.printStackTrace();
-                                    logger.debug("Plot with ID {} has an invalid value:", id);
-                                    logger.debug("Failed to parse flag '{}', value '{}': {}",
+                                    logger.error("Plot with ID {} has an invalid value:", id);
+                                    logger.error("Failed to parse flag '{}', value '{}': {}",
                                         plotFlag.getName(), e.getValue(), e.getErrorMessage());
                                     if (!invalidFlags.containsKey(plot)) {
                                         invalidFlags.put(plot, new ArrayList<>());
@@ -1946,8 +1942,8 @@ public class SQLManager implements AbstractDB {
                             }
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else {
-                            logger.debug("Entry #{}({}) in `plot_flags` does not exist."
+                        } else if (Settings.DEBUG) {
+                            logger.info("Entry #{}({}) in `plot_flags` does not exist."
                                 + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
                     }
@@ -1957,8 +1953,11 @@ public class SQLManager implements AbstractDB {
                         for (final Map.Entry<Plot, Collection<PlotFlag<?, ?>>> plotFlagEntry : invalidFlags
                             .entrySet()) {
                             for (final PlotFlag<?, ?> flag : plotFlagEntry.getValue()) {
-                                logger.debug("Plot {} has an invalid flag ({}). A fix has been attempted",
-                                    plotFlagEntry.getKey(), flag.getName());
+                                if (Settings.DEBUG) {
+                                    logger.info(
+                                        "Plot {} has an invalid flag ({}). A fix has been attempted",
+                                        plotFlagEntry.getKey(), flag.getName());
+                                }
                                 removeFlag(plotFlagEntry.getKey(), flag);
                             }
                         }
@@ -1999,8 +1998,8 @@ public class SQLManager implements AbstractDB {
                             plot.getSettings().setMerged(merged);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else {
-                            logger.debug("Entry #{}({}) in `plot_settings` does not exist."
+                        } else if (Settings.DEBUG) {
+                            logger.info("Entry #{}({}) in `plot_settings` does not exist."
                                 + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
                     }
@@ -2017,11 +2016,13 @@ public class SQLManager implements AbstractDB {
             for (Entry<String, AtomicInteger> entry : noExist.entrySet()) {
                 String worldName = entry.getKey();
                 invalidPlot = true;
-                logger.debug("Warning! Found {} plots in DB for non existent world: '{}'",
-                    entry.getValue().intValue(), worldName);
+                if (Settings.DEBUG) {
+                    logger.info("Warning! Found {} plots in DB for non existent world: '{}'",
+                        entry.getValue().intValue(), worldName);
+                }
             }
-            if (invalidPlot) {
-                logger.debug("Warning! Please create the world(s) or remove the plots using the purge command");
+            if (invalidPlot && Settings.DEBUG) {
+                logger.info("Warning! Please create the world(s) or remove the plots using the purge command");
             }
         } catch (SQLException e) {
             logger.error("Failed to load plots", e);
@@ -2163,8 +2164,6 @@ public class SQLManager implements AbstractDB {
                         int count = 0;
                         int last = -1;
                         for (int j = 0; j <= amount; j++) {
-                            int purging = Math.max(j * packet, size);
-                            logger.debug("Purging {}/{}", purging, size);
                             List<Integer> subList =
                                 uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
                             if (subList.isEmpty()) {
@@ -2214,7 +2213,9 @@ public class SQLManager implements AbstractDB {
                         return;
                     }
                 }
-                logger.debug("Successfully purged {} plots", uniqueIds.size());
+                if (Settings.DEBUG) {
+                    logger.info("Successfully purged {} plots", uniqueIds.size());
+                }
             }
         });
     }
@@ -2714,8 +2715,8 @@ public class SQLManager implements AbstractDB {
                     cluster = clusters.get(id);
                     if (cluster != null) {
                         cluster.helpers.add(user);
-                    } else {
-                        logger.debug("Cluster #{}({}) in cluster_helpers does not exist."
+                    } else if (Settings.DEBUG) {
+                        logger.warn("Cluster #{}({}) in cluster_helpers does not exist."
                             + " Please create the cluster or remove this entry", id, cluster);
                     }
                 }
@@ -2733,8 +2734,8 @@ public class SQLManager implements AbstractDB {
                     cluster = clusters.get(id);
                     if (cluster != null) {
                         cluster.invited.add(user);
-                    } else {
-                        logger.debug("Cluster #{}({}) in cluster_helpers does not exist."
+                    } else if (Settings.DEBUG) {
+                        logger.warn("Cluster #{}({}) in cluster_helpers does not exist."
                             + " Please create the cluster or remove this entry", id, cluster);
                     }
                 }
@@ -2768,8 +2769,8 @@ public class SQLManager implements AbstractDB {
                             merged[3 - i] = (m & 1 << i) != 0;
                         }
                         cluster.settings.setMerged(merged);
-                    } else {
-                        logger.debug("Cluster #{}({}) in cluster_helpers does not exist."
+                    } else if (Settings.DEBUG) {
+                        logger.warn("Cluster #{}({}) in cluster_helpers does not exist."
                             + " Please create the cluster or remove this entry", id, cluster);
                     }
                 }
@@ -2779,10 +2780,10 @@ public class SQLManager implements AbstractDB {
             for (Entry<String, Integer> entry : noExist.entrySet()) {
                 String a = entry.getKey();
                 invalidPlot = true;
-                logger.debug("Warning! Found {} clusters in DB for non existent area; '{}'", noExist.get(a), a);
+                logger.warn("Warning! Found {} clusters in DB for non existent area; '{}'", noExist.get(a), a);
             }
             if (invalidPlot) {
-                logger.debug("Warning! Please create the world(s) or remove the clusters using the purge command");
+                logger.warn("Warning! Please create the world(s) or remove the clusters using the purge command");
             }
         } catch (SQLException e) {
             logger.error("Failed to load clusters", e);
@@ -2977,7 +2978,7 @@ public class SQLManager implements AbstractDB {
         if (!isValid()) {
             reconnect();
         }
-        logger.debug("All DB transactions during this session are being validated (This may take a while if corrections need to be made)");
+        logger.info("All DB transactions during this session are being validated (This may take a while if corrections need to be made)");
         commit();
         while (true) {
             if (!sendBatch()) {
@@ -3009,19 +3010,16 @@ public class SQLManager implements AbstractDB {
             }
             HashMap<PlotId, Plot> worldPlots = database.get(plot.getArea().toString());
             if (worldPlots == null) {
-                logger.debug(" - Creating plot (1): {}", plot);
                 toCreate.add(plot);
                 continue;
             }
             Plot dataPlot = worldPlots.remove(plot.getId());
             if (dataPlot == null) {
-                logger.debug(" - Creating plot (2): {}", plot);
                 toCreate.add(plot);
                 continue;
             }
             // owner
             if (!plot.getOwnerAbs().equals(dataPlot.getOwnerAbs())) {
-                logger.debug(" - Setting owner: {} -> {}", plot, MainUtil.getName(plot.getOwnerAbs()));
                 setOwner(plot, plot.getOwnerAbs());
             }
             // trusted
@@ -3030,7 +3028,6 @@ public class SQLManager implements AbstractDB {
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getTrusted().clone();
                 toRemove.removeAll(plot.getTrusted());
                 toAdd.removeAll(dataPlot.getTrusted());
-                logger.debug(" - Correcting {} trusted for: {}", toAdd.size() + toRemove.size(), plot);
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
                         removeTrusted(plot, uuid);
@@ -3047,7 +3044,6 @@ public class SQLManager implements AbstractDB {
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getMembers().clone();
                 toRemove.removeAll(plot.getMembers());
                 toAdd.removeAll(dataPlot.getMembers());
-                logger.debug(" - Correcting {} members for: {}", toAdd.size() + toRemove.size());
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
                         removeMember(plot, uuid);
@@ -3064,7 +3060,6 @@ public class SQLManager implements AbstractDB {
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getDenied().clone();
                 toRemove.removeAll(plot.getDenied());
                 toAdd.removeAll(dataPlot.getDenied());
-                logger.debug(" - Correcting {} denied for: {}", toAdd.size() + toRemove.size());
                 if (!toRemove.isEmpty()) {
                     for (UUID uuid : toRemove) {
                         removeDenied(plot, uuid);
@@ -3079,7 +3074,6 @@ public class SQLManager implements AbstractDB {
             boolean[] pm = plot.getMerged();
             boolean[] dm = dataPlot.getMerged();
             if (pm[0] != dm[0] || pm[1] != dm[1]) {
-                logger.debug(" - Correcting merge for: {}", plot);
                 setMerged(dataPlot, plot.getMerged());
             }
             Set<PlotFlag<?, ?>> pf = plot.getFlags();

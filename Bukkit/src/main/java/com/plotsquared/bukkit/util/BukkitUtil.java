@@ -112,7 +112,7 @@ import java.util.stream.Stream;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class BukkitUtil extends WorldUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(BukkitUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
 
     private static String lastString = null;
     private static World lastWorld = null;

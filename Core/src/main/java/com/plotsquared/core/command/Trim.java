@@ -64,7 +64,7 @@ import java.util.Set;
     category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger(Trim.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Trim.class.getSimpleName());
     public static ArrayList<Plot> expired = null;
     private static volatile boolean TASK = false;
 

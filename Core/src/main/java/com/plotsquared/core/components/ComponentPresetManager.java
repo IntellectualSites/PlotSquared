@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
 
 public class ComponentPresetManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(ComponentPresetManager.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ComponentPresetManager.class.getSimpleName());
 
     private final List<ComponentPreset> presets;
     private final String guiName;

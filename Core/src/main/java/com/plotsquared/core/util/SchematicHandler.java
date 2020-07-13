@@ -96,7 +96,7 @@ import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(SchematicHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + SchematicHandler.class.getSimpleName());
     public static SchematicHandler manager;
 
     private boolean exportAll = false;
@@ -151,17 +151,12 @@ public abstract class SchematicHandler {
                 final Runnable THIS = this;
                 SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                     @Override public void run(final CompoundTag value) {
-                        if (value == null) {
-                            logger.debug("Skipped plot {}", plot.getId());
-                        } else {
+                        if (value != null) {
                             TaskManager.runTaskAsync(() -> {
-                                logger.debug("ID: {}", plot.getId());
                                 boolean result = SchematicHandler.manager
                                     .save(value, directory + File.separator + name + ".schem");
                                 if (!result) {
                                     logger.error("Failed to save {}", plot.getId());
-                                } else {
-                                    logger.debug("success: {}", plot.getId());
                                 }
                                 TaskManager.runTask(THIS);
                             });
@@ -205,7 +200,6 @@ public abstract class SchematicHandler {
                     + 1) < WIDTH) || (
                     (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset
                         + 1) < LENGTH) || (HEIGHT > 256)) {
-                    logger.debug("Schematic is too large");
                     TaskManager.runTask(whenDone);
                     return;
                 }

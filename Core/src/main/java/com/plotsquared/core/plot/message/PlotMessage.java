@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public class PlotMessage {
 
-    private static final Logger logger = LoggerFactory.getLogger(PlotMessage.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotMessage.class.getSimpleName());
 
     private Object builder;
 

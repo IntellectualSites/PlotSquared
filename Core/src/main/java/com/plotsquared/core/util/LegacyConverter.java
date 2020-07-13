@@ -46,7 +46,7 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public final class LegacyConverter {
 
-    private static final Logger logger = LoggerFactory.getLogger(LegacyConverter.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + LegacyConverter.class.getSimpleName());
     public static final String CONFIGURATION_VERSION = "post_flattening";
     private static final HashMap<String, ConfigurationType> TYPE_MAP = new HashMap<>();
 

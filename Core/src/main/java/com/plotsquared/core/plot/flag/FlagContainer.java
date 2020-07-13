@@ -45,7 +45,7 @@ import java.util.Map;
  */
 @EqualsAndHashCode(of = "flagMap") public class FlagContainer {
 
-    private static final Logger logger = LoggerFactory.getLogger(FlagContainer.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + FlagContainer.class.getSimpleName());
 
     private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();

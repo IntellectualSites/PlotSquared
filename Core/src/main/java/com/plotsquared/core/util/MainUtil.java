@@ -99,7 +99,7 @@ import java.util.stream.IntStream;
  */
 public class MainUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(MainUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + MainUtil.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
 
     static {
@@ -156,7 +156,6 @@ public class MainUtil {
     public static void upload(UUID uuid, String file, String extension,
         final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
-            logger.debug("Write task cannot be null");
             TaskManager.runTask(whenDone);
             return;
         }
@@ -897,8 +896,6 @@ public class MainUtil {
                 for (File file : files) {
                     if (file.isDirectory()) {
                         deleteDirectory(file);
-                    } else {
-                        logger.debug("Deleting file: {} | {}", file, file.delete());
                     }
                 }
             }

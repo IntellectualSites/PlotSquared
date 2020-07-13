@@ -119,7 +119,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  */
 public class Plot {
 
-    private static final Logger logger = LoggerFactory.getLogger(Plot.class);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Plot.class.getSimpleName());
 
     public static final int MAX_HEIGHT = 256;
 
@@ -1735,8 +1735,6 @@ public class Plot {
 
     public boolean claim(@NotNull final PlotPlayer player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
-            logger.debug("Player {} attempted to claim plot {}, but was not allowed",
-                player.getName(), this.getId().toCommaSeparatedString());
             return false;
         }
         return claim(player, teleport, schematic, true);
@@ -1747,7 +1745,7 @@ public class Plot {
 
         if (updateDB) {
             if (!create(player.getUUID(), true)) {
-                logger.debug("Player {} attempted to claim plot {}, but the database failed to update",
+                logger.error("Player {} attempted to claim plot {}, but the database failed to update",
                     player.getName(), this.getId().toCommaSeparatedString());
                 return false;
             }
@@ -1934,12 +1932,10 @@ public class Plot {
      */
     public boolean moveData(Plot plot, Runnable whenDone) {
         if (!this.hasOwner()) {
-            logger.debug("{} is unowned (single)", plot);
             TaskManager.runTask(whenDone);
             return false;
         }
         if (plot.hasOwner()) {
-            logger.debug("{} is unowned (multi)", plot);
             TaskManager.runTask(whenDone);
             return false;
         }
@@ -2647,7 +2643,6 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.NORTH));
             if (!tmp.getMerged(Direction.SOUTH)) {
                 // invalid merge
-                logger.debug("Fixing invalid merge: {}", this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.SOUTH, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2664,7 +2659,6 @@ public class Plot {
             assert tmp != null;
             if (!tmp.getMerged(Direction.WEST)) {
                 // invalid merge
-                logger.debug("Fixing invalid merge: {}", this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.WEST, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2681,7 +2675,6 @@ public class Plot {
             assert tmp != null;
             if (!tmp.getMerged(Direction.NORTH)) {
                 // invalid merge
-                logger.debug("Fixing invalid merge: {}", this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.NORTH, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2697,7 +2690,6 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.WEST));
             if (!tmp.getMerged(Direction.EAST)) {
                 // invalid merge
-                logger.debug("Fixing invalid merge: {}", this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.EAST, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2712,7 +2704,6 @@ public class Plot {
         Plot current;
         while ((current = frontier.poll()) != null) {
             if (!current.hasOwner() || current.settings == null) {
-                logger.debug("Ignoring invalid merged plot: {} | {}", current, current.getOwnerAbs());
                 continue;
             }
             tmpSet.add(current);
