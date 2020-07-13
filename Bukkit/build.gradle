@@ -109,7 +109,8 @@ shadowJar {
     relocate("org.bstats", "com.plotsquared.metrics")
     relocate('com.sk89q.squirrelid', 'com.plotsquared.squirrelid')
     relocate('org.khelekore.prtree', 'com.plotsquared.prtree')
-    relocate('org.apache.logging.log4j', 'com.plotsquared.logging')
+    relocate('org.apache.logging', 'com.plotsquared.logging.apache')
+    relocate('org.slf4j', 'com.plotsquared.logging.slf4j')
     archiveFileName = "${project.name}-${parent.version}.jar"
     destinationDirectory = file "../target"
 }
