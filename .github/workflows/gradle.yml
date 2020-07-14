@@ -3,14 +3,12 @@ name: Java CI
 on:
   push:
     branches:
-    - 'v4'
     - 'v5'
-    - 'legacy/1.8-1.12'
+    - 'v6'
   pull_request:
     branches:
-    - 'v4'
     - 'v5'
-    - 'legacy/1.8-1.12'
+    - 'v6'
  
 jobs:
   test:
