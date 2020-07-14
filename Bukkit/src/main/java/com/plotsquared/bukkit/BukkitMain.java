@@ -36,8 +36,9 @@ import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.managers.BukkitWorldManager;
 import com.plotsquared.bukkit.managers.HyperverseWorldManager;
 import com.plotsquared.bukkit.managers.MultiverseWorldManager;
+import com.plotsquared.bukkit.placeholder.MVdWPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
-import com.plotsquared.bukkit.placeholder.Placeholders;
+import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitLocalQueue;
 import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
@@ -363,7 +364,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new Placeholders().register();
+            new PAPIPlaceholders().register();
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
                 ChatFormatter.formatters.add(new PlaceholderFormatter());
             }
@@ -371,6 +372,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         } else {
             PlotSquared
                 .debug(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
+            new MVdWPlaceholders(this, PlotSquared.get().getPlaceholderRegistry());
+            PlotSquared.log(Captions.PREFIX + "&cPlotSquared hooked into MVdWPlaceholderAPI");
         }
 
         this.startMetrics();

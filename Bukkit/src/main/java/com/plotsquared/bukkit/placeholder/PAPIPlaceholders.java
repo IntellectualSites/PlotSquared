@@ -31,9 +31,9 @@ import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
-public class Placeholders extends PlaceholderExpansion {
+public class PAPIPlaceholders extends PlaceholderExpansion {
 
-    public Placeholders() {
+    public PAPIPlaceholders() {
     }
 
     @Override public boolean persist() {
