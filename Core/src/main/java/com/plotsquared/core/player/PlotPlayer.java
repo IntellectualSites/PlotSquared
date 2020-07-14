@@ -59,8 +59,6 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -69,6 +67,8 @@ import net.kyori.adventure.title.Title;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -390,7 +390,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return this.plotAreaManager.getApplicablePlotArea(getLocation());
     }
 
-    @Override @NotNull public RequiredType getSuperCaller() {
+    @Override @Nonnull public RequiredType getSuperCaller() {
         return RequiredType.PLAYER;
     }
 
@@ -758,8 +758,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @param subtitle     Subtitle text
      * @param replacements Variable replacements
      */
-    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
-        @NotNull final Template... replacements) {
+    public void sendTitle(@Nonnull final Caption title, @Nonnull final Caption subtitle,
+        @Nonnull final Template... replacements) {
         sendTitle(title, subtitle, 10, 50, 20, replacements);
     }
 
@@ -773,9 +773,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @param fadeOut      Fade out time (in ticks)
      * @param replacements Variable replacements
      */
-    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
+    public void sendTitle(@Nonnull final Caption title, @Nonnull final Caption subtitle,
         final int fadeIn, final int stay, final int fadeOut,
-        @NotNull final Template... replacements) {
+        @Nonnull final Template... replacements) {
         final Component titleComponent = MINI_MESSAGE.parse(title.getComponent(this), replacements);
         final Component subtitleComponent =
             MINI_MESSAGE.parse(subtitle.getComponent(this), replacements);
@@ -785,8 +785,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 Duration.of(fadeOut * 50, ChronoUnit.MILLIS)));
     }
 
-    @Override public void sendMessage(@NotNull final Caption caption,
-        @NotNull final Template... replacements) {
+    @Override public void sendMessage(@Nonnull final Caption caption,
+        @Nonnull final Template... replacements) {
         String message;
         try {
             message = caption.getComponent(this);
@@ -822,14 +822,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return this.getAttribute("debug");
     }
 
-    @NotNull @Override public Locale getLocale() {
+    @Nonnull @Override public Locale getLocale() {
         if (this.locale == null) {
             this.locale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
         }
         return this.locale;
     }
 
-    @Override public void setLocale(@NotNull final Locale locale) {
+    @Override public void setLocale(@Nonnull final Locale locale) {
         if (!PlotSquared.get().getCaptionMap().supportsLocale(locale)) {
             this.locale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
         } else {
@@ -857,7 +857,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      *
      * @return Player audience
      */
-    @NotNull public abstract Audience getAudience();
+    @Nonnull public abstract Audience getAudience();
 
     /**
      * The amount of money this Player has.

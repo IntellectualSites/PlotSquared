@@ -43,15 +43,6 @@ import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.Placeholders;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
-import com.plotsquared.bukkit.queue.BukkitLocalQueue;
-import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
-import com.plotsquared.bukkit.util.BukkitChunkManager;
-import com.plotsquared.bukkit.util.BukkitEconHandler;
-import com.plotsquared.bukkit.util.BukkitInventoryUtil;
-import com.plotsquared.bukkit.util.BukkitPermHandler;
-import com.plotsquared.bukkit.util.BukkitRegionManager;
-import com.plotsquared.bukkit.util.BukkitSetupUtils;
-import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
@@ -94,15 +85,12 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.CommentManager;
-import com.plotsquared.core.plot.message.PlainChatManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
-import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
@@ -120,7 +108,6 @@ import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
-import lombok.NonNull;
 import net.kyori.adventure.audience.Audience;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -284,9 +271,6 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         CommentManager.registerDefaultInboxes();
 
         plotSquared.startExpiryTasks();
-
-        // This is getting removed so I won't even bother migrating it
-        ChatManager.manager = this.initChatManager();
 
         // Do stuff that was previously done in PlotSquared
         // Kill entities
@@ -1135,7 +1119,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return BukkitWorld.of(worldName);
     }
 
-    @Override @NotNull public Audience getConsoleAudience() {
+    @Override @Nonnull public Audience getConsoleAudience() {
         return BukkitUtil.BUKKIT_AUDIENCES.audience(Bukkit.getConsoleSender());
     }
 

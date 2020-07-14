@@ -27,7 +27,8 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Caption;
 import net.kyori.adventure.text.minimessage.Template;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Any entity that is able to execute commands, receive messages &amp; and have
@@ -41,14 +42,14 @@ public interface CommandCaller {
      * @param caption      Caption to send
      * @param replacements Variable replacements
      */
-    void sendMessage(@NotNull Caption caption, @NotNull Template... replacements);
+    void sendMessage(@Nonnull Caption caption, @Nonnull Template... replacements);
 
     /**
      * Check the player's permissions. <i>Will be cached if permission caching is enabled.</i>
      *
      * @param permission the name of the permission
      */
-    boolean hasPermission(@NotNull String permission);
+    boolean hasPermission(@Nonnull String permission);
 
     /**
      * Checks if this object contains an override for the specified
@@ -57,13 +58,13 @@ public interface CommandCaller {
      * @param permission Name of the permission
      * @return true if the permission is set, otherwise false
      */
-    boolean isPermissionSet(@NotNull String permission);
+    boolean isPermissionSet(@Nonnull String permission);
 
     /**
      * Get the type of the caller
      *
      * @return Caller type
      */
-    @NotNull RequiredType getSuperCaller();
+    @Nonnull RequiredType getSuperCaller();
 
 }

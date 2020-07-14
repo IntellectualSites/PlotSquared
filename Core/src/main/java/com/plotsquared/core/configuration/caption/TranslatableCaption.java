@@ -27,8 +27,8 @@ package com.plotsquared.core.configuration.caption;
 
 import com.plotsquared.core.PlotSquared;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -38,7 +38,7 @@ public final class TranslatableCaption implements KeyedCaption {
 
     @Getter private final String key;
 
-    private TranslatableCaption(@NotNull final String key) {
+    private TranslatableCaption(@Nonnull final String key) {
         this.key = key;
     }
 
@@ -48,11 +48,11 @@ public final class TranslatableCaption implements KeyedCaption {
      * @param key Caption key
      * @return Caption instance
      */
-    @NotNull public static TranslatableCaption of(@NotNull final String key) {
+    @Nonnull public static TranslatableCaption of(@Nonnull final String key) {
         return new TranslatableCaption(key.toLowerCase(Locale.ENGLISH));
     }
 
-    @Override @NotNull public String getComponent(@NotNull final LocaleHolder localeHolder) {
+    @Override @Nonnull public String getComponent(@Nonnull final LocaleHolder localeHolder) {
         return PlotSquared.get().getCaptionMap().getMessage(this, localeHolder);
     }
 

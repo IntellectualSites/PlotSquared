@@ -31,8 +31,8 @@ import com.plotsquared.core.util.MainUtil;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
@@ -52,10 +52,10 @@ public class Templates {
      * @param replacements Replacements
      * @return Generated template
      */
-    @NotNull public Template of(@NotNull final LocaleHolder localeHolder,
-                                @NotNull final String key,
-                                @NotNull final Caption caption,
-                                @NotNull final Template... replacements) {
+    @Nonnull public Template of(@Nonnull final LocaleHolder localeHolder,
+                                @Nonnull final String key,
+                                @Nonnull final Caption caption,
+                                @Nonnull final Template... replacements) {
         return Template.of(key, MINI_MESSAGE.parse(caption.getComponent(localeHolder), replacements));
     }
 
@@ -66,8 +66,8 @@ public class Templates {
      * @param uuid         Player UUID
      * @return Generated template
      */
-    @NotNull public Template of(@NotNull final String key,
-                                @NotNull final UUID uuid) {
+    @Nonnull public Template of(@Nonnull final String key,
+                                @Nonnull final UUID uuid) {
         final String username = MainUtil.getName(uuid);
         return Template.of(key, username);
     }
@@ -79,8 +79,8 @@ public class Templates {
      * @param value Template value
      * @return Generated template
      */
-    @NotNull public Template of(@NotNull final String key,
-                                @NotNull final String value) {
+    @Nonnull public Template of(@Nonnull final String key,
+                                @Nonnull final String value) {
         return Template.of(key, value);
     }
 
@@ -91,8 +91,8 @@ public class Templates {
      * @param area Plot area
      * @return Generated template
      */
-    @NotNull public Template of(@NotNull final String key,
-                                @NotNull final PlotArea area) {
+    @Nonnull public Template of(@Nonnull final String key,
+                                @Nonnull final PlotArea area) {
         return Template.of(key, area.toString());
     }
 
@@ -103,8 +103,8 @@ public class Templates {
      * @param number Number
      * @return Generated template
      */
-    @NotNull public Template of(@NotNull final String key,
-                                @NotNull final Number number) {
+    @Nonnull public Template of(@Nonnull final String key,
+                                @Nonnull final Number number) {
         return Template.of(key, number.toString());
     }
 

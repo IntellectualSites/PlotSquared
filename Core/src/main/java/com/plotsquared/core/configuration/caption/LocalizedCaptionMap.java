@@ -25,8 +25,7 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import org.jetbrains.annotations.NotNull;
-
+import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.Map;
 
@@ -40,19 +39,19 @@ public class LocalizedCaptionMap implements CaptionMap {
         this.captions = captions;
     }
 
-    @Override @NotNull public String getMessage(@NotNull final TranslatableCaption caption) {
+    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption) {
         return this.captions.get(caption);
     }
 
-    @Override @NotNull public String getMessage(@NotNull final TranslatableCaption caption, @NotNull final LocaleHolder localeHolder) {
+    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption, @Nonnull final LocaleHolder localeHolder) {
         return getMessage(caption); // use the translation of this locale
     }
 
-    @Override public boolean supportsLocale(@NotNull final Locale locale) {
+    @Override public boolean supportsLocale(@Nonnull final Locale locale) {
         return this.locale.equals(locale);
     }
 
-    @Override @NotNull public Locale getLocale() {
+    @Override @Nonnull public Locale getLocale() {
         return this.locale;
     }
 

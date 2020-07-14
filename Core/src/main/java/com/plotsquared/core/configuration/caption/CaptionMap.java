@@ -26,8 +26,8 @@
 package com.plotsquared.core.configuration.caption;
 
 import net.kyori.text.Component;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -43,7 +43,7 @@ public interface CaptionMap {
      * @return Component
      * @throws NoSuchCaptionException if no caption with the given key exists
      */
-    @NotNull String getMessage(@NotNull TranslatableCaption caption) throws NoSuchCaptionException;
+    @Nonnull String getMessage(@Nonnull TranslatableCaption caption) throws NoSuchCaptionException;
 
     /**
      * Get a message using a specific locale
@@ -53,7 +53,7 @@ public interface CaptionMap {
      * @return Component
      * @throws NoSuchCaptionException if no caption with the given key exists
      */
-    String getMessage(@NotNull TranslatableCaption caption, @NotNull LocaleHolder localeHolder) throws NoSuchCaptionException;
+    String getMessage(@Nonnull TranslatableCaption caption, @Nonnull LocaleHolder localeHolder) throws NoSuchCaptionException;
 
     /**
      * Check if the map supports a given locale
@@ -61,18 +61,18 @@ public interface CaptionMap {
      * @param locale Locale
      * @return True if the map supports the locale
      */
-    boolean supportsLocale(@NotNull Locale locale);
+    boolean supportsLocale(@Nonnull Locale locale);
 
     /**
      * Get the locale of the messages stored in the map
      *
      * @return Message locale
      */
-    @NotNull Locale getLocale();
+    @Nonnull Locale getLocale();
 
     class NoSuchCaptionException extends IllegalArgumentException {
 
-        public NoSuchCaptionException(@NotNull final KeyedCaption caption) {
+        public NoSuchCaptionException(@Nonnull final KeyedCaption caption) {
             super(String.format("No caption with the key '%s' exists in the map", caption.getKey()));
         }
 

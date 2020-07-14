@@ -26,7 +26,8 @@
 package com.plotsquared.core.configuration;
 
 import com.plotsquared.core.configuration.caption.LocaleHolder;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Any message that can be sent to a player, the console, etc.
@@ -39,6 +40,6 @@ public interface Caption {
      * @param localeHolder Locale holder
      * @return Message
      */
-    @NotNull String getComponent(@NotNull LocaleHolder localeHolder);
+    @Nonnull String getComponent(@Nonnull LocaleHolder localeHolder);
 
 }

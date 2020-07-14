@@ -28,7 +28,8 @@ package com.plotsquared.core.configuration;
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 @RequiredArgsConstructor
 public final class StaticCaption implements Caption {
@@ -49,12 +50,12 @@ public final class StaticCaption implements Caption {
      * @param text Text
      * @return Created caption
      */
-    @NotNull public static StaticCaption of(@NotNull final String text) {
+    @Nonnull public static StaticCaption of(@Nonnull final String text) {
         return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
     }
 
     @Override
-    public @NotNull String getComponent(@NotNull LocaleHolder localeHolder) {
+    public @Nonnull String getComponent(@Nonnull LocaleHolder localeHolder) {
         return this.value; // can't be translated
     }
 }

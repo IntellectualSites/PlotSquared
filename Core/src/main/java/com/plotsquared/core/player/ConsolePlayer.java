@@ -47,12 +47,11 @@ import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import org.jetbrains.annotations.NotNull;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -111,8 +110,8 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override
-    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
-        final int fadeIn, final int stay, final int fadeOut, @NotNull final Template... replacements) {
+    public void sendTitle(@Nonnull final Caption title, @Nonnull final Caption subtitle,
+        final int fadeIn, final int stay, final int fadeOut, @Nonnull final Template... replacements) {
     }
 
     @Nonnull @Override public Location getLocation() {
@@ -131,15 +130,16 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return 0;
     }
 
-    @Override public boolean hasPermission(@NotNull String permission) {
+    @Override public boolean hasPermission(@Nonnull String permission) {
         return true;
     }
 
-    @Override public boolean isPermissionSet(@NotNull String permission) {
+    @Override public boolean isPermissionSet(@Nonnull String permission) {
         return true;
     }
 
-    @Override public void sendMessage(@NotNull final Caption caption, @NotNull final Template... replacements) {
+    @Override public void sendMessage(@Nonnull final Caption caption,
+                                     @Nonnull final Template... replacements) {
         final String message = caption.getComponent(this);
         if (message.isEmpty()) {
             return;
@@ -149,7 +149,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         templates.add(Template.of("prefix", MINI_MESSAGE.parse(
             TranslatableCaption.of("core.prefix").getComponent(this))));
         // Parse the message
-        PlotSquared.imp().getConsoleAudience().sendMessage(MINI_MESSAGE.parse(message, templates));
+        PlotSquared.platform().getConsoleAudience().sendMessage(MINI_MESSAGE.parse(message, templates));
     }
 
     @Override public void teleport(Location location, TeleportCause cause) {
@@ -178,7 +178,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     @Override public void removeAttribute(String key) {
     }
 
-    @Override @NotNull public RequiredType getSuperCaller() {
+    @Override @Nonnull public RequiredType getSuperCaller() {
         return RequiredType.CONSOLE;
     }
 
@@ -215,8 +215,8 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return false;
     }
 
-    @Override @NotNull public Audience getAudience() {
-        return PlotSquared.imp().getConsoleAudience();
+    @Override @Nonnull public Audience getAudience() {
+        return PlotSquared.platform().getConsoleAudience();
     }
 
 }

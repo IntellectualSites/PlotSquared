@@ -26,7 +26,7 @@
 package com.plotsquared.bukkit.queue;
 
 import com.google.common.base.Preconditions;
-import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.sk89q.worldedit.math.BlockVector2;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Chunk;
@@ -34,8 +34,8 @@ import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -87,9 +87,9 @@ public final class ChunkCoordinator extends BukkitRunnable {
     private int batchSize;
 
     private ChunkCoordinator(final long maxIterationTime, final int initialBatchSize,
-        @NotNull final Consumer<Chunk> chunkConsumer, @NotNull final World world,
-        @NotNull final Collection<BlockVector2> requestedChunks, @NotNull final Runnable whenDone,
-        @NotNull final Consumer<Throwable> throwableConsumer) {
+        @Nonnull final Consumer<Chunk> chunkConsumer, @Nonnull final World world,
+        @Nonnull final Collection<BlockVector2> requestedChunks, @Nonnull final Runnable whenDone,
+        @Nonnull final Consumer<Throwable> throwableConsumer) {
         this.requestedChunks = new LinkedBlockingQueue<>(requestedChunks);
         this.availableChunks = new LinkedBlockingQueue<>();
         this.totalSize = requestedChunks.size();
@@ -100,7 +100,7 @@ public final class ChunkCoordinator extends BukkitRunnable {
         this.maxIterationTime = maxIterationTime;
         this.whenDone = whenDone;
         this.throwableConsumer = throwableConsumer;
-        this.plugin = JavaPlugin.getPlugin(BukkitMain.class);
+        this.plugin = JavaPlugin.getPlugin(BukkitPlatform.class);
     }
 
     /**
@@ -108,7 +108,7 @@ public final class ChunkCoordinator extends BukkitRunnable {
      *
      * @return Coordinator builder instance
      */
-    @NotNull public static ChunkCoordinatorBuilder builder() {
+    @Nonnull public static ChunkCoordinatorBuilder builder() {
         return new ChunkCoordinatorBuilder();
     }
 
@@ -186,7 +186,7 @@ public final class ChunkCoordinator extends BukkitRunnable {
         }
     }
 
-    private void processChunk(@NotNull final Chunk chunk) {
+    private void processChunk(@Nonnull final Chunk chunk) {
         if (!chunk.isLoaded()) {
             throw new IllegalArgumentException(
                 String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
@@ -195,7 +195,7 @@ public final class ChunkCoordinator extends BukkitRunnable {
         this.availableChunks.add(chunk);
     }
 
-    private void freeChunk(@NotNull final Chunk chunk) {
+    private void freeChunk(@Nonnull final Chunk chunk) {
         if (!chunk.isLoaded()) {
             throw new IllegalArgumentException(
                 String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
@@ -226,7 +226,7 @@ public final class ChunkCoordinator extends BukkitRunnable {
      *
      * @param subscriber Subscriber
      */
-    public void subscribeToProgress(@NotNull final ChunkCoordinator.ProgressSubscriber subscriber) {
+    public void subscribeToProgress(@Nonnull final ChunkCoordinator.ProgressSubscriber subscriber) {
         this.progressSubscribers.add(subscriber);
     }
 
@@ -240,7 +240,7 @@ public final class ChunkCoordinator extends BukkitRunnable {
          * @param coordinator Coordinator instance that triggered the notification
          * @param progress    Progress in the range [0, 1]
          */
-        void notifyProgress(@NotNull final ChunkCoordinator coordinator, final float progress);
+        void notifyProgress(@Nonnull final ChunkCoordinator coordinator, final float progress);
 
     }
 
@@ -259,58 +259,58 @@ public final class ChunkCoordinator extends BukkitRunnable {
         private ChunkCoordinatorBuilder() {
         }
 
-        @NotNull public ChunkCoordinatorBuilder inWorld(@NotNull final World world) {
+        @Nonnull public ChunkCoordinatorBuilder inWorld(@Nonnull final World world) {
             this.world = Preconditions.checkNotNull(world, "World may not be null");
             return this;
         }
 
-        @NotNull
-        public ChunkCoordinatorBuilder withChunk(@NotNull final BlockVector2 chunkLocation) {
+        @Nonnull
+        public ChunkCoordinatorBuilder withChunk(@Nonnull final BlockVector2 chunkLocation) {
             this.requestedChunks
                 .add(Preconditions.checkNotNull(chunkLocation, "Chunk location may not be null"));
             return this;
         }
 
-        @NotNull public ChunkCoordinatorBuilder withChunks(
-            @NotNull final Collection<BlockVector2> chunkLocations) {
+        @Nonnull public ChunkCoordinatorBuilder withChunks(
+            @Nonnull final Collection<BlockVector2> chunkLocations) {
             chunkLocations.forEach(this::withChunk);
             return this;
         }
 
-        @NotNull
-        public ChunkCoordinatorBuilder withConsumer(@NotNull final Consumer<Chunk> chunkConsumer) {
+        @Nonnull
+        public ChunkCoordinatorBuilder withConsumer(@Nonnull final Consumer<Chunk> chunkConsumer) {
             this.chunkConsumer =
                 Preconditions.checkNotNull(chunkConsumer, "Chunk consumer may not be null");
             return this;
         }
 
-        @NotNull public ChunkCoordinatorBuilder withFinalAction(@NotNull final Runnable whenDone) {
+        @Nonnull public ChunkCoordinatorBuilder withFinalAction(@Nonnull final Runnable whenDone) {
             this.whenDone = Preconditions.checkNotNull(whenDone, "Final action may not be null");
             return this;
         }
 
-        @NotNull public ChunkCoordinatorBuilder withMaxIterationTime(final long maxIterationTime) {
+        @Nonnull public ChunkCoordinatorBuilder withMaxIterationTime(final long maxIterationTime) {
             Preconditions
                 .checkArgument(maxIterationTime > 0, "Max iteration time must be positive");
             this.maxIterationTime = maxIterationTime;
             return this;
         }
 
-        @NotNull public ChunkCoordinatorBuilder withInitialBatchSize(final int initialBatchSize) {
+        @Nonnull public ChunkCoordinatorBuilder withInitialBatchSize(final int initialBatchSize) {
             Preconditions
                 .checkArgument(initialBatchSize > 0, "Initial batch size must be positive");
             this.initialBatchSize = initialBatchSize;
             return this;
         }
 
-        @NotNull public ChunkCoordinatorBuilder withThrowableConsumer(
-            @NotNull final Consumer<Throwable> throwableConsumer) {
+        @Nonnull public ChunkCoordinatorBuilder withThrowableConsumer(
+            @Nonnull final Consumer<Throwable> throwableConsumer) {
             this.throwableConsumer =
                 Preconditions.checkNotNull(throwableConsumer, "Throwable consumer may not be null");
             return this;
         }
 
-        @NotNull public ChunkCoordinator build() {
+        @Nonnull public ChunkCoordinator build() {
             Preconditions.checkNotNull(this.world, "No world was supplied");
             Preconditions.checkNotNull(this.chunkConsumer, "No chunk consumer was supplied");
             Preconditions.checkNotNull(this.whenDone, "No final action was supplied");

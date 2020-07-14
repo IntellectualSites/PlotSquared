@@ -121,8 +121,9 @@ public abstract class WorldUtil {
      * @param lines        Sign text
      * @param replacements Text replacements
      */
-    public abstract void setSign(@NotNull Location location, @NotNull Caption[] lines,
-        @NotNull Template ... replacements);
+    public abstract void setSign(@Nonnull Location location,
+                                 @Nonnull Caption[] lines,
+                                 @Nonnull Template ... replacements);
 
     public abstract void setBiomes(String world, CuboidRegion region, BiomeType biome);
 

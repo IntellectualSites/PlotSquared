@@ -43,14 +43,10 @@ import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
-import com.plotsquared.core.util.task.TaskManager;
-import com.sk89q.worldedit.extension.platform.Actor;
 import net.kyori.adventure.audience.Audience;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -116,100 +112,6 @@ public interface PlotPlatform<P> extends ILogger {
      * @return The NMS package prefix
      */
     String getNMSPackage();
-
-    /**
-     * Gets the schematic handler.
-     *
-     * @return The {@link SchematicHandler}
-     */
-    SchematicHandler initSchematicHandler();
-
-    /**
-     * The task manager will run and manage Minecraft tasks.
-     *
-     * @return the PlotSquared task manager
-     */
-    TaskManager getTaskManager();
-
-    /**
-     * Run the task that will kill road mobs.
-     */
-    void runEntityTask();
-
-    /**
-     * Registerss the implementation specific commands.
-     */
-    void registerCommands();
-
-    /**
-     * Register the protection system.
-     */
-    void registerPlayerEvents();
-
-    /**
-     * Register force field events.
-     */
-    void registerForceFieldEvents();
-
-    /**
-     * Registers the WorldEdit hook.
-     */
-    boolean initWorldEdit();
-
-    /**
-     * Gets the economy provider, if there is one
-     *
-     * @return the PlotSquared economy manager
-     */
-    @Nullable EconHandler getEconomyHandler();
-
-    /**
-     * Gets the permission provider, if there is one
-     *
-     * @return the PlotSquared permission manager
-     */
-    @Nullable PermHandler getPermissionHandler();
-
-    /**
-     * Gets the {@link QueueProvider} class.
-     */
-    QueueProvider initBlockQueue();
-
-    /**
-     * Gets the {@link WorldUtil} class.
-     */
-    WorldUtil initWorldUtil();
-
-    /**
-     * Gets the chunk manager.
-     *
-     * @return the PlotSquared chunk manager
-     */
-    ChunkManager initChunkManager();
-
-    /**
-     * Gets the region manager.
-     *
-     * @return the PlotSquared region manager
-     */
-    RegionManager initRegionManager();
-
-    /**
-     * Gets the {@link SetupUtils} class.
-     */
-    SetupUtils initSetupUtils();
-
-    /**
-     * Gets {@link HybridUtils} class.
-     */
-    HybridUtils initHybridUtils();
-
-    /**
-     * Starts the {@link ChatManager}.
-     *
-     * @return the ChatManager
-     */
-    ChatManager initChatManager();
 
     /**
      * Start Metrics.
@@ -285,7 +187,7 @@ public interface PlotPlatform<P> extends ILogger {
      * @param worldName World name
      * @return Platform world wrapper
      */
-    @Nonnull World<?> getPlatformWorld(@Nonnull final String worldName);
+    @Nullable World<?> getPlatformWorld(@Nonnull final String worldName);
 
     /**
      * Get the {@link com.google.inject.Injector} instance used by PlotSquared
@@ -362,6 +264,6 @@ public interface PlotPlatform<P> extends ILogger {
      *
      * @return Console audience
      */
-    @NotNull Audience getConsoleAudience();
+    @Nonnull Audience getConsoleAudience();
 
 }

@@ -29,8 +29,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -52,7 +52,7 @@ public final class CaptionLoader {
     private CaptionLoader() {
     }
 
-    public static CaptionMap loadAll(@NotNull final Path directory) throws IOException {
+    public static CaptionMap loadAll(@Nonnull final Path directory) throws IOException {
         final Map<Locale, CaptionMap> localeMaps = new HashMap<>();
         try (Stream<Path> files = Files.list(directory)) {
             List<Path> captionFiles = files.filter(Files::isRegularFile).collect(Collectors.toList());
@@ -64,7 +64,7 @@ public final class CaptionLoader {
         }
     }
 
-    public static CaptionMap loadSingle(@NotNull final Path file) throws IOException {
+    public static CaptionMap loadSingle(@Nonnull final Path file) throws IOException {
         final String fileName = file.getFileName().toString();
         final Matcher matcher = FILE_NAME_PATTERN.matcher(fileName);
         final Locale locale;
