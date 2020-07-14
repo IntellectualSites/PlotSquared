@@ -37,6 +37,8 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collection;
@@ -44,6 +46,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class RegionManager {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + RegionManager.class.getSimpleName());
 
     public static RegionManager manager = null;
 
@@ -142,7 +146,7 @@ public abstract class RegionManager {
                     world + File.separator + "region" + File.separator + "r." + loc.getX() + "."
                         + loc.getZ() + ".mca";
                 File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
-                PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                logger.info("[P2] - Deleting file: {} (max 1024 chunks)", file.getName());
                 if (file.exists()) {
                     file.delete();
                 }

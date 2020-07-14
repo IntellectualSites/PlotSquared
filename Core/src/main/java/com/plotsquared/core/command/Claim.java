@@ -44,6 +44,8 @@ import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @CommandDeclaration(command = "claim",
     aliases = "c",
@@ -53,6 +55,8 @@ import com.plotsquared.core.util.task.TaskManager;
     permission = "plots.claim",
     usage = "/plot claim")
 public class Claim extends SubCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Claim.class.getSimpleName());
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String schematic = null;
@@ -133,7 +137,7 @@ public class Claim extends SubCommand {
         DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 if (!plot.claim(player, true, finalSchematic, false)) {
-                    PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() + String
+                    logger.info(Captions.PREFIX.getTranslated() + String
                         .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
                     sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                     plot.setOwnerAbs(null);
@@ -148,7 +152,7 @@ public class Claim extends SubCommand {
                 }
             }
         }), () -> {
-            PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() + String
+            logger.info(Captions.PREFIX.getTranslated() + String
                 .format("Failed to add plot %s to the database",
                     plot.getId().toCommaSeparatedString()));
             sendMessage(player, Captions.PLOT_NOT_CLAIMED);

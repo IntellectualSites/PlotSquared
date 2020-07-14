@@ -25,10 +25,12 @@
  */
 package com.plotsquared.core.configuration.file;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Configuration;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.InvalidConfigurationException;
+import com.plotsquared.core.configuration.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -45,6 +47,9 @@ import java.util.Map;
  * Note that this implementation is not synchronized.
  */
 public class YamlConfiguration extends FileConfiguration {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + YamlConfiguration.class.getSimpleName());
+
     private static final String COMMENT_PREFIX = "# ";
     private static final String BLANK_CONFIG = "{}\n";
     private final DumperOptions yamlOptions = new DumperOptions();
@@ -76,11 +81,13 @@ public class YamlConfiguration extends FileConfiguration {
                     dest = new File(file.getAbsolutePath() + "_broken_" + i++);
                 }
                 Files.copy(file.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                PlotSquared.debug("&dCould not read: &7" + file);
-                PlotSquared.debug("&dRenamed to: &7" + dest.getName());
-                PlotSquared.debug("&c============ Full stacktrace ============");
-                ex.printStackTrace();
-                PlotSquared.debug("&c=========================================");
+                if (Settings.DEBUG) {
+                    logger.error("[P2] Could not read: {}", file);
+                    logger.error("[P2] Renamed to: {}", file);
+                    logger.error("[P2] ============ Full stacktrace ============");
+                    ex.printStackTrace();
+                    logger.error("[P2] =========================================");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

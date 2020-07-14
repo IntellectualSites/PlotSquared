@@ -95,6 +95,8 @@ import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.WaterMob;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -109,6 +111,8 @@ import java.util.stream.Stream;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class BukkitUtil extends WorldUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
 
     private static String lastString = null;
     private static World lastWorld = null;
@@ -464,7 +468,6 @@ public class BukkitUtil extends WorldUtil {
                     block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
                 }
                 if (!(block.getBlockData() instanceof WallSign)) {
-                    PlotSquared.debug(block.getBlockData().getAsString());
                     throw new RuntimeException("Something went wrong generating a sign");
                 }
                 final Directional sign = (Directional) block.getBlockData();
@@ -505,7 +508,7 @@ public class BukkitUtil extends WorldUtil {
         @NonNull final BiomeType biomeType) {
         final World world = getWorld(worldName);
         if (world == null) {
-            PlotSquared.log("An error occurred setting the biome because the world was null.");
+            logger.warn("[P2] An error occured while setting the biome because the world was null", new RuntimeException());
             return;
         }
         final Biome biome = BukkitAdapter.adapt(biomeType);
@@ -619,7 +622,7 @@ public class BukkitUtil extends WorldUtil {
             }
             break;
             default: {
-                PlotSquared.log(Captions.PREFIX + "Unknown entity category requested: " + category);
+                logger.error("[P2] Unknown entity category requested: {}", category);
             }
             break;
         }

@@ -26,7 +26,6 @@
 package com.plotsquared.bukkit.util;
 
 import com.plotsquared.bukkit.BukkitMain;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
@@ -56,6 +55,8 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -76,6 +77,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
 public class BukkitRegionManager extends RegionManager {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
+
     public static boolean isIn(CuboidRegion region, int x, int z) {
         return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX()
             && z >= region.getMinimumPoint().getZ() && z <= region.getMaximumPoint().getZ();
@@ -91,8 +94,6 @@ public class BukkitRegionManager extends RegionManager {
         } else {
             final Semaphore semaphore = new Semaphore(1);
             try {
-                PlotSquared.debug("Attempting to make an asynchronous call to getLoadedChunks."
-                    + " Will halt the calling thread until completed.");
                 semaphore.acquire();
                 Bukkit.getScheduler().runTask(BukkitMain.getPlugin(BukkitMain.class), () -> {
                     for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))

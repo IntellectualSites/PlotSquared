@@ -27,11 +27,9 @@ package com.plotsquared.bukkit.queue;
 
 import com.plotsquared.bukkit.schematic.StateWrapper;
 import com.plotsquared.bukkit.util.BukkitBlockUtil;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.queue.BasicLocalBlockQueue;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -85,8 +83,6 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
         World worldObj = Bukkit.getWorld(getWorld());
         if (worldObj != null) {
             worldObj.refreshChunk(x, z);
-        } else {
-            PlotSquared.debug("Error Refreshing Chunk");
         }
     }
 
@@ -109,8 +105,6 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
                     world.regenerate(region, editSession);
                 }
             }
-        } else {
-            PlotSquared.debug("Error Regenerating Chunk");
         }
     }
 

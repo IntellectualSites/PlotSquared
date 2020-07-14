@@ -54,6 +54,8 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
@@ -72,6 +74,8 @@ import java.util.stream.Collectors;
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
  */
 public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotPlayer.class.getSimpleName());
 
     public static final String META_LAST_PLOT = "lastplot";
     public static final String META_LOCATION = "location";
@@ -580,9 +584,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
                 owned.deletePlot(null);
-                PlotSquared.debug(String
-                    .format("&cPlot &6%s &cwas deleted + cleared due to &6%s&c getting banned",
-                        plot.getId(), getName()));
+                if (Settings.DEBUG) {
+                    logger.info("[P2] Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
+                }
             }
         }
         if (ExpireManager.IMP != null) {

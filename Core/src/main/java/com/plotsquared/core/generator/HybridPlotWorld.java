@@ -26,7 +26,6 @@
 package com.plotsquared.core.generator;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -52,6 +51,8 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -60,7 +61,8 @@ import java.util.Locale;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
-    private static AffineTransform transform = new AffineTransform().rotateY(90);
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + HybridPlotWorld.class.getSimpleName());
+    private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
     public int PLOT_SCHEMATIC_HEIGHT = -1;
@@ -160,13 +162,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             setupSchematics();
         } catch (Exception event) {
             event.printStackTrace();
-            PlotSquared.debug("&c - road schematics are disabled for this world.");
         }
 
         // Dump world settings
         if (Settings.DEBUG) {
-            PlotSquared.debug(String.format("- Dumping settings for ClassicPlotWorld with name %s",
-                this.getWorldName()));
+            logger.info("[P2] - Dumping settings for ClassicPlotWorld with name {}", this.getWorldName());
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);
@@ -182,7 +182,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 } catch (final IllegalAccessException e) {
                     value = String.format("Failed to parse: %s", e.getMessage());
                 }
-                PlotSquared.debug(String.format("-- %s = %s", name, value));
+                logger.info("[P2] -- {} = {}", name, value);
             }
         }
     }
@@ -282,10 +282,14 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
 
-            PlotSquared.debug(Captions.PREFIX + "&3 - plot schematic: &7"  + schematic3File.getPath());
+            if (Settings.DEBUG) {
+                logger.info("[P2]  - plot schematic: {}", schematic3File.getPath());
+            }
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
-            PlotSquared.debug(Captions.PREFIX + "&3 - schematic: &7false");
+            if (Settings.DEBUG) {
+                logger.info("[P2]  - schematic: false");
+            }
             return;
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
@@ -361,7 +365,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         if (y >= height) {
-            PlotSquared.log("Error adding overlay block. `y > height` ");
+            logger.error("[P2] Error adding overlay block. `y > height`");
             return;
         }
         existing[y] = id;

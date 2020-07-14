@@ -25,8 +25,6 @@
  */
 package com.plotsquared.core.listener;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.WEManager;
 import com.plotsquared.core.util.WorldUtil;
@@ -44,6 +42,8 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -51,6 +51,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class ProcessedWEExtent extends AbstractDelegateExtent {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ProcessedWEExtent.class.getSimpleName());
 
     private final Set<CuboidRegion> mask;
     private final String world;
@@ -101,8 +103,6 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 return false;
             } else {
                 tileEntityCount[0]++;
-                PlotSquared.debug(Captions.PREFIX + "&cDetected unsafe WorldEdit: " + location.getX() + ","
-                    + location.getZ());
             }
         }
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
@@ -133,9 +133,6 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         this.Ecount++;
         if (this.Ecount > Settings.Chunk_Processor.MAX_ENTITIES) {
             this.Eblocked = true;
-            PlotSquared.debug(
-                Captions.PREFIX + "&cDetected unsafe WorldEdit: " + location.getBlockX() + ","
-                    + location.getBlockZ());
         }
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
             location.getBlockZ())) {

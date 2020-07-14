@@ -167,7 +167,8 @@ import java.util.UUID;
      * @see MainUtil#sendConsoleMessage(Captions, String...)
      */
     public void sendConsoleMessage(String message) {
-        PlotSquared.log(message);
+        // TODO: Re-implement
+        // PlotSquared.log(message);
     }
 
     /**

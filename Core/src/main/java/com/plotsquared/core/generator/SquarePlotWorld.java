@@ -25,12 +25,16 @@
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.PlotId;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + SquarePlotWorld.class.getSimpleName());
 
     public int PLOT_WIDTH = 42;
     public int ROAD_WIDTH = 7;
@@ -44,7 +48,10 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
 
     @Override public void loadConfiguration(ConfigurationSection config) {
         if (!config.contains("plot.height")) {
-            PlotSquared.debug(" - &cConfiguration is null? (" + config.getCurrentPath() + ')');
+            if (Settings.DEBUG) {
+                logger.info("[P2]  - Configuration is null? ({})", config.getCurrentPath());
+            }
+
         }
         this.PLOT_WIDTH = config.getInt("plot.size");
         this.ROAD_WIDTH = config.getInt("road.width");

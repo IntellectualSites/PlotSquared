@@ -26,7 +26,8 @@
 package com.plotsquared.core.util.net;
 
 import com.google.common.base.Charsets;
-import com.plotsquared.core.PlotSquared;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -46,6 +47,8 @@ import java.util.Locale;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class IncendoPaster {
+
+    private static Logger logger = LoggerFactory.getLogger("P2/" + IncendoPaster.class);
 
     /**
      * Upload service URL
@@ -158,7 +161,7 @@ public final class IncendoPaster {
         if (!httpURLConnection.getResponseMessage().contains("OK")) {
             if (httpURLConnection.getResponseCode() == 413) {
                 final long size = content.length;
-                PlotSquared.debug(String.format("Paste Too Big > Size: %dMB", size / 1_000_000));
+                logger.error("[P2] Paste too big > size: {}MB", size / 1_000_000);
             }
             throw new IllegalStateException(String
                 .format("Server returned status: %d %s", httpURLConnection.getResponseCode(),

@@ -29,8 +29,12 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.ChatManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlotMessage {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotMessage.class.getSimpleName());
 
     private Object builder;
 
@@ -38,9 +42,7 @@ public class PlotMessage {
         try {
             reset(ChatManager.manager);
         } catch (Throwable e) {
-            PlotSquared.debug(
-                PlotSquared.imp().getPluginName() + " doesn't support fancy chat for " + PlotSquared
-                    .get().IMP.getServerVersion());
+            logger.error("[P2] {} doesn't support fancy chat for {}", PlotSquared.imp().getPluginName(), PlotSquared.get().IMP.getServerVersion());
             ChatManager.manager = new PlainChatManager();
             reset(ChatManager.manager);
         }
