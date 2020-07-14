@@ -33,6 +33,7 @@ import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -88,6 +89,8 @@ import java.util.stream.Collectors;
 public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer, LocaleHolder {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    private static final String NON_EXISTENT_CAPTION = "<red>PlotSquared does not recognize the caption: ";
+
     public static final String META_LAST_PLOT = "lastplot";
     public static final String META_LOCATION = "location";
 
@@ -771,7 +774,15 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     @Override public void sendMessage(@NotNull final Caption caption,
         @NotNull final Template... replacements) {
-        final String message = caption.getComponent(this);
+        String message;
+        try {
+            message = caption.getComponent(this);
+        } catch (final CaptionMap.NoSuchCaptionException exception) {
+            // This sends feedback to the player
+            message = NON_EXISTENT_CAPTION + ((TranslatableCaption) caption).getKey();
+            // And this also prints it to the console
+            exception.printStackTrace();
+        }
         if (message.isEmpty()) {
             return;
         }
