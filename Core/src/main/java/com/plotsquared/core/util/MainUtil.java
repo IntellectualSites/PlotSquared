@@ -27,11 +27,11 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Like;
-import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
@@ -558,14 +558,14 @@ public class MainUtil {
                     return p;
                 }
             }
-            if (message) {
-                MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
+            if (message && player != null) {
+                player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
             }
             return null;
         }
         if (area == null) {
-            if (message) {
-                MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
+            if (message && player != null) {
+                player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
             }
             return null;
         }

@@ -208,7 +208,7 @@
   
   "commandconfig.not_valid_subcommand": "<prefix><gray>That is not a valid subcommand.</gray>",
   "commandconfig.did_you_mean": "<prefix><gray>Did you mean: <gold><value></gold></gray>",
-  "commandconfig.subcommand_set_options_header": "<prefix><gray>Possible Values: ",
+  "commandconfig.subcommand_set_options_header": "<prefix><gray>Possible Values: <values>",
   "commandconfig.command_syntax": "<prefix><gold>Usage: <gray><value></gray></gold>",
   "commandconfig.flag_tutorial_usage": "<prefix><gold>Have an admin set the flag: <gray><flag></gray></gold>",
   
@@ -226,6 +226,7 @@
   "errors.invalid_player_offline": "<prefix><red>The player must be online: <gray><player></gray>.</red>",
   "errors.invalid_command_flag": "<prefix><red>Invalid command flag: </red><value></gray>",
   "errors.error": "<prefix><red>An error occurred: </gray><value></gray></red>",
+  "errors.error_console": "<prefix><red>An error occurred. See the console for more information.</red>",
   "errors.command_went_wrong": "<prefix><red>Something went wrong when executing that command...</red>",
   "errors.no_free_plots": "<prefix><red>There are no free plots available.</red>",
   "errors.not_in_plot": "<prefix><red>You're not in a plot.</red>",

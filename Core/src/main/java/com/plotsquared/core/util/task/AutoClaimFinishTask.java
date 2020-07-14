@@ -27,7 +27,8 @@ package com.plotsquared.core.util.task;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Auto;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
@@ -35,8 +36,6 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import lombok.RequiredArgsConstructor;
-
-import static com.plotsquared.core.util.MainUtil.sendMessage;
 
 @RequiredArgsConstructor
 public final class AutoClaimFinishTask extends RunnableVal<Object> {
@@ -49,7 +48,7 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
     @Override public void run(Object value) {
         player.deleteMeta(Auto.class.getName());
         if (plot == null) {
-            sendMessage(player, Captions.NO_FREE_PLOTS);
+            player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
             return;
         }
         plot.claim(player, true, schematic, false);
@@ -57,7 +56,8 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
             PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
                 .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
             if (event.getEventResult() == Result.DENY) {
-                sendMessage(player, Captions.EVENT_DENIED, "Auto merge");
+                player.sendMessage(TranslatableCaption.of("events.event_denied"),
+                                   Templates.of("value", "Auto Merge"));
             } else {
                 plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
             }
