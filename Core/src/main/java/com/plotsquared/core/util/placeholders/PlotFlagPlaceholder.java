@@ -57,13 +57,14 @@ public final class PlotFlagPlaceholder extends PlotSpecificPlaceholder {
      * @param inherit  Define if it returns only the flag set on currentplot or also inherited flag
      * @return The value of flag serialized in string
      */
-    private String getFlagValue(final Plot plot, final String flagName, final boolean inherit) {
-        if (flagName.isEmpty())
+    @NotNull private String getFlagValue(@NotNull final Plot plot, @NotNull final String flagName, final boolean inherit) {
+        if (flagName.isEmpty()) {
             return "";
+        }
         final PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(flagName);
-        if (flag == null)
+        if (flag == null) {
             return "";
-
+        }
         if (inherit) {
             return plot.getFlag(flag).toString();
         } else {
