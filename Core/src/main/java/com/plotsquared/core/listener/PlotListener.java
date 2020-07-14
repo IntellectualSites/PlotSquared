@@ -29,6 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.ByteArrayUtilities;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
@@ -264,12 +265,12 @@ public class PlotListener {
                             player.sendTitle(
                                 TranslatableCaption.of("titles.title_entered_plot"),
                                 TranslatableCaption.of("titles.title_entered_plot_sub"),
-                                Template.of("x", Integer.toString(lastPlot.getId().getX())),
-                                Template.of("z", Integer.toString(lastPlot.getId().getY())),
-                                Template.of("world", plot.getArea().toString()),
-                                Template.of("greeting", greeting),
-                                Template.of("alias", plot.toString()),
-                                Template.of("owner", MainUtil.getName(plot.getOwner()))
+                                Templates.of("x", lastPlot.getId().getX()),
+                                Templates.of("z", lastPlot.getId().getY()),
+                                Templates.of("world", plot.getArea()),
+                                Templates.of("greeting", greeting),
+                                Templates.of("alias", plot.getAlias()),
+                                Templates.of("owner", plot.getOwner())
                             );
                         }
                     }, 20);

@@ -34,6 +34,7 @@ import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
+import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
@@ -688,7 +689,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                             TaskManager.runTask(() -> {
                                 if (getMeta("teleportOnLogin", true)) {
                                     teleport(location);
-                                    sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
+                                    sendMessage(
+                                        TranslatableCaption.of("teleport.teleported_to_plot"));
                                 }
                             });
                         } else if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
@@ -698,7 +700,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                                         if (getMeta("teleportOnLogin", true)) {
                                             if (plot.isLoaded()) {
                                                 teleport(location);
-                                                sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
+                                                sendMessage(TranslatableCaption
+                                                    .of("teleport.teleported_to_plot"));
                                             }
                                         }
                                     }));
@@ -735,16 +738,35 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * Send a title to the player that fades in, in 10 ticks, stays for 50 ticks and fades
      * out in 20 ticks
      *
-     * @param title    Title text
-     * @param subtitle Subtitle text
+     * @param title        Title text
+     * @param subtitle     Subtitle text
      * @param replacements Variable replacements
      */
     public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
-        final int fadeIn, final int stay, final int fadeOut, @NotNull final Template ... replacements) {
+        @NotNull final Template... replacements) {
+        sendTitle(title, subtitle, 10, 50, 20, replacements);
+    }
+
+    /**
+     * Send a title to to the player
+     *
+     * @param title        Title
+     * @param subtitle     Subtitle
+     * @param fadeIn       Fade in time (in ticks)
+     * @param stay         The the title stays for (in ticks)
+     * @param fadeOut      Fade out time (in ticks)
+     * @param replacements Variable replacements
+     */
+    public void sendTitle(@NotNull final Caption title, @NotNull final Caption subtitle,
+        final int fadeIn, final int stay, final int fadeOut,
+        @NotNull final Template... replacements) {
         final Component titleComponent = MINI_MESSAGE.parse(title.getComponent(this), replacements);
-        final Component subtitleComponent = MINI_MESSAGE.parse(subtitle.getComponent(this), replacements);
-        getAudience().showTitle(Title.of(titleComponent, subtitleComponent, Duration.of(fadeIn * 50,
-            ChronoUnit.MILLIS), Duration.of(stay * 50, ChronoUnit.MILLIS), Duration.of(fadeOut * 50, ChronoUnit.MILLIS)));
+        final Component subtitleComponent =
+            MINI_MESSAGE.parse(subtitle.getComponent(this), replacements);
+        getAudience().showTitle(Title
+            .of(titleComponent, subtitleComponent, Duration.of(fadeIn * 50, ChronoUnit.MILLIS),
+                Duration.of(stay * 50, ChronoUnit.MILLIS),
+                Duration.of(fadeOut * 50, ChronoUnit.MILLIS)));
     }
 
     @Override public void sendMessage(@NotNull final Caption caption,
@@ -755,11 +777,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         }
         // Create the template list, and add the prefix as a replacement
         final List<Template> templates = Arrays.asList(replacements);
-        templates.add(Template.of("prefix", MINI_MESSAGE.parse(
-            TranslatableCaption.of("core.prefix").getComponent(this))));
+        templates.add(Templates.of(this, "prefix", TranslatableCaption.of("core.prefix")));
         // Parse the message
         final Component component = MINI_MESSAGE.parse(message, templates);
-        if (!Objects.equal(component, this.getMeta("lastMessage")) || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
+        if (!Objects.equal(component, this.getMeta("lastMessage"))
+            || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
             setMeta("lastMessage", component);
             setMeta("lastMessageTime", System.currentTimeMillis());
             getAudience().sendMessage(component);
