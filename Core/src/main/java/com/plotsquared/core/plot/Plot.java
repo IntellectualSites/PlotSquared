@@ -27,6 +27,7 @@ package com.plotsquared.core.plot;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -128,13 +129,13 @@ public class Plot {
     @NotNull private final PlotId id;
 
     // These will be injected
-    private EventDispatcher eventDispatcher;
-    private PlotListener plotListener;
-    private RegionManager regionManager;
-    private GlobalBlockQueue blockQueue;
-    private WorldUtil worldUtil;
-    private SchematicHandler schematicHandler;
-    @ImpromptuPipeline private UUIDPipeline impromptuPipeline;
+    @Inject private EventDispatcher eventDispatcher;
+    @Inject private PlotListener plotListener;
+    @Inject private RegionManager regionManager;
+    @Inject private GlobalBlockQueue blockQueue;
+    @Inject private WorldUtil worldUtil;
+    @Inject private SchematicHandler schematicHandler;
+    @Inject @ImpromptuPipeline private UUIDPipeline impromptuPipeline;
 
     /**
      * Plot flag container

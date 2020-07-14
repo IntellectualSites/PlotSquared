@@ -26,6 +26,7 @@
 package com.plotsquared.bukkit;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Stage;
@@ -176,16 +177,16 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
     @Getter private Injector injector;
 
-    private PlotAreaManager plotAreaManager;
-    private EventDispatcher eventDispatcher;
-    private PlotListener plotListener;
-    @WorldConfig private YamlConfiguration worldConfiguration;
-    @WorldFile private File worldfile;
-    private BukkitPlayerManager playerManager;
-    private BackupManager backupManager;
-    @ImpromptuPipeline private UUIDPipeline impromptuPipeline;
-    @BackgroundPipeline private UUIDPipeline backgroundPipeline;
-    private PlatformWorldManager<World> worldManager;
+    @Inject private PlotAreaManager plotAreaManager;
+    @Inject private EventDispatcher eventDispatcher;
+    @Inject private PlotListener plotListener;
+    @Inject @WorldConfig private YamlConfiguration worldConfiguration;
+    @Inject @WorldFile private File worldfile;
+    @Inject private BukkitPlayerManager playerManager;
+    @Inject private BackupManager backupManager;
+    @Inject @ImpromptuPipeline private UUIDPipeline impromptuPipeline;
+    @Inject @BackgroundPipeline private UUIDPipeline backgroundPipeline;
+    @Inject private PlatformWorldManager<World> worldManager;
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -308,7 +309,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
         if (Settings.Enabled_Components.COMPONENT_PRESETS) {
             try {
-                new ComponentPresetManager();
+                getInjector().getInstance(ComponentPresetManager.class);
             } catch (final Exception e) {
                 PlotSquared.log(Captions.PREFIX + "Failed to initialize the preset system");
                 e.printStackTrace();
