@@ -42,13 +42,17 @@ import com.plotsquared.core.util.query.PlotQuery;
 public class Target extends SubCommand {
 
     public Target() {
-        super(Argument.PlotID);
+        super();
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         if (!location.isPlotArea()) {
             MainUtil.sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
+            return false;
+        }
+        if (args.length == 0) {
+            MainUtil.sendMessage(player, this.getUsage());
             return false;
         }
         Plot target = null;

@@ -389,9 +389,11 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
             logger.info("[P2] (UUID) Using the offline mode UUID service");
         }
 
-        final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
-        this.impromptuPipeline.registerService(offlinePlayerUUIDService);
-        this.backgroundPipeline.registerService(offlinePlayerUUIDService);
+        if (Settings.UUID.SERVICE_BUKKIT) {
+            final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
+            this.impromptuPipeline.registerService(offlinePlayerUUIDService);
+            this.backgroundPipeline.registerService(offlinePlayerUUIDService);
+        }
 
         final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService("user_cache.db");
 
@@ -404,7 +406,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         final LuckPermsUUIDService luckPermsUUIDService;
-        if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+        if (Settings.UUID.SERVICE_LUCKPERMS &&
+            Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
             logger.info("[P2] (UUID) Using LuckPerms as a complementary UUID service");
         } else {
@@ -412,7 +415,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         final BungeePermsUUIDService bungeePermsUUIDService;
-        if (Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
+        if (Settings.UUID.SERVICE_BUNGEE_PERMS &&
+            Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
             bungeePermsUUIDService = new BungeePermsUUIDService();
             logger.info("[P2] (UUID) Using BungeePerms as a complementary UUID service");
         } else {
@@ -420,16 +424,16 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         final EssentialsUUIDService essentialsUUIDService;
-        if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
+        if (Settings.UUID.SERVICE_ESSENTIALSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
-            logger.info("[P2] (UUID) Using Essentials as a complementary UUID service");
+            logger.info("[P2] (UUID) Using EssentialsX as a complementary UUID service");
         } else {
             essentialsUUIDService = null;
         }
 
         if (!Settings.UUID.OFFLINE) {
             // If running Paper we'll also try to use their profiles
-            if (PaperLib.isPaper()) {
+            if (Bukkit.getOnlineMode() && PaperLib.isPaper() && Settings.UUID.SERVICE_PAPER) {
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 this.impromptuPipeline.registerService(paperUUIDService);
                 this.backgroundPipeline.registerService(paperUUIDService);

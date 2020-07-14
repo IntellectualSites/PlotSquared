@@ -28,7 +28,7 @@ dependencies {
         exclude(module: "bukkit")
 
     }
-    compile("io.papermc:paperlib:1.0.2")
+    compile("io.papermc:paperlib:1.0.4")
     implementation("net.kyori:text-adapter-bukkit:3.0.3")
     compile("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(module: "bukkit")
@@ -96,7 +96,7 @@ task copyFiles {
 shadowJar {
     dependencies {
         include(dependency(":PlotSquared-Core"))
-        include(dependency("io.papermc:paperlib:1.0.2"))
+        include(dependency("io.papermc:paperlib:1.0.4"))
         include(dependency("net.kyori:text-adapter-bukkit:3.0.3"))
         include(dependency("org.bstats:bstats-bukkit:1.7"))
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
