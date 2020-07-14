@@ -54,7 +54,7 @@ public final class PlotFlagPlaceholder extends PlotSpecificPlaceholder {
      *
      * @param plot     Current plot where the player is
      * @param flagName Name of flag to get from current plot
-     * @param inherit  Define if it returns only the flag set on currentplot or also inherited flag
+     * @param inherit  Define if it returns only the flag set on the current plot or also inherited flags
      * @return The value of flag serialized in string
      */
     @NotNull private String getFlagValue(@NotNull final Plot plot, @NotNull final String flagName, final boolean inherit) {
