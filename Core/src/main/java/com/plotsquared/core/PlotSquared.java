@@ -26,6 +26,8 @@
 package com.plotsquared.core;
 
 import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.command.WE_Anywhere;
+import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -46,6 +48,7 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -66,6 +69,7 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.logger.ILogger;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
@@ -74,6 +78,11 @@ import com.sk89q.worldedit.math.BlockVector2;
 import lombok.Getter;
 import lombok.Setter;
 import javax.annotation.Nullable;
+import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -117,6 +126,8 @@ import java.util.zip.ZipInputStream;
 @SuppressWarnings({"WeakerAccess"})
 public class PlotSquared {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotSquared.class.getSimpleName());
+    private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
     private static PlotSquared instance;
 
     // Implementation
@@ -139,8 +150,6 @@ public class PlotSquared {
     private HashMap<String, Set<PlotCluster>> clustersTmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     private YamlConfiguration config;
-    // Implementation logger
-    @Setter @Getter private ILogger logger;
     // Platform / Version / Update URL
     private PlotVersion version;
     // Files and configuration
@@ -163,7 +172,6 @@ public class PlotSquared {
 
         this.thread = Thread.currentThread();
         this.platform = iPlotMain;
-        this.logger = iPlotMain;
         Settings.PLATFORM = platform;
 
         //
@@ -174,9 +182,9 @@ public class PlotSquared {
         try {
             new ReflectionUtils(this.platform.getNMSPackage());
             try {
-                URL url = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
+                URL logurl = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
                 this.jarFile = new File(
-                    new URL(url.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
+                    new URL(logurl.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
                         .toURI().getPath());
             } catch (MalformedURLException | URISyntaxException | SecurityException e) {
                 e.printStackTrace();
@@ -258,42 +266,8 @@ public class PlotSquared {
         throw new IllegalStateException("Plot platform implementation is missing");
     }
 
-    /**
-     * Log a message to the IPlotMain logger.
-     *
-     * @param message Message to log
-     * @see PlotPlatform#log(String)
-     */
-    public static void log(Object message) {
-        if (message == null || (message instanceof Caption ?
-            ((Caption) message).getTranslated().isEmpty() :
-            message.toString().isEmpty())) {
-            return;
-        }
-        if (PlotSquared.get() == null || PlotSquared.get().getLogger() == null) {
-            System.out.printf("[P2][Info] %s\n", StringMan.getString(message));
-        } else {
-            PlotSquared.get().getLogger().log(StringMan.getString(message));
-        }
-    }
-
-    /**
-     * Log a message to the IPlotMain logger.
-     *
-     * @param message Message to log
-     * @see PlotPlatform#log(String)
-     */
-    public static void debug(@Nullable Object message) {
-        if (Settings.DEBUG) {
-            if (PlotSquared.get() == null || PlotSquared.get().getLogger() == null) {
-                System.out.printf("[P2][Debug] %s\n", StringMan.getString(message));
-            } else {
-                PlotSquared.get().getLogger().log(StringMan.getString(message));
-            }
-        }
-    }
-
     public void startExpiryTasks() {
+    private void startExpiryTasks() {
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
             ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
             ExpireManager.IMP.runAutomatedTask();
@@ -411,21 +385,16 @@ public class PlotSquared {
                 regionInts.forEach(l -> regions.add(BlockVector2.at(l[0], l[1])));
                 chunkInts.forEach(l -> chunks.add(BlockVector2.at(l[0], l[1])));
                 int height = (int) list.get(2);
-                PlotSquared.log(
-                    Captions.PREFIX + "Incomplete road regeneration found. Restarting in world "
-                        + plotArea.getWorldName() + " with height " + height + ".");
-                PlotSquared.debug("   Regions: " + regions.size());
-                PlotSquared.debug("   Chunks: " + chunks.size());
+                logger.info("[P2] Incomplete road regeneration found. Restarting in world {} with height {}", plotArea.getWorldName(), height);
+                logger.info("[P2]  - Regions: {}", regions.size());
+                logger.info("[P2]  - Chunks: {}", chunks.size());
                 HybridUtils.UPDATE = true;
                 PlotSquared.platform().getHybridUtils().scheduleRoadUpdate(plotArea, regions, height, chunks);
             } catch (IOException | ClassNotFoundException e) {
-                PlotSquared.log(Captions.PREFIX + "Error restarting road regeneration.");
-                e.printStackTrace();
+                logger.error("[P2] Error restarting road regeneration", e);
             } finally {
                 if (!file.delete()) {
-                    PlotSquared.log(
-                        Captions.PREFIX + "Error deleting persistent_regen_data_" + plotArea.getId()
-                            + ". Please manually delete this file.");
+                    logger.error("[P2] Error deleting persistent_regen_data_{}. Please delete this file manually", plotArea.getId());
                 }
             }
         });
@@ -811,7 +780,6 @@ public class PlotSquared {
         }
         if (type == PlotAreaType.NORMAL) {
             if (getPlotAreaManager().getPlotAreas(world, null).length != 0) {
-                debug("World possibly already loaded: " + world);
                 return;
             }
             IndependentPlotGenerator plotGenerator;
@@ -839,15 +807,13 @@ public class PlotSquared {
             // Conventional plot generator
             PlotArea plotArea = plotGenerator.getNewPlotArea(world, null, null, null);
             PlotManager plotManager = plotArea.getPlotManager();
-            PlotSquared.log(Captions.PREFIX + "&aDetected world load for '" + world + "'");
-            PlotSquared
-                .log(Captions.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);
-            PlotSquared.log(Captions.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
-            PlotSquared.log(
-                Captions.PREFIX + "&3 - getPlotAreaManager(): &7" + plotManager.getClass().getName());
-            if (!this.worldConfiguration.contains(path)) {
-                this.worldConfiguration.createSection(path);
-                worldSection = this.worldConfiguration.getConfigurationSection(path);
+            logger.info("[P2] Detected world load for '{}'", world);
+            logger.info("[P2]  - generator: {}>{}", baseGenerator, plotGenerator);
+            logger.info("[P2]  - plot world: {}", plotArea.getClass().getCanonicalName());
+            logger.info("[P2] - plot area manager: {}", plotManager.getClass().getCanonicalName());
+            if (!this.worlds.contains(path)) {
+                this.worlds.createSection(path);
+                worldSection = this.worlds.getConfigurationSection(path);
             }
             plotArea.saveConfiguration(worldSection);
             plotArea.loadDefaultConfiguration(worldSection);
@@ -866,10 +832,9 @@ public class PlotSquared {
             ConfigurationSection areasSection = worldSection.getConfigurationSection("areas");
             if (areasSection == null) {
                 if (getPlotAreaManager().getPlotAreas(world, null).length != 0) {
-                    debug("World possibly already loaded: " + world);
                     return;
                 }
-                PlotSquared.log(Captions.PREFIX + "&aDetected world load for '" + world + "'");
+                logger.info("[P2] Detected world load for '{}'", world);
                 String gen_string = worldSection.getString("generator.plugin", platform.getPluginName());
                 if (type == PlotAreaType.PARTIAL) {
                     Set<PlotCluster> clusters =
@@ -885,8 +850,7 @@ public class PlotSquared {
                         String fullId = name + "-" + pos1 + "-" + pos2;
                         worldSection.createSection("areas." + fullId);
                         DBFunc.replaceWorld(world, world + ";" + name, pos1, pos2); // NPE
-
-                        PlotSquared.log(Captions.PREFIX + "&3 - " + name + "-" + pos1 + "-" + pos2);
+                        logger.info("[P2]  - {}-{}-{}", name, pos1, pos2);
                         GeneratorWrapper<?> areaGen = this.platform.getGenerator(world, gen_string);
                         if (areaGen == null) {
                             throw new IllegalArgumentException("Invalid Generator: " + gen_string);
@@ -900,14 +864,10 @@ public class PlotSquared {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        PlotSquared.log(
-                            Captions.PREFIX + "&c | &9generator: &7" + baseGenerator + ">"
-                                + areaGen);
-                        PlotSquared.log(Captions.PREFIX + "&c | &9plotworld: &7" + pa);
-                        PlotSquared.log(Captions.PREFIX + "&c | &9manager: &7" + pa);
-                        PlotSquared.log(
-                            Captions.PREFIX + "&cNote: &7Area created for cluster:" + name
-                                + " (invalid or old configuration?)");
+                        logger.info("[P2]  | generator: {}>{}", baseGenerator, areaGen);
+                        logger.info("[P2]  | plot world: {}", pa);
+                        logger.info("[P2]  | manager: {}", pa);
+                        logger.info("[P2] Note: Area created for cluster '{}' (invalid or old configuration?)", name);
                         areaGen.getPlotGenerator().initialize(pa);
                         areaGen.augment(pa);
                         toLoad.add(pa);
@@ -929,10 +889,9 @@ public class PlotSquared {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                PlotSquared
-                    .log(Captions.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + areaGen);
-                PlotSquared.log(Captions.PREFIX + "&3 - plotworld: &7" + pa);
-                PlotSquared.log(Captions.PREFIX + "&3 - getPlotAreaManager(): &7" + pa.getPlotManager());
+                logger.info("[P2]  - generator: {}>{}", baseGenerator, areaGen);
+                logger.info("[P2]  - plot world: {}", pa);
+                logger.info("[P2]  - plot area manager: {}", pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
@@ -944,7 +903,7 @@ public class PlotSquared {
                         + PlotAreaType.AUGMENTED + "`");
             }
             for (String areaId : areasSection.getKeys(false)) {
-                PlotSquared.log(Captions.PREFIX + " - " + areaId);
+                logger.info("[P2]  - {}", areaId);
                 String[] split = areaId.split("(?<=[^;-])-");
                 if (split.length != 3) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId
@@ -1006,11 +965,10 @@ public class PlotSquared {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                PlotSquared.log(Captions.PREFIX + "&aDetected area load for '" + world + "'");
-                PlotSquared
-                    .log(Captions.PREFIX + "&c | &9generator: &7" + baseGenerator + ">" + areaGen);
-                PlotSquared.log(Captions.PREFIX + "&c | &9plotworld: &7" + pa);
-                PlotSquared.log(Captions.PREFIX + "&c | &9manager: &7" + pa.getPlotManager());
+                logger.info("[P2] Detected area load for '{}'", world);
+                logger.info("[P2]  | generator: {}>{}", baseGenerator, areaGen);
+                logger.info("[P2]  | plot world: {}", pa);
+                logger.info("[P2]  | manager: {}", pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
@@ -1081,7 +1039,7 @@ public class PlotSquared {
             for (String element : split) {
                 String[] pair = element.split("=");
                 if (pair.length != 2) {
-                    PlotSquared.log("&cNo value provided for: &7" + element);
+                    logger.error("[P2] No value provided for '{}'", element);
                     return false;
                 }
                 String key = pair[0].toLowerCase();
@@ -1129,12 +1087,12 @@ public class PlotSquared {
                                 ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString());
                             break;
                         default:
-                            PlotSquared.log("&cKey not found: &7" + element);
+                            logger.error("[P2] Key not found: {}", element);
                             return false;
                     }
                 } catch (Exception e) {
+                    logger.error("[P2] Invalid value '{}' for arg '{}'", value, element);
                     e.printStackTrace();
-                    PlotSquared.log("&cInvalid value: &7" + value + " in arg " + element);
                     return false;
                 }
             }
@@ -1201,8 +1159,8 @@ public class PlotSquared {
                 }
             }
         } catch (IOException e) {
+            logger.error("[P2] Could not save {}", file);
             e.printStackTrace();
-            PlotSquared.log("&cCould not save " + file);
         }
     }
 
@@ -1224,8 +1182,8 @@ public class PlotSquared {
             // Close the connection
             DBFunc.close();
         } catch (NullPointerException throwable) {
+            logger.error("[P2] Could not close database connection", throwable);
             throwable.printStackTrace();
-            PlotSquared.log("&cCould not close database connection!");
         }
     }
 
@@ -1237,10 +1195,9 @@ public class PlotSquared {
             HybridUtils.regions.isEmpty() && HybridUtils.chunks.isEmpty())) {
             return;
         }
-        PlotSquared.log(
-            Captions.PREFIX + "Road regeneration incomplete. Saving incomplete regions to disk.");
-        PlotSquared.debug("   Regions: " + HybridUtils.regions.size());
-        PlotSquared.debug("   Chunks: " + HybridUtils.chunks.size());
+        logger.info("[P2] Road regeneration incomplete. Saving incomplete regions to disk");
+        logger.info("[P2]  - regions: {}", HybridUtils.regions.size());
+        logger.info("[P2]  - chunks: {}", HybridUtils.chunks.size());
         ArrayList<int[]> regions = new ArrayList<>();
         ArrayList<int[]> chunks = new ArrayList<>();
         for (BlockVector2 r : HybridUtils.regions) {
@@ -1257,16 +1214,14 @@ public class PlotSquared {
             this.platform.getDirectory() + File.separator + "persistent_regen_data_" + HybridUtils.area
                 .getId() + "_" + HybridUtils.area.getWorldName());
         if (file.exists() && !file.delete()) {
-            PlotSquared.log(Captions.PREFIX
-                + "persistent_regen_data file already exists and could not be deleted.");
+            logger.error("[P2] persistent_regene_data file already exists and could not be deleted");
             return;
         }
         try (ObjectOutputStream oos = new ObjectOutputStream(
             Files.newOutputStream(file.toPath(), StandardOpenOption.CREATE_NEW))) {
             oos.writeObject(list);
         } catch (IOException e) {
-            PlotSquared.log(Captions.PREFIX + "Error create persistent_regen_data file.");
-            e.printStackTrace();
+            logger.error("[P2] Error creating persistent_region_data file", e);
         }
     }
 
@@ -1286,7 +1241,7 @@ public class PlotSquared {
                 File file = MainUtil.getFile(platform.getDirectory(), Storage.SQLite.DB + ".db");
                 database = new SQLite(file);
             } else {
-                PlotSquared.log(Captions.PREFIX + "&cNo storage type is set!");
+                logger.error("[P2] No storage type is set. Disabling PlotSquared");
                 this.platform.shutdown(); //shutdown used instead of disable because no database is set
                 return;
             }
@@ -1304,20 +1259,13 @@ public class PlotSquared {
             }
             this.clustersTmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
-            PlotSquared.log(Captions.PREFIX
-                + "&cFailed to open DATABASE connection. The plugin will disable itself.");
-            if (Storage.MySQL.USE) {
-                PlotSquared.log("$4MYSQL");
-            } else if (Storage.SQLite.USE) {
-                PlotSquared.log("$4SQLITE");
-            }
-            PlotSquared.log(
-                "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
+            logger.error("[P2] Failed to open database connection ({}). Disabling PlotSquared", Storage.MySQL.USE ? "MySQL" : "SQLite");
+            logger.error("[P2] ==== Here is an ugly stacktrace, if you are interested in those things ===");
             e.printStackTrace();
-            PlotSquared.log("&d==== End of stacktrace ====");
-            PlotSquared.log("&6Please go to the " + platform.getPluginName()
-                + " 'storage.yml' and configure the database correctly.");
-            this.platform.shutdown(); //shutdown used instead of disable because of database error
+            logger.error("[P2] &d==== End of stacktrace ====");
+            logger.error("[P2] &6Please go to the {} 'storage.yml' and configure the database correctly",
+                imp().getPluginName());
+            this.IMP.shutdown(); //shutdown used instead of disable because of database error
         }
     }
 
@@ -1341,7 +1289,7 @@ public class PlotSquared {
                     try {
                         worldConfiguration.save(worldsFile);
                     } catch (IOException e) {
-                        PlotSquared.debug("Failed to save " + platform.getPluginName() + " worlds.yml");
+                        logger.error("[P2] Failed to save worlds.yml", e);
                         e.printStackTrace();
                     }
                 }
@@ -1374,14 +1322,12 @@ public class PlotSquared {
     public boolean setupConfigs() {
         File folder = new File(this.platform.getDirectory(), "config");
         if (!folder.exists() && !folder.mkdirs()) {
-            PlotSquared.log(Captions.PREFIX
-                + "&cFailed to create the /plugins/config folder. Please create it manually.");
+            logger.error("[P2] Failed to create the /plugins/config folder. Please create it manually");
         }
         try {
             this.worldsFile = new File(folder, "worlds.yml");
             if (!this.worldsFile.exists() && !this.worldsFile.createNewFile()) {
-                PlotSquared.log(
-                    "Could not create the worlds file, please create \"worlds.yml\" manually.");
+                logger.error("[P2] Could not create the worlds file. Please create 'worlds.yml' manually");
             }
             this.worldConfiguration = YamlConfiguration.loadConfiguration(this.worldsFile);
 
@@ -1391,21 +1337,20 @@ public class PlotSquared {
                         .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION) && !this.worldConfiguration
                         .getString("configuration_version").equalsIgnoreCase("v5"))) {
                     // Conversion needed
-                    log(Captions.LEGACY_CONFIG_FOUND.getTranslated());
+                    logger.info(Captions.LEGACY_CONFIG_FOUND.getTranslated());
                     try {
                         com.google.common.io.Files
                             .copy(this.worldsFile, new File(folder, "worlds.yml.old"));
-                        log(Captions.LEGACY_CONFIG_BACKUP.getTranslated());
+                        logger.info(Captions.LEGACY_CONFIG_BACKUP.getTranslated());
                         final ConfigurationSection worlds =
                             this.worldConfiguration.getConfigurationSection("worlds");
                         final LegacyConverter converter = new LegacyConverter(worlds);
                         converter.convert();
                         this.worldConfiguration.set("worlds", worlds);
                         this.setConfigurationVersion(LegacyConverter.CONFIGURATION_VERSION);
-                        log(Captions.LEGACY_CONFIG_DONE.getTranslated());
+                        logger.info(Captions.LEGACY_CONFIG_DONE.getTranslated());
                     } catch (final Exception e) {
-                        log(Captions.LEGACY_CONFIG_CONVERSION_FAILED.getTranslated());
-                        e.printStackTrace();
+                        logger.error(Captions.LEGACY_CONFIG_CONVERSION_FAILED.getTranslated(), e);
                     }
                     // Disable plugin
                     this.platform.shutdown();
@@ -1415,18 +1360,17 @@ public class PlotSquared {
                 this.worldConfiguration.set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
             }
         } catch (IOException ignored) {
-            PlotSquared.log("Failed to save settings.yml");
+            logger.error("[P2] Failed to save worlds.yml");
         }
         try {
             this.configFile = new File(folder, "settings.yml");
             if (!this.configFile.exists() && !this.configFile.createNewFile()) {
-                PlotSquared.log(
-                    "Could not create the settings file, please create \"settings.yml\" manually.");
+                logger.error("[P2] Could not create the settings file. Please create 'settings.yml' manually");
             }
             this.config = YamlConfiguration.loadConfiguration(this.configFile);
             setupConfig();
         } catch (IOException ignored) {
-            PlotSquared.log("Failed to save settings.yml");
+            logger.error("[P2] Failed to save settings.yml");
         }
         try {
             // TODO: REMOVE
@@ -1437,27 +1381,28 @@ public class PlotSquared {
                     styleFile.getParentFile().mkdirs();
                 }
                 if (!styleFile.createNewFile()) {
-                    PlotSquared.log(
-                        "Could not create the style file, please create \"translations/style.yml\" manually");
+                    logger.error("[P2] Failed to create the style file. Please create 'translations/style.yml' manually");
                 }
             }
             this.style = YamlConfiguration.loadConfiguration(styleFile);
             setupStyle();
-            this.style.save(styleFile);
-        } catch (IOException err) {
-            err.printStackTrace();
-            PlotSquared.log("Failed to save style.yml");
+        } catch (IOException ignored) {
+            logger.error("[P2] Failed to save style.yml");
         }
         try {
             this.storageFile = new File(folder, "storage.yml");
             if (!this.storageFile.exists() && !this.storageFile.createNewFile()) {
-                PlotSquared.log(
-                    "Could not the storage settings file, please create \"storage.yml\" manually.");
+                logger.error("[P2] Could not create the storage settings file. Please create 'storage.yml' manually");
             }
             YamlConfiguration.loadConfiguration(this.storageFile);
             setupStorage();
         } catch (IOException ignored) {
-            PlotSquared.log("Failed to save storage.yml");
+            logger.error("[P2] Failed to save storage.yml");
+        }
+        try {
+            this.style.save(this.styleFile);
+        } catch (IOException e) {
+            logger.error("[P2] Configuration file saving failed", e);
         }
         return true;
     }
@@ -1488,9 +1433,7 @@ public class PlotSquared {
         if (Settings.DEBUG) {
             Map<String, Object> components = Settings.getFields(Settings.Enabled_Components.class);
             for (Entry<String, Object> component : components.entrySet()) {
-                PlotSquared.log(Captions.PREFIX + String
-                    .format("&cKey: &6%s&c, Value: &6%s", component.getKey(),
-                        component.getValue()));
+                logger.info("[P2] Key: {} | Value: {}", component.getKey(), component.getValue());
             }
         }
     }

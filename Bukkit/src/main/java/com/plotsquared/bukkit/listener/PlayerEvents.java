@@ -1020,7 +1020,8 @@ import java.util.regex.Pattern;
                 player.sendMessage(spyMessage);
             }
         }
-        PlotSquared.debug(full);
+        // TODO: Re-implement
+        // PlotSquared.debug(full);
     }
 
     @EventHandler(priority = EventPriority.LOWEST) public void blockDestroy(BlockBreakEvent event) {
@@ -2497,7 +2498,6 @@ import java.util.regex.Pattern;
         }
         Player p = event.getPlayer();
         if (p == null) {
-            PlotSquared.debug("PlotSquared does not support HangingPlaceEvent for non-players.");
             event.setCancelled(true);
             return;
         }

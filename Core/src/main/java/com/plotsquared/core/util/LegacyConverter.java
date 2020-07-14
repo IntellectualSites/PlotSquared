@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -33,6 +32,8 @@ import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
 import javax.annotation.Nonnull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public final class LegacyConverter {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + LegacyConverter.class.getSimpleName());
     public static final String CONFIGURATION_VERSION = "post_flattening";
     private static final HashMap<String, ConfigurationType> TYPE_MAP = new HashMap<>();
 
@@ -109,7 +111,7 @@ public final class LegacyConverter {
         @Nonnull final String key, @Nonnull final String block) {
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
-        PlotSquared.log(CaptionUtility
+        logger.info(CaptionUtility
             .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(),
                 block, bucket.toString()));
     }
@@ -119,7 +121,7 @@ public final class LegacyConverter {
         final BlockState[] blocks = this.splitBlockList(blockList);
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
-        PlotSquared.log(CaptionUtility
+        logger.info(CaptionUtility
             .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(),
                 plotBlockArrayString(blocks), bucket.toString()));
     }

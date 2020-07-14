@@ -44,11 +44,14 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer<Actor> {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ConsolePlayer.class.getSimpleName());
     private static ConsolePlayer instance;
 
     private final Actor actor;
@@ -127,7 +130,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override public void sendMessage(String message) {
-        PlotSquared.log(message);
+        logger.info(message);
     }
 
     @Override public void teleport(Location location, TeleportCause cause) {

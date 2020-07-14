@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
@@ -58,6 +59,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import javax.annotation.Nonnull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -78,6 +81,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
 @Singleton public class BukkitRegionManager extends RegionManager {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
+
     @Inject public BukkitRegionManager(@Nonnull final ChunkManager chunkManager) {
         super(chunkManager);
     }
@@ -97,8 +102,6 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
         } else {
             final Semaphore semaphore = new Semaphore(1);
             try {
-                PlotSquared.debug("Attempting to make an asynchronous call to getLoadedChunks."
-                    + " Will halt the calling thread until completed.");
                 semaphore.acquire();
                 Bukkit.getScheduler().runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> {
                     for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))

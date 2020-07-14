@@ -25,13 +25,16 @@
  */
 package com.plotsquared.core.plot;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.InventoryUtil;
 
 import javax.annotation.Nonnull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlotInventory {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotInventory.class.getSimpleName());
 
     private static final String META_KEY = "inventory";
     public final PlotPlayer<?> player;
@@ -40,7 +43,7 @@ public class PlotInventory {
     private String title;
     private boolean open = false;
     private final InventoryUtil inventoryUtil;
-    
+
     public PlotInventory(@Nonnull final InventoryUtil inventoryUtil,
                          PlotPlayer<?> player, int size, String name) {
         this.size = size;
@@ -75,10 +78,7 @@ public class PlotInventory {
         if (this.title == null) {
             return;
         }
-        if (hasPlotInventoryOpen(player)) {
-            PlotSquared.debug(String.format("Failed to open plot inventory for %s "
-                + "because the player already has an open plot inventory", player.getName()));
-        } else {
+        if (!hasPlotInventoryOpen(player)) {
             this.open = true;
             setPlotInventoryOpen(player, this);
             this.inventoryUtil.open(this);

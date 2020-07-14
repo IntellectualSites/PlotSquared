@@ -48,6 +48,8 @@ import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @CommandDeclaration(command = "claim",
     aliases = "c",
@@ -58,15 +60,17 @@ import javax.annotation.Nullable;
     usage = "/plot claim")
 public class Claim extends SubCommand {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Claim.class.getSimpleName());
+
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
-    
+
     @Inject public Claim(@Nonnull final EventDispatcher eventDispatcher,
                          @Nullable final EconHandler econHandler) {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
-    
+
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String schematic = null;
         if (args.length >= 1) {
@@ -145,7 +149,7 @@ public class Claim extends SubCommand {
         DBFunc.createPlotSafe(plot, () -> TaskManager.getImplementation().sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 if (!plot.claim(player, true, finalSchematic, false)) {
-                    PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() + String
+                    logger.info(Captions.PREFIX.getTranslated() + String
                         .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
                     sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                     plot.setOwnerAbs(null);
@@ -160,7 +164,7 @@ public class Claim extends SubCommand {
                 }
             }
         }), () -> {
-            PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() + String
+            logger.info(Captions.PREFIX.getTranslated() + String
                 .format("Failed to add plot %s to the database",
                     plot.getId().toCommaSeparatedString()));
             sendMessage(player, Captions.PLOT_NOT_CLAIMED);

@@ -27,13 +27,15 @@ package com.plotsquared.core.plot.flag.types;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
 import lombok.Getter;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +45,8 @@ import java.util.Map;
  * or a {@link BlockCategory}
  */
 public class BlockTypeWrapper {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BlockTypeWrapper.class.getSimpleName());
 
     private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
     private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();
@@ -129,7 +133,9 @@ public class BlockTypeWrapper {
             && this.blockCategoryId != null) { // only if name is available
             this.blockCategory = BlockCategory.REGISTRY.get(this.blockCategoryId);
             if (this.blockCategory == null && !BlockCategory.REGISTRY.values().isEmpty()) {
-                PlotSquared.debug("- Block category #" + this.blockCategoryId + " does not exist");
+                if (Settings.DEBUG) {
+                    logger.info("[P2] - Block category #{} does not exist", this.blockCategoryId);
+                }
                 this.blockCategory = new NullBlockCategory(this.blockCategoryId);
             }
         }

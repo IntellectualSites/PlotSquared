@@ -63,6 +63,8 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 
 import java.io.File;
@@ -79,6 +81,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HybridUtils {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + HybridUtils.class.getSimpleName());
+
+    public static HybridUtils manager;
     public static Set<BlockVector2> regions;
     public static int height;
     public static Set<BlockVector2> chunks = new HashSet<>();
@@ -433,24 +438,25 @@ public class HybridUtils {
                         BlockVector2 chunk = iter.next();
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend);
-                        if (!regenedRoad) {
-                            PlotSquared.debug("Failed to regenerate roads.");
+                        if (!regenedRoad && Settings.DEBUG) {
+                            logger.info("[P2] Failed to regenerate roads");
                         }
                         chunkManager.unloadChunk(area.getWorldName(), chunk, true);
                     }
-                    PlotSquared.debug("Cancelled road task");
+                    if (Settings.DEBUG) {
+                        logger.info("[P2] Cancelled road task");
+                    }
                     return;
                 }
                 count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
-                    PlotSquared.debug("PROGRESS: " + 100 * (2048 - chunks.size()) / 2048 + "%");
+                    logger.info("[P2] Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
                 }
                 if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
-                    PlotSquared.debug("Regenerating plot walls");
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    PlotSquared.log("Finished road conversion");
+                    logger.info("[P2] Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
@@ -462,11 +468,11 @@ public class HybridUtils {
                                         HybridUtils.regions.iterator();
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
-                                    PlotSquared.debug(
-                                        "Updating .mcr: " + loc.getX() + ", " + loc.getZ()
-                                            + " (approx 1024 chunks)");
-                                    PlotSquared
-                                        .debug(" - Remaining: " + HybridUtils.regions.size());
+                                    if (Settings.DEBUG) {
+                                        logger.info("[P2] Updating .mcr: {}, {} (approx 1024 chunks)",
+                                            loc.getX(), loc.getZ());
+                                        logger.info("[P2] - Remaining: {}", HybridUtils.regions.size());
+                                    }
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
                                 }
@@ -482,8 +488,8 @@ public class HybridUtils {
                                             iterator.remove();
                                             boolean regenedRoads =
                                                 regenerateRoad(area, chunk, extend);
-                                            if (!regenedRoads) {
-                                                PlotSquared.debug("Failed to regenerate road.");
+                                            if (!regenedRoads && Settings.DEBUG) {
+                                                logger.info("[P2] Failed to regenerate road");
                                             }
                                         }
                                     }
@@ -494,9 +500,8 @@ public class HybridUtils {
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
-                            PlotSquared.debug(
-                                "[ERROR] Could not update '" + area.getWorldName() + "/region/r."
-                                    + loc.getX() + "." + loc.getZ() + ".mca' (Corrupt chunk?)");
+                            logger.error("[P2] Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
+                                area.getWorldHash(), loc.getX(), loc.getZ());
                             int sx = loc.getX() << 5;
                             int sz = loc.getZ() << 5;
                             for (int x = sx; x < sx + 32; x++) {
@@ -505,8 +510,6 @@ public class HybridUtils {
                                             true);
                                 }
                             }
-                            PlotSquared.debug(" - Potentially skipping 1024 chunks");
-                            PlotSquared.debug(" - TODO: recommend chunkster if corrupt");
                         }
                         blockQueue.addEmptyTask(() -> TaskManager.runTaskLater(task, 20));
                     });

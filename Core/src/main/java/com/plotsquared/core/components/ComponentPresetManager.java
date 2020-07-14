@@ -46,6 +46,8 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +60,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ComponentPresetManager {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ComponentPresetManager.class.getSimpleName());
 
     private final List<ComponentPreset> presets;
     private final String guiName;
@@ -77,7 +81,7 @@ public class ComponentPresetManager {
                 e.printStackTrace();
             }
             if (!created) {
-                PlotSquared.log(Captions.PREFIX + "Failed to create components.yml");
+                logger.error("[P2] Failed to create components.yml");
                 this.guiName = "&cInvalid!";
                 this.presets = new ArrayList<>();
                 return;
@@ -93,8 +97,7 @@ public class ComponentPresetManager {
             try {
                 yamlConfiguration.save(file);
             } catch (IOException e) {
-                PlotSquared.log(Captions.PREFIX + "Failed to save default values to components.yml");
-                e.printStackTrace();
+                logger.error("[P2] Failed to save default values to components.yml", e);
             }
         }
         this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
@@ -112,8 +115,7 @@ public class ComponentPresetManager {
             try {
                 yamlConfiguration.save(file);
             } catch (final IOException e) {
-                PlotSquared.log(Captions.PREFIX + "Failed to save default values to components.yml");
-                e.printStackTrace();
+                logger.error("[P2] Failed to save default values to components.yml", e);
             }
             this.presets = defaultPreset;
         }

@@ -77,6 +77,8 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -120,6 +122,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  * - Use the methods from the PlotArea/PS/Location etc to get existing plots
  */
 public class Plot {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Plot.class.getSimpleName());
 
     public static final int MAX_HEIGHT = 256;
 
@@ -1735,9 +1739,6 @@ public class Plot {
 
     public boolean claim(@Nonnull final PlotPlayer player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
-            PlotSquared.debug(Captions.PREFIX.getTranslated() + String
-                .format("Player %s attempted to claim plot %s, but was not allowed",
-                    player.getName(), this.getId().toCommaSeparatedString()));
             return false;
         }
         return claim(player, teleport, schematic, true);
@@ -1748,9 +1749,8 @@ public class Plot {
 
         if (updateDB) {
             if (!create(player.getUUID(), true)) {
-                PlotSquared.debug(Captions.PREFIX.getTranslated() + String.format(
-                    "Player %s attempted to claim plot %s, but the database failed to update",
-                    player.getName(), this.getId().toCommaSeparatedString()));
+                logger.error("[P2] Player {} attempted to claim plot {}, but the database failed to update",
+                    player.getName(), this.getId().toCommaSeparatedString());
                 return false;
             }
         } else {
@@ -1838,9 +1838,8 @@ public class Plot {
             });
             return true;
         }
-        PlotSquared.get().getLogger().log(Captions.PREFIX.getTranslated() + String
-            .format("Failed to add plot %s to plot area %s", this.getId().toCommaSeparatedString(),
-                this.area.toString()));
+        logger.info("[P2] Failed to add plot {} to plot area {}",
+            this.getId().toCommaSeparatedString(), this.area.toString());
         return false;
     }
 
@@ -1934,12 +1933,10 @@ public class Plot {
      */
     public boolean moveData(Plot plot, Runnable whenDone) {
         if (!this.hasOwner()) {
-            PlotSquared.debug(plot + " is unowned (single)");
             TaskManager.runTask(whenDone);
             return false;
         }
         if (plot.hasOwner()) {
-            PlotSquared.debug(plot + " is unowned (multi)");
             TaskManager.runTask(whenDone);
             return false;
         }
@@ -2645,7 +2642,6 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.NORTH));
             if (!tmp.getMerged(Direction.SOUTH)) {
                 // invalid merge
-                PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.SOUTH, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2662,7 +2658,6 @@ public class Plot {
             assert tmp != null;
             if (!tmp.getMerged(Direction.WEST)) {
                 // invalid merge
-                PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.WEST, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2679,7 +2674,6 @@ public class Plot {
             assert tmp != null;
             if (!tmp.getMerged(Direction.NORTH)) {
                 // invalid merge
-                PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.NORTH, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2695,7 +2689,6 @@ public class Plot {
             tmp = this.area.getPlotAbs(this.id.getRelative(Direction.WEST));
             if (!tmp.getMerged(Direction.EAST)) {
                 // invalid merge
-                PlotSquared.debug("Fixing invalid merge: " + this);
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(Direction.EAST, true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2710,10 +2703,6 @@ public class Plot {
         Plot current;
         while ((current = frontier.poll()) != null) {
             if (!current.hasOwner() || current.settings == null) {
-                // Invalid plot
-                // merged onto unclaimed plot
-                PlotSquared.debug(
-                    "Ignoring invalid merged plot: " + current + " | " + current.getOwnerAbs());
                 continue;
             }
             tmpSet.add(current);

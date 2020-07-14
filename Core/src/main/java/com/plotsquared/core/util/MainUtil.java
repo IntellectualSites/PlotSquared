@@ -57,6 +57,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +100,7 @@ import java.util.stream.IntStream;
  */
 public class MainUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + MainUtil.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
 
     static {
@@ -154,7 +157,6 @@ public class MainUtil {
     public static void upload(UUID uuid, String file, String extension,
         final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
-            PlotSquared.debug("&cWrite task cannot be null");
             TaskManager.runTask(whenDone);
             return;
         }
@@ -216,7 +218,6 @@ public class MainUtil {
                     content = scanner.next().trim();
                 }
                 if (!content.startsWith("<")) {
-                    PlotSquared.debug(content);
                 }
                 int responseCode = ((HttpURLConnection) con).getResponseCode();
                 if (responseCode == 200) {
@@ -539,7 +540,7 @@ public class MainUtil {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    PlotSquared.log(Captions.NOT_VALID_PLOT_WORLD);
+                    logger.info("[P2] No plot area string was supplied");
                 }
                 return null;
             }
@@ -662,7 +663,7 @@ public class MainUtil {
             if (player == null) {
                 String message = CaptionUtility
                     .format(null, (prefix ? Captions.PREFIX.getTranslated() : "") + msg);
-                PlotSquared.log(message);
+                logger.info(message);
             } else {
                 player.sendMessage(CaptionUtility.format(player,
                     (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg)));
@@ -697,7 +698,7 @@ public class MainUtil {
         TaskManager.runTaskAsync(() -> {
             String m = CaptionUtility.format(player, caption, args);
             if (player == null) {
-                PlotSquared.log(m);
+                logger.info(m);
             } else {
                 player.sendMessage(m);
             }
@@ -914,8 +915,6 @@ public class MainUtil {
                 for (File file : files) {
                     if (file.isDirectory()) {
                         deleteDirectory(file);
-                    } else {
-                        PlotSquared.debug("Deleting file: " + file + " | " + file.delete());
                     }
                 }
             }

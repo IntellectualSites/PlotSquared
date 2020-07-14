@@ -48,6 +48,8 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 
 import java.util.ArrayDeque;
@@ -57,12 +59,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ExpireManager {
+
+    private final Logger logger = LoggerFactory.getLogger("P2/" + ExpireManager.class);
 
     public static ExpireManager IMP;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
@@ -70,7 +73,7 @@ public class ExpireManager {
     private final EventDispatcher eventDispatcher;
     private volatile HashSet<Plot> plotsToDelete;
     private ArrayDeque<ExpiryTask> tasks;
-    
+
     /**
      * 0 = stopped, 1 = stopping, 2 = running
      */
@@ -84,7 +87,6 @@ public class ExpireManager {
     }
 
     public void addTask(ExpiryTask task) {
-        PlotSquared.debug("Adding new expiry task!");
         this.tasks.add(task);
     }
 
@@ -425,21 +427,7 @@ public class ExpireManager {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
         }
-        Set<Plot> plots = plot.getConnectedPlots();
         plot.deletePlot(whenDone);
-        PlotAnalysis changed = plot.getComplexity(null);
-        int changes = changed == null ? 0 : changed.changes_sd;
-        int modified = changed == null ? 0 : changed.changes;
-        PlotSquared.debug(
-            "$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.getOwner()
-                + " Delta:" + changes + "/" + modified + " Connected: " + StringMan
-                .getString(plots));
-        PlotSquared.debug("$4 - Area: " + plot.getArea());
-        if (plot.hasOwner()) {
-            PlotSquared.debug("$4 - Owner: " + plot.getOwner());
-        } else {
-            PlotSquared.debug("$4 - Owner: Unowned");
-        }
     }
 
     public long getAge(UUID uuid) {

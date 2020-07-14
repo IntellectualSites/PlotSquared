@@ -25,16 +25,19 @@
  */
 package com.plotsquared.core.queue;
 
-import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 
 public class LocationOffsetDelegateLocalBlockQueue extends DelegateLocalBlockQueue {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + LocationOffsetDelegateLocalBlockQueue.class.getSimpleName());
 
     private final boolean[][] canPlace;
     private final int blockX;
@@ -61,10 +64,6 @@ public class LocationOffsetDelegateLocalBlockQueue extends DelegateLocalBlockQue
                 return super.setBlock(x, y, z, id);
             }
         } catch (final Exception e) {
-            PlotSquared.debug(String.format(
-                "Failed to set block at: %d;%d;%d (to = %s) with offset %d;%d."
-                    + " Translated to: %d;%d", x, y, z, id, blockX, blockZ, x - blockX,
-                z - blockZ));
             throw e;
         }
         return false;

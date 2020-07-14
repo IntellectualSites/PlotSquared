@@ -65,6 +65,8 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.world.block.BlockState;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -87,6 +89,9 @@ import java.util.concurrent.CompletableFuture;
     aliases = {"exec", "$"},
     category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + DebugExec.class.getSimpleName());
+
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
@@ -464,7 +469,6 @@ public class DebugExec extends SubCommand {
             }
             init();
             this.scope.put("PlotPlayer", player);
-            PlotSquared.debug("> " + script);
             try {
                 if (async) {
                     final String toExec = script;
@@ -476,14 +480,12 @@ public class DebugExec extends SubCommand {
                         } catch (ScriptException e) {
                             e.printStackTrace();
                         }
-                        PlotSquared
-                            .log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                        logger.info("[P2] > {}ms -> {}", System.currentTimeMillis() - start, result);
                     });
                 } else {
                     long start = System.currentTimeMillis();
                     Object result = this.engine.eval(script, this.scope);
-                    PlotSquared
-                        .log("> " + (System.currentTimeMillis() - start) + "ms -> " + result);
+                    logger.info("[P2] > {}ms -> {}", System.currentTimeMillis() - start, result);
                 }
                 return true;
             } catch (ScriptException e) {

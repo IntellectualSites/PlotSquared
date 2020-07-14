@@ -61,6 +61,8 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import javax.annotation.Nonnull;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -93,6 +95,9 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + SchematicHandler.class.getSimpleName());
+    public static SchematicHandler manager;
 
     private boolean exportAll = false;
 
@@ -151,17 +156,11 @@ public abstract class SchematicHandler {
                 final Runnable THIS = this;
                 getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                     @Override public void run(final CompoundTag value) {
-                        if (value == null) {
-                            MainUtil.sendMessage(null, "&7 - Skipped plot &c" + plot.getId());
-                        } else {
+                        if (value != null) {
                             TaskManager.runTaskAsync(() -> {
-                                MainUtil.sendMessage(null, "&6ID: " + plot.getId());
                                 boolean result = save(value, directory + File.separator + name + ".schem");
                                 if (!result) {
-                                    MainUtil
-                                        .sendMessage(null, "&7 - Failed to save &c" + plot.getId());
-                                } else {
-                                    MainUtil.sendMessage(null, "&7 - &a  success: " + plot.getId());
+                                    logger.error("[P2] Failed to save {}", plot.getId());
                                 }
                                 TaskManager.runTask(THIS);
                             });
@@ -190,7 +189,6 @@ public abstract class SchematicHandler {
                 whenDone.value = false;
             }
             if (schematic == null) {
-                PlotSquared.debug("Schematic == null :|");
                 TaskManager.runTask(whenDone);
                 return;
             }
@@ -206,12 +204,6 @@ public abstract class SchematicHandler {
                     + 1) < WIDTH) || (
                     (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset
                         + 1) < LENGTH) || (HEIGHT > 256)) {
-                    PlotSquared.debug("Schematic is too large");
-                    PlotSquared.debug(
-                        "(" + WIDTH + ',' + LENGTH + ',' + HEIGHT + ") is bigger than (" + (
-                            region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) + ','
-                            + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ())
-                            + ",256)");
                     TaskManager.runTask(whenDone);
                     return;
                 }
@@ -409,8 +401,6 @@ public abstract class SchematicHandler {
                 return new Schematic(clip);
             } catch (IOException e) {
                 e.printStackTrace();
-                PlotSquared.debug(is.toString() + " | " + is.getClass().getCanonicalName()
-                    + " is not in GZIP format : " + e.getMessage());
             }
         }
         return null;
@@ -436,14 +426,12 @@ public abstract class SchematicHandler {
             return schematics;
         } catch (JSONException | IOException e) {
             e.printStackTrace();
-            PlotSquared.debug("ERROR PARSING: " + rawJSON);
         }
         return null;
     }
 
     public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (tag == null) {
-            PlotSquared.debug("&cCannot save empty tag");
             TaskManager.runTask(whenDone);
             return;
         }
@@ -468,7 +456,6 @@ public abstract class SchematicHandler {
      */
     public boolean save(CompoundTag tag, String path) {
         if (tag == null) {
-            PlotSquared.debug("&cCannot save empty tag");
             return false;
         }
         try {

@@ -68,6 +68,8 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -86,6 +88,8 @@ import java.util.function.Consumer;
  * @author Jesse Boyd, Alexander Söderberg
  */
 public abstract class PlotArea {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotArea.class.getSimpleName());
 
     protected final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
     @Getter @Nonnull private final String worldName;
@@ -381,7 +385,6 @@ public abstract class PlotArea {
             }
         }
 
-        PlotSquared.log(Captions.PREFIX + "&3 - default flags: &7" + flagBuilder.toString());
         this.spawnEggs = config.getBoolean("event.spawn.egg");
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
@@ -417,7 +420,8 @@ public abstract class PlotArea {
                 prefix = ", ";
             }
         }
-        PlotSquared.log(Captions.PREFIX + "&3 - road flags: &7" + roadFlagBuilder.toString());
+
+        logger.info("[P2] - road flags: {}", roadFlagBuilder.toString());
 
         loadConfiguration(config);
     }
@@ -1113,10 +1117,12 @@ public abstract class PlotArea {
                 try {
                     flags.add(flagInstance.parse(split[1]));
                 } catch (final FlagParseException e) {
-                    PlotSquared.log(Captions.PREFIX.getTranslated() + String.format(
-                        "§cFailed to parse default flag with key §6'%s'§c and value: §6'%s'§c."
-                            + " Reason: %s. This flag will not be added as a default flag.",
-                        e.getFlag().getName(), e.getValue(), e.getErrorMessage()));
+                    logger.warn("[P2] Failed to parse default flag with key '{}' and value '{}'. "
+                                 + "Reason: {}. This flag will not be added as a default flag.",
+                                 e.getFlag().getName(),
+                                 e.getValue(),
+                                 e.getErrorMessage());
+                    e.printStackTrace();
                 }
             }
         }

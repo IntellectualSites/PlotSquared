@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.configuration;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
 
@@ -44,7 +43,8 @@ public interface Caption {
     default boolean send(PlotPlayer caller, Object... args) {
         String msg = CaptionUtility.format(caller, this, args);
         if (caller == null) {
-            PlotSquared.log(msg);
+            // TODO: Replace with adventure
+            System.out.println(msg);
         } else {
             caller.sendMessage(msg);
         }

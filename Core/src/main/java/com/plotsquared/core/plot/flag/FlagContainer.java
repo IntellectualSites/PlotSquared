@@ -27,9 +27,12 @@ package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.plotsquared.core.PlotSquared;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -43,6 +46,8 @@ import java.util.Map;
  * Container type for {@link PlotFlag plot flags}.
  */
 @EqualsAndHashCode(of = "flagMap") public class FlagContainer {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + FlagContainer.class.getSimpleName());
 
     private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
@@ -145,11 +150,9 @@ import java.util.Map;
             this.updateSubscribers
                 .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
         } catch (IllegalStateException e) {
-            PlotSquared.log(String.format(
-                "Flag '%s' (class: '%s') could not be added to the container"
-                    + " because the flag name exceeded the allowed limit of 64 characters."
-                    + " Please tell the developer of that flag to fix this.", flag.getName(),
-                flag.getClass().getName()));
+            logger.info("[P2] Flag {} (class '{}') could not be added to the container because the "
+                + "flag name exceeded the allowed limit of 64 characters. Please tell the developer "
+                + "of the flag to fix this.", flag.getName(), flag.getClass().getName());
             e.printStackTrace();
         }
     }

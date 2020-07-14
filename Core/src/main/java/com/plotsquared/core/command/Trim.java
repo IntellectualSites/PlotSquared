@@ -45,6 +45,8 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 
 import java.util.HashSet;
@@ -60,6 +62,10 @@ import java.util.Set;
     category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Trim.class.getSimpleName());
+    public static ArrayList<Plot> expired = null;
+    private static volatile boolean TASK = false;
+
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
     private final GlobalBlockQueue blockQueue;
@@ -74,8 +80,6 @@ public class Trim extends SubCommand {
         this.blockQueue = blockQueue;
         this.regionManager = regionManager;
     }
-
-    private static volatile boolean TASK = false;
 
     /**
      * Runs the result task with the parameters (viable, nonViable).
@@ -140,14 +144,15 @@ public class Trim extends SubCommand {
             @Override public void run(Set<BlockVector2> viable, final Set<BlockVector2> nonViable) {
                 Runnable regenTask;
                 if (regen) {
-                    PlotSquared.log("Starting regen task:");
-                    PlotSquared.log(" - This is a VERY slow command");
-                    PlotSquared.log(" - It will say `Trim done!` when complete");
+                    logger.info("[P2] Starting regen task");
+                    logger.info("[P2]  - This is a VERY slow command");
+                    logger.info("[P2]  - It will say 'Trim done!' when complete");
                     regenTask = new Runnable() {
                         @Override public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
                                 player.sendMessage("Trim done!");
+                                logger.info("[P2] Trim done!");
                                 return;
                             }
                             Iterator<BlockVector2> iterator = nonViable.iterator();

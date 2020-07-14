@@ -25,10 +25,11 @@
  */
 package com.plotsquared.core.configuration;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings.Enabled_Components;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.StringMan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -45,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Config {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Config.class.getSimpleName());
 
     /**
      * Get the value for a node<br>
@@ -68,7 +71,6 @@ public class Config {
                 }
             }
         }
-        PlotSquared.debug("Failed to get config option: " + key);
         return null;
     }
 
@@ -95,15 +97,13 @@ public class Config {
                     }
                     field.set(instance, value);
                     return;
-                } catch (Throwable e) {
-                    PlotSquared.debug(
-                        "Invalid configuration value: " + key + ": " + value + " in " + root
-                            .getSimpleName());
+                } catch (final Throwable e) {
+                    logger.error("[P2] Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
                     e.printStackTrace();
                 }
             }
         }
-        PlotSquared.debug("Failed to set config option: " + key + ": " + value + " | " + instance);
+        logger.error("[P2] Failed to set config option '{}: {}' | {}", key, value, instance);
     }
 
     public static boolean load(File file, Class<? extends Config> root) {
@@ -288,10 +288,10 @@ public class Config {
             Field field = instance.getClass().getField(toFieldName(split[split.length - 1]));
             setAccessible(field);
             return field;
-        } catch (Throwable e) {
-            PlotSquared.debug(
-                "Invalid config field: " + StringMan.join(split, ".") + " for " + toNodeName(
-                    instance.getClass().getSimpleName()));
+        } catch (final Throwable e) {
+            logger.error("[P2] Invalid config field: {} for {}",
+                StringMan.join(split, "."), toNodeName(instance.getClass().getSimpleName()));
+            e.printStackTrace();
             return null;
         }
     }

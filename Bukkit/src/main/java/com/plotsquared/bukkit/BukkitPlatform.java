@@ -59,9 +59,8 @@ import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.command.WE_Anywhere;
-import com.plotsquared.core.components.ComponentPresetManager;
-import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.backup.NullBackupManager;
+import com.plotsquared.core.backup.SimpleBackupManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -96,6 +95,7 @@ import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.ChatManager;
+import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
@@ -105,7 +105,6 @@ import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.SetupUtils;
-import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.CacheUUIDService;
@@ -134,6 +133,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -160,6 +161,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 @SuppressWarnings("unused") public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitMain.class.getSimpleName());
     private static final int BSTATS_ID = 1404;
 
     static {
@@ -203,9 +205,6 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                PlotSquared.debug(StringMan.getString(Bukkit.getBukkitVersion()));
-                PlotSquared.debug(
-                    StringMan.getString(Bukkit.getBukkitVersion().split("-")[0].split("\\.")));
                 return new int[] {1, 13, 0};
             }
         }
@@ -246,14 +245,12 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         if (PremiumVerification.isPremium()) {
-            PlotSquared.log(
-                Captions.PREFIX + "&6PlotSquared version licensed to Spigot user " + getUserID());
-            PlotSquared
-                .log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/" + getResourceID());
-            PlotSquared.log(Captions.PREFIX + "&6Download ID: " + getDownloadID());
-            PlotSquared.log(Captions.PREFIX + "&6Thanks for supporting us :)");
+            logger.info("[P2] PlotSquared version licensed to Spigot user {}", getUserID());
+            logger.info("[P2] https://www.spigotmc.org/resources/{}", getResourceID());
+            logger.info("[P2] Download ID: {}", getDownloadID());
+            logger.info("[P2] Thanks for supporting us :)");
         } else {
-            PlotSquared.log(Captions.PREFIX + "&6Couldn't verify purchase :(");
+            logger.info("[P2] Couldn't verify purchase :(");
         }
 
         // Database
@@ -398,7 +395,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
             final OfflineModeUUIDService offlineModeUUIDService = new OfflineModeUUIDService();
             this.impromptuPipeline.registerService(offlineModeUUIDService);
             this.backgroundPipeline.registerService(offlineModeUUIDService);
-            PlotSquared.log(Captions.PREFIX + "(UUID) Using the offline mode UUID service");
+            logger.info("[P2] (UUID) Using the offline mode UUID service");
         }
 
         final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
@@ -418,8 +415,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         final LuckPermsUUIDService luckPermsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
-            PlotSquared
-                .log(Captions.PREFIX + "(UUID) Using LuckPerms as a complementary UUID service");
+            logger.info("[P2] (UUID) Using LuckPerms as a complementary UUID service");
         } else {
             luckPermsUUIDService = null;
         }
@@ -427,8 +423,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         final BungeePermsUUIDService bungeePermsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
             bungeePermsUUIDService = new BungeePermsUUIDService();
-            PlotSquared
-                .log(Captions.PREFIX + "(UUID) Using BungeePerms as a complementary UUID service");
+            logger.info("[P2] (UUID) Using BungeePerms as a complementary UUID service");
         } else {
             bungeePermsUUIDService = null;
         }
@@ -436,8 +431,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         final EssentialsUUIDService essentialsUUIDService;
         if (Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
-            PlotSquared
-                .log(Captions.PREFIX + "(UUID) Using Essentials as a complementary UUID service");
+            logger.info("[P2] (UUID) Using Essentials as a complementary UUID service");
         } else {
             essentialsUUIDService = null;
         }
@@ -448,8 +442,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 this.impromptuPipeline.registerService(paperUUIDService);
                 this.backgroundPipeline.registerService(paperUUIDService);
-                PlotSquared
-                    .log(Captions.PREFIX + "(UUID) Using Paper as a complementary UUID service");
+                logger.info("[P2] (UUID) Using Paper as a complementary UUID service");
             }
 
             this.impromptuPipeline.registerService(sqLiteUUIDService);
@@ -505,10 +498,9 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
                 ChatFormatter.formatters.add(getInjector().getInstance(PlaceholderFormatter.class));
             }
-            PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into PlaceholderAPI");
+            logger.info("[P2] PlotSquared hooked into PlaceholderAPI");
         } else {
-            PlotSquared
-                .debug(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
+            logger.info("[P2] PlaceholderAPI is not in use. Hook deactivated");
         }
 
         this.startMetrics();
@@ -520,10 +512,6 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 e.printStackTrace();
             }
         }
-
-        PlotSquared.log(
-            Captions.PREFIX.getTranslated() + "Using platform world manager: " + this.worldManager
-                .getName());
 
         // Clean up potential memory leak
         Bukkit.getScheduler().runTaskTimer(this, () -> {
@@ -537,10 +525,6 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 getLogger().warning("Failed to clean up players: " + e.getMessage());
             }
         }, 100L, 100L);
-
-        PlotSquared.log(Captions.PREFIX + CaptionUtility
-            .format(ConsolePlayer.getConsole(), Captions.ENABLED.getTranslated(),
-                this.getPluginName()));
     }
 
     private void unload() {
@@ -588,7 +572,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                         final Chunk[] chunks = world.getLoadedChunks();
                         if (chunks.length == 0) {
                             if (!Bukkit.unloadWorld(world, true)) {
-                                PlotSquared.debug("Failed to unload " + world.getName());
+                                logger.warn("[P2] Failed to unload {}", world.getName());
                             }
                             return;
                         } else {
@@ -638,8 +622,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 }
             }
         });
-        PlotSquared.log(Captions.PREFIX.getTranslated() + "(UUID) " + uuidQueue.size()
-            + " UUIDs will be cached.");
+
+        logger.info("[P2] (UUID) {} UUIDs will be cached", uuidQueue.size());
 
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             // Begin by reading all the SQLite cache at once
@@ -647,9 +631,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
             // Now fetch names for all known UUIDs
             final int totalSize = uuidQueue.size();
             int read = 0;
-            PlotSquared.log(Captions.PREFIX.getTranslated()
-                + "(UUID) PlotSquared will fetch UUIDs in groups of "
-                + Settings.UUID.BACKGROUND_LIMIT);
+            logger.info("[P2] (UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
             final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
 
             // Used to indicate that the second retrieval has been attempted
@@ -657,7 +639,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
             while (!uuidQueue.isEmpty() || !uuidList.isEmpty()) {
                 if (!uuidList.isEmpty() && secondRun) {
-                    PlotSquared.log("Giving up on last batch. Fetching new batch instead.");
+                    logger.warn("[P2] (UUID) Giving up on last batch. Fetching new batch instead");
                     uuidList.clear();
                 }
                 if (uuidList.isEmpty()) {
@@ -681,15 +663,14 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                     uuidList.clear();
                     // Print progress
                     final double percentage = ((double) read / (double) totalSize) * 100.0D;
-                    PlotSquared.log(Captions.PREFIX.getTranslated() + String
-                        .format("(UUID) PlotSquared has cached %.1f%% of UUIDs", percentage));
+                    if (Settings.DEBUG) {
+                        logger.info("[P2] (UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
+                    }
                 } catch (final InterruptedException | ExecutionException e) {
-                    PlotSquared.log("Failed to retrieve that batch. Will try again.");
-                    e.printStackTrace();
+                    logger.error("[P2] (UUID) Failed to retrieve last batch. Will try again", e);
                 }
             }
-            PlotSquared
-                .log(Captions.PREFIX.getTranslated() + "(UUID) PlotSquared has cached all UUIDs");
+            logger.info("[P2] (UUID) PlotSquared has cached all UUIDs");
         }, 10, TimeUnit.SECONDS);
     }
 
@@ -733,7 +714,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
     }
 
     @SuppressWarnings("deprecation") private void runEntityTask() {
-        PlotSquared.log(Captions.PREFIX + "KillAllEntities started.");
+        logger.info("[P2] KillAllEntities started");
         TaskManager.runTaskRepeat(() -> this.plotAreaManager.forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.getWorldName());
             try {
@@ -1074,8 +1055,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 if (!this.plotAreaManager.hasPlotArea(worldName)) {
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
-            } catch (Exception e) {
-                PlotSquared.log("Failed to reload world: " + world + " | " + e.getMessage());
+            } catch (final Exception e) {
+                logger.error("[P2] Failed to reload world: {} | {}", world, e.getMessage());
                 Bukkit.getServer().unloadWorld(world, false);
                 return;
             }
