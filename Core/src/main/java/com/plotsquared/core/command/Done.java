@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotDoneEvent;
@@ -42,7 +43,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "done",
     aliases = {"submit"},
@@ -53,9 +54,12 @@ import org.jetbrains.annotations.NotNull;
 public class Done extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
-    
-    public Done(@NotNull final EventDispatcher eventDispatcher) {
+    private final HybridUtils hybridUtils;
+
+    @Inject public Done(@Nonnull final EventDispatcher eventDispatcher,
+                        @Nonnull final HybridUtils hybridUtils) {
         this.eventDispatcher = eventDispatcher;
+        this.hybridUtils = hybridUtils;
     }
     
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -90,7 +94,7 @@ public class Done extends SubCommand {
             finish(plot, player, true);
             plot.removeRunning();
         } else {
-            HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+            this.hybridUtils.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
                 @Override public void run(PlotAnalysis value) {
                     plot.removeRunning();
                     boolean result =

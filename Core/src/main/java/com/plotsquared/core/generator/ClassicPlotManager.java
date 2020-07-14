@@ -40,7 +40,7 @@ import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,8 +53,8 @@ public class ClassicPlotManager extends SquarePlotManager {
     private final ClassicPlotWorld classicPlotWorld;
     private final RegionManager regionManager;
 
-    public ClassicPlotManager(@NotNull final ClassicPlotWorld classicPlotWorld,
-                              @NotNull final RegionManager regionManager) {
+    public ClassicPlotManager(@Nonnull final ClassicPlotWorld classicPlotWorld,
+                              @Nonnull final RegionManager regionManager) {
         super(classicPlotWorld, regionManager);
         this.classicPlotWorld = classicPlotWorld;
         this.regionManager = regionManager;

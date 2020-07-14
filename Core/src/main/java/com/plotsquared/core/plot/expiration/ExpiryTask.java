@@ -30,7 +30,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.query.PlotQuery;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class ExpiryTask {
     private final PlotAreaManager plotAreaManager;
     private long cutoffThreshold = Long.MIN_VALUE;
     
-    public ExpiryTask(@NotNull final Settings.Auto_Clear settings, @NotNull final PlotAreaManager plotAreaManager) {
+    public ExpiryTask(final Settings.Auto_Clear settings, @Nonnull final PlotAreaManager plotAreaManager) {
         this.settings = settings;
         this.plotAreaManager = plotAreaManager;
     }

@@ -27,8 +27,8 @@ package com.plotsquared.core.uuid;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,13 +57,13 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
         this.uuidCache = CacheBuilder.newBuilder().maximumSize(size).build();
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
         mappings.addAll(this.uuidCache.getAllPresent(uuids).values());
         return mappings;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         mappings.addAll(this.usernameCache.getAllPresent(usernames).values());
         return mappings;
@@ -76,7 +76,7 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
         }
     }
 
-    @Override @NotNull public Collection<UUIDMapping> getImmediately() {
+    @Override @Nonnull public Collection<UUIDMapping> getImmediately() {
         return this.usernameCache.asMap().values();
     }
 
@@ -84,7 +84,7 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
         return true;
     }
 
-    @Override @Nullable public UUIDMapping getImmediately(@NotNull final Object object) {
+    @Override @Nullable public UUIDMapping getImmediately(@Nonnull final Object object) {
         final List<UUIDMapping> list;
         if (object instanceof String) {
             list = getUUIDs(Collections.singletonList((String) object));

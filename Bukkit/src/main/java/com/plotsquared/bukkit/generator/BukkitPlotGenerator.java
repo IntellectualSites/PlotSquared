@@ -43,7 +43,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,9 +64,9 @@ public class BukkitPlotGenerator extends ChunkGenerator
 
     @Getter private final String levelName;
 
-    public BukkitPlotGenerator(@NotNull final  String name,
-                               @NotNull final IndependentPlotGenerator generator,
-                               @NotNull final PlotAreaManager plotAreaManager) {
+    public BukkitPlotGenerator(@Nonnull final  String name,
+                               @Nonnull final IndependentPlotGenerator generator,
+                               @Nonnull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
         this.levelName = name;
         this.plotGenerator = generator;
@@ -77,7 +77,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         MainUtil.initCache();
     }
 
-    public BukkitPlotGenerator(final String world, final ChunkGenerator cg, @NotNull final PlotAreaManager plotAreaManager) {
+    public BukkitPlotGenerator(final String world, final ChunkGenerator cg, @Nonnull final PlotAreaManager plotAreaManager) {
         if (cg instanceof BukkitPlotGenerator) {
             throw new IllegalArgumentException("ChunkGenerator: " + cg.getClass().getName()
                 + " is already a BukkitPlotGenerator!");
@@ -106,7 +106,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return this.platformGenerator;
     }
 
-    @Override @NotNull public List<BlockPopulator> getDefaultPopulators(@NotNull World world) {
+    @Override @Nonnull public List<BlockPopulator> getDefaultPopulators(@Nonnull World world) {
         try {
             if (!this.loaded) {
                 String name = world.getName();
@@ -150,9 +150,9 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return toAdd;
     }
 
-    @Override @NotNull
-    public ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z,
-        @NotNull BiomeGrid biome) {
+    @Override @Nonnull
+    public ChunkData generateChunkData(@Nonnull World world, @Nonnull Random random, int x, int z,
+        @Nonnull BiomeGrid biome) {
 
         GenChunk result = new GenChunk();
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
@@ -216,7 +216,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         ChunkManager.postProcessChunk(loc, result);
     }
 
-    @Override public boolean canSpawn(@NotNull final World world, final int x, final int z) {
+    @Override public boolean canSpawn(@Nonnull final World world, final int x, final int z) {
         return true;
     }
 

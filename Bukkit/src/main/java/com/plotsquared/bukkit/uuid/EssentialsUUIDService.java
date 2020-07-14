@@ -29,7 +29,7 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,11 +47,11 @@ public class EssentialsUUIDService implements UUIDService {
         this.essentials = Essentials.getPlugin(Essentials.class);
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
         return Collections.emptyList();
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
             try {

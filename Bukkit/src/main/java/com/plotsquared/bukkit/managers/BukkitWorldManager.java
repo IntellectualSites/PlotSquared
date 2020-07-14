@@ -32,8 +32,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +51,7 @@ import java.util.List;
     }
 
     @Override @Nullable
-    public World handleWorldCreation(@NotNull String worldName, @Nullable String generator) {
+    public World handleWorldCreation(@Nonnull String worldName, @Nullable String generator) {
         this.setGenerator(worldName, generator);
         final WorldCreator wc = new WorldCreator(worldName);
         wc.environment(World.Environment.NORMAL);

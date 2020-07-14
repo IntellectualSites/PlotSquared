@@ -25,15 +25,19 @@
  */
 package com.plotsquared.core.inject.factory;
 
+import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.plot.PlotId;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface HybridPlotWorldFactory {
 
-    @NotNull HybridPlotWorld create(@NotNull String worldName, @Nullable String id,
-        @NotNull IndependentPlotGenerator plotGenerator, @Nullable PlotId min, @Nullable PlotId max);
+    @Nonnull HybridPlotWorld create(@Nonnull @Assisted("world") String worldName,
+                                    @Nullable @Assisted("id") String id,
+                                    @Nonnull IndependentPlotGenerator plotGenerator,
+                                    @Nullable @Assisted("min") PlotId min,
+                                    @Nullable @Assisted("max") PlotId max);
 
 }

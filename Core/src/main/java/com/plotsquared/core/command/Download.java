@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
@@ -38,7 +39,7 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.jnbt.CompoundTag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.net.URL;
 
@@ -52,9 +53,15 @@ import java.net.URL;
 public class Download extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final SchematicHandler schematicHandler;
+    private final WorldUtil worldUtil;
 
-    public Download(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public Download(@Nonnull final PlotAreaManager plotAreaManager,
+                            @Nonnull final SchematicHandler schematicHandler,
+                            @Nonnull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
+        this.schematicHandler = schematicHandler;
+        this.worldUtil = worldUtil;
     }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -91,10 +98,10 @@ public class Download extends SubCommand {
                 return false;
             }
             plot.addRunning();
-            SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
+            this.schematicHandler.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                 @Override public void run(CompoundTag value) {
                     plot.removeRunning();
-                    SchematicHandler.manager.upload(value, null, null, new RunnableVal<URL>() {
+                    schematicHandler.upload(value, null, null, new RunnableVal<URL>() {
                         @Override public void run(URL url) {
                             if (url == null) {
                                 MainUtil.sendMessage(player, Captions.GENERATING_LINK_FAILED);
@@ -113,8 +120,8 @@ public class Download extends SubCommand {
             }
             MainUtil.sendMessage(player, Captions.MCA_FILE_SIZE);
             plot.addRunning();
-            WorldUtil.IMP.saveWorld(world);
-            WorldUtil.IMP.upload(plot, null, null, new RunnableVal<URL>() {
+            this.worldUtil.saveWorld(world);
+            this.worldUtil.upload(plot, null, null, new RunnableVal<URL>() {
                 @Override public void run(URL url) {
                     plot.removeRunning();
                     if (url == null) {

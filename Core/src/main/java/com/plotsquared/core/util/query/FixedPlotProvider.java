@@ -26,7 +26,7 @@
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +35,7 @@ class FixedPlotProvider implements PlotProvider {
 
     private final Plot plot;
 
-    FixedPlotProvider(@NotNull final Plot plot) {
+    FixedPlotProvider(@Nonnull final Plot plot) {
         this.plot = plot;
     }
 

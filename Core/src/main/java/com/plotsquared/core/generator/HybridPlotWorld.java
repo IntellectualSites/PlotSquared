@@ -57,8 +57,8 @@ import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -83,15 +83,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private final RegionManager regionManager;
     private final SchematicHandler schematicHandler;
 
-    @Inject public HybridPlotWorld(@Assisted final String worldName,
-                                   @Assisted final String id,
-                                   @Assisted @NotNull final IndependentPlotGenerator generator,
-                                   @Assisted final PlotId min,
-                                   @Assisted final PlotId max,
-                                   @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
-                                   @NotNull final RegionManager regionManager,
-                                   @NotNull final SchematicHandler schematicHandler,
-                                   @NotNull final GlobalBlockQueue blockQueue,
+    @Inject public HybridPlotWorld(@Assisted("world") final String worldName,
+                                   @Nullable @Assisted("id") final String id,
+                                   @Assisted @Nonnull final IndependentPlotGenerator generator,
+                                   @Nullable @Assisted("min") final PlotId min,
+                                   @Nullable @Assisted("max") final PlotId max,
+                                   @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                                   @Nonnull final RegionManager regionManager,
+                                   @Nonnull final SchematicHandler schematicHandler,
+                                   @Nonnull final GlobalBlockQueue blockQueue,
                                    @Nullable final EconHandler econHandler) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
         this.regionManager = regionManager;
@@ -145,11 +145,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         return BlockTransformExtent.transform(id, transform);
     }
 
-    @NotNull @Override protected PlotManager createManager() {
+    @Nonnull @Override protected PlotManager createManager() {
         return new HybridPlotManager(this, this.regionManager);
     }
 
-    public Location getSignLocation(@NotNull Plot plot) {
+    public Location getSignLocation(@Nonnull Plot plot) {
         plot = plot.getBasePlot(false);
         final Location bot = plot.getBottomAbs();
         if (SIGN_LOCATION == null) {
@@ -206,7 +206,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
     }
 
-    @Override public boolean isCompatible(@NotNull final PlotArea plotArea) {
+    @Override public boolean isCompatible(@Nonnull final PlotArea plotArea) {
         if (!(plotArea instanceof SquarePlotWorld)) {
             return false;
         }

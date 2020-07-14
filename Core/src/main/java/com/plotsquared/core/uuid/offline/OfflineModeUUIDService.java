@@ -29,7 +29,7 @@ import com.google.common.base.Charsets;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,18 +42,18 @@ import java.util.UUID;
  */
 public class OfflineModeUUIDService implements UUIDService {
 
-    @NotNull protected final UUID getFromUsername(@NotNull String username) {
+    @Nonnull protected final UUID getFromUsername(@Nonnull String username) {
         if (Settings.UUID.FORCE_LOWERCASE) {
             username = username.toLowerCase(Locale.ENGLISH);
         }
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(Charsets.UTF_8));
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
         return Collections.emptyList();
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
+    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
             mappings.add(new UUIDMapping(getFromUsername(username), username));

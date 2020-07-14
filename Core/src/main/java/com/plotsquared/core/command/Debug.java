@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
@@ -38,7 +39,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -52,9 +53,12 @@ import java.util.Map;
 public class Debug extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final RegionManager regionManager;
 
-    public Debug(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public Debug(@Nonnull final PlotAreaManager plotAreaManager,
+                         @Nonnull final RegionManager regionManager) {
         this.plotAreaManager = plotAreaManager;
+        this.regionManager = regionManager;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -70,8 +74,7 @@ public class Debug extends SubCommand {
             final long start = System.currentTimeMillis();
             MainUtil.sendMessage(player, "Fetching loaded chunks...");
             TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,
-                "Loaded chunks: " + RegionManager.manager
-                    .getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (
+                "Loaded chunks: " + this.regionManager.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (
                     System.currentTimeMillis() - start) + "ms) using thread: " + Thread
                     .currentThread().getName()));
             return true;

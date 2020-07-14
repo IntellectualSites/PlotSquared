@@ -41,8 +41,8 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class LocalBlockQueue {
 
@@ -95,7 +95,7 @@ public abstract class LocalBlockQueue {
 
     public abstract boolean setBlock(final int x, final int y, final int z, final BaseBlock id);
 
-    public boolean setBlock(final int x, final int y, final int z, @NotNull final Pattern pattern) {
+    public boolean setBlock(final int x, final int y, final int z, @Nonnull final Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 

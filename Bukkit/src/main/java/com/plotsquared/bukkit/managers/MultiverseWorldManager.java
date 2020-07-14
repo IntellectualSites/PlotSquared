@@ -28,8 +28,8 @@ package com.plotsquared.bukkit.managers;
 import com.google.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Multiverse specific manager that informs Multiverse of
@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 @Singleton public class MultiverseWorldManager extends BukkitWorldManager {
 
     @Override @Nullable
-    public World handleWorldCreation(@NotNull final String worldName, @Nullable final String generator) {
+    public World handleWorldCreation(@Nonnull final String worldName, @Nullable final String generator) {
         // First let Bukkit register the world
         this.setGenerator(worldName, generator);
         // Then we send the console command

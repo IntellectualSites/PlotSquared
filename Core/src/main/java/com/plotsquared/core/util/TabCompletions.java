@@ -37,7 +37,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.uuid.UUIDMapping;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,8 +74,8 @@ public class TabCompletions {
      * @param existing Players that should not be included in completions
      * @return List of completions
      */
-    @NotNull public List<Command> completePlayers(@NotNull final String input,
-        @NotNull final List<String> existing) {
+    @Nonnull public List<Command> completePlayers(@Nonnull final String input,
+        @Nonnull final List<String> existing) {
         return completePlayers("players", input, existing, uuid -> true);
     }
 
@@ -87,16 +87,16 @@ public class TabCompletions {
      * @param existing Players that should not be included in completions
      * @return List of completions
      */
-    @NotNull public List<Command> completeAddedPlayers(@NotNull final Plot plot, @NotNull final String input,
-                                                       @NotNull final List<String> existing) {
+    @Nonnull public List<Command> completeAddedPlayers(@Nonnull final Plot plot, @Nonnull final String input,
+                                                       @Nonnull final List<String> existing) {
         return completePlayers("added" + plot, input, existing,
                 uuid -> plot.getMembers().contains(uuid)
                 || plot.getTrusted().contains(uuid)
                 || plot.getDenied().contains(uuid));
     }
 
-    @NotNull public List<Command> completePlayersInPlot(@NotNull final Plot plot, @NotNull final String input,
-                                                        @NotNull final List<String> existing) {
+    @Nonnull public List<Command> completePlayersInPlot(@Nonnull final Plot plot, @Nonnull final String input,
+                                                        @Nonnull final List<String> existing) {
         List<String> players = cachedCompletionValues.getIfPresent("inPlot" + plot);
         if (players == null) {
             final List<PlotPlayer<?>> inPlot = plot.getPlayersInPlot();
@@ -116,7 +116,7 @@ public class TabCompletions {
      * @param input Command input
      * @return List of completions
      */
-    @NotNull public List<Command> completePatterns(@NotNull final String input) {
+    @Nonnull public List<Command> completePatterns(@Nonnull final String input) {
         return PatternUtil.getSuggestions(input.trim()).stream()
             .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
             .filter(value -> value.startsWith(input.toLowerCase(Locale.ENGLISH)))
@@ -124,7 +124,7 @@ public class TabCompletions {
             }).collect(Collectors.toList());
     }
 
-    @NotNull public List<Command> completeBoolean(@NotNull final String input) {
+    @Nonnull public List<Command> completeBoolean(@Nonnull final String input) {
         if (input.isEmpty()) {
             return Arrays.asList(booleanTrueCompletion, booleanFalseCompletion);
         }
@@ -146,7 +146,7 @@ public class TabCompletions {
      * @param highestLimit Highest number to include
      * @return Unmodifiable list of number completions
      */
-    @NotNull public List<Command> completeNumbers(@NotNull final String input,
+    @Nonnull public List<Command> completeNumbers(@Nonnull final String input,
                                                   final int amountLimit, final int highestLimit) {
         if (input.isEmpty() || input.length() > highestLimit || !MathMan.isInteger(input)) {
             return Collections.emptyList();
@@ -171,7 +171,7 @@ public class TabCompletions {
      * @param input Input to filter with
      * @return Unmodifiable list of area completions
      */
-    @NotNull public List<Command> completeAreas(@NotNull final String input) {
+    @Nonnull public List<Command> completeAreas(@Nonnull final String input) {
         final List<Command> completions = new ArrayList<>();
         for (final PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
             String areaName = area.getWorldName();
@@ -187,7 +187,7 @@ public class TabCompletions {
         return Collections.unmodifiableList(completions);
     }
 
-    @NotNull public List<Command> asCompletions(String... toFilter) {
+    @Nonnull public List<Command> asCompletions(String... toFilter) {
         final List<Command> completions = new ArrayList<>();
         for (String completion : toFilter) {
             completions.add(new Command(null, false, completion, "",
@@ -203,9 +203,9 @@ public class TabCompletions {
      * @param uuidFilter      Filter applied before caching values
      * @return List of completions
      */
-    private List<Command> completePlayers(@NotNull final String cacheIdentifier, @NotNull final String input,
-                                          @NotNull final List<String> existing,
-                                          @NotNull final Predicate<UUID> uuidFilter) {
+    private List<Command> completePlayers(@Nonnull final String cacheIdentifier, @Nonnull final String input,
+                                          @Nonnull final List<String> existing,
+                                          @Nonnull final Predicate<UUID> uuidFilter) {
         List<String> players;
         if (Settings.Enabled_Components.EXTENDED_USERNAME_COMPLETION) {
             players = cachedCompletionValues.getIfPresent(cacheIdentifier);

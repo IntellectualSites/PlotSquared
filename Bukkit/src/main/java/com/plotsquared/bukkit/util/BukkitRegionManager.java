@@ -35,7 +35,6 @@ import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
@@ -58,7 +57,7 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
 @Singleton public class BukkitRegionManager extends RegionManager {
 
-    @Inject public BukkitRegionManager(@NotNull ChunkManager chunkManager) {
+    @Inject public BukkitRegionManager(@Nonnull final ChunkManager chunkManager) {
         super(chunkManager);
     }
 
@@ -212,7 +211,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
         assert oldWorld != null;
         final String newWorldName = newWorld.getName();
         final ContentMap map = new ContentMap();
-        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(newWorldName, false);
+        final LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(newWorldName, false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 int bx = value[2];
@@ -243,7 +242,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
                 }
             }
             queue.enqueue();
-            GlobalBlockQueue.IMP.addEmptyTask(() -> {
+            PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(() -> {
                 //map.restoreBlocks(newWorld, 0, 0);
                 map.restoreEntities(newWorld, relX, relZ);
                 TaskManager.runTask(whenDone);
@@ -291,8 +290,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
                         if (chunkObj == null) {
                             return;
                         }
-                        final LocalBlockQueue queue =
-                            GlobalBlockQueue.IMP.getNewQueue(world, false);
+                        final LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue()
+                            .getNewQueue(world, false);
                         if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
                             AugmentedUtils.bypass(ignoreAugment,
                                 () -> queue.regenChunkSafe(chunk.getX(), chunk.getZ()));
@@ -452,7 +451,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
                     BukkitChunkManager.swapChunk(world1, world2, chunk1, chunk2, region1, region2));
             }
         }
-        GlobalBlockQueue.IMP.addEmptyTask(() -> {
+        PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(() -> {
             for (ContentMap map : maps) {
                 map.restoreEntities(world1, 0, 0);
                 TaskManager.runTaskLater(whenDone, 1);
@@ -467,12 +466,13 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
             region.getMinimumPoint().getY(), region.getMinimumPoint().getZ() - extendBiome);
         Location pos2 = Location.at(world, region.getMaximumPoint().getX() + extendBiome,
             region.getMaximumPoint().getY(), region.getMaximumPoint().getZ() + extendBiome);
-        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+        final LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue()
+            .getNewQueue(world, false);
 
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 BlockVector2 loc = BlockVector2.at(value[0], value[1]);
-                ChunkManager.manager.loadChunk(world, loc, false).thenRun(() -> {
+                PlotSquared.platform().getChunkManager().loadChunk(world, loc, false).thenRun(() -> {
                     MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
                     queue.refreshChunk(value[0], value[1]);
                 });

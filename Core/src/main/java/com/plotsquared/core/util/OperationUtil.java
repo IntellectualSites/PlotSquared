@@ -37,8 +37,8 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extension.platform.Capability;
 import com.sk89q.worldedit.extension.platform.Platform;
 import com.sk89q.worldedit.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.List;
 import java.util.concurrent.Future;
@@ -74,7 +74,7 @@ public class OperationUtil {
         if (actor instanceof Player) {
             weWorld = ((Player) actor).getWorld();
         } else {
-            @NotNull Location loc = plotPlayer.getLocation();
+            @Nonnull Location loc = plotPlayer.getLocation();
             String world = loc.getWorldName();
             weWorld = getWorld(world);
         }
@@ -106,8 +106,8 @@ public class OperationUtil {
         return editSession;
     }
 
-    public Future<?> withEditSession(@NotNull PlotPlayer plotPlayer,
-        @NotNull Consumer<EditSession> consumer, @Nullable Consumer<Throwable> exceptionHandler) {
+    public Future<?> withEditSession(@Nonnull PlotPlayer plotPlayer,
+        @Nonnull Consumer<EditSession> consumer, @Nullable Consumer<Throwable> exceptionHandler) {
         if (ASYNC) {
             ListeningExecutorService exec = WorldEdit.getInstance().getExecutorService();
             return exec

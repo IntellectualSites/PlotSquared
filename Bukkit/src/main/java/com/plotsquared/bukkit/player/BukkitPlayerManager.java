@@ -28,13 +28,14 @@ package com.plotsquared.bukkit.player;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
@@ -44,27 +45,31 @@ import java.util.UUID;
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
+    private final EconHandler econHandler;
 
-    @Inject public BukkitPlayerManager(@NotNull final PlotAreaManager plotAreaManager,
-                               @NotNull final EventDispatcher eventDispatcher) {
+    @Inject public BukkitPlayerManager(@Nonnull final PlotAreaManager plotAreaManager,
+                                       @Nonnull final EventDispatcher eventDispatcher,
+                                       @Nullable final EconHandler econHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
     }
 
-    @NotNull @Override public BukkitPlayer getPlayer(@NotNull final Player object) {
+    @Nonnull @Override public BukkitPlayer getPlayer(@Nonnull final Player object) {
         try {
             return getPlayer(object.getUniqueId());
         } catch (final NoSuchPlayerException exception) {
-            return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object, object.isOnline(), false);
+            return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object,
+                object.isOnline(), false, this.econHandler);
         }
     }
 
-    @Override @NotNull public BukkitPlayer createPlayer(@NotNull final UUID uuid) {
+    @Override @Nonnull public BukkitPlayer createPlayer(@Nonnull final UUID uuid) {
         final Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline()) {
             throw new NoSuchPlayerException(uuid);
         }
-        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player);
+        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, this.econHandler);
     }
 
     @Nullable @Override public BukkitOfflinePlayer getOfflinePlayer(@Nullable final UUID uuid) {
@@ -74,7 +79,7 @@ import java.util.UUID;
         return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
     }
 
-    @NotNull @Override public BukkitOfflinePlayer getOfflinePlayer(@NotNull final String username) {
+    @Nonnull @Override public BukkitOfflinePlayer getOfflinePlayer(@Nonnull final String username) {
         return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(username));
     }
 

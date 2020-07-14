@@ -32,7 +32,7 @@ import com.plotsquared.core.util.BlockUtil;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +48,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         super(blockTypeList, Captions.FLAG_CATEGORY_BLOCK_LIST, description);
     }
 
-    @Override public F parse(@NotNull String input) throws FlagParseException {
+    @Override public F parse(@Nonnull String input) throws FlagParseException {
         final List<BlockTypeWrapper> parsedBlocks = new ArrayList<>();
         final String[] split = input.replaceAll("\\s+", "").split(",(?![^\\(\\[]*[\\]\\)])");
         if (split.length == 0) {

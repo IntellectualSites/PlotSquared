@@ -27,7 +27,7 @@ package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 
@@ -35,7 +35,7 @@ class SearchPlotProvider implements PlotProvider {
 
     private final String searchTerm;
 
-    SearchPlotProvider(@NotNull final String searchTerm) {
+    SearchPlotProvider(@Nonnull final String searchTerm) {
         this.searchTerm = searchTerm;
     }
 

@@ -63,7 +63,7 @@ allprojects {
     }
 }
 
-subprojects {
+subprojects { subproject ->
     apply(plugin: "java")
     apply(plugin: "maven")
     apply(plugin: "eclipse")
@@ -100,6 +100,8 @@ subprojects {
         annotationProcessor("org.projectlombok:lombok:1.18.8")
         testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
         testImplementation("junit:junit:4.13")
+
+        compile group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
     }
 
     configurations.all {

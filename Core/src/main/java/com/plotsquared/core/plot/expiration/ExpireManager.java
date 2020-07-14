@@ -48,7 +48,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class ExpireManager {
      */
     private int running;
 
-    public ExpireManager(@NotNull final EventDispatcher eventDispatcher) {
+    public ExpireManager(@Nonnull final EventDispatcher eventDispatcher) {
         this.tasks = new ArrayDeque<>();
         this.dates_cache = new ConcurrentHashMap<>();
         this.account_age_cache = new ConcurrentHashMap<>();

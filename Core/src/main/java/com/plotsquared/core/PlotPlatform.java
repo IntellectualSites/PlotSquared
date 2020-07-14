@@ -36,14 +36,16 @@ import com.plotsquared.core.location.World;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChatManager;
+import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
+import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.util.List;
@@ -153,7 +155,7 @@ public interface PlotPlatform<P> extends ILogger {
      *
      * @return Default implementation generator
      */
-    @NotNull default IndependentPlotGenerator getDefaultGenerator() {
+    @Nonnull default IndependentPlotGenerator getDefaultGenerator() {
         return getInjector().getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class));
     }
 
@@ -164,7 +166,7 @@ public interface PlotPlatform<P> extends ILogger {
      *
      * @return Backup manager
      */
-    @NotNull default BackupManager getBackupManager() {
+    @Nonnull default BackupManager getBackupManager() {
         return getInjector().getInstance(BackupManager.class);
     }
 
@@ -173,7 +175,7 @@ public interface PlotPlatform<P> extends ILogger {
      *
      * @return World manager
      */
-    @NotNull default PlatformWorldManager<?> getWorldManager() {
+    @Nonnull default PlatformWorldManager<?> getWorldManager() {
         return getInjector().getInstance(PlatformWorldManager.class);
     }
 
@@ -182,7 +184,7 @@ public interface PlotPlatform<P> extends ILogger {
      *
      * @return Player manager
      */
-    @NotNull default PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager() {
+    @Nonnull default PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager() {
         return getInjector().getInstance(PlayerManager.class);
     }
 
@@ -192,21 +194,21 @@ public interface PlotPlatform<P> extends ILogger {
      * @param worldName World name
      * @return Platform world wrapper
      */
-    @NotNull World<?> getPlatformWorld(@NotNull final String worldName);
+    @Nonnull World<?> getPlatformWorld(@Nonnull final String worldName);
 
     /**
      * Get the {@link com.google.inject.Injector} instance used by PlotSquared
      *
      * @return Injector instance
      */
-    @NotNull Injector getInjector();
+    @Nonnull Injector getInjector();
 
     /**
      * Get the world utility implementation
      *
      * @return World utility
      */
-    @NotNull default WorldUtil getWorldUtil() {
+    @Nonnull default WorldUtil getWorldUtil() {
         return getInjector().getInstance(WorldUtil.class);
     }
 
@@ -215,7 +217,7 @@ public interface PlotPlatform<P> extends ILogger {
      *
      * @return Global block queue implementation
      */
-    @NotNull default GlobalBlockQueue getGlobalBlockQueue() {
+    @Nonnull default GlobalBlockQueue getGlobalBlockQueue() {
         return getInjector().getInstance(GlobalBlockQueue.class);
     }
 
@@ -224,7 +226,7 @@ public interface PlotPlatform<P> extends ILogger {
      *
      * @return Hybrid utils
      */
-    @NotNull default HybridUtils getHybridUtils() {
+    @Nonnull default HybridUtils getHybridUtils() {
         return getInjector().getInstance(HybridUtils.class);
     }
 
@@ -233,17 +235,35 @@ public interface PlotPlatform<P> extends ILogger {
      *
      * @return Setup utils
      */
-    @NotNull default SetupUtils getSetupUtils() {
+    @Nonnull default SetupUtils getSetupUtils() {
         return getInjector().getInstance(SetupUtils.class);
     }
 
     /**
      * Get the {@link EconHandler} implementation for the platform
-     *
+     *      *
      * @return Econ handler
      */
-    @NotNull default EconHandler getEconHandler() {
+    @Nullable default EconHandler getEconHandler() {
         return getInjector().getInstance(EconHandler.class);
+    }
+
+    /**
+     * Get the {@link RegionManager} implementation for the platform
+     *
+     * @return Region manager
+     */
+    @Nonnull default RegionManager getRegionManager() {
+        return getInjector().getInstance(RegionManager.class);
+    }
+
+    /**
+     * Get the {@link ChunkManager} implementation for the platform
+     *
+     * @return Region manager
+     */
+    @Nonnull default ChunkManager getChunkManager() {
+        return getInjector().getInstance(ChunkManager.class);
     }
 
 }

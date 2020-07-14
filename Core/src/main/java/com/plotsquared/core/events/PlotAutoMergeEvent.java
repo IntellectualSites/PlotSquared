@@ -28,7 +28,7 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,8 +50,8 @@ public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePl
      * @param plot  Plot that was merged
      * @param plots A list of plots involved in the event
      */
-    public PlotAutoMergeEvent(@NotNull final String world, @NotNull final Plot plot,
-        @NotNull final List<PlotId> plots) {
+    public PlotAutoMergeEvent(@Nonnull final String world, @Nonnull final Plot plot,
+        @Nonnull final List<PlotId> plots) {
         super(plot);
         this.world = world;
         this.plots = plots;

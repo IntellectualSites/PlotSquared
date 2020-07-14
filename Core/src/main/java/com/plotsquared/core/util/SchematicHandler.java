@@ -58,7 +58,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -98,7 +98,7 @@ public abstract class SchematicHandler {
 
     private final WorldUtil worldUtil;
 
-    public SchematicHandler(@NotNull final WorldUtil worldUtil) {
+    public SchematicHandler(@Nonnull final WorldUtil worldUtil) {
         this.worldUtil = worldUtil;
     }
 
@@ -384,7 +384,7 @@ public abstract class SchematicHandler {
         return null;
     }
 
-    public Schematic getSchematic(@NotNull URL url) {
+    public Schematic getSchematic(@Nonnull URL url) {
         try {
             ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
             InputStream inputStream = Channels.newInputStream(readableByteChannel);
@@ -395,7 +395,7 @@ public abstract class SchematicHandler {
         return null;
     }
 
-    public Schematic getSchematic(@NotNull InputStream is) {
+    public Schematic getSchematic(@Nonnull InputStream is) {
         try {
             SpongeSchematicReader schematicReader =
                 new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));

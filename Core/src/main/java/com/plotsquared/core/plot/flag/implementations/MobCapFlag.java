@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.NonNegativeIntegerFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class MobCapFlag extends NonNegativeIntegerFlag<MobCapFlag> {
     public static final MobCapFlag MOB_CAP_UNLIMITED = new MobCapFlag(Integer.MAX_VALUE);
@@ -36,7 +36,7 @@ public class MobCapFlag extends NonNegativeIntegerFlag<MobCapFlag> {
         super(value, Captions.FLAG_DESCRIPTION_MOB_CAP);
     }
 
-    @Override protected MobCapFlag flagOf(@NotNull Integer value) {
+    @Override protected MobCapFlag flagOf(@Nonnull Integer value) {
         return new MobCapFlag(value);
     }
 }

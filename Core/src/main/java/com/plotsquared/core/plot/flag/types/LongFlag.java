@@ -28,20 +28,20 @@ package com.plotsquared.core.plot.flag.types;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag<Long, F> {
 
-    protected LongFlag(@NotNull Long value, Long minimum, Long maximum,
-        @NotNull Caption flagDescription) {
+    protected LongFlag(@Nonnull Long value, Long minimum, Long maximum,
+        @Nonnull Caption flagDescription) {
         super(value, minimum, maximum, Captions.FLAG_CATEGORY_INTEGERS, flagDescription);
     }
 
-    protected LongFlag(@NotNull Long value, @NotNull Caption flagDescription) {
+    protected LongFlag(@Nonnull Long value, @Nonnull Caption flagDescription) {
         this(value, Long.MIN_VALUE, Long.MAX_VALUE, flagDescription);
     }
 
-    @Override public F merge(@NotNull Long newValue) {
+    @Override public F merge(@Nonnull Long newValue) {
         return flagOf(getValue() + newValue);
     }
 
@@ -53,7 +53,7 @@ public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag
         return "123456789";
     }
 
-    @NotNull @Override protected Long parseNumber(String input) throws FlagParseException {
+    @Nonnull @Override protected Long parseNumber(String input) throws FlagParseException {
         try {
             return Long.parseLong(input);
         } catch (Throwable throwable) {

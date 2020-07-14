@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class PveFlag extends BooleanFlag<PveFlag> {
 
@@ -38,7 +38,7 @@ public class PveFlag extends BooleanFlag<PveFlag> {
         super(value, Captions.FLAG_DESCRIPTION_PVE);
     }
 
-    @Override protected PveFlag flagOf(@NotNull Boolean value) {
+    @Override protected PveFlag flagOf(@Nonnull Boolean value) {
         return value ? PVE_TRUE : PVE_FALSE;
     }
 

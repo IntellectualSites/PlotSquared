@@ -27,21 +27,21 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class DescriptionFlag extends PlotFlag<String, DescriptionFlag> {
 
     public static final DescriptionFlag DESCRIPTION_FLAG_EMPTY = new DescriptionFlag("");
 
-    protected DescriptionFlag(@NotNull String value) {
+    protected DescriptionFlag(@Nonnull String value) {
         super(value, Captions.FLAG_CATEGORY_STRING, Captions.FLAG_DESCRIPTION_DESCRIPTION);
     }
 
-    @Override public DescriptionFlag parse(@NotNull String input) {
+    @Override public DescriptionFlag parse(@Nonnull String input) {
         return flagOf(input);
     }
 
-    @Override public DescriptionFlag merge(@NotNull String newValue) {
+    @Override public DescriptionFlag merge(@Nonnull String newValue) {
         return flagOf(this.getValue() + " " + newValue);
     }
 
@@ -53,7 +53,7 @@ public class DescriptionFlag extends PlotFlag<String, DescriptionFlag> {
         return "&6This is my plot!";
     }
 
-    @Override protected DescriptionFlag flagOf(@NotNull String value) {
+    @Override protected DescriptionFlag flagOf(@Nonnull String value) {
         return new DescriptionFlag(value);
     }
 

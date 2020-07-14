@@ -28,7 +28,7 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,7 @@ public class BreakFlag extends BlockTypeListFlag<BreakFlag> {
         super(blockTypeList, Captions.FLAG_DESCRIPTION_BREAK);
     }
 
-    @Override protected BreakFlag flagOf(@NotNull List<BlockTypeWrapper> value) {
+    @Override protected BreakFlag flagOf(@Nonnull List<BlockTypeWrapper> value) {
         return new BreakFlag(value);
     }
 

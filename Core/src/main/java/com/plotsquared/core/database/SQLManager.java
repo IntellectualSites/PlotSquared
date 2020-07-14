@@ -51,7 +51,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -144,11 +144,11 @@ public class SQLManager implements AbstractDB {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public SQLManager(@NotNull final Database database,
-                      @NotNull final String prefix,
-                      @NotNull final EventDispatcher eventDispatcher,
-                      @NotNull final PlotListener plotListener,
-                      @WorldConfig @NotNull final YamlConfiguration worldConfiguration)
+    public SQLManager(@Nonnull final Database database,
+                      @Nonnull final String prefix,
+                      @Nonnull final EventDispatcher eventDispatcher,
+                      @Nonnull final PlotListener plotListener,
+                      @WorldConfig @Nonnull final YamlConfiguration worldConfiguration)
         throws SQLException, ClassNotFoundException {
         // Private final
         this.eventDispatcher = eventDispatcher;
@@ -265,7 +265,7 @@ public class SQLManager implements AbstractDB {
         return this.notifyTasks;
     }
 
-    public synchronized void addPlotTask(@NotNull Plot plot, UniqueStatement task) {
+    public synchronized void addPlotTask(@Nonnull Plot plot, UniqueStatement task) {
         Queue<UniqueStatement> tasks = this.plotTasks.get(plot);
         if (tasks == null) {
             tasks = new ConcurrentLinkedQueue<>();
@@ -2390,7 +2390,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void getComments(@NotNull Plot plot, final String inbox,
+    public void getComments(@Nonnull Plot plot, final String inbox,
         final RunnableVal<List<PlotComment>> whenDone) {
         addPlotTask(plot, new UniqueStatement("getComments_" + plot) {
             @Override public void set(PreparedStatement statement) throws SQLException {

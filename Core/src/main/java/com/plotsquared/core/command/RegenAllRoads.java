@@ -34,7 +34,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "regenallroads",
     description = "Regenerate all roads in the map using the set road schematic",
@@ -48,8 +48,8 @@ public class RegenAllRoads extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final HybridUtils hybridUtils;
 
-    @Inject public RegenAllRoads(@NotNull final PlotAreaManager plotAreaManager,
-                                 @NotNull final HybridUtils hybridUtils) {
+    @Inject public RegenAllRoads(@Nonnull final PlotAreaManager plotAreaManager,
+                                 @Nonnull final HybridUtils hybridUtils) {
         this.plotAreaManager = plotAreaManager;
         this.hybridUtils = hybridUtils;
     }

@@ -39,7 +39,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -58,9 +58,9 @@ public class Deny extends SubCommand {
     private final EventDispatcher eventDispatcher;
     private final WorldUtil worldUtil;
 
-    @Inject public Deny(@NotNull final PlotAreaManager plotAreaManager,
-                        @NotNull final EventDispatcher eventDispatcher,
-                        @NotNull final WorldUtil worldUtil) {
+    @Inject public Deny(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final EventDispatcher eventDispatcher,
+                        @Nonnull final WorldUtil worldUtil) {
         super(Argument.PlayerName);
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;

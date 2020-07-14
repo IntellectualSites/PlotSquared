@@ -28,12 +28,12 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class HealFlag extends TimedFlag<Integer, HealFlag> {
     public static final HealFlag HEAL_NOTHING = new HealFlag(new Timed<>(0, 0));
 
-    protected HealFlag(@NotNull Timed<Integer> value) {
+    protected HealFlag(@Nonnull Timed<Integer> value) {
         super(value, 1, Captions.FLAG_DESCRIPTION_HEAL);
     }
 
@@ -58,7 +58,7 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
         return "20 2";
     }
 
-    @Override protected HealFlag flagOf(@NotNull Timed<Integer> value) {
+    @Override protected HealFlag flagOf(@Nonnull Timed<Integer> value) {
         return new HealFlag(value);
     }
 }

@@ -46,7 +46,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 
@@ -135,7 +135,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @NotNull Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         return setBlock(x, y, z, PatternUtil
             .apply(Preconditions.checkNotNull(pattern, "Pattern may not be null"), x, y, z));
     }

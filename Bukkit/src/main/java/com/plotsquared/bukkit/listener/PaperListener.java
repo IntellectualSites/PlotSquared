@@ -59,7 +59,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,7 +76,7 @@ public class PaperListener implements Listener {
     private final PlotAreaManager plotAreaManager;
     private Chunk lastChunk;
 
-    @Inject public PaperListener(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public PaperListener(@Nonnull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
     

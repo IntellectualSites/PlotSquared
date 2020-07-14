@@ -39,8 +39,8 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -66,7 +66,7 @@ public enum CommonSetupSteps implements SetupStep {
             return CommonSetupSteps.CHOOSE_PLOT_AREA_TYPE; // proceed with next step
         }
 
-        @NotNull @Override public Collection<String> getSuggestions() {
+        @Nonnull @Override public Collection<String> getSuggestions() {
             return Collections.unmodifiableSet(SetupUtils.generators.keySet());
         }
 
@@ -243,7 +243,7 @@ public enum CommonSetupSteps implements SetupStep {
         }
     };
 
-    @Getter @NotNull private final Collection<String> suggestions;
+    @Getter @Nonnull private final Collection<String> suggestions;
     private final Caption description;
 
     /**
@@ -251,17 +251,17 @@ public enum CommonSetupSteps implements SetupStep {
      * @param suggestions the input suggestions for this step
      * @param description the caption describing this step
      */
-    CommonSetupSteps(@NotNull Collection<String> suggestions, @NotNull Caption description) {
+    CommonSetupSteps(@Nonnull Collection<String> suggestions, @Nonnull Caption description) {
         this.suggestions = suggestions;
         this.description = description;
     }
 
-    CommonSetupSteps(@NotNull Caption description) {
+    CommonSetupSteps(@Nonnull Caption description) {
         this.description = description;
         this.suggestions = Collections.emptyList();
     }
 
-    <E extends Enum<E>> CommonSetupSteps(@NotNull Class<E> argumentType, Caption description) {
+    <E extends Enum<E>> CommonSetupSteps(@Nonnull Class<E> argumentType, Caption description) {
         this(enumToStrings(argumentType), description);
     }
 

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -44,6 +45,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,8 +69,13 @@ public class Set extends SubCommand {
     public static final String[] aliases = new String[] {"b", "w", "wf", "a", "h"};
 
     private final SetCommand component;
+    private final WorldUtil worldUtil;
+    private final GlobalBlockQueue blockQueue;
 
-    public Set() {
+    @Inject public Set(@Nonnull final WorldUtil worldUtil,
+                       @Nonnull final GlobalBlockQueue blockQueue) {
+        this.worldUtil = worldUtil;
+        this.blockQueue = blockQueue;
         this.component = new SetCommand() {
 
             @Override public String getId() {
@@ -91,7 +98,7 @@ public class Set extends SubCommand {
                 final List<String> forbiddenTypes = new ArrayList<>(Settings.General.INVALID_BLOCKS);
 
                 if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
-                    forbiddenTypes.addAll(WorldUtil.IMP.getTileEntityTypes().stream().map(
+                    forbiddenTypes.addAll(worldUtil.getTileEntityTypes().stream().map(
                         BlockType::getName).collect(Collectors.toList()));
                 }
 
@@ -154,7 +161,7 @@ public class Set extends SubCommand {
                                 current.setComponent(component, pattern);
                             }
                             MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
-                            GlobalBlockQueue.IMP.addEmptyTask(plot::removeRunning);
+                            blockQueue.addEmptyTask(plot::removeRunning);
                         });
                         return true;
                     }

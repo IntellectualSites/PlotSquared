@@ -38,7 +38,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Range;
 
 import java.util.Random;
@@ -74,21 +74,21 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
             ChunkGenerator.BiomeGrid grid = new ChunkGenerator.BiomeGrid() {
                 @Override
                 public void setBiome(@Range(from = 0, to = 15) int x,
-                    @Range(from = 0, to = 15) int z, @NotNull Biome biome) {
+                    @Range(from = 0, to = 15) int z, @Nonnull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
                 }
 
                 //do not annotate with Override until we discontinue support for 1.4.4
-                public void setBiome(int x, int y, int z, @NotNull Biome biome) {
+                public void setBiome(int x, int y, int z, @Nonnull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
 
                 }
 
-                @Override @NotNull public Biome getBiome(int x, int z) {
+                @Override @Nonnull public Biome getBiome(int x, int z) {
                     return Biome.FOREST;
                 }
 
-                @Override public @NotNull Biome getBiome(int x, int y, int z) {
+                @Override public @Nonnull Biome getBiome(int x, int y, int z) {
                     return Biome.FOREST;
                 }
             };

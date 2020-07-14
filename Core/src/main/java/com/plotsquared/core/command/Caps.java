@@ -71,7 +71,7 @@ public class Caps extends SubCommand {
     }
 
     private <T extends PlotFlag<Integer, T>> void sendFormatted(final Plot plot,
-        final PlotPlayer player, final Class<T> capFlag, final int[] countedEntities,
+        final PlotPlayer<?> player, final Class<T> capFlag, final int[] countedEntities,
         final String name, final int type) {
         final int current = countedEntities[type];
         final int max = plot.getFlag(capFlag);

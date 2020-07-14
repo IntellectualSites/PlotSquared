@@ -53,7 +53,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -70,7 +70,7 @@ public class ChunkListener implements Listener {
     private Chunk lastChunk;
     private boolean ignoreUnload = false;
     
-    @Inject public ChunkListener(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public ChunkListener(@Nonnull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             try {

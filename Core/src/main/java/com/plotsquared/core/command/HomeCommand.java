@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
@@ -40,7 +41,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,13 +59,13 @@ public class HomeCommand extends Command {
 
     private final PlotAreaManager plotAreaManager;
 
-    public HomeCommand(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public HomeCommand(@Nonnull final PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
         this.plotAreaManager = plotAreaManager;
     }
 
-    private void home(@NotNull final PlotPlayer<?> player,
-                      @NotNull final PlotQuery query, final int page,
+    private void home(@Nonnull final PlotPlayer<?> player,
+                      @Nonnull final PlotQuery query, final int page,
                       final RunnableVal3<Command, Runnable, Runnable> confirm,
                       final RunnableVal2<Command, CommandResult> whenDone) {
         List<Plot> plots = query.asList();
@@ -86,7 +87,7 @@ public class HomeCommand extends Command {
         }), () -> whenDone.run(HomeCommand.this, CommandResult.FAILURE));
     }
 
-    @NotNull private PlotQuery query(@NotNull final PlotPlayer<?> player) {
+    @Nonnull private PlotQuery query(@Nonnull final PlotPlayer<?> player) {
         // everything plots need to have in common here
         return PlotQuery.newQuery().ownedBy(player);
     }

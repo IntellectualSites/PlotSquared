@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.TeleportCause;
@@ -41,7 +42,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,17 +63,17 @@ public class Visit extends Command {
 
     private final PlotAreaManager plotAreaManager;
     
-    public Visit(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public Visit(@Nonnull final PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
         this.plotAreaManager = plotAreaManager;
     }
 
-    private void visit(@NotNull final PlotPlayer player, @NotNull final PlotQuery query, final PlotArea sortByArea,
+    private void visit(@Nonnull final PlotPlayer player, @Nonnull final PlotQuery query, final PlotArea sortByArea,
         final RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone) {
         this.visit(player, query, sortByArea, confirm, whenDone, 1);
     }
 
-    private void visit(@NotNull final PlotPlayer player, @NotNull final PlotQuery query, final PlotArea sortByArea,
+    private void visit(@Nonnull final PlotPlayer player, @Nonnull final PlotQuery query, final PlotArea sortByArea,
         final RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone, int page) {
         // We get the query once,
         // then we get it another time further on

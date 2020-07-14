@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.io.Files;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -62,8 +63,8 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.world.block.BlockState;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.script.Bindings;
 import javax.script.ScriptContext;
@@ -90,35 +91,39 @@ public class DebugExec extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
+    private final GlobalBlockQueue blockQueue;
+    private final SchematicHandler schematicHandler;
+    private final EconHandler econHandler;
+    private final ChunkManager chunkManager;
+    private final WorldUtil worldUtil;
+    private final SetupUtils setupUtils;
+    private final HybridUtils hybridUtils;
+
     private ScriptEngine engine;
     private Bindings scope;
 
-    public DebugExec(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher,
-        @Nullable final WorldEdit worldEdit) {
+    @Inject public DebugExec(@Nonnull final PlotAreaManager plotAreaManager,
+                     @Nonnull final EventDispatcher eventDispatcher,
+                     @Nullable final WorldEdit worldEdit,
+                     @Nonnull final GlobalBlockQueue blockQueue,
+                     @Nonnull final SchematicHandler schematicHandler,
+                     @Nullable final EconHandler econHandler,
+                     @Nonnull final ChunkManager chunkManager,
+                     @Nonnull final WorldUtil worldUtil,
+                     @Nonnull final SetupUtils setupUtils,
+                     @Nonnull final HybridUtils hybridUtils) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.worldEdit = worldEdit;
+        this.blockQueue = blockQueue;
+        this.schematicHandler = schematicHandler;
+        this.econHandler = econHandler;
+        this.chunkManager = chunkManager;
+        this.worldUtil = worldUtil;
+        this.setupUtils = setupUtils;
+        this.hybridUtils = hybridUtils;
+
         init();
-/*
-        try {
-            if (PlotSquared.get() != null) {
-                File file = new File(PlotSquared.imp().getDirectory(),
-                    Settings.Paths.SCRIPTS + File.separator + "start.js");
-                if (file.exists()) {
-                    init();
-                    String script = StringMan.join(Files.readLines(new File(new File(
-                            PlotSquared.imp().getDirectory() + File.separator
-                                + Settings.Paths.SCRIPTS), "start.js"), StandardCharsets.UTF_8),
-                        System.getProperty("line.separator"));
-                    this.scope.put("THIS", this);
-                    this.scope.put("PlotPlayer", ConsolePlayer.getConsole());
-                    this.engine.eval(script, this.scope);
-                }
-            }
-        } catch (IOException | ScriptException ignored) {
-            ignored.printStackTrace();
-        }
-*/
     }
 
     public ScriptEngine getEngine() {
@@ -167,21 +172,21 @@ public class DebugExec extends SubCommand {
 
         // Instances
         this.scope.put("PS", PlotSquared.get());
-        this.scope.put("GlobalBlockQueue", GlobalBlockQueue.IMP);
+        this.scope.put("GlobalBlockQueue", this.blockQueue);
         this.scope.put("ExpireManager", ExpireManager.IMP);
         if (this.worldEdit != null) {
             this.scope.put("WEManager", new WEManager());
         }
-        this.scope.put("TaskManager", TaskManager.IMP);
+        this.scope.put("TaskManager", TaskManager.getImplementation());
         this.scope.put("ConsolePlayer", ConsolePlayer.getConsole());
-        this.scope.put("SchematicHandler", SchematicHandler.manager);
-        this.scope.put("ChunkManager", ChunkManager.manager);
-        this.scope.put("BlockManager", WorldUtil.IMP);
-        this.scope.put("SetupUtils", SetupUtils.manager);
+        this.scope.put("SchematicHandler", this.schematicHandler);
+        this.scope.put("ChunkManager", this.chunkManager);
+        this.scope.put("BlockManager", this.worldUtil);
+        this.scope.put("SetupUtils", this.setupUtils);
         this.scope.put("EventUtil", this.eventDispatcher);
-        this.scope.put("EconHandler", EconHandler.getEconHandler());
+        this.scope.put("EconHandler", this.econHandler);
         this.scope.put("DBFunc", DBFunc.dbManager);
-        this.scope.put("HybridUtils", HybridUtils.manager);
+        this.scope.put("HybridUtils", this.hybridUtils);
         this.scope.put("IMP", PlotSquared.platform());
         this.scope.put("MainCommand", MainCommand.getInstance());
 
@@ -213,7 +218,7 @@ public class DebugExec extends SubCommand {
                         return true;
                     }
                     MainUtil.sendMessage(player, "$1Starting task...");
-                    HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+                    this.hybridUtils.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
                         @Override public void run(PlotAnalysis value) {
                             MainUtil.sendMessage(player,
                                 "$1Done: $2Use $3/plot debugexec analyze$2 for more information");
@@ -279,10 +284,9 @@ public class DebugExec extends SubCommand {
                     }
                     boolean result;
                     if (HybridUtils.regions != null) {
-                        result = HybridUtils.manager
-                            .scheduleRoadUpdate(area, HybridUtils.regions, 0, new HashSet<>());
+                        result = this.hybridUtils.scheduleRoadUpdate(area, HybridUtils.regions, 0, new HashSet<>());
                     } else {
-                        result = HybridUtils.manager.scheduleRoadUpdate(area, 0);
+                        result = this.hybridUtils.scheduleRoadUpdate(area, 0);
                     }
                     if (!result) {
                         MainUtil.sendMessage(player,

@@ -28,7 +28,7 @@ package com.plotsquared.core.util.query;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -38,7 +38,7 @@ class GlobalPlotProvider implements PlotProvider {
 
     private final PlotAreaManager plotAreaManager;
 
-    GlobalPlotProvider(@NotNull final PlotAreaManager plotAreaManager) {
+    GlobalPlotProvider(@Nonnull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
 

@@ -47,7 +47,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,8 +61,8 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Getter private final HybridPlotWorld hybridPlotWorld;
     private final RegionManager regionManager;
 
-    public HybridPlotManager(@NotNull final HybridPlotWorld hybridPlotWorld,
-                             @NotNull final RegionManager regionManager) {
+    public HybridPlotManager(@Nonnull final HybridPlotWorld hybridPlotWorld,
+                             @Nonnull final RegionManager regionManager) {
         super(hybridPlotWorld, regionManager);
         this.hybridPlotWorld = hybridPlotWorld;
         this.regionManager = regionManager;

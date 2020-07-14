@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class SnowFormFlag extends BooleanFlag<SnowFormFlag> {
 
@@ -38,7 +38,7 @@ public class SnowFormFlag extends BooleanFlag<SnowFormFlag> {
         super(value, Captions.FLAG_DESCRIPTION_SNOW_FORM);
     }
 
-    @Override protected SnowFormFlag flagOf(@NotNull Boolean value) {
+    @Override protected SnowFormFlag flagOf(@Nonnull Boolean value) {
         return value ? SNOW_FORM_TRUE : SNOW_FORM_FALSE;
     }
 

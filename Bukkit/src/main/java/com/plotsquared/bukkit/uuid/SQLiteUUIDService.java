@@ -30,7 +30,7 @@ import com.plotsquared.core.database.SQLite;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -72,7 +72,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         }
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
         try (final PreparedStatement statement = getConnection()
             .prepareStatement("SELECT `username` FROM `usercache` WHERE `uuid` = ?")) {
@@ -90,7 +90,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         return mappings;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
+    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         try (final PreparedStatement statement = getConnection()
             .prepareStatement("SELECT `uuid` FROM `usercache` WHERE `username` = ?")) {
@@ -127,7 +127,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
      *
      * @return All read mappings
      */
-    @NotNull public List<UUIDMapping> getAll() {
+    @Nonnull public List<UUIDMapping> getAll() {
         final List<UUIDMapping> mappings = new LinkedList<>();
         try (final PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM `usercache`")) {
             try (final ResultSet resultSet = statement.executeQuery()) {

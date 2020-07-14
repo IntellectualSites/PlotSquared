@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -34,7 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "setdescription",
     permission = "plots.set.desc",
@@ -47,7 +48,7 @@ public class Desc extends SetCommand {
 
     private final EventDispatcher eventDispatcher;
     
-    public Desc(@NotNull final EventDispatcher eventDispatcher) {
+    @Inject public Desc(@Nonnull final EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
     

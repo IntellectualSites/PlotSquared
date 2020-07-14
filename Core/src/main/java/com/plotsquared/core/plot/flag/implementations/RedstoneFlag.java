@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class RedstoneFlag extends BooleanFlag<RedstoneFlag> {
 
@@ -38,7 +38,7 @@ public class RedstoneFlag extends BooleanFlag<RedstoneFlag> {
         super(value, Captions.FLAG_DESCRIPTION_REDSTONE);
     }
 
-    @Override protected RedstoneFlag flagOf(@NotNull Boolean value) {
+    @Override protected RedstoneFlag flagOf(@Nonnull Boolean value) {
         return value ? REDSTONE_TRUE : REDSTONE_FALSE;
     }
 

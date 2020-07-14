@@ -37,7 +37,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.util.Collection;
@@ -54,7 +54,7 @@ public abstract class RegionManager {
 
     private final ChunkManager chunkManager;
 
-    public RegionManager(@NotNull final ChunkManager chunkManager) {
+    public RegionManager(@Nonnull final ChunkManager chunkManager) {
         this.chunkManager = chunkManager;
     }
 

@@ -44,8 +44,8 @@ import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class ComponentPresetManager {
     private final EconHandler econHandler;
     private final InventoryUtil inventoryUtil;
 
-    @Inject public ComponentPresetManager(@Nullable final EconHandler econHandler, @NotNull final
+    @Inject public ComponentPresetManager(@Nullable final EconHandler econHandler, @Nonnull final
         InventoryUtil inventoryUtil) {
         this.econHandler = econHandler;
         this.inventoryUtil = inventoryUtil;

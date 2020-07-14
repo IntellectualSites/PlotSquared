@@ -34,7 +34,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -48,7 +48,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
     private final SquarePlotWorld squarePlotWorld;
     private final RegionManager regionManager;
 
-    public SquarePlotManager(@NotNull final SquarePlotWorld squarePlotWorld, @NotNull final RegionManager regionManager) {
+    public SquarePlotManager(@Nonnull final SquarePlotWorld squarePlotWorld, @Nonnull final RegionManager regionManager) {
         super(squarePlotWorld);
         this.squarePlotWorld = squarePlotWorld;
         this.regionManager = regionManager;

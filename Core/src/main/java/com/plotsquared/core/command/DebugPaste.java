@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.inject.annotations.ConfigFile;
 import com.plotsquared.core.inject.annotations.WorldFile;
@@ -37,8 +38,8 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.task.TaskManager;
-import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -65,13 +66,13 @@ public class DebugPaste extends SubCommand {
     private final File configFile;
     private final File worldfile;
 
-    public DebugPaste(@ConfigFile @NotNull final File configFile,
-                      @WorldFile @NotNull final File worldFile) {
+    @Inject public DebugPaste(@ConfigFile @Nonnull final File configFile,
+                              @WorldFile @Nonnull final File worldFile) {
         this.configFile = configFile;
         this.worldfile = worldFile;
     }
 
-    private static String readFile(@NonNull final File file) throws IOException {
+    private static String readFile(@Nonnull final File file) throws IOException {
         final List<String> lines;
         try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
             lines = reader.lines().collect(Collectors.toList());

@@ -31,7 +31,7 @@ import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +43,7 @@ import java.util.UUID;
  */
 public class OfflinePlayerUUIDService implements UUIDService {
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
         if (Settings.UUID.FORCE_LOWERCASE || Bukkit.getWorlds().isEmpty()) {
             return Collections.emptyList(); // This is useless now
         }
@@ -61,7 +61,7 @@ public class OfflinePlayerUUIDService implements UUIDService {
         return wrappers;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
         final List<UUIDMapping> wrappers = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
             if (Settings.UUID.OFFLINE) {

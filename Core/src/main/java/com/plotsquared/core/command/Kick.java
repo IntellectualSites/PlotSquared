@@ -37,7 +37,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -58,8 +58,8 @@ public class Kick extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
 
-    @Inject public Kick(@NotNull final PlotAreaManager plotAreaManager,
-                        @NotNull final WorldUtil worldUtil) {
+    @Inject public Kick(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final WorldUtil worldUtil) {
         super(Argument.PlayerName);
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;

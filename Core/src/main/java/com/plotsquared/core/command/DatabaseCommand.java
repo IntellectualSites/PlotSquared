@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
@@ -44,7 +45,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -68,8 +69,10 @@ public class DatabaseCommand extends SubCommand {
     private final PlotListener plotListener;
     private final YamlConfiguration worldConfiguration;
 
-    public DatabaseCommand(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher,
-        @NotNull final PlotListener plotListener, @WorldConfig @NotNull final YamlConfiguration worldConfiguration) {
+    @Inject public DatabaseCommand(@Nonnull final PlotAreaManager plotAreaManager,
+                                   @Nonnull final EventDispatcher eventDispatcher,
+                                   @Nonnull final PlotListener plotListener,
+                                   @WorldConfig @Nonnull final YamlConfiguration worldConfiguration) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;

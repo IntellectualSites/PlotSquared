@@ -35,7 +35,7 @@ import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class SingleWorldGenerator extends IndependentPlotGenerator {
 
@@ -48,7 +48,7 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
 
     private final PlotAreaManager plotAreaManager;
 
-    @Inject public SingleWorldGenerator(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public SingleWorldGenerator(@Nonnull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
 

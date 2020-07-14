@@ -42,7 +42,7 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -61,8 +61,8 @@ public class SchematicCmd extends SubCommand {
     private final SchematicHandler schematicHandler;
     private boolean running = false;
 
-    @Inject public SchematicCmd(@NotNull final PlotAreaManager plotAreaManager,
-                                @NotNull final SchematicHandler schematicHandler) {
+    @Inject public SchematicCmd(@Nonnull final PlotAreaManager plotAreaManager,
+                                @Nonnull final SchematicHandler schematicHandler) {
         this.plotAreaManager = plotAreaManager;
         this.schematicHandler = schematicHandler;
     }

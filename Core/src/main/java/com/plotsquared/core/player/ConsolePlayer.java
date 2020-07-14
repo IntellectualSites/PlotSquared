@@ -42,8 +42,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.UUID;
 
@@ -53,9 +53,9 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
 
     private final Actor actor;
 
-    @Inject private ConsolePlayer(@NotNull final PlotAreaManager plotAreaManager,
-                                  @NotNull final EventDispatcher eventDispatcher,
-                                  @ConsoleActor @NotNull final Actor actor,
+    @Inject private ConsolePlayer(@Nonnull final PlotAreaManager plotAreaManager,
+                                  @Nonnull final EventDispatcher eventDispatcher,
+                                  @ConsoleActor @Nonnull final Actor actor,
                                   @Nullable final EconHandler econHandler) {
         super(plotAreaManager, eventDispatcher, econHandler);
         this.actor = actor;
@@ -73,7 +73,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
                 region.getMinimumPoint().getX() + region.getMaximumPoint().getX() / 2, 0,
                 region.getMinimumPoint().getZ() + region.getMaximumPoint().getZ() / 2);
         } else {
-            location = Location.at("world", 0, 0, 0);
+            location = Location.at("", 0, 0, 0);
         }
         setMeta("location", location);
     }
@@ -94,7 +94,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return this.toActor();
     }
 
-    @Override public boolean canTeleport(@NotNull Location location) {
+    @Override public boolean canTeleport(@Nonnull Location location) {
         return true;
     }
 
@@ -102,7 +102,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
     }
 
-    @NotNull @Override public Location getLocation() {
+    @Nonnull @Override public Location getLocation() {
         return this.getMeta("location");
     }
 
@@ -110,7 +110,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return getLocation();
     }
 
-    @NotNull @Override public UUID getUUID() {
+    @Nonnull @Override public UUID getUUID() {
         return DBFunc.EVERYONE;
     }
 
@@ -160,14 +160,14 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return RequiredType.CONSOLE;
     }
 
-    @Override public void setWeather(@NotNull PlotWeather weather) {
+    @Override public void setWeather(@Nonnull PlotWeather weather) {
     }
 
-    @Override public @NotNull GameMode getGameMode() {
+    @Override public @Nonnull GameMode getGameMode() {
         return GameModes.SPECTATOR;
     }
 
-    @Override public void setGameMode(@NotNull GameMode gameMode) {
+    @Override public void setGameMode(@Nonnull GameMode gameMode) {
     }
 
     @Override public void setTime(long time) {
@@ -180,7 +180,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     @Override public void setFlight(boolean fly) {
     }
 
-    @Override public void playMusic(@NotNull Location location, @NotNull ItemType id) {
+    @Override public void playMusic(@Nonnull Location location, @Nonnull ItemType id) {
     }
 
     @Override public void kick(String message) {

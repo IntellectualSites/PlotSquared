@@ -29,8 +29,8 @@ import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -40,16 +40,16 @@ import java.util.Objects;
  */
 @Singleton public class NullBackupManager implements BackupManager {
 
-    @Override @NotNull public BackupProfile getProfile(@NotNull Plot plot) {
+    @Override @Nonnull public BackupProfile getProfile(@Nonnull Plot plot) {
         return new NullBackupProfile();
     }
 
     @Override public void automaticBackup(@Nullable PlotPlayer plotPlayer,
-        @NotNull Plot plot, @NotNull Runnable whenDone) {
+        @Nonnull Plot plot, @Nonnull Runnable whenDone) {
         whenDone.run();
     }
 
-    @Override @NotNull public Path getBackupPath() {
+    @Override @Nonnull public Path getBackupPath() {
         return Objects.requireNonNull(PlotSquared.platform()).getDirectory().toPath();
     }
 

@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.NonNegativeIntegerFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class MiscCapFlag extends NonNegativeIntegerFlag<MiscCapFlag> {
     public static final MiscCapFlag MISC_CAP_UNLIMITED = new MiscCapFlag(Integer.MAX_VALUE);
@@ -36,7 +36,7 @@ public class MiscCapFlag extends NonNegativeIntegerFlag<MiscCapFlag> {
         super(value, Captions.FLAG_DESCRIPTION_MISC_CAP);
     }
 
-    @Override protected MiscCapFlag flagOf(@NotNull Integer value) {
+    @Override protected MiscCapFlag flagOf(@Nonnull Integer value) {
         return new MiscCapFlag(value);
     }
 }

@@ -26,7 +26,7 @@
 
 package com.plotsquared.core.location;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * PlotSquared representation of a platform world
@@ -40,14 +40,14 @@ public interface World<T> {
      *
      * @return Platform world
      */
-    @NotNull T getPlatformWorld();
+    @Nonnull T getPlatformWorld();
 
     /**
      * Get the name of the world
      *
      * @return World name
      */
-    @NotNull String getName();
+    @Nonnull String getName();
 
     /**
      * Get a {@link NullWorld} implementation
@@ -63,11 +63,11 @@ public interface World<T> {
         private NullWorld() {
         }
 
-        @NotNull @Override public T getPlatformWorld() {
+        @Nonnull @Override public T getPlatformWorld() {
             throw new UnsupportedOperationException("Cannot get platform world from NullWorld");
         }
 
-        @Override public @NotNull String getName() {
+        @Override public @Nonnull String getName() {
             return "";
         }
 

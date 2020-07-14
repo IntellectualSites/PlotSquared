@@ -45,7 +45,7 @@ import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Set;
 
@@ -54,7 +54,7 @@ public class WESubscriber {
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
 
-    @Inject public WESubscriber(@NotNull final PlotAreaManager plotAreaManager, @NotNull final WorldUtil worldUtil) {
+    @Inject public WESubscriber(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
     }

@@ -28,7 +28,7 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,7 @@ public class UseFlag extends BlockTypeListFlag<UseFlag> {
         super(blockTypeList, Captions.FLAG_DESCRIPTION_USE);
     }
 
-    @Override protected UseFlag flagOf(@NotNull List<BlockTypeWrapper> value) {
+    @Override protected UseFlag flagOf(@Nonnull List<BlockTypeWrapper> value) {
         return new UseFlag(value);
     }
 

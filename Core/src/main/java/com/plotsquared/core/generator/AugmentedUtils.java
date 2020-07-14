@@ -39,8 +39,8 @@ import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Set;
 
@@ -54,7 +54,7 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(@Nullable Object chunkObject, @NotNull final String world,
+    public static boolean generate(@Nullable Object chunkObject, @Nonnull final String world,
         final int chunkX, final int chunkZ, LocalBlockQueue queue) {
         if (!enabled) {
             return false;

@@ -27,7 +27,7 @@ package com.plotsquared.core.location;
 
 import com.plotsquared.core.util.StringMan;
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 //todo better description needed
 

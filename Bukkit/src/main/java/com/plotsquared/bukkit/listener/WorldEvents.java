@@ -37,14 +37,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.generator.ChunkGenerator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 public class WorldEvents implements Listener {
 
     private final PlotAreaManager plotAreaManager;
 
-    @Inject public WorldEvents(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public WorldEvents(@Nonnull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
 

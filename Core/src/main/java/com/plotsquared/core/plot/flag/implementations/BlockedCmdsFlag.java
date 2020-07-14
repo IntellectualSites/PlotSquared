@@ -28,7 +28,7 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.ListFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +44,7 @@ public class BlockedCmdsFlag extends ListFlag<String, BlockedCmdsFlag> {
             Captions.FLAG_DESCRIPTION_BLOCKED_CMDS);
     }
 
-    @Override public BlockedCmdsFlag parse(@NotNull String input) throws FlagParseException {
+    @Override public BlockedCmdsFlag parse(@Nonnull String input) throws FlagParseException {
         return flagOf(Arrays.asList(input.split(",")));
     }
 
@@ -52,7 +52,7 @@ public class BlockedCmdsFlag extends ListFlag<String, BlockedCmdsFlag> {
         return "gamemode survival, spawn";
     }
 
-    @Override protected BlockedCmdsFlag flagOf(@NotNull List<String> value) {
+    @Override protected BlockedCmdsFlag flagOf(@Nonnull List<String> value) {
         return new BlockedCmdsFlag(value);
 
     }

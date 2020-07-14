@@ -39,8 +39,8 @@ import com.plotsquared.core.util.task.TaskManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,7 +60,7 @@ import java.util.concurrent.TimeUnit;
         .expireAfterAccess(3, TimeUnit.MINUTES).build();
     private final PlayerBackupProfileFactory playerBackupProfileFactory;
 
-    @Inject public SimpleBackupManager(@NotNull final PlayerBackupProfileFactory playerBackupProfileFactory) throws Exception {
+    @Inject public SimpleBackupManager(@Nonnull final PlayerBackupProfileFactory playerBackupProfileFactory) throws Exception {
         this.playerBackupProfileFactory = playerBackupProfileFactory;
         this.backupPath = Objects.requireNonNull(PlotSquared.platform()).getDirectory().toPath().resolve("backups");
         if (!Files.exists(backupPath)) {
@@ -70,7 +70,7 @@ import java.util.concurrent.TimeUnit;
         this.backupLimit = Settings.Backup.BACKUP_LIMIT;
     }
 
-    @Override @NotNull public BackupProfile getProfile(@NotNull final Plot plot) {
+    @Override @Nonnull public BackupProfile getProfile(@Nonnull final Plot plot) {
         if (plot.hasOwner() && !plot.isMerged()) {
             try {
                 return backupProfileCache.get(new PlotCacheKey(plot), () -> this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot));
@@ -83,7 +83,7 @@ import java.util.concurrent.TimeUnit;
         return new NullBackupProfile();
     }
 
-    @Override public void automaticBackup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone) {
+    @Override public void automaticBackup(@Nullable PlotPlayer player, @Nonnull final Plot plot, @Nonnull Runnable whenDone) {
         final BackupProfile profile;
         if (!this.shouldAutomaticallyBackup() || (profile = getProfile(plot)) instanceof NullBackupProfile) {
             whenDone.run();

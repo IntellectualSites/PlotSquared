@@ -29,7 +29,7 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ import java.util.UUID;
  */
 public class PaperUUIDService implements UUIDService {
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
         for (final UUID uuid : uuids) {
             final PlayerProfile playerProfile = Bukkit.createProfile(uuid);
@@ -51,7 +51,7 @@ public class PaperUUIDService implements UUIDService {
         return mappings;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
             final PlayerProfile playerProfile = Bukkit.createProfile(username);

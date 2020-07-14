@@ -28,8 +28,8 @@ package com.plotsquared.core.plot;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.InventoryUtil;
-import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class PlotInventory {
 
@@ -41,7 +41,8 @@ public class PlotInventory {
     private boolean open = false;
     private final InventoryUtil inventoryUtil;
     
-    public PlotInventory(@NotNull final InventoryUtil inventoryUtil, PlotPlayer<?> player, int size, String name) {
+    public PlotInventory(@Nonnull final InventoryUtil inventoryUtil,
+                         PlotPlayer<?> player, int size, String name) {
         this.size = size;
         this.title = name == null ? "" : name;
         this.player = player;
@@ -49,20 +50,20 @@ public class PlotInventory {
         this.inventoryUtil = inventoryUtil;
     }
 
-    public static boolean hasPlotInventoryOpen(@NonNull final PlotPlayer<?> plotPlayer) {
+    public static boolean hasPlotInventoryOpen(@Nonnull final PlotPlayer<?> plotPlayer) {
         return getOpenPlotInventory(plotPlayer) != null;
     }
 
-    public static PlotInventory getOpenPlotInventory(@NonNull final PlotPlayer<?> plotPlayer) {
+    public static PlotInventory getOpenPlotInventory(@Nonnull final PlotPlayer<?> plotPlayer) {
         return plotPlayer.getMeta(META_KEY, null);
     }
 
-    public static void setPlotInventoryOpen(@NonNull final PlotPlayer<?> plotPlayer,
-        @NonNull final PlotInventory plotInventory) {
+    public static void setPlotInventoryOpen(@Nonnull final PlotPlayer<?> plotPlayer,
+        @Nonnull final PlotInventory plotInventory) {
         plotPlayer.setMeta(META_KEY, plotInventory);
     }
 
-    public static void removePlotInventoryOpen(@NonNull final PlotPlayer<?>plotPlayer) {
+    public static void removePlotInventoryOpen(@Nonnull final PlotPlayer<?>plotPlayer) {
         plotPlayer.deleteMeta(META_KEY);
     }
 

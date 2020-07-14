@@ -29,8 +29,8 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import lombok.NonNull;
 import lombok.experimental.UtilityClass;
+import javax.annotation.Nonnull;
 
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
@@ -45,7 +45,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 @UtilityClass
 public final class EntityUtil {
 
-    private static int capNumeral(@NonNull final String flagName) {
+    private static int capNumeral(@Nonnull final String flagName) {
         int i;
         switch (flagName) {
             case "mob-cap":

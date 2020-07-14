@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class IceFormFlag extends BooleanFlag<IceFormFlag> {
 
@@ -38,7 +38,7 @@ public class IceFormFlag extends BooleanFlag<IceFormFlag> {
         super(value, Captions.FLAG_DESCRIPTION_ICE_FORM);
     }
 
-    @Override protected IceFormFlag flagOf(@NotNull Boolean value) {
+    @Override protected IceFormFlag flagOf(@Nonnull Boolean value) {
         return value ? ICE_FORM_TRUE : ICE_FORM_FALSE;
     }
 

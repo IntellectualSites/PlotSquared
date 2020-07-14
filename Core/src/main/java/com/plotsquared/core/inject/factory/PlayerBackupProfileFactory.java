@@ -27,12 +27,12 @@ package com.plotsquared.core.inject.factory;
 
 import com.plotsquared.core.backup.PlayerBackupProfile;
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.UUID;
 
 public interface PlayerBackupProfileFactory {
 
-    @NotNull PlayerBackupProfile create(@NotNull UUID uuid, @NotNull Plot plot);
+    @Nonnull PlayerBackupProfile create(@Nonnull UUID uuid, @Nonnull Plot plot);
 
 }

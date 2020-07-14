@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -33,6 +34,7 @@ import com.plotsquared.core.setup.SetupProcess;
 import com.plotsquared.core.setup.SetupStep;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +49,12 @@ import java.util.Map.Entry;
     aliases = {"create"},
     category = CommandCategory.ADMINISTRATION)
 public class Setup extends SubCommand {
+
+    private final SetupUtils setupUtils;
+
+    @Inject public Setup(@Nonnull final SetupUtils setupUtils) {
+        this.setupUtils = setupUtils;
+    }
 
     public void displayGenerators(PlotPlayer<?> player) {
         StringBuilder message = new StringBuilder();
@@ -72,7 +80,7 @@ public class Setup extends SubCommand {
             }
             process = new SetupProcess();
             player.setMeta("setup", process);
-            SetupUtils.manager.updateGenerators();
+            this.setupUtils.updateGenerators();
             SetupStep step = process.getCurrentStep();
             step.announce(player);
             displayGenerators(player);

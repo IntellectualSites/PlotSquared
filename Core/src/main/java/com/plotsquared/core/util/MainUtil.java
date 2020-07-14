@@ -55,8 +55,8 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -375,7 +375,7 @@ public class MainUtil {
      * @param owner Owner UUID
      * @return The player's name, None, Everyone or Unknown
      */
-    @NotNull public static String getName(@Nullable UUID owner) {
+    @Nonnull public static String getName(@Nullable UUID owner) {
         return getName(owner, true);
     }
 
@@ -386,7 +386,7 @@ public class MainUtil {
      * @param blocking Whether or not the operation can be blocking
      * @return The player's name, None, Everyone or Unknown
      */
-    @NotNull public static String getName(@Nullable final UUID owner, final boolean blocking) {
+    @Nonnull public static String getName(@Nullable final UUID owner, final boolean blocking) {
         if (owner == null) {
             return Captions.NONE.getTranslated();
         }
@@ -417,7 +417,7 @@ public class MainUtil {
         return plot.getFlag(ServerPlotFlag.class);
     }
 
-    @NotNull public static Location[] getCorners(@NotNull final String world, @NotNull final CuboidRegion region) {
+    @Nonnull public static Location[] getCorners(@Nonnull final String world, @Nonnull final CuboidRegion region) {
         final BlockVector3 min = region.getMinimumPoint();
         final BlockVector3 max = region.getMaximumPoint();
         return new Location[] {Location.at(world, min), Location.at(world, max)};
@@ -431,7 +431,7 @@ public class MainUtil {
      * @return
      * @see Plot#getCorners()
      */
-    @NotNull public static Location[] getCorners(String world, Collection<CuboidRegion> regions) {
+    @Nonnull public static Location[] getCorners(String world, Collection<CuboidRegion> regions) {
         Location min = null;
         Location max = null;
         for (CuboidRegion region : regions) {
@@ -657,7 +657,7 @@ public class MainUtil {
      * @param prefix If the message should be prefixed with the configured prefix
      * @return
      */
-    public static boolean sendMessage(PlotPlayer player, @NotNull String msg, boolean prefix) {
+    public static boolean sendMessage(PlotPlayer player, @Nonnull String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
                 String message = CaptionUtility
@@ -924,7 +924,7 @@ public class MainUtil {
     }
 
     /*
-    @NotNull public static String getName(UUID owner) {
+    @Nonnull public static String getName(UUID owner) {
         if (owner == null) {
             return Captions.NONE.getTranslated();
         }

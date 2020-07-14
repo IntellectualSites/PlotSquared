@@ -54,9 +54,8 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
-import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
@@ -93,13 +92,13 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
     
-    public PlotPlayer(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler) {
+    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
 
-    public static <T> PlotPlayer<T> from(@NonNull final T object) {
+    public static <T> PlotPlayer<T> from(@Nonnull final T object) {
         if (!converters.containsKey(object.getClass())) {
             throw new IllegalArgumentException(String
                 .format("There is no registered PlotPlayer converter for type %s",
@@ -108,7 +107,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return converters.get(object.getClass()).convert(object);
     }
 
-    public static <T> void registerConverter(@NonNull final Class<T> clazz,
+    public static <T> void registerConverter(@Nonnull final Class<T> clazz,
         final PlotPlayerConverter<T> converter) {
         converters.put(clazz, converter);
     }
@@ -117,7 +116,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return Collections.unmodifiableCollection(debugModeEnabled);
     }
 
-    public static Collection<PlotPlayer<?>> getDebugModePlayersInPlot(@NotNull final Plot plot) {
+    public static Collection<PlotPlayer<?>> getDebugModePlayersInPlot(@Nonnull final Plot plot) {
         if (debugModeEnabled.isEmpty()) {
             return Collections.emptyList();
         }
@@ -376,7 +375,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      *
      * @return The location
      */
-    @NotNull public Location getLocation() {
+    @Nonnull public Location getLocation() {
         Location location = getMeta("location");
         if (location != null) {
             return location;
@@ -403,9 +402,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      *
      * @return UUID
      */
-    @Override @NotNull public abstract UUID getUUID();
+    @Override @Nonnull public abstract UUID getUUID();
 
-    public boolean canTeleport(@NotNull final Location location) {
+    public boolean canTeleport(@Nonnull final Location location) {
         Preconditions.checkNotNull(location, "Specified location cannot be null");
         final Location current = getLocationFull();
         teleport(location);
@@ -497,21 +496,21 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      *
      * @param weather the weather visible to the player
      */
-    public abstract void setWeather(@NotNull PlotWeather weather);
+    public abstract void setWeather(@Nonnull PlotWeather weather);
 
     /**
      * Get this player's gamemode.
      *
      * @return the gamemode of the player.
      */
-    public abstract @NotNull GameMode getGameMode();
+    public abstract @Nonnull GameMode getGameMode();
 
     /**
      * Set this player's gameMode.
      *
      * @param gameMode the gamemode to set
      */
-    public abstract void setGameMode(@NotNull GameMode gameMode);
+    public abstract void setGameMode(@Nonnull GameMode gameMode);
 
     /**
      * Set this player's local time (ticks).
@@ -540,7 +539,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @param location where to play the music
      * @param id       the record item id
      */
-    public abstract void playMusic(@NotNull Location location, @NotNull ItemType id);
+    public abstract void playMusic(@Nonnull Location location, @Nonnull ItemType id);
 
     /**
      * Check if this player is banned.

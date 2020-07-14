@@ -30,7 +30,7 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
 
@@ -50,11 +50,11 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
      *
      * @param value Flag value
      */
-    protected GuestGamemodeFlag(@NotNull GameMode value) {
+    protected GuestGamemodeFlag(@Nonnull GameMode value) {
         super(value, Captions.FLAG_CATEGORY_GAMEMODE, Captions.FLAG_DESCRIPTION_GUEST_GAMEMODE);
     }
 
-    @Override public GuestGamemodeFlag parse(@NotNull String input) throws FlagParseException {
+    @Override public GuestGamemodeFlag parse(@Nonnull String input) throws FlagParseException {
         switch (input) {
             case "creative":
             case "c":
@@ -77,7 +77,7 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
         }
     }
 
-    @Override public GuestGamemodeFlag merge(@NotNull GameMode newValue) {
+    @Override public GuestGamemodeFlag merge(@Nonnull GameMode newValue) {
         return flagOf(newValue);
     }
 
@@ -89,7 +89,7 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
         return "survival";
     }
 
-    @Override protected GuestGamemodeFlag flagOf(@NotNull GameMode value) {
+    @Override protected GuestGamemodeFlag flagOf(@Nonnull GameMode value) {
         switch (value.getId()) {
             case "creative":
                 return GUEST_GAMEMODE_FLAG_CREATIVE;

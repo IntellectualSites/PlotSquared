@@ -215,7 +215,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -247,11 +247,11 @@ import java.util.regex.Pattern;
     private PlayerMoveEvent moveTmp;
     private String internalVersion;
 
-    @Inject public PlayerEvents(@NotNull final PlotAreaManager plotAreaManager,
-                                @NotNull final EventDispatcher eventDispatcher,
-                                @NotNull final WorldEdit worldEdit,
-                                @NotNull final WorldUtil worldUtil) {
-        super(eventDispatcher, worldUtil);
+    @Inject public PlayerEvents(@Nonnull final PlotAreaManager plotAreaManager,
+                                @Nonnull final EventDispatcher eventDispatcher,
+                                @Nonnull final WorldEdit worldEdit,
+                                @Nonnull final WorldUtil worldUtil) {
+        super(eventDispatcher);
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.worldEdit = worldEdit;

@@ -33,7 +33,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "createroadschematic",
     aliases = {"crs"},
@@ -46,7 +46,7 @@ public class CreateRoadSchematic extends SubCommand {
 
     private final HybridUtils hybridUtils;
 
-    @Inject public CreateRoadSchematic(@NotNull final HybridUtils hybridUtils) {
+    @Inject public CreateRoadSchematic(@Nonnull final HybridUtils hybridUtils) {
         this.hybridUtils = hybridUtils;
     }
 

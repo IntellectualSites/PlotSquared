@@ -36,7 +36,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.nio.file.Files;
 import java.time.Instant;
@@ -64,7 +64,7 @@ public final class Backup extends Command {
 
     private final BackupManager backupManager;
 
-    @Inject public Backup(@NotNull final BackupManager backupManager) {
+    @Inject public Backup(@Nonnull final BackupManager backupManager) {
         super(MainCommand.getInstance(), true);
         this.backupManager = backupManager;
     }

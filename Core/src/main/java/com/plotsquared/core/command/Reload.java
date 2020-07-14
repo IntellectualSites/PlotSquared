@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
@@ -36,7 +37,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,9 +55,9 @@ public class Reload extends SubCommand {
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
 
-    public Reload(@NotNull final PlotAreaManager plotAreaManager,
-                  @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
-                  @WorldFile @NotNull final File  worldFile) {
+    @Inject public Reload(@Nonnull final PlotAreaManager plotAreaManager,
+                          @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                          @WorldFile @Nonnull final File  worldFile) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;

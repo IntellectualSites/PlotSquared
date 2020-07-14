@@ -41,7 +41,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.entity.EntityType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -64,7 +64,7 @@ public abstract class WorldUtil {
 
     private final RegionManager regionManager;
 
-    public WorldUtil(@NotNull final RegionManager regionManager) {
+    public WorldUtil(@Nonnull final RegionManager regionManager) {
         this.regionManager = regionManager;
     }
 
@@ -118,7 +118,7 @@ public abstract class WorldUtil {
 
     public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
 
-    public void upload(@NotNull final Plot plot, UUID uuid, String file,
+    public void upload(@Nonnull final Plot plot, UUID uuid, String file,
         RunnableVal<URL> whenDone) {
         plot.getHome(home -> MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {

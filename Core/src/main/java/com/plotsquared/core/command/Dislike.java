@@ -25,8 +25,9 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.player.PlotPlayer;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "dislike",
     permission = "plots.dislike",
@@ -38,7 +39,7 @@ public class Dislike extends SubCommand {
 
     private final Like like;
 
-    public Dislike(@NotNull final Like like) {
+    @Inject public Dislike(@Nonnull final Like like) {
         this.like = like;
     }
 

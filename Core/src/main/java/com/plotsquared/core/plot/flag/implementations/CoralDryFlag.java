@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class CoralDryFlag extends BooleanFlag<CoralDryFlag> {
 
@@ -38,7 +38,7 @@ public class CoralDryFlag extends BooleanFlag<CoralDryFlag> {
         super(value, Captions.FLAG_DESCRIPTION_CORAL_DRY);
     }
 
-    @Override protected CoralDryFlag flagOf(@NotNull Boolean value) {
+    @Override protected CoralDryFlag flagOf(@Nonnull Boolean value) {
         return value ? CORAL_DRY_TRUE : CORAL_DRY_FALSE;
     }
 

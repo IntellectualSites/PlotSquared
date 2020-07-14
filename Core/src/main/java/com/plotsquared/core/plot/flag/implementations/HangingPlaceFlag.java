@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class HangingPlaceFlag extends BooleanFlag<HangingPlaceFlag> {
 
@@ -38,7 +38,7 @@ public class HangingPlaceFlag extends BooleanFlag<HangingPlaceFlag> {
         super(value, Captions.FLAG_DESCRIPTION_HANGING_PLACE);
     }
 
-    @Override protected HangingPlaceFlag flagOf(@NotNull Boolean value) {
+    @Override protected HangingPlaceFlag flagOf(@Nonnull Boolean value) {
         return value ? HANGING_PLACE_TRUE : HANGING_PLACE_FALSE;
     }
 

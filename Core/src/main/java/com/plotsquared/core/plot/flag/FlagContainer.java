@@ -30,8 +30,8 @@ import com.google.common.collect.ImmutableMap;
 import com.plotsquared.core.PlotSquared;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -284,7 +284,7 @@ import java.util.Map;
      * @param plotFlagUpdateHandler The update handler which will react to changes.
      * @see PlotFlagUpdateType Plot flag update types
      */
-    public void subscribe(@NotNull final PlotFlagUpdateHandler plotFlagUpdateHandler) {
+    public void subscribe(@Nonnull final PlotFlagUpdateHandler plotFlagUpdateHandler) {
         this.updateSubscribers.add(plotFlagUpdateHandler);
     }
 

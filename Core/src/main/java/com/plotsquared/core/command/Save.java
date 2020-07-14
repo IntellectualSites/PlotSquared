@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -37,7 +38,7 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.jnbt.CompoundTag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.net.URL;
 import java.util.List;
@@ -51,9 +52,12 @@ import java.util.UUID;
 public class Save extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final SchematicHandler schematicHandler;
 
-    public Save(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public Save(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final SchematicHandler schematicHandler) {
         this.plotAreaManager = plotAreaManager;
+        this.schematicHandler = schematicHandler;
     }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
@@ -79,7 +83,7 @@ public class Save extends SubCommand {
             return false;
         }
         plot.addRunning();
-        SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
+        this.schematicHandler.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
             @Override public void run(final CompoundTag value) {
                 TaskManager.runTaskAsync(() -> {
                     String time = (System.currentTimeMillis() / 1000) + "";
@@ -92,7 +96,7 @@ public class Save extends SubCommand {
                         .replaceAll("[^A-Za-z0-9]", "");
                     final String file = time + '_' + world1 + '_' + id.x + '_' + id.y + '_' + size;
                     UUID uuid = player.getUUID();
-                    SchematicHandler.manager.upload(value, uuid, file, new RunnableVal<URL>() {
+                    schematicHandler.upload(value, uuid, file, new RunnableVal<URL>() {
                         @Override public void run(URL url) {
                             plot.removeRunning();
                             if (url == null) {

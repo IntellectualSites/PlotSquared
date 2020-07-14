@@ -27,6 +27,7 @@ package com.plotsquared.bukkit.inject;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.util.Providers;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitLocalQueue;
@@ -65,7 +66,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @RequiredArgsConstructor public class BukkitModule extends AbstractModule {
 
@@ -77,7 +78,7 @@ import org.jetbrains.annotations.NotNull;
         bind(PlotPlatform.class).toInstance(bukkitPlatform);
         bind(IndependentPlotGenerator.class).annotatedWith(DefaultGenerator.class).to(HybridGen.class);
         // Console actor
-        @NotNull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+        @Nonnull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
         WorldEditPlugin wePlugin = ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
         bind(Actor.class).annotatedWith(ConsoleActor.class).toInstance(wePlugin.wrapCommandSender(console));
         bind(InventoryUtil.class).to(BukkitInventoryUtil.class);
@@ -88,14 +89,34 @@ import org.jetbrains.annotations.NotNull;
         bind(ChunkManager.class).to(BukkitChunkManager.class);
         bind(RegionManager.class).to(BukkitRegionManager.class);
         bind(SchematicHandler.class).to(BukkitSchematicHandler.class);
-        bind(PermHandler.class).to(BukkitPermHandler.class);
-        bind(EconHandler.class).to(BukkitEconHandler.class);
+        this.setupVault();
         if (Settings.Enabled_Components.WORLDS) {
             bind(PlotAreaManager.class).to(SinglePlotAreaManager.class);
         } else {
             bind(PlotAreaManager.class).to(DefaultPlotAreaManager.class);
         }
         install(new FactoryModuleBuilder().build(HybridPlotWorldFactory.class));
+    }
+
+    private void setupVault() {
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            BukkitPermHandler bukkitPermHandler = null;
+            try {
+                bukkitPermHandler = new BukkitPermHandler();
+                bind(PermHandler.class).toInstance(bukkitPermHandler);
+            } catch (final Exception ignored) {
+                bind(PermHandler.class).toProvider(Providers.of(null));
+            }
+            try {
+                final BukkitEconHandler bukkitEconHandler = new BukkitEconHandler(bukkitPermHandler);
+                bind(EconHandler.class).toInstance(bukkitEconHandler);
+            } catch (final Exception ignored) {
+                bind(EconHandler.class).toProvider(Providers.of(null));
+            }
+        } else {
+            bind(PermHandler.class).toProvider(Providers.of(null));
+            bind(EconHandler.class).toProvider(Providers.of(null));
+        }
     }
 
 }

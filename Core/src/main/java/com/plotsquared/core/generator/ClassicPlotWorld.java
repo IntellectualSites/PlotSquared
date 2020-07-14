@@ -35,8 +35,8 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
@@ -58,13 +58,13 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     // BlockUtil.get((short) 155, (byte) 0);
     public boolean PLOT_BEDROCK = true;
 
-    public ClassicPlotWorld(@NotNull final String worldName,
+    public ClassicPlotWorld(@Nonnull final String worldName,
                             @Nullable final String id,
-                            @NotNull final IndependentPlotGenerator generator,
-                            @NotNull final PlotId min,
-                            @NotNull final PlotId max,
-                            @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
-                            @NotNull final GlobalBlockQueue blockQueue,
+                            @Nonnull final IndependentPlotGenerator generator,
+                            @Nonnull final PlotId min,
+                            @Nonnull final PlotId max,
+                            @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                            @Nonnull final GlobalBlockQueue blockQueue,
                             @Nullable final EconHandler econHandler) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
     }
@@ -76,7 +76,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
      * command - this may be useful if a config value can be changed at a later date, and has no impact on the actual
      * world generation</p>
      */
-    @NotNull @Override public ConfigurationNode[] getSettingNodes() {
+    @Nonnull @Override public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[] {
             new ConfigurationNode("plot.height", this.PLOT_HEIGHT, "Plot height",
                 ConfigurationUtil.INTEGER),

@@ -27,7 +27,8 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class DenyExitFlag extends BooleanFlag<DenyExitFlag> {
 
@@ -38,7 +39,7 @@ public class DenyExitFlag extends BooleanFlag<DenyExitFlag> {
         super(value, Captions.FLAG_DESCRIPTION_DENY_EXIT);
     }
 
-    @Override protected DenyExitFlag flagOf(@NotNull Boolean value) {
+    @Override protected DenyExitFlag flagOf(@Nonnull Boolean value) {
         return value ? DENY_EXIT_FLAG_TRUE : DENY_EXIT_FLAG_FALSE;
     }
 

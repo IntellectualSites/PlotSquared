@@ -32,8 +32,8 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
 
@@ -44,11 +44,11 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
 
     public SquarePlotWorld(final String worldName,
                            @Nullable final String id,
-                           @NotNull final IndependentPlotGenerator generator,
+                           @Nonnull final IndependentPlotGenerator generator,
                            @Nullable final PlotId min,
                            @Nullable final PlotId max,
-                           @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
-                           @NotNull final GlobalBlockQueue blockQueue,
+                           @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                           @Nonnull final GlobalBlockQueue blockQueue,
                            @Nullable final EconHandler econHandler) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
     }

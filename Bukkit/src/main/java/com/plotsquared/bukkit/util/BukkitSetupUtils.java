@@ -48,7 +48,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,9 +62,9 @@ import java.util.Objects;
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
 
-    @Inject public BukkitSetupUtils(@NotNull final PlotAreaManager plotAreaManager,
-                            @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
-                            @WorldFile @NotNull final File worldFile) {
+    @Inject public BukkitSetupUtils(@Nonnull final PlotAreaManager plotAreaManager,
+                            @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                            @WorldFile @Nonnull final File worldFile) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;

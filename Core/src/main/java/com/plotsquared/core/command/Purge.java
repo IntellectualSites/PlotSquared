@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -37,7 +38,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,7 +59,8 @@ public class Purge extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
 
-    public Purge(@NotNull final PlotAreaManager plotAreaManager, @NotNull final PlotListener plotListener) {
+    @Inject public Purge(@Nonnull final PlotAreaManager plotAreaManager,
+                         @Nonnull final PlotListener plotListener) {
         this.plotAreaManager = plotAreaManager;
         this.plotListener = plotListener;
     }

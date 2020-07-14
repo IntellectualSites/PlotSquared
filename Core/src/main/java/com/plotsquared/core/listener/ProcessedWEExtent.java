@@ -44,7 +44,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     private Extent parent;
     private Map<Long, Integer[]> tileEntityCount = new HashMap<>();
 
-    public ProcessedWEExtent(String world, Set<CuboidRegion> mask, int max, Extent child, Extent parent, @NotNull final WorldUtil worldUtil) {
+    public ProcessedWEExtent(String world, Set<CuboidRegion> mask, int max, Extent child, Extent parent, @Nonnull final WorldUtil worldUtil) {
         super(child);
         this.mask = mask;
         this.world = world;

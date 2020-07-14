@@ -28,8 +28,8 @@ package com.plotsquared.core.backup;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -45,7 +45,7 @@ public interface BackupManager {
      * @param plot     Plot to perform the automatic backup on
      * @param whenDone Action that runs when the automatic backup has been completed
      */
-    static void backup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone) {
+    static void backup(@Nullable PlotPlayer player, @Nonnull final Plot plot, @Nonnull Runnable whenDone) {
         Objects.requireNonNull(PlotSquared.platform()).getBackupManager().automaticBackup(player, plot, whenDone);
     }
 
@@ -56,7 +56,7 @@ public interface BackupManager {
      * @param plot Plot to get the backup profile for
      * @return Backup profile
      */
-    @NotNull BackupProfile getProfile(@NotNull final Plot plot);
+    @Nonnull BackupProfile getProfile(@Nonnull final Plot plot);
 
     /**
      * This will perform an automatic backup of the plot iff the plot has an owner,
@@ -67,14 +67,14 @@ public interface BackupManager {
      * @param plot     Plot to perform the automatic backup on
      * @param whenDone Action that runs when the automatic backup has been completed
      */
-    void automaticBackup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone);
+    void automaticBackup(@Nullable PlotPlayer player, @Nonnull final Plot plot, @Nonnull Runnable whenDone);
 
     /**
      * Get the directory in which backups are stored
      *
      * @return Backup directory path
      */
-    @NotNull Path getBackupPath();
+    @Nonnull Path getBackupPath();
 
     /**
      * Get the maximum amount of backups that may be stored for

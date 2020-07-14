@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class VineGrowFlag extends BooleanFlag<VineGrowFlag> {
 
@@ -38,7 +38,7 @@ public class VineGrowFlag extends BooleanFlag<VineGrowFlag> {
         super(value, Captions.FLAG_DESCRIPTION_VINE_GROW);
     }
 
-    @Override protected VineGrowFlag flagOf(@NotNull Boolean value) {
+    @Override protected VineGrowFlag flagOf(@Nonnull Boolean value) {
         return value ? VINE_GROW_TRUE : VINE_GROW_FALSE;
     }
 

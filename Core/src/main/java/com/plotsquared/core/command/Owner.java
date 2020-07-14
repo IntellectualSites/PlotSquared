@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -37,7 +38,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Set;
 import java.util.UUID;
@@ -56,7 +57,7 @@ public class Owner extends SetCommand {
 
     private final EventDispatcher eventDispatcher;
     
-    public Owner(@NotNull final EventDispatcher eventDispatcher) {
+    @Inject public Owner(@Nonnull final EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
     

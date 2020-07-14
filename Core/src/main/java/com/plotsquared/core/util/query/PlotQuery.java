@@ -34,7 +34,7 @@ import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MathMan;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,7 +66,7 @@ public final class PlotQuery {
     private PlotArea priorityArea;
     private Comparator<Plot> plotComparator;
 
-    private PlotQuery(@NotNull final PlotAreaManager plotAreaManager) {
+    private PlotQuery(@Nonnull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
         this.plotProvider = new GlobalPlotProvider(plotAreaManager);
     }
@@ -86,7 +86,7 @@ public final class PlotQuery {
      * @param area Area
      * @return The query instance
      */
-    @NotNull public PlotQuery inArea(@NotNull final PlotArea area) {
+    @Nonnull public PlotQuery inArea(@Nonnull final PlotArea area) {
         Preconditions.checkNotNull(area, "Area may not be null");
         this.plotProvider = new AreaLimitedPlotProvider(Collections.singletonList(area));
         return this;
@@ -98,7 +98,7 @@ public final class PlotQuery {
      * @param world World name
      * @return The query instance
      */
-    @NotNull public PlotQuery inWorld(@NotNull final String world) {
+    @Nonnull public PlotQuery inWorld(@Nonnull final String world) {
         Preconditions.checkNotNull(world, "World may not be null");
         this.plotProvider = new AreaLimitedPlotProvider(this.plotAreaManager.getPlotAreasSet(world));
         return this;
@@ -110,7 +110,7 @@ public final class PlotQuery {
      * @param areas Plot areas
      * @return The query instance
      */
-    @NotNull public PlotQuery inAreas(@NotNull final Collection<PlotArea> areas) {
+    @Nonnull public PlotQuery inAreas(@Nonnull final Collection<PlotArea> areas) {
         Preconditions.checkNotNull(areas, "Areas may not be null");
         Preconditions.checkState(!areas.isEmpty(), "At least one area must be provided");
         this.plotProvider = new AreaLimitedPlotProvider(Collections.unmodifiableCollection(areas));
@@ -122,7 +122,7 @@ public final class PlotQuery {
      *
      * @return The query instance
      */
-    @NotNull public PlotQuery expiredPlots() {
+    @Nonnull public PlotQuery expiredPlots() {
         this.plotProvider = new ExpiredPlotProvider();
         return this;
     }
@@ -132,7 +132,7 @@ public final class PlotQuery {
      *
      * @return The query instance
      */
-    @NotNull public PlotQuery allPlots() {
+    @Nonnull public PlotQuery allPlots() {
         this.plotProvider = new GlobalPlotProvider(this.plotAreaManager);
         return this;
     }
@@ -142,7 +142,7 @@ public final class PlotQuery {
      *
      * @return The query instance
      */
-    @NotNull public PlotQuery noPlots() {
+    @Nonnull public PlotQuery noPlots() {
         this.plotProvider = new NullProvider();
         return this;
     }
@@ -152,7 +152,7 @@ public final class PlotQuery {
      *
      * @return The query instance
      */
-    @NotNull public PlotQuery plotsBySearch(@NotNull final String searchTerm) {
+    @Nonnull public PlotQuery plotsBySearch(@Nonnull final String searchTerm) {
         Preconditions.checkNotNull(searchTerm, "Search term may not be null");
         this.plotProvider = new SearchPlotProvider(searchTerm);
         return this;
@@ -163,7 +163,7 @@ public final class PlotQuery {
      *
      * @return The query instance
      */
-    @NotNull public PlotQuery withPlot(@NotNull final Plot plot) {
+    @Nonnull public PlotQuery withPlot(@Nonnull final Plot plot) {
         Preconditions.checkNotNull(plot, "Plot may not be null");
         this.plotProvider = new FixedPlotProvider(plot);
         return this;
@@ -174,7 +174,7 @@ public final class PlotQuery {
      *
      * @return The query instance
      */
-    @NotNull public PlotQuery whereBasePlot() {
+    @Nonnull public PlotQuery whereBasePlot() {
         return this.addFilter(new PredicateFilter(Plot::isBasePlot));
     }
 
@@ -184,7 +184,7 @@ public final class PlotQuery {
      * @param owner Owner UUID
      * @return The query instance
      */
-    @NotNull public PlotQuery ownedBy(@NotNull final UUID owner) {
+    @Nonnull public PlotQuery ownedBy(@Nonnull final UUID owner) {
         Preconditions.checkNotNull(owner, "Owner may not be null");
         return this.addFilter(new OwnerFilter(owner));
     }
@@ -195,7 +195,7 @@ public final class PlotQuery {
      * @param owner Owner
      * @return The query instance
      */
-    @NotNull public PlotQuery ownedBy(@NotNull final PlotPlayer owner) {
+    @Nonnull public PlotQuery ownedBy(@Nonnull final PlotPlayer owner) {
         Preconditions.checkNotNull(owner, "Owner may not be null");
         return this.addFilter(new OwnerFilter(owner.getUUID()));
     }
@@ -206,7 +206,7 @@ public final class PlotQuery {
      * @param alias Plot alias
      * @return The query instance
      */
-    @NotNull public PlotQuery withAlias(@NotNull final String alias) {
+    @Nonnull public PlotQuery withAlias(@Nonnull final String alias) {
         Preconditions.checkNotNull(alias, "Alias may not be null");
         return this.addFilter(new AliasFilter(alias));
     }
@@ -217,7 +217,7 @@ public final class PlotQuery {
      * @param member Member UUID
      * @return The query instance
      */
-    @NotNull public PlotQuery withMember(@NotNull final UUID member) {
+    @Nonnull public PlotQuery withMember(@Nonnull final UUID member) {
         Preconditions.checkNotNull(member, "Member may not be null");
         return this.addFilter(new MemberFilter(member));
     }
@@ -228,7 +228,7 @@ public final class PlotQuery {
      * @param predicate Predicate
      * @return The query instance
      */
-    @NotNull public PlotQuery thatPasses(@NotNull final Predicate<Plot> predicate) {
+    @Nonnull public PlotQuery thatPasses(@Nonnull final Predicate<Plot> predicate) {
         Preconditions.checkNotNull(predicate, "Predicate may not be null");
         return this.addFilter(new PredicateFilter(predicate));
     }
@@ -240,7 +240,7 @@ public final class PlotQuery {
      * @param strategy Strategy
      * @return The query instance
      */
-    @NotNull public PlotQuery withSortingStrategy(@NotNull final SortingStrategy strategy) {
+    @Nonnull public PlotQuery withSortingStrategy(@Nonnull final SortingStrategy strategy) {
         Preconditions.checkNotNull(strategy, "Strategy may not be null");
         this.sortingStrategy = strategy;
         return this;
@@ -252,7 +252,7 @@ public final class PlotQuery {
      * @param comparator Comparator
      * @return The query instance
      */
-    @NotNull public PlotQuery sorted(@NotNull final Comparator<Plot> comparator) {
+    @Nonnull public PlotQuery sorted(@Nonnull final Comparator<Plot> comparator) {
         Preconditions.checkNotNull(comparator, "Comparator may not be null");
         this.sortingStrategy = SortingStrategy.COMPARATOR;
         this.plotComparator = comparator;
@@ -266,7 +266,7 @@ public final class PlotQuery {
      * @param plotArea Plot area
      * @return The query instance
      */
-    @NotNull public PlotQuery relativeToArea(@NotNull final PlotArea plotArea) {
+    @Nonnull public PlotQuery relativeToArea(@Nonnull final PlotArea plotArea) {
         Preconditions.checkNotNull(plotArea, "Area may not be null");
         this.priorityArea = plotArea;
         return this;
@@ -277,7 +277,7 @@ public final class PlotQuery {
      *
      * @return Matching plots
      */
-    @NotNull public Stream<Plot> asStream() {
+    @Nonnull public Stream<Plot> asStream() {
         return this.asList().stream();
     }
 
@@ -286,7 +286,7 @@ public final class PlotQuery {
      *
      * @return Matching plots as a mutable
      */
-    @NotNull public List<Plot> asList() {
+    @Nonnull public List<Plot> asList() {
         final List<Plot> result;
         if (this.filters.isEmpty()) {
             result = new ArrayList<>(this.plotProvider.getPlots());
@@ -356,7 +356,7 @@ public final class PlotQuery {
      *
      * @return Matching plots as a mutable set
      */
-    @NotNull public Set<Plot> asSet() {
+    @Nonnull public Set<Plot> asSet() {
         return new HashSet<>(this.asList());
     }
 
@@ -367,7 +367,7 @@ public final class PlotQuery {
      * @param pageSize The size of the pages. Must be positive.
      * @return Paginated plot result
      */
-    @NotNull public PaginatedPlotResult getPaginated(final int pageSize) {
+    @Nonnull public PaginatedPlotResult getPaginated(final int pageSize) {
         Preconditions.checkState(pageSize > 0, "Page size must be greater than 0");
         return new PaginatedPlotResult(this.asList(), pageSize);
     }
@@ -377,7 +377,7 @@ public final class PlotQuery {
      *
      * @return Matching plots as an immutable collection
      */
-    @NotNull public Collection<Plot> asCollection() {
+    @Nonnull public Collection<Plot> asCollection() {
         return this.asList();
     }
 
@@ -386,7 +386,7 @@ public final class PlotQuery {
      *
      * @param consumer Plot consumer
      */
-    public void forEach(@NotNull final Consumer<Plot> consumer) {
+    public void forEach(@Nonnull final Consumer<Plot> consumer) {
         Preconditions.checkNotNull(consumer, "Consumer may not be null");
         this.asCollection().forEach(consumer);
     }
@@ -424,7 +424,7 @@ public final class PlotQuery {
         }
     }
 
-    @NotNull private PlotQuery addFilter(@NotNull final PlotFilter filter) {
+    @Nonnull private PlotQuery addFilter(@Nonnull final PlotFilter filter) {
         this.filters.add(filter);
         return this;
     }

@@ -33,7 +33,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +48,7 @@ public class SinglePlot extends Plot {
         new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
             BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)));
 
-    public SinglePlot(@NotNull final PlotArea area, @NotNull final PlotId id) {
+    public SinglePlot(@Nonnull final PlotArea area, @Nonnull final PlotId id) {
         super(area, id);
     }
 
@@ -76,7 +76,7 @@ public class SinglePlot extends Plot {
         return super.isLoaded();
     }
 
-    @NotNull @Override public Set<CuboidRegion> getRegions() {
+    @Nonnull @Override public Set<CuboidRegion> getRegions() {
         return regions;
     }
 

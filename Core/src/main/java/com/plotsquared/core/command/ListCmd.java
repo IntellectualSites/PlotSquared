@@ -49,8 +49,8 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.uuid.UUIDMapping;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,7 +76,7 @@ public class ListCmd extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final EconHandler econHandler;
 
-    @Inject public ListCmd(@NotNull final PlotAreaManager plotAreaManager,
+    @Inject public ListCmd(@Nonnull final PlotAreaManager plotAreaManager,
                            @Nullable final EconHandler econHandler) {
         this.plotAreaManager = plotAreaManager;
         this.econHandler = econHandler;

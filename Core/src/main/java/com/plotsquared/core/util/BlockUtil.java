@@ -35,7 +35,7 @@ import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldedit.world.block.FuzzyBlockState;
 import com.sk89q.worldedit.world.registry.LegacyMapper;
-import lombok.NonNull;
+import javax.annotation.Nonnull;
 
 import java.util.Map;
 
@@ -99,7 +99,7 @@ public final class BlockUtil {
         return result;
     }
 
-    public static BlockState deserialize(@NonNull final Map<String, Object> map) {
+    public static BlockState deserialize(@Nonnull final Map<String, Object> map) {
         if (map.containsKey("material")) {
             final Object object = map.get("material");
             return get(object.toString());

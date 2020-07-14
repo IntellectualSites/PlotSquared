@@ -39,9 +39,9 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -56,7 +56,7 @@ public class Buy extends Command {
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
 
-    @Inject public Buy(@NotNull final EventDispatcher eventDispatcher,
+    @Inject public Buy(@Nonnull final EventDispatcher eventDispatcher,
                        @Nullable final EconHandler econHandler) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;

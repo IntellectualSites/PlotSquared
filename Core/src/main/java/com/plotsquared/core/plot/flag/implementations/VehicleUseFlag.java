@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class VehicleUseFlag extends BooleanFlag<VehicleUseFlag> {
 
@@ -38,7 +38,7 @@ public class VehicleUseFlag extends BooleanFlag<VehicleUseFlag> {
         super(value, Captions.FLAG_DESCRIPTION_VEHICLE_USE);
     }
 
-    @Override protected VehicleUseFlag flagOf(@NotNull Boolean value) {
+    @Override protected VehicleUseFlag flagOf(@Nonnull Boolean value) {
         return value ? VEHICLE_USE_TRUE : VEHICLE_USE_FALSE;
     }
 

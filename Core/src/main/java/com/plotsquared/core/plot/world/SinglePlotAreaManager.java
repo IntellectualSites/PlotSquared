@@ -38,8 +38,8 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SetupUtils;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.inject.Inject;
 
@@ -49,11 +49,11 @@ import javax.inject.Inject;
     private SinglePlotArea area;
     private PlotArea[] all;
 
-    @Inject public SinglePlotAreaManager(@NotNull final EventDispatcher eventDispatcher,
-                                         @NotNull final PlotListener plotListener,
-                                         @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
-                                         @NotNull final GlobalBlockQueue blockQueue,
-                                         @NotNull final EconHandler econHandler) {
+    @Inject public SinglePlotAreaManager(@Nonnull final EventDispatcher eventDispatcher,
+                                         @Nonnull final PlotListener plotListener,
+                                         @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                                         @Nonnull final GlobalBlockQueue blockQueue,
+                                         @Nonnull final EconHandler econHandler) {
         this.area = new SinglePlotArea(this, eventDispatcher, plotListener,
             worldConfiguration, blockQueue, econHandler);
         this.array = new SinglePlotArea[] {area};
@@ -66,13 +66,13 @@ import javax.inject.Inject;
         return area;
     }
 
-    public void setArea(@NotNull final SinglePlotArea area) {
+    public void setArea(@Nonnull final SinglePlotArea area) {
         this.area = area;
         array[0] = area;
         all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
     }
 
-    public boolean isWorld(@NotNull final String id) {
+    public boolean isWorld(@Nonnull final String id) {
         char[] chars = id.toCharArray();
         if (chars.length == 1 && chars[0] == '*') {
             return true;
@@ -119,7 +119,7 @@ import javax.inject.Inject;
             super.getApplicablePlotArea(location);
     }
 
-    @Override @Nullable public PlotArea getPlotArea(@NotNull final String world, @NotNull final String id) {
+    @Override @Nullable public PlotArea getPlotArea(@Nonnull final String world, @Nonnull final String id) {
         PlotArea found = super.getPlotArea(world, id);
         if (found != null) {
             return found;
@@ -127,7 +127,7 @@ import javax.inject.Inject;
         return isWorld(world) || world.equals("*") ? area : super.getPlotArea(world, id);
     }
 
-    @Override @Nullable public PlotArea getPlotArea(@NotNull final Location location) {
+    @Override @Nullable public PlotArea getPlotArea(@Nonnull final Location location) {
         PlotArea found = super.getPlotArea(location);
         if (found != null) {
             return found;
@@ -135,7 +135,7 @@ import javax.inject.Inject;
         return isWorld(location.getWorldName()) || location.getWorldName().equals("*") ? area : null;
     }
 
-    @Override @NotNull public PlotArea[] getPlotAreas(@NotNull final String world, @NotNull final CuboidRegion region) {
+    @Override @Nonnull public PlotArea[] getPlotAreas(@Nonnull final String world, @Nonnull final CuboidRegion region) {
         PlotArea[] found = super.getPlotAreas(world, region);
         if (found != null && found.length != 0) {
             return found;
@@ -145,15 +145,15 @@ import javax.inject.Inject;
             all.length == 0 ? noPlotAreas : super.getPlotAreas(world, region);
     }
 
-    @Override @NotNull public PlotArea[] getAllPlotAreas() {
+    @Override @Nonnull public PlotArea[] getAllPlotAreas() {
         return all;
     }
 
-    @Override @NotNull public String[] getAllWorlds() {
+    @Override @Nonnull public String[] getAllWorlds() {
         return super.getAllWorlds();
     }
 
-    @Override public void addPlotArea(@NotNull final PlotArea area) {
+    @Override public void addPlotArea(@Nonnull final PlotArea area) {
         if (area == this.area) {
             return;
         }
@@ -161,18 +161,18 @@ import javax.inject.Inject;
         all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
     }
 
-    @Override public void removePlotArea(@NotNull final PlotArea area) {
+    @Override public void removePlotArea(@Nonnull final PlotArea area) {
         if (area == this.area) {
             throw new UnsupportedOperationException("Cannot remove base area!");
         }
         super.removePlotArea(area);
     }
 
-    @Override public void addWorld(@NotNull final String worldName) {
+    @Override public void addWorld(@Nonnull final String worldName) {
         super.addWorld(worldName);
     }
 
-    @Override public void removeWorld(@NotNull final String worldName) {
+    @Override public void removeWorld(@Nonnull final String worldName) {
         super.removeWorld(worldName);
     }
 }

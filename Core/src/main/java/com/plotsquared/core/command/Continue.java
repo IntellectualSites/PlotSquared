@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -36,7 +37,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "continue",
     description = "Continue a plot that was previously marked as done",
@@ -47,7 +48,7 @@ public class Continue extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
     
-    public Continue(@NotNull final EventDispatcher eventDispatcher) {
+    @Inject public Continue(@Nonnull final EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
     

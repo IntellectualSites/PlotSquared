@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class SnowMeltFlag extends BooleanFlag<SnowMeltFlag> {
 
@@ -38,7 +38,7 @@ public class SnowMeltFlag extends BooleanFlag<SnowMeltFlag> {
         super(value, Captions.FLAG_DESCRIPTION_SNOW_MELT);
     }
 
-    @Override protected SnowMeltFlag flagOf(@NotNull Boolean value) {
+    @Override protected SnowMeltFlag flagOf(@Nonnull Boolean value) {
         return value ? SNOW_MELT_TRUE : SNOW_MELT_FALSE;
     }
 

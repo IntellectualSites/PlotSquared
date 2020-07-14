@@ -35,7 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.util.MainUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 
@@ -51,7 +51,7 @@ public class DebugRoadRegen extends SubCommand {
 
     private final HybridUtils hybridUtils;
 
-    @Inject public DebugRoadRegen(@NotNull final HybridUtils hybridUtils) {
+    @Inject public DebugRoadRegen(@Nonnull final HybridUtils hybridUtils) {
         this.hybridUtils = hybridUtils;
     }
 

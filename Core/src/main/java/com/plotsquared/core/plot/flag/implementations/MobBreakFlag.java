@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class MobBreakFlag extends BooleanFlag<MobBreakFlag> {
 
@@ -38,7 +38,7 @@ public class MobBreakFlag extends BooleanFlag<MobBreakFlag> {
         super(value, Captions.FLAG_DESCRIPTION_MOB_BREAK);
     }
 
-    @Override protected MobBreakFlag flagOf(@NotNull Boolean value) {
+    @Override protected MobBreakFlag flagOf(@Nonnull Boolean value) {
         return value ? MOB_BREAK_TRUE : MOB_BREAK_FALSE;
     }
 

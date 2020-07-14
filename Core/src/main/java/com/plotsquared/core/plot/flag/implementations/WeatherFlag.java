@@ -28,7 +28,7 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,11 +44,11 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
      *
      * @param value Flag value
      */
-    protected WeatherFlag(@NotNull PlotWeather value) {
+    protected WeatherFlag(@Nonnull PlotWeather value) {
         super(value, Captions.FLAG_CATEGORY_WEATHER, Captions.FLAG_DESCRIPTION_WEATHER);
     }
 
-    @Override public WeatherFlag parse(@NotNull String input) {
+    @Override public WeatherFlag parse(@Nonnull String input) {
         switch (input.toLowerCase()) {
             case "rain":
             case "storm":
@@ -65,7 +65,7 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
         }
     }
 
-    @Override public WeatherFlag merge(@NotNull PlotWeather newValue) {
+    @Override public WeatherFlag merge(@Nonnull PlotWeather newValue) {
         return flagOf(newValue);
     }
 
@@ -77,7 +77,7 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
         return "storm";
     }
 
-    @Override protected WeatherFlag flagOf(@NotNull PlotWeather value) {
+    @Override protected WeatherFlag flagOf(@Nonnull PlotWeather value) {
         switch (value) {
             case RAIN:
                 return PLOT_WEATHER_FLAG_RAIN;

@@ -34,7 +34,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -90,7 +90,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         return false;
     }
 
-    public final boolean execute(@NotNull LocalChunk lc)
+    public final boolean execute(@Nonnull LocalChunk lc)
         throws ExecutionException, InterruptedException {
         this.setComponents(lc);
         return true;
@@ -116,7 +116,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         this.modified = modified;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @NotNull Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 

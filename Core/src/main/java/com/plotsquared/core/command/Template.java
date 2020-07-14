@@ -48,7 +48,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,12 +73,12 @@ public class Template extends SubCommand {
     private final GlobalBlockQueue globalBlockQueue;
     private final WorldUtil worldUtil;
 
-    @Inject public Template(@NotNull final PlotAreaManager plotAreaManager,
-                            @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
-                            @WorldFile @NotNull final File worldFile,
-                            @NotNull final SetupUtils setupUtils,
-                            @NotNull final GlobalBlockQueue globalBlockQueue,
-                            @NotNull final WorldUtil worldUtil) {
+    @Inject public Template(@Nonnull final PlotAreaManager plotAreaManager,
+                            @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                            @WorldFile @Nonnull final File worldFile,
+                            @Nonnull final SetupUtils setupUtils,
+                            @Nonnull final GlobalBlockQueue globalBlockQueue,
+                            @Nonnull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;

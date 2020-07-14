@@ -38,13 +38,13 @@ import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class HybridGen extends IndependentPlotGenerator {
 
     private final HybridPlotWorldFactory hybridPlotWorldFactory;
 
-    @Inject public HybridGen(@NotNull final HybridPlotWorldFactory hybridPlotWorldFactory) {
+    @Inject public HybridGen(@Nonnull final HybridPlotWorldFactory hybridPlotWorldFactory) {
         this.hybridPlotWorldFactory = hybridPlotWorldFactory;
     }
 
@@ -76,7 +76,7 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public void generateChunk(@NotNull ScopedLocalBlockQueue result, @NotNull PlotArea settings) {
+    public void generateChunk(@Nonnull ScopedLocalBlockQueue result, @Nonnull PlotArea settings) {
         Preconditions.checkNotNull(result, "result cannot be null");
         Preconditions.checkNotNull(settings, "settings cannot be null");
 

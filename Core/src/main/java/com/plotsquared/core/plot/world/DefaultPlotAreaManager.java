@@ -32,8 +32,8 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotWorld;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ import java.util.Set;
     final PlotArea[] noPlotAreas = new PlotArea[0];
     private final Map<String, PlotWorld> plotWorlds = new HashMap<>();
 
-    @Override @NotNull public PlotArea[] getAllPlotAreas() {
+    @Override @Nonnull public PlotArea[] getAllPlotAreas() {
         final Set<PlotArea> area = new HashSet<>();
         for (final PlotWorld world : plotWorlds.values()) {
             area.addAll(world.getAreas());
@@ -66,7 +66,7 @@ import java.util.Set;
         return world.getArea(location);
     }
 
-    @Override public void addPlotArea(@NotNull final PlotArea plotArea) {
+    @Override public void addPlotArea(@Nonnull final PlotArea plotArea) {
         PlotWorld world = this.plotWorlds.get(plotArea.getWorldName());
         if (world != null) {
             if (world instanceof StandardPlotWorld && world.getAreas().isEmpty()) {
@@ -85,7 +85,7 @@ import java.util.Set;
         this.plotWorlds.put(plotArea.getWorldName(), world);
     }
 
-    @Override public void removePlotArea(@NotNull final PlotArea area) {
+    @Override public void removePlotArea(@Nonnull final PlotArea area) {
         final PlotWorld world = this.plotWorlds.get(area.getWorldName());
         if (world == null) {
             return;
@@ -100,7 +100,7 @@ import java.util.Set;
         }
     }
 
-    @Override public PlotArea getPlotArea(@NotNull final String world, @Nullable final String id) {
+    @Override public PlotArea getPlotArea(@Nonnull final String world, @Nullable final String id) {
         final PlotWorld plotWorld = this.plotWorlds.get(world);
         if (plotWorld == null) {
             return null;
@@ -120,11 +120,11 @@ import java.util.Set;
         return null;
     }
 
-    @Override @Nullable public PlotArea getPlotArea(@NotNull final Location location) {
+    @Override @Nullable public PlotArea getPlotArea(@Nonnull final Location location) {
         return this.getApplicablePlotArea(location);
     }
 
-    @Override @NotNull public PlotArea[] getPlotAreas(@NotNull final String world, @Nullable final CuboidRegion region) {
+    @Override @Nonnull public PlotArea[] getPlotAreas(@Nonnull final String world, @Nullable final CuboidRegion region) {
         final PlotWorld plotWorld = this.plotWorlds.get(world);
         if (plotWorld == null) {
             return noPlotAreas;
@@ -135,7 +135,7 @@ import java.util.Set;
         return plotWorld.getAreasInRegion(region).toArray(new PlotArea[0]);
     }
 
-    @Override public void addWorld(@NotNull final String worldName) {
+    @Override public void addWorld(@Nonnull final String worldName) {
         PlotWorld world = this.plotWorlds.get(worldName);
         if (world != null) {
             return;
@@ -146,11 +146,11 @@ import java.util.Set;
         this.plotWorlds.put(worldName, world);
     }
 
-    @Override public void removeWorld(@NotNull final String worldName) {
+    @Override public void removeWorld(@Nonnull final String worldName) {
         this.plotWorlds.remove(worldName);
     }
 
-    @Override @NotNull public String[] getAllWorlds() {
+    @Override @Nonnull public String[] getAllWorlds() {
         return this.plotWorlds.keySet().toArray(new String[0]);
     }
 }

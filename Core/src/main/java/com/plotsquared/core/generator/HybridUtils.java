@@ -63,7 +63,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -92,9 +92,9 @@ public class HybridUtils {
     private final RegionManager regionManager;
     private final SchematicHandler schematicHandler;
 
-    @Inject public HybridUtils(@NotNull final PlotAreaManager plotAreaManager,
-        @NotNull final ChunkManager chunkManager, @NotNull final GlobalBlockQueue blockQueue,
-        @NotNull final WorldUtil worldUtil, @NotNull final RegionManager regionManager, @NotNull final SchematicHandler schematicHandler) {
+    @Inject public HybridUtils(@Nonnull final PlotAreaManager plotAreaManager,
+        @Nonnull final ChunkManager chunkManager, @Nonnull final GlobalBlockQueue blockQueue,
+        @Nonnull final WorldUtil worldUtil, @Nonnull final RegionManager regionManager, @Nonnull final SchematicHandler schematicHandler) {
         this.plotAreaManager = plotAreaManager;
         this.chunkManager = chunkManager;
         this.blockQueue = blockQueue;

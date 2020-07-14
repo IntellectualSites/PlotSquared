@@ -26,21 +26,26 @@
 package com.plotsquared.bukkit.inject;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.plotsquared.bukkit.managers.BukkitWorldManager;
 import com.plotsquared.bukkit.managers.HyperverseWorldManager;
 import com.plotsquared.bukkit.managers.MultiverseWorldManager;
 import com.plotsquared.core.util.PlatformWorldManager;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 
 public class WorldManagerModule extends AbstractModule {
 
-    @Override protected void configure() {
+    @Provides
+    @Singleton
+    PlatformWorldManager<World> provideWorldManager() {
         if (Bukkit.getPluginManager().getPlugin("Hyperverse") != null) {
-            bind(PlatformWorldManager.class).to(HyperverseWorldManager.class);
+            return new HyperverseWorldManager();
         } else if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
-            bind(PlatformWorldManager.class).to(MultiverseWorldManager.class);
+            return new MultiverseWorldManager();
         } else {
-            bind(PlatformWorldManager.class).to(BukkitWorldManager.class);
+            return new BukkitWorldManager();
         }
     }
 

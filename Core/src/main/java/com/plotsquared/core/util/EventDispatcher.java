@@ -72,8 +72,8 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +105,7 @@ public class EventDispatcher {
         }
     }
 
-    public void callEvent(@NotNull final PlotEvent event) {
+    public void callEvent(@Nonnull final PlotEvent event) {
         eventBus.post(event);
     }
 
@@ -263,7 +263,7 @@ public class EventDispatcher {
         }
     }
 
-    public boolean checkPlayerBlockEvent(PlotPlayer<?> player, @NotNull PlayerBlockEventType type,
+    public boolean checkPlayerBlockEvent(PlotPlayer<?> player, @Nonnull PlayerBlockEventType type,
         Location location, BlockType blockType, boolean notifyPerms) {
         PlotArea area = location.getPlotArea();
         assert area != null;

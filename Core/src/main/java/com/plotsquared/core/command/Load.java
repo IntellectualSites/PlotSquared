@@ -39,7 +39,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -57,8 +57,8 @@ public class Load extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final SchematicHandler schematicHandler;
 
-    @Inject public Load(@NotNull final PlotAreaManager plotAreaManager,
-                        @NotNull final SchematicHandler schematicHandler) {
+    @Inject public Load(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final SchematicHandler schematicHandler) {
         this.plotAreaManager = plotAreaManager;
         this.schematicHandler = schematicHandler;
     }

@@ -28,20 +28,20 @@ package com.plotsquared.core.plot.flag.types;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends NumberFlag<Double, F> {
 
-    protected DoubleFlag(@NotNull Double value, Double minimum, Double maximum,
-        @NotNull Caption flagDescription) {
+    protected DoubleFlag(@Nonnull Double value, Double minimum, Double maximum,
+        @Nonnull Caption flagDescription) {
         super(value, minimum, maximum, Captions.FLAG_CATEGORY_DOUBLES, flagDescription);
     }
 
-    protected DoubleFlag(@NotNull Double value, @NotNull Caption flagDescription) {
+    protected DoubleFlag(@Nonnull Double value, @Nonnull Caption flagDescription) {
         this(value, Double.MIN_VALUE, Double.MAX_VALUE, flagDescription);
     }
 
-    @Override public F merge(@NotNull Double newValue) {
+    @Override public F merge(@Nonnull Double newValue) {
         return flagOf(getValue() + newValue);
     }
 
@@ -53,7 +53,7 @@ public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends Number
         return getValue().toString();
     }
 
-    @NotNull @Override protected Double parseNumber(String input) throws FlagParseException {
+    @Nonnull @Override protected Double parseNumber(String input) throws FlagParseException {
         try {
             return Double.parseDouble(input);
         } catch (Throwable throwable) {

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
@@ -34,7 +35,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -52,7 +53,7 @@ public class Remove extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
 
-    public Remove(@NotNull final EventDispatcher eventDispatcher) {
+    @Inject public Remove(@Nonnull final EventDispatcher eventDispatcher) {
         super(Argument.PlayerName);
         this.eventDispatcher = eventDispatcher;
     }

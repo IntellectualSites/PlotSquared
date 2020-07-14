@@ -54,7 +54,7 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import io.papermc.lib.PaperLib;
-import lombok.NonNull;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -96,8 +96,8 @@ import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.entity.WaterMob;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,7 +119,7 @@ import java.util.stream.Stream;
     private static Player lastPlayer = null;
     private static BukkitPlayer lastPlotPlayer = null;
 
-    @Inject public BukkitUtil(@NotNull final RegionManager regionManager) {
+    @Inject public BukkitUtil(@Nonnull final RegionManager regionManager) {
         super(regionManager);
     }
 
@@ -130,7 +130,7 @@ import java.util.stream.Stream;
         PlotSquared.platform().getPlayerManager().removePlayer(uuid);
     }
 
-    public static PlotPlayer<Player> getPlayer(@NonNull final OfflinePlayer op) {
+    public static PlotPlayer<Player> getPlayer(@Nonnull final OfflinePlayer op) {
         if (op.isOnline()) {
             return getPlayer(op.getPlayer());
         }
@@ -275,7 +275,7 @@ import java.util.stream.Stream;
         MainUtil.sendMessage(BukkitUtil.getPlayer(player), caption);
     }
 
-    public static BukkitPlayer getPlayer(@NonNull final Player player) {
+    public static BukkitPlayer getPlayer(@Nonnull final Player player) {
         if (player == lastPlayer) {
             return lastPlotPlayer;
         }
@@ -283,31 +283,31 @@ import java.util.stream.Stream;
         return ((BukkitPlayerManager) playerManager).getPlayer(player);
     }
 
-    public static Location getLocation(@NonNull final org.bukkit.Location location) {
+    public static Location getLocation(final org.bukkit.Location location) {
         return Location.at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
             MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()));
     }
 
-    public static Location getLocationFull(@NonNull final org.bukkit.Location location) {
+    public static Location getLocationFull(final org.bukkit.Location location) {
         return Location.at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
             MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()), location.getYaw(),
             location.getPitch());
     }
 
-    public static org.bukkit.Location getLocation(@NonNull final Location location) {
+    public static org.bukkit.Location getLocation(@Nonnull final Location location) {
         return new org.bukkit.Location((World) location.getWorld().getPlatformWorld(), location.getX(),
             location.getY(), location.getZ());
     }
 
-    public static World getWorld(@NonNull final String string) {
+    public static World getWorld(@Nonnull final String string) {
         return Bukkit.getWorld(string);
     }
 
-    public static String getWorld(@NonNull final Entity entity) {
+    public static String getWorld(@Nonnull final Entity entity) {
         return entity.getWorld().getName();
     }
 
-    public static List<Entity> getEntities(@NonNull final String worldName) {
+    public static List<Entity> getEntities(@Nonnull final String worldName) {
         World world = getWorld(worldName);
         if (world != null) {
             return world.getEntities();
@@ -316,21 +316,21 @@ import java.util.stream.Stream;
         }
     }
 
-    public static Location getLocation(@NonNull final Entity entity) {
+    public static Location getLocation(@Nonnull final Entity entity) {
         final org.bukkit.Location location = entity.getLocation();
         String world = location.getWorld().getName();
         return Location.at(world, location.getBlockX(), location.getBlockY(),
             location.getBlockZ());
     }
 
-    @NotNull public static Location getLocationFull(@NonNull final Entity entity) {
+    @Nonnull public static Location getLocationFull(@Nonnull final Entity entity) {
         final org.bukkit.Location location = entity.getLocation();
         return Location.at(location.getWorld().getName(), MathMan.roundInt(location.getX()),
             MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()), location.getYaw(),
             location.getPitch());
     }
 
-    public static Material getMaterial(@NonNull final BlockState plotBlock) {
+    public static Material getMaterial(@Nonnull final BlockState plotBlock) {
         return BukkitAdapter.adapt(plotBlock.getBlockType());
     }
 
@@ -342,7 +342,7 @@ import java.util.stream.Stream;
         return mat1 == mat2;
     }
 
-    @Override public boolean isWorld(@NonNull final String worldName) {
+    @Override public boolean isWorld(@Nonnull final String worldName) {
         return getWorld(worldName) != null;
     }
 
@@ -356,7 +356,7 @@ import java.util.stream.Stream;
     }
 
     @Override
-    public void getHighestBlock(@NonNull final String world, final int x, final int z,
+    public void getHighestBlock(@Nonnull final String world, final int x, final int z,
         final IntConsumer result) {
         ensureLoaded(world, x, z, chunk -> {
             final World bukkitWorld = getWorld(world);
@@ -406,7 +406,7 @@ import java.util.stream.Stream;
     }
 
     @Override
-    public void getSign(@NonNull final Location location, final Consumer<String[]> result) {
+    public void getSign(@Nonnull final Location location, final Consumer<String[]> result) {
         ensureLoaded(location, chunk -> {
             final Block block = chunk.getWorld().getBlockAt(getLocation(location));
             if (block.getState() instanceof Sign) {
@@ -416,7 +416,7 @@ import java.util.stream.Stream;
         });
     }
 
-    @Override @Nullable public String[] getSignSynchronous(@NonNull final Location location) {
+    @Override @Nullable public String[] getSignSynchronous(@Nonnull final Location location) {
         Block block = getWorld(location.getWorldName())
             .getBlockAt(location.getX(), location.getY(), location.getZ());
         return TaskManager.getImplementation().sync(new RunnableVal<String[]>() {
@@ -429,20 +429,20 @@ import java.util.stream.Stream;
         });
     }
 
-    @Override public Location getSpawn(@NonNull final String world) {
+    @Override public Location getSpawn(@Nonnull final String world) {
         final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
         return Location.at(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(),
             temp.getYaw(), temp.getPitch());
     }
 
-    @Override public void setSpawn(@NonNull final Location location) {
+    @Override public void setSpawn(@Nonnull final Location location) {
         final World world = getWorld(location.getWorldName());
         if (world != null) {
             world.setSpawnLocation(location.getX(), location.getY(), location.getZ());
         }
     }
 
-    @Override public void saveWorld(@NonNull final String worldName) {
+    @Override public void saveWorld(@Nonnull final String worldName) {
         final World world = getWorld(worldName);
         if (world != null) {
             world.save();
@@ -450,8 +450,8 @@ import java.util.stream.Stream;
     }
 
     @Override @SuppressWarnings("deprecation")
-    public void setSign(@NonNull final String worldName, final int x, final int y, final int z,
-        @NonNull final String[] lines) {
+    public void setSign(@Nonnull final String worldName, final int x, final int y, final int z,
+        @Nonnull final String[] lines) {
         ensureLoaded(worldName, x, z, chunk -> {
             final World world = getWorld(worldName);
             final Block block = world.getBlockAt(x, y, z);
@@ -490,11 +490,11 @@ import java.util.stream.Stream;
         });
     }
 
-    @Override public boolean isBlockSolid(@NonNull final BlockState block) {
+    @Override public boolean isBlockSolid(@Nonnull final BlockState block) {
         return block.getBlockType().getMaterial().isSolid();
     }
 
-    @Override public String getClosestMatchingName(@NonNull final BlockState block) {
+    @Override public String getClosestMatchingName(@Nonnull final BlockState block) {
         try {
             return getMaterial(block).name();
         } catch (Exception ignored) {
@@ -509,8 +509,8 @@ import java.util.stream.Stream;
     }
 
     @Override
-    public void setBiomes(@NonNull final String worldName, @NonNull final CuboidRegion region,
-        @NonNull final BiomeType biomeType) {
+    public void setBiomes(@Nonnull final String worldName, @Nonnull final CuboidRegion region,
+        @Nonnull final BiomeType biomeType) {
         final World world = getWorld(worldName);
         if (world == null) {
             PlotSquared.log("An error occurred setting the biome because the world was null.");
@@ -532,7 +532,7 @@ import java.util.stream.Stream;
     }
 
     @Override
-    public void getBlock(@NonNull final Location location, final Consumer<BlockState> result) {
+    public void getBlock(@Nonnull final Location location, final Consumer<BlockState> result) {
         ensureLoaded(location, chunk -> {
             final World world = getWorld(location.getWorldName());
             final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
@@ -540,7 +540,7 @@ import java.util.stream.Stream;
         });
     }
 
-    @Override public BlockState getBlockSynchronous(@NonNull final Location location) {
+    @Override public BlockState getBlockSynchronous(@Nonnull final Location location) {
         final World world = getWorld(location.getWorldName());
         final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
         return BukkitAdapter.asBlockType(block.getType()).getDefaultState();

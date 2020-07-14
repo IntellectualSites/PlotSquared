@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
@@ -36,7 +37,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "unlink",
     aliases = {"u", "unmerge"},
@@ -49,7 +50,7 @@ public class Unlink extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
     
-    public Unlink(@NotNull final EventDispatcher eventDispatcher) {
+    @Inject public Unlink(@Nonnull final EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
     

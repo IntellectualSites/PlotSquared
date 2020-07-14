@@ -25,18 +25,18 @@
  */
 package com.plotsquared.core.uuid;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Thrown by {@link ServiceError} when something goes wrong
  */
 public class ServiceError extends RuntimeException {
 
-    public ServiceError(@NotNull final String message) {
+    public ServiceError(@Nonnull final String message) {
         super(message);
     }
 
-    public ServiceError(@NotNull final String message, @NotNull final Throwable cause) {
+    public ServiceError(@Nonnull final String message, @Nonnull final Throwable cause) {
         super(message, cause);
     }
 

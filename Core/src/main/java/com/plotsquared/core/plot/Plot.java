@@ -75,8 +75,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -126,7 +126,7 @@ public class Plot {
     private static Set<Plot> connected_cache;
     private static Set<CuboidRegion> regions_cache;
 
-    @NotNull private final PlotId id;
+    @Nonnull private final PlotId id;
 
     // These will be injected
     @Inject private EventDispatcher eventDispatcher;
@@ -207,7 +207,7 @@ public class Plot {
      * @param owner the plot owner
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(final PlotArea area, @NotNull final PlotId id, final UUID owner) {
+    public Plot(final PlotArea area, @Nonnull final PlotId id, final UUID owner) {
         this(area, id, owner, 0);
     }
 
@@ -219,7 +219,7 @@ public class Plot {
      * @param id   the plot id
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(@NotNull final PlotArea area, @NotNull final PlotId id) {
+    public Plot(@Nonnull final PlotArea area, @Nonnull final PlotId id) {
         this(area, id, null, 0);
     }
 
@@ -234,7 +234,7 @@ public class Plot {
      * @param temp  Represents whatever the database manager needs it to
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(final PlotArea area, @NotNull final PlotId id, final UUID owner, final int temp) {
+    public Plot(final PlotArea area, @Nonnull final PlotId id, final UUID owner, final int temp) {
         this.area = area;
         this.id = id;
         this.owner = owner;
@@ -253,7 +253,7 @@ public class Plot {
      * @param merged  an array giving merged plots
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(@NotNull PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
+    public Plot(@Nonnull PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
         HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
         PlotArea area, boolean[] merged, long timestamp, int temp) {
         this.id = id;
@@ -440,7 +440,7 @@ public class Plot {
      * @param uuid the player uuid
      * @return if the provided uuid is the owner of the plot
      */
-    public boolean isOwner(@NotNull UUID uuid) {
+    public boolean isOwner(@Nonnull UUID uuid) {
         if (uuid.equals(this.getOwner())) {
             return true;
         }
@@ -569,7 +569,7 @@ public class Plot {
      *
      * @return the PlotId for this plot
      */
-    @NotNull public PlotId getId() {
+    @Nonnull public PlotId getId() {
         return this.id;
     }
 
@@ -1079,7 +1079,7 @@ public class Plot {
      *
      * @param name name
      */
-    public void setSign(@NotNull String name) {
+    public void setSign(@Nonnull String name) {
         if (!isLoaded()) {
             return;
         }
@@ -1733,7 +1733,7 @@ public class Plot {
         return this.create(this.owner, true);
     }
 
-    public boolean claim(@NotNull final PlotPlayer player, boolean teleport, String schematic) {
+    public boolean claim(@Nonnull final PlotPlayer player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
             PlotSquared.debug(Captions.PREFIX.getTranslated() + String
                 .format("Player %s attempted to claim plot %s, but was not allowed",
@@ -1743,7 +1743,7 @@ public class Plot {
         return claim(player, teleport, schematic, true);
     }
 
-    public boolean claim(@NotNull final PlotPlayer player, boolean teleport, String schematic,
+    public boolean claim(@Nonnull final PlotPlayer player, boolean teleport, String schematic,
         boolean updateDB) {
 
         if (updateDB) {
@@ -1804,7 +1804,7 @@ public class Plot {
      * @param notify notify
      * @return true if plot was created successfully
      */
-    public boolean create(@NotNull UUID uuid, final boolean notify) {
+    public boolean create(@Nonnull UUID uuid, final boolean notify) {
         this.setOwnerAbs(uuid);
         Plot existing = this.area.getOwnedPlotAbs(this.id);
         if (existing != null) {
@@ -2366,7 +2366,7 @@ public class Plot {
      *
      * @param player the claiming player
      */
-    public boolean canClaim(@NotNull PlotPlayer player) {
+    public boolean canClaim(@Nonnull PlotPlayer player) {
         PlotCluster cluster = this.getCluster();
         if (cluster != null) {
             if (!cluster.isAdded(player.getUUID()) && !Permissions
@@ -2758,7 +2758,7 @@ public class Plot {
      *
      * @return
      */
-    @NotNull public Set<CuboidRegion> getRegions() {
+    @Nonnull public Set<CuboidRegion> getRegions() {
         if (regions_cache != null && connected_cache != null && connected_cache.contains(this)) {
             return regions_cache;
         }
@@ -2923,7 +2923,7 @@ public class Plot {
         }, 1);
     }
 
-    public void debug(@NotNull final String message) {
+    public void debug(@Nonnull final String message) {
         try {
             final Collection<PlotPlayer<?>> players = PlotPlayer.getDebugModePlayersInPlot(this);
             if (players.isEmpty()) {

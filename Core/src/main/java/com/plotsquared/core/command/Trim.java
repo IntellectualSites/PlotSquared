@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
@@ -44,7 +45,7 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,9 +61,18 @@ import java.util.Set;
 public class Trim extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
+    private final WorldUtil worldUtil;
+    private final GlobalBlockQueue blockQueue;
+    private final RegionManager regionManager;
 
-    public Trim(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public Trim(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final WorldUtil worldUtil,
+                        @Nonnull final GlobalBlockQueue blockQueue,
+                        @Nonnull final RegionManager regionManager) {
         this.plotAreaManager = plotAreaManager;
+        this.worldUtil = worldUtil;
+        this.blockQueue = blockQueue;
+        this.regionManager = regionManager;
     }
 
     private static volatile boolean TASK = false;
@@ -84,7 +94,7 @@ public class Trim extends SubCommand {
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
-        result.value1 = new HashSet<>(RegionManager.manager.getChunkChunks(world));
+        result.value1 = new HashSet<>(PlotSquared.platform().getRegionManager().getChunkChunks(world));
         result.value2 = new HashSet<>();
         MainUtil.sendMessage(null, " - MCA #: " + result.value1.size());
         MainUtil.sendMessage(null, " - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
@@ -116,7 +126,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final String world = args[0];
-        if (!WorldUtil.IMP.isWorld(world) || !this.plotAreaManager.hasPlotArea(world)) {
+        if (!this.worldUtil.isWorld(world) || !this.plotAreaManager.hasPlotArea(world)) {
             MainUtil.sendMessage(player, Captions.NOT_VALID_WORLD);
             return false;
         }
@@ -174,8 +184,7 @@ public class Trim extends SubCommand {
                                     }
                                 }
                             }
-                            final LocalBlockQueue queue =
-                                GlobalBlockQueue.IMP.getNewQueue(world, false);
+                            final LocalBlockQueue queue = blockQueue.getNewQueue(world, false);
                             TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
                                 @Override public void run(BlockVector2 value) {
                                     queue.regenChunk(value.getX(), value.getZ());
@@ -189,7 +198,7 @@ public class Trim extends SubCommand {
                         player.sendMessage("Trim done!");
                     };
                 }
-                RegionManager.manager.deleteRegionFiles(world, viable, regenTask);
+                regionManager.deleteRegionFiles(world, viable, regenTask);
 
             }
         });

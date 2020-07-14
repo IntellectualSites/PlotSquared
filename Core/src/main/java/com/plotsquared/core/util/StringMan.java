@@ -26,7 +26,7 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.configuration.Caption;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -266,7 +266,7 @@ public class StringMan {
         return false;
     }
 
-    public static boolean isEqualIgnoreCaseToAny(@NotNull String a, String... args) {
+    public static boolean isEqualIgnoreCaseToAny(@Nonnull String a, String... args) {
         for (String arg : args) {
             if (a.equalsIgnoreCase(arg)) {
                 return true;

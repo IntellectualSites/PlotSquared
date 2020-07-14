@@ -30,7 +30,7 @@ import com.plotsquared.core.configuration.serialization.SerializableAs;
 import com.plotsquared.core.generator.ClassicPlotManagerComponent;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class ComponentPreset implements ConfigurationSerializable {
         this.icon = icon;
     }
 
-    public static ComponentPreset deserialize(@NotNull final Map<String, Object> map) {
+    public static ComponentPreset deserialize(@Nonnull final Map<String, Object> map) {
         final ClassicPlotManagerComponent classicPlotManagerComponent = ClassicPlotManagerComponent
             .fromString(map.getOrDefault("component", "").toString()).orElseThrow(() ->
                 new IllegalArgumentException("The preset needs a valid target component"));

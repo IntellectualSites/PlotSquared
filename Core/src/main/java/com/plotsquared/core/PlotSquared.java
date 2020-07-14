@@ -26,7 +26,6 @@
 package com.plotsquared.core;
 
 import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -47,7 +46,6 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -56,13 +54,11 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.ExpiryTask;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.util.ChatManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.LegacyConverter;
 import com.plotsquared.core.util.MainUtil;
@@ -77,9 +73,9 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -150,7 +146,6 @@ public class PlotSquared {
     // Files and configuration
     @Getter private File jarFile = null; // This file
     private File storageFile;
-    @Getter private PlotAreaManager plotAreaManager;
     @Getter private EventDispatcher eventDispatcher;
     @Getter private PlotListener plotListener;
 
@@ -195,6 +190,7 @@ public class PlotSquared {
             if (!setupConfigs()) {
                 return;
             }
+
             this.translationFile = MainUtil.getFile(this.platform.getDirectory(),
                 Settings.Paths.TRANSLATIONS + File.separator + this.platform.getPluginName()
                     + ".use_THIS.yml");
@@ -206,29 +202,6 @@ public class PlotSquared {
             this.eventDispatcher = new EventDispatcher(this.worldedit);
             // Create plot listener
             this.plotListener = new PlotListener(this.eventDispatcher);
-
-            // Database
-            if (Settings.Enabled_Components.DATABASE) {
-                setupDatabase();
-            }
-
-            // Check if we need to convert old flag values, etc
-            if (!getConfigurationVersion().equalsIgnoreCase("v5")) {
-                // Perform upgrade
-                if (DBFunc.dbManager.convertFlags()) {
-                    log(Captions.PREFIX.getTranslated() + "Flags were converted successfully!");
-                    // Update the config version
-                    setConfigurationVersion("v5");
-                }
-            }
-
-            // Comments
-            CommentManager.registerDefaultInboxes();
-
-            startExpiryTasks();
-
-            // This is getting removed so I won't even bother migrating it
-            ChatManager.manager = this.platform.initChatManager();
 
             // Copy files
             copyFile("addplots.js", Settings.Paths.SCRIPTS);
@@ -253,10 +226,15 @@ public class PlotSquared {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
 
-        PlotSquared.log(Captions.PREFIX + CaptionUtility
-            .format(ConsolePlayer.getConsole(), Captions.ENABLED.getTranslated(),
-                this.platform.getPluginName()));
+    /**
+     * Get the platform specific {@link PlotAreaManager} instance
+     *
+     * @return Plot area manager
+     */
+    @Nonnull public PlotAreaManager getPlotAreaManager() {
+        return this.platform.getInjector().getInstance(PlotAreaManager.class);
     }
 
     /**
@@ -273,7 +251,7 @@ public class PlotSquared {
      *
      * @return Platform implementation
      */
-    @NotNull public static PlotPlatform<?> platform() {
+    @Nonnull public static PlotPlatform<?> platform() {
         if (instance != null && instance.platform != null) {
             return instance.platform;
         }
@@ -315,12 +293,12 @@ public class PlotSquared {
         }
     }
 
-    private void startExpiryTasks() {
+    public void startExpiryTasks() {
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
             ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
             ExpireManager.IMP.runAutomatedTask();
             for (Settings.Auto_Clear settings : Settings.AUTO_CLEAR.getInstances()) {
-                ExpiryTask task = new ExpiryTask(settings, this.plotAreaManager);
+                ExpiryTask task = new ExpiryTask(settings, this.getPlotAreaManager());
                 ExpireManager.IMP.addTask(task);
             }
         }
@@ -412,7 +390,7 @@ public class PlotSquared {
                 cluster.setArea(plotArea);
             }
         }
-        plotAreaManager.addPlotArea(plotArea);
+        getPlotAreaManager().addPlotArea(plotArea);
         plotArea.setupBorder();
         if (!Settings.Enabled_Components.PERSISTENT_ROAD_REGEN) {
             return;
@@ -459,11 +437,11 @@ public class PlotSquared {
      * @param area the {@code PlotArea} to remove
      */
     public void removePlotArea(PlotArea area) {
-        plotAreaManager.removePlotArea(area);
+        getPlotAreaManager().removePlotArea(area);
         setPlotsTmp(area);
     }
 
-    public void removePlotAreas(@NotNull final String world) {
+    public void removePlotAreas(@Nonnull final String world) {
         for (final PlotArea area : this.getPlotAreaManager().getPlotAreasSet(world)) {
             if (area.getWorldName().equals(world)) {
                 removePlotArea(area);
@@ -486,7 +464,7 @@ public class PlotSquared {
         this.clustersTmp.put(area.toString(), area.getClusters());
     }
 
-    public Set<PlotCluster> getClusters(@NotNull final String world) {
+    public Set<PlotCluster> getClusters(@Nonnull final String world) {
         final Set<PlotCluster> set = new HashSet<>();
         for (final PlotArea area : this.getPlotAreaManager().getPlotAreasSet(world)) {
             set.addAll(area.getClusters());
@@ -695,13 +673,13 @@ public class PlotSquared {
         // group by world
         // sort each
         HashMap<PlotArea, Collection<Plot>> map = new HashMap<>();
-        int totalSize = Arrays.stream(this.plotAreaManager.getAllPlotAreas()).mapToInt(PlotArea::getPlotCount).sum();
+        int totalSize = Arrays.stream(this.getPlotAreaManager().getAllPlotAreas()).mapToInt(PlotArea::getPlotCount).sum();
         if (plots.size() == totalSize) {
-            for (PlotArea area : plotAreaManager.getAllPlotAreas()) {
+            for (PlotArea area : getPlotAreaManager().getAllPlotAreas()) {
                 map.put(area, area.getPlots());
             }
         } else {
-            for (PlotArea area : plotAreaManager.getAllPlotAreas()) {
+            for (PlotArea area : getPlotAreaManager().getAllPlotAreas()) {
                 map.put(area, new ArrayList<>(0));
             }
             Collection<Plot> lastList = null;
@@ -716,7 +694,7 @@ public class PlotSquared {
                 }
             }
         }
-        List<PlotArea> areas = Arrays.asList(plotAreaManager.getAllPlotAreas());
+        List<PlotArea> areas = Arrays.asList(getPlotAreaManager().getAllPlotAreas());
         areas.sort((a, b) -> {
             if (priorityArea != null) {
                 if (a.equals(priorityArea)) {
@@ -749,7 +727,7 @@ public class PlotSquared {
         return toReturn;
     }
 
-    public void setPlots(@NotNull final Map<String, HashMap<PlotId, Plot>> plots) {
+    public void setPlots(@Nonnull final Map<String, HashMap<PlotId, Plot>> plots) {
         if (this.plots_tmp == null) {
             this.plots_tmp = new HashMap<>();
         }
@@ -816,7 +794,7 @@ public class PlotSquared {
         if (world.equals("CheckingPlotSquaredGenerator")) {
             return;
         }
-        this.plotAreaManager.addWorld(world);
+        this.getPlotAreaManager().addWorld(world);
         Set<String> worlds;
         if (this.worldConfiguration.contains("worlds")) {
             worlds = this.worldConfiguration.getConfigurationSection("worlds").getKeys(false);
@@ -832,7 +810,7 @@ public class PlotSquared {
             type = PlotAreaType.NORMAL;
         }
         if (type == PlotAreaType.NORMAL) {
-            if (plotAreaManager.getPlotAreas(world, null).length != 0) {
+            if (getPlotAreaManager().getPlotAreas(world, null).length != 0) {
                 debug("World possibly already loaded: " + world);
                 return;
             }
@@ -866,7 +844,7 @@ public class PlotSquared {
                 .log(Captions.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + plotGenerator);
             PlotSquared.log(Captions.PREFIX + "&3 - plotworld: &7" + plotArea.getClass().getName());
             PlotSquared.log(
-                Captions.PREFIX + "&3 - plotAreaManager: &7" + plotManager.getClass().getName());
+                Captions.PREFIX + "&3 - getPlotAreaManager(): &7" + plotManager.getClass().getName());
             if (!this.worldConfiguration.contains(path)) {
                 this.worldConfiguration.createSection(path);
                 worldSection = this.worldConfiguration.getConfigurationSection(path);
@@ -887,7 +865,7 @@ public class PlotSquared {
             }
             ConfigurationSection areasSection = worldSection.getConfigurationSection("areas");
             if (areasSection == null) {
-                if (plotAreaManager.getPlotAreas(world, null).length != 0) {
+                if (getPlotAreaManager().getPlotAreas(world, null).length != 0) {
                     debug("World possibly already loaded: " + world);
                     return;
                 }
@@ -954,7 +932,7 @@ public class PlotSquared {
                 PlotSquared
                     .log(Captions.PREFIX + "&3 - generator: &7" + baseGenerator + ">" + areaGen);
                 PlotSquared.log(Captions.PREFIX + "&3 - plotworld: &7" + pa);
-                PlotSquared.log(Captions.PREFIX + "&3 - plotAreaManager: &7" + pa.getPlotManager());
+                PlotSquared.log(Captions.PREFIX + "&3 - getPlotAreaManager(): &7" + pa.getPlotManager());
                 areaGen.getPlotGenerator().initialize(pa);
                 areaGen.augment(pa);
                 addPlotArea(pa);
@@ -1314,8 +1292,8 @@ public class PlotSquared {
             }
             DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, this.eventDispatcher, this.plotListener, this.worldConfiguration);
             this.plots_tmp = DBFunc.getPlots();
-            if (plotAreaManager instanceof SinglePlotAreaManager) {
-                SinglePlotArea area = ((SinglePlotAreaManager) plotAreaManager).getArea();
+            if (getPlotAreaManager() instanceof SinglePlotAreaManager) {
+                SinglePlotArea area = ((SinglePlotAreaManager) getPlotAreaManager()).getArea();
                 addPlotArea(area);
                 ConfigurationSection section = worldConfiguration.getConfigurationSection("worlds.*");
                 if (section == null) {
@@ -1556,7 +1534,7 @@ public class PlotSquared {
     }
 
     public void forEachPlotRaw(Consumer<Plot> consumer) {
-        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
+        for (final PlotArea area : this.getPlotAreaManager().getAllPlotAreas()) {
             area.getPlots().forEach(consumer);
         }
         if (this.plots_tmp != null) {
@@ -1573,10 +1551,10 @@ public class PlotSquared {
      * @param chunkCoordinates Chunk coordinates
      * @return True if the chunk uses non-standard generation, false if not
      */
-    public boolean isNonStandardGeneration(@NotNull final String world,
-        @NotNull final BlockVector2 chunkCoordinates) {
+    public boolean isNonStandardGeneration(@Nonnull final String world,
+        @Nonnull final BlockVector2 chunkCoordinates) {
         final Location location = Location.at(world, chunkCoordinates.getBlockX() << 4, 64, chunkCoordinates.getBlockZ() << 4);
-        final PlotArea area = plotAreaManager.getApplicablePlotArea(location);
+        final PlotArea area = getPlotAreaManager().getApplicablePlotArea(location);
         if (area == null) {
             return true;
         }

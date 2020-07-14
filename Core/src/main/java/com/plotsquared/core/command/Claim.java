@@ -46,8 +46,8 @@ import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @CommandDeclaration(command = "claim",
     aliases = "c",
@@ -61,7 +61,7 @@ public class Claim extends SubCommand {
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
     
-    @Inject public Claim(@NotNull final EventDispatcher eventDispatcher,
+    @Inject public Claim(@Nonnull final EventDispatcher eventDispatcher,
                          @Nullable final EconHandler econHandler) {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;

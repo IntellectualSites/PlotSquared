@@ -30,7 +30,7 @@ import com.plotsquared.core.location.World;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Map;
 
@@ -40,7 +40,7 @@ import java.util.Map;
 
     private final org.bukkit.World world;
 
-    private BukkitWorld(@NotNull final org.bukkit.World world) {
+    private BukkitWorld(final org.bukkit.World world) {
         this.world = world;
     }
 
@@ -50,7 +50,7 @@ import java.util.Map;
      * @param worldName World name
      * @return World instance
      */
-    @NotNull public static BukkitWorld of(@NotNull final String worldName) {
+    @Nonnull public static BukkitWorld of(@Nonnull final String worldName) {
         final org.bukkit.World bukkitWorld = Bukkit.getWorld(worldName);
         if (bukkitWorld == null) {
             throw new IllegalArgumentException(String.format("There is no world with the name '%s'", worldName));
@@ -64,7 +64,7 @@ import java.util.Map;
      * @param world Bukkit world
      * @return World instance
      */
-    @NotNull public static BukkitWorld of(@NotNull final org.bukkit.World world) {
+    @Nonnull public static BukkitWorld of(final org.bukkit.World world) {
         BukkitWorld bukkitWorld = worldMap.get(world.getName());
         if (bukkitWorld != null && bukkitWorld.getPlatformWorld().equals(world)) {
             return bukkitWorld;
@@ -74,11 +74,11 @@ import java.util.Map;
         return bukkitWorld;
     }
 
-    @NotNull @Override public org.bukkit.World getPlatformWorld() {
+    @Override public org.bukkit.World getPlatformWorld() {
         return this.world;
     }
 
-    @Override @NotNull public String getName() {
+    @Override @Nonnull public String getName() {
         return this.world.getName();
     }
 

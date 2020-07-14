@@ -33,7 +33,7 @@ import com.plotsquared.core.uuid.UUIDService;
 import com.sk89q.squirrelid.Profile;
 import com.sk89q.squirrelid.resolver.HttpRepositoryService;
 import com.sk89q.squirrelid.resolver.ProfileService;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class SquirrelIdUUIDService implements UUIDService {
         this.rateLimiter = RateLimiter.create(rateLimit / 600.0D);
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
         final List<UUIDMapping> results = new ArrayList<>(uuids.size());
         this.rateLimiter.acquire(uuids.size());
         try {
@@ -96,7 +96,7 @@ public class SquirrelIdUUIDService implements UUIDService {
         return results;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
         final List<UUIDMapping> results = new ArrayList<>(usernames.size());
         this.rateLimiter.acquire(usernames.size());
         try {

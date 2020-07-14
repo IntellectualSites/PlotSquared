@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.base.Charsets;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
@@ -36,7 +37,7 @@ import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.util.UUID;
@@ -50,10 +51,13 @@ import java.util.concurrent.CompletableFuture;
 public class DebugImportWorlds extends Command {
 
     private final PlotAreaManager plotAreaManager;
+    private final WorldUtil worldUtil;
 
-    public DebugImportWorlds(@NotNull final PlotAreaManager plotAreaManager) {
+    @Inject public DebugImportWorlds(@Nonnull final PlotAreaManager plotAreaManager,
+                                     @Nonnull final WorldUtil worldUtil) {
         super(MainCommand.getInstance(), true);
         this.plotAreaManager = plotAreaManager;
+        this.worldUtil = worldUtil;
     }
 
     @Override
@@ -75,7 +79,7 @@ public class DebugImportWorlds extends Command {
         }
         for (File folder : container.listFiles()) {
             String name = folder.getName();
-            if (!WorldUtil.IMP.isWorld(name) && PlotId.fromStringOrNull(name) == null) {
+            if (!this.worldUtil.isWorld(name) && PlotId.fromStringOrNull(name) == null) {
                 UUID uuid;
                 if (name.length() > 16) {
                     uuid = UUID.fromString(name);

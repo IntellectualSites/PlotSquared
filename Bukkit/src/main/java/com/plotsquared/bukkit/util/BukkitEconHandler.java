@@ -36,7 +36,7 @@ import com.plotsquared.core.util.PermHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 @Singleton public class BukkitEconHandler extends EconHandler {
 

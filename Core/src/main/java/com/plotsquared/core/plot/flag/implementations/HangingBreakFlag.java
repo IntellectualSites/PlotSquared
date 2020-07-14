@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class HangingBreakFlag extends BooleanFlag<HangingBreakFlag> {
 
@@ -38,7 +38,7 @@ public class HangingBreakFlag extends BooleanFlag<HangingBreakFlag> {
         super(value, Captions.FLAG_DESCRIPTION_HANGING_BREAK);
     }
 
-    @Override protected HangingBreakFlag flagOf(@NotNull Boolean value) {
+    @Override protected HangingBreakFlag flagOf(@Nonnull Boolean value) {
         return value ? HANGING_BREAK_TRUE : HANGING_BREAK_FALSE;
     }
 

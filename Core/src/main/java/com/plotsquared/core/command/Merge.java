@@ -42,8 +42,8 @@ import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.UUID;
 
@@ -63,7 +63,7 @@ public class Merge extends SubCommand {
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
 
-    @Inject public Merge(@NotNull final EventDispatcher eventDispatcher,
+    @Inject public Merge(@Nonnull final EventDispatcher eventDispatcher,
                          @Nullable final EconHandler econHandler) {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;

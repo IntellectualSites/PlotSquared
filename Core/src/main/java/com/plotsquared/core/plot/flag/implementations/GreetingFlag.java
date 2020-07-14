@@ -27,21 +27,21 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class GreetingFlag extends PlotFlag<String, GreetingFlag> {
 
     public static final GreetingFlag GREETING_FLAG_EMPTY = new GreetingFlag("");
 
-    protected GreetingFlag(@NotNull String value) {
+    protected GreetingFlag(@Nonnull String value) {
         super(value, Captions.FLAG_CATEGORY_STRING, Captions.FLAG_DESCRIPTION_GREETING);
     }
 
-    @Override public GreetingFlag parse(@NotNull String input) {
+    @Override public GreetingFlag parse(@Nonnull String input) {
         return flagOf(input);
     }
 
-    @Override public GreetingFlag merge(@NotNull String newValue) {
+    @Override public GreetingFlag merge(@Nonnull String newValue) {
         return flagOf(this.getValue() + " " + newValue);
     }
 
@@ -53,7 +53,7 @@ public class GreetingFlag extends PlotFlag<String, GreetingFlag> {
         return "&6Welcome to my plot!";
     }
 
-    @Override protected GreetingFlag flagOf(@NotNull String value) {
+    @Override protected GreetingFlag flagOf(@Nonnull String value) {
         return new GreetingFlag(value);
     }
 

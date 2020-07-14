@@ -61,6 +61,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.command.WE_Anywhere;
 import com.plotsquared.core.components.ComponentPresetManager;
+import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -79,12 +80,14 @@ import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.inject.modules.PlotSquaredModule;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.listener.WESubscriber;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.message.PlainChatManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
@@ -111,7 +114,7 @@ import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
-import lombok.NonNull;
+
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -129,8 +132,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -234,8 +237,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
         // We create the injector after PlotSquared has been initialized, so that we have access
         // to generated instances and settings
-        this.injector = Guice.createInjector(Stage.PRODUCTION, new PlotSquaredModule(),
-            new BukkitModule(this), new BackupModule(), new WorldManagerModule());
+        this.injector = Guice.createInjector(Stage.PRODUCTION, new WorldManagerModule(), new PlotSquaredModule(),
+            new BukkitModule(this), new BackupModule());
         this.injector.injectMembers(this);
 
         if (PremiumVerification.isPremium() && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
@@ -252,6 +255,33 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         } else {
             PlotSquared.log(Captions.PREFIX + "&6Couldn't verify purchase :(");
         }
+
+        // Database
+        if (Settings.Enabled_Components.DATABASE) {
+            plotSquared.setupDatabase();
+        }
+
+        // Check if we need to convert old flag values, etc
+        if (!plotSquared.getConfigurationVersion().equalsIgnoreCase("v5")) {
+            // Perform upgrade
+            if (DBFunc.dbManager.convertFlags()) {
+                log(Captions.PREFIX.getTranslated() + "Flags were converted successfully!");
+                // Update the config version
+                try {
+                    plotSquared.setConfigurationVersion("v5");
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        // Comments
+        CommentManager.registerDefaultInboxes();
+
+        plotSquared.startExpiryTasks();
+
+        // This is getting removed so I won't even bother migrating it
+        ChatManager.manager = this.initChatManager();
 
         // Do stuff that was previously done in PlotSquared
         // Kill entities
@@ -302,8 +332,14 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         // Economy
         if (Settings.Enabled_Components.ECONOMY) {
             TaskManager.runTask(() -> {
-                getInjector().getInstance(PermHandler.class).init();
-                getInjector().getInstance(EconHandler.class).init();
+                final PermHandler permHandler = getInjector().getInstance(PermHandler.class);
+                if (permHandler != null) {
+                    permHandler.init();
+                }
+                final EconHandler econHandler = getInjector().getInstance(EconHandler.class);
+                if (econHandler != null) {
+                    econHandler.init();
+                }
             });
         }
 
@@ -501,6 +537,10 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 getLogger().warning("Failed to clean up players: " + e.getMessage());
             }
         }, 100L, 100L);
+
+        PlotSquared.log(Captions.PREFIX + CaptionUtility
+            .format(ConsolePlayer.getConsole(), Captions.ENABLED.getTranslated(),
+                this.getPluginName()));
     }
 
     private void unload() {
@@ -582,8 +622,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
     }
 
-    private void startUuidCaching(@NotNull final SQLiteUUIDService sqLiteUUIDService,
-        @NotNull final CacheUUIDService cacheUUIDService) {
+    private void startUuidCaching(@Nonnull final SQLiteUUIDService sqLiteUUIDService,
+        @Nonnull final CacheUUIDService cacheUUIDService) {
         // Load all uuids into a big chunky boi queue
         final Queue<UUID> uuidQueue = new LinkedBlockingQueue<>();
         PlotSquared.get().forEachPlotRaw(plot -> {
@@ -658,7 +698,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         Bukkit.getScheduler().cancelTasks(this);
     }
 
-    @Override public void log(@NonNull String message) {
+    @Override public void log(@Nonnull String message) {
         try {
             message = Captions.color(message);
             if (!Settings.Chat.CONSOLE_COLOR) {
@@ -948,7 +988,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
     }
 
     @Override @Nullable
-    public final ChunkGenerator getDefaultWorldGenerator(@NotNull final String worldName,
+    public final ChunkGenerator getDefaultWorldGenerator(@Nonnull final String worldName,
         final String id) {
         final IndependentPlotGenerator result;
         if (id != null && id.equalsIgnoreCase("single")) {
@@ -962,7 +1002,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return (ChunkGenerator) result.specify(worldName);
     }
 
-    @Override @Nullable public GeneratorWrapper<?> getGenerator(@NonNull final String world,
+    @Override @Nullable public GeneratorWrapper<?> getGenerator(@Nonnull final String world,
         @Nullable final String name) {
         if (name == null) {
             return null;
@@ -1011,11 +1051,11 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 "WorldEdit"));
     }
 
-    @Override public void unregister(@NonNull final PlotPlayer player) {
+    @Override public void unregister(@Nonnull final PlotPlayer player) {
         BukkitUtil.removePlayer(player.getUUID());
     }
 
-    @Override public void setGenerator(@NonNull final String worldName) {
+    @Override public void setGenerator(@Nonnull final String worldName) {
         World world = BukkitUtil.getWorld(worldName);
         if (world == null) {
             // create world
@@ -1098,7 +1138,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
     }
 
     @Override public GeneratorWrapper<?> wrapPlotGenerator(@Nullable final String world,
-        @NonNull final IndependentPlotGenerator generator) {
+        @Nonnull final IndependentPlotGenerator generator) {
         return new BukkitPlotGenerator(world, generator, this.plotAreaManager);
     }
 
@@ -1112,7 +1152,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return names;
     }
 
-    @Override @NotNull public com.plotsquared.core.location.World<?> getPlatformWorld(@NotNull final String worldName) {
+    @Override public com.plotsquared.core.location.World<?> getPlatformWorld(@Nonnull final String worldName) {
         return BukkitWorld.of(worldName);
     }
 

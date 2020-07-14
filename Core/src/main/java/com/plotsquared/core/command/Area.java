@@ -71,7 +71,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -100,13 +100,13 @@ public class Area extends SubCommand {
     private final WorldUtil worldUtil;
     private final RegionManager regionManager;
 
-    @Inject public Area(@NotNull final PlotAreaManager plotAreaManager,
-                        @WorldConfig @NotNull final YamlConfiguration worldConfiguration,
-                        @WorldFile @NotNull final File worldFile,
-                        @NotNull final HybridPlotWorldFactory hybridPlotWorldFactory,
-                        @NotNull final SetupUtils setupUtils,
-                        @NotNull final WorldUtil worldUtil,
-                        @NotNull final RegionManager regionManager) {
+    @Inject public Area(@Nonnull final PlotAreaManager plotAreaManager,
+                        @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                        @WorldFile @Nonnull final File worldFile,
+                        @Nonnull final HybridPlotWorldFactory hybridPlotWorldFactory,
+                        @Nonnull final SetupUtils setupUtils,
+                        @Nonnull final WorldUtil worldUtil,
+                        @Nonnull final RegionManager regionManager) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;

@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.primitives.Ints;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -49,8 +50,8 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -66,10 +67,14 @@ public class Auto extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
-    
-    public Auto(@NotNull final PlotAreaManager plotAreaManager, @NotNull final EventDispatcher eventDispatcher) {
+    private final EconHandler econHandler;
+
+    @Inject public Auto(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final EventDispatcher eventDispatcher,
+                        @Nullable final EconHandler econHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
     }
     
     @Deprecated public static PlotId getNextPlotId(PlotId id, int step) {
@@ -147,7 +152,7 @@ public class Auto extends SubCommand {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
-                TaskManager.IMP.sync(new AutoClaimFinishTask(player, plot, area, schematic,
+                TaskManager.getImplementation().sync(new AutoClaimFinishTask(player, plot, area, schematic,
                     PlotSquared.get().getEventDispatcher()));
             }
         });
@@ -169,10 +174,9 @@ public class Auto extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
-            if (EconHandler.getEconHandler() != null) {
+            if (this.econHandler != null) {
                 for (PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-                    if (EconHandler.getEconHandler()
-                        .hasPermission(area.getWorldName(), player.getName(), "plots.auto")) {
+                    if (this.econHandler.hasPermission(area.getWorldName(), player.getName(), "plots.auto")) {
                         if (plotarea != null) {
                             plotarea = null;
                             break;
@@ -265,18 +269,18 @@ public class Auto extends SubCommand {
                 return true;
             }
         }
-        if (EconHandler.getEconHandler() != null && plotarea.useEconomy()) {
+        if (this.econHandler != null && plotarea.useEconomy()) {
             Expression<Double> costExp = plotarea.getPrices().get("claim");
             double cost = costExp.evaluate((double) (Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
                 player.getPlotCount(plotarea.getWorldName())));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
-                if (!force && EconHandler.getEconHandler().getMoney(player) < cost) {
+                if (!force && this.econHandler.getMoney(player) < cost) {
                     sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
                 }
-                EconHandler.getEconHandler().withdrawMoney(player, cost);
+                this.econHandler.withdrawMoney(player, cost);
                 sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
             }
         }
