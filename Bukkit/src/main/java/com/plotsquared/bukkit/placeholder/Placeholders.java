@@ -45,7 +45,7 @@ public class Placeholders extends PlaceholderExpansion {
     }
 
     @Override public String getAuthor() {
-        return "NotMyFault";
+        return "IntellectualSites";
     }
 
     @Override public String getIdentifier() {
@@ -53,11 +53,11 @@ public class Placeholders extends PlaceholderExpansion {
     }
 
     @Override public String getVersion() {
-        return "2.5";
+        return "3";
     }
 
     @Override public String onPlaceholderRequest(Player p, String identifier) {
-        final PlotPlayer pl = PlotSquared.imp().getPlayerManager().getPlayerIfExists(p.getUniqueId());
+        final PlotPlayer<?> pl = PlotSquared.imp().getPlayerManager().getPlayerIfExists(p.getUniqueId());
 
         if (pl == null) {
             return "";
