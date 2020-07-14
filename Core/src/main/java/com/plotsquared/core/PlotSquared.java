@@ -62,6 +62,7 @@ import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.ExpiryTask;
+import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
@@ -82,6 +83,7 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
+import com.plotsquared.core.util.placeholders.PlaceholderRegistry;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
@@ -171,6 +173,7 @@ public class PlotSquared {
     private File storageFile;
     @Getter private PlotAreaManager plotAreaManager;
     @Getter private EventDispatcher eventDispatcher;
+    @Getter private PlaceholderRegistry placeholderRegistry;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -194,6 +197,9 @@ public class PlotSquared {
         //
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
+        // Setup the global flag container
+        GlobalFlagContainer.setup();
+
         try {
             new ReflectionUtils(this.IMP.getNMSPackage());
             try {
@@ -209,6 +215,7 @@ public class PlotSquared {
                         "PlotSquared-" + platform + ".jar");
                 }
             }
+
             TaskManager.IMP = this.IMP.getTaskManager();
 
             // World Util. Has to be done before config files are loaded
@@ -262,6 +269,8 @@ public class PlotSquared {
             startExpiryTasks();
             // Create Event utility class
             eventDispatcher = new EventDispatcher();
+            // Create placeholder registry
+            placeholderRegistry = new PlaceholderRegistry(eventDispatcher);
             // create Hybrid utility class
             HybridUtils.manager = this.IMP.initHybridUtils();
             // Inventory utility class

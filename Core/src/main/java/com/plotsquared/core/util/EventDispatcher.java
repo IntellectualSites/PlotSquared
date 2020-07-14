@@ -80,9 +80,9 @@ import java.util.UUID;
 
 public class EventDispatcher {
 
-    private EventBus eventBus = new EventBus("PlotSquaredEvents");
+    private final EventBus eventBus = new EventBus("PlotSquaredEvents");
 
-    private List<Object> listeners = new ArrayList<>();
+    private final List<Object> listeners = new ArrayList<>();
 
     public void registerListener(Object listener) {
         eventBus.register(listener);
@@ -98,6 +98,10 @@ public class EventDispatcher {
         for (Object listener : listeners) {
             eventBus.unregister(listener);
         }
+    }
+
+    public void callGenericEvent(@NotNull final Object event) {
+        eventBus.post(event);
     }
 
     public void callEvent(@NotNull final PlotEvent event) {
