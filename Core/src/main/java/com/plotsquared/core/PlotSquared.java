@@ -1717,17 +1717,7 @@ public class PlotSquared {
             logger.error("[P2] Failed to save storage.yml");
         }
         try {
-            this.commandsFile = new File(folder, "commands.yml");
-            if (!this.commandsFile.exists() && !this.commandsFile.createNewFile()) {
-                logger.error("[P2] Could not create the commands file. Please create 'commands.yml' manually");
-            }
-            this.commands = YamlConfiguration.loadConfiguration(this.commandsFile);
-        } catch (IOException ignored) {
-            logger.error("[P2] Failed to save commands.yml");
-        }
-        try {
             this.style.save(this.styleFile);
-            this.commands.save(this.commandsFile);
         } catch (IOException e) {
             logger.error("[P2] Configuration file saving failed", e);
         }

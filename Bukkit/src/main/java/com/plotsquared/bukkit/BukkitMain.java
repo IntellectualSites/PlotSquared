@@ -933,7 +933,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 return perm;
             }
         } catch (Throwable ignored) {
-            PlotSquared.debug("No permissions detected!");
         }
         return null;
     }

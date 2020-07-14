@@ -408,7 +408,8 @@ public abstract class PlotArea {
                 prefix = ", ";
             }
         }
-        PlotSquared.log(Captions.PREFIX + "&3 - road flags: &7" + roadFlagBuilder.toString());
+
+        logger.info("[P2] - road flags: {}", roadFlagBuilder.toString());
 
         loadConfiguration(config);
     }
