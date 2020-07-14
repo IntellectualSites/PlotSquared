@@ -230,7 +230,6 @@ public class PlayerEvents extends PlotListener implements Listener {
     public static final com.sk89q.worldedit.world.entity.EntityType FAKE_ENTITY_TYPE =
         new com.sk89q.worldedit.world.entity.EntityType("plotsquared:fake");
 
-    private boolean pistonBlocks = true;
     private float lastRadius;
     // To prevent recursion
     private boolean tmpTeleport = true;
@@ -822,7 +821,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             Player player = event.getPlayer();
             BukkitPlayer pp = BukkitUtil.getPlayer(player);
             // Cancel teleport
-            TaskManager.TELEPORT_QUEUE.remove(pp.getName());
+            if (TaskManager.TELEPORT_QUEUE.remove(pp.getName())) {
+                MainUtil.sendMessage(pp, Captions.TELEPORT_FAILED);
+            }
             // Set last location
             Location location = BukkitUtil.getLocation(to);
             pp.setMeta(PlotPlayer.META_LOCATION, location);
@@ -882,7 +883,9 @@ public class PlayerEvents extends PlotListener implements Listener {
             Player player = event.getPlayer();
             BukkitPlayer pp = BukkitUtil.getPlayer(player);
             // Cancel teleport
-            TaskManager.TELEPORT_QUEUE.remove(pp.getName());
+            if (TaskManager.TELEPORT_QUEUE.remove(pp.getName())) {
+                MainUtil.sendMessage(pp, Captions.TELEPORT_FAILED);
+            }
             // Set last location
             Location location = BukkitUtil.getLocation(to);
             pp.setMeta(PlotPlayer.META_LOCATION, location);
@@ -1510,7 +1513,63 @@ public class PlayerEvents extends PlotListener implements Listener {
                 return;
             }
             for (Block block1 : event.getBlocks()) {
-                if (BukkitUtil.getLocation(block1.getLocation().add(relative)).isPlotArea()) {
+                Location bloc = BukkitUtil.getLocation(block1.getLocation());
+                if (bloc.isPlotArea() || bloc.add(relative.getBlockX(),
+                    relative.getBlockY(), relative.getBlockZ()).isPlotArea()) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            if (location.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())
+                .isPlotArea()) {
+                // Prevent pistons from extending if they are: bordering a plot
+                // area, facing inside plot area, and not pushing any blocks
+                event.setCancelled(true);
+            }
+            return;
+        }
+        Plot plot = area.getOwnedPlot(location);
+        if (plot == null) {
+            event.setCancelled(true);
+            return;
+        }
+        for (Block block1 : event.getBlocks()) {
+            Location bloc = BukkitUtil.getLocation(block1.getLocation());
+            if (!area.contains(bloc.getX(), bloc.getZ()) || !area
+                .contains(bloc.getX() + relative.getBlockX(), bloc.getZ() + relative.getBlockZ())) {
+                event.setCancelled(true);
+                return;
+            }
+            if (!plot.equals(area.getOwnedPlot(bloc)) || !plot.equals(area.getOwnedPlot(
+                bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+        if (!plot.equals(area.getOwnedPlot(location.add(
+            relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
+            // This branch is only necessary to prevent pistons from extending
+            // if they are: on a plot edge, facing outside the plot, and not
+            // pushing any blocks
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+        Block block = event.getBlock();
+        Location location = BukkitUtil.getLocation(block.getLocation());
+        BlockFace face = event.getDirection();
+        Vector relative = new Vector(face.getModX(), face.getModY(), face.getModZ());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+                return;
+            }
+            for (Block block1 : event.getBlocks()) {
+                Location bloc = BukkitUtil.getLocation(block1.getLocation());
+                if (bloc.isPlotArea() || bloc.add(relative.getBlockX(),
+                    relative.getBlockY(), relative.getBlockZ()).isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -1538,86 +1597,38 @@ public class PlayerEvents extends PlotListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
-        Block block = event.getBlock();
-        Location location = BukkitUtil.getLocation(block.getLocation());
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
-                return;
-            }
-            if (this.pistonBlocks) {
-                try {
-                    for (Block pulled : event.getBlocks()) {
-                        location = BukkitUtil.getLocation(pulled.getLocation());
-                        if (location.isPlotArea()) {
-                            event.setCancelled(true);
-                            return;
-                        }
-                    }
-                } catch (Throwable ignored) {
-                    this.pistonBlocks = false;
-                }
-            }
-            if (!this.pistonBlocks && !block.getType().toString().contains("PISTON")) {
-                BlockFace dir = event.getDirection();
-                location = BukkitUtil.getLocation(block.getLocation()
-                    .add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
-                if (location.isPlotArea()) {
-                    event.setCancelled(true);
-                    return;
-                }
-            }
-            return;
-        }
-        Plot plot = area.getOwnedPlot(location);
-        BlockFace dir = event.getDirection();
-        //        Location head = location.add(-dir.getModX(), -dir.getModY(), -dir.getModZ());
-        //
-        //        if (!Objects.equals(plot, area.getOwnedPlot(head))) {
-        //            // FIXME: cancelling the event doesn't work here. See issue #1484
-        //            event.setCancelled(true);
-        //            return;
-        //        }
-        if (this.pistonBlocks) {
-            try {
-                for (Block pulled : event.getBlocks()) {
-                    Location from = BukkitUtil.getLocation(
-                        pulled.getLocation().add(dir.getModX(), dir.getModY(), dir.getModZ()));
-                    Location to = BukkitUtil.getLocation(pulled.getLocation());
-                    if (!area.contains(to.getX(), to.getZ())) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                    Plot fromPlot = area.getOwnedPlot(from);
-                    Plot toPlot = area.getOwnedPlot(to);
-                    if (!Objects.equals(fromPlot, toPlot)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-            } catch (Throwable ignored) {
-                this.pistonBlocks = false;
-            }
-        }
-        if (!this.pistonBlocks && !block.getType().toString().contains("PISTON")) {
-            location = BukkitUtil.getLocation(
-                block.getLocation().add(dir.getModX() * 2, dir.getModY() * 2, dir.getModZ() * 2));
-            if (!area.contains(location)) {
-                event.setCancelled(true);
-                return;
-            }
-            Plot newPlot = area.getOwnedPlot(location);
-            if (!Objects.equals(plot, newPlot)) {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
         Material type = event.getItem().getType();
         switch (type) {
+            case SHULKER_BOX:
+            case WHITE_SHULKER_BOX:
+            case ORANGE_SHULKER_BOX:
+            case MAGENTA_SHULKER_BOX:
+            case LIGHT_BLUE_SHULKER_BOX:
+            case YELLOW_SHULKER_BOX:
+            case LIME_SHULKER_BOX:
+            case PINK_SHULKER_BOX:
+            case GRAY_SHULKER_BOX:
+            case LIGHT_GRAY_SHULKER_BOX:
+            case CYAN_SHULKER_BOX:
+            case PURPLE_SHULKER_BOX:
+            case BLUE_SHULKER_BOX:
+            case BROWN_SHULKER_BOX:
+            case GREEN_SHULKER_BOX:
+            case RED_SHULKER_BOX:
+            case BLACK_SHULKER_BOX:
+            case CARVED_PUMPKIN:
+            case WITHER_SKELETON_SKULL:
+            case FLINT_AND_STEEL:
+            case BONE_MEAL:
+            case SHEARS:
+            case GLASS_BOTTLE:
+            case GLOWSTONE:
+            case COD_BUCKET:
+            case PUFFERFISH_BUCKET:
+            case SALMON_BUCKET:
+            case TROPICAL_FISH_BUCKET:
+            case BUCKET:
             case WATER_BUCKET:
             case LAVA_BUCKET: {
                 if (event.getBlock().getType() == Material.DROPPER) {
@@ -1864,8 +1875,8 @@ public class PlayerEvents extends PlotListener implements Listener {
         Plot plot = location.getPlotAbs();
         BukkitPlayer pp = BukkitUtil.getPlayer(e.getPlayer());
         if (plot == null) {
-            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class)
-                && !Permissions.hasPermission(pp, "plots.admin.interact.road")) {
+            if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class) && !Permissions
+                .hasPermission(pp, "plots.admin.interact.road")) {
                 MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
                 e.setCancelled(true);
             }
@@ -1878,8 +1889,7 @@ public class PlayerEvents extends PlotListener implements Listener {
                     return;
                 }
             }
-            if (!plot.hasOwner() && !area.isRoadFlags() && !area
-                .getRoadFlag(MiscInteractFlag.class)) {
+            if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
                     MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
                         "plots.admin.interact.unowned");
@@ -2601,8 +2611,8 @@ public class PlayerEvents extends PlotListener implements Listener {
                     Captions.PERMISSION_ADMIN_INTERACT_UNOWNED);
                 event.setCancelled(true);
             }
-        } else if ((plot != null && !plot.isAdded(pp.getUUID())) || area
-            .isRoadFlags()) {
+        } else if ((plot != null && !plot.isAdded(pp.getUUID())) || (plot == null && area
+            .isRoadFlags())) {
             final Entity entity = event.getRightClicked();
             final com.sk89q.worldedit.world.entity.EntityType entityType =
                 BukkitAdapter.adapt(entity.getType());
@@ -3145,7 +3155,7 @@ public class PlayerEvents extends PlotListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(ItemDropFlag.class)) {
+            if (area.isRoadFlags() && !area.getRoadFlag(ItemDropFlag.class)) {
                 event.setCancelled(true);
             }
             return;

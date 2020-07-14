@@ -831,7 +831,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                         case "HOGLIN":
                         case "PIGLIN":
                         case "ZOGLIN":
-                            break;
                         default: {
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                 Location location = entity.getLocation();

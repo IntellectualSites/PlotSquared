@@ -3010,11 +3010,9 @@ public class Plot {
             final String name = player.getName();
             TaskManager.TELEPORT_QUEUE.add(name);
             TaskManager.runTaskLater(() -> {
-                if (!TaskManager.TELEPORT_QUEUE.contains(name)) {
-                    MainUtil.sendMessage(player, Captions.TELEPORT_FAILED);
+                if (!TaskManager.TELEPORT_QUEUE.remove(name)) {
                     return;
                 }
-                TaskManager.TELEPORT_QUEUE.remove(name);
                 if (player.isOnline()) {
                     MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
                     player.teleport(location, cause);
