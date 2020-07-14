@@ -59,8 +59,8 @@ import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.backup.NullBackupManager;
-import com.plotsquared.core.backup.SimpleBackupManager;
+import com.plotsquared.core.command.WE_Anywhere;
+import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -79,7 +79,6 @@ import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.inject.modules.PlotSquaredModule;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.listener.WESubscriber;
-import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -95,7 +94,6 @@ import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.ChatManager;
-import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
@@ -113,7 +111,6 @@ import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
-
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -131,11 +128,11 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.AbstractMap;
@@ -161,7 +158,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
 @SuppressWarnings("unused") public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitMain.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitPlatform.class.getSimpleName());
     private static final int BSTATS_ID = 1404;
 
     static {
@@ -290,15 +287,13 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         // WorldEdit
         if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
             try {
-                PlotSquared.log(Captions.PREFIX.getTranslated() + "&6" + this.getPluginName()
-                    + " hooked into WorldEdit.");
+                logger.info("[P2] {} hooked into WorldEdit", this.getPluginName());
                 WorldEdit.getInstance().getEventBus().register(this.getInjector().getInstance(WESubscriber.class));
                 if (Settings.Enabled_Components.COMMANDS) {
                     new WE_Anywhere();
                 }
             } catch (Throwable e) {
-                PlotSquared.debug(
-                    "Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
+                logger.error("[P2] Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
             }
         }
 
@@ -344,8 +339,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
             try {
                 getInjector().getInstance(ComponentPresetManager.class);
             } catch (final Exception e) {
-                PlotSquared.log(Captions.PREFIX + "Failed to initialize the preset system");
-                e.printStackTrace();
+                logger.error("[P2] Failed to initialize the preset system", e);
             }
         }
 
@@ -368,14 +362,11 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                         continue;
                     }
                     if (!worldUtil.isWorld(world) && !world.equals("*")) {
-                        PlotSquared.debug("`" + world + "` was not properly loaded - " + this.getPluginName()
-                            + " will now try to load it properly: ");
-                        PlotSquared.debug(
-                            " - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
-                        PlotSquared.debug(
-                            " - Your world management plugin may be faulty (or non existent)");
-                        PlotSquared.debug(
-                            " This message may also be a false positive and could be ignored.");
+                        logger.warn("[P2] `{}` was not properly loaded - {} will now try to load it properly",
+                            world, this.getPluginName());
+                        logger.warn("[P2]  - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
+                        logger.warn("[P2]  - Your world management plugin may be faulty (or non existent)");
+                        logger.warn("[P2]  This message may also be a false positive and could be ignored.");
                         this.setGenerator(world);
                     }
                 }

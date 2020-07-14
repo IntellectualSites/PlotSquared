@@ -27,16 +27,18 @@ package com.plotsquared.bukkit.inject;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.backup.BackupProfile;
 import com.plotsquared.core.backup.NullBackupManager;
 import com.plotsquared.core.backup.PlayerBackupProfile;
 import com.plotsquared.core.backup.SimpleBackupManager;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BackupModule extends AbstractModule {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BackupModule.class.getSimpleName());
 
     @Override protected void configure() {
         try {
@@ -44,9 +46,8 @@ public class BackupModule extends AbstractModule {
                 .implement(BackupProfile.class, PlayerBackupProfile.class).build(PlayerBackupProfileFactory.class));
             bind(BackupManager.class).to(SimpleBackupManager.class);
         } catch (final Exception e) {
-            PlotSquared.log(Captions.PREFIX + "&6Failed to initialize backup manager");
-            e.printStackTrace();
-            PlotSquared.log(Captions.PREFIX + "&6Backup features will be disabled");
+            logger.error("[P2] Failed to initialize backup manager", e);
+            logger.error("[P2] Backup features will be disabled");
             bind(BackupManager.class).to(NullBackupManager.class);
         }
     }

@@ -25,9 +25,6 @@
  */
 package com.plotsquared.core;
 
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.command.WE_Anywhere;
-import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -48,7 +45,6 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -67,20 +63,12 @@ import com.plotsquared.core.util.LegacyConverter;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
-import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.logger.ILogger;
-import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
 import lombok.Getter;
-import lombok.Setter;
-import javax.annotation.Nullable;
-import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -267,7 +255,6 @@ public class PlotSquared {
     }
 
     public void startExpiryTasks() {
-    private void startExpiryTasks() {
         if (Settings.Enabled_Components.PLOT_EXPIRY) {
             ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
             ExpireManager.IMP.runAutomatedTask();
@@ -811,9 +798,9 @@ public class PlotSquared {
             logger.info("[P2]  - generator: {}>{}", baseGenerator, plotGenerator);
             logger.info("[P2]  - plot world: {}", plotArea.getClass().getCanonicalName());
             logger.info("[P2] - plot area manager: {}", plotManager.getClass().getCanonicalName());
-            if (!this.worlds.contains(path)) {
-                this.worlds.createSection(path);
-                worldSection = this.worlds.getConfigurationSection(path);
+            if (!this.worldConfiguration.contains(path)) {
+                this.worldConfiguration.createSection(path);
+                worldSection = this.worldConfiguration.getConfigurationSection(path);
             }
             plotArea.saveConfiguration(worldSection);
             plotArea.loadDefaultConfiguration(worldSection);
@@ -1264,8 +1251,8 @@ public class PlotSquared {
             e.printStackTrace();
             logger.error("[P2] &d==== End of stacktrace ====");
             logger.error("[P2] &6Please go to the {} 'storage.yml' and configure the database correctly",
-                imp().getPluginName());
-            this.IMP.shutdown(); //shutdown used instead of disable because of database error
+                platform.getPluginName());
+            this.platform.shutdown(); //shutdown used instead of disable because of database error
         }
     }
 
@@ -1398,11 +1385,6 @@ public class PlotSquared {
             setupStorage();
         } catch (IOException ignored) {
             logger.error("[P2] Failed to save storage.yml");
-        }
-        try {
-            this.style.save(this.styleFile);
-        } catch (IOException e) {
-            logger.error("[P2] Configuration file saving failed", e);
         }
         return true;
     }

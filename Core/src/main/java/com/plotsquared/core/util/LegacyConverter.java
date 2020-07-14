@@ -25,16 +25,17 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
