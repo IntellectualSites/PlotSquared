@@ -25,6 +25,8 @@
  */
 package com.plotsquared.core.util.entity;
 
+import com.plotsquared.core.PlotSquared;
+
 /**
  * A collection of {@link EntityCategory entity categories}
  */
@@ -48,7 +50,7 @@ public class EntityCategories {
     public static final EntityCategory PLAYER = register("player");
 
     public static EntityCategory register(final String id) {
-        final EntityCategory entityCategory = new EntityCategory(id);
+        final EntityCategory entityCategory = new EntityCategory(PlotSquared.platform().getWorldUtil(), id);
         EntityCategory.REGISTRY.register(entityCategory.getId(), entityCategory);
         return entityCategory;
     }

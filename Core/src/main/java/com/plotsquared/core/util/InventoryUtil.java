@@ -34,11 +34,6 @@ import com.plotsquared.core.plot.PlotItemStack;
  */
 public abstract class InventoryUtil {
 
-    /**
-     * This class is only used by internal functions, for most cases use the PlotInventory class
-     */
-    public static InventoryUtil manager = null;
-
     public abstract void open(final PlotInventory inv);
 
     public abstract void close(final PlotInventory inv);

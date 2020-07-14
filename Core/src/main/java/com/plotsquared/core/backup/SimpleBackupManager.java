@@ -27,17 +27,20 @@ package com.plotsquared.core.backup;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.TaskManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,16 +51,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * {@inheritDoc}
  */
-@RequiredArgsConstructor public class SimpleBackupManager implements BackupManager {
+@RequiredArgsConstructor @Singleton public class SimpleBackupManager implements BackupManager {
 
     @Getter private final Path backupPath;
     private final boolean automaticBackup;
     @Getter private final int backupLimit;
     private final Cache<PlotCacheKey, BackupProfile> backupProfileCache = CacheBuilder.newBuilder()
         .expireAfterAccess(3, TimeUnit.MINUTES).build();
+    private final PlayerBackupProfileFactory playerBackupProfileFactory;
 
-    public SimpleBackupManager() throws Exception {
-        this.backupPath = Objects.requireNonNull(PlotSquared.imp()).getDirectory().toPath().resolve("backups");
+    @Inject public SimpleBackupManager(@Nonnull final PlayerBackupProfileFactory playerBackupProfileFactory) throws Exception {
+        this.playerBackupProfileFactory = playerBackupProfileFactory;
+        this.backupPath = Objects.requireNonNull(PlotSquared.platform()).getDirectory().toPath().resolve("backups");
         if (!Files.exists(backupPath)) {
             Files.createDirectory(backupPath);
         }
@@ -65,12 +70,12 @@ import java.util.concurrent.TimeUnit;
         this.backupLimit = Settings.Backup.BACKUP_LIMIT;
     }
 
-    @Override @NotNull public BackupProfile getProfile(@NotNull final Plot plot) {
+    @Override @Nonnull public BackupProfile getProfile(@Nonnull final Plot plot) {
         if (plot.hasOwner() && !plot.isMerged()) {
             try {
-                return backupProfileCache.get(new PlotCacheKey(plot), () -> new PlayerBackupProfile(plot.getOwnerAbs(), plot, this));
+                return backupProfileCache.get(new PlotCacheKey(plot), () -> this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot));
             } catch (ExecutionException e) {
-                final BackupProfile profile = new PlayerBackupProfile(plot.getOwnerAbs(), plot, this);
+                final BackupProfile profile = this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot);
                 this.backupProfileCache.put(new PlotCacheKey(plot), profile);
                 return profile;
             }
@@ -78,7 +83,7 @@ import java.util.concurrent.TimeUnit;
         return new NullBackupProfile();
     }
 
-    @Override public void automaticBackup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone) {
+    @Override public void automaticBackup(@Nullable PlotPlayer player, @Nonnull final Plot plot, @Nonnull Runnable whenDone) {
         final BackupProfile profile;
         if (!this.shouldAutomaticallyBackup() || (profile = getProfile(plot)) instanceof NullBackupProfile) {
             whenDone.run();

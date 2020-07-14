@@ -31,7 +31,8 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Arrays;
 
@@ -46,7 +47,7 @@ public class ChunkBlockQueue extends ScopedLocalBlockQueue {
     private final BlockVector3 top;
 
     public ChunkBlockQueue(BlockVector3 bot, BlockVector3 top, boolean biomes) {
-        super(null, new Location(null, 0, 0, 0), new Location(null, 15, 255, 15));
+        super(null, Location.at("", 0, 0, 0), Location.at("", 15, 255, 15));
         this.width = top.getX() - bot.getX() + 1;
         this.length = top.getZ() - bot.getZ() + 1;
         this.area = width * length;
@@ -113,15 +114,15 @@ public class ChunkBlockQueue extends ScopedLocalBlockQueue {
         return null;
     }
 
-    @Override @Nullable public String getWorld() {
-        return null;
+    @Override @Nonnull public String getWorld() {
+        return "";
     }
 
     @Override public Location getMax() {
-        return new Location(getWorld(), top.getX(), top.getY(), top.getZ());
+        return Location.at(getWorld(), top.getX(), top.getY(), top.getZ());
     }
 
     @Override public Location getMin() {
-        return new Location(getWorld(), bot.getX(), bot.getY(), bot.getZ());
+        return Location.at(getWorld(), bot.getX(), bot.getY(), bot.getZ());
     }
 }

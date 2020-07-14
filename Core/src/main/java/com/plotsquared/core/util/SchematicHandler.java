@@ -58,7 +58,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -100,6 +100,12 @@ public abstract class SchematicHandler {
     public static SchematicHandler manager;
 
     private boolean exportAll = false;
+
+    private final WorldUtil worldUtil;
+
+    public SchematicHandler(@Nonnull final WorldUtil worldUtil) {
+        this.worldUtil = worldUtil;
+    }
 
     public boolean exportAll(Collection<Plot> collection, final File outputDir,
         final String namingScheme, final Runnable ifSuccess) {
@@ -148,12 +154,11 @@ public abstract class SchematicHandler {
                 }
 
                 final Runnable THIS = this;
-                SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
+                getCompoundTag(plot, new RunnableVal<CompoundTag>() {
                     @Override public void run(final CompoundTag value) {
                         if (value != null) {
                             TaskManager.runTaskAsync(() -> {
-                                boolean result = SchematicHandler.manager
-                                    .save(value, directory + File.separator + name + ".schem");
+                                boolean result = save(value, directory + File.separator + name + ".schem");
                                 if (!result) {
                                     logger.error("[P2] Failed to save {}", plot.getId());
                                 }
@@ -214,7 +219,7 @@ public abstract class SchematicHandler {
                         if (pw instanceof ClassicPlotWorld) {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
-                            y_offset_actual = yOffset + 1 + WorldUtil.IMP
+                            y_offset_actual = yOffset + 1 +  this.worldUtil
                                 .getHighestBlockSynchronous(plot.getWorldName(),
                                     region.getMinimumPoint().getX() + 1,
                                     region.getMinimumPoint().getZ() + 1);
@@ -223,10 +228,11 @@ public abstract class SchematicHandler {
                 } else {
                     y_offset_actual = yOffset;
                 }
-                Location pos1 =
-                    new Location(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset,
-                        y_offset_actual, region.getMinimumPoint().getZ() + zOffset);
-                Location pos2 = pos1.clone().add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
+
+                final Location pos1 = Location.at(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual,
+                    region.getMinimumPoint().getZ() + zOffset);
+                final Location pos2 = pos1.add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
+
                 final int p1x = pos1.getX();
                 final int p1z = pos1.getZ();
                 final int p2x = pos2.getX();
@@ -305,7 +311,7 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(String name) throws UnsupportedFormatException {
         File parent =
-            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+            MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
         if (!parent.exists()) {
             if (!parent.mkdir()) {
                 throw new RuntimeException("Could not create schematic parent directory");
@@ -314,10 +320,10 @@ public abstract class SchematicHandler {
         if (!name.endsWith(".schem") && !name.endsWith(".schematic")) {
             name = name + ".schem";
         }
-        File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+        File file = MainUtil.getFile(PlotSquared.platform().getDirectory(),
             Settings.Paths.SCHEMATICS + File.separator + name);
         if (!file.exists()) {
-            file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+            file = MainUtil.getFile(PlotSquared.platform().getDirectory(),
                 Settings.Paths.SCHEMATICS + File.separator + name);
         }
         return getSchematic(file);
@@ -330,7 +336,7 @@ public abstract class SchematicHandler {
      */
     public Collection<String> getSchematicNames() {
         final File parent =
-            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.SCHEMATICS);
+            MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
         final List<String> names = new ArrayList<>();
         if (parent.exists()) {
             final String[] rawNames =
@@ -370,7 +376,7 @@ public abstract class SchematicHandler {
         return null;
     }
 
-    public Schematic getSchematic(@NotNull URL url) {
+    public Schematic getSchematic(@Nonnull URL url) {
         try {
             ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
             InputStream inputStream = Channels.newInputStream(readableByteChannel);
@@ -381,7 +387,7 @@ public abstract class SchematicHandler {
         return null;
     }
 
-    public Schematic getSchematic(@NotNull InputStream is) {
+    public Schematic getSchematic(@Nonnull InputStream is) {
         try {
             SpongeSchematicReader schematicReader =
                 new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
@@ -453,7 +459,7 @@ public abstract class SchematicHandler {
             return false;
         }
         try {
-            File tmp = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), path);
+            File tmp = MainUtil.getFile(PlotSquared.platform().getDirectory(), path);
             tmp.getParentFile().mkdirs();
             try (NBTOutputStream nbtStream = new NBTOutputStream(
                 new GZIPOutputStream(new FileOutputStream(tmp)))) {
@@ -478,7 +484,7 @@ public abstract class SchematicHandler {
             final Location top = corners[1];
 
             CuboidRegion cuboidRegion =
-                new CuboidRegion(WorldUtil.IMP.getWeWorld(world), bot.getBlockVector3(),
+                new CuboidRegion(this.worldUtil.getWeWorld(world), bot.getBlockVector3(),
                     top.getBlockVector3());
 
             final int width = cuboidRegion.getWidth();
@@ -540,10 +546,10 @@ public abstract class SchematicHandler {
                     }
                     final Runnable regionTask = this;
                     CuboidRegion region = queue.poll();
-                    Location pos1 = new Location(world, region.getMinimumPoint().getX(),
-                        region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
-                    Location pos2 = new Location(world, region.getMaximumPoint().getX(),
-                        region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
+
+                    final Location pos1 = Location.at(world, region.getMinimumPoint());
+                    final Location pos2 = Location.at(world, region.getMaximumPoint());
+
                     final int p1x = pos1.getX();
                     final int sy = pos1.getY();
                     final int p1z = pos1.getZ();

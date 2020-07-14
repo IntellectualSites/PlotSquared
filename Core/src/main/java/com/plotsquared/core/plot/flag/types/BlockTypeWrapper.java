@@ -32,8 +32,8 @@ import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,19 +54,19 @@ public class BlockTypeWrapper {
     @Nullable private final String blockCategoryId;
     @Nullable private BlockCategory blockCategory;
 
-    private BlockTypeWrapper(@NotNull final BlockType blockType) {
+    private BlockTypeWrapper(@Nonnull final BlockType blockType) {
         this.blockType = Preconditions.checkNotNull(blockType);
         this.blockCategory = null;
         this.blockCategoryId = null;
     }
 
-    private BlockTypeWrapper(@NotNull final BlockCategory blockCategory) {
+    private BlockTypeWrapper(@Nonnull final BlockCategory blockCategory) {
         this.blockType = null;
         this.blockCategory = Preconditions.checkNotNull(blockCategory);
         this.blockCategoryId = blockCategory.getId(); // used in toString()/equals()/hashCode()
     }
 
-    private BlockTypeWrapper(@NotNull final String blockCategoryId) {
+    private BlockTypeWrapper(@Nonnull final String blockCategoryId) {
         this.blockType = null;
         this.blockCategory = null;
         this.blockCategoryId = Preconditions.checkNotNull(blockCategoryId);

@@ -32,8 +32,8 @@ import com.plotsquared.core.util.PlotAreaConverter;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.PRTree;
 import org.khelekore.prtree.SimpleMBR;
@@ -60,11 +60,11 @@ public class ScatteredPlotWorld extends PlotWorld {
      *
      * @param world World name
      */
-    public ScatteredPlotWorld(@NotNull final String world) {
+    public ScatteredPlotWorld(@Nonnull final String world) {
         super(world);
     }
 
-    @Override @Nullable public PlotArea getArea(@NotNull final Location location) {
+    @Override @Nullable public PlotArea getArea(@Nonnull final Location location) {
         if (this.areas.isEmpty()) {
             return null;
         }
@@ -78,21 +78,21 @@ public class ScatteredPlotWorld extends PlotWorld {
         return null;
     }
 
-    @Override @NotNull public Collection<PlotArea> getAreas() {
+    @Override @Nonnull public Collection<PlotArea> getAreas() {
         return Collections.unmodifiableCollection(this.areas);
     }
 
-    @Override public void addArea(@NotNull final PlotArea area) {
+    @Override public void addArea(@Nonnull final PlotArea area) {
         this.areas.add(area);
         this.buildTree();
     }
 
-    @Override public void removeArea(@NotNull final PlotArea area) {
+    @Override public void removeArea(@Nonnull final PlotArea area) {
         this.areas.remove(area);
         this.buildTree();
     }
 
-    @Override @NotNull public Collection<PlotArea> getAreasInRegion(@NotNull final CuboidRegion region) {
+    @Override @Nonnull public Collection<PlotArea> getAreasInRegion(@Nonnull final CuboidRegion region) {
         if (this.areas.isEmpty()) {
             return Collections.emptyList();
         }

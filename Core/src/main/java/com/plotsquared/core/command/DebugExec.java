@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.io.Files;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -44,9 +45,11 @@ import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
@@ -58,7 +61,10 @@ import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.world.block.BlockState;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,31 +92,43 @@ public class DebugExec extends SubCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + DebugExec.class.getSimpleName());
 
+
+    private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
+    private final WorldEdit worldEdit;
+    private final GlobalBlockQueue blockQueue;
+    private final SchematicHandler schematicHandler;
+    private final EconHandler econHandler;
+    private final ChunkManager chunkManager;
+    private final WorldUtil worldUtil;
+    private final SetupUtils setupUtils;
+    private final HybridUtils hybridUtils;
+
     private ScriptEngine engine;
     private Bindings scope;
 
-    public DebugExec() {
+    @Inject public DebugExec(@Nonnull final PlotAreaManager plotAreaManager,
+                     @Nonnull final EventDispatcher eventDispatcher,
+                     @Nullable final WorldEdit worldEdit,
+                     @Nonnull final GlobalBlockQueue blockQueue,
+                     @Nonnull final SchematicHandler schematicHandler,
+                     @Nullable final EconHandler econHandler,
+                     @Nonnull final ChunkManager chunkManager,
+                     @Nonnull final WorldUtil worldUtil,
+                     @Nonnull final SetupUtils setupUtils,
+                     @Nonnull final HybridUtils hybridUtils) {
+        this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
+        this.worldEdit = worldEdit;
+        this.blockQueue = blockQueue;
+        this.schematicHandler = schematicHandler;
+        this.econHandler = econHandler;
+        this.chunkManager = chunkManager;
+        this.worldUtil = worldUtil;
+        this.setupUtils = setupUtils;
+        this.hybridUtils = hybridUtils;
+
         init();
-/*
-        try {
-            if (PlotSquared.get() != null) {
-                File file = new File(PlotSquared.get().IMP.getDirectory(),
-                    Settings.Paths.SCRIPTS + File.separator + "start.js");
-                if (file.exists()) {
-                    init();
-                    String script = StringMan.join(Files.readLines(new File(new File(
-                            PlotSquared.get().IMP.getDirectory() + File.separator
-                                + Settings.Paths.SCRIPTS), "start.js"), StandardCharsets.UTF_8),
-                        System.getProperty("line.separator"));
-                    this.scope.put("THIS", this);
-                    this.scope.put("PlotPlayer", ConsolePlayer.getConsole());
-                    this.engine.eval(script, this.scope);
-                }
-            }
-        } catch (IOException | ScriptException ignored) {
-            ignored.printStackTrace();
-        }
-*/
     }
 
     public ScriptEngine getEngine() {
@@ -159,22 +177,22 @@ public class DebugExec extends SubCommand {
 
         // Instances
         this.scope.put("PS", PlotSquared.get());
-        this.scope.put("GlobalBlockQueue", GlobalBlockQueue.IMP);
+        this.scope.put("GlobalBlockQueue", this.blockQueue);
         this.scope.put("ExpireManager", ExpireManager.IMP);
-        if (PlotSquared.get().worldedit != null) {
+        if (this.worldEdit != null) {
             this.scope.put("WEManager", new WEManager());
         }
-        this.scope.put("TaskManager", TaskManager.IMP);
+        this.scope.put("TaskManager", TaskManager.getImplementation());
         this.scope.put("ConsolePlayer", ConsolePlayer.getConsole());
-        this.scope.put("SchematicHandler", SchematicHandler.manager);
-        this.scope.put("ChunkManager", ChunkManager.manager);
-        this.scope.put("BlockManager", WorldUtil.IMP);
-        this.scope.put("SetupUtils", SetupUtils.manager);
-        this.scope.put("EventUtil", PlotSquared.get().getEventDispatcher());
-        this.scope.put("EconHandler", EconHandler.getEconHandler());
+        this.scope.put("SchematicHandler", this.schematicHandler);
+        this.scope.put("ChunkManager", this.chunkManager);
+        this.scope.put("BlockManager", this.worldUtil);
+        this.scope.put("SetupUtils", this.setupUtils);
+        this.scope.put("EventUtil", this.eventDispatcher);
+        this.scope.put("EconHandler", this.econHandler);
         this.scope.put("DBFunc", DBFunc.dbManager);
-        this.scope.put("HybridUtils", HybridUtils.manager);
-        this.scope.put("IMP", PlotSquared.get().IMP);
+        this.scope.put("HybridUtils", this.hybridUtils);
+        this.scope.put("IMP", PlotSquared.platform());
         this.scope.put("MainCommand", MainCommand.getInstance());
 
         // enums
@@ -205,7 +223,7 @@ public class DebugExec extends SubCommand {
                         return true;
                     }
                     MainUtil.sendMessage(player, "$1Starting task...");
-                    HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+                    this.hybridUtils.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
                         @Override public void run(PlotAnalysis value) {
                             MainUtil.sendMessage(player,
                                 "$1Done: $2Use $3/plot debugexec analyze$2 for more information");
@@ -250,7 +268,7 @@ public class DebugExec extends SubCommand {
                         GlobalFlagContainer.getInstance().getFlagFromString(flag);
                     if (flagInstance != null) {
                         for (Plot plot : PlotSquared.get().getBasePlots()) {
-                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
+                            PlotFlagRemoveEvent event = this.eventDispatcher
                                 .callFlagRemove(flagInstance, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
@@ -264,17 +282,16 @@ public class DebugExec extends SubCommand {
                             "&cInvalid syntax: /plot debugexec start-rgar <world>");
                         return false;
                     }
-                    PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
+                    PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (area == null) {
                         MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD, args[1]);
                         return false;
                     }
                     boolean result;
                     if (HybridUtils.regions != null) {
-                        result = HybridUtils.manager
-                            .scheduleRoadUpdate(area, HybridUtils.regions, 0, new HashSet<>());
+                        result = this.hybridUtils.scheduleRoadUpdate(area, HybridUtils.regions, 0, new HashSet<>());
                     } else {
-                        result = HybridUtils.manager.scheduleRoadUpdate(area, 0);
+                        result = this.hybridUtils.scheduleRoadUpdate(area, 0);
                     }
                     if (!result) {
                         MainUtil.sendMessage(player,
@@ -293,7 +310,7 @@ public class DebugExec extends SubCommand {
                     return true;
                 case "start-expire":
                     if (ExpireManager.IMP == null) {
-                        ExpireManager.IMP = new ExpireManager();
+                        ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
                     }
                     if (ExpireManager.IMP.runAutomatedTask()) {
                         return MainUtil.sendMessage(player, "Started plot expiry task");
@@ -311,7 +328,7 @@ public class DebugExec extends SubCommand {
                 case "addcmd":
                     try {
                         final String cmd = StringMan.join(Files.readLines(MainUtil.getFile(new File(
-                                PlotSquared.get().IMP.getDirectory() + File.separator
+                                PlotSquared.platform().getDirectory() + File.separator
                                     + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
@@ -343,7 +360,7 @@ public class DebugExec extends SubCommand {
                 case "run":
                     try {
                         script = StringMan.join(Files.readLines(MainUtil.getFile(new File(
-                                PlotSquared.get().IMP.getDirectory() + File.separator
+                                PlotSquared.platform().getDirectory() + File.separator
                                     + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
                         if (args.length > 2) {
@@ -359,7 +376,7 @@ public class DebugExec extends SubCommand {
                     }
                     break;
                 case "list-scripts":
-                    String path = PlotSquared.get().IMP.getDirectory() + File.separator
+                    String path = PlotSquared.platform().getDirectory() + File.separator
                         + Settings.Paths.SCRIPTS;
                     File folder = new File(path);
                     File[] filesArray = folder.listFiles();

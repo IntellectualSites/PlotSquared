@@ -33,8 +33,8 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.TabCompletions;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -64,7 +64,7 @@ public class SettingsNodeStep implements SetupStep {
         return this.next;
     }
 
-    @NotNull @Override public Collection<String> getSuggestions() {
+    @Nonnull @Override public Collection<String> getSuggestions() {
         return this.configurationNode.getSuggestions();
     }
 

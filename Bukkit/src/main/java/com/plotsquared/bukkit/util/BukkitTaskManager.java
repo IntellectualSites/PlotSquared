@@ -25,15 +25,17 @@
  */
 package com.plotsquared.bukkit.util;
 
-import com.plotsquared.bukkit.BukkitMain;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.util.task.TaskManager;
 import org.bukkit.Bukkit;
 
-public class BukkitTaskManager extends TaskManager {
+@Singleton public class BukkitTaskManager extends TaskManager {
 
-    private final BukkitMain bukkitMain;
+    private final BukkitPlatform bukkitMain;
 
-    public BukkitTaskManager(BukkitMain bukkitMain) {
+    @Inject public BukkitTaskManager(BukkitPlatform bukkitMain) {
         this.bukkitMain = bukkitMain;
     }
 

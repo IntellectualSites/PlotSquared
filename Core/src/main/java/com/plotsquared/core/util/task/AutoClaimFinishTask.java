@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.util.task;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Auto;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotMergeEvent;
@@ -34,6 +33,7 @@ import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.util.EventDispatcher;
 import lombok.RequiredArgsConstructor;
 
 import static com.plotsquared.core.util.MainUtil.sendMessage;
@@ -45,6 +45,7 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
     private final Plot plot;
     private final PlotArea area;
     private final String schematic;
+    private final EventDispatcher eventDispatcher;
 
     @Override public void run(Object value) {
         player.deleteMeta(Auto.class.getName());
@@ -54,8 +55,7 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
         }
         plot.claim(player, true, schematic, false);
         if (area.isAutoMerge()) {
-            PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
-                .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
+            PlotMergeEvent event = this.eventDispatcher.callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
             if (event.getEventResult() == Result.DENY) {
                 sendMessage(player, Captions.EVENT_DENIED, "Auto merge");
             } else {

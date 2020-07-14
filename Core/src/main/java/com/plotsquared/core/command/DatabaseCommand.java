@@ -25,19 +25,27 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.database.Database;
 import com.plotsquared.core.database.MySQL;
 import com.plotsquared.core.database.SQLManager;
 import com.plotsquared.core.database.SQLite;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -55,6 +63,21 @@ import java.util.Map.Entry;
     requiredType = RequiredType.CONSOLE,
     usage = "/plot database [area] <sqlite|mysql|import>")
 public class DatabaseCommand extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
+    private final PlotListener plotListener;
+    private final YamlConfiguration worldConfiguration;
+
+    @Inject public DatabaseCommand(@Nonnull final PlotAreaManager plotAreaManager,
+                                   @Nonnull final EventDispatcher eventDispatcher,
+                                   @Nonnull final PlotListener plotListener,
+                                   @WorldConfig @Nonnull final YamlConfiguration worldConfiguration) {
+        this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
+        this.plotListener = plotListener;
+        this.worldConfiguration = worldConfiguration;
+    }
 
     public static void insertPlots(final SQLManager manager, final List<Plot> plots,
         final PlotPlayer player) {
@@ -80,12 +103,12 @@ public class DatabaseCommand extends SubCommand {
             return false;
         }
         List<Plot> plots;
-        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
+        PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
         if (area != null) {
             plots = PlotSquared.get().sortPlotsByTemp(area.getPlots());
             args = Arrays.copyOfRange(args, 1, args.length);
         } else {
-            plots = PlotSquared.get().sortPlotsByTemp(PlotSquared.get().getPlots());
+            plots = PlotSquared.get().sortPlotsByTemp(PlotQuery.newQuery().allPlots().asList());
         }
         if (args.length < 1) {
             MainUtil.sendMessage(player, getUsage());
@@ -102,7 +125,7 @@ public class DatabaseCommand extends SubCommand {
                             .sendMessage(player, "/plot database import <sqlite file> [prefix]");
                         return false;
                     }
-                    File file = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+                    File file = MainUtil.getFile(PlotSquared.platform().getDirectory(),
                         args[1].endsWith(".db") ? args[1] : args[1] + ".db");
                     if (!file.exists()) {
                         MainUtil.sendMessage(player, "&6Database does not exist: " + file);
@@ -110,13 +133,13 @@ public class DatabaseCommand extends SubCommand {
                     }
                     MainUtil.sendMessage(player, "&6Starting...");
                     implementation = new SQLite(file);
-                    SQLManager manager =
-                        new SQLManager(implementation, args.length == 3 ? args[2] : "", true);
+                    SQLManager manager = new SQLManager(implementation, args.length == 3 ? args[2] : "",
+                        this.eventDispatcher, this.plotListener, this.worldConfiguration);
                     HashMap<String, HashMap<PlotId, Plot>> map = manager.getPlots();
                     plots = new ArrayList<>();
                     for (Entry<String, HashMap<PlotId, Plot>> entry : map.entrySet()) {
                         String areaName = entry.getKey();
-                        PlotArea pa = PlotSquared.get().getPlotAreaByString(areaName);
+                        PlotArea pa = this.plotAreaManager.getPlotAreaByString(areaName);
                         if (pa != null) {
                             for (Entry<PlotId, Plot> entry2 : entry.getValue().entrySet()) {
                                 Plot plot = entry2.getValue();
@@ -127,11 +150,11 @@ public class DatabaseCommand extends SubCommand {
                                             PlotId newId = newPlot.getId();
                                             PlotId id = plot.getId();
                                             File worldFile =
-                                                new File(PlotSquared.imp().getWorldContainer(),
+                                                new File(PlotSquared.platform().getWorldContainer(),
                                                     id.toCommaSeparatedString());
                                             if (worldFile.exists()) {
                                                 File newFile =
-                                                    new File(PlotSquared.imp().getWorldContainer(),
+                                                    new File(PlotSquared.platform().getWorldContainer(),
                                                         newId.toCommaSeparatedString());
                                                 worldFile.renameTo(newFile);
                                             }
@@ -179,14 +202,14 @@ public class DatabaseCommand extends SubCommand {
                         return MainUtil.sendMessage(player, "/plot database sqlite [file]");
                     }
                     File sqliteFile =
-                        MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), args[1] + ".db");
+                        MainUtil.getFile(PlotSquared.platform().getDirectory(), args[1] + ".db");
                     implementation = new SQLite(sqliteFile);
                     break;
                 default:
                     return MainUtil.sendMessage(player, "/plot database [sqlite/mysql]");
             }
             try {
-                SQLManager manager = new SQLManager(implementation, prefix, true);
+                SQLManager manager = new SQLManager(implementation, prefix, this.eventDispatcher, this.plotListener, this.worldConfiguration);
                 DatabaseCommand.insertPlots(manager, plots, player);
                 return true;
             } catch (ClassNotFoundException | SQLException e) {

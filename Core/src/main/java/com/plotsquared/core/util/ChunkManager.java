@@ -28,7 +28,6 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -47,17 +46,16 @@ public abstract class ChunkManager {
         new ConcurrentHashMap<>();
     private static final Map<BlockVector2, RunnableVal<ScopedLocalBlockQueue>> addChunks =
         new ConcurrentHashMap<>();
-    public static ChunkManager manager = null;
 
     public static void setChunkInPlotArea(RunnableVal<ScopedLocalBlockQueue> force,
         RunnableVal<ScopedLocalBlockQueue> add, String world, BlockVector2 loc) {
-        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
-        if (PlotSquared.get().isAugmented(world) && PlotSquared.get().isNonStandardGeneration(world, loc)) {
+        LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
+        if (PlotSquared.get().getPlotAreaManager().isAugmented(world) && PlotSquared.get().isNonStandardGeneration(world, loc)) {
             int blockX = loc.getX() << 4;
             int blockZ = loc.getZ() << 4;
             ScopedLocalBlockQueue scoped =
-                new ScopedLocalBlockQueue(queue, new Location(world, blockX, 0, blockZ),
-                    new Location(world, blockX + 15, 255, blockZ + 15));
+                new ScopedLocalBlockQueue(queue, Location.at(world, blockX, 0, blockZ),
+                    Location.at(world, blockX + 15, 255, blockZ + 15));
             if (force != null) {
                 force.run(scoped);
             } else {
@@ -108,9 +106,9 @@ public abstract class ChunkManager {
                     return;
                 }
                 CuboidRegion value = regions.remove(0);
-                Location pos1 = new Location(plot.getWorldName(), value.getMinimumPoint().getX(), 0,
+                Location pos1 = Location.at(plot.getWorldName(), value.getMinimumPoint().getX(), 0,
                     value.getMinimumPoint().getZ());
-                Location pos2 = new Location(plot.getWorldName(), value.getMaximumPoint().getX(), 0,
+                Location pos2 = Location.at(plot.getWorldName(), value.getMaximumPoint().getX(), 0,
                     value.getMaximumPoint().getZ());
                 chunkTask(pos1, pos2, task, this, allocate);
             }
@@ -191,12 +189,12 @@ public abstract class ChunkManager {
         int z1 = chunk.getZ() << 4;
         int x2 = x1 + 15;
         int z2 = z1 + 15;
-        Location bot = new Location(world, x1, 0, z1);
+        Location bot = Location.at(world, x1, 0, z1);
         Plot plot = bot.getOwnedPlotAbs();
         if (plot != null) {
             return plot;
         }
-        Location top = new Location(world, x2, 0, z2);
+        Location top = Location.at(world, x2, 0, z2);
         plot = top.getOwnedPlotAbs();
         return plot;
     }

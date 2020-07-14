@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class TamedAttackFlag extends BooleanFlag<TamedAttackFlag> {
 
@@ -38,7 +38,7 @@ public class TamedAttackFlag extends BooleanFlag<TamedAttackFlag> {
         super(value, Captions.FLAG_DESCRIPTION_TAMED_ATTACK);
     }
 
-    @Override protected TamedAttackFlag flagOf(@NotNull Boolean value) {
+    @Override protected TamedAttackFlag flagOf(@Nonnull Boolean value) {
         return value ? TAMED_ATTACK_TRUE : TAMED_ATTACK_FALSE;
     }
 

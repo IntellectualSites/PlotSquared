@@ -25,13 +25,13 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.query.PlotQuery;
 
 @CommandDeclaration(command = "target",
     usage = "/plot target <<plot>|nearest>",
@@ -54,7 +54,7 @@ public class Target extends SubCommand {
         Plot target = null;
         if (StringMan.isEqualIgnoreCaseToAny(args[0], "near", "nearest")) {
             int distance = Integer.MAX_VALUE;
-            for (Plot plot : PlotSquared.get().getPlots(location.getWorld())) {
+            for (Plot plot : PlotQuery.newQuery().inWorld(location.getWorldName()).asCollection()) {
                 double current = plot.getCenterSynchronous().getEuclideanDistanceSquared(location);
                 if (current < distance) {
                     distance = (int) current;

@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class NotifyEnterFlag extends BooleanFlag<NotifyEnterFlag> {
 
@@ -38,7 +38,7 @@ public class NotifyEnterFlag extends BooleanFlag<NotifyEnterFlag> {
         super(value, Captions.FLAG_DESCRIPTION_NOTIFY_ENTER);
     }
 
-    @Override protected NotifyEnterFlag flagOf(@NotNull Boolean value) {
+    @Override protected NotifyEnterFlag flagOf(@Nonnull Boolean value) {
         return value ? NOTIFY_ENTER_TRUE : NOTIFY_ENTER_FALSE;
     }
 

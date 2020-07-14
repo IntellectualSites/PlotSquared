@@ -34,7 +34,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.FileBytes;
@@ -48,6 +47,7 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,10 +59,13 @@ public class HybridPlotManager extends ClassicPlotManager {
     public static boolean REGENERATIVE_CLEAR = true;
 
     @Getter private final HybridPlotWorld hybridPlotWorld;
+    private final RegionManager regionManager;
 
-    public HybridPlotManager(HybridPlotWorld hybridPlotWorld) {
-        super(hybridPlotWorld);
+    public HybridPlotManager(@Nonnull final HybridPlotWorld hybridPlotWorld,
+                             @Nonnull final RegionManager regionManager) {
+        super(hybridPlotWorld, regionManager);
         this.hybridPlotWorld = hybridPlotWorld;
+        this.regionManager = regionManager;
     }
 
     @Override public void exportTemplate() throws IOException {
@@ -74,7 +77,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 .getWorldName() + File.separator;
         try {
             File sideRoad =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "sideroad.schem");
+                MainUtil.getFile(PlotSquared.platform().getDirectory(), dir + "sideroad.schem");
             String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
                 + "__TEMP_DIR__" + File.separator;
             if (sideRoad.exists()) {
@@ -82,12 +85,12 @@ public class HybridPlotManager extends ClassicPlotManager {
                     Files.readAllBytes(sideRoad.toPath())));
             }
             File intersection =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "intersection.schem");
+                MainUtil.getFile(PlotSquared.platform().getDirectory(), dir + "intersection.schem");
             if (intersection.exists()) {
                 files.add(new FileBytes(newDir + "intersection.schem",
                     Files.readAllBytes(intersection.toPath())));
             }
-            File plot = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), dir + "plot.schem");
+            File plot = MainUtil.getFile(PlotSquared.platform().getDirectory(), dir + "plot.schem");
             if (plot.exists()) {
                 files.add(new FileBytes(newDir + "plot.schem", Files.readAllBytes(plot.toPath())));
             }
@@ -103,9 +106,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x + 1, id.y);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
-        Location pos1 =
-            new Location(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
-        Location pos2 = new Location(hybridPlotWorld.getWorldName(), bot.getX(),
+        Location pos1 = Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
+        Location pos2 = Location.at(hybridPlotWorld.getWorldName(), bot.getX(),
             Math.min(getWorldHeight(), 255), top.getZ() + 1);
         MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
@@ -165,9 +167,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x, id.y + 1);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
-        Location pos1 =
-            new Location(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
-        Location pos2 = new Location(hybridPlotWorld.getWorldName(), top.getX() + 1,
+        Location pos1 = Location.at(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
+        Location pos2 = Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1,
             Math.min(getWorldHeight(), 255), bot.getZ());
         MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
@@ -183,10 +184,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         super.createRoadSouthEast(plot);
         PlotId id = plot.getId();
         PlotId id2 = new PlotId(id.x + 1, id.y + 1);
-        Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1);
-        Location pos2 = getPlotBottomLocAbs(id2);
-        pos1.setY(0);
-        pos2.setY(Math.min(getWorldHeight(), 255));
+        Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1).withY(0);
+        Location pos2 = getPlotBottomLocAbs(id2).withY(Math.min(getWorldHeight(), 255));
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
         createSchemAbs(queue, pos1, pos2, true);
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
@@ -203,9 +202,9 @@ public class HybridPlotManager extends ClassicPlotManager {
      * </p>
      */
     @Override public boolean clearPlot(Plot plot, final Runnable whenDone) {
-        if (RegionManager.manager.notifyClear(this)) {
+        if (this.regionManager.notifyClear(this)) {
             //If this returns false, the clear didn't work
-            if (RegionManager.manager.handleClear(plot, whenDone, this)) {
+            if (this.regionManager.handleClear(plot, whenDone, this)) {
                 return true;
             }
         }
@@ -241,18 +240,18 @@ public class HybridPlotManager extends ClassicPlotManager {
                 // Set the biome
                 MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
                 // These two locations are for each component (e.g. bedrock, main block, floor, air)
-                Location bot = new Location(world, value[2], 0, value[3]);
-                Location top = new Location(world, value[4], 1, value[5]);
+                Location bot = Location.at(world, value[2], 0, value[3]);
+                Location top = Location.at(world, value[4], 1, value[5]);
                 queue.setCuboid(bot, top, bedrock);
                 // Each component has a different layer
-                bot.setY(1);
-                top.setY(hybridPlotWorld.PLOT_HEIGHT);
+                bot = bot.withY(1);
+                top = top.withY(hybridPlotWorld.PLOT_HEIGHT);
                 queue.setCuboid(bot, top, filling);
-                bot.setY(hybridPlotWorld.PLOT_HEIGHT);
-                top.setY(hybridPlotWorld.PLOT_HEIGHT + 1);
+                bot = bot.withY(hybridPlotWorld.PLOT_HEIGHT);
+                top = top.withY(hybridPlotWorld.PLOT_HEIGHT + 1);
                 queue.setCuboid(bot, top, plotfloor);
-                bot.setY(hybridPlotWorld.PLOT_HEIGHT + 1);
-                top.setY(getWorldHeight());
+                bot = bot.withY(hybridPlotWorld.PLOT_HEIGHT + 1);
+                top = top.withY(getWorldHeight());
                 queue.setCuboid(bot, top, air);
                 // And finally set the schematic, the y value is unimportant for this function
                 pastePlotSchematic(queue, bot, top);
@@ -260,7 +259,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         }, () -> {
             queue.enqueue();
             // And notify whatever called this when plot clearing is done
-            GlobalBlockQueue.IMP.addEmptyTask(whenDone);
+            PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(whenDone);
         }, 10);
         return true;
     }

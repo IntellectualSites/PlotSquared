@@ -38,8 +38,9 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
+
 import lombok.RequiredArgsConstructor;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -81,28 +82,28 @@ public final class BlockBucket implements ConfigurationSerializable {
         this.input = new StringBuilder();
     }
 
-    public static BlockBucket withSingle(@NonNull final BlockState block) {
+    public static BlockBucket withSingle(@Nonnull final BlockState block) {
         final BlockBucket blockBucket = new BlockBucket();
         blockBucket.addBlock(block, 100);
         return blockBucket;
     }
 
-    public static BlockBucket deserialize(@NonNull final Map<String, Object> map) {
+    public static BlockBucket deserialize(@Nonnull final Map<String, Object> map) {
         if (!map.containsKey("blocks")) {
             return null;
         }
         return ConfigurationUtil.BLOCK_BUCKET.parseString(map.get("blocks").toString());
     }
 
-    public void addBlock(@NonNull final BlockState block) {
+    public void addBlock(@Nonnull final BlockState block) {
         this.addBlock(block, -1);
     }
 
-    public void addBlock(@NonNull final BlockState block, final int chance) {
+    public void addBlock(@Nonnull final BlockState block, final int chance) {
         addBlock(block, (double) chance);
     }
 
-    private void addBlock(@NonNull final BlockState block, double chance) {
+    private void addBlock(@Nonnull final BlockState block, double chance) {
         if (chance == -1)
             chance = 1;
         String prefix = input.length() == 0 ? "" : ",";

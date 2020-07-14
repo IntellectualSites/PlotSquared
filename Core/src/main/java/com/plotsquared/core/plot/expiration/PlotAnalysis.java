@@ -31,6 +31,7 @@ import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import org.slf4j.Logger;
@@ -84,7 +85,7 @@ public class PlotAnalysis {
     }
 
     public static void analyzePlot(Plot plot, RunnableVal<PlotAnalysis> whenDone) {
-        HybridUtils.manager.analyzePlot(plot, whenDone);
+        PlotSquared.platform().getInjector().getInstance(HybridUtils.class).analyzePlot(plot, whenDone);
     }
 
     /**
@@ -109,7 +110,7 @@ public class PlotAnalysis {
             return;
         }
         running = true;
-        final ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots());
+        final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 Iterator<Plot> iterator = plots.iterator();
@@ -450,7 +451,7 @@ public class PlotAnalysis {
                     logger.info("[P2]  Saving calibration");
                 }
                 Settings.AUTO_CLEAR.put("auto-calibrated", settings);
-                Settings.save(PlotSquared.get().worldsFile);
+                Settings.save(PlotSquared.get().getWorldsFile());
                 running = false;
                 for (Plot plot : plots) {
                     plot.removeRunning();

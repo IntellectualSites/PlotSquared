@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.generator.HybridPlotManager;
 import com.plotsquared.core.generator.HybridUtils;
@@ -34,6 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.util.MainUtil;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 
@@ -44,7 +46,14 @@ import java.util.Arrays;
     category = CommandCategory.DEBUG,
     permission = "plots.debugroadregen")
 public class DebugRoadRegen extends SubCommand {
+
     public static final String USAGE = "/plot debugroadregen <plot|region [height]>";
+
+    private final HybridUtils hybridUtils;
+
+    @Inject public DebugRoadRegen(@Nonnull final HybridUtils hybridUtils) {
+        this.hybridUtils = hybridUtils;
+    }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
@@ -117,7 +126,7 @@ public class DebugRoadRegen extends SubCommand {
         MainUtil.sendMessage(player,
             "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
         MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
-        boolean result = HybridUtils.manager.scheduleSingleRegionRoadUpdate(plot, height);
+        boolean result = this.hybridUtils.scheduleSingleRegionRoadUpdate(plot, height);
         if (!result) {
             MainUtil.sendMessage(player,
                 "&cCannot schedule mass schematic update! (Is one already in progress?)");

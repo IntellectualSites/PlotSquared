@@ -25,18 +25,20 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.jnbt.CompoundTag;
+import javax.annotation.Nonnull;
 
 import java.net.URL;
 import java.util.List;
@@ -49,9 +51,18 @@ import java.util.UUID;
     permission = "plots.save")
 public class Save extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        String world = player.getLocation().getWorld();
-        if (!PlotSquared.get().hasPlotArea(world)) {
+    private final PlotAreaManager plotAreaManager;
+    private final SchematicHandler schematicHandler;
+
+    @Inject public Save(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final SchematicHandler schematicHandler) {
+        this.plotAreaManager = plotAreaManager;
+        this.schematicHandler = schematicHandler;
+    }
+
+    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
+        final String world = player.getLocation().getWorldName();
+        if (!this.plotAreaManager.hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         final Plot plot = player.getCurrentPlot();
@@ -72,20 +83,20 @@ public class Save extends SubCommand {
             return false;
         }
         plot.addRunning();
-        SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
+        this.schematicHandler.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
             @Override public void run(final CompoundTag value) {
                 TaskManager.runTaskAsync(() -> {
                     String time = (System.currentTimeMillis() / 1000) + "";
                     Location[] corners = plot.getCorners();
-                    corners[0].setY(0);
-                    corners[1].setY(255);
+                    corners[0] = corners[0].withY(0);
+                    corners[1] = corners[1].withY(255);
                     int size = (corners[1].getX() - corners[0].getX()) + 1;
                     PlotId id = plot.getId();
                     String world1 = plot.getArea().toString().replaceAll(";", "-")
                         .replaceAll("[^A-Za-z0-9]", "");
                     final String file = time + '_' + world1 + '_' + id.x + '_' + id.y + '_' + size;
                     UUID uuid = player.getUUID();
-                    SchematicHandler.manager.upload(value, uuid, file, new RunnableVal<URL>() {
+                    schematicHandler.upload(value, uuid, file, new RunnableVal<URL>() {
                         @Override public void run(URL url) {
                             plot.removeRunning();
                             if (url == null) {

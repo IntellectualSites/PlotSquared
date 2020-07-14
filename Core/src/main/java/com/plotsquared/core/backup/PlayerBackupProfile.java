@@ -25,14 +25,15 @@
  */
 package com.plotsquared.core.backup;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -51,22 +52,30 @@ import java.util.concurrent.CompletableFuture;
  * plot, which is used to store and retrieve plot backups
  * {@inheritDoc}
  */
-@RequiredArgsConstructor
 public class PlayerBackupProfile implements BackupProfile {
 
     private final UUID owner;
     private final Plot plot;
     private final BackupManager backupManager;
+    private final SchematicHandler schematicHandler;
+
+    @Inject public PlayerBackupProfile(@Assisted @Nonnull final UUID owner, @Assisted @Nonnull final Plot plot,
+        @Nonnull final BackupManager backupManager, @Nonnull final SchematicHandler schematicHandler) {
+        this.owner = owner;
+        this.plot = plot;
+        this.backupManager = backupManager;
+        this.schematicHandler = schematicHandler;
+    }
 
     private volatile List<Backup> backupCache;
     private final Object backupLock = new Object();
 
-    private static boolean isValidFile(@NotNull final Path path) {
+    private static boolean isValidFile(@Nonnull final Path path) {
         final String name = path.getFileName().toString();
         return name.endsWith(".schem") || name.endsWith(".schematic");
     }
 
-    @Override @NotNull public CompletableFuture<List<Backup>> listBackups() {
+    @Override @Nonnull public CompletableFuture<List<Backup>> listBackups() {
         synchronized (this.backupLock) {
             if (this.backupCache != null) {
                 return CompletableFuture.completedFuture(backupCache);
@@ -112,12 +121,12 @@ public class PlayerBackupProfile implements BackupProfile {
         });
     }
 
-    @NotNull public Path getBackupDirectory() {
+    @Nonnull public Path getBackupDirectory() {
         return resolve(resolve(resolve(backupManager.getBackupPath(), Objects.requireNonNull(plot.getArea().toString(), "plot area id")),
             Objects.requireNonNull(plot.getId().toDashSeparatedString(), "plot id")), Objects.requireNonNull(owner.toString(), "owner"));
     }
 
-    private static Path resolve(@NotNull final Path parent, final String child) {
+    private static Path resolve(@Nonnull final Path parent, final String child) {
         Path path = parent;
         try {
             if (!Files.exists(parent)) {
@@ -133,7 +142,7 @@ public class PlayerBackupProfile implements BackupProfile {
         return path;
     }
 
-    @Override @NotNull public CompletableFuture<Backup> createBackup() {
+    @Override @Nonnull public CompletableFuture<Backup> createBackup() {
         final CompletableFuture<Backup> future = new CompletableFuture<>();
         this.listBackups().thenAcceptAsync(backups -> {
             synchronized (this.backupLock) {
@@ -141,7 +150,7 @@ public class PlayerBackupProfile implements BackupProfile {
                     backups.get(backups.size() - 1).delete();
                 }
                 final List<Plot> plots = Collections.singletonList(plot);
-                final boolean result = SchematicHandler.manager.exportAll(plots, getBackupDirectory().toFile(),
+                final boolean result = this.schematicHandler.exportAll(plots, getBackupDirectory().toFile(),
                     "%world%-%id%-" + System.currentTimeMillis(), () ->
                     future.complete(new Backup(this, System.currentTimeMillis(), null)));
                 if (!result) {
@@ -153,7 +162,7 @@ public class PlayerBackupProfile implements BackupProfile {
         return future;
     }
 
-    @Override @NotNull public CompletableFuture<Void> restoreBackup(@NotNull final Backup backup) {
+    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup) {
         final CompletableFuture<Void> future = new CompletableFuture<>();
         if (backup.getFile() == null || !Files.exists(backup.getFile())) {
             future.completeExceptionally(new IllegalArgumentException("The specific backup does not exist"));
@@ -161,14 +170,14 @@ public class PlayerBackupProfile implements BackupProfile {
             TaskManager.runTaskAsync(() -> {
                 Schematic schematic = null;
                 try {
-                    schematic = SchematicHandler.manager.getSchematic(backup.getFile().toFile());
+                    schematic = this.schematicHandler.getSchematic(backup.getFile().toFile());
                 } catch (SchematicHandler.UnsupportedFormatException e) {
                     e.printStackTrace();
                 }
                 if (schematic == null) {
                     future.completeExceptionally(new IllegalArgumentException("The backup is non-existent or not in the correct format"));
                 } else {
-                    SchematicHandler.manager.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
+                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
                         @Override public void run(Boolean value) {
                             if (value) {
                                 future.complete(null);

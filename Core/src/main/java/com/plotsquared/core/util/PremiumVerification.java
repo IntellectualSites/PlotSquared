@@ -26,6 +26,7 @@
 package com.plotsquared.core.util;
 
 public class PremiumVerification {
+
     private static Boolean usingPremium;
 
     /**

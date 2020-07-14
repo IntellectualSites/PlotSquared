@@ -29,7 +29,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag {
 
@@ -38,7 +38,7 @@ public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag
      *
      * @param value Flag value
      */
-    public DoneFlag(@NotNull String value) {
+    public DoneFlag(@Nonnull String value) {
         super(value, Captions.NONE, Captions.NONE);
     }
 
@@ -46,11 +46,11 @@ public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag
         return !plot.getFlag(DoneFlag.class).isEmpty();
     }
 
-    @Override public DoneFlag parse(@NotNull String input) {
+    @Override public DoneFlag parse(@Nonnull String input) {
         return flagOf(input);
     }
 
-    @Override public DoneFlag merge(@NotNull String newValue) {
+    @Override public DoneFlag merge(@Nonnull String newValue) {
         return flagOf(newValue);
     }
 
@@ -62,7 +62,7 @@ public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag
         return "";
     }
 
-    @Override protected DoneFlag flagOf(@NotNull String value) {
+    @Override protected DoneFlag flagOf(@Nonnull String value) {
         return new DoneFlag(value);
     }
 

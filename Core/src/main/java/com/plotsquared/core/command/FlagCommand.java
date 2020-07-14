@@ -50,8 +50,8 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.helpmenu.HelpMenu;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ public final class FlagCommand extends Command {
     }
 
     private static boolean checkPermValue(@Nonnull final PlotPlayer player,
-        @NotNull final PlotFlag<?, ?> flag, @NotNull String key, @NotNull String value) {
+        @Nonnull final PlotFlag<?, ?> flag, @Nonnull String key, @Nonnull String value) {
         key = key.toLowerCase();
         value = value.toLowerCase();
         String perm = CaptionUtility
@@ -152,7 +152,7 @@ public final class FlagCommand extends Command {
      *
      * @return true if the player is allowed to modify the flags at their current location
      */
-    private static boolean checkRequirements(@NotNull final PlotPlayer player) {
+    private static boolean checkRequirements(@Nonnull final PlotPlayer player) {
         final Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -180,8 +180,8 @@ public final class FlagCommand extends Command {
      * @param arg    String to extract flag from
      * @return The flag, if found, else null
      */
-    @Nullable private static PlotFlag<?, ?> getFlag(@NotNull final PlotPlayer player,
-        @NotNull final String arg) {
+    @Nullable private static PlotFlag<?, ?> getFlag(@Nonnull final PlotPlayer player,
+        @Nonnull final String arg) {
         if (arg != null && arg.length() > 0) {
             final PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(arg);
             if (flag instanceof InternalFlag || flag == null) {

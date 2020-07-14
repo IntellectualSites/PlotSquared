@@ -25,14 +25,15 @@
  */
 package com.plotsquared.bukkit.managers;
 
+import com.google.inject.Singleton;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.PlatformWorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,13 +45,13 @@ import java.util.List;
  * Default Bukkit world manager. It will handle world creation by
  * registering the generator in bukkit.yml
  */
-public class BukkitWorldManager implements PlatformWorldManager<World> {
+@Singleton public class BukkitWorldManager implements PlatformWorldManager<World> {
 
     @Override public void initialize() {
     }
 
     @Override @Nullable
-    public World handleWorldCreation(@NotNull String worldName, @Nullable String generator) {
+    public World handleWorldCreation(@Nonnull String worldName, @Nullable String generator) {
         this.setGenerator(worldName, generator);
         final WorldCreator wc = new WorldCreator(worldName);
         wc.environment(World.Environment.NORMAL);

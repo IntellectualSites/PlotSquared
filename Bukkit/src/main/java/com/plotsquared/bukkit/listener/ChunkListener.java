@@ -25,10 +25,12 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.ReflectionUtils.RefClass;
 import com.plotsquared.core.util.ReflectionUtils.RefField;
 import com.plotsquared.core.util.ReflectionUtils.RefMethod;
@@ -51,6 +53,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,12 +67,15 @@ public class ChunkListener implements Listener {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + ChunkListener.class.getSimpleName());
 
+    private final PlotAreaManager plotAreaManager;
+
     private RefMethod methodGetHandleChunk;
     private RefField mustSave;
     private Chunk lastChunk;
     private boolean ignoreUnload = false;
 
-    public ChunkListener() {
+    @Inject public ChunkListener(@Nonnull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             try {
                 RefClass classChunk = getRefClass("{nms}.Chunk");
@@ -91,7 +97,7 @@ public class ChunkListener implements Listener {
                 HashSet<Chunk> toUnload = new HashSet<>();
                 for (World world : Bukkit.getWorlds()) {
                     String worldName = world.getName();
-                    if (!PlotSquared.get().hasPlotArea(worldName)) {
+                    if (!this.plotAreaManager.hasPlotArea(worldName)) {
                         continue;
                     }
                     Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
@@ -151,23 +157,23 @@ public class ChunkListener implements Listener {
         int z = chunkZ << 4;
         int x2 = x + 15;
         int z2 = z + 15;
-        Plot plot = new Location(world, x, 1, z).getOwnedPlotAbs();
+        Plot plot = Location.at(world, x, 1, z).getOwnedPlotAbs();
         if (plot != null && plot.hasOwner()) {
             return true;
         }
-        plot = new Location(world, x2, 1, z2).getOwnedPlotAbs();
+        plot = Location.at(world, x2, 1, z2).getOwnedPlotAbs();
         if (plot != null && plot.hasOwner()) {
             return true;
         }
-        plot = new Location(world, x2, 1, z).getOwnedPlotAbs();
+        plot = Location.at(world, x2, 1, z).getOwnedPlotAbs();
         if (plot != null && plot.hasOwner()) {
             return true;
         }
-        plot = new Location(world, x, 1, z2).getOwnedPlotAbs();
+        plot = Location.at(world, x, 1, z2).getOwnedPlotAbs();
         if (plot != null && plot.hasOwner()) {
             return true;
         }
-        plot = new Location(world, x + 7, 1, z + 7).getOwnedPlotAbs();
+        plot = Location.at(world, x + 7, 1, z + 7).getOwnedPlotAbs();
         return plot != null && plot.hasOwner();
     }
 
@@ -178,7 +184,7 @@ public class ChunkListener implements Listener {
         Chunk chunk = event.getChunk();
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             String world = chunk.getWorld().getName();
-            if (PlotSquared.get().hasPlotArea(world)) {
+            if (this.plotAreaManager.hasPlotArea(world)) {
                 if (unloadChunk(world, chunk, true)) {
                     return;
                 }
@@ -201,7 +207,7 @@ public class ChunkListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
+            if (!this.plotAreaManager.hasPlotArea(chunk.getWorld().getName())) {
                 return;
             }
             Entity[] entities = chunk.getEntities();
@@ -231,7 +237,7 @@ public class ChunkListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
+            if (!this.plotAreaManager.hasPlotArea(chunk.getWorld().getName())) {
                 return;
             }
             Entity[] entities = chunk.getEntities();
@@ -279,7 +285,7 @@ public class ChunkListener implements Listener {
     }
 
     public boolean processChunk(Chunk chunk, boolean unload) {
-        if (!PlotSquared.get().hasPlotArea(chunk.getWorld().getName())) {
+        if (!this.plotAreaManager.hasPlotArea(chunk.getWorld().getName())) {
             return false;
         }
         Entity[] entities = chunk.getEntities();

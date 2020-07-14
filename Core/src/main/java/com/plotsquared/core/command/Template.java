@@ -25,7 +25,10 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -36,6 +39,7 @@ import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
@@ -44,6 +48,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,14 +66,35 @@ import java.util.zip.ZipOutputStream;
     category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
 
+    private final PlotAreaManager plotAreaManager;
+    private final YamlConfiguration worldConfiguration;
+    private final File worldFile;
+    private final SetupUtils setupUtils;
+    private final GlobalBlockQueue globalBlockQueue;
+    private final WorldUtil worldUtil;
+
+    @Inject public Template(@Nonnull final PlotAreaManager plotAreaManager,
+                            @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                            @WorldFile @Nonnull final File worldFile,
+                            @Nonnull final SetupUtils setupUtils,
+                            @Nonnull final GlobalBlockQueue globalBlockQueue,
+                            @Nonnull final WorldUtil worldUtil) {
+        this.plotAreaManager = plotAreaManager;
+        this.worldConfiguration = worldConfiguration;
+        this.worldFile = worldFile;
+        this.setupUtils = setupUtils;
+        this.globalBlockQueue = globalBlockQueue;
+        this.worldUtil = worldUtil;
+    }
+
     public static boolean extractAllFiles(String world, String template) {
         try {
             File folder =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+                MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
             if (!folder.exists()) {
                 return false;
             }
-            File output = PlotSquared.get().IMP.getDirectory();
+            File output = PlotSquared.platform().getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
@@ -105,10 +131,9 @@ public class Template extends SubCommand {
     }
 
     public static byte[] getBytes(PlotArea plotArea) {
-        ConfigurationSection section =
-            PlotSquared.get().worlds.getConfigurationSection("worlds." + plotArea.getWorldName());
+        ConfigurationSection section = PlotSquared.get().getWorldConfiguration().getConfigurationSection("worlds." + plotArea.getWorldName());
         YamlConfiguration config = new YamlConfiguration();
-        String generator = SetupUtils.manager.getGenerator(plotArea);
+        String generator = PlotSquared.platform().getSetupUtils().getGenerator(plotArea);
         if (generator != null) {
             config.set("generator.plugin", generator);
         }
@@ -120,7 +145,7 @@ public class Template extends SubCommand {
 
     public static void zipAll(String world, Set<FileBytes> files) throws IOException {
         File output =
-            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+            MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(
             output + File.separator + world + ".template");
@@ -159,7 +184,7 @@ public class Template extends SubCommand {
                         "/plot template import <world> <template>");
                     return false;
                 }
-                if (PlotSquared.get().hasPlotArea(world)) {
+                if (this.plotAreaManager.hasPlotArea(world)) {
                     MainUtil.sendMessage(player, Captions.SETUP_WORLD_TAKEN, world);
                     return false;
                 }
@@ -169,20 +194,20 @@ public class Template extends SubCommand {
                         .sendMessage(player, "&cInvalid template file: " + args[2] + ".template");
                     return false;
                 }
-                File worldFile = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
+                File worldFile = MainUtil.getFile(PlotSquared.platform().getDirectory(),
                     Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml");
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
-                PlotSquared.get().worlds.set("worlds." + world, worldConfig.get(""));
+                this.worldConfiguration.set("worlds." + world, worldConfig.get(""));
                 try {
-                    PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
-                    PlotSquared.get().worlds.load(PlotSquared.get().worldsFile);
+                    this.worldConfiguration.save(this.worldFile);
+                    this.worldConfiguration.load(this.worldFile);
                 } catch (InvalidConfigurationException | IOException e) {
                     e.printStackTrace();
                 }
                 String manager =
-                    worldConfig.getString("generator.plugin", PlotSquared.imp().getPluginName());
+                    worldConfig.getString("generator.plugin", PlotSquared.platform().getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
-                PlotAreaBuilder builder = new PlotAreaBuilder()
+                PlotAreaBuilder builder = PlotAreaBuilder.newBuilder()
                         .plotAreaType(MainUtil.getType(worldConfig))
                         .terrainType(MainUtil.getTerrain(worldConfig))
                         .plotManager(manager)
@@ -190,10 +215,10 @@ public class Template extends SubCommand {
                         .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                         .worldName(world);
 
-                SetupUtils.manager.setupWorld(builder);
-                GlobalBlockQueue.IMP.addEmptyTask(() -> {
+                this.setupUtils.setupWorld(builder);
+                this.globalBlockQueue.addEmptyTask(() -> {
                     MainUtil.sendMessage(player, "Done!");
-                    player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
+                    player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
                 });
                 return true;
             }
@@ -203,7 +228,7 @@ public class Template extends SubCommand {
                         "/plot template export <world>");
                     return false;
                 }
-                final PlotArea area = PlotSquared.get().getPlotAreaByString(world);
+                final PlotArea area = this.plotAreaManager.getPlotAreaByString(world);
                 if (area == null) {
                     MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
                     return false;

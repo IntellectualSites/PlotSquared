@@ -46,14 +46,16 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
-import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +70,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * The abstract class supporting {@code BukkitPlayer} and {@code SpongePlayer}.
@@ -91,7 +92,17 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     private ConcurrentHashMap<String, Object> meta;
     private int hash;
 
-    public static <T> PlotPlayer<T> from(@NonNull final T object) {
+    private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
+    private final EconHandler econHandler;
+
+    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler) {
+        this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
+    }
+
+    public static <T> PlotPlayer<T> from(@Nonnull final T object) {
         if (!converters.containsKey(object.getClass())) {
             throw new IllegalArgumentException(String
                 .format("There is no registered PlotPlayer converter for type %s",
@@ -100,7 +111,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return converters.get(object.getClass()).convert(object);
     }
 
-    public static <T> void registerConverter(@NonNull final Class<T> clazz,
+    public static <T> void registerConverter(@Nonnull final Class<T> clazz,
         final PlotPlayerConverter<T> converter) {
         converters.put(clazz, converter);
     }
@@ -109,7 +120,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return Collections.unmodifiableCollection(debugModeEnabled);
     }
 
-    public static Collection<PlotPlayer<?>> getDebugModePlayersInPlot(@NotNull final Plot plot) {
+    public static Collection<PlotPlayer<?>> getDebugModePlayersInPlot(@Nonnull final Plot plot) {
         if (debugModeEnabled.isEmpty()) {
             return Collections.emptyList();
         }
@@ -133,7 +144,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @return Wrapped player
      */
     public static PlotPlayer<?> wrap(Object player) {
-        return PlotSquared.get().IMP.wrapPlayer(player);
+        return PlotSquared.platform().wrapPlayer(player);
     }
 
     public abstract Actor toActor();
@@ -269,11 +280,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     public int getPlotCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getPlotCount(getLocation().getWorld());
+            return getPlotCount(getLocation().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
         final UUID uuid = getUUID();
-        PlotSquared.get().forEachPlotArea(value -> {
+        this.plotAreaManager.forEachPlotArea(value -> {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 for (Plot plot : value.getPlotsAbs(uuid)) {
                     if (!DoneFlag.isDone(plot)) {
@@ -289,10 +300,10 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
 
     public int getClusterCount() {
         if (!Settings.Limit.GLOBAL) {
-            return getClusterCount(getLocation().getWorld());
+            return getClusterCount(getLocation().getWorldName());
         }
         final AtomicInteger count = new AtomicInteger(0);
-        PlotSquared.get().forEachPlotArea(value -> {
+        this.plotAreaManager.forEachPlotArea(value -> {
             for (PlotCluster cluster : value.getClusters()) {
                 if (cluster.isOwner(getUUID())) {
                     count.incrementAndGet();
@@ -311,7 +322,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     public int getPlotCount(String world) {
         UUID uuid = getUUID();
         int count = 0;
-        for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
+        for (PlotArea area : this.plotAreaManager.getPlotAreasSet(world)) {
             if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
                 count +=
                     area.getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
@@ -325,7 +336,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     public int getClusterCount(String world) {
         UUID uuid = getUUID();
         int count = 0;
-        for (PlotArea area : PlotSquared.get().getPlotAreas(world)) {
+        for (PlotArea area : this.plotAreaManager.getPlotAreasSet(world)) {
             for (PlotCluster cluster : area.getClusters()) {
                 if (cluster.isOwner(getUUID())) {
                     count++;
@@ -343,20 +354,20 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @see #getPlotCount() for the number of plots
      */
     public Set<Plot> getPlots() {
-        return PlotSquared.get().getPlots(this);
+        return PlotQuery.newQuery().ownedBy(this).asSet();
     }
 
     /**
      * Return the PlotArea this player is currently in, or null.
      *
-     * @return
+     * @return Plot area the player is currently in, or {@code null}
      */
-    public PlotArea getPlotAreaAbs() {
-        return PlotSquared.get().getPlotAreaAbs(getLocation());
+    @Nullable public PlotArea getPlotAreaAbs() {
+        return this.plotAreaManager.getPlotArea(getLocation());
     }
 
     public PlotArea getApplicablePlotArea() {
-        return PlotSquared.get().getApplicablePlotArea(getLocation());
+        return this.plotAreaManager.getApplicablePlotArea(getLocation());
     }
 
     @Override public RequiredType getSuperCaller() {
@@ -368,10 +379,10 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      *
      * @return The location
      */
-    @NotNull public Location getLocation() {
+    @Nonnull public Location getLocation() {
         Location location = getMeta("location");
         if (location != null) {
-            return location.copy(); // Always return a copy of the location
+            return location;
         }
         return getLocationFull();
     }
@@ -395,9 +406,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      *
      * @return UUID
      */
-    @Override @NotNull public abstract UUID getUUID();
+    @Override @Nonnull public abstract UUID getUUID();
 
-    public boolean canTeleport(@NotNull final Location location) {
+    public boolean canTeleport(@Nonnull final Location location) {
         Preconditions.checkNotNull(location, "Specified location cannot be null");
         final Location current = getLocationFull();
         teleport(location);
@@ -489,21 +500,21 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      *
      * @param weather the weather visible to the player
      */
-    public abstract void setWeather(@NotNull PlotWeather weather);
+    public abstract void setWeather(@Nonnull PlotWeather weather);
 
     /**
      * Get this player's gamemode.
      *
      * @return the gamemode of the player.
      */
-    public abstract @NotNull GameMode getGameMode();
+    public abstract @Nonnull GameMode getGameMode();
 
     /**
      * Set this player's gameMode.
      *
      * @param gameMode the gamemode to set
      */
-    public abstract void setGameMode(@NotNull GameMode gameMode);
+    public abstract void setGameMode(@Nonnull GameMode gameMode);
 
     /**
      * Set this player's local time (ticks).
@@ -532,7 +543,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @param location where to play the music
      * @param id       the record item id
      */
-    public abstract void playMusic(@NotNull Location location, @NotNull ItemType id);
+    public abstract void playMusic(@Nonnull Location location, @Nonnull ItemType id);
 
     /**
      * Check if this player is banned.
@@ -579,7 +590,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
             removePersistentMeta("quitLoc");
         }
         if (plot != null) {
-            PlotSquared.get().getEventDispatcher().callLeave(this, plot);
+            this.eventDispatcher.callLeave(this, plot);
         }
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
@@ -592,8 +603,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         if (ExpireManager.IMP != null) {
             ExpireManager.IMP.storeDate(getUUID(), System.currentTimeMillis());
         }
-        PlotSquared.imp().getPlayerManager().removePlayer(this);
-        PlotSquared.get().IMP.unregister(this);
+        PlotSquared.platform().getPlayerManager().removePlayer(this);
+        PlotSquared.platform().unregister(this);
 
         debugModeEnabled.remove(this);
     }
@@ -617,7 +628,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     public int getPlayerClusterCount() {
         final AtomicInteger count = new AtomicInteger();
-        PlotSquared.get().forEachPlotArea(value -> count.addAndGet(value.getClusters().size()));
+        this.plotAreaManager.forEachPlotArea(value -> count.addAndGet(value.getClusters().size()));
         return count.get();
     }
 
@@ -628,9 +639,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @return a {@code Set} of plots this player owns in the provided world
      */
     public Set<Plot> getPlots(String world) {
-        UUID uuid = getUUID();
-        return PlotSquared.get().getPlots(world).stream().filter(plot -> plot.isOwner(uuid))
-            .collect(Collectors.toCollection(HashSet::new));
+        return PlotQuery.newQuery().inWorld(world).ownedBy(getUUID()).asSet();
     }
 
     public void populatePersistentMetaMap() {
@@ -650,7 +659,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
                         if (!Settings.Teleport.ON_LOGIN) {
                             return;
                         }
-                        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
+                        PlotAreaManager manager = PlotPlayer.this.plotAreaManager;
 
                         if (!(manager instanceof SinglePlotAreaManager)) {
                             return;
@@ -678,7 +687,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
                             return;
                         }
 
-                        final Location location = new Location(plot.getWorldName(), x, y, z);
+                        final Location location = Location.at(plot.getWorldName(), x, y, z);
                         if (plot.isLoaded()) {
                             TaskManager.runTask(() -> {
                                 if (getMeta("teleportOnLogin", true)) {
@@ -760,23 +769,24 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * The amount of money this Player has.
      */
     public double getMoney() {
-        return EconHandler.getEconHandler() == null ? 0 : EconHandler.getEconHandler().getMoney(this);
+        return this.econHandler == null ? 0 : this.econHandler.getMoney(this);
     }
 
     public void withdraw(double amount) {
-        if (EconHandler.getEconHandler() != null) {
-            EconHandler.getEconHandler().withdrawMoney(this, amount);
+        if (this.econHandler != null) {
+            this.econHandler.withdrawMoney(this, amount);
         }
     }
 
     public void deposit(double amount) {
-        if (EconHandler.getEconHandler() != null) {
-            EconHandler.getEconHandler().depositMoney(this, amount);
+        if (this.econHandler != null) {
+            this.econHandler.depositMoney(this, amount);
         }
     }
 
     @FunctionalInterface
     public interface PlotPlayerConverter<BaseObject> {
-        PlotPlayer convert(BaseObject object);
+        PlotPlayer<?> convert(BaseObject object);
     }
+
 }

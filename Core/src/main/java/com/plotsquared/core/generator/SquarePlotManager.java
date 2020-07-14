@@ -35,6 +35,7 @@ import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -47,10 +48,12 @@ public abstract class SquarePlotManager extends GridPlotManager {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + SquarePlotManager.class.getSimpleName());
 
     private final SquarePlotWorld squarePlotWorld;
+    private final RegionManager regionManager;
 
-    public SquarePlotManager(SquarePlotWorld squarePlotWorld) {
+    public SquarePlotManager(@Nonnull final SquarePlotWorld squarePlotWorld, @Nonnull final RegionManager regionManager) {
         super(squarePlotWorld);
         this.squarePlotWorld = squarePlotWorld;
+        this.regionManager = regionManager;
     }
 
     @Override public boolean clearPlot(final Plot plot, final Runnable whenDone) {
@@ -64,11 +67,9 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 Iterator<CuboidRegion> iterator = regions.iterator();
                 CuboidRegion region = iterator.next();
                 iterator.remove();
-                Location pos1 = new Location(plot.getWorldName(), region.getMinimumPoint().getX(),
-                    region.getMinimumPoint().getY(), region.getMinimumPoint().getZ());
-                Location pos2 = new Location(plot.getWorldName(), region.getMaximumPoint().getX(),
-                    region.getMaximumPoint().getY(), region.getMaximumPoint().getZ());
-                RegionManager.manager.regenerateRegion(pos1, pos2, false, this);
+                final Location pos1 = Location.at(plot.getWorldName(), region.getMinimumPoint());
+                final Location pos2 = Location.at(plot.getWorldName(), region.getMaximumPoint());
+                regionManager.regenerateRegion(pos1, pos2, false, this);
             }
         };
         run.run();
@@ -82,7 +83,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             + squarePlotWorld.PLOT_WIDTH))) - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
             + squarePlotWorld.PLOT_WIDTH))) - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
-        return new Location(squarePlotWorld.getWorldName(), x, Math.min(getWorldHeight(), 255), z);
+        return Location.at(squarePlotWorld.getWorldName(), x, Math.min(getWorldHeight(), 255), z);
     }
 
     @Override public PlotId getPlotIdAbs(int x, int y, int z) {
@@ -247,7 +248,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
             + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH - (int) Math
             .floor(squarePlotWorld.ROAD_WIDTH / 2);
-        return new Location(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinBuildHeight(),
-            z);
+        return Location.at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinBuildHeight(), z);
     }
 }

@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class ForcefieldFlag extends BooleanFlag<ForcefieldFlag> {
 
@@ -38,7 +38,7 @@ public class ForcefieldFlag extends BooleanFlag<ForcefieldFlag> {
         super(value, Captions.FLAG_DESCRIPTION_FORCEFIELD);
     }
 
-    @Override protected ForcefieldFlag flagOf(@NotNull Boolean value) {
+    @Override protected ForcefieldFlag flagOf(@Nonnull Boolean value) {
         return value ? FORCEFIELD_TRUE : FORCEFIELD_FALSE;
     }
 

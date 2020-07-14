@@ -27,6 +27,7 @@ package com.plotsquared.core.plot;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -38,6 +39,7 @@ import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.SquarePlotWorld;
+import com.plotsquared.core.inject.annotations.ImpromptuPipeline;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
@@ -55,6 +57,7 @@ import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -63,6 +66,7 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -71,8 +75,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +130,17 @@ public class Plot {
     private static Set<Plot> connected_cache;
     private static Set<CuboidRegion> regions_cache;
 
-    @NotNull private final PlotId id;
+    @Nonnull private final PlotId id;
+
+    // These will be injected
+    @Inject private EventDispatcher eventDispatcher;
+    @Inject private PlotListener plotListener;
+    @Inject private RegionManager regionManager;
+    @Inject private GlobalBlockQueue blockQueue;
+    @Inject private WorldUtil worldUtil;
+    @Inject private SchematicHandler schematicHandler;
+    @Inject @ImpromptuPipeline private UUIDPipeline impromptuPipeline;
+
     /**
      * Plot flag container
      */
@@ -197,7 +211,7 @@ public class Plot {
      * @param owner the plot owner
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(PlotArea area, @NotNull PlotId id, UUID owner) {
+    public Plot(final PlotArea area, @Nonnull final PlotId id, final UUID owner) {
         this(area, id, owner, 0);
     }
 
@@ -209,7 +223,7 @@ public class Plot {
      * @param id   the plot id
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(@NotNull PlotArea area, @NotNull PlotId id) {
+    public Plot(@Nonnull final PlotArea area, @Nonnull final PlotId id) {
         this(area, id, null, 0);
     }
 
@@ -224,12 +238,13 @@ public class Plot {
      * @param temp  Represents whatever the database manager needs it to
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(PlotArea area, @NotNull PlotId id, UUID owner, int temp) {
+    public Plot(final PlotArea area, @Nonnull final PlotId id, final UUID owner, final int temp) {
         this.area = area;
         this.id = id;
         this.owner = owner;
         this.temp = temp;
         this.flagContainer.setParentContainer(area.getFlagContainer());
+        PlotSquared.platform().getInjector().injectMembers(this);
     }
 
     /**
@@ -242,7 +257,7 @@ public class Plot {
      * @param merged  an array giving merged plots
      * @see Plot#getPlot(Location) for existing plots
      */
-    public Plot(@NotNull PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
+    public Plot(@Nonnull PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
         HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
         PlotArea area, boolean[] merged, long timestamp, int temp) {
         this.id = id;
@@ -265,6 +280,7 @@ public class Plot {
                 }
             }
         }
+        PlotSquared.platform().getInjector().injectMembers(this);
     }
 
     /**
@@ -282,13 +298,13 @@ public class Plot {
                 return defaultArea.getPlotAbs(id);
             }
         } else if (split.length == 3) {
-            PlotArea pa = PlotSquared.get().getPlotArea(split[0], null);
+            PlotArea pa = PlotSquared.get().getPlotAreaManager().getPlotArea(split[0], null);
             if (pa != null) {
                 PlotId id = PlotId.fromString(split[1] + ';' + split[2]);
                 return pa.getPlotAbs(id);
             }
         } else if (split.length == 4) {
-            PlotArea pa = PlotSquared.get().getPlotArea(split[0], split[1]);
+            PlotArea pa = PlotSquared.get().getPlotAreaManager().getPlotArea(split[0], split[1]);
             if (pa != null) {
                 PlotId id = PlotId.fromString(split[1] + ';' + split[2]);
                 return pa.getPlotAbs(id);
@@ -405,7 +421,7 @@ public class Plot {
      */
     public List<PlotPlayer<?>> getPlayersInPlot() {
         final List<PlotPlayer<?>> players = new ArrayList<>();
-        for (final PlotPlayer<?> player : PlotSquared.imp().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager().getPlayers()) {
             if (this.equals(player.getCurrentPlot())) {
                 players.add(player);
             }
@@ -428,7 +444,7 @@ public class Plot {
      * @param uuid the player uuid
      * @return if the provided uuid is the owner of the plot
      */
-    public boolean isOwner(@NotNull UUID uuid) {
+    public boolean isOwner(@Nonnull UUID uuid) {
         if (uuid.equals(this.getOwner())) {
             return true;
         }
@@ -557,7 +573,7 @@ public class Plot {
      *
      * @return the PlotId for this plot
      */
-    @NotNull public PlotId getId() {
+    @Nonnull public PlotId getId() {
         return this.id;
     }
 
@@ -929,7 +945,7 @@ public class Plot {
         if (isDelete) {
             this.removeSign();
         }
-        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+        PlotUnlinkEvent event = this.eventDispatcher
             .callUnlink(getArea(), this, true, !isDelete,
                 isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR);
         if (event.getEventResult() != Result.DENY) {
@@ -942,7 +958,7 @@ public class Plot {
                     Runnable run = () -> {
                         for (CuboidRegion region : regions) {
                             Location[] corners = MainUtil.getCorners(getWorldName(), region);
-                            RegionManager.manager.clearAllEntities(corners[0], corners[1]);
+                            regionManager.clearAllEntities(corners[0], corners[1]);
                         }
                         TaskManager.runTask(whenDone);
                     };
@@ -953,14 +969,13 @@ public class Plot {
                             manager.claimPlot(current);
                         }
                     }
-                    GlobalBlockQueue.IMP.addEmptyTask(run);
+                    blockQueue.addEmptyTask(run);
                     return;
                 }
                 Plot current = queue.poll();
                 if (Plot.this.area.getTerrain() != PlotAreaTerrainType.NONE) {
                     try {
-                        RegionManager.manager
-                            .regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false,
+                        regionManager.regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false,
                                 this);
                     } catch (UnsupportedOperationException exception) {
                         MainUtil.sendMessage(null,
@@ -997,7 +1012,7 @@ public class Plot {
                     return;
                 }
                 CuboidRegion region = regions.poll();
-                RegionManager.manager.setBiome(region, extendBiome, biome, getWorldName(), this);
+                regionManager.setBiome(region, extendBiome, biome, getWorldName(), this);
             }
         };
         run.run();
@@ -1049,7 +1064,7 @@ public class Plot {
             current.setMerged(merged);
         }
         if (createSign) {
-            GlobalBlockQueue.IMP.addEmptyTask(() -> {
+            blockQueue.addEmptyTask(() -> {
                 TaskManager.runTaskAsync(() -> {
                     for (Plot current : plots) {
                         current.setSign(MainUtil.getName(current.getOwnerAbs()));
@@ -1068,7 +1083,7 @@ public class Plot {
      *
      * @param name name
      */
-    public void setSign(@NotNull String name) {
+    public void setSign(@Nonnull String name) {
         if (!isLoaded()) {
             return;
         }
@@ -1084,14 +1099,13 @@ public class Plot {
                         "%plr%", name),
                     Captions.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll(
                         "%plr%", name)};
-            WorldUtil.IMP
-                .setSign(this.getWorldName(), location.getX(), location.getY(), location.getZ(),
+            this.worldUtil.setSign(this.getWorldName(), location.getX(), location.getY(), location.getZ(),
                     lines);
         }
     }
 
     public boolean isLoaded() {
-        return WorldUtil.IMP.isWorld(getWorldName());
+        return this.worldUtil.isWorld(getWorldName());
     }
 
     /**
@@ -1262,7 +1276,7 @@ public class Plot {
     public int[] countEntities() {
         int[] count = new int[6];
         for (Plot current : this.getConnectedPlots()) {
-            int[] result = RegionManager.manager.countEntities(current);
+            int[] result = this.regionManager.countEntities(current);
             count[CAP_ENTITY] += result[CAP_ENTITY];
             count[CAP_ANIMAL] += result[CAP_ANIMAL];
             count[CAP_MONSTER] += result[CAP_MONSTER];
@@ -1329,12 +1343,12 @@ public class Plot {
         for (Plot current : getConnectedPlots()) {
             List<PlotPlayer<?>> players = current.getPlayersInPlot();
             for (PlotPlayer<?> pp : players) {
-                PlotListener.plotExit(pp, current);
+                this.plotListener.plotExit(pp, current);
             }
 
             if (Settings.Backup.DELETE_ON_UNCLAIM) {
                 // Destroy all backups when the plot is unclaimed
-                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(current)
+                Objects.requireNonNull(PlotSquared.platform()).getBackupManager().getProfile(current)
                     .destroy();
             }
 
@@ -1343,7 +1357,7 @@ public class Plot {
             current.setOwnerAbs(null);
             current.settings = null;
             for (PlotPlayer pp : players) {
-                PlotListener.plotEntry(pp, current);
+                this.plotListener.plotEntry(pp, current);
             }
         }
         return true;
@@ -1363,20 +1377,18 @@ public class Plot {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
-        Location location =
-            new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
+        Location location = Location.at(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
                 MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
         if (!isLoaded()) {
             result.accept(location);
             return;
         }
-        WorldUtil.IMP.getHighestBlock(getWorldName(), location.getX(), location.getZ(), y -> {
+        this.worldUtil.getHighestBlock(getWorldName(), location.getX(), location.getZ(), y -> {
             int height = y;
             if (area.allowSigns()) {
                 height = Math.max(y, getManager().getSignLoc(this).getY());
             }
-            location.setY(1 + height);
-            result.accept(location);
+            result.accept(location.withY(1 + height));
         });
     }
 
@@ -1387,19 +1399,16 @@ public class Plot {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
-        Location location =
-            new Location(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
-                MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
+        Location location = Location.at(this.getWorldName(), MathMan.average(bot.getX(), top.getX()),
+            MathMan.average(bot.getY(), top.getY()), MathMan.average(bot.getZ(), top.getZ()));
         if (!isLoaded()) {
             return location;
         }
-        int y = WorldUtil.IMP
-            .getHighestBlockSynchronous(getWorldName(), location.getX(), location.getZ());
+        int y = this.worldUtil.getHighestBlockSynchronous(getWorldName(), location.getX(), location.getZ());
         if (area.allowSigns()) {
             y = Math.max(y, getManager().getSignLoc(this).getY());
         }
-        location.setY(1 + y);
-        return location;
+        return location.withY(1 + y);
     }
 
     /**
@@ -1411,11 +1420,11 @@ public class Plot {
             + largest.getMinimumPoint().getX();
         int z = largest.getMinimumPoint().getZ() - 1;
         PlotManager manager = getManager();
-        int y = isLoaded() ? WorldUtil.IMP.getHighestBlockSynchronous(getWorldName(), x, z) : 62;
+        int y = isLoaded() ? this.worldUtil.getHighestBlockSynchronous(getWorldName(), x, z) : 62;
         if (area.allowSigns() && (y <= 0 || y >= 255)) {
             y = Math.max(y, manager.getSignLoc(this).getY() - 1);
         }
-        return new Location(getWorldName(), x, y + 1, z);
+        return Location.at(getWorldName(), x, y + 1, z);
     }
 
     public void getSide(Consumer<Location> result) {
@@ -1425,19 +1434,19 @@ public class Plot {
         int z = largest.getMinimumPoint().getZ() - 1;
         PlotManager manager = getManager();
         if (isLoaded()) {
-            WorldUtil.IMP.getHighestBlock(getWorldName(), x, z, y -> {
+            this.worldUtil.getHighestBlock(getWorldName(), x, z, y -> {
                 int height = y;
                 if (area.allowSigns() && (y <= 0 || y >= 255)) {
                     height = Math.max(y, manager.getSignLoc(this).getY() - 1);
                 }
-                result.accept(new Location(getWorldName(), x, height + 1, z));
+                result.accept(Location.at(getWorldName(), x, height + 1, z));
             });
         } else {
             int y = 62;
             if (area.allowSigns()) {
                 y = Math.max(y, manager.getSignLoc(this).getY() - 1);
             }
-            result.accept(new Location(getWorldName(), x, y + 1, z));
+            result.accept(Location.at(getWorldName(), x, y + 1, z));
         }
     }
 
@@ -1450,15 +1459,14 @@ public class Plot {
             return this.getDefaultHomeSynchronous(true);
         } else {
             Location bottom = this.getBottomAbs();
-            Location location = new Location(bottom.getWorld(), bottom.getX() + home.getX(),
+            Location location = Location.at(bottom.getWorldName(), bottom.getX() + home.getX(),
                 bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
                 home.getPitch());
             if (!isLoaded()) {
                 return location;
             }
-            if (!WorldUtil.IMP.getBlockSynchronous(location).getBlockType().getMaterial().isAir()) {
-                location.setY(Math.max(1 + WorldUtil.IMP
-                    .getHighestBlockSynchronous(this.getWorldName(), location.getX(),
+            if (!this.worldUtil.getBlockSynchronous(location).getBlockType().getMaterial().isAir()) {
+                location = location.withY(Math.max(1 + this.worldUtil.getHighestBlockSynchronous(this.getWorldName(), location.getX(),
                         location.getZ()), bottom.getY()));
             }
             return location;
@@ -1474,21 +1482,17 @@ public class Plot {
             this.getDefaultHome(result);
         } else {
             Location bottom = this.getBottomAbs();
-            Location location = new Location(bottom.getWorld(), bottom.getX() + home.getX(),
+            Location location = Location.at(bottom.getWorldName(), bottom.getX() + home.getX(),
                 bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
                 home.getPitch());
             if (!isLoaded()) {
                 result.accept(location);
                 return;
             }
-            WorldUtil.IMP.getBlock(location, block -> {
+            this.worldUtil.getBlock(location, block -> {
                 if (!block.getBlockType().getMaterial().isAir()) {
-                    WorldUtil.IMP
-                        .getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
-                            y -> {
-                                location.setY(Math.max(1 + y, bottom.getY()));
-                                result.accept(location);
-                            });
+                    this.worldUtil.getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
+                            y -> result.accept(location.withY(Math.max(1 + y, bottom.getY()))));
                 } else {
                     result.accept(location);
                 }
@@ -1546,10 +1550,10 @@ public class Plot {
             }
             int y = loc.getY() < 1 ?
                 (isLoaded() ?
-                    WorldUtil.IMP.getHighestBlockSynchronous(plot.getWorldName(), x, z) + 1 :
+                    this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), x, z) + 1 :
                     63) :
                 loc.getY();
-            return new Location(plot.getWorldName(), x, y, z);
+            return Location.at(plot.getWorldName(), x, y, z);
         }
         // Side
         return plot.getSideSynchronous();
@@ -1576,13 +1580,13 @@ public class Plot {
             }
             if (loc.getY() < 1) {
                 if (isLoaded()) {
-                    WorldUtil.IMP.getHighestBlock(plot.getWorldName(), x, z,
-                        y -> result.accept(new Location(plot.getWorldName(), x, y + 1, z)));
+                    this.worldUtil.getHighestBlock(plot.getWorldName(), x, z,
+                        y -> result.accept(Location.at(plot.getWorldName(), x, y + 1, z)));
                 } else {
-                    result.accept(new Location(plot.getWorldName(), x, 63, z));
+                    result.accept(Location.at(plot.getWorldName(), x, 63, z));
                 }
             } else {
-                result.accept(new Location(plot.getWorldName(), x, loc.getY(), z));
+                result.accept(Location.at(plot.getWorldName(), x, loc.getY(), z));
             }
             return;
         }
@@ -1679,7 +1683,7 @@ public class Plot {
      * This should not need to be called
      */
     public void refreshChunks() {
-        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
+        LocalBlockQueue queue = this.blockQueue.getNewQueue(getWorldName(), false);
         HashSet<BlockVector2> chunks = new HashSet<>();
         for (CuboidRegion region : Plot.this.getRegions()) {
             for (int x = region.getMinimumPoint().getX() >> 4;
@@ -1703,7 +1707,7 @@ public class Plot {
             return;
         }
         Location location = manager.getSignLoc(this);
-        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(getWorldName(), false);
+        LocalBlockQueue queue = this.blockQueue.getNewQueue(getWorldName(), false);
         queue.setBlock(location.getX(), location.getY(), location.getZ(),
             BlockTypes.AIR.getDefaultState());
         queue.flush();
@@ -1717,7 +1721,7 @@ public class Plot {
             this.setSign("unknown");
             return;
         }
-        PlotSquared.get().getImpromptuUUIDPipeline().getSingle(this.getOwnerAbs(), (username, sign) ->
+        this.impromptuPipeline.getSingle(this.getOwnerAbs(), (username, sign) ->
             this.setSign(username));
     }
 
@@ -1733,14 +1737,14 @@ public class Plot {
         return this.create(this.owner, true);
     }
 
-    public boolean claim(@NotNull final PlotPlayer player, boolean teleport, String schematic) {
+    public boolean claim(@Nonnull final PlotPlayer player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
             return false;
         }
         return claim(player, teleport, schematic, true);
     }
 
-    public boolean claim(@NotNull final PlotPlayer player, boolean teleport, String schematic,
+    public boolean claim(@Nonnull final PlotPlayer player, boolean teleport, String schematic,
         boolean updateDB) {
 
         if (updateDB) {
@@ -1764,18 +1768,18 @@ public class Plot {
             Schematic sch;
             try {
                 if (schematic == null || schematic.isEmpty()) {
-                    sch = SchematicHandler.manager.getSchematic(plotworld.getSchematicFile());
+                    sch = schematicHandler.getSchematic(plotworld.getSchematicFile());
                 } else {
-                    sch = SchematicHandler.manager.getSchematic(schematic);
+                    sch = schematicHandler.getSchematic(schematic);
                     if (sch == null) {
-                        sch = SchematicHandler.manager.getSchematic(plotworld.getSchematicFile());
+                        sch = schematicHandler.getSchematic(plotworld.getSchematicFile());
                     }
                 }
             } catch (SchematicHandler.UnsupportedFormatException e) {
                 e.printStackTrace();
                 return true;
             }
-            SchematicHandler.manager.paste(sch, this, 0, 1, 0, Settings.Schematics.PASTE_ON_TOP,
+            schematicHandler.paste(sch, this, 0, 1, 0, Settings.Schematics.PASTE_ON_TOP,
                 new RunnableVal<Boolean>() {
                     @Override public void run(Boolean value) {
                         if (value) {
@@ -1800,7 +1804,7 @@ public class Plot {
      * @param notify notify
      * @return true if plot was created successfully
      */
-    public boolean create(@NotNull UUID uuid, final boolean notify) {
+    public boolean create(@Nonnull UUID uuid, final boolean notify) {
         this.setOwnerAbs(uuid);
         Plot existing = this.area.getOwnedPlotAbs(this.id);
         if (existing != null) {
@@ -1822,8 +1826,8 @@ public class Plot {
             DBFunc.createPlotAndSettings(this, () -> {
                 PlotArea plotworld = Plot.this.area;
                 if (notify && plotworld.isAutoMerge()) {
-                    PlotPlayer player = WorldUtil.IMP.wrapPlayer(uuid);
-                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
+                    PlotPlayer player = this.worldUtil.wrapPlayer(uuid);
+                    PlotMergeEvent event = this.eventDispatcher
                         .callMerge(this, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {
                         sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
@@ -1855,8 +1859,8 @@ public class Plot {
      * Retrieve the biome of the plot.
      */
     public void getBiome(Consumer<BiomeType> result) {
-        this.getCenter(location -> WorldUtil.IMP
-            .getBiome(location.getWorld(), location.getX(), location.getZ(), result));
+        this.getCenter(location -> this.worldUtil
+            .getBiome(location.getWorldName(), location.getX(), location.getZ(), result));
     }
 
     /**
@@ -1864,8 +1868,8 @@ public class Plot {
      */
     @Deprecated public BiomeType getBiomeSynchronous() {
         final Location location = this.getCenterSynchronous();
-        return WorldUtil.IMP
-            .getBiomeSynchronous(location.getWorld(), location.getX(), location.getZ());
+        return this.worldUtil
+            .getBiomeSynchronous(location.getWorldName(), location.getX(), location.getZ());
     }
 
     //TODO Better documentation needed.
@@ -1874,9 +1878,7 @@ public class Plot {
      * Returns the top location for the plot.
      */
     public Location getTopAbs() {
-        Location top = getManager().getPlotTopLocAbs(this.id);
-        top.setWorld(getWorldName());
-        return top;
+        return this.getManager().getPlotTopLocAbs(this.id).withWorld(this.getWorldName());
     }
 
     //TODO Better documentation needed.
@@ -1885,9 +1887,7 @@ public class Plot {
      * Returns the bottom location for the plot.
      */
     public Location getBottomAbs() {
-        Location location = getManager().getPlotBottomLocAbs(this.id);
-        location.setWorld(getWorldName());
-        return location;
+        return this.getManager().getPlotBottomLocAbs(this.id).withWorld(this.getWorldName());
     }
 
     /**
@@ -1962,10 +1962,10 @@ public class Plot {
             return top;
         }
         if (this.getMerged(Direction.SOUTH)) {
-            top.setZ(this.getRelative(Direction.SOUTH).getBottomAbs().getZ() - 1);
+            top = top.withZ(this.getRelative(Direction.SOUTH).getBottomAbs().getZ() - 1);
         }
         if (this.getMerged(Direction.EAST)) {
-            top.setX(this.getRelative(Direction.EAST).getBottomAbs().getX() - 1);
+            top = top.withX(this.getRelative(Direction.EAST).getBottomAbs().getX() - 1);
         }
         return top;
     }
@@ -1983,10 +1983,10 @@ public class Plot {
             return bot;
         }
         if (this.getMerged(Direction.NORTH)) {
-            bot.setZ(this.getRelative(Direction.NORTH).getTopAbs().getZ() + 1);
+            bot = bot.withZ(this.getRelative(Direction.NORTH).getTopAbs().getZ() + 1);
         }
         if (this.getMerged(Direction.WEST)) {
-            bot.setX(this.getRelative(Direction.WEST).getTopAbs().getX() + 1);
+            bot = bot.withX(this.getRelative(Direction.WEST).getTopAbs().getX() + 1);
         }
         return bot;
     }
@@ -2016,9 +2016,9 @@ public class Plot {
             Plot other = this.getRelative(Direction.EAST);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
-            Location pos1 = new Location(this.getWorldName(), top.getX(), 0, bot.getZ());
-            Location pos2 = new Location(this.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
-            RegionManager.manager.regenerateRegion(pos1, pos2, true, null);
+            Location pos1 = Location.at(this.getWorldName(), top.getX(), 0, bot.getZ());
+            Location pos2 = Location.at(this.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
+            this.regionManager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain()
             != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.area.getPlotManager().removeRoadEast(this);
@@ -2172,7 +2172,7 @@ public class Plot {
      * Export the plot as a schematic to the configured output directory.
      */
     public void export(final RunnableVal<Boolean> whenDone) {
-        SchematicHandler.manager.getCompoundTag(this, new RunnableVal<CompoundTag>() {
+        this.schematicHandler.getCompoundTag(this, new RunnableVal<CompoundTag>() {
             @Override public void run(final CompoundTag value) {
                 if (value == null) {
                     if (whenDone != null) {
@@ -2183,7 +2183,7 @@ public class Plot {
                     TaskManager.runTaskAsync(() -> {
                         String name = Plot.this.id + "," + Plot.this.area + ',' + MainUtil
                             .getName(Plot.this.getOwnerAbs());
-                        boolean result = SchematicHandler.manager.save(value,
+                        boolean result = schematicHandler.save(value,
                             Settings.Paths.SCHEMATICS + File.separator + name + ".schem");
                         if (whenDone != null) {
                             whenDone.value = result;
@@ -2201,9 +2201,9 @@ public class Plot {
      * @param whenDone value will be null if uploading fails
      */
     public void upload(final RunnableVal<URL> whenDone) {
-        SchematicHandler.manager.getCompoundTag(this, new RunnableVal<CompoundTag>() {
+        this.schematicHandler.getCompoundTag(this, new RunnableVal<CompoundTag>() {
             @Override public void run(CompoundTag value) {
-                SchematicHandler.manager.upload(value, null, null, whenDone);
+                schematicHandler.upload(value, null, null, whenDone);
             }
         });
     }
@@ -2217,7 +2217,7 @@ public class Plot {
      * @see WorldUtil
      */
     public void uploadWorld(RunnableVal<URL> whenDone) {
-        WorldUtil.IMP.upload(this, null, null, whenDone);
+        this.worldUtil.upload(this, null, null, whenDone);
     }
 
     @Override public boolean equals(Object obj) {
@@ -2363,7 +2363,7 @@ public class Plot {
      *
      * @param player the claiming player
      */
-    public boolean canClaim(@NotNull PlotPlayer player) {
+    public boolean canClaim(@Nonnull PlotPlayer player) {
         PlotCluster cluster = this.getCluster();
         if (cluster != null) {
             if (!cluster.isAdded(player.getUUID()) && !Permissions
@@ -2388,9 +2388,9 @@ public class Plot {
             Plot other = this.getRelative(Direction.SOUTH);
             Location bot = other.getBottomAbs();
             Location top = this.getTopAbs();
-            Location pos1 = new Location(this.getWorldName(), bot.getX(), 0, top.getZ());
-            Location pos2 = new Location(this.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
-            RegionManager.manager.regenerateRegion(pos1, pos2, true, null);
+            Location pos1 = Location.at(this.getWorldName(), bot.getX(), 0, top.getZ());
+            Location pos2 = Location.at(this.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
+            this.regionManager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain()
             != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.getManager().removeRoadSouth(this);
@@ -2564,11 +2564,9 @@ public class Plot {
         if (this.area.getType() != PlotAreaType.NORMAL
             && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(1, 1);
-            Location pos1 = this.getTopAbs().add(1, 0, 1);
-            Location pos2 = other.getBottomAbs().subtract(1, 0, 1);
-            pos1.setY(0);
-            pos2.setY(MAX_HEIGHT);
-            RegionManager.manager.regenerateRegion(pos1, pos2, true, null);
+            Location pos1 = this.getTopAbs().add(1, 0, 1).withY(0);
+            Location pos2 = other.getBottomAbs().subtract(1, 0, 1).withY(MAX_HEIGHT);
+            this.regionManager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain()
             != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.area.getPlotManager().removeRoadSouthEast(this);
@@ -2749,7 +2747,7 @@ public class Plot {
      *
      * @return
      */
-    @NotNull public Set<CuboidRegion> getRegions() {
+    @Nonnull public Set<CuboidRegion> getRegions() {
         if (regions_cache != null && connected_cache != null && connected_cache.contains(this)) {
             return regions_cache;
         }
@@ -2908,13 +2906,13 @@ public class Plot {
     public void reEnter() {
         TaskManager.runTaskLater(() -> {
             for (PlotPlayer<?> pp : Plot.this.getPlayersInPlot()) {
-                PlotListener.plotExit(pp, Plot.this);
-                PlotListener.plotEntry(pp, Plot.this);
+                this.plotListener.plotExit(pp, Plot.this);
+                this.plotListener.plotEntry(pp, Plot.this);
             }
         }, 1);
     }
 
-    public void debug(@NotNull final String message) {
+    public void debug(@Nonnull final String message) {
         try {
             final Collection<PlotPlayer<?>> players = PlotPlayer.getDebugModePlayersInPlot(this);
             if (players.isEmpty()) {
@@ -2952,7 +2950,7 @@ public class Plot {
             int x = (int) MathMan.inverseRound(coords[0]);
             int z = (int) MathMan.inverseRound(coords[1]);
             if (type != 4) {
-                locs.add(new Location(this.getWorldName(), x, 0, z));
+                locs.add(Location.at(this.getWorldName(), x, 0, z));
             }
         }
         return locs;
@@ -2979,7 +2977,7 @@ public class Plot {
         Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
         Result result =
-            PlotSquared.get().getEventDispatcher().callTeleport(player, player.getLocation(), plot)
+            this.eventDispatcher.callTeleport(player, player.getLocation(), plot)
                 .getEventResult();
         if (result == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Teleport");
@@ -3026,11 +3024,11 @@ public class Plot {
             return false;
         }
         if (!isMerged()) {
-            return PlotSquared.imp().getPlayerManager()
+            return PlotSquared.platform().getPlayerManager()
                 .getPlayerIfExists(Objects.requireNonNull(this.getOwnerAbs())) != null;
         }
         for (final Plot current : getConnectedPlots()) {
-            if (current.hasOwner() && PlotSquared.imp().getPlayerManager()
+            if (current.hasOwner() && PlotSquared.platform().getPlayerManager()
                 .getPlayerIfExists(Objects.requireNonNull(current.getOwnerAbs())) != null) {
                 return true;
             }
@@ -3049,7 +3047,7 @@ public class Plot {
      */
     public boolean setComponent(String component, Pattern blocks) {
         PlotComponentSetEvent event =
-            PlotSquared.get().getEventDispatcher().callComponentSet(this, component, blocks);
+            this.eventDispatcher.callComponentSet(this, component, blocks);
         component = event.getComponent();
         blocks = event.getPattern();
         return this.getManager().setComponent(this.getId(), component, blocks);
@@ -3216,11 +3214,9 @@ public class Plot {
                             Location[] corners = MainUtil.getCorners(getWorldName(), region);
                             Location pos1 = corners[0];
                             Location pos2 = corners[1];
-                            Location pos3 = pos1.clone().add(offsetX, 0, offsetZ);
-                            Location pos4 = pos2.clone().add(offsetX, 0, offsetZ);
-                            pos3.setWorld(destination.getWorldName());
-                            pos4.setWorld(destination.getWorldName());
-                            RegionManager.manager.swap(pos1, pos2, pos3, pos4, this);
+                            Location pos3 = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
+                            Location pos4 = pos2.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
+                            regionManager.swap(pos1, pos2, pos3, pos4, this);
                         }
                     }
                 }.run();
@@ -3250,9 +3246,8 @@ public class Plot {
                         Location[] corners = MainUtil.getCorners(getWorldName(), region);
                         final Location pos1 = corners[0];
                         final Location pos2 = corners[1];
-                        Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
-                        newPos.setWorld(destination.getWorldName());
-                        RegionManager.manager.copyRegion(pos1, pos2, newPos, task);
+                        Location newPos = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
+                        regionManager.copyRegion(pos1, pos2, newPos, task);
                     }
                 }.run();
             }
@@ -3345,9 +3340,8 @@ public class Plot {
                 Location[] corners = MainUtil.getCorners(getWorldName(), region);
                 Location pos1 = corners[0];
                 Location pos2 = corners[1];
-                Location newPos = pos1.clone().add(offsetX, 0, offsetZ);
-                newPos.setWorld(destination.getWorldName());
-                RegionManager.manager.copyRegion(pos1, pos2, newPos, this);
+                Location newPos = pos1 .add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
+                regionManager.copyRegion(pos1, pos2, newPos, this);
             }
         };
         run.run();

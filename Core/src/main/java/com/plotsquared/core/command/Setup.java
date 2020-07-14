@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -33,6 +34,7 @@ import com.plotsquared.core.setup.SetupProcess;
 import com.plotsquared.core.setup.SetupStep;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,11 +50,17 @@ import java.util.Map.Entry;
     category = CommandCategory.ADMINISTRATION)
 public class Setup extends SubCommand {
 
+    private final SetupUtils setupUtils;
+
+    @Inject public Setup(@Nonnull final SetupUtils setupUtils) {
+        this.setupUtils = setupUtils;
+    }
+
     public void displayGenerators(PlotPlayer<?> player) {
         StringBuilder message = new StringBuilder();
         message.append("&6What generator do you want?");
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
-            if (entry.getKey().equals(PlotSquared.imp().getPluginName())) {
+            if (entry.getKey().equals(PlotSquared.platform().getPluginName())) {
                 message.append("\n&8 - &2").append(entry.getKey()).append(" (Default Generator)");
             } else if (entry.getValue().isFull()) {
                 message.append("\n&8 - &7").append(entry.getKey()).append(" (Plot Generator)");
@@ -72,7 +80,7 @@ public class Setup extends SubCommand {
             }
             process = new SetupProcess();
             player.setMeta("setup", process);
-            SetupUtils.manager.updateGenerators();
+            this.setupUtils.updateGenerators();
             SetupStep step = process.getCurrentStep();
             step.announce(player);
             displayGenerators(player);

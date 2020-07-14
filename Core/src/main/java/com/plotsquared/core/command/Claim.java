@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.primitives.Ints;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -40,10 +41,13 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,18 +62,26 @@ public class Claim extends SubCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + Claim.class.getSimpleName());
 
+    private final EventDispatcher eventDispatcher;
+    private final EconHandler econHandler;
+
+    @Inject public Claim(@Nonnull final EventDispatcher eventDispatcher,
+                         @Nullable final EconHandler econHandler) {
+        this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
+    }
+
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String schematic = null;
         if (args.length >= 1) {
             schematic = args[0];
         }
         Location location = player.getLocation();
-        final Plot plot = location.getPlotAbs();
+        Plot plot = location.getPlotAbs();
         if (plot == null) {
             return sendMessage(player, Captions.NOT_IN_PLOT);
         }
-        PlayerClaimPlotEvent event =
-            PlotSquared.get().getEventDispatcher().callClaim(player, plot, schematic);
+        final PlayerClaimPlotEvent event = this.eventDispatcher.callClaim(player, plot, schematic);
         schematic = event.getSchematic();
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Claim");
@@ -78,7 +90,7 @@ public class Claim extends SubCommand {
         boolean force = event.getEventResult() == Result.FORCE;
         int currentPlots = Settings.Limit.GLOBAL ?
             player.getPlotCount() :
-            player.getPlotCount(location.getWorld());
+            player.getPlotCount(location.getWorldName());
         int grants = 0;
         if (currentPlots >= player.getAllowedPlots() && !force) {
             if (player.hasPersistentMeta("grantedPlots")) {
@@ -109,14 +121,14 @@ public class Claim extends SubCommand {
                 }
             }
         }
-        if ((EconHandler.getEconHandler() != null) && area.useEconomy() && !force) {
+        if ((this.econHandler != null) && area.useEconomy() && !force) {
             Expression<Double> costExr = area.getPrices().get("claim");
             double cost = costExr.evaluate((double) currentPlots);
             if (cost > 0d) {
-                if (EconHandler.getEconHandler().getMoney(player) < cost) {
+                if (this.econHandler.getMoney(player) < cost) {
                     return sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
                 }
-                EconHandler.getEconHandler().withdrawMoney(player, cost);
+                this.econHandler.withdrawMoney(player, cost);
                 sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
             }
         }
@@ -134,7 +146,7 @@ public class Claim extends SubCommand {
         }
         plot.setOwnerAbs(player.getUUID());
         final String finalSchematic = schematic;
-        DBFunc.createPlotSafe(plot, () -> TaskManager.IMP.sync(new RunnableVal<Object>() {
+        DBFunc.createPlotSafe(plot, () -> TaskManager.getImplementation().sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 if (!plot.claim(player, true, finalSchematic, false)) {
                     logger.info(Captions.PREFIX.getTranslated() + String
@@ -142,7 +154,7 @@ public class Claim extends SubCommand {
                     sendMessage(player, Captions.PLOT_NOT_CLAIMED);
                     plot.setOwnerAbs(null);
                 } else if (area.isAutoMerge()) {
-                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher()
+                    PlotMergeEvent event = Claim.this.eventDispatcher
                         .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {
                         sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");

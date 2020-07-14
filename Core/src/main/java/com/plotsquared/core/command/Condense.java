@@ -25,15 +25,17 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,13 +56,22 @@ public class Condense extends SubCommand {
 
     public static boolean TASK = false;
 
+    private final PlotAreaManager plotAreaManager;
+    private final WorldUtil worldUtil;
+
+    @Inject public Condense(@Nonnull final PlotAreaManager plotAreaManager,
+                            @Nonnull final WorldUtil worldUtil) {
+        this.plotAreaManager = plotAreaManager;
+        this.worldUtil = worldUtil;
+    }
+
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {
             MainUtil.sendMessage(player, getUsage());
             return false;
         }
-        PlotArea area = PlotSquared.get().getPlotAreaByString(args[0]);
-        if (area == null || !WorldUtil.IMP.isWorld(area.getWorldName())) {
+        PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
+        if (area == null || !this.worldUtil.isWorld(area.getWorldName())) {
             MainUtil.sendMessage(player, "INVALID AREA");
             return false;
         }
@@ -80,7 +91,8 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
-                ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots(area));
+
+                final List<Plot> plots = new ArrayList<>(area.getPlots());
                 // remove non base plots
                 Iterator<Plot> iterator = plots.iterator();
                 int maxSize = 0;

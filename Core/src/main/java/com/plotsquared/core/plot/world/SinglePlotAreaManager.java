@@ -25,38 +25,54 @@
  */
 package com.plotsquared.core.plot.world;
 
+import com.google.inject.Singleton;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.collection.ArrayUtil;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.SingleWorldGenerator;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SetupUtils;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class SinglePlotAreaManager extends DefaultPlotAreaManager {
+import javax.inject.Inject;
+
+@Singleton public class SinglePlotAreaManager extends DefaultPlotAreaManager {
+
     private final SinglePlotArea[] array;
     private SinglePlotArea area;
     private PlotArea[] all;
 
-    public SinglePlotAreaManager() {
-        this.area = new SinglePlotArea();
+    @Inject public SinglePlotAreaManager(@Nonnull final EventDispatcher eventDispatcher,
+                                         @Nonnull final PlotListener plotListener,
+                                         @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                                         @Nonnull final GlobalBlockQueue blockQueue,
+                                         @Nonnull final EconHandler econHandler) {
+        this.area = new SinglePlotArea(this, eventDispatcher, plotListener,
+            worldConfiguration, blockQueue, econHandler);
         this.array = new SinglePlotArea[] {area};
         this.all = new PlotArea[] {area};
         SetupUtils.generators.put("PlotSquared:single",
-            new SingleWorldGenerator().specify("CheckingPlotSquaredGenerator"));
+            new SingleWorldGenerator(this).specify("CheckingPlotSquaredGenerator"));
     }
 
     public SinglePlotArea getArea() {
         return area;
     }
 
-    public void setArea(SinglePlotArea area) {
+    public void setArea(@Nonnull final SinglePlotArea area) {
         this.area = area;
         array[0] = area;
         all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
     }
 
-    public boolean isWorld(String id) {
+    public boolean isWorld(@Nonnull final String id) {
         char[] chars = id.toCharArray();
         if (chars.length == 1 && chars[0] == '*') {
             return true;
@@ -88,20 +104,22 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
                     if ((c <= '/') || (c >= ':')) {
                         return false;
                     }
-                    continue;
             }
         }
         return mode == 3;
     }
 
-    @Override public PlotArea getApplicablePlotArea(Location location) {
-        String world = location.getWorld();
+    @Override @Nullable public PlotArea getApplicablePlotArea(@Nullable final Location location) {
+        if (location == null) {
+            return null;
+        }
+        String world = location.getWorldName();
         return isWorld(world) || world.equals("*") || super.getAllPlotAreas().length == 0 ?
             area :
             super.getApplicablePlotArea(location);
     }
 
-    @Override public PlotArea getPlotArea(String world, String id) {
+    @Override @Nullable public PlotArea getPlotArea(@Nonnull final String world, @Nonnull final String id) {
         PlotArea found = super.getPlotArea(world, id);
         if (found != null) {
             return found;
@@ -109,15 +127,15 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         return isWorld(world) || world.equals("*") ? area : super.getPlotArea(world, id);
     }
 
-    @Override public PlotArea getPlotArea(@NotNull Location location) {
+    @Override @Nullable public PlotArea getPlotArea(@Nonnull final Location location) {
         PlotArea found = super.getPlotArea(location);
         if (found != null) {
             return found;
         }
-        return isWorld(location.getWorld()) || location.getWorld().equals("*") ? area : null;
+        return isWorld(location.getWorldName()) || location.getWorldName().equals("*") ? area : null;
     }
 
-    @Override public PlotArea[] getPlotAreas(String world, CuboidRegion region) {
+    @Override @Nonnull public PlotArea[] getPlotAreas(@Nonnull final String world, @Nonnull final CuboidRegion region) {
         PlotArea[] found = super.getPlotAreas(world, region);
         if (found != null && found.length != 0) {
             return found;
@@ -127,15 +145,15 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
             all.length == 0 ? noPlotAreas : super.getPlotAreas(world, region);
     }
 
-    @Override public PlotArea[] getAllPlotAreas() {
+    @Override @Nonnull public PlotArea[] getAllPlotAreas() {
         return all;
     }
 
-    @Override public String[] getAllWorlds() {
+    @Override @Nonnull public String[] getAllWorlds() {
         return super.getAllWorlds();
     }
 
-    @Override public void addPlotArea(PlotArea area) {
+    @Override public void addPlotArea(@Nonnull final PlotArea area) {
         if (area == this.area) {
             return;
         }
@@ -143,18 +161,18 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
     }
 
-    @Override public void removePlotArea(PlotArea area) {
+    @Override public void removePlotArea(@Nonnull final PlotArea area) {
         if (area == this.area) {
             throw new UnsupportedOperationException("Cannot remove base area!");
         }
         super.removePlotArea(area);
     }
 
-    @Override public void addWorld(String worldName) {
+    @Override public void addWorld(@Nonnull final String worldName) {
         super.addWorld(worldName);
     }
 
-    @Override public void removeWorld(String worldName) {
+    @Override public void removeWorld(@Nonnull final String worldName) {
         super.removeWorld(worldName);
     }
 }

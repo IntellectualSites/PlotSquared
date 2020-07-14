@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class VillagerInteractFlag extends BooleanFlag<VillagerInteractFlag> {
 
@@ -40,7 +40,7 @@ public class VillagerInteractFlag extends BooleanFlag<VillagerInteractFlag> {
         super(value, Captions.FLAG_DESCRIPTION_VILLAGER_INTERACT);
     }
 
-    @Override protected VillagerInteractFlag flagOf(@NotNull Boolean value) {
+    @Override protected VillagerInteractFlag flagOf(@Nonnull Boolean value) {
         return value ? VILLAGER_INTERACT_TRUE : VILLAGER_INTERACT_FALSE;
     }
 

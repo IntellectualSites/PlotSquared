@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class HostileInteractFlag extends BooleanFlag<HostileInteractFlag> {
 
@@ -38,7 +38,7 @@ public class HostileInteractFlag extends BooleanFlag<HostileInteractFlag> {
         super(value, Captions.FLAG_DESCRIPTION_HOSTILE_INTERACT);
     }
 
-    @Override protected HostileInteractFlag flagOf(@NotNull Boolean value) {
+    @Override protected HostileInteractFlag flagOf(@Nonnull Boolean value) {
         return value ? HOSTILE_INTERACT_TRUE : HOSTILE_INTERACT_FALSE;
     }
 

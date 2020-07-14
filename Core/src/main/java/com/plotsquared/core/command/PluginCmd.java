@@ -40,9 +40,9 @@ import com.plotsquared.core.util.task.TaskManager;
 public class PluginCmd extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        TaskManager.IMP.taskAsync(() -> {
+        TaskManager.getImplementation().taskAsync(() -> {
             MainUtil.sendMessage(player, String.format(
-                "$2>> $1&l" + PlotSquared.imp().getPluginName() + " $2($1Version$2: $1%s$2)",
+                "$2>> $1&l" + PlotSquared.platform().getPluginName() + " $2($1Version$2: $1%s$2)",
                 PlotSquared.get().getVersion()));
             MainUtil.sendMessage(player,
                 "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92 $2& $1MattBDev $2& $1dordsor21 $2& $1NotMyFault $2& $1SirYwell");

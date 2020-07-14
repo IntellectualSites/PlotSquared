@@ -28,12 +28,12 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class FeedFlag extends TimedFlag<Integer, FeedFlag> {
     public static final FeedFlag FEED_NOTHING = new FeedFlag(new Timed<>(0, 0));
 
-    public FeedFlag(@NotNull Timed<Integer> value) {
+    public FeedFlag(@Nonnull Timed<Integer> value) {
         super(value, 1, Captions.FLAG_DESCRIPTION_FEED);
     }
 
@@ -58,7 +58,7 @@ public class FeedFlag extends TimedFlag<Integer, FeedFlag> {
         return "10 5";
     }
 
-    @Override protected FeedFlag flagOf(@NotNull Timed<Integer> value) {
+    @Override protected FeedFlag flagOf(@Nonnull Timed<Integer> value) {
         return new FeedFlag(value);
     }
 }

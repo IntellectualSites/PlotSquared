@@ -29,18 +29,18 @@ import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
     extends PlotFlag<TimedFlag.Timed<T>, F> {
     private final T defaultValue;
 
-    protected TimedFlag(@NotNull Timed<T> value, T defaultValue, @NotNull Caption flagDescription) {
+    protected TimedFlag(@Nonnull Timed<T> value, T defaultValue, @Nonnull Caption flagDescription) {
         super(value, Captions.FLAG_CATEGORY_INTERVALS, flagDescription);
         this.defaultValue = defaultValue;
     }
 
-    @Override public F parse(@NotNull String input) throws FlagParseException {
+    @Override public F parse(@Nonnull String input) throws FlagParseException {
         String[] split = input.split(" ", 2);
         int interval;
         try {
@@ -58,7 +58,7 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
         return flagOf(new Timed<>(interval, parsedValue));
     }
 
-    @Override public F merge(@NotNull Timed<T> newValue) {
+    @Override public F merge(@Nonnull Timed<T> newValue) {
         return flagOf(
             new Timed<>(getValue().interval + newValue.interval, mergeValue(newValue.value)));
     }

@@ -29,7 +29,7 @@ import com.plotsquared.core.plot.Plot;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.awt.geom.Rectangle2D;
 
@@ -58,7 +58,7 @@ public class RegionUtil {
             .getY() && y <= max.getY();
     }
 
-    @NotNull public static Rectangle2D toRectangle(@NotNull final CuboidRegion region) {
+    @Nonnull public static Rectangle2D toRectangle(@Nonnull final CuboidRegion region) {
         final BlockVector2 min = region.getMinimumPoint().toBlockVector2();
         final BlockVector2 max = region.getMaximumPoint().toBlockVector2();
         return new Rectangle2D.Double(min.getX(), min.getZ(), max.getX(), max.getZ());

@@ -26,7 +26,7 @@
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.function.Predicate;
 
@@ -34,11 +34,11 @@ class PredicateFilter implements PlotFilter {
 
     private final Predicate<Plot> predicate;
 
-    PredicateFilter(@NotNull final Predicate<Plot> predicate) {
+    PredicateFilter(@Nonnull final Predicate<Plot> predicate) {
         this.predicate = predicate;
     }
 
-    @Override public boolean accepts(@NotNull final Plot plot) {
+    @Override public boolean accepts(@Nonnull final Plot plot) {
         return predicate.test(plot);
     }
 

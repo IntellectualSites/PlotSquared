@@ -28,7 +28,7 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,7 @@ public class PlaceFlag extends BlockTypeListFlag<PlaceFlag> {
         super(blockTypeList, Captions.FLAG_DESCRIPTION_PLACE);
     }
 
-    @Override protected PlaceFlag flagOf(@NotNull List<BlockTypeWrapper> value) {
+    @Override protected PlaceFlag flagOf(@Nonnull List<BlockTypeWrapper> value) {
         return new PlaceFlag(value);
     }
 

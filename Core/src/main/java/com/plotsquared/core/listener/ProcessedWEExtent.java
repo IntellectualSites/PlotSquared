@@ -44,6 +44,7 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -57,17 +58,19 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     private final Set<CuboidRegion> mask;
     private final String world;
     private final int max;
+    private final WorldUtil worldUtil;
+
     int Ecount = 0;
     boolean Eblocked = false;
     private int count;
     private Extent parent;
     private Map<Long, Integer[]> tileEntityCount = new HashMap<>();
 
-    public ProcessedWEExtent(String world, Set<CuboidRegion> mask, int max, Extent child,
-        Extent parent) {
+    public ProcessedWEExtent(String world, Set<CuboidRegion> mask, int max, Extent child, Extent parent, @Nonnull final WorldUtil worldUtil) {
         super(child);
         this.mask = mask;
         this.world = world;
+        this.worldUtil = worldUtil;
         if (max == -1) {
             max = Integer.MAX_VALUE;
         }
@@ -94,10 +97,10 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 location, T block)
         throws WorldEditException {
 
-        final boolean isTile = WorldUtil.IMP.getTileEntityTypes().contains(block.getBlockType());
+        final boolean isTile = this.worldUtil.getTileEntityTypes().contains(block.getBlockType());
         if (isTile) {
             final Integer[] tileEntityCount = this.tileEntityCount.computeIfAbsent(getChunkKey(location),
-                key -> new Integer[] {WorldUtil.IMP.getTileEntityCount(world,
+                key -> new Integer[] {this.worldUtil.getTileEntityCount(world,
                     BlockVector2.at(location.getBlockX() >> 4, location.getBlockZ() >> 4))});
             if (tileEntityCount[0] >= Settings.Chunk_Processor.MAX_TILES) {
                 return false;

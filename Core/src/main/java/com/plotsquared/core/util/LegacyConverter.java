@@ -25,16 +25,17 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
-import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -61,24 +62,24 @@ public final class LegacyConverter {
 
     private final ConfigurationSection configuration;
 
-    public LegacyConverter(@NonNull final ConfigurationSection configuration) {
+    public LegacyConverter(@Nonnull final ConfigurationSection configuration) {
         this.configuration = configuration;
     }
 
-    private BlockBucket blockToBucket(@NonNull final String block) {
-        final BlockState plotBlock = WorldUtil.IMP.getClosestBlock(block).best;
+    private BlockBucket blockToBucket(@Nonnull final String block) {
+        final BlockState plotBlock = PlotSquared.platform().getWorldUtil().getClosestBlock(block).best;
         return BlockBucket.withSingle(plotBlock);
     }
 
-    private void setString(@NonNull final ConfigurationSection section,
-        @NonNull final String string, @NonNull final BlockBucket blocks) {
+    private void setString(@Nonnull final ConfigurationSection section,
+        @Nonnull final String string, @Nonnull final BlockBucket blocks) {
         if (!section.contains(string)) {
             throw new IllegalArgumentException(String.format("No such key: %s", string));
         }
         section.set(string, blocks.toString());
     }
 
-    private BlockBucket blockListToBucket(@NonNull final BlockState[] blocks) {
+    private BlockBucket blockListToBucket(@Nonnull final BlockState[] blocks) {
         final Map<BlockState, Integer> counts = new HashMap<>();
         for (final BlockState block : blocks) {
             counts.putIfAbsent(block, 0);
@@ -102,13 +103,13 @@ public final class LegacyConverter {
         return bucket;
     }
 
-    private BlockState[] splitBlockList(@NonNull final List<String> list) {
-        return list.stream().map(s -> WorldUtil.IMP.getClosestBlock(s).best)
+    private BlockState[] splitBlockList(@Nonnull final List<String> list) {
+        return list.stream().map(s -> PlotSquared.platform().getWorldUtil().getClosestBlock(s).best)
             .toArray(BlockState[]::new);
     }
 
-    private void convertBlock(@NonNull final ConfigurationSection section,
-        @NonNull final String key, @NonNull final String block) {
+    private void convertBlock(@Nonnull final ConfigurationSection section,
+        @Nonnull final String key, @Nonnull final String block) {
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
         logger.info(CaptionUtility
@@ -116,8 +117,8 @@ public final class LegacyConverter {
                 block, bucket.toString()));
     }
 
-    private void convertBlockList(@NonNull final ConfigurationSection section,
-        @NonNull final String key, @NonNull final List<String> blockList) {
+    private void convertBlockList(@Nonnull final ConfigurationSection section,
+        @Nonnull final String key, @Nonnull final List<String> blockList) {
         final BlockState[] blocks = this.splitBlockList(blockList);
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
@@ -126,7 +127,7 @@ public final class LegacyConverter {
                 plotBlockArrayString(blocks), bucket.toString()));
     }
 
-    private String plotBlockArrayString(@NonNull final BlockState[] blocks) {
+    private String plotBlockArrayString(@Nonnull final BlockState[] blocks) {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < blocks.length; i++) {
             builder.append(blocks[i].toString());

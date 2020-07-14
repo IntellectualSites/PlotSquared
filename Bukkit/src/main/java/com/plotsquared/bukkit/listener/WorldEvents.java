@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -36,17 +37,23 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.generator.ChunkGenerator;
+import javax.annotation.Nonnull;
 
 @SuppressWarnings("unused")
 public class WorldEvents implements Listener {
+
+    private final PlotAreaManager plotAreaManager;
+
+    @Inject public WorldEvents(@Nonnull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldInit(WorldInitEvent event) {
         World world = event.getWorld();
         String name = world.getName();
-        PlotAreaManager manager = PlotSquared.get().getPlotAreaManager();
-        if (manager instanceof SinglePlotAreaManager) {
-            SinglePlotAreaManager single = (SinglePlotAreaManager) manager;
+        if (this.plotAreaManager instanceof SinglePlotAreaManager) {
+            final SinglePlotAreaManager single = (SinglePlotAreaManager) this.plotAreaManager;
             if (single.isWorld(name)) {
                 world.setKeepSpawnInMemory(false);
                 return;
@@ -56,7 +63,7 @@ public class WorldEvents implements Listener {
         if (gen instanceof GeneratorWrapper) {
             PlotSquared.get().loadWorld(name, (GeneratorWrapper<?>) gen);
         } else {
-            PlotSquared.get().loadWorld(name, new BukkitPlotGenerator(name, gen));
+            PlotSquared.get().loadWorld(name, new BukkitPlotGenerator(name, gen, this.plotAreaManager));
         }
     }
 }

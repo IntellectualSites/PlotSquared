@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class KeepInventoryFlag extends BooleanFlag<KeepInventoryFlag> {
 
@@ -38,7 +38,7 @@ public class KeepInventoryFlag extends BooleanFlag<KeepInventoryFlag> {
         super(value, Captions.FLAG_DESCRIPTION_KEEP_INVENTORY);
     }
 
-    @Override protected KeepInventoryFlag flagOf(@NotNull final Boolean value) {
+    @Override protected KeepInventoryFlag flagOf(@Nonnull final Boolean value) {
         return value ? KEEP_INVENTORY_TRUE : KEEP_INVENTORY_FALSE;
     }
 

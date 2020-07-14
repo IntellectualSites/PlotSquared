@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
@@ -33,11 +33,13 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.schematic.Schematic;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import javax.annotation.Nonnull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,9 +54,18 @@ import java.util.List;
     usage = "/plot load")
 public class Load extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        String world = player.getLocation().getWorld();
-        if (!PlotSquared.get().hasPlotArea(world)) {
+    private final PlotAreaManager plotAreaManager;
+    private final SchematicHandler schematicHandler;
+
+    @Inject public Load(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final SchematicHandler schematicHandler) {
+        this.plotAreaManager = plotAreaManager;
+        this.schematicHandler = schematicHandler;
+    }
+
+    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
+        final String world = player.getLocation().getWorldName();
+        if (!this.plotAreaManager.hasPlotArea(world)) {
             return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
         }
         final Plot plot = player.getCurrentPlot();
@@ -103,7 +114,7 @@ public class Load extends SubCommand {
                 plot.addRunning();
                 MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
                 TaskManager.runTaskAsync(() -> {
-                    Schematic taskSchematic = SchematicHandler.manager.getSchematic(url);
+                    Schematic taskSchematic = this.schematicHandler.getSchematic(url);
                     if (taskSchematic == null) {
                         plot.removeRunning();
                         sendMessage(player, Captions.SCHEMATIC_INVALID,
@@ -111,8 +122,7 @@ public class Load extends SubCommand {
                         return;
                     }
                     PlotArea area = plot.getArea();
-                    SchematicHandler.manager
-                        .paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false,
+                    this.schematicHandler.paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false,
                             new RunnableVal<Boolean>() {
                                 @Override public void run(Boolean value) {
                                     plot.removeRunning();
@@ -137,7 +147,7 @@ public class Load extends SubCommand {
         if (schematics == null) {
             plot.addRunning();
             TaskManager.runTaskAsync(() -> {
-                List<String> schematics1 = SchematicHandler.manager.getSaves(player.getUUID());
+                List<String> schematics1 = this.schematicHandler.getSaves(player.getUUID());
                 plot.removeRunning();
                 if ((schematics1 == null) || schematics1.isEmpty()) {
                     MainUtil.sendMessage(player, Captions.LOAD_FAILED);

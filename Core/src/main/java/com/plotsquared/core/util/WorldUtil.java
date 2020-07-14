@@ -41,7 +41,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.entity.EntityType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -61,7 +61,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public abstract class WorldUtil {
-    public static WorldUtil IMP;
+
+    private final RegionManager regionManager;
+
+    public WorldUtil(@Nonnull final RegionManager regionManager) {
+        this.regionManager = regionManager;
+    }
 
     public abstract String getMainWorld();
 
@@ -113,7 +118,7 @@ public abstract class WorldUtil {
 
     public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
 
-    public void upload(@NotNull final Plot plot, UUID uuid, String file,
+    public void upload(@Nonnull final Plot plot, UUID uuid, String file,
         RunnableVal<URL> whenDone) {
         plot.getHome(home -> MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
@@ -150,8 +155,7 @@ public abstract class WorldUtil {
                         int brz = bot.getZ() >> 9;
                         int trx = top.getX() >> 9;
                         int trz = top.getZ() >> 9;
-                        Set<BlockVector2> files =
-                            RegionManager.manager.getChunkChunks(bot.getWorld());
+                        Set<BlockVector2> files = regionManager.getChunkChunks(bot.getWorldName());
                         for (BlockVector2 mca : files) {
                             if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz
                                 && mca.getZ() <= trz) {
@@ -187,7 +191,7 @@ public abstract class WorldUtil {
 
     public File getDat(String world) {
         File file = new File(
-            PlotSquared.get().IMP.getWorldContainer() + File.separator + world + File.separator
+            PlotSquared.platform().getWorldContainer() + File.separator + world + File.separator
                 + "level.dat");
         if (file.exists()) {
             return file;
@@ -196,7 +200,7 @@ public abstract class WorldUtil {
     }
 
     public File getMcr(String world, int x, int z) {
-        File file = new File(PlotSquared.get().IMP.getWorldContainer(),
+        File file = new File(PlotSquared.platform().getWorldContainer(),
             world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
         if (file.exists()) {
             return file;

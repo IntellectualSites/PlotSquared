@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class MiscPlaceFlag extends BooleanFlag<MiscPlaceFlag> {
 
@@ -38,7 +38,7 @@ public class MiscPlaceFlag extends BooleanFlag<MiscPlaceFlag> {
         super(value, Captions.FLAG_DESCRIPTION_MISC_PLACE);
     }
 
-    @Override protected MiscPlaceFlag flagOf(@NotNull Boolean value) {
+    @Override protected MiscPlaceFlag flagOf(@Nonnull Boolean value) {
         return value ? MISC_PLACE_TRUE : MISC_PLACE_FALSE;
     }
 

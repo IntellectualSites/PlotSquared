@@ -32,7 +32,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.task.RunnableVal;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -192,7 +192,7 @@ public class AbstractDBTest implements AbstractDB {
     }
 
     @Override
-    public void getComments(@NotNull Plot plot, String inbox,
+    public void getComments(@Nonnull Plot plot, String inbox,
         RunnableVal<List<PlotComment>> whenDone) {
     }
 

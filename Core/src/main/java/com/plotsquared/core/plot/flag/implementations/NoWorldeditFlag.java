@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class NoWorldeditFlag extends BooleanFlag<NoWorldeditFlag> {
 
@@ -38,7 +38,7 @@ public class NoWorldeditFlag extends BooleanFlag<NoWorldeditFlag> {
         super(value, Captions.FLAG_DESCRIPTION_NO_WORLDEDIT);
     }
 
-    @Override protected NoWorldeditFlag flagOf(@NotNull Boolean value) {
+    @Override protected NoWorldeditFlag flagOf(@Nonnull Boolean value) {
         return value ? NO_WORLDEDIT_TRUE : NO_WORLDEDIT_FALSE;
     }
 

@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.base.Charsets;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
@@ -36,6 +37,7 @@ import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.util.UUID;
@@ -47,8 +49,15 @@ import java.util.concurrent.CompletableFuture;
     requiredType = RequiredType.CONSOLE,
     category = CommandCategory.TELEPORT)
 public class DebugImportWorlds extends Command {
-    public DebugImportWorlds() {
+
+    private final PlotAreaManager plotAreaManager;
+    private final WorldUtil worldUtil;
+
+    @Inject public DebugImportWorlds(@Nonnull final PlotAreaManager plotAreaManager,
+                                     @Nonnull final WorldUtil worldUtil) {
         super(MainCommand.getInstance(), true);
+        this.plotAreaManager = plotAreaManager;
+        this.worldUtil = worldUtil;
     }
 
     @Override
@@ -56,14 +65,13 @@ public class DebugImportWorlds extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         // UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8))
-        PlotAreaManager pam = PlotSquared.get().getPlotAreaManager();
-        if (!(pam instanceof SinglePlotAreaManager)) {
+        if (!(this.plotAreaManager instanceof SinglePlotAreaManager)) {
             player.sendMessage("Must be a single plot area!");
             return CompletableFuture.completedFuture(false);
         }
-        SinglePlotArea area = ((SinglePlotAreaManager) pam).getArea();
+        SinglePlotArea area = ((SinglePlotAreaManager) this.plotAreaManager).getArea();
         PlotId id = new PlotId(0, 0);
-        File container = PlotSquared.imp().getWorldContainer();
+        File container = PlotSquared.platform().getWorldContainer();
         if (container.equals(new File("."))) {
             player.sendMessage(
                 "World container must be configured to be a separate directory to your base files!");
@@ -71,7 +79,7 @@ public class DebugImportWorlds extends Command {
         }
         for (File folder : container.listFiles()) {
             String name = folder.getName();
-            if (!WorldUtil.IMP.isWorld(name) && PlotId.fromStringOrNull(name) == null) {
+            if (!this.worldUtil.isWorld(name) && PlotId.fromStringOrNull(name) == null) {
                 UUID uuid;
                 if (name.length() > 16) {
                     uuid = UUID.fromString(name);

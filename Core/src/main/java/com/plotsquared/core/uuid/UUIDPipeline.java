@@ -31,8 +31,8 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +77,7 @@ public class UUIDPipeline {
      * @param executor Executor that is used to run asynchronous tasks inside
      *                 of the pipeline
      */
-    public UUIDPipeline(@NotNull final Executor executor) {
+    public UUIDPipeline(@Nonnull final Executor executor) {
         this.executor = executor;
         this.serviceList = Lists.newLinkedList();
         this.consumerList = Lists.newLinkedList();
@@ -89,7 +89,7 @@ public class UUIDPipeline {
      *
      * @param uuidService UUID service to register
      */
-    public void registerService(@NotNull final UUIDService uuidService) {
+    public void registerService(@Nonnull final UUIDService uuidService) {
         this.serviceList.add(uuidService);
     }
 
@@ -98,7 +98,7 @@ public class UUIDPipeline {
      *
      * @param mappingConsumer Consumer to register
      */
-    public void registerConsumer(@NotNull final Consumer<List<UUIDMapping>> mappingConsumer) {
+    public void registerConsumer(@Nonnull final Consumer<List<UUIDMapping>> mappingConsumer) {
         this.consumerList.add(mappingConsumer);
     }
 
@@ -116,7 +116,7 @@ public class UUIDPipeline {
      *
      * @param mappings Mappings
      */
-    public void consume(@NotNull final List<UUIDMapping> mappings) {
+    public void consume(@Nonnull final List<UUIDMapping> mappings) {
         final Runnable runnable = () -> {
             for (final Consumer<List<UUIDMapping>> consumer : this.consumerList) {
                 consumer.accept(mappings);
@@ -134,7 +134,7 @@ public class UUIDPipeline {
      *
      * @param mapping Mapping to consume
      */
-    public void consume(@NotNull final UUIDMapping mapping) {
+    public void consume(@Nonnull final UUIDMapping mapping) {
         this.consume(Collections.singletonList(mapping));
     }
 
@@ -147,7 +147,7 @@ public class UUIDPipeline {
      * @param username Player username
      * @param uuid     Player uuid
      */
-    public void storeImmediately(@NotNull final String username, @NotNull final UUID uuid) {
+    public void storeImmediately(@Nonnull final String username, @Nonnull final UUID uuid) {
         this.consume(new UUIDMapping(uuid, username));
     }
 
@@ -158,7 +158,7 @@ public class UUIDPipeline {
      * @param timeout  Timeout in milliseconds
      * @return The mapped uuid. Will return null if the request timed out.
      */
-    @Nullable public UUID getSingle(@NotNull final String username, final long timeout) {
+    @Nullable public UUID getSingle(@Nonnull final String username, final long timeout) {
         ThreadUtils.catchSync("Blocking UUID retrieval from the main thread");
         try {
             final List<UUIDMapping> mappings = this.getUUIDs(Collections.singletonList(username)).get(timeout, TimeUnit.MILLISECONDS);
@@ -181,7 +181,7 @@ public class UUIDPipeline {
      * @param timeout Timeout in milliseconds
      * @return The mapped username. Will return null if the request timeout.
      */
-    @Nullable public String getSingle(@NotNull final UUID uuid, final long timeout) {
+    @Nullable public String getSingle(@Nonnull final UUID uuid, final long timeout) {
         ThreadUtils.catchSync("Blocking username retrieval from the main thread");
         try {
             final List<UUIDMapping> mappings = this.getNames(Collections.singletonList(uuid)).get(timeout, TimeUnit.MILLISECONDS);
@@ -203,8 +203,8 @@ public class UUIDPipeline {
      * @param username Username
      * @param uuid     UUID consumer
      */
-    public void getSingle(@NotNull final String username,
-        @NotNull final BiConsumer<UUID, Throwable> uuid) {
+    public void getSingle(@Nonnull final String username,
+        @Nonnull final BiConsumer<UUID, Throwable> uuid) {
         this.getUUIDs(Collections.singletonList(username)).applyToEither(timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT), Function.identity())
             .whenComplete((uuids, throwable) -> {
             if (throwable != null) {
@@ -225,8 +225,8 @@ public class UUIDPipeline {
      * @param uuid     UUID
      * @param username Username consumer
      */
-    public void getSingle(@NotNull final UUID uuid,
-        @NotNull final BiConsumer<String, Throwable> username) {
+    public void getSingle(@Nonnull final UUID uuid,
+        @Nonnull final BiConsumer<String, Throwable> username) {
         this.getNames(Collections.singletonList(uuid)).applyToEither(timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT), Function.identity())
             .whenComplete((uuids, throwable) -> {
             if (throwable != null) {
@@ -251,7 +251,7 @@ public class UUIDPipeline {
      * @param timeout  Timeout in milliseconds
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getNames(@NotNull final Collection<UUID> requests,
+    public CompletableFuture<List<UUIDMapping>> getNames(@Nonnull final Collection<UUID> requests,
         final long timeout) {
         return this.getNames(requests).applyToEither(timeoutAfter(timeout), Function.identity());
     }
@@ -266,7 +266,7 @@ public class UUIDPipeline {
      * @param timeout  Timeout in milliseconds
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getUUIDs(@NotNull final Collection<String> requests,
+    public CompletableFuture<List<UUIDMapping>> getUUIDs(@Nonnull final Collection<String> requests,
         final long timeout) {
         return this.getUUIDs(requests).applyToEither(timeoutAfter(timeout), Function.identity());
     }
@@ -283,7 +283,7 @@ public class UUIDPipeline {
      * @param requests UUIDs
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getNames(@NotNull final Collection<UUID> requests) {
+    public CompletableFuture<List<UUIDMapping>> getNames(@Nonnull final Collection<UUID> requests) {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
@@ -346,7 +346,7 @@ public class UUIDPipeline {
      * @return Mappings
      */
     public CompletableFuture<List<UUIDMapping>> getUUIDs(
-        @NotNull final Collection<String> requests) {
+        @Nonnull final Collection<String> requests) {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
@@ -401,7 +401,7 @@ public class UUIDPipeline {
      *
      * @return All mappings that could be provided immediately
      */
-    @NotNull public final Collection<UUIDMapping> getAllImmediately() {
+    @Nonnull public final Collection<UUIDMapping> getAllImmediately() {
         final Set<UUIDMapping> mappings = new LinkedHashSet<>();
         for (final UUIDService service : this.getServiceListInstance()) {
             mappings.addAll(service.getImmediately());
@@ -415,7 +415,7 @@ public class UUIDPipeline {
      * @param object Username ({@link String}) or {@link UUID}
      * @return Mapping, if it could be found immediately
      */
-    @Nullable public final UUIDMapping getImmediately(@NotNull final Object object) {
+    @Nullable public final UUIDMapping getImmediately(@Nonnull final Object object) {
         for (final UUIDService uuidService : this.getServiceListInstance()) {
             final UUIDMapping mapping = uuidService.getImmediately(object);
             if (mapping != null) {

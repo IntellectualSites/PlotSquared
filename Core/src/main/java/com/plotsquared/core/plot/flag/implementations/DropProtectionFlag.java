@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class DropProtectionFlag extends BooleanFlag<DropProtectionFlag> {
 
@@ -38,7 +38,7 @@ public class DropProtectionFlag extends BooleanFlag<DropProtectionFlag> {
         super(value, Captions.FLAG_DESCRIPTION_DROP_PROTECTION);
     }
 
-    @Override protected DropProtectionFlag flagOf(@NotNull Boolean value) {
+    @Override protected DropProtectionFlag flagOf(@Nonnull Boolean value) {
         return value ? DROP_PROTECTION_TRUE : DROP_PROTECTION_FALSE;
     }
 

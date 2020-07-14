@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class SetGenCB {
 
     public static void setGenerator(World world) throws Exception {
-        SetupUtils.manager.updateGenerators();
+        PlotSquared.platform().getSetupUtils().updateGenerators();
         PlotSquared.get().removePlotAreas(world.getName());
         ChunkGenerator gen = world.getGenerator();
         if (gen == null) {
@@ -72,6 +72,6 @@ public class SetGenCB {
                 .removeIf(blockPopulator -> blockPopulator instanceof BukkitAugmentedGenerator);
         }
         PlotSquared.get()
-            .loadWorld(world.getName(), PlotSquared.get().IMP.getGenerator(world.getName(), null));
+            .loadWorld(world.getName(), PlotSquared.platform().getGenerator(world.getName(), null));
     }
 }

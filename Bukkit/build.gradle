@@ -101,9 +101,13 @@ shadowJar {
         include(dependency("org.bstats:bstats-bukkit:1.7"))
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))
+        include(dependency("com.google.inject:guice:4.2.3"))
+        include(dependency("com.google.inject.extensions:guice-assistedinject:4.2.3"))
+        include(dependency("javax.annotation:javax-annotation-api"))
         include(dependency('org.apache.logging.log4j:log4j-slf4j-impl'))
         include(dependency('org.slf4j:slf4j-api'))
     }
+
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
@@ -111,7 +115,7 @@ shadowJar {
     relocate('org.khelekore.prtree', 'com.plotsquared.prtree')
     relocate('org.apache.logging.slf4j', 'com.plotsquared.logging.apache')
     relocate('org.slf4j', 'com.plotsquared.logging.slf4j')
-
+    relocate('com.google.inject', 'com.plotsquared.google')
 
     archiveFileName = "${project.name}-${parent.version}.jar"
     destinationDirectory = file "../target"

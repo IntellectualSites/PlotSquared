@@ -25,12 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.util.task.RunnableVal3;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -92,43 +87,11 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     }
 
     public Location getMin() {
-        return new Location(getWorld(), minX, minY, minZ);
+        return Location.at(this.getWorld(), this.minX, this.minY, this.minZ);
     }
 
     public Location getMax() {
-        return new Location(getWorld(), maxX, maxY, maxZ);
+        return Location.at(this.getWorld(), this.maxX, this.maxY, this.maxZ);
     }
 
-    /**
-     * Run a task for each x,z value corresponding to the plot at that location<br>
-     * - Plot: The plot at the x,z (may be null)<br>
-     * - Location: The location in the chunk (y = 0)<br>
-     * - PlotChunk: Reference to this chunk object<br>
-     *
-     * @param task
-     */
-    public void mapByType2D(RunnableVal3<Plot, Integer, Integer> task) {
-        int bx = minX;
-        int bz = minZ;
-        PlotArea area = PlotSquared.get().getPlotArea(getWorld(), null);
-        Location location = new Location(getWorld(), bx, 0, bz);
-        if (area != null) {
-            PlotManager manager = area.getPlotManager();
-            for (int x = 0; x < 16; x++) {
-                location.setX(bx + x);
-                for (int z = 0; z < 16; z++) {
-                    location.setZ(bz + z);
-                    task.run(area.getPlotAbs(location), x, z);
-                }
-            }
-        } else {
-            for (int x = 0; x < 16; x++) {
-                location.setX(bx + x);
-                for (int z = 0; z < 16; z++) {
-                    location.setZ(bz + z);
-                    task.run(location.getPlotAbs(), x, z);
-                }
-            }
-        }
-    }
 }

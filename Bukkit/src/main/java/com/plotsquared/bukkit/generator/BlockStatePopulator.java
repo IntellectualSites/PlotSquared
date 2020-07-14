@@ -29,32 +29,40 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Random;
 
 final class BlockStatePopulator extends BlockPopulator {
 
     private final IndependentPlotGenerator plotGenerator;
+    private final PlotAreaManager plotAreaManager;
+
     private LocalBlockQueue queue;
 
-    public BlockStatePopulator(IndependentPlotGenerator plotGenerator) {
+    public BlockStatePopulator(@Nonnull final IndependentPlotGenerator plotGenerator,
+        @Nonnull final PlotAreaManager plotAreaManager) {
         this.plotGenerator = plotGenerator;
+        this.plotAreaManager = plotAreaManager;
     }
 
     @Override
-    public void populate(@NotNull final World world, @NotNull final Random random,
-        @NotNull final Chunk source) {
+    public void populate(@Nonnull final World world, @Nonnull final Random random,
+        @Nonnull final Chunk source) {
         if (this.queue == null) {
-            this.queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
+            this.queue = PlotSquared.platform().getGlobalBlockQueue()
+                .getNewQueue(world.getName(), false);
         }
-        final PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
+        final PlotArea area = this.plotAreaManager.getPlotArea(world.getName(), null);
+        if (area == null) {
+            return;
+        }
         final ChunkWrapper wrap =
             new ChunkWrapper(area.getWorldName(), source.getX(), source.getZ());
         final ScopedLocalBlockQueue chunk = this.queue.getForChunk(wrap.x, wrap.z);

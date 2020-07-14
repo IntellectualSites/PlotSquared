@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class VehicleBreakFlag extends BooleanFlag<VehicleBreakFlag> {
 
@@ -38,7 +38,7 @@ public class VehicleBreakFlag extends BooleanFlag<VehicleBreakFlag> {
         super(value, Captions.FLAG_DESCRIPTION_VEHICLE_BREAK);
     }
 
-    @Override protected VehicleBreakFlag flagOf(@NotNull Boolean value) {
+    @Override protected VehicleBreakFlag flagOf(@Nonnull Boolean value) {
         return value ? VEHICLE_BREAK_TRUE : VEHICLE_BREAK_FALSE;
     }
 

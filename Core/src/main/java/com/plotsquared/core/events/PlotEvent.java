@@ -26,7 +26,7 @@
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class PlotEvent {
 
@@ -51,7 +51,7 @@ public abstract class PlotEvent {
      *
      * @return the event class name
      */
-    @NotNull public String getEventName() {
+    @Nonnull public String getEventName() {
         if (name == null) {
             name = getClass().getSimpleName();
         }

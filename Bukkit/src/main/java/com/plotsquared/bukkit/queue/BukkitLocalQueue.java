@@ -40,7 +40,6 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import io.papermc.lib.PaperLib;
-import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -49,6 +48,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
+import javax.annotation.Nonnull;
 
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -195,12 +195,12 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
         return chunk;
     }
 
-    private void setMaterial(@NonNull final BlockState plotBlock, @NonNull final Block block) {
+    private void setMaterial(@Nonnull final BlockState plotBlock, @Nonnull final Block block) {
         Material material = BukkitAdapter.adapt(plotBlock.getBlockType());
         block.setType(material, false);
     }
 
-    private boolean equals(@NonNull final BlockState plotBlock, @NonNull final Block block) {
+    private boolean equals(@Nonnull final BlockState plotBlock, @Nonnull final Block block) {
         return plotBlock.equals(BukkitBlockUtil.get(block));
     }
 

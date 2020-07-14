@@ -33,7 +33,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,20 +43,13 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class SinglePlot extends Plot {
+
     private Set<CuboidRegion> regions = Collections.singleton(
         new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
             BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)));
 
-    public SinglePlot(PlotArea area, PlotId id, UUID owner) {
-        super(area, id, owner);
-    }
-
-    public SinglePlot(PlotArea area, PlotId id) {
+    public SinglePlot(@Nonnull final PlotArea area, @Nonnull final PlotId id) {
         super(area, id);
-    }
-
-    public SinglePlot(PlotArea area, PlotId id, UUID owner, int temp) {
-        super(area, id, owner, temp);
     }
 
     public SinglePlot(PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
@@ -83,7 +76,7 @@ public class SinglePlot extends Plot {
         return super.isLoaded();
     }
 
-    @NotNull @Override public Set<CuboidRegion> getRegions() {
+    @Nonnull @Override public Set<CuboidRegion> getRegions() {
         return regions;
     }
 

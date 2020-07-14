@@ -31,7 +31,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -40,7 +40,7 @@ public class AreaBoundDelegateLocalBlockQueue extends DelegateLocalBlockQueue {
 
     @Getter private final PlotArea area;
 
-    public AreaBoundDelegateLocalBlockQueue(@NotNull final PlotArea area,
+    public AreaBoundDelegateLocalBlockQueue(@Nonnull final PlotArea area,
         @Nullable final LocalBlockQueue parent) {
         super(parent);
         this.area = Objects.requireNonNull(area);

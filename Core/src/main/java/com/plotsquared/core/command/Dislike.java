@@ -25,7 +25,9 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.player.PlotPlayer;
+import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "dislike",
     permission = "plots.dislike",
@@ -35,8 +37,14 @@ import com.plotsquared.core.player.PlotPlayer;
     requiredType = RequiredType.PLAYER)
 public class Dislike extends SubCommand {
 
+    private final Like like;
+
+    @Inject public Dislike(@Nonnull final Like like) {
+        this.like = like;
+    }
+
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        return Like.handleLike(player, args, false);
+        return this.like.handleLike(player, args, false);
     }
 
 }

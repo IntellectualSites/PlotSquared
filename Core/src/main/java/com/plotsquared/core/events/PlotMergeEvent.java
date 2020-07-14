@@ -30,7 +30,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Event called when several plots are merged
@@ -53,8 +53,8 @@ public final class PlotMergeEvent extends PlotPlayerEvent implements Cancellable
      * @param max    Max merge size
      * @param player The player attempting the merge
      */
-    public PlotMergeEvent(@NotNull final String world, @NotNull final Plot plot,
-        @NotNull final Direction dir, final int max, PlotPlayer player) {
+    public PlotMergeEvent(@Nonnull final String world, @Nonnull final Plot plot,
+        @Nonnull final Direction dir, final int max, PlotPlayer player) {
         super(player, plot);
         this.world = world;
         this.dir = dir;

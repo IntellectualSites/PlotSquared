@@ -31,7 +31,9 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
-import lombok.NonNull;
+
+import javax.annotation.Nonnull;
+
 
 /**
  * Main Configuration Utility
@@ -104,7 +106,7 @@ public class ConfigurationUtil {
 
         @Getter private final String unknownValue;
 
-        UnknownBlockException(@NonNull final String unknownValue) {
+        UnknownBlockException(@Nonnull final String unknownValue) {
             super(String.format("\"%s\" is not a valid block", unknownValue));
             this.unknownValue = unknownValue;
         }
@@ -137,7 +139,7 @@ public class ConfigurationUtil {
 
         @Getter private final BlockState unsafeBlock;
 
-        UnsafeBlockException(@NonNull final BlockState unsafeBlock) {
+        UnsafeBlockException(@Nonnull final BlockState unsafeBlock) {
             super(String.format("%s is not a valid block", unsafeBlock));
             this.unsafeBlock = unsafeBlock;
         }

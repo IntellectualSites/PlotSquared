@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.NonNegativeIntegerFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class VehicleCapFlag extends NonNegativeIntegerFlag<VehicleCapFlag> {
     public static final VehicleCapFlag VEHICLE_CAP_UNLIMITED =
@@ -37,7 +37,7 @@ public class VehicleCapFlag extends NonNegativeIntegerFlag<VehicleCapFlag> {
         super(value, Captions.FLAG_DESCRIPTION_VEHICLE_CAP);
     }
 
-    @Override protected VehicleCapFlag flagOf(@NotNull Integer value) {
+    @Override protected VehicleCapFlag flagOf(@Nonnull Integer value) {
         return new VehicleCapFlag(value);
     }
 }

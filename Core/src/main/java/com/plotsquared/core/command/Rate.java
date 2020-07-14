@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -37,10 +38,13 @@ import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
 import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +60,15 @@ import java.util.UUID;
     requiredType = RequiredType.PLAYER)
 public class Rate extends SubCommand {
 
+    private final EventDispatcher eventDispatcher;
+    private final InventoryUtil inventoryUtil;
+    
+    @Inject public Rate(@Nonnull final EventDispatcher eventDispatcher,
+                        @Nonnull final InventoryUtil inventoryUtil) {
+        this.eventDispatcher = eventDispatcher;
+        this.inventoryUtil = inventoryUtil;
+    }
+    
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
@@ -135,13 +148,13 @@ public class Rate extends SubCommand {
                     final MutableInt index = new MutableInt(0);
                     final MutableInt rating = new MutableInt(0);
                     String title = Settings.Ratings.CATEGORIES.get(0);
-                    PlotInventory inventory = new PlotInventory(player, 1, title) {
+                    PlotInventory inventory = new PlotInventory(inventoryUtil, player, 1, title) {
                         @Override public boolean onClick(int i) {
                             rating.add((i + 1) * Math.pow(10, index.getValue()));
                             index.increment();
                             if (index.getValue() >= Settings.Ratings.CATEGORIES.size()) {
                                 int rV = rating.getValue();
-                                PlotRateEvent event = PlotSquared.get().getEventDispatcher()
+                                PlotRateEvent event = Rate.this.eventDispatcher
                                     .callRating(this.player, plot, new Rating(rV));
                                 if (event.getRating() != null) {
                                     plot.addRating(this.player.getUUID(), event.getRating());
@@ -211,7 +224,7 @@ public class Rate extends SubCommand {
                 return;
             }
             PlotRateEvent event =
-                PlotSquared.get().getEventDispatcher().callRating(player, plot, new Rating(rating));
+                this.eventDispatcher.callRating(player, plot, new Rating(rating));
             if (event.getRating() != null) {
                 plot.addRating(uuid, event.getRating());
                 sendMessage(player, Captions.RATING_APPLIED, plot.getId().toString());

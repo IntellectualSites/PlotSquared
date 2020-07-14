@@ -38,7 +38,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class GlobalBlockQueue {
 
-    public static GlobalBlockQueue IMP;
     private final int PARALLEL_THREADS;
     private final ConcurrentLinkedDeque<LocalBlockQueue> activeQueues;
     private final ConcurrentLinkedDeque<LocalBlockQueue> inactiveQueues;
@@ -92,6 +91,8 @@ public class GlobalBlockQueue {
 
     public LocalBlockQueue getNewQueue(String world, boolean autoQueue) {
         LocalBlockQueue queue = provider.getNewQueue(world);
+        // Auto-inject into the queue
+        PlotSquared.platform().getInjector().injectMembers(queue);
         if (autoQueue) {
             inactiveQueues.add(queue);
         }

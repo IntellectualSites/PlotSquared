@@ -25,13 +25,18 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.generator.HybridPlotWorld;
+import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -40,6 +45,7 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
@@ -65,11 +71,14 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -82,6 +91,30 @@ import java.util.Set;
     usage = "/plot area <create|info|list|tp|regen>",
     confirmation = true)
 public class Area extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+    private final YamlConfiguration worldConfiguration;
+    private final File worldFile;
+    private final HybridPlotWorldFactory hybridPlotWorldFactory;
+    private final SetupUtils setupUtils;
+    private final WorldUtil worldUtil;
+    private final RegionManager regionManager;
+
+    @Inject public Area(@Nonnull final PlotAreaManager plotAreaManager,
+                        @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                        @WorldFile @Nonnull final File worldFile,
+                        @Nonnull final HybridPlotWorldFactory hybridPlotWorldFactory,
+                        @Nonnull final SetupUtils setupUtils,
+                        @Nonnull final WorldUtil worldUtil,
+                        @Nonnull final RegionManager regionManager) {
+        this.plotAreaManager = plotAreaManager;
+        this.worldConfiguration = worldConfiguration;
+        this.worldFile = worldFile;
+        this.hybridPlotWorldFactory = hybridPlotWorldFactory;
+        this.setupUtils = setupUtils;
+        this.worldUtil = worldUtil;
+        this.regionManager = regionManager;
+    }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -102,7 +135,7 @@ public class Area extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NEEDS_NAME);
                     return false;
                 }
-                final PlotArea existingArea = PlotSquared.get().getPlotArea(player.getLocation().getWorld(), args[1]);
+                final PlotArea existingArea = this.plotAreaManager.getPlotArea(player.getLocation().getWorldName(), args[1]);
                 if (existingArea != null && existingArea.getId().equalsIgnoreCase(args[1])) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NAME_TAKEN);
                     return false;
@@ -124,7 +157,7 @@ public class Area extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_NOT_SQUARE);
                     return false;
                 }
-                if (PlotSquared.get().getPlotAreaManager().getPlotAreas(
+                if (this.plotAreaManager.getPlotAreas(
                     Objects.requireNonNull(playerSelectedRegion.getWorld()).getName(), CuboidRegion.makeCuboid(playerSelectedRegion)).length != 0) {
                     MainUtil.sendMessage(player, Captions.SINGLE_AREA_OVERLAPPING);
                 }
@@ -137,8 +170,8 @@ public class Area extends SubCommand {
                     BlockVector3.at(playerSelectionMax.getX(), 255, playerSelectionMax.getZ()));
                 // There's only one plot in the area...
                 final PlotId plotId = new PlotId(1, 1);
-                final HybridPlotWorld hybridPlotWorld = new HybridPlotWorld(player.getLocation().getWorld(), args[1],
-                    Objects.requireNonNull(PlotSquared.imp()).getDefaultGenerator(), plotId, plotId);
+                final HybridPlotWorld hybridPlotWorld = this.hybridPlotWorldFactory.create(player.getLocation().getWorldName(), args[1],
+                    Objects.requireNonNull(PlotSquared.platform()).getDefaultGenerator(), plotId, plotId);
                 // Plot size is the same as the region width
                 hybridPlotWorld.PLOT_WIDTH = hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
                 // We use a schematic generator
@@ -153,7 +186,7 @@ public class Area extends SubCommand {
                 hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT = hybridPlotWorld.WALL_HEIGHT = playerSelectionMin.getBlockY();
                 // No sign plz
                 hybridPlotWorld.setAllowSigns(false);
-                final File parentFile = MainUtil.getFile(PlotSquared.imp().getDirectory(), "schematics" + File.separator +
+                final File parentFile = MainUtil.getFile(PlotSquared.platform().getDirectory(), "schematics" + File.separator +
                     "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld.getWorldName() + File.separator +
                     hybridPlotWorld.getId());
                 if (!parentFile.exists() && !parentFile.mkdirs()) {
@@ -187,8 +220,8 @@ public class Area extends SubCommand {
 
                 // Now the schematic is saved, which is wonderful!
                 PlotAreaBuilder singleBuilder = PlotAreaBuilder.ofPlotArea(hybridPlotWorld)
-                        .plotManager(PlotSquared.imp().getPluginName())
-                        .generatorName(PlotSquared.imp().getPluginName())
+                        .plotManager(PlotSquared.platform().getPluginName())
+                        .generatorName(PlotSquared.platform().getPluginName())
                         .maximumId(plotId)
                         .minimumId(plotId);
                 Runnable singleRun = () -> {
@@ -198,15 +231,13 @@ public class Area extends SubCommand {
                     final int offsetX = singlePos1.getX();
                     final int offsetZ = singlePos1.getZ();
                     if (offsetX != 0) {
-                        PlotSquared.get().worlds
-                            .set(path + ".road.offset.x", offsetX);
+                        this.worldConfiguration.set(path + ".road.offset.x", offsetX);
                     }
                     if (offsetZ != 0) {
-                        PlotSquared.get().worlds
-                            .set(path + ".road.offset.z", offsetZ);
+                        this.worldConfiguration.set(path + ".road.offset.z", offsetZ);
                     }
-                    final String world = SetupUtils.manager.setupWorld(singleBuilder);
-                    if (WorldUtil.IMP.isWorld(world)) {
+                    final String world = this.setupUtils.setupWorld(singleBuilder);
+                    if (this.worldUtil.isWorld(world)) {
                         PlotSquared.get().loadWorld(world, null);
                         MainUtil.sendMessage(player, Captions.SINGLE_AREA_CREATED);
                     } else {
@@ -274,16 +305,16 @@ public class Area extends SubCommand {
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final CuboidRegion region = RegionUtil.createRegion(bx, tx, bz, tz);
-                                Set<PlotArea> areas =
-                                    PlotSquared.get().getPlotAreas(area.getWorldName(), region);
+                                final Set<PlotArea> areas = this.plotAreaManager
+                                    .getPlotAreasSet(area.getWorldName(), region);
                                 if (!areas.isEmpty()) {
                                     Captions.CLUSTER_INTERSECTION
                                         .send(player, areas.iterator().next().toString());
                                     return false;
                                 }
                                 PlotAreaBuilder builder = PlotAreaBuilder.ofPlotArea(area)
-                                        .plotManager(PlotSquared.imp().getPluginName())
-                                        .generatorName(PlotSquared.imp().getPluginName())
+                                        .plotManager(PlotSquared.platform().getPluginName())
+                                        .generatorName(PlotSquared.platform().getPluginName())
                                         .minimumId(new PlotId(1, 1))
                                         .maximumId(new PlotId(numX, numZ));
                                 final String path =
@@ -291,21 +322,19 @@ public class Area extends SubCommand {
                                         + builder.minimumId() + '-' + builder.maximumId();
                                 Runnable run = () -> {
                                     if (offsetX != 0) {
-                                        PlotSquared.get().worlds
-                                            .set(path + ".road.offset.x", offsetX);
+                                        this.worldConfiguration.set(path + ".road.offset.x", offsetX);
                                     }
                                     if (offsetZ != 0) {
-                                        PlotSquared.get().worlds
-                                            .set(path + ".road.offset.z", offsetZ);
+                                        this.worldConfiguration.set(path + ".road.offset.z", offsetZ);
                                     }
-                                    final String world = SetupUtils.manager.setupWorld(builder);
-                                    if (WorldUtil.IMP.isWorld(world)) {
+                                    final String world = this.setupUtils.setupWorld(builder);
+                                    if (this.worldUtil.isWorld(world)) {
                                         PlotSquared.get().loadWorld(world, null);
                                         Captions.SETUP_FINISHED.send(player);
-                                        player.teleport(WorldUtil.IMP.getSpawn(world),
+                                        player.teleport(this.worldUtil.getSpawn(world),
                                             TeleportCause.COMMAND);
                                         if (area.getTerrain() != PlotAreaTerrainType.ALL) {
-                                            RegionManager.largeRegionTask(world, region,
+                                            this.regionManager.largeRegionTask(world, region,
                                                 new RunnableVal<BlockVector2>() {
                                                     @Override public void run(BlockVector2 value) {
                                                         AugmentedUtils
@@ -336,16 +365,16 @@ public class Area extends SubCommand {
                         } else {
                             id = null;
                         }
-                        PlotAreaBuilder builder = new PlotAreaBuilder();
+                        PlotAreaBuilder builder = PlotAreaBuilder.newBuilder();
                         builder.worldName(split[0]);
-                        final HybridPlotWorld pa = new HybridPlotWorld(builder.worldName(), id,
-                            PlotSquared.get().IMP.getDefaultGenerator(), null, null);
-                        PlotArea other = PlotSquared.get().getPlotArea(pa.getWorldName(), id);
+                        final HybridPlotWorld pa = this.hybridPlotWorldFactory.create(builder.worldName(),
+                            id, PlotSquared.platform().getDefaultGenerator(), null, null);
+                        PlotArea other = this.plotAreaManager.getPlotArea(pa.getWorldName(), id);
                         if (other != null && Objects.equals(pa.getId(), other.getId())) {
                             Captions.SETUP_WORLD_TAKEN.send(player, pa.toString());
                             return false;
                         }
-                        Set<PlotArea> areas = PlotSquared.get().getPlotAreas(pa.getWorldName());
+                        Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(pa.getWorldName());
                         if (!areas.isEmpty()) {
                             PlotArea area = areas.iterator().next();
                             pa.setType(area.getType());
@@ -415,25 +444,24 @@ public class Area extends SubCommand {
                             }
                         }
                         if (pa.getType() != PlotAreaType.PARTIAL) {
-                            if (WorldUtil.IMP.isWorld(pa.getWorldName())) {
+                            if (this.worldUtil.isWorld(pa.getWorldName())) {
                                 Captions.SETUP_WORLD_TAKEN.send(player, pa.getWorldName());
                                 return false;
                             }
                             Runnable run = () -> {
                                 String path = "worlds." + pa.getWorldName();
-                                if (!PlotSquared.get().worlds.contains(path)) {
-                                    PlotSquared.get().worlds.createSection(path);
+                                if (!this.worldConfiguration.contains(path)) {
+                                    this.worldConfiguration.createSection(path);
                                 }
-                                ConfigurationSection section =
-                                    PlotSquared.get().worlds.getConfigurationSection(path);
+                                ConfigurationSection section = this.worldConfiguration.getConfigurationSection(path);
                                 pa.saveConfiguration(section);
                                 pa.loadConfiguration(section);
-                                builder.plotManager(PlotSquared.imp().getPluginName());
-                                builder.generatorName(PlotSquared.imp().getPluginName());
-                                String world = SetupUtils.manager.setupWorld(builder);
-                                if (WorldUtil.IMP.isWorld(world)) {
+                                builder.plotManager(PlotSquared.platform().getPluginName());
+                                builder.generatorName(PlotSquared.platform().getPluginName());
+                                String world = this.setupUtils.setupWorld(builder);
+                                if (this.worldUtil.isWorld(world)) {
                                     Captions.SETUP_FINISHED.send(player);
-                                    player.teleport(WorldUtil.IMP.getSpawn(world),
+                                    player.teleport(this.worldUtil.getSpawn(world),
                                         TeleportCause.COMMAND);
                                 } else {
                                     MainUtil.sendMessage(player,
@@ -441,7 +469,7 @@ public class Area extends SubCommand {
                                             .getWorldName());
                                 }
                                 try {
-                                    PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
+                                    this.worldConfiguration.save(this.worldFile);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -459,16 +487,16 @@ public class Area extends SubCommand {
                                 + " create [world[:id]] [<modifier>=<value>]...");
                             return false;
                         }
-                        if (WorldUtil.IMP.isWorld(pa.getWorldName())) {
-                            if (!player.getLocation().getWorld().equals(pa.getWorldName())) {
-                                player.teleport(WorldUtil.IMP.getSpawn(pa.getWorldName()),
+                        if (this.worldUtil.isWorld(pa.getWorldName())) {
+                            if (!player.getLocation().getWorldName().equals(pa.getWorldName())) {
+                                player.teleport(this.worldUtil.getSpawn(pa.getWorldName()),
                                     TeleportCause.COMMAND);
                             }
                         } else {
                             builder.terrainType(PlotAreaTerrainType.NONE);
                             builder.plotAreaType(PlotAreaType.NORMAL);
-                            SetupUtils.manager.setupWorld(builder);
-                            player.teleport(WorldUtil.IMP.getSpawn(pa.getWorldName()),
+                            this.setupUtils.setupWorld(builder);
+                            player.teleport(this.worldUtil.getSpawn(pa.getWorldName()),
                                 TeleportCause.COMMAND);
                         }
                         player.setMeta("area_create_area", pa);
@@ -490,7 +518,7 @@ public class Area extends SubCommand {
                         area = player.getApplicablePlotArea();
                         break;
                     case 2:
-                        area = PlotSquared.get().getPlotAreaByString(args[1]);
+                        area = this.plotAreaManager.getPlotAreaByString(args[1]);
                         break;
                     default:
                         Captions.COMMAND_SYNTAX.send(player, getCommandString() + " info [area]");
@@ -552,7 +580,7 @@ public class Area extends SubCommand {
                         Captions.COMMAND_SYNTAX.send(player, getCommandString() + " list [#]");
                         return false;
                 }
-                ArrayList<PlotArea> areas = new ArrayList<>(PlotSquared.get().getPlotAreas());
+                final List<PlotArea> areas = new ArrayList<>(Arrays.asList(this.plotAreaManager.getAllPlotAreas()));
                 paginate(player, areas, 8, page,
                     new RunnableVal3<Integer, PlotArea, PlotMessage>() {
                         @Override public void run(Integer i, PlotArea area, PlotMessage message) {
@@ -612,7 +640,7 @@ public class Area extends SubCommand {
                         "$4Stop the server and delete: " + area.getWorldName() + "/region");
                     return false;
                 }
-                RegionManager.largeRegionTask(area.getWorldName(), area.getRegion(),
+                this.regionManager.largeRegionTask(area.getWorldName(), area.getRegion(),
                     new RunnableVal<BlockVector2>() {
                         @Override public void run(BlockVector2 value) {
                             AugmentedUtils
@@ -635,33 +663,30 @@ public class Area extends SubCommand {
                     Captions.COMMAND_SYNTAX.send(player, "/plot visit [area]");
                     return false;
                 }
-                PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
+                PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                 if (area == null) {
                     Captions.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;
                 }
                 Location center;
                 if (area.getType() != PlotAreaType.PARTIAL) {
-                    center = WorldUtil.IMP.getSpawn(area.getWorldName());
+                    center = this.worldUtil.getSpawn(area.getWorldName());
                     player.teleport(center, TeleportCause.COMMAND);
                 } else {
                     CuboidRegion region = area.getRegion();
-                    center = new Location(area.getWorldName(), region.getMinimumPoint().getX()
+                    center = Location.at(area.getWorldName(), region.getMinimumPoint().getX()
                         + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
                         0, region.getMinimumPoint().getZ()
                         + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
-                    WorldUtil.IMP
-                        .getHighestBlock(area.getWorldName(), center.getX(), center.getZ(), y -> {
-                            center.setY(1 + y);
-                            player.teleport(center, TeleportCause.COMMAND);
-                        });
+                    this.worldUtil.getHighestBlock(area.getWorldName(), center.getX(), center.getZ(), y ->
+                            player.teleport(center.withY(1 + y), TeleportCause.COMMAND));
                 }
                 return true;
             case "delete":
             case "remove":
                 MainUtil.sendMessage(player,
                     "$1World creation settings may be stored in multiple locations:"
-                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.imp()
+                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.platform()
                         .getPluginName() + " settings.yml"
                         + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
                         + "\n$1Stop the server and delete it from these locations.");

@@ -34,8 +34,6 @@ import java.util.HashMap;
 
 public abstract class SetupUtils {
 
-    public static SetupUtils manager;
-
     public static HashMap<String, GeneratorWrapper<?>> generators = new HashMap<>();
 
     public abstract void updateGenerators();
@@ -48,4 +46,5 @@ public abstract class SetupUtils {
     public abstract String setupWorld(final PlotAreaBuilder builder);
 
     public abstract void unload(String world, boolean save);
+
 }

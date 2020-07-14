@@ -25,18 +25,21 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.expiration.ExpireManager;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.TaskManager;
@@ -44,16 +47,11 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 @CommandDeclaration(command = "trim",
@@ -65,57 +63,21 @@ import java.util.Set;
 public class Trim extends SubCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + Trim.class.getSimpleName());
-    public static ArrayList<Plot> expired = null;
     private static volatile boolean TASK = false;
 
-    public static boolean getBulkRegions(final ArrayList<BlockVector2> empty, final String world,
-        final Runnable whenDone) {
-        if (Trim.TASK) {
-            return false;
-        }
-        TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
-                String directory = world + File.separator + "region";
-                File folder = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
-                File[] regionFiles = folder.listFiles();
-                for (File file : regionFiles) {
-                    String name = file.getName();
-                    if (name.endsWith("mca")) {
-                        if (file.getTotalSpace() <= 8192) {
-                            checkMca(name);
-                        } else {
-                            Path path = Paths.get(file.getPath());
-                            try {
-                                BasicFileAttributes attr =
-                                    Files.readAttributes(path, BasicFileAttributes.class);
-                                long creation = attr.creationTime().toMillis();
-                                long modification = file.lastModified();
-                                long diff = Math.abs(creation - modification);
-                                if (diff < 10000) {
-                                    checkMca(name);
-                                }
-                            } catch (IOException ignored) {
-                            }
-                        }
-                    }
-                }
-                Trim.TASK = false;
-                TaskManager.runTaskAsync(whenDone);
-            }
+    private final PlotAreaManager plotAreaManager;
+    private final WorldUtil worldUtil;
+    private final GlobalBlockQueue blockQueue;
+    private final RegionManager regionManager;
 
-            private void checkMca(String name) {
-                try {
-                    String[] split = name.split("\\.");
-                    int x = Integer.parseInt(split[1]);
-                    int z = Integer.parseInt(split[2]);
-                    BlockVector2 loc = BlockVector2.at(x, z);
-                    empty.add(loc);
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        });
-        Trim.TASK = true;
-        return true;
+    @Inject public Trim(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final WorldUtil worldUtil,
+                        @Nonnull final GlobalBlockQueue blockQueue,
+                        @Nonnull final RegionManager regionManager) {
+        this.plotAreaManager = plotAreaManager;
+        this.worldUtil = worldUtil;
+        this.blockQueue = blockQueue;
+        this.regionManager = regionManager;
     }
 
     /**
@@ -131,11 +93,11 @@ public class Trim extends SubCommand {
             return false;
         }
         MainUtil.sendMessage(null, "Collecting region data...");
-        ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getPlots(world));
+        final List<Plot> plots = PlotQuery.newQuery().inWorld(world).asList();
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
-        result.value1 = new HashSet<>(RegionManager.manager.getChunkChunks(world));
+        result.value1 = new HashSet<>(PlotSquared.platform().getRegionManager().getChunkChunks(world));
         result.value2 = new HashSet<>();
         MainUtil.sendMessage(null, " - MCA #: " + result.value1.size());
         MainUtil.sendMessage(null, " - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
@@ -167,7 +129,7 @@ public class Trim extends SubCommand {
             return false;
         }
         final String world = args[0];
-        if (!WorldUtil.IMP.isWorld(world) || !PlotSquared.get().hasPlotArea(world)) {
+        if (!this.worldUtil.isWorld(world) || !this.plotAreaManager.hasPlotArea(world)) {
             MainUtil.sendMessage(player, Captions.NOT_VALID_WORLD);
             return false;
         }
@@ -209,7 +171,7 @@ public class Trim extends SubCommand {
                             int bz = cbz << 4;
                             CuboidRegion region =
                                 RegionUtil.createRegion(bx, bx + 511, bz, bz + 511);
-                            for (Plot plot : PlotSquared.get().getPlots(world)) {
+                            for (Plot plot : PlotQuery.newQuery().inWorld(world).asCollection()) {
                                 Location bot = plot.getBottomAbs();
                                 Location top = plot.getExtendedTopAbs();
                                 CuboidRegion plotReg = RegionUtil
@@ -226,8 +188,7 @@ public class Trim extends SubCommand {
                                     }
                                 }
                             }
-                            final LocalBlockQueue queue =
-                                GlobalBlockQueue.IMP.getNewQueue(world, false);
+                            final LocalBlockQueue queue = blockQueue.getNewQueue(world, false);
                             TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
                                 @Override public void run(BlockVector2 value) {
                                     queue.regenChunk(value.getX(), value.getZ());
@@ -241,7 +202,7 @@ public class Trim extends SubCommand {
                         player.sendMessage("Trim done!");
                     };
                 }
-                RegionManager.manager.deleteRegionFiles(world, viable, regenTask);
+                regionManager.deleteRegionFiles(world, viable, regenTask);
 
             }
         });

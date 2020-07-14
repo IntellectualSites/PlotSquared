@@ -27,9 +27,13 @@ package com.plotsquared.core.database;
 
 import com.google.common.base.Charsets;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
+import com.plotsquared.core.configuration.file.YamlConfiguration;
+import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -42,11 +46,12 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,6 +136,10 @@ public class SQLManager implements AbstractDB {
     private Connection connection;
     private boolean closed = false;
 
+    private final EventDispatcher eventDispatcher;
+    private final PlotListener plotListener;
+    private final YamlConfiguration worldConfiguration;
+
     /**
      * Constructor
      *
@@ -139,9 +148,16 @@ public class SQLManager implements AbstractDB {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public SQLManager(final Database database, String prefix, boolean debug)
+    public SQLManager(@Nonnull final Database database,
+                      @Nonnull final String prefix,
+                      @Nonnull final EventDispatcher eventDispatcher,
+                      @Nonnull final PlotListener plotListener,
+                      @WorldConfig @Nonnull final YamlConfiguration worldConfiguration)
         throws SQLException, ClassNotFoundException {
         // Private final
+        this.eventDispatcher = eventDispatcher;
+        this.plotListener = plotListener;
+        this.worldConfiguration = worldConfiguration;
         this.database = database;
         this.connection = database.openConnection();
         this.mySQL = database instanceof MySQL;
@@ -253,7 +269,7 @@ public class SQLManager implements AbstractDB {
         return this.notifyTasks;
     }
 
-    public synchronized void addPlotTask(@NotNull Plot plot, UniqueStatement task) {
+    public synchronized void addPlotTask(@Nonnull Plot plot, UniqueStatement task) {
         Queue<UniqueStatement> tasks = this.plotTasks.get(plot);
         if (tasks == null) {
             tasks = new ConcurrentLinkedQueue<>();
@@ -1696,9 +1712,8 @@ public class SQLManager implements AbstractDB {
         HashMap<Integer, Plot> plots = new HashMap<>();
         try {
             HashSet<String> areas = new HashSet<>();
-            if (PlotSquared.get().worlds.contains("worlds")) {
-                ConfigurationSection worldSection =
-                    PlotSquared.get().worlds.getConfigurationSection("worlds");
+            if (this.worldConfiguration.contains("worlds")) {
+                ConfigurationSection worldSection = this.worldConfiguration.getConfigurationSection("worlds");
                 if (worldSection != null) {
                     for (String worldKey : worldSection.getKeys(false)) {
                         areas.add(worldKey);
@@ -2319,7 +2334,7 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override
-    public void getComments(@NotNull Plot plot, final String inbox,
+    public void getComments(@Nonnull Plot plot, final String inbox,
         final RunnableVal<List<PlotComment>> whenDone) {
         addPlotTask(plot, new UniqueStatement("getComments_" + plot) {
             @Override public void set(PreparedStatement statement) throws SQLException {
@@ -2648,9 +2663,8 @@ public class SQLManager implements AbstractDB {
         HashMap<Integer, PlotCluster> clusters = new HashMap<>();
         try {
             HashSet<String> areas = new HashSet<>();
-            if (PlotSquared.get().worlds.contains("worlds")) {
-                ConfigurationSection worldSection =
-                    PlotSquared.get().worlds.getConfigurationSection("worlds");
+            if (this.worldConfiguration.contains("worlds")) {
+                ConfigurationSection worldSection = this.worldConfiguration.getConfigurationSection("worlds");
                 if (worldSection != null) {
                     for (String worldKey : worldSection.getKeys(false)) {
                         areas.add(worldKey);
