@@ -32,15 +32,16 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.util.List;
 
 public class SinglePlotManager extends PlotManager {
-    public SinglePlotManager(PlotArea plotArea) {
+
+    public SinglePlotManager(@Nonnull final PlotArea plotArea) {
         super(plotArea);
     }
 
@@ -52,19 +53,18 @@ public class SinglePlotManager extends PlotManager {
         return new PlotId(0, 0);
     }
 
-    @Override public Location getPlotBottomLocAbs(PlotId plotId) {
-        return new Location(plotId.toCommaSeparatedString(), -30000000, 0, -30000000);
+    @Override public Location getPlotBottomLocAbs(@Nonnull final PlotId plotId) {
+        return Location.at(plotId.toCommaSeparatedString(), -30000000, 0, -30000000);
     }
 
-    @Override public Location getPlotTopLocAbs(PlotId plotId) {
-        return new Location(plotId.toCommaSeparatedString(), 30000000, 0, 30000000);
+    @Override public Location getPlotTopLocAbs(@Nonnull final PlotId plotId) {
+        return Location.at(plotId.toCommaSeparatedString(), 30000000, 0, 30000000);
     }
 
     @Override public boolean clearPlot(Plot plot, final Runnable whenDone) {
-        SetupUtils.manager.unload(plot.getWorldName(), false);
-        final File worldFolder =
-            new File(PlotSquared.get().IMP.getWorldContainer(), plot.getWorldName());
-        TaskManager.IMP.taskAsync(() -> {
+        PlotSquared.platform().getSetupUtils().unload(plot.getWorldName(), false);
+        final File worldFolder = new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
+        TaskManager.getImplementation().taskAsync(() -> {
             MainUtil.deleteDirectory(worldFolder);
             if (whenDone != null) {
                 whenDone.run();

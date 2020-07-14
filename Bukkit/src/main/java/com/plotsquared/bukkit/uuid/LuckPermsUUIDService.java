@@ -31,7 +31,7 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class LuckPermsUUIDService implements UUIDService {
         }
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
        final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
        final UserManager userManager = this.luckPerms.getUserManager();
        for (final UUID uuid : uuids) {
@@ -67,7 +67,7 @@ public class LuckPermsUUIDService implements UUIDService {
        return mappings;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         final UserManager userManager = this.luckPerms.getUserManager();
         for (final String username : usernames) {

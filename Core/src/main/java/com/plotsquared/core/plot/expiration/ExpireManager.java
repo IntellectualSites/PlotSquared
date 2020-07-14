@@ -31,7 +31,6 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -42,11 +41,16 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -55,31 +59,34 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class ExpireManager {
 
+    private final Logger logger = LoggerFactory.getLogger("P2/" + ExpireManager.class);
+
     public static ExpireManager IMP;
     private final ConcurrentHashMap<UUID, Long> dates_cache;
     private final ConcurrentHashMap<UUID, Long> account_age_cache;
+    private final EventDispatcher eventDispatcher;
     private volatile HashSet<Plot> plotsToDelete;
     private ArrayDeque<ExpiryTask> tasks;
+
     /**
      * 0 = stopped, 1 = stopping, 2 = running
      */
     private int running;
 
-    public ExpireManager() {
-        tasks = new ArrayDeque<>();
-        dates_cache = new ConcurrentHashMap<>();
-        account_age_cache = new ConcurrentHashMap<>();
+    public ExpireManager(@Nonnull final EventDispatcher eventDispatcher) {
+        this.tasks = new ArrayDeque<>();
+        this.dates_cache = new ConcurrentHashMap<>();
+        this.account_age_cache = new ConcurrentHashMap<>();
+        this.eventDispatcher = eventDispatcher;
     }
 
     public void addTask(ExpiryTask task) {
-        PlotSquared.debug("Adding new expiry task!");
         this.tasks.add(task);
     }
 
@@ -295,7 +302,7 @@ public class ExpireManager {
         }
         this.running = 2;
         final ConcurrentLinkedDeque<Plot> plots =
-            new ConcurrentLinkedDeque<>(PlotSquared.get().getPlots());
+            new ConcurrentLinkedDeque<>(PlotQuery.newQuery().allPlots().asList());
         TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 final Runnable task = this;
@@ -319,7 +326,7 @@ public class ExpireManager {
                     }
                     for (ExpiryTask expiryTask : expired) {
                         if (!expiryTask.needsAnalysis()) {
-                            expiredTask.run(newPlot, () -> TaskManager.IMP.taskLaterAsync(task, 1),
+                            expiredTask.run(newPlot, () -> TaskManager.getImplementation().taskLaterAsync(task, 1),
                                 expiryTask.requiresConfirmation());
                             return;
                         }
@@ -330,7 +337,7 @@ public class ExpireManager {
                                 passesComplexity(changed, expired, new RunnableVal<Boolean>() {
                                     @Override public void run(Boolean confirmation) {
                                         expiredTask.run(newPlot,
-                                            () -> TaskManager.IMP.taskLaterAsync(task, 1),
+                                            () -> TaskManager.getImplementation().taskLaterAsync(task, 1),
                                             confirmation);
                                     }
                                 }, () -> {
@@ -348,7 +355,7 @@ public class ExpireManager {
                             }
                         };
                     final Runnable doAnalysis =
-                        () -> HybridUtils.manager.analyzePlot(newPlot, handleAnalysis);
+                        () -> PlotSquared.platform().getHybridUtils().analyzePlot(newPlot, handleAnalysis);
 
                     PlotAnalysis analysis = newPlot.getComplexity(null);
                     if (analysis != null) {
@@ -356,7 +363,7 @@ public class ExpireManager {
                             @Override public void run(Boolean value) {
                                 doAnalysis.run();
                             }
-                        }, () -> TaskManager.IMP.taskLaterAsync(task, 1));
+                        }, () -> TaskManager.getImplementation().taskLaterAsync(task, 1));
                     } else {
                         doAnalysis.run();
                     }
@@ -401,7 +408,7 @@ public class ExpireManager {
 
     public void deleteWithMessage(Plot plot, Runnable whenDone) {
         if (plot.isMerged()) {
-            PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
+            PlotUnlinkEvent event = this.eventDispatcher
                 .callUnlink(plot.getArea(), plot, true, false,
                     PlotUnlinkEvent.REASON.EXPIRE_DELETE);
             if (event.getEventResult() != Result.DENY) {
@@ -409,41 +416,27 @@ public class ExpireManager {
             }
         }
         for (UUID helper : plot.getTrusted()) {
-            PlotPlayer player = PlotSquared.imp().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
         }
         for (UUID helper : plot.getMembers()) {
-            PlotPlayer player = PlotSquared.imp().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
         }
-        Set<Plot> plots = plot.getConnectedPlots();
         plot.deletePlot(whenDone);
-        PlotAnalysis changed = plot.getComplexity(null);
-        int changes = changed == null ? 0 : changed.changes_sd;
-        int modified = changed == null ? 0 : changed.changes;
-        PlotSquared.debug(
-            "$2[&5Expire&dManager$2] &cDeleted expired plot: " + plot + " User:" + plot.getOwner()
-                + " Delta:" + changes + "/" + modified + " Connected: " + StringMan
-                .getString(plots));
-        PlotSquared.debug("$4 - Area: " + plot.getArea());
-        if (plot.hasOwner()) {
-            PlotSquared.debug("$4 - Owner: " + plot.getOwner());
-        } else {
-            PlotSquared.debug("$4 - Owner: Unowned");
-        }
     }
 
     public long getAge(UUID uuid) {
-        if (PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid) != null) {
+        if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid) != null) {
             return 0;
         }
         Long last = this.dates_cache.get(uuid);
         if (last == null) {
-            OfflinePlotPlayer opp = PlotSquared.imp().getPlayerManager().getOfflinePlayer(uuid);
+            OfflinePlotPlayer opp = PlotSquared.platform().getPlayerManager().getOfflinePlayer(uuid);
             if (opp != null && (last = opp.getLastPlayed()) != 0) {
                 this.dates_cache.put(uuid, last);
             } else {
@@ -458,7 +451,7 @@ public class ExpireManager {
 
     public long getAge(Plot plot) {
         if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
-            || PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
+            || PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
             return 0;
         }
 

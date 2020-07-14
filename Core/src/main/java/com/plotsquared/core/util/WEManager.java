@@ -87,8 +87,8 @@ public class WEManager {
         HashSet<CuboidRegion> regions = new HashSet<>();
         UUID uuid = player.getUUID();
         Location location = player.getLocation();
-        String world = location.getWorld();
-        if (!PlotSquared.get().hasPlotArea(world)) {
+        String world = location.getWorldName();
+        if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
             regions.add(RegionUtil
                 .createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
                     Integer.MAX_VALUE));

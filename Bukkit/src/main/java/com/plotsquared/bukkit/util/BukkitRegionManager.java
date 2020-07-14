@@ -25,7 +25,9 @@
  */
 package com.plotsquared.bukkit.util;
 
-import com.plotsquared.bukkit.BukkitMain;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.location.Location;
@@ -33,7 +35,6 @@ import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
@@ -56,7 +57,10 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -74,7 +78,13 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
-public class BukkitRegionManager extends RegionManager {
+@Singleton public class BukkitRegionManager extends RegionManager {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
+
+    @Inject public BukkitRegionManager(@Nonnull final ChunkManager chunkManager) {
+        super(chunkManager);
+    }
 
     public static boolean isIn(CuboidRegion region, int x, int z) {
         return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX()
@@ -91,10 +101,8 @@ public class BukkitRegionManager extends RegionManager {
         } else {
             final Semaphore semaphore = new Semaphore(1);
             try {
-                PlotSquared.debug("Attempting to make an asynchronous call to getLoadedChunks."
-                    + " Will halt the calling thread until completed.");
                 semaphore.acquire();
-                Bukkit.getScheduler().runTask(BukkitMain.getPlugin(BukkitMain.class), () -> {
+                Bukkit.getScheduler().runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> {
                     for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))
                         .getLoadedChunks()) {
                         BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
@@ -198,14 +206,14 @@ public class BukkitRegionManager extends RegionManager {
 
         final CuboidRegion region =
             RegionUtil.createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-        final World oldWorld = Bukkit.getWorld(pos1.getWorld());
+        final World oldWorld = Bukkit.getWorld(pos1.getWorldName());
         final BukkitWorld oldBukkitWorld = new BukkitWorld(oldWorld);
-        final World newWorld = Bukkit.getWorld(newPos.getWorld());
+        final World newWorld = Bukkit.getWorld(newPos.getWorldName());
         assert newWorld != null;
         assert oldWorld != null;
         final String newWorldName = newWorld.getName();
         final ContentMap map = new ContentMap();
-        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(newWorldName, false);
+        final LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(newWorldName, false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 int bx = value[2];
@@ -236,7 +244,7 @@ public class BukkitRegionManager extends RegionManager {
                 }
             }
             queue.enqueue();
-            GlobalBlockQueue.IMP.addEmptyTask(() -> {
+            PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(() -> {
                 //map.restoreBlocks(newWorld, 0, 0);
                 map.restoreEntities(newWorld, relX, relZ);
                 TaskManager.runTask(whenDone);
@@ -248,7 +256,7 @@ public class BukkitRegionManager extends RegionManager {
     @Override
     public boolean regenerateRegion(final Location pos1, final Location pos2,
         final boolean ignoreAugment, final Runnable whenDone) {
-        final String world = pos1.getWorld();
+        final String world = pos1.getWorldName();
 
         final int p1x = pos1.getX();
         final int p1z = pos1.getZ();
@@ -284,8 +292,8 @@ public class BukkitRegionManager extends RegionManager {
                         if (chunkObj == null) {
                             return;
                         }
-                        final LocalBlockQueue queue =
-                            GlobalBlockQueue.IMP.getNewQueue(world, false);
+                        final LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue()
+                            .getNewQueue(world, false);
                         if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
                             AugmentedUtils.bypass(ignoreAugment,
                                 () -> queue.regenChunkSafe(chunk.getX(), chunk.getZ()));
@@ -401,7 +409,7 @@ public class BukkitRegionManager extends RegionManager {
     }
 
     @Override public void clearAllEntities(Location pos1, Location pos2) {
-        String world = pos1.getWorld();
+        String world = pos1.getWorldName();
         List<Entity> entities = BukkitUtil.getEntities(world);
         int bx = pos1.getX();
         int bz = pos1.getZ();
@@ -428,8 +436,8 @@ public class BukkitRegionManager extends RegionManager {
             RegionUtil.createRegion(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
         CuboidRegion region2 =
             RegionUtil.createRegion(bot2.getX(), top2.getX(), bot2.getZ(), top2.getZ());
-        final World world1 = Bukkit.getWorld(bot1.getWorld());
-        final World world2 = Bukkit.getWorld(bot2.getWorld());
+        final World world1 = Bukkit.getWorld(bot1.getWorldName());
+        final World world2 = Bukkit.getWorld(bot2.getWorldName());
         checkNotNull(world1, "Critical error during swap.");
         checkNotNull(world2, "Critical error during swap.");
         int relX = bot2.getX() - bot1.getX();
@@ -445,7 +453,7 @@ public class BukkitRegionManager extends RegionManager {
                     BukkitChunkManager.swapChunk(world1, world2, chunk1, chunk2, region1, region2));
             }
         }
-        GlobalBlockQueue.IMP.addEmptyTask(() -> {
+        PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(() -> {
             for (ContentMap map : maps) {
                 map.restoreEntities(world1, 0, 0);
                 TaskManager.runTaskLater(whenDone, 1);
@@ -456,16 +464,17 @@ public class BukkitRegionManager extends RegionManager {
     @Override
     public void setBiome(final CuboidRegion region, final int extendBiome, final BiomeType biome,
         final String world, final Runnable whenDone) {
-        Location pos1 = new Location(world, region.getMinimumPoint().getX() - extendBiome,
+        Location pos1 = Location.at(world, region.getMinimumPoint().getX() - extendBiome,
             region.getMinimumPoint().getY(), region.getMinimumPoint().getZ() - extendBiome);
-        Location pos2 = new Location(world, region.getMaximumPoint().getX() + extendBiome,
+        Location pos2 = Location.at(world, region.getMaximumPoint().getX() + extendBiome,
             region.getMaximumPoint().getY(), region.getMaximumPoint().getZ() + extendBiome);
-        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+        final LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue()
+            .getNewQueue(world, false);
 
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 BlockVector2 loc = BlockVector2.at(value[0], value[1]);
-                ChunkManager.manager.loadChunk(world, loc, false).thenRun(() -> {
+                PlotSquared.platform().getChunkManager().loadChunk(world, loc, false).thenRun(() -> {
                     MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
                     queue.refreshChunk(value[0], value[1]);
                 });

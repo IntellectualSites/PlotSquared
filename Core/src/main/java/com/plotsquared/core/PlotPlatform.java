@@ -25,20 +25,21 @@
  */
 package com.plotsquared.core;
 
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
+import com.plotsquared.core.inject.annotations.DefaultGenerator;
+import com.plotsquared.core.location.World;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.queue.QueueProvider;
+import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.InventoryUtil;
-import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
-import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.logger.ILogger;
@@ -47,6 +48,8 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import net.kyori.adventure.audience.Audience;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.util.List;
@@ -57,7 +60,7 @@ import java.util.Map;
  *
  * @param <P> Player type
  */
-public interface IPlotMain<P> extends ILogger {
+public interface PlotPlatform<P> extends ILogger {
 
     /**
      * Logs a message to console.
@@ -92,20 +95,6 @@ public interface IPlotMain<P> extends ILogger {
      * Completely shuts down the plugin.
      */
     void shutdown();
-
-    /**
-     * Gets the version of the PlotSquared being used.
-     *
-     * @return the plugin version
-     */
-    int[] getPluginVersion();
-
-    /**
-     * Gets the version of the PlotSquared being used as a string.
-     *
-     * @return the plugin version as a string
-     */
-    String getPluginVersionString();
 
     default String getPluginName() {
         return "PlotSquared";
@@ -216,6 +205,13 @@ public interface IPlotMain<P> extends ILogger {
     HybridUtils initHybridUtils();
 
     /**
+     * Starts the {@link ChatManager}.
+     *
+     * @return the ChatManager
+     */
+    ChatManager initChatManager();
+
+    /**
      * Start Metrics.
      */
     void startMetrics();
@@ -226,12 +222,6 @@ public interface IPlotMain<P> extends ILogger {
      * @param world The world to set the generator
      */
     void setGenerator(String world);
-
-    /**
-     * Gets the {@link InventoryUtil} class (used for implementation specific
-     * inventory guis).
-     */
-    InventoryUtil initInventoryUtil();
 
     /**
      * Unregisters a {@link PlotPlayer} from cache e.g. if they have logged off.
@@ -252,48 +242,120 @@ public interface IPlotMain<P> extends ILogger {
     GeneratorWrapper<?> wrapPlotGenerator(String world, IndependentPlotGenerator generator);
 
     /**
-     * Register the chunk processor which will clean out chunks that have too
-     * many block states or entities.
-     */
-    void registerChunkProcessor();
-
-    /**
-     * Register the world initialization events (used to keep track of worlds
-     * being generated).
-     */
-    void registerWorldEvents();
-
-    /**
      * Usually HybridGen
      *
      * @return Default implementation generator
      */
-    @NotNull IndependentPlotGenerator getDefaultGenerator();
+    @Nonnull default IndependentPlotGenerator getDefaultGenerator() {
+        return getInjector().getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class));
+    }
 
     List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds();
-
-    Actor getConsole();
 
     /**
      * Get the backup manager instance
      *
      * @return Backup manager
      */
-    @NotNull BackupManager getBackupManager();
+    @Nonnull default BackupManager getBackupManager() {
+        return getInjector().getInstance(BackupManager.class);
+    }
 
     /**
      * Get the platform specific world manager
      *
      * @return World manager
      */
-    @NotNull PlatformWorldManager<?> getWorldManager();
+    @Nonnull default PlatformWorldManager<?> getWorldManager() {
+        return getInjector().getInstance(PlatformWorldManager.class);
+    }
 
     /**
      * Get the player manager implementation for the platform
      *
      * @return Player manager
      */
-    @NotNull PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager();
+    @Nonnull default PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager() {
+        return getInjector().getInstance(PlayerManager.class);
+    }
+
+    /**
+     * Get a platform world wrapper from a world name
+     *
+     * @param worldName World name
+     * @return Platform world wrapper
+     */
+    @Nonnull World<?> getPlatformWorld(@Nonnull final String worldName);
+
+    /**
+     * Get the {@link com.google.inject.Injector} instance used by PlotSquared
+     *
+     * @return Injector instance
+     */
+    @Nonnull Injector getInjector();
+
+    /**
+     * Get the world utility implementation
+     *
+     * @return World utility
+     */
+    @Nonnull default WorldUtil getWorldUtil() {
+        return getInjector().getInstance(WorldUtil.class);
+    }
+
+    /**
+     * Get the global block queue implementation
+     *
+     * @return Global block queue implementation
+     */
+    @Nonnull default GlobalBlockQueue getGlobalBlockQueue() {
+        return getInjector().getInstance(GlobalBlockQueue.class);
+    }
+
+    /**
+     * Get the {@link HybridUtils} implementation for the platform
+     *
+     * @return Hybrid utils
+     */
+    @Nonnull default HybridUtils getHybridUtils() {
+        return getInjector().getInstance(HybridUtils.class);
+    }
+
+    /**
+     * Get the {@link SetupUtils} implementation for the platform
+     *
+     * @return Setup utils
+     */
+    @Nonnull default SetupUtils getSetupUtils() {
+        return getInjector().getInstance(SetupUtils.class);
+    }
+
+    /**
+     * Get the {@link EconHandler} implementation for the platform
+     *      *
+     * @return Econ handler
+     */
+    @Nullable default EconHandler getEconHandler() {
+        return getInjector().getInstance(EconHandler.class);
+    }
+
+    /**
+     * Get the {@link RegionManager} implementation for the platform
+     *
+     * @return Region manager
+     */
+    @Nonnull default RegionManager getRegionManager() {
+        return getInjector().getInstance(RegionManager.class);
+    }
+
+    /**
+     * Get the {@link ChunkManager} implementation for the platform
+     *
+     * @return Region manager
+     */
+    @Nonnull default ChunkManager getChunkManager() {
+        return getInjector().getInstance(ChunkManager.class);
+    }
 
     /**
      * Get the platform specific console {@link Audience}

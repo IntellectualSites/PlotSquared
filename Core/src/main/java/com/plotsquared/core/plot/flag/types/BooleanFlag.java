@@ -29,7 +29,7 @@ import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,7 +62,7 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
         this(false, description);
     }
 
-    @Override public F parse(@NotNull String input) throws FlagParseException {
+    @Override public F parse(@Nonnull String input) throws FlagParseException {
         if (positiveValues.contains(input.toLowerCase(Locale.ENGLISH))) {
             return this.flagOf(true);
         } else if (negativeValues.contains(input.toLowerCase(Locale.ENGLISH))) {
@@ -72,7 +72,7 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
         }
     }
 
-    @Override public F merge(@NotNull Boolean newValue) {
+    @Override public F merge(@Nonnull Boolean newValue) {
         return this.flagOf(getValue() || newValue);
     }
 

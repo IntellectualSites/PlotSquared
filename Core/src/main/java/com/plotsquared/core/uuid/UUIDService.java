@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.uuid;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -45,7 +45,7 @@ public interface UUIDService {
      * @param uuids Requests
      * @return Completed requests
      */
-    @NotNull List<UUIDMapping> getNames(@NotNull final List<UUID> uuids);
+    @Nonnull List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids);
 
     /**
      * Attempt to complete the given requests. Returns the mappings
@@ -54,7 +54,7 @@ public interface UUIDService {
      * @param usernames Requests
      * @return Completed requests
      */
-    @NotNull List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames);
+    @Nonnull List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames);
 
     /**
      * Get as many UUID mappings as possible under the condition
@@ -62,7 +62,7 @@ public interface UUIDService {
      *
      * @return All mappings that could be provided immediately
      */
-    default @NotNull Collection<UUIDMapping> getImmediately() {
+    default @Nonnull Collection<UUIDMapping> getImmediately() {
         return Collections.emptyList();
     }
 
@@ -82,7 +82,7 @@ public interface UUIDService {
      * @param object Username ({@link String}) or {@link UUID}
      * @return Mapping, if it could be found immediately
      */
-    default @Nullable UUIDMapping getImmediately(@NotNull final Object object) {
+    default @Nullable UUIDMapping getImmediately(@Nonnull final Object object) {
         return null;
     }
 

@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.primitives.Ints;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -41,7 +42,9 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
@@ -50,6 +53,8 @@ import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -62,6 +67,18 @@ import java.util.Set;
     aliases = "a",
     usage = "/plot auto [length,width]")
 public class Auto extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
+    private final EconHandler econHandler;
+
+    @Inject public Auto(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final EventDispatcher eventDispatcher,
+                        @Nullable final EconHandler econHandler) {
+        this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
+    }
 
     @Deprecated public static PlotId getNextPlotId(PlotId id, int step) {
         return id.getNextId(step);
@@ -139,7 +156,8 @@ public class Auto extends SubCommand {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
-                TaskManager.IMP.sync(new AutoClaimFinishTask(player, plot, area, schematic));
+                TaskManager.getImplementation().sync(new AutoClaimFinishTask(player, plot, area, schematic,
+                    PlotSquared.get().getEventDispatcher()));
             }
         });
     }
@@ -160,10 +178,9 @@ public class Auto extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
-            if (EconHandler.getEconHandler() != null) {
-                for (PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
-                    if (EconHandler.getEconHandler()
-                        .hasPermission(area.getWorldName(), player.getName(), "plots.auto")) {
+            if (this.econHandler != null) {
+                for (PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
+                    if (this.econHandler.hasPermission(area.getWorldName(), player.getName(), "plots.auto")) {
                         if (plotarea != null) {
                             plotarea = null;
                             break;
@@ -172,8 +189,8 @@ public class Auto extends SubCommand {
                     }
                 }
             }
-            if (PlotSquared.get().getPlotAreaManager().getAllPlotAreas().length == 1) {
-                plotarea = PlotSquared.get().getPlotAreaManager().getAllPlotAreas()[0];
+            if (this.plotAreaManager.getAllPlotAreas().length == 1) {
+                plotarea = this.plotAreaManager.getAllPlotAreas()[0];
             }
             if (plotarea == null) {
                 player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
@@ -216,7 +233,7 @@ public class Auto extends SubCommand {
                 // return false;
             }
         }
-        PlayerAutoPlotEvent event = PlotSquared.get().getEventDispatcher()
+        PlayerAutoPlotEvent event = this.eventDispatcher
             .callAuto(player, plotarea, schematic, size_x, size_z);
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Auto claim");
@@ -256,18 +273,18 @@ public class Auto extends SubCommand {
                 return true;
             }
         }
-        if (EconHandler.getEconHandler() != null && plotarea.useEconomy()) {
+        if (this.econHandler != null && plotarea.useEconomy()) {
             Expression<Double> costExp = plotarea.getPrices().get("claim");
             double cost = costExp.evaluate((double) (Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
                 player.getPlotCount(plotarea.getWorldName())));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
-                if (!force && EconHandler.getEconHandler().getMoney(player) < cost) {
+                if (!force && this.econHandler.getMoney(player) < cost) {
                     sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
                     return true;
                 }
-                EconHandler.getEconHandler().withdrawMoney(player, cost);
+                this.econHandler.withdrawMoney(player, cost);
                 sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
             }
         }
@@ -297,7 +314,7 @@ public class Auto extends SubCommand {
                     }
                     ArrayList<PlotId> plotIds = MainUtil.getPlotSelectionIds(start, end);
                     final PlotId pos1 = plotIds.get(0);
-                    final PlotAutoMergeEvent mergeEvent = PlotSquared.get().getEventDispatcher()
+                    final PlotAutoMergeEvent mergeEvent = this.eventDispatcher
                         .callAutoMerge(plotarea.getPlotAbs(pos1), plotIds);
                     if (!force && mergeEvent.getEventResult() == Result.DENY) {
                         sendMessage(player, Captions.EVENT_DENIED, "Auto merge");

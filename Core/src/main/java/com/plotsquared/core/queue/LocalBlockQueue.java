@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -40,13 +41,17 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class LocalBlockQueue {
 
     @Getter @Setter private boolean forceSync = false;
     @Getter @Setter @Nullable private Object chunkObject;
+
+    @Inject private SchematicHandler schematicHandler;
+    @Inject private WorldUtil worldUtil;
+    @Inject private GlobalBlockQueue blockQueue;
 
     /**
      * Needed for compatibility with FAWE.
@@ -54,13 +59,14 @@ public abstract class LocalBlockQueue {
      * @param world unused
      */
     @Deprecated public LocalBlockQueue(String world) {
+        PlotSquared.platform().getInjector().injectMembers(this);
     }
 
     public ScopedLocalBlockQueue getForChunk(int x, int z) {
         int bx = x << 4;
         int bz = z << 4;
-        return new ScopedLocalBlockQueue(this, new Location(getWorld(), bx, 0, bz),
-            new Location(getWorld(), bx + 15, 255, bz + 15));
+        return new ScopedLocalBlockQueue(this, Location.at(getWorld(), bx, 0, bz),
+            Location.at(getWorld(), bx + 15, 255, bz + 255));
     }
 
     public abstract boolean next();
@@ -89,12 +95,12 @@ public abstract class LocalBlockQueue {
 
     public abstract boolean setBlock(final int x, final int y, final int z, final BaseBlock id);
 
-    public boolean setBlock(final int x, final int y, final int z, @NotNull final Pattern pattern) {
+    public boolean setBlock(final int x, final int y, final int z, @Nonnull final Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 
     public boolean setTile(int x, int y, int z, CompoundTag tag) {
-        SchematicHandler.manager.restoreTile(this, tag, x, y, z);
+        this.schematicHandler.restoreTile(this, tag, x, y, z);
         return true;
     }
 
@@ -123,20 +129,18 @@ public abstract class LocalBlockQueue {
         fixChunkLighting(x, z);
         BlockVector2 loc = BlockVector2.at(x, z);
 
-        for (final PlotPlayer pp : PlotSquared.imp().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer<?> pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
             Location pLoc = pp.getLocation();
-            if (!StringMan.isEqual(getWorld(), pLoc.getWorld()) || !pLoc.getBlockVector2()
+            if (!StringMan.isEqual(getWorld(), pLoc.getWorldName()) || !pLoc.getChunkLocation()
                 .equals(loc)) {
                 continue;
             }
-            pLoc.setY(
-                WorldUtil.IMP.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ()));
-            pp.teleport(pLoc);
+            pp.teleport(pLoc.withY(this.worldUtil.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ())));
         }
     }
 
     public boolean enqueue() {
-        return GlobalBlockQueue.IMP.enqueue(this);
+        return blockQueue.enqueue(this);
     }
 
     public void setCuboid(Location pos1, Location pos2, BlockState block) {

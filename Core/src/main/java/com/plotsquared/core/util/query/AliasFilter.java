@@ -26,17 +26,17 @@
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 class AliasFilter implements PlotFilter {
 
     private final String alias;
 
-    AliasFilter(@NotNull final String alias) {
+    AliasFilter(@Nonnull final String alias) {
         this.alias = alias;
     }
 
-    @Override public boolean accepts(@NotNull final Plot plot) {
+    @Override public boolean accepts(@Nonnull final Plot plot) {
         return this.alias.equalsIgnoreCase(plot.getAlias());
     }
 

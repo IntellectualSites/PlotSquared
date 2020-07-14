@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -37,6 +38,8 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
+import com.plotsquared.core.plot.message.PlotMessage;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
@@ -47,6 +50,8 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.uuid.UUIDMapping;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,9 +74,18 @@ import java.util.stream.Collectors;
     usage = "/plot list <forsale|mine|shared|world|top|all|unowned|player|world|done|fuzzy <search...>> [#]")
 public class ListCmd extends SubCommand {
 
+    private final PlotAreaManager plotAreaManager;
+    private final EconHandler econHandler;
+
+    @Inject public ListCmd(@Nonnull final PlotAreaManager plotAreaManager,
+                           @Nullable final EconHandler econHandler) {
+        this.plotAreaManager = plotAreaManager;
+        this.econHandler = econHandler;
+    }
+
     private String[] getArgumentList(PlotPlayer player) {
         List<String> args = new ArrayList<>();
-        if (EconHandler.getEconHandler() != null && Permissions
+        if (this.econHandler != null && Permissions
             .hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
             args.add("forsale");
         }
@@ -138,7 +152,7 @@ public class ListCmd extends SubCommand {
             page = 0;
         }
 
-        String world = player.getLocation().getWorld();
+        String world = player.getLocation().getWorldName();
         PlotArea area = player.getApplicablePlotArea();
         String arg = args[0].toLowerCase();
         final boolean[] sort = new boolean[] {true};
@@ -260,7 +274,7 @@ public class ListCmd extends SubCommand {
                                        Templates.of("node", "plots.list.forsale"));
                     return false;
                 }
-                if (EconHandler.getEconHandler() == null) {
+                if (this.econHandler == null) {
                     break;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().allPlots().thatPasses(plot -> plot.getFlag(PriceFlag.class) > 0));
@@ -294,7 +308,7 @@ public class ListCmd extends SubCommand {
                 plotConsumer.accept(PlotQuery.newQuery().plotsBySearch(term));
                 break;
             default:
-                if (PlotSquared.get().hasPlotArea(args[0])) {
+                if (this.plotAreaManager.hasPlotArea(args[0])) {
                     if (!Permissions.hasPermission(player, Captions.PERMISSION_LIST_WORLD)) {
                         player.sendMessage(TranslatableCaption.of("permission.no_permission"),
                                            Templates.of("node", "plots.list.world"));
@@ -378,7 +392,7 @@ public class ListCmd extends SubCommand {
                         final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline()
                             .getNames(plot.getOwners()).get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
                         for (final UUIDMapping uuidMapping : names) {
-                            PlotPlayer pp = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
+                            PlotPlayer pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
                             if (pp != null) {
                                 message = message.text(prefix).color("$4").text(uuidMapping.getUsername()).color("$1")
                                     .tooltip(new PlotMessage("Online").color("$4"));
@@ -399,7 +413,7 @@ public class ListCmd extends SubCommand {
 
     @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         final List<String> completions = new LinkedList<>();
-        if (EconHandler.getEconHandler() != null && Permissions
+        if (this.econHandler != null && Permissions
             .hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
             completions.add("forsale");
         }
@@ -410,7 +424,7 @@ public class ListCmd extends SubCommand {
             completions.add("shared");
         }
         if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_WORLD)) {
-            completions.addAll(PlotSquared.imp().getWorldManager().getWorlds());
+            completions.addAll(PlotSquared.platform().getWorldManager().getWorlds());
         }
         if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_TOP)) {
             completions.add("top");

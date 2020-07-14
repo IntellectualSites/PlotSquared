@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,7 +42,7 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
         super(value, Captions.FLAG_CATEGORY_BOOLEAN, Captions.FLAG_DESCRIPTION_FLIGHT);
     }
 
-    @Override public FlyFlag parse(@NotNull final String input) {
+    @Override public FlyFlag parse(@Nonnull final String input) {
         switch (input.toLowerCase()) {
             case "true":
             case "enabled":
@@ -57,7 +57,7 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
         }
     }
 
-    @Override public FlyFlag merge(@NotNull final FlyStatus newValue) {
+    @Override public FlyFlag merge(@Nonnull final FlyStatus newValue) {
         if (newValue == FlyStatus.ENABLED || this.getValue() == FlyStatus.ENABLED) {
             return FLIGHT_FLAG_ENABLED;
         }
@@ -72,7 +72,7 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
         return "true";
     }
 
-    @Override protected FlyFlag flagOf(@NotNull final FlyStatus value) {
+    @Override protected FlyFlag flagOf(@Nonnull final FlyStatus value) {
         switch (value) {
             case ENABLED:
                 return FLIGHT_FLAG_ENABLED;

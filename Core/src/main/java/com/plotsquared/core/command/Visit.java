@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.TeleportCause;
@@ -32,6 +33,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -40,7 +42,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,16 +61,19 @@ import java.util.concurrent.TimeoutException;
     category = CommandCategory.TELEPORT)
 public class Visit extends Command {
 
-    public Visit() {
+    private final PlotAreaManager plotAreaManager;
+    
+    @Inject public Visit(@Nonnull final PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
+        this.plotAreaManager = plotAreaManager;
     }
 
-    private void visit(@NotNull final PlotPlayer player, @NotNull final PlotQuery query, final PlotArea sortByArea,
+    private void visit(@Nonnull final PlotPlayer player, @Nonnull final PlotQuery query, final PlotArea sortByArea,
         final RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone) {
         this.visit(player, query, sortByArea, confirm, whenDone, 1);
     }
 
-    private void visit(@NotNull final PlotPlayer player, @NotNull final PlotQuery query, final PlotArea sortByArea,
+    private void visit(@Nonnull final PlotPlayer player, @Nonnull final PlotQuery query, final PlotArea sortByArea,
         final RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone, int page) {
         // We get the query once,
         // then we get it another time further on
@@ -164,7 +169,7 @@ public class Visit extends Command {
             // /p v <name> [page]
             case 2:
                 if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
-                    sortByArea = PlotSquared.get().getPlotAreaByString(args[1]);
+                    sortByArea = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
                         Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
                         Captions.COMMAND_SYNTAX.send(player, getUsage());
@@ -198,7 +203,7 @@ public class Visit extends Command {
                         if (throwable instanceof TimeoutException) {
                             // The request timed out
                             MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
-                        } else if (uuid != null && !PlotSquared.get().hasPlot(uuid)) {
+                        } else if (uuid != null && !PlotQuery.newQuery().ownedBy(uuid).anyMatch()) {
                             // It was a valid UUID but the player has no plots
                             MainUtil.sendMessage(player, Captions.PLAYER_NO_PLOTS);
                         } else if (uuid == null) {
@@ -275,7 +280,7 @@ public class Visit extends Command {
     }
 
     private void completeAreas(final List<Command> commands, final String arg) {
-        for (final PlotArea area : PlotSquared.get().getPlotAreas()) {
+        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
             final String areaName = area.getWorldName() + ";" + area.getId();
             if (!areaName.toLowerCase().startsWith(arg.toLowerCase())) {
                 continue;

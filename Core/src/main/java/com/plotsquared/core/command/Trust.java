@@ -25,16 +25,18 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,8 +53,11 @@ import java.util.concurrent.TimeoutException;
     category = CommandCategory.SETTINGS)
 public class Trust extends Command {
 
-    public Trust() {
+    private final EventDispatcher eventDispatcher;
+    
+    @Inject public Trust(@Nonnull final EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
@@ -119,7 +124,7 @@ public class Trust extends Command {
                             }
                         }
                         currentPlot.addTrusted(uuid);
-                        PlotSquared.get().getEventDispatcher().callTrusted(player, currentPlot, uuid, true);
+                        this.eventDispatcher.callTrusted(player, currentPlot, uuid, true);
                         MainUtil.sendMessage(player, Captions.TRUSTED_ADDED);
                     }
                 }, null);

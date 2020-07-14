@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.backup;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -38,7 +38,7 @@ public interface BackupProfile {
      *
      * @return Future that will be completed with available backups
      */
-    @NotNull CompletableFuture<List<Backup>> listBackups();
+    @Nonnull CompletableFuture<List<Backup>> listBackups();
 
     /**
      * Remove all backups stored for this profile
@@ -51,7 +51,7 @@ public interface BackupProfile {
      *
      * @return Folder that contains the backups for this profile
      */
-    @NotNull Path getBackupDirectory();
+    @Nonnull Path getBackupDirectory();
 
     /**
      * Create a backup of the plot. If the profile is at the
@@ -59,7 +59,7 @@ public interface BackupProfile {
      *
      * @return Future that completes with the created backup.
      */
-    @NotNull CompletableFuture<Backup> createBackup();
+    @Nonnull CompletableFuture<Backup> createBackup();
 
     /**
      * Restore a backup
@@ -67,6 +67,6 @@ public interface BackupProfile {
      * @param backup Backup to restore
      * @return Future that completes when the backup has finished
      */
-    @NotNull CompletableFuture<Void> restoreBackup(@NotNull final Backup backup);
+    @Nonnull CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup);
 
 }

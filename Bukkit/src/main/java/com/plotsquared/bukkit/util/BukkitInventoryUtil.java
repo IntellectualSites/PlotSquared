@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.util;
 
+import com.google.inject.Singleton;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotInventory;
@@ -45,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class BukkitInventoryUtil extends InventoryUtil {
+@Singleton public class BukkitInventoryUtil extends InventoryUtil {
 
     @Override public void open(PlotInventory inv) {
         BukkitPlayer bp = (BukkitPlayer) inv.player;

@@ -25,17 +25,19 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import javax.annotation.Nonnull;
 import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Collection;
@@ -53,8 +55,11 @@ import java.util.concurrent.TimeoutException;
     requiredType = RequiredType.PLAYER)
 public class Add extends Command {
 
-    public Add() {
+    private final EventDispatcher eventDispatcher;
+
+    @Inject public Add(@Nonnull final EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
@@ -122,7 +127,7 @@ public class Add extends Command {
                                 }
                             }
                             plot.addMember(uuid);
-                            PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, true);
+                            this.eventDispatcher.callMember(player, plot, uuid, true);
                             player.sendMessage(TranslatableCaption.of("member.member_added"));
                         }
                     }, null);

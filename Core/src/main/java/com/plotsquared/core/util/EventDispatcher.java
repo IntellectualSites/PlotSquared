@@ -26,7 +26,6 @@
 package com.plotsquared.core.util;
 
 import com.google.common.eventbus.EventBus;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -69,10 +68,12 @@ import com.plotsquared.core.plot.flag.implementations.VehiclePlaceFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.task.TaskManager;
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,9 +81,13 @@ import java.util.UUID;
 
 public class EventDispatcher {
 
-    private EventBus eventBus = new EventBus("PlotSquaredEvents");
+    private final EventBus eventBus = new EventBus("PlotSquaredEvents");
+    private final List<Object> listeners = new ArrayList<>();
+    private final WorldEdit worldEdit;
 
-    private List<Object> listeners = new ArrayList<>();
+    public EventDispatcher(@Nullable final WorldEdit worldEdit) {
+        this.worldEdit = worldEdit;
+    }
 
     public void registerListener(Object listener) {
         eventBus.register(listener);
@@ -100,17 +105,17 @@ public class EventDispatcher {
         }
     }
 
-    public void callEvent(@NotNull final PlotEvent event) {
+    public void callEvent(@Nonnull final PlotEvent event) {
         eventBus.post(event);
     }
 
-    public PlayerClaimPlotEvent callClaim(PlotPlayer player, Plot plot, String schematic) {
+    public PlayerClaimPlotEvent callClaim(PlotPlayer<?> player, Plot plot, String schematic) {
         PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, schematic);
         callEvent(event);
         return event;
     }
 
-    public PlayerAutoPlotEvent callAuto(PlotPlayer player, PlotArea area, String schematic,
+    public PlayerAutoPlotEvent callAuto(PlotPlayer<?> player, PlotArea area, String schematic,
         int size_x, int size_z) {
         PlayerAutoPlotEvent event =
             new PlayerAutoPlotEvent(player, area, schematic, size_x, size_z);
@@ -118,7 +123,7 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer player, Location from, Plot plot) {
+    public PlayerTeleportToPlotEvent callTeleport(PlotPlayer<?> player, Location from, Plot plot) {
         PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot);
         callEvent(event);
         return event;
@@ -154,7 +159,7 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlotMergeEvent callMerge(Plot plot, Direction dir, int max, PlotPlayer player) {
+    public PlotMergeEvent callMerge(Plot plot, Direction dir, int max, PlotPlayer<?> player) {
         PlotMergeEvent event = new PlotMergeEvent(plot.getWorldName(), plot, dir, max, player);
         callEvent(event);
         return event;
@@ -173,40 +178,40 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlayerEnterPlotEvent callEntry(PlotPlayer player, Plot plot) {
+    public PlayerEnterPlotEvent callEntry(PlotPlayer<?> player, Plot plot) {
         PlayerEnterPlotEvent event = new PlayerEnterPlotEvent(player, plot);
         callEvent(event);
         return event;
     }
 
-    public PlayerLeavePlotEvent callLeave(PlotPlayer player, Plot plot) {
+    public PlayerLeavePlotEvent callLeave(PlotPlayer<?> player, Plot plot) {
         PlayerLeavePlotEvent event = new PlayerLeavePlotEvent(player, plot);
         callEvent(event);
         return event;
     }
 
-    public PlayerPlotDeniedEvent callDenied(PlotPlayer initiator, Plot plot, UUID player,
+    public PlayerPlotDeniedEvent callDenied(PlotPlayer<?> initiator, Plot plot, UUID player,
         boolean added) {
         PlayerPlotDeniedEvent event = new PlayerPlotDeniedEvent(initiator, plot, player, added);
         callEvent(event);
         return event;
     }
 
-    public PlayerPlotTrustedEvent callTrusted(PlotPlayer initiator, Plot plot, UUID player,
+    public PlayerPlotTrustedEvent callTrusted(PlotPlayer<?> initiator, Plot plot, UUID player,
         boolean added) {
         PlayerPlotTrustedEvent event = new PlayerPlotTrustedEvent(initiator, plot, player, added);
         callEvent(event);
         return event;
     }
 
-    public PlayerPlotHelperEvent callMember(PlotPlayer initiator, Plot plot, UUID player,
+    public PlayerPlotHelperEvent callMember(PlotPlayer<?> initiator, Plot plot, UUID player,
         boolean added) {
         PlayerPlotHelperEvent event = new PlayerPlotHelperEvent(initiator, plot, player, added);
         callEvent(event);
         return event;
     }
 
-    public PlotChangeOwnerEvent callOwnerChange(PlotPlayer initiator, Plot plot, UUID oldOwner,
+    public PlotChangeOwnerEvent callOwnerChange(PlotPlayer<?> initiator, Plot plot, UUID oldOwner,
         UUID newOwner, boolean hasOldOwner) {
         PlotChangeOwnerEvent event =
             new PlotChangeOwnerEvent(initiator, plot, oldOwner, newOwner, hasOldOwner);
@@ -214,7 +219,7 @@ public class EventDispatcher {
         return event;
     }
 
-    public PlotRateEvent callRating(PlotPlayer player, Plot plot, Rating rating) {
+    public PlotRateEvent callRating(PlotPlayer<?> player, Plot plot, Rating rating) {
         PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         eventBus.post(event);
         return event;
@@ -226,14 +231,14 @@ public class EventDispatcher {
         return event;
     }
 
-    public void doJoinTask(final PlotPlayer player) {
+    public void doJoinTask(final PlotPlayer<?> player) {
         if (player == null) {
             return; //possible future warning message to figure out where we are retrieving null
         }
         if (ExpireManager.IMP != null) {
             ExpireManager.IMP.handleJoin(player);
         }
-        if (PlotSquared.get().worldedit != null) {
+        if (this.worldEdit != null) {
             if (player.getAttribute("worldedit")) {
                 MainUtil.sendMessage(player, Captions.WORLDEDIT_BYPASSED);
             }
@@ -249,7 +254,7 @@ public class EventDispatcher {
         }
     }
 
-    public void doRespawnTask(final PlotPlayer player) {
+    public void doRespawnTask(final PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_DEATH && plot != null) {
             TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
@@ -258,7 +263,7 @@ public class EventDispatcher {
         }
     }
 
-    public boolean checkPlayerBlockEvent(PlotPlayer player, @NotNull PlayerBlockEventType type,
+    public boolean checkPlayerBlockEvent(PlotPlayer<?> player, @Nonnull PlayerBlockEventType type,
         Location location, BlockType blockType, boolean notifyPerms) {
         PlotArea area = location.getPlotArea();
         assert area != null;

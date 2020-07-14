@@ -29,8 +29,8 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,23 +42,23 @@ public class StandardPlotWorld extends PlotWorld {
 
     private final PlotArea area;
 
-    public StandardPlotWorld(@NotNull final String world, @Nullable final PlotArea area) {
+    public StandardPlotWorld(@Nonnull final String world, @Nullable final PlotArea area) {
         super(world);
         this.area = area;
     }
 
-    @Override @Nullable public PlotArea getArea(@NotNull final Location location) {
+    @Override @Nullable public PlotArea getArea(@Nonnull final Location location) {
         return this.area;
     }
 
-    @Override @NotNull public Collection<PlotArea> getAreas() {
+    @Override @Nonnull public Collection<PlotArea> getAreas() {
         if (this.area == null) {
             return Collections.emptyList();
         }
         return Collections.singletonList(this.area);
     }
 
-    @Override @NotNull public Collection<PlotArea> getAreasInRegion(@NotNull final CuboidRegion region) {
+    @Override @Nonnull public Collection<PlotArea> getAreasInRegion(@Nonnull final CuboidRegion region) {
         return this.getAreas();
     }
 

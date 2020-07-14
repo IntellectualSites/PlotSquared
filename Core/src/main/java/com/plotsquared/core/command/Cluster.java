@@ -39,8 +39,8 @@ import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.query.PlotQuery;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -117,7 +117,7 @@ public class Cluster extends SubCommand {
                 }
                 int currentClusters = Settings.Limit.GLOBAL ?
                     player.getClusterCount() :
-                    player.getPlotCount(player.getLocation().getWorld());
+                    player.getPlotCount(player.getLocation().getWorldName());
                 if (currentClusters >= player.getAllowedPlots()) {
                     return sendMessage(player, Captions.CANT_CLAIM_MORE_CLUSTERS);
                 }
@@ -173,7 +173,7 @@ public class Cluster extends SubCommand {
                 if (Settings.Limit.GLOBAL) {
                     current = player.getPlayerClusterCount();
                 } else {
-                    current = player.getPlayerClusterCount(player.getLocation().getWorld());
+                    current = player.getPlayerClusterCount(player.getLocation().getWorldName());
                 }
                 int allowed = Permissions
                     .hasPermissionRange(player, Captions.PERMISSION_CLUSTER_SIZE,
@@ -324,7 +324,7 @@ public class Cluster extends SubCommand {
                 if (Settings.Limit.GLOBAL) {
                     current = player.getPlayerClusterCount();
                 } else {
-                    current = player.getPlayerClusterCount(player.getLocation().getWorld());
+                    current = player.getPlayerClusterCount(player.getLocation().getWorldName());
                 }
                 current -= cluster.getArea() + (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
                 int allowed = Permissions.hasPermissionRange(player, Captions.PERMISSION_CLUSTER,
@@ -385,7 +385,7 @@ public class Cluster extends SubCommand {
                                 DBFunc.setInvited(cluster, uuid);
 
                                 final PlotPlayer otherPlayer =
-                                    PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                                    PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                                 if (otherPlayer != null) {
                                     MainUtil.sendMessage(otherPlayer, Captions.CLUSTER_INVITED,
                                         cluster.getName());
@@ -448,13 +448,13 @@ public class Cluster extends SubCommand {
                                 DBFunc.removeInvited(cluster, uuid);
 
                                 final PlotPlayer player2 =
-                                    PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                                    PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                                 if (player2 != null) {
                                     MainUtil.sendMessage(player2, Captions.CLUSTER_REMOVED,
                                         cluster.getName());
                                 }
-                                for (Plot plot : new ArrayList<>(PlotSquared.get()
-                                    .getPlots(player2.getLocation().getWorld(), uuid))) {
+                                for (final Plot plot : PlotQuery.newQuery().inWorld(player2.getLocation()
+                                    .getWorldName()).ownedBy(uuid).asCollection()) {
                                     PlotCluster current = plot.getCluster();
                                     if (current != null && current.equals(cluster)) {
                                         plot.unclaim();
@@ -512,8 +512,8 @@ public class Cluster extends SubCommand {
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
                 MainUtil.sendMessage(player, Captions.CLUSTER_REMOVED, cluster.getName());
-                for (Plot plot : new ArrayList<>(
-                    PlotSquared.get().getPlots(player.getLocation().getWorld(), uuid))) {
+                for (final Plot plot : PlotQuery.newQuery().inWorld(player.getLocation().getWorldName())
+                    .ownedBy(uuid).asCollection()) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {
                         plot.unclaim();

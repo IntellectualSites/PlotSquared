@@ -26,8 +26,8 @@
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.location.Direction;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class PlotId {
 
@@ -53,14 +53,14 @@ public class PlotId {
      * @return the PlotId representation of the arguement
      * @throws IllegalArgumentException if the string does not contain a valid PlotId
      */
-    @NotNull public static PlotId fromString(@NotNull String string) {
+    @Nonnull public static PlotId fromString(@Nonnull String string) {
         PlotId plot = fromStringOrNull(string);
         if (plot == null)
             throw new IllegalArgumentException("Cannot create PlotID. String invalid.");
         return plot;
     }
 
-    @Nullable public static PlotId fromStringOrNull(@NotNull String string) {
+    @Nullable public static PlotId fromStringOrNull(@Nonnull String string) {
         String[] parts = string.split("[;,.]");
         if (parts.length < 2) {
             return null;

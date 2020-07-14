@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.components;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.command.MainCommand;
@@ -36,14 +37,17 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,11 +61,18 @@ import java.util.stream.Collectors;
 
 public class ComponentPresetManager {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ComponentPresetManager.class.getSimpleName());
+
     private final List<ComponentPreset> presets;
     private final String guiName;
+    private final EconHandler econHandler;
+    private final InventoryUtil inventoryUtil;
 
-    public ComponentPresetManager() {
-        final File file = new File(Objects.requireNonNull(PlotSquared.imp()).getDirectory(), "components.yml");
+    @Inject public ComponentPresetManager(@Nullable final EconHandler econHandler, @Nonnull final
+        InventoryUtil inventoryUtil) {
+        this.econHandler = econHandler;
+        this.inventoryUtil = inventoryUtil;
+        final File file = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "components.yml");
         if (!file.exists()) {
             boolean created = false;
             try {
@@ -70,7 +81,7 @@ public class ComponentPresetManager {
                 e.printStackTrace();
             }
             if (!created) {
-                PlotSquared.log(Captions.PREFIX + "Failed to create components.yml");
+                logger.error("[P2] Failed to create components.yml");
                 this.guiName = "&cInvalid!";
                 this.presets = new ArrayList<>();
                 return;
@@ -86,8 +97,7 @@ public class ComponentPresetManager {
             try {
                 yamlConfiguration.save(file);
             } catch (IOException e) {
-                PlotSquared.log(Captions.PREFIX + "Failed to save default values to components.yml");
-                e.printStackTrace();
+                logger.error("[P2] Failed to save default values to components.yml", e);
             }
         }
         this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
@@ -105,8 +115,7 @@ public class ComponentPresetManager {
             try {
                 yamlConfiguration.save(file);
             } catch (final IOException e) {
-                PlotSquared.log(Captions.PREFIX + "Failed to save default values to components.yml");
-                e.printStackTrace();
+                logger.error("[P2] Failed to save default values to components.yml", e);
             }
             this.presets = defaultPreset;
         }
@@ -144,7 +153,7 @@ public class ComponentPresetManager {
             allowedPresets.add(componentPreset);
         }
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
-        final PlotInventory plotInventory = new PlotInventory(player, size, this.guiName) {
+        final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size, this.guiName) {
             @Override public boolean onClick(final int index) {
                 if (!player.getCurrentPlot().equals(plot)) {
                     return false;
@@ -170,12 +179,12 @@ public class ComponentPresetManager {
                     return false;
                 }
 
-                if (componentPreset.getCost() > 0.0D && EconHandler.getEconHandler() != null && plot.getArea().useEconomy()) {
-                    if (EconHandler.getEconHandler().getMoney(player) < componentPreset.getCost()) {
+                if (componentPreset.getCost() > 0.0D && econHandler != null && plot.getArea().useEconomy()) {
+                    if (econHandler.getMoney(player) < componentPreset.getCost()) {
                         Captions.PRESET_CANNOT_AFFORD.send(player);
                         return false;
                     } else {
-                        EconHandler.getEconHandler().withdrawMoney(player, componentPreset.getCost());
+                        econHandler.withdrawMoney(player, componentPreset.getCost());
                         Captions.REMOVED_BALANCE.send(player, componentPreset.getCost() + "");
                     }
                 }
@@ -186,7 +195,7 @@ public class ComponentPresetManager {
                         current.setComponent(componentPreset.getComponent().name(), pattern);
                     }
                     MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
-                    GlobalBlockQueue.IMP.addEmptyTask(plot::removeRunning);
+                    PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(plot::removeRunning);
                 });
                 return false;
             }
@@ -196,7 +205,7 @@ public class ComponentPresetManager {
         for (int i = 0; i < allowedPresets.size(); i++) {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
-            if (preset.getCost() > 0 && EconHandler.getEconHandler() != null && plot.getArea().useEconomy()){
+            if (preset.getCost() > 0 && this.econHandler != null && plot.getArea().useEconomy()){
                 lore.add(Captions.PRESET_LORE_COST.getTranslated().replace("%cost%",
                     String.format("%.2f", preset.getCost())));
             }

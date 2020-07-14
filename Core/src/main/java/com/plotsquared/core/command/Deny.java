@@ -25,17 +25,21 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -50,8 +54,17 @@ import java.util.concurrent.TimeoutException;
     requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
 
-    public Deny() {
+    private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
+    private final WorldUtil worldUtil;
+
+    @Inject public Deny(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final EventDispatcher eventDispatcher,
+                        @Nonnull final WorldUtil worldUtil) {
         super(Argument.PlayerName);
+        this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
+        this.worldUtil = worldUtil;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -94,9 +107,9 @@ public class Deny extends SubCommand {
                             plot.removeTrusted(uuid);
                         }
                         plot.addDenied(uuid);
-                        PlotSquared.get().getEventDispatcher().callDenied(player, plot, uuid, true);
+                        this.eventDispatcher.callDenied(player, plot, uuid, true);
                         if (!uuid.equals(DBFunc.EVERYONE)) {
-                            handleKick(PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid), plot);
+                            handleKick(PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid), plot);
                         } else {
                             for (PlotPlayer plotPlayer : plot.getPlayersInPlot()) {
                                 // Ignore plot-owners
@@ -133,11 +146,10 @@ public class Deny extends SubCommand {
             player.stopSpectating();
         }
         Location location = player.getLocation();
-        Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
+        Location spawn = this.worldUtil.getSpawn(location.getWorldName());
         MainUtil.sendMessage(player, Captions.YOU_GOT_DENIED);
         if (plot.equals(spawn.getPlot())) {
-            Location newSpawn =
-                WorldUtil.IMP.getSpawn(PlotSquared.get().getPlotAreaManager().getAllWorlds()[0]);
+            Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
                 player.kick(Captions.YOU_GOT_DENIED.getTranslated());

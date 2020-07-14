@@ -46,7 +46,7 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 
@@ -62,7 +62,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     @Getter @Setter private ChunkData chunkData = null;
 
     public GenChunk() {
-        super(null, new Location(null, 0, 0, 0), new Location(null, 15, 255, 15));
+        super(null, Location.at("", 0, 0, 0), Location.at("", 15, 255, 15));
         this.biomes = Biome.values();
     }
 
@@ -135,7 +135,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @NotNull Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         return setBlock(x, y, z, PatternUtil
             .apply(Preconditions.checkNotNull(pattern, "Pattern may not be null"), x, y, z));
     }
@@ -196,11 +196,11 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     @Override public Location getMax() {
-        return new Location(getWorld(), 15 + (getX() << 4), 255, 15 + (getZ() << 4));
+        return Location.at(getWorld(), 15 + (getX() << 4), 255, 15 + (getZ() << 4));
     }
 
     @Override public Location getMin() {
-        return new Location(getWorld(), getX() << 4, 0, getZ() << 4);
+        return Location.at(getWorld(), getX() << 4, 0, getZ() << 4);
     }
 
     public GenChunk clone() {

@@ -49,6 +49,13 @@ public class PlotAreaBuilder {
     @Getter @Setter private SettingsNodesWrapper settingsNodesWrapper;
     @Getter @Setter private SetupUtils setupManager;
 
+    private PlotAreaBuilder() {
+    }
+
+    public static PlotAreaBuilder newBuilder() {
+        return new PlotAreaBuilder();
+    }
+
     public static PlotAreaBuilder ofPlotArea(PlotArea area) {
         return new PlotAreaBuilder()
                 .worldName(area.getWorldName())
@@ -56,7 +63,7 @@ public class PlotAreaBuilder {
                 .plotAreaType(area.getType())
                 .terrainType(area.getTerrain())
                 .generatorName(area.getGenerator().getName())
-                .plotManager(PlotSquared.imp().getPluginName())
+                .plotManager(PlotSquared.platform().getPluginName())
                 .minimumId(area.getMin())
                 .maximumId(area.getMax())
                 .settingsNodesWrapper(new SettingsNodesWrapper(area.getSettingNodes(), null));

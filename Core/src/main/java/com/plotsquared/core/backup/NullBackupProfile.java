@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.backup;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -39,22 +39,22 @@ import java.util.concurrent.CompletableFuture;
  */
 public class NullBackupProfile implements BackupProfile {
 
-    @Override @NotNull public CompletableFuture<List<Backup>> listBackups() {
+    @Override @Nonnull public CompletableFuture<List<Backup>> listBackups() {
         return CompletableFuture.completedFuture(Collections.emptyList());
     }
 
     @Override public void destroy(){
     }
 
-    @Override @NotNull public Path getBackupDirectory() {
+    @Override @Nonnull public Path getBackupDirectory() {
         return new File(".").toPath();
     }
 
-    @Override @NotNull public CompletableFuture<Backup> createBackup() {
+    @Override @Nonnull public CompletableFuture<Backup> createBackup() {
         throw new UnsupportedOperationException("Cannot create backup of an unowned plot");
     }
 
-    @Override @NotNull public CompletableFuture<Void> restoreBackup(@NotNull final Backup backup) {
+    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup) {
         return CompletableFuture.completedFuture(null);
     }
 

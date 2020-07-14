@@ -26,14 +26,15 @@
 package com.plotsquared.bukkit.uuid;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import com.sk89q.squirrelid.Profile;
 import com.sk89q.squirrelid.resolver.HttpRepositoryService;
 import com.sk89q.squirrelid.resolver.ProfileService;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,6 +47,8 @@ import java.util.UUID;
  */
 @SuppressWarnings("UnstableApiUsage")
 public class SquirrelIdUUIDService implements UUIDService {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + SquirrelIdUUIDService.class.getSimpleName());
 
     private final ProfileService profileService;
     private final RateLimiter rateLimiter;
@@ -64,7 +67,7 @@ public class SquirrelIdUUIDService implements UUIDService {
         this.rateLimiter = RateLimiter.create(rateLimit / 600.0D);
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
         final List<UUIDMapping> results = new ArrayList<>(uuids.size());
         this.rateLimiter.acquire(uuids.size());
         try {
@@ -78,7 +81,9 @@ public class SquirrelIdUUIDService implements UUIDService {
                 // go through them one by one
                 //
                 if (uuids.size() >= 2) {
-                    PlotSquared.debug(Captions.PREFIX + "(UUID) Found invalid UUID in batch. Will try each UUID individually.");
+                    if (Settings.DEBUG) {
+                        logger.info("[P2] (UUID) Found invalid UUID in batch. Will try each UUID individually.");
+                    }
                     for (final UUID uuid : uuids) {
                         final List<UUIDMapping> result = this.getNames(Collections.singletonList(uuid));
                         if (result.isEmpty()) {
@@ -86,8 +91,8 @@ public class SquirrelIdUUIDService implements UUIDService {
                         }
                         results.add(result.get(0));
                     }
-                } else if (uuids.size() == 1) {
-                    PlotSquared.debug(Captions.PREFIX + "(UUID) Found invalid UUID: " + uuids.get(0));
+                } else if (uuids.size() == 1 && Settings.DEBUG) {
+                    logger.info("[P2] (UUID) Found invalid UUID: {}", uuids.get(0));
                 }
             }
         } catch (IOException | InterruptedException e) {
@@ -96,7 +101,7 @@ public class SquirrelIdUUIDService implements UUIDService {
         return results;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
         final List<UUIDMapping> results = new ArrayList<>(usernames.size());
         this.rateLimiter.acquire(usernames.size());
         try {

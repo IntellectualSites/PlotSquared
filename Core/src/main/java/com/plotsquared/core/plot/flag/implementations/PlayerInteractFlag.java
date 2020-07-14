@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class PlayerInteractFlag extends BooleanFlag<PlayerInteractFlag> {
 
@@ -38,7 +38,7 @@ public class PlayerInteractFlag extends BooleanFlag<PlayerInteractFlag> {
         super(value, Captions.FLAG_DESCRIPTION_PLAYER_INTERACT);
     }
 
-    @Override protected PlayerInteractFlag flagOf(@NotNull Boolean value) {
+    @Override protected PlayerInteractFlag flagOf(@Nonnull Boolean value) {
         return value ? PLAYER_INTERACT_TRUE : PLAYER_INTERACT_FALSE;
     }
 

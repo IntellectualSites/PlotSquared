@@ -25,7 +25,8 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
+import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.backup.BackupProfile;
 import com.plotsquared.core.backup.NullBackupProfile;
 import com.plotsquared.core.backup.PlayerBackupProfile;
@@ -35,6 +36,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import javax.annotation.Nonnull;
 
 import java.nio.file.Files;
 import java.time.Instant;
@@ -60,8 +62,11 @@ import java.util.stream.Stream;
     permission = "plots.backup")
 public final class Backup extends Command {
 
-    public Backup() {
+    private final BackupManager backupManager;
+
+    @Inject public Backup(@Nonnull final BackupManager backupManager) {
         super(MainCommand.getInstance(), true);
+        this.backupManager = backupManager;
     }
 
     private static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
@@ -90,8 +95,7 @@ public final class Backup extends Command {
 
             final Plot plot = player.getCurrentPlot();
             if (plot != null) {
-                final BackupProfile backupProfile =
-                    Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+                final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
                 if (backupProfile instanceof PlayerBackupProfile) {
                     final CompletableFuture<List<com.plotsquared.core.backup.Backup>> backupList =
                         backupProfile.listBackups();
@@ -135,8 +139,7 @@ public final class Backup extends Command {
             .hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
             sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
         } else {
-            final BackupProfile backupProfile =
-                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+            final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
             if (backupProfile instanceof NullBackupProfile) {
                 sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
                     Captions.GENERIC_OTHER.getTranslated());
@@ -175,8 +178,7 @@ public final class Backup extends Command {
             .hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
             sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
         } else {
-            final BackupProfile backupProfile =
-                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+            final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
             if (backupProfile instanceof NullBackupProfile) {
                 sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
                     Captions.GENERIC_OTHER.getTranslated());
@@ -237,8 +239,7 @@ public final class Backup extends Command {
                 sendMessage(player, Captions.NOT_A_NUMBER, args[0]);
                 return;
             }
-            final BackupProfile backupProfile =
-                Objects.requireNonNull(PlotSquared.imp()).getBackupManager().getProfile(plot);
+            final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
             if (backupProfile instanceof NullBackupProfile) {
                 sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
                     Captions.GENERIC_OTHER.getTranslated());

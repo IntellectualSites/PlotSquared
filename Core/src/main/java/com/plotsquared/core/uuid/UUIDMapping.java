@@ -26,7 +26,7 @@
 package com.plotsquared.core.uuid;
 
 import lombok.EqualsAndHashCode;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.UUID;
 
@@ -38,16 +38,16 @@ import java.util.UUID;
     private final UUID uuid;
     private final String username;
 
-    public UUIDMapping(@NotNull final UUID uuid, final String username) {
+    public UUIDMapping(@Nonnull final UUID uuid, final String username) {
         this.uuid = uuid;
         this.username = username;
     }
 
-    @NotNull public String getUsername() {
+    @Nonnull public String getUsername() {
         return this.username;
     }
 
-    @NotNull public UUID getUuid() {
+    @Nonnull public UUID getUuid() {
         return this.uuid;
     }
 

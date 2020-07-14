@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.Result;
@@ -34,10 +34,13 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 
 @CommandDeclaration(command = "delete",
@@ -50,9 +53,15 @@ import com.plotsquared.core.util.task.TaskManager;
     confirmation = true)
 public class Delete extends SubCommand {
 
-    // Note: To delete a specific plot use /plot <plot> delete
-    // The syntax also works with any command: /plot <plot> <command>
+    private final EventDispatcher eventDispatcher;
+    private final EconHandler econHandler;
 
+    @Inject public Delete(@Nonnull final EventDispatcher eventDispatcher,
+                          @Nullable final EconHandler econHandler) {
+        this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
+    }
+    
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
@@ -62,8 +71,7 @@ public class Delete extends SubCommand {
         if (!plot.hasOwner()) {
             return !sendMessage(player, Captions.PLOT_UNOWNED);
         }
-        Result eventResult =
-            PlotSquared.get().getEventDispatcher().callDelete(plot).getEventResult();
+        Result eventResult = this.eventDispatcher.callDelete(plot).getEventResult();
         if (eventResult == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Delete");
             return true;
@@ -77,7 +85,7 @@ public class Delete extends SubCommand {
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
         final int currentPlots = Settings.Limit.GLOBAL ?
             player.getPlotCount() :
-            player.getPlotCount(location.getWorld());
+            player.getPlotCount(location.getWorldName());
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
                 MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
@@ -86,11 +94,11 @@ public class Delete extends SubCommand {
             final long start = System.currentTimeMillis();
             boolean result = plot.deletePlot(() -> {
                 plot.removeRunning();
-                if ((EconHandler.getEconHandler() != null) && plotArea.useEconomy()) {
+                if ((this.econHandler != null) && plotArea.useEconomy()) {
                     Expression<Double> valueExr = plotArea.getPrices().get("sell");
                     double value = plots.size() * valueExr.evaluate((double) currentPlots);
                     if (value > 0d) {
-                        EconHandler.getEconHandler().depositMoney(player, value);
+                        this.econHandler.depositMoney(player, value);
                         sendMessage(player, Captions.ADDED_BALANCE, String.valueOf(value));
                     }
                 }

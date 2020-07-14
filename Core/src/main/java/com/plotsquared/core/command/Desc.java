@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -33,7 +33,9 @@ import com.plotsquared.core.events.Result;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
+import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "setdescription",
     permission = "plots.set.desc",
@@ -44,10 +46,15 @@ import com.plotsquared.core.util.MainUtil;
     requiredType = RequiredType.PLAYER)
 public class Desc extends SetCommand {
 
+    private final EventDispatcher eventDispatcher;
+    
+    @Inject public Desc(@Nonnull final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+    
     @Override public boolean set(PlotPlayer player, Plot plot, String desc) {
         if (desc.isEmpty()) {
-            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
-                .callFlagRemove(plot.getFlagContainer().getFlag(DescriptionFlag.class), plot);
+            PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plot.getFlagContainer().getFlag(DescriptionFlag.class), plot);
             if (event.getEventResult() == Result.DENY) {
                 sendMessage(player, Captions.EVENT_DENIED, "Description removal");
                 return false;
@@ -56,8 +63,7 @@ public class Desc extends SetCommand {
             MainUtil.sendMessage(player, Captions.DESC_UNSET);
             return true;
         }
-        PlotFlagAddEvent event = PlotSquared.get().getEventDispatcher().callFlagAdd(
-            plot.getFlagContainer().getFlag(DescriptionFlag.class).createFlagInstance(desc), plot);
+        PlotFlagAddEvent event = this.eventDispatcher.callFlagAdd(plot.getFlagContainer().getFlag(DescriptionFlag.class).createFlagInstance(desc), plot);
         if (event.getEventResult() == Result.DENY) {
             sendMessage(player, Captions.EVENT_DENIED, "Description set");
             return false;

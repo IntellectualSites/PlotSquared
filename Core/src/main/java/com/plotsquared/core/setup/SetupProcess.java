@@ -39,7 +39,7 @@ public class SetupProcess {
     private SetupStep current;
 
     public SetupProcess() {
-        this.builder = new PlotAreaBuilder();
+        this.builder = PlotAreaBuilder.newBuilder();
         this.history = new Stack<>();
         this.current = CommonSetupSteps.CHOOSE_GENERATOR;
     }

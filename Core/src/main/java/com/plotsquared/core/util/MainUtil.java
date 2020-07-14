@@ -47,6 +47,7 @@ import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.util.net.AbstractDelegateOutputStream;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
@@ -54,8 +55,10 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +100,7 @@ import java.util.stream.IntStream;
  */
 public class MainUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + MainUtil.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
 
     static {
@@ -153,7 +157,6 @@ public class MainUtil {
     public static void upload(UUID uuid, String file, String extension,
         final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
-            PlotSquared.debug("&cWrite task cannot be null");
             TaskManager.runTask(whenDone);
             return;
         }
@@ -215,7 +218,6 @@ public class MainUtil {
                     content = scanner.next().trim();
                 }
                 if (!content.startsWith("<")) {
-                    PlotSquared.debug(content);
                 }
                 int responseCode = ((HttpURLConnection) con).getResponseCode();
                 if (responseCode == 200) {
@@ -239,8 +241,7 @@ public class MainUtil {
      */
     public static boolean resetBiome(PlotArea area, Location pos1, Location pos2) {
         BiomeType biome = area.getPlotBiome();
-        if (!Objects.equals(WorldUtil.IMP
-            .getBiomeSynchronous(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
+        if (!Objects.equals(PlotSquared.platform().getWorldUtil().getBiomeSynchronous(area.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
                 (pos1.getZ() + pos2.getZ()) / 2), biome)) {
             MainUtil
                 .setBiome(area.getWorldName(), pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
@@ -375,7 +376,7 @@ public class MainUtil {
      * @param owner Owner UUID
      * @return The player's name, None, Everyone or Unknown
      */
-    @NotNull public static String getName(@Nullable UUID owner) {
+    @Nonnull public static String getName(@Nullable UUID owner) {
         return getName(owner, true);
     }
 
@@ -386,7 +387,7 @@ public class MainUtil {
      * @param blocking Whether or not the operation can be blocking
      * @return The player's name, None, Everyone or Unknown
      */
-    @NotNull public static String getName(@Nullable final UUID owner, final boolean blocking) {
+    @Nonnull public static String getName(@Nullable final UUID owner, final boolean blocking) {
         if (owner == null) {
             return Captions.NONE.getTranslated();
         }
@@ -417,12 +418,10 @@ public class MainUtil {
         return plot.getFlag(ServerPlotFlag.class);
     }
 
-    @NotNull public static Location[] getCorners(String world, CuboidRegion region) {
-        BlockVector3 min = region.getMinimumPoint();
-        BlockVector3 max = region.getMaximumPoint();
-        Location pos1 = new Location(world, min.getX(), min.getY(), min.getZ());
-        Location pos2 = new Location(world, max.getX(), max.getY(), max.getZ());
-        return new Location[] {pos1, pos2};
+    @Nonnull public static Location[] getCorners(@Nonnull final String world, @Nonnull final CuboidRegion region) {
+        final BlockVector3 min = region.getMinimumPoint();
+        final BlockVector3 max = region.getMaximumPoint();
+        return new Location[] {Location.at(world, min), Location.at(world, max)};
     }
 
     /**
@@ -433,7 +432,7 @@ public class MainUtil {
      * @return
      * @see Plot#getCorners()
      */
-    @NotNull public static Location[] getCorners(String world, Collection<CuboidRegion> regions) {
+    @Nonnull public static Location[] getCorners(String world, Collection<CuboidRegion> regions) {
         Location min = null;
         Location max = null;
         for (CuboidRegion region : regions) {
@@ -446,16 +445,16 @@ public class MainUtil {
             Location pos1 = corners[0];
             Location pos2 = corners[1];
             if (pos2.getX() > max.getX()) {
-                max.setX(pos2.getX());
+                max = max.withX(pos2.getX());
             }
             if (pos1.getX() < min.getX()) {
-                min.setX(pos1.getX());
+                min = min.withX(pos1.getX());
             }
             if (pos2.getZ() > max.getZ()) {
-                max.setZ(pos2.getZ());
+                max = max.withZ(pos2.getZ());
             }
             if (pos1.getZ() < min.getZ()) {
-                min.setZ(pos1.getZ());
+                min = min.withZ(pos1.getZ());
             }
         }
         return new Location[] {min, max};
@@ -493,7 +492,7 @@ public class MainUtil {
 
         PlotArea area = null;
         String alias = null;
-        for (Plot plot : PlotSquared.get().getPlots()) {
+        for (Plot plot : PlotQuery.newQuery().allPlots().asList()) {
             int count = 0;
             if (!uuids.isEmpty()) {
                 for (UUID uuid : uuids) {
@@ -537,11 +536,11 @@ public class MainUtil {
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
      */
-    @Nullable public static Plot getPlotFromString(PlotPlayer player, String arg, boolean message) {
+    @Nullable public static Plot getPlotFromString(PlotPlayer<?> player, String arg, boolean message) {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    PlotSquared.log(Captions.NOT_VALID_PLOT_WORLD);
+                    logger.info("[P2] No plot area string was supplied");
                 }
                 return null;
             }
@@ -549,7 +548,7 @@ public class MainUtil {
         }
         PlotArea area;
         if (player != null) {
-            area = PlotSquared.get().getPlotAreaByString(arg);
+            area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(arg);
             if (area == null) {
                 area = player.getApplicablePlotArea();
             }
@@ -559,17 +558,17 @@ public class MainUtil {
         String[] split = arg.split(";|,");
         PlotId id;
         if (split.length == 4) {
-            area = PlotSquared.get().getPlotAreaByString(split[0] + ';' + split[1]);
+            area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(split[0] + ';' + split[1]);
             id = PlotId.fromString(split[2] + ';' + split[3]);
         } else if (split.length == 3) {
-            area = PlotSquared.get().getPlotAreaByString(split[0]);
+            area = PlotSquared.get().getPlotAreaManager().getPlotAreaByString(split[0]);
             id = PlotId.fromString(split[1] + ';' + split[2]);
         } else if (split.length == 2) {
             id = PlotId.fromString(arg);
         } else {
             Collection<Plot> plots;
             if (area == null) {
-                plots = PlotSquared.get().getPlots();
+                plots = PlotQuery.newQuery().allPlots().asList();
             } else {
                 plots = area.getPlots();
             }
@@ -614,14 +613,14 @@ public class MainUtil {
         BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
         BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(Plot.MAX_HEIGHT - 1);
         CuboidRegion region = new CuboidRegion(pos1, pos2);
-        WorldUtil.IMP.setBiomes(world, region, biome);
+        PlotSquared.platform().getWorldUtil().setBiomes(world, region, biome);
     }
 
     /**
      * Get the highest block at a location.
      */
     public static void getHighestBlock(String world, int x, int z, IntConsumer result) {
-        WorldUtil.IMP.getHighestBlock(world, x, z, highest -> {
+        PlotSquared.platform().getWorldUtil().getHighestBlock(world, x, z, highest -> {
             if (highest == 0) {
                 result.accept(63);
             } else {
@@ -726,7 +725,7 @@ public class MainUtil {
         int num = plot.getConnectedPlots().size();
         String alias = !plot.getAlias().isEmpty() ? plot.getAlias() : Captions.NONE.getTranslated();
         Location bot = plot.getCorners()[0];
-        WorldUtil.IMP.getBiome(plot.getWorldName(), bot.getX(), bot.getZ(), biome -> {
+        PlotSquared.platform().getWorldUtil().getBiome(plot.getWorldName(), bot.getX(), bot.getZ(), biome -> {
             String info = iInfo;
             String trusted = getPlayerList(plot.getTrusted());
             String members = getPlayerList(plot.getMembers());
@@ -839,8 +838,6 @@ public class MainUtil {
                 for (File file : files) {
                     if (file.isDirectory()) {
                         deleteDirectory(file);
-                    } else {
-                        PlotSquared.debug("Deleting file: " + file + " | " + file.delete());
                     }
                 }
             }
@@ -849,7 +846,7 @@ public class MainUtil {
     }
 
     /*
-    @NotNull public static String getName(UUID owner) {
+    @Nonnull public static String getName(UUID owner) {
         if (owner == null) {
             return Captions.NONE.getTranslated();
         }
@@ -913,7 +910,7 @@ public class MainUtil {
 
     public static void getPersistentMeta(UUID uuid, final String key,
         final RunnableVal<byte[]> result) {
-        PlotPlayer player = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+        PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
         if (player != null) {
             result.run(player.getPersistentMeta(key));
         } else {

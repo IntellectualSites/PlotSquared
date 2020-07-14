@@ -29,7 +29,7 @@ import com.google.common.base.Preconditions;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import lombok.EqualsAndHashCode;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,8 +55,8 @@ import java.util.Collections;
      * @param flagCategory    The flag category
      * @param flagDescription A caption describing the flag functionality
      */
-    protected PlotFlag(@NotNull final T value, @NotNull final Caption flagCategory,
-        @NotNull final Caption flagDescription) {
+    protected PlotFlag(@Nonnull final T value, @Nonnull final Caption flagCategory,
+        @Nonnull final Caption flagDescription) {
         this.value = Preconditions.checkNotNull(value, "flag value may not be null");
         this.flagCategory =
             Preconditions.checkNotNull(flagCategory, "flag category may not be null");
@@ -82,7 +82,7 @@ import java.util.Collections;
      *
      * @return Non-nullable flag value
      */
-    @NotNull public final T getValue() {
+    @Nonnull public final T getValue() {
         return this.value;
     }
 
@@ -95,7 +95,7 @@ import java.util.Collections;
      * @return Parsed value, if valid.
      * @throws FlagParseException If the value could not be parsed.
      */
-    public abstract F parse(@NotNull final String input) throws FlagParseException;
+    public abstract F parse(@Nonnull final String input) throws FlagParseException;
 
     /**
      * Merge this flag's value with another value and return an instance
@@ -104,7 +104,7 @@ import java.util.Collections;
      * @param newValue New flag value.
      * @return Flag containing parsed flag value.
      */
-    public abstract F merge(@NotNull final T newValue);
+    public abstract F merge(@Nonnull final T newValue);
 
     /**
      * Returns a string representation of the flag instance, that when
@@ -154,7 +154,7 @@ import java.util.Collections;
      */
     public abstract String getExample();
 
-    protected abstract F flagOf(@NotNull T value);
+    protected abstract F flagOf(@Nonnull T value);
 
     /**
      * Create a new instance of the flag using a provided
@@ -163,7 +163,7 @@ import java.util.Collections;
      * @param value The flag value
      * @return The created flag instance
      */
-    public final F createFlagInstance(@NotNull final T value) {
+    public final F createFlagInstance(@Nonnull final T value) {
         return flagOf(Preconditions.checkNotNull(value));
     }
 

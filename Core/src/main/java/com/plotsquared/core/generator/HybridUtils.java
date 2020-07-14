@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.generator;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagAddEvent;
@@ -40,6 +41,7 @@ import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.ChunkBlockQueue;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
@@ -61,6 +63,9 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -74,7 +79,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class HybridUtils {
+public class HybridUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + HybridUtils.class.getSimpleName());
 
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
@@ -83,9 +90,27 @@ public abstract class HybridUtils {
     public static PlotArea area;
     public static boolean UPDATE = false;
 
-    public static boolean regeneratePlotWalls(final PlotArea area) {
+    private final PlotAreaManager plotAreaManager;
+    private final ChunkManager chunkManager;
+    private final GlobalBlockQueue blockQueue;
+    private final WorldUtil worldUtil;
+    private final RegionManager regionManager;
+    private final SchematicHandler schematicHandler;
+
+    @Inject public HybridUtils(@Nonnull final PlotAreaManager plotAreaManager,
+        @Nonnull final ChunkManager chunkManager, @Nonnull final GlobalBlockQueue blockQueue,
+        @Nonnull final WorldUtil worldUtil, @Nonnull final RegionManager regionManager, @Nonnull final SchematicHandler schematicHandler) {
+        this.plotAreaManager = plotAreaManager;
+        this.chunkManager = chunkManager;
+        this.blockQueue = blockQueue;
+        this.worldUtil = worldUtil;
+        this.regionManager = regionManager;
+        this.schematicHandler = schematicHandler;
+    }
+
+    public void regeneratePlotWalls(final PlotArea area) {
         PlotManager plotManager = area.getPlotManager();
-        return plotManager.regenerateAllPlotWalls();
+        plotManager.regenerateAllPlotWalls();
     }
 
     public void analyzeRegion(final String world, final CuboidRegion region,
@@ -103,7 +128,7 @@ public abstract class HybridUtils {
          *
          */
         TaskManager.runTaskAsync(() -> {
-            final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+            final LocalBlockQueue queue = blockQueue.getNewQueue(world, false);
 
             final BlockVector3 bot = region.getMinimumPoint();
             final BlockVector3 top = region.getMaximumPoint();
@@ -120,7 +145,7 @@ public abstract class HybridUtils {
             final int width = tx - bx + 1;
             final int length = tz - bz + 1;
 
-            PlotArea area = PlotSquared.get().getPlotArea(world, null);
+            final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
 
             if (!(area instanceof HybridPlotWorld)) {
                 return;
@@ -227,8 +252,8 @@ public abstract class HybridUtils {
             });
             System.gc();
             MainUtil.initCache();
-            Location botLoc = new Location(world, bot.getX(), bot.getY(), bot.getZ());
-            Location topLoc = new Location(world, top.getX(), top.getY(), top.getZ());
+            Location botLoc = Location.at(world, bot.getX(), bot.getY(), bot.getZ());
+            Location topLoc = Location.at(world, top.getX(), top.getY(), top.getZ());
             ChunkManager.chunkTask(botLoc, topLoc, new RunnableVal<int[]>() {
                 @Override public void run(int[] value) {
                     int X = value[0];
@@ -357,7 +382,7 @@ public abstract class HybridUtils {
                 for (int z = z1; z <= z2; z++) {
                     BlockState block = queue.getBlock(x, y, z);
                     boolean same =
-                        Arrays.stream(blocks).anyMatch(p -> WorldUtil.IMP.isBlockSame(block, p));
+                        Arrays.stream(blocks).anyMatch(p -> this.worldUtil.isBlockSame(block, p));
                     if (!same) {
                         count++;
                     }
@@ -384,7 +409,7 @@ public abstract class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        Set<BlockVector2> regions = RegionManager.manager.getChunkChunks(area.getWorldName());
+        Set<BlockVector2> regions = this.regionManager.getChunkChunks(area.getWorldName());
         return scheduleRoadUpdate(area, regions, extend, new HashSet<>());
     }
 
@@ -413,24 +438,25 @@ public abstract class HybridUtils {
                         BlockVector2 chunk = iter.next();
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend);
-                        if (!regenedRoad) {
-                            PlotSquared.debug("Failed to regenerate roads.");
+                        if (!regenedRoad && Settings.DEBUG) {
+                            logger.info("[P2] Failed to regenerate roads");
                         }
-                        ChunkManager.manager.unloadChunk(area.getWorldName(), chunk, true);
+                        chunkManager.unloadChunk(area.getWorldName(), chunk, true);
                     }
-                    PlotSquared.debug("Cancelled road task");
+                    if (Settings.DEBUG) {
+                        logger.info("[P2] Cancelled road task");
+                    }
                     return;
                 }
                 count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
-                    PlotSquared.debug("PROGRESS: " + 100 * (2048 - chunks.size()) / 2048 + "%");
+                    logger.info("[P2] Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
                 }
                 if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
-                    PlotSquared.debug("Regenerating plot walls");
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    PlotSquared.log("Finished road conversion");
+                    logger.info("[P2] Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
@@ -442,17 +468,17 @@ public abstract class HybridUtils {
                                         HybridUtils.regions.iterator();
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
-                                    PlotSquared.debug(
-                                        "Updating .mcr: " + loc.getX() + ", " + loc.getZ()
-                                            + " (approx 1024 chunks)");
-                                    PlotSquared
-                                        .debug(" - Remaining: " + HybridUtils.regions.size());
+                                    if (Settings.DEBUG) {
+                                        logger.info("[P2] Updating .mcr: {}, {} (approx 1024 chunks)",
+                                            loc.getX(), loc.getZ());
+                                        logger.info("[P2] - Remaining: {}", HybridUtils.regions.size());
+                                    }
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
                                 }
                             }
                             if (!chunks.isEmpty()) {
-                                TaskManager.IMP.sync(new RunnableVal<Object>() {
+                                TaskManager.getImplementation().sync(new RunnableVal<Object>() {
                                     @Override public void run(Object value) {
                                         long start = System.currentTimeMillis();
                                         Iterator<BlockVector2> iterator = chunks.iterator();
@@ -462,8 +488,8 @@ public abstract class HybridUtils {
                                             iterator.remove();
                                             boolean regenedRoads =
                                                 regenerateRoad(area, chunk, extend);
-                                            if (!regenedRoads) {
-                                                PlotSquared.debug("Failed to regenerate road.");
+                                            if (!regenedRoads && Settings.DEBUG) {
+                                                logger.info("[P2] Failed to regenerate road");
                                             }
                                         }
                                     }
@@ -474,22 +500,18 @@ public abstract class HybridUtils {
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
-                            PlotSquared.debug(
-                                "[ERROR] Could not update '" + area.getWorldName() + "/region/r."
-                                    + loc.getX() + "." + loc.getZ() + ".mca' (Corrupt chunk?)");
+                            logger.error("[P2] Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
+                                area.getWorldHash(), loc.getX(), loc.getZ());
                             int sx = loc.getX() << 5;
                             int sz = loc.getZ() << 5;
                             for (int x = sx; x < sx + 32; x++) {
                                 for (int z = sz; z < sz + 32; z++) {
-                                    ChunkManager.manager
-                                        .unloadChunk(area.getWorldName(), BlockVector2.at(x, z),
+                                    chunkManager.unloadChunk(area.getWorldName(), BlockVector2.at(x, z),
                                             true);
                                 }
                             }
-                            PlotSquared.debug(" - Potentially skipping 1024 chunks");
-                            PlotSquared.debug(" - TODO: recommend chunkster if corrupt");
                         }
-                        GlobalBlockQueue.IMP.addEmptyTask(() -> TaskManager.runTaskLater(task, 20));
+                        blockQueue.addEmptyTask(() -> TaskManager.runTaskLater(task, 20));
                     });
                 }
             }
@@ -499,7 +521,7 @@ public abstract class HybridUtils {
 
     public boolean setupRoadSchematic(Plot plot) {
         final String world = plot.getWorldName();
-        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+        final LocalBlockQueue queue = blockQueue.getNewQueue(world, false);
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
@@ -523,13 +545,12 @@ public abstract class HybridUtils {
             "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.getArea()
                 .toString() + File.separator;
 
-        SchematicHandler.manager.getCompoundTag(world, sideRoad, new RunnableVal<CompoundTag>() {
+        this.schematicHandler.getCompoundTag(world, sideRoad, new RunnableVal<CompoundTag>() {
             @Override public void run(CompoundTag value) {
-                SchematicHandler.manager.save(value, dir + "sideroad.schem");
-                SchematicHandler.manager
-                    .getCompoundTag(world, intersection, new RunnableVal<CompoundTag>() {
+                schematicHandler.save(value, dir + "sideroad.schem");
+                schematicHandler.getCompoundTag(world, intersection, new RunnableVal<CompoundTag>() {
                         @Override public void run(CompoundTag value) {
-                            SchematicHandler.manager.save(value, dir + "intersection.schem");
+                            schematicHandler.save(value, dir + "intersection.schem");
                             plotworld.ROAD_SCHEMATIC_ENABLED = true;
                             try {
                                 plotworld.setupSchematics();
@@ -587,9 +608,9 @@ public abstract class HybridUtils {
         z -= plotWorld.ROAD_OFFSET_Z;
         final int finalX = x;
         final int finalZ = z;
-        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(plotWorld.getWorldName(), false);
+        LocalBlockQueue queue = this.blockQueue.getNewQueue(plotWorld.getWorldName(), false);
         if (id1 == null || id2 == null || id1 != id2) {
-            ChunkManager.manager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
+            this.chunkManager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
                 if (id1 != null) {
                     Plot p1 = area.getPlotAbs(id1);
                     if (p1 != null && p1.hasOwner() && p1.isMerged()) {

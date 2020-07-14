@@ -25,9 +25,10 @@
  */
 package com.plotsquared.bukkit.util;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.EconHandler;
@@ -35,10 +36,17 @@ import com.plotsquared.core.util.PermHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import javax.annotation.Nullable;
 
-public class BukkitEconHandler extends EconHandler {
+@Singleton public class BukkitEconHandler extends EconHandler {
 
     private Economy econ;
+
+    private final PermHandler permHandler;
+
+    @Inject public BukkitEconHandler(@Nullable final PermHandler permHandler) {
+        this.permHandler = permHandler;
+    }
 
     @Override
     public boolean init() {
@@ -83,8 +91,8 @@ public class BukkitEconHandler extends EconHandler {
      * @deprecated Use {@link PermHandler#hasPermission(String, String, String)} instead
      */
     @Deprecated @Override public boolean hasPermission(String world, String player, String perm) {
-        if (PlotSquared.imp().getPermissionHandler() != null) {
-            return PlotSquared.imp().getPermissionHandler().hasPermission(world, player, perm);
+        if (this.permHandler != null) {
+            return this.permHandler.hasPermission(world, player, perm);
         } else {
             return false;
         }

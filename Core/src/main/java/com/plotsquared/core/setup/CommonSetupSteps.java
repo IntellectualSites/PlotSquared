@@ -37,10 +37,9 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.WorldUtil;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,12 +59,12 @@ public enum CommonSetupSteps implements SetupStep {
             return CommonSetupSteps.CHOOSE_PLOT_AREA_TYPE; // proceed with next step
         }
 
-        @NotNull @Override public Collection<String> getSuggestions() {
+        @Nonnull @Override public Collection<String> getSuggestions() {
             return Collections.unmodifiableSet(SetupUtils.generators.keySet());
         }
 
         @Nullable @Override public String getDefaultValue() {
-            return PlotSquared.imp().getPluginName();
+            return PlotSquared.platform().getPluginName();
         }
     },
     CHOOSE_PLOT_AREA_TYPE(PlotAreaType.class, TranslatableCaption.of("setup.setup_world_type")) {
@@ -94,7 +93,7 @@ public enum CommonSetupSteps implements SetupStep {
                     SetupUtils.generators.get(builder.plotManager()).getPlotGenerator()
                             .processAreaSetup(builder);
                 } else {
-                    builder.plotManager(PlotSquared.imp().getPluginName());
+                    builder.plotManager(PlotSquared.platform().getPluginName());
                     plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_generator_error"));
                     builder.settingsNodesWrapper(CommonSetupSteps.wrap(builder.plotManager()));
                     // TODO why is processSetup not called here?
@@ -118,7 +117,7 @@ public enum CommonSetupSteps implements SetupStep {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_area_non_alphanumerical"));
                 return this;
             }
-            for (PlotArea area : PlotSquared.get().getPlotAreas()) {
+            for (PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
                 if (area.getId() != null && area.getId().equalsIgnoreCase(argument)) {
                     plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_area_invalid_id"));
                     return this;
@@ -198,8 +197,8 @@ public enum CommonSetupSteps implements SetupStep {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_name_format"));
                 return this;
             }
-            if (WorldUtil.IMP.isWorld(argument)) {
-                if (PlotSquared.get().hasPlotArea(argument)) {
+            if (PlotSquared.platform().getWorldUtil().isWorld(argument)) {
+                if (PlotSquared.get().getPlotAreaManager().hasPlotArea(argument)) {
                     plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_taken"));
                     return this;
                 }
@@ -209,12 +208,12 @@ public enum CommonSetupSteps implements SetupStep {
             plotPlayer.deleteMeta("setup");
             String world;
             if (builder.setupManager() == null) {
-                world = SetupUtils.manager.setupWorld(builder);
+                world = PlotSquared.platform().getInjector().getInstance(SetupUtils.class).setupWorld(builder);
             } else {
                 world = builder.setupManager().setupWorld(builder);
             }
             try {
-                plotPlayer.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
+                plotPlayer.teleport(PlotSquared.platform().getWorldUtil().getSpawn(world), TeleportCause.COMMAND);
             } catch (Exception e) {
                 plotPlayer.sendMessage(TranslatableCaption.of("errors.error_console"));
                 e.printStackTrace();
@@ -228,7 +227,7 @@ public enum CommonSetupSteps implements SetupStep {
         }
     };
 
-    @Getter @NotNull private final Collection<String> suggestions;
+    @Getter @Nonnull private final Collection<String> suggestions;
     private final Caption description;
 
     /**
@@ -236,17 +235,17 @@ public enum CommonSetupSteps implements SetupStep {
      * @param suggestions the input suggestions for this step
      * @param description the caption describing this step
      */
-    CommonSetupSteps(@NotNull Collection<String> suggestions, @NotNull Caption description) {
+    CommonSetupSteps(@Nonnull Collection<String> suggestions, @Nonnull Caption description) {
         this.suggestions = suggestions;
         this.description = description;
     }
 
-    CommonSetupSteps(@NotNull Caption description) {
+    CommonSetupSteps(@Nonnull Caption description) {
         this.description = description;
         this.suggestions = Collections.emptyList();
     }
 
-    <E extends Enum<E>> CommonSetupSteps(@NotNull Class<E> argumentType, Caption description) {
+    <E extends Enum<E>> CommonSetupSteps(@Nonnull Class<E> argumentType, Caption description) {
         this(enumToStrings(argumentType), description);
     }
 

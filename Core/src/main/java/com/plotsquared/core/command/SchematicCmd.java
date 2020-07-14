@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.common.collect.Lists;
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -35,12 +35,14 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.schematic.Schematic;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import javax.annotation.Nonnull;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,7 +57,15 @@ import java.util.UUID;
     usage = "/plot schematic <save|saveall|paste>")
 public class SchematicCmd extends SubCommand {
 
+    private final PlotAreaManager plotAreaManager;
+    private final SchematicHandler schematicHandler;
     private boolean running = false;
+
+    @Inject public SchematicCmd(@Nonnull final PlotAreaManager plotAreaManager,
+                                @Nonnull final SchematicHandler schematicHandler) {
+        this.plotAreaManager = plotAreaManager;
+        this.schematicHandler = schematicHandler;
+    }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
@@ -105,7 +115,7 @@ public class SchematicCmd extends SubCommand {
                             UUID uuid = UUID.fromString(location.substring(4));
                             URL base = new URL(Settings.Web.URL);
                             URL url = new URL(base, "uploads/" + uuid + ".schematic");
-                            schematic = SchematicHandler.manager.getSchematic(url);
+                            schematic = this.schematicHandler.getSchematic(url);
                         } catch (Exception e) {
                             e.printStackTrace();
                             sendMessage(player, Captions.SCHEMATIC_INVALID,
@@ -115,7 +125,7 @@ public class SchematicCmd extends SubCommand {
                         }
                     } else {
                         try {
-                            schematic = SchematicHandler.manager.getSchematic(location);
+                            schematic = this.schematicHandler.getSchematic(location);
                         } catch (SchematicHandler.UnsupportedFormatException e) {
                             e.printStackTrace();
                         }
@@ -126,8 +136,7 @@ public class SchematicCmd extends SubCommand {
                             "non-existent or not in gzip format");
                         return;
                     }
-                    SchematicHandler.manager
-                        .paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
+                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
                             @Override public void run(Boolean value) {
                                 SchematicCmd.this.running = false;
                                 if (value) {
@@ -150,7 +159,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD_ARGS);
                     return false;
                 }
-                PlotArea area = PlotSquared.get().getPlotAreaByString(args[1]);
+                PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                 if (area == null) {
                     Captions.NOT_VALID_PLOT_WORLD.send(player, args[1]);
                     return false;
@@ -160,7 +169,7 @@ public class SchematicCmd extends SubCommand {
                     MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD);
                     return false;
                 }
-                boolean result = SchematicHandler.manager.exportAll(plots, null, null,
+                boolean result = this.schematicHandler.exportAll(plots, null, null,
                     () -> MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_FINISHED));
                 if (!result) {
                     MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
@@ -198,7 +207,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 ArrayList<Plot> plots = Lists.newArrayList(plot);
-                boolean result = SchematicHandler.manager.exportAll(plots, null, null, () -> {
+                boolean result = this.schematicHandler.exportAll(plots, null, null, () -> {
                     MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_SINGLE_FINISHED);
                     SchematicCmd.this.running = false;
                 });
@@ -215,8 +224,7 @@ public class SchematicCmd extends SubCommand {
                         Captions.PERMISSION_SCHEMATIC_LIST);
                     return false;
                 }
-                final String string =
-                    StringMan.join(SchematicHandler.manager.getSchematicNames(), "$2, $1");
+                final String string = StringMan.join(this.schematicHandler.getSchematicNames(), "$2, $1");
                 Captions.SCHEMATIC_LIST.send(player, string);
             }
             break;

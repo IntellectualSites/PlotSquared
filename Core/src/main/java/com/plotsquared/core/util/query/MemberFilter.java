@@ -26,19 +26,19 @@
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.UUID;
 
 class MemberFilter implements PlotFilter {
 
-    @NotNull private final UUID uuid;
+    @Nonnull private final UUID uuid;
 
-    MemberFilter(@NotNull final UUID uuid) {
+    MemberFilter(@Nonnull final UUID uuid) {
         this.uuid = uuid;
     }
 
-    @Override public boolean accepts(@NotNull final Plot plot) {
+    @Override public boolean accepts(@Nonnull final Plot plot) {
         return plot.isAdded(uuid);
     }
 

@@ -27,7 +27,10 @@ package com.plotsquared.core.command;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.inject.annotations.ConfigFile;
+import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
@@ -35,7 +38,8 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.task.TaskManager;
-import lombok.NonNull;
+
+import javax.annotation.Nonnull;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,7 +63,16 @@ import java.util.stream.Collectors;
     requiredType = RequiredType.NONE)
 public class DebugPaste extends SubCommand {
 
-    private static String readFile(@NonNull final File file) throws IOException {
+    private final File configFile;
+    private final File worldfile;
+
+    @Inject public DebugPaste(@ConfigFile @Nonnull final File configFile,
+                              @WorldFile @Nonnull final File worldFile) {
+        this.configFile = configFile;
+        this.worldfile = worldFile;
+    }
+
+    private static String readFile(@Nonnull final File file) throws IOException {
         final List<String> lines;
         try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
             lines = reader.lines().collect(Collectors.toList());
@@ -87,13 +100,13 @@ public class DebugPaste extends SubCommand {
                 b.append("This PlotSquared version is licensed to the spigot user ")
                     .append(PremiumVerification.getUserID()).append("\n\n");
                 b.append("# Server Information\n");
-                b.append("Server Version: ").append(PlotSquared.get().IMP.getServerImplementation())
+                b.append("Server Version: ").append(PlotSquared.platform().getServerImplementation())
                     .append("\n");
                 b.append("online_mode: ").append(!Settings.UUID.OFFLINE).append(';')
                     .append(!Settings.UUID.OFFLINE).append('\n');
                 b.append("Plugins:");
                 for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared
-                    .get().IMP.getPluginIds()) {
+                    .platform().getPluginIds()) {
                     Map.Entry<String, String> nameVersion = pluginInfo.getKey();
                     String name = nameVersion.getKey();
                     String version = nameVersion.getValue();
@@ -129,7 +142,7 @@ public class DebugPaste extends SubCommand {
 
                 try {
                     final File logFile =
-                        new File(PlotSquared.get().IMP.getDirectory(), "../../logs/latest.log");
+                        new File(PlotSquared.platform().getDirectory(), "../../logs/latest.log");
                     if (Files.size(logFile.toPath()) > 14_000_000) {
                         throw new IOException("Too big...");
                     }
@@ -142,13 +155,13 @@ public class DebugPaste extends SubCommand {
 
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml",
-                        readFile(PlotSquared.get().configFile)));
+                        readFile(this.configFile)));
                 } catch (final IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, "&cSkipping settings.yml because it's empty");
                 }
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml",
-                        readFile(PlotSquared.get().worldsFile)));
+                        readFile(this.worldfile)));
                 } catch (final IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, "&cSkipping worlds.yml because it's empty");
                 }
@@ -161,7 +174,7 @@ public class DebugPaste extends SubCommand {
                 }
 
                 try {
-                    final File MultiverseWorlds = new File(PlotSquared.get().IMP.getDirectory(),
+                    final File MultiverseWorlds = new File(PlotSquared.platform().getDirectory(),
                         "../Multiverse-Core/worlds.yml");
                     incendoPaster.addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml",
                         readFile(MultiverseWorlds)));

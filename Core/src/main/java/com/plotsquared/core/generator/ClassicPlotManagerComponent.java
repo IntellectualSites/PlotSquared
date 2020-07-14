@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.generator;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Optional;
 
@@ -51,7 +51,7 @@ public enum ClassicPlotManagerComponent {
         return stringValues;
     }
 
-    public static Optional<ClassicPlotManagerComponent> fromString(@NotNull final String string) {
+    public static Optional<ClassicPlotManagerComponent> fromString(@Nonnull final String string) {
         for (final ClassicPlotManagerComponent classicPlotManagerComponent : values()) {
             if (classicPlotManagerComponent.name().equalsIgnoreCase(string)) {
                 return Optional.of(classicPlotManagerComponent);

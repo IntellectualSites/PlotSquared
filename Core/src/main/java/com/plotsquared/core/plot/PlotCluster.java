@@ -31,6 +31,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import javax.annotation.Nonnull;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -151,17 +152,17 @@ public class PlotCluster {
             + this.pos2.y;
     }
 
-    public void getHome(Consumer<Location> result) {
-        BlockLoc home = this.settings.getPosition();
-        Consumer<Location> locationConsumer = toReturn -> {
+    public void getHome(@Nonnull final Consumer<Location> result) {
+        final BlockLoc home = this.settings.getPosition();
+        Consumer<Location> locationConsumer = toReturn ->
             MainUtil.getHighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(),
                 max -> {
                     if (max > toReturn.getY()) {
-                        toReturn.setY(1 + max);
+                        result.accept(toReturn.withY(1 + max));
+                    } else {
+                        result.accept(toReturn);
                     }
-                    result.accept(toReturn);
-                });
-        };
+            });
         if (home.getY() == 0) {
             // default pos
             Plot center = getCenterPlot();
@@ -170,7 +171,7 @@ public class PlotCluster {
                 if (toReturn.getY() == 0) {
                     PlotManager manager = this.area.getPlotManager();
                     Location locationSign = manager.getSignLoc(center);
-                    toReturn.setY(locationSign.getY());
+                    toReturn = toReturn.withY(locationSign.getY());
                 }
                 locationConsumer.accept(toReturn);
             });

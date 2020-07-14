@@ -25,16 +25,19 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
+import javax.annotation.Nonnull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -52,8 +55,14 @@ import java.util.concurrent.TimeoutException;
     requiredType = RequiredType.PLAYER)
 public class Kick extends SubCommand {
 
-    public Kick() {
+    private final PlotAreaManager plotAreaManager;
+    private final WorldUtil worldUtil;
+
+    @Inject public Kick(@Nonnull final PlotAreaManager plotAreaManager,
+                        @Nonnull final WorldUtil worldUtil) {
         super(Argument.PlayerName);
+        this.plotAreaManager = plotAreaManager;
+        this.worldUtil = worldUtil;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -86,7 +95,7 @@ public class Kick extends SubCommand {
                         }
                         continue;
                     }
-                    PlotPlayer<?> pp = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                    PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                     if (pp != null) {
                         players.add(pp);
                     }
@@ -105,11 +114,10 @@ public class Kick extends SubCommand {
                         Captions.CANNOT_KICK_PLAYER.send(player, player2.getName());
                         return;
                     }
-                    Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
+                    Location spawn = this.worldUtil.getSpawn(location.getWorldName());
                     Captions.YOU_GOT_KICKED.send(player2);
                     if (plot.equals(spawn.getPlot())) {
-                        Location newSpawn = WorldUtil.IMP
-                            .getSpawn(PlotSquared.get().getPlotAreaManager().getAllWorlds()[0]);
+                        Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
                         if (plot.equals(newSpawn.getPlot())) {
                             // Kick from server if you can't be teleported to spawn
                             player2.kick(Captions.YOU_GOT_KICKED.getTranslated());

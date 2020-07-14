@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class MycelGrowFlag extends BooleanFlag<MycelGrowFlag> {
 
@@ -38,7 +38,7 @@ public class MycelGrowFlag extends BooleanFlag<MycelGrowFlag> {
         super(value, Captions.FLAG_DESCRIPTION_MYCEL_GROW);
     }
 
-    @Override protected MycelGrowFlag flagOf(@NotNull Boolean value) {
+    @Override protected MycelGrowFlag flagOf(@Nonnull Boolean value) {
         return value ? MYCEL_GROW_TRUE : MYCEL_GROW_FALSE;
     }
 

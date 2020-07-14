@@ -29,7 +29,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.types.ListFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ public class AnalysisFlag extends ListFlag<Integer, AnalysisFlag> implements Int
         super(valueList, Captions.NONE, Captions.NONE);
     }
 
-    @Override public AnalysisFlag parse(@NotNull String input) throws FlagParseException {
+    @Override public AnalysisFlag parse(@Nonnull String input) throws FlagParseException {
         final String[] split = input.split(",");
         final List<Integer> numbers = new ArrayList<>();
         for (final String element : split) {
@@ -53,7 +53,7 @@ public class AnalysisFlag extends ListFlag<Integer, AnalysisFlag> implements Int
         return "";
     }
 
-    @Override protected AnalysisFlag flagOf(@NotNull List<Integer> value) {
+    @Override protected AnalysisFlag flagOf(@Nonnull List<Integer> value) {
         return new AnalysisFlag(value);
     }
 

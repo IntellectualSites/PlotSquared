@@ -37,6 +37,9 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 import java.util.Collection;
@@ -44,6 +47,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class RegionManager {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + RegionManager.class.getSimpleName());
 
     public static RegionManager manager = null;
 
@@ -53,11 +58,17 @@ public abstract class RegionManager {
         return BlockVector2.at(x, z);
     }
 
-    public static void largeRegionTask(final String world, final CuboidRegion region,
+    private final ChunkManager chunkManager;
+
+    public RegionManager(@Nonnull final ChunkManager chunkManager) {
+        this.chunkManager = chunkManager;
+    }
+
+    public void largeRegionTask(final String world, final CuboidRegion region,
         final RunnableVal<BlockVector2> task, final Runnable whenDone) {
         TaskManager.runTaskAsync(() -> {
             HashSet<BlockVector2> chunks = new HashSet<>();
-            Set<BlockVector2> mcrs = manager.getChunkChunks(world);
+            Set<BlockVector2> mcrs = this.getChunkChunks(world);
             for (BlockVector2 mcr : mcrs) {
                 int bx = mcr.getX() << 9;
                 int bz = mcr.getZ() << 9;
@@ -85,7 +96,7 @@ public abstract class RegionManager {
             }
             TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
                 @Override public void run(BlockVector2 value) {
-                    ChunkManager.manager.loadChunk(world, value, false)
+                    chunkManager.loadChunk(world, value, false)
                         .thenRun(() -> task.run(value));
                 }
             }, whenDone);
@@ -107,7 +118,7 @@ public abstract class RegionManager {
 
     public Set<BlockVector2> getChunkChunks(String world) {
         File folder =
-            new File(PlotSquared.get().IMP.getWorldContainer(), world + File.separator + "region");
+            new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region");
         File[] regionFiles = folder.listFiles();
         if (regionFiles == null) {
             throw new RuntimeException(
@@ -141,8 +152,8 @@ public abstract class RegionManager {
                 String directory =
                     world + File.separator + "region" + File.separator + "r." + loc.getX() + "."
                         + loc.getZ() + ".mca";
-                File file = new File(PlotSquared.get().IMP.getWorldContainer(), directory);
-                PlotSquared.log("&6 - Deleting file: " + file.getName() + " (max 1024 chunks)");
+                File file = new File(PlotSquared.platform().getWorldContainer(), directory);
+                logger.info("[P2] - Deleting file: {} (max 1024 chunks)", file.getName());
                 if (file.exists()) {
                     file.delete();
                 }
@@ -155,9 +166,9 @@ public abstract class RegionManager {
         final Pattern blocks, int minY, int maxY) {
         LocalBlockQueue queue = area.getQueue(false);
         for (CuboidRegion region : regions) {
-            Location pos1 = new Location(area.getWorldName(), region.getMinimumPoint().getX(), minY,
+            Location pos1 = Location.at(area.getWorldName(), region.getMinimumPoint().getX(), minY,
                 region.getMinimumPoint().getZ());
-            Location pos2 = new Location(area.getWorldName(), region.getMaximumPoint().getX(), maxY,
+            Location pos2 = Location.at(area.getWorldName(), region.getMaximumPoint().getX(), maxY,
                 region.getMaximumPoint().getZ());
             queue.setCuboid(pos1, pos2, blocks);
         }

@@ -32,7 +32,6 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.AreaBoundDelegateLocalBlockQueue;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.LocationOffsetDelegateLocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
@@ -40,8 +39,8 @@ import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Set;
 
@@ -55,7 +54,7 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(@Nullable Object chunkObject, @NotNull final String world,
+    public static boolean generate(@Nullable Object chunkObject, @Nonnull final String world,
         final int chunkX, final int chunkZ, LocalBlockQueue queue) {
         if (!enabled) {
             return false;
@@ -68,7 +67,7 @@ public class AugmentedUtils {
         // entire chunk
         CuboidRegion region = RegionUtil.createRegion(blockX, blockX + 15, blockZ, blockZ + 15);
         // Query for plot areas in the chunk
-        Set<PlotArea> areas = PlotSquared.get().getPlotAreas(world, region);
+        final Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world, region);
         if (areas.isEmpty()) {
             return false;
         }
@@ -87,7 +86,7 @@ public class AugmentedUtils {
             IndependentPlotGenerator generator = area.getGenerator();
             // Mask
             if (queue == null) {
-                queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+                queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
                 queue.setChunkObject(chunkObject);
             }
             LocalBlockQueue primaryMask;
@@ -153,8 +152,8 @@ public class AugmentedUtils {
             secondaryMask.setForceSync(true);
 
             ScopedLocalBlockQueue scoped =
-                new ScopedLocalBlockQueue(secondaryMask, new Location(world, blockX, 0, blockZ),
-                    new Location(world, blockX + 15, 255, blockZ + 15));
+                new ScopedLocalBlockQueue(secondaryMask, Location.at(world, blockX, 0, blockZ),
+                    Location.at(world, blockX + 15, 255, blockZ + 15));
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
         }

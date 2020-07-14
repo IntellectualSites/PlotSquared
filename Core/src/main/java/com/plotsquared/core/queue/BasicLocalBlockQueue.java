@@ -34,7 +34,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -50,6 +50,8 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
     private int lastX = Integer.MIN_VALUE;
     private int lastZ = Integer.MIN_VALUE;
     private boolean setbiome = false;
+
+    private GlobalBlockQueue globalBlockQueue;
 
     public BasicLocalBlockQueue(String world) {
         super(world);
@@ -88,7 +90,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         return false;
     }
 
-    public final boolean execute(@NotNull LocalChunk lc)
+    public final boolean execute(@Nonnull LocalChunk lc)
         throws ExecutionException, InterruptedException {
         this.setComponents(lc);
         return true;
@@ -114,7 +116,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         this.modified = modified;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @NotNull Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 
@@ -182,8 +184,8 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
     }
 
     @Override public void flush() {
-        GlobalBlockQueue.IMP.dequeue(this);
-        TaskManager.IMP.sync(new RunnableVal<Object>() {
+        this.globalBlockQueue.dequeue(this);
+        TaskManager.getImplementation().sync(new RunnableVal<Object>() {
             @Override public void run(Object value) {
                 while (next()) {
                 }

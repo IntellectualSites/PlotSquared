@@ -29,7 +29,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Event called when several merged plots are unlinked
@@ -52,7 +52,7 @@ public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotE
      * @param createSign Whether to regenerate signs
      * @param reason     The {@link REASON} for the unlink
      */
-    public PlotUnlinkEvent(@NotNull final PlotArea area, Plot plot, boolean createRoad,
+    public PlotUnlinkEvent(@Nonnull final PlotArea area, Plot plot, boolean createRoad,
         boolean createSign, REASON reason) {
         super(plot);
         this.area = area;

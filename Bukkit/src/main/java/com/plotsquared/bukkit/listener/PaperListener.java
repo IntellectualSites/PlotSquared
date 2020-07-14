@@ -32,8 +32,8 @@ import com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent;
 import com.destroystokyo.paper.event.entity.SlimePathfindEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.MainCommand;
 import com.plotsquared.core.configuration.Captions;
@@ -43,6 +43,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -58,6 +59,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,8 +73,13 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unused")
 public class PaperListener implements Listener {
 
+    private final PlotAreaManager plotAreaManager;
     private Chunk lastChunk;
 
+    @Inject public PaperListener(@Nonnull final PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+    
     @EventHandler public void onEntityPathfind(EntityPathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
@@ -305,7 +312,7 @@ public class PaperListener implements Listener {
             return;
         }
         Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
         PlotPlayer<?> pp = BukkitUtil.getPlayer((Player) shooter);

@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class ChatFlag extends BooleanFlag<ChatFlag> {
 
@@ -38,7 +38,7 @@ public class ChatFlag extends BooleanFlag<ChatFlag> {
         super(value, Captions.FLAG_DESCRIPTION_CHAT);
     }
 
-    @Override protected ChatFlag flagOf(@NotNull Boolean value) {
+    @Override protected ChatFlag flagOf(@Nonnull Boolean value) {
         return value ? CHAT_FLAG_TRUE : CHAT_FLAG_FALSE;
     }
 

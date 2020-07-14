@@ -41,14 +41,14 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PatternUtil {
 
-    public static BaseBlock apply(@NotNull Pattern pattern, int x, int y, int z) {
+    public static BaseBlock apply(@Nonnull Pattern pattern, int x, int y, int z) {
         Preconditions.checkNotNull(pattern, "Pattern may not be null");
         if (pattern instanceof BlockPattern || pattern instanceof RandomPattern
             || pattern instanceof BlockState || pattern instanceof BlockType

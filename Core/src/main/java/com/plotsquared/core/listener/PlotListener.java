@@ -57,10 +57,10 @@ import com.plotsquared.core.plot.flag.implementations.TimeFlag;
 import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.world.gamemode.GameMode;
@@ -68,6 +68,7 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.Template;
+import javax.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -76,10 +77,16 @@ import java.util.UUID;
 
 public class PlotListener {
 
-    private static final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
-    private static final HashMap<UUID, Interval> healRunnable = new HashMap<>();
+    private final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
+    private final HashMap<UUID, Interval> healRunnable = new HashMap<>();
 
-    public static void startRunnable() {
+    private final EventDispatcher eventDispatcher;
+
+    public PlotListener(@Nullable final EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+
+    public void startRunnable() {
         TaskManager.runTaskRepeat(() -> {
             if (!healRunnable.isEmpty()) {
                 for (Iterator<Map.Entry<UUID, Interval>> iterator =
@@ -89,15 +96,14 @@ public class PlotListener {
                     ++value.count;
                     if (value.count == value.interval) {
                         value.count = 0;
-                        PlotPlayer player = WorldUtil.IMP.wrapPlayer(entry.getKey());
+                        PlotPlayer<?> player = PlotPlayer.wrap(entry.getKey());
                         if (player == null) {
                             iterator.remove();
                             continue;
                         }
-                        double level = WorldUtil.IMP.getHealth(player);
+                        double level = PlotSquared.platform().getWorldUtil().getHealth(player);
                         if (level != value.max) {
-                            WorldUtil.IMP
-                                .setHealth(player, Math.min(level + value.amount, value.max));
+                            PlotSquared.platform().getWorldUtil().setHealth(player, Math.min(level + value.amount, value.max));
                         }
                     }
                 }
@@ -110,15 +116,14 @@ public class PlotListener {
                     ++value.count;
                     if (value.count == value.interval) {
                         value.count = 0;
-                        PlotPlayer player = WorldUtil.IMP.wrapPlayer(entry.getKey());
+                        PlotPlayer<?> player = PlotSquared.platform().getWorldUtil().wrapPlayer(entry.getKey());
                         if (player == null) {
                             iterator.remove();
                             continue;
                         }
-                        int level = WorldUtil.IMP.getFoodLevel(player);
+                        int level = PlotSquared.platform().getWorldUtil().getFoodLevel(player);
                         if (level != value.max) {
-                            WorldUtil.IMP
-                                .setFoodLevel(player, Math.min(level + value.amount, value.max));
+                            PlotSquared.platform().getWorldUtil().setFoodLevel(player, Math.min(level + value.amount, value.max));
                         }
                     }
                 }
@@ -126,7 +131,7 @@ public class PlotListener {
         }, 20);
     }
 
-    public static boolean plotEntry(final PlotPlayer<?> player, final Plot plot) {
+    public boolean plotEntry(final PlotPlayer<?> player, final Plot plot) {
         if (plot.isDenied(player.getUUID()) && !Permissions
             .hasPermission(player, "plots.admin.entry.denied")) {
             return false;
@@ -139,7 +144,7 @@ public class PlotListener {
             ExpireManager.IMP.handleEntry(player, plot);
         }
         player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
-        PlotSquared.get().getEventDispatcher().callEntry(player, plot);
+        this.eventDispatcher.callEntry(player, plot);
         if (plot.hasOwner()) {
             // This will inherit values from PlotArea
             final TitlesFlag.TitlesFlagValue titleFlag = plot.getFlag(TitlesFlag.class);
@@ -163,7 +168,7 @@ public class PlotListener {
             if (plot.getFlag(NotifyEnterFlag.class)) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
-                        final PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                        final PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID())) {
                             MainUtil.sendMessage(owner, Captions.NOTIFY_ENTER.getTranslated()
                                 .replace("%player", player.getName())
@@ -218,7 +223,7 @@ public class PlotListener {
                     PlotFlag<?, ?> plotFlag =
                         GlobalFlagContainer.getInstance().getFlag(TimeFlag.class);
                     PlotFlagRemoveEvent event =
-                        PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+                        this.eventDispatcher.callFlagRemove(plotFlag, plot);
                     if (event.getEventResult() != Result.DENY) {
                         plot.removeFlag(event.getFlag());
                     }
@@ -292,9 +297,9 @@ public class PlotListener {
         return true;
     }
 
-    public static boolean plotExit(final PlotPlayer<?> player, Plot plot) {
+    public boolean plotExit(final PlotPlayer<?> player, Plot plot) {
         Object previous = player.deleteMeta(PlotPlayer.META_LAST_PLOT);
-        PlotSquared.get().getEventDispatcher().callLeave(player, plot);
+        this.eventDispatcher.callLeave(player, plot);
         if (plot.hasOwner()) {
             PlotArea pw = plot.getArea();
             if (pw == null) {
@@ -335,7 +340,7 @@ public class PlotListener {
             if (plot.getFlag(NotifyLeaveFlag.class)) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
-                        final PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                        final PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                         if ((owner != null) && !owner.getUUID().equals(player.getUUID())) {
                             MainUtil.sendMessage(owner, Captions.NOTIFY_LEAVE.getTranslated()
                                 .replace("%player", player.getName())
@@ -382,7 +387,7 @@ public class PlotListener {
         return true;
     }
 
-    public static void logout(UUID uuid) {
+    public void logout(UUID uuid) {
         feedRunnable.remove(uuid);
         healRunnable.remove(uuid);
     }

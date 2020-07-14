@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class UntrustedVisitFlag extends BooleanFlag<UntrustedVisitFlag> {
 
@@ -37,7 +37,7 @@ public class UntrustedVisitFlag extends BooleanFlag<UntrustedVisitFlag> {
         super(value, Captions.FLAG_DESCRIPTION_UNTRUSTED);
     }
 
-    @Override protected UntrustedVisitFlag flagOf(@NotNull Boolean value) {
+    @Override protected UntrustedVisitFlag flagOf(@Nonnull Boolean value) {
         return new UntrustedVisitFlag(value);
     }
 

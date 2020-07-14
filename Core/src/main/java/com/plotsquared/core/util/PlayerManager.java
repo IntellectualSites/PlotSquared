@@ -27,8 +27,8 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +50,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      *
      * @param plotPlayer Player to remove
      */
-    public void removePlayer(@NotNull final PlotPlayer<?> plotPlayer) {
+    public void removePlayer(@Nonnull final PlotPlayer<?> plotPlayer) {
         synchronized (playerLock) {
             this.playerMap.remove(plotPlayer.getUUID());
         }
@@ -61,7 +61,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      *
      * @param uuid Player to remove
      */
-    public void removePlayer(@NotNull final UUID uuid) {
+    public void removePlayer(@Nonnull final UUID uuid) {
         synchronized (playerLock) {
             this.playerMap.remove(uuid);
         }
@@ -99,7 +99,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param object Platform player object
      * @return Player object
      */
-    @NotNull public abstract P getPlayer(@NotNull final T object);
+    @Nonnull public abstract P getPlayer(@Nonnull final T object);
 
     /**
      * Get a plot player from a UUID. This method requires
@@ -111,7 +111,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param uuid Player UUID
      * @return Player object
      */
-    @NotNull public P getPlayer(@NotNull final UUID uuid) {
+    @Nonnull public P getPlayer(@Nonnull final UUID uuid) {
         synchronized (playerLock) {
             P player = this.playerMap.get(uuid);
             if (player == null) {
@@ -122,7 +122,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         }
     }
 
-    @NotNull public abstract P createPlayer(@NotNull final UUID uuid);
+    @Nonnull public abstract P createPlayer(@Nonnull final UUID uuid);
 
     /**
      * Get an an offline player object from the player's UUID
@@ -138,7 +138,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param username Player name
      * @return Offline player object
      */
-    @Nullable public abstract OfflinePlotPlayer getOfflinePlayer(@NotNull final String username);
+    @Nullable public abstract OfflinePlotPlayer getOfflinePlayer(@Nonnull final String username);
 
     /**
      * Get all online players
@@ -152,7 +152,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
 
     public static final class NoSuchPlayerException extends IllegalArgumentException {
 
-        public NoSuchPlayerException(@NotNull final UUID uuid) {
+        public NoSuchPlayerException(@Nonnull final UUID uuid) {
             super(String.format("There is no online player with UUID '%s'", uuid.toString()));
         }
 

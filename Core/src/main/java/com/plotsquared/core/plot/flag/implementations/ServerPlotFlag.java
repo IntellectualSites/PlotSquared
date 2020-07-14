@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class ServerPlotFlag extends BooleanFlag<ServerPlotFlag> {
 
@@ -38,7 +38,7 @@ public class ServerPlotFlag extends BooleanFlag<ServerPlotFlag> {
         super(value, Captions.FLAG_DESCRIPTION_SERVER_PLOT);
     }
 
-    @Override protected ServerPlotFlag flagOf(@NotNull Boolean value) {
+    @Override protected ServerPlotFlag flagOf(@Nonnull Boolean value) {
         return value ? SERVER_PLOT_TRUE : SERVER_PLOT_FALSE;
     }
 

@@ -28,8 +28,8 @@ package com.plotsquared.core.setup;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.player.PlotPlayer;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +47,7 @@ public interface SetupStep {
      */
     SetupStep handleInput(final PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument);
 
-    @NotNull Collection<String> getSuggestions();
+    @Nonnull Collection<String> getSuggestions();
 
     @Nullable String getDefaultValue();
 

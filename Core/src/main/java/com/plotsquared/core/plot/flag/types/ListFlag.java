@@ -29,7 +29,7 @@ import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.StringMan;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +41,7 @@ public abstract class ListFlag<V, F extends PlotFlag<List<V>, F>> extends PlotFl
         super(Collections.unmodifiableList(valueList), category, description);
     }
 
-    @Override public F merge(@NotNull List<V> newValue) {
+    @Override public F merge(@Nonnull List<V> newValue) {
         final List<V> mergedList = new ArrayList<>();
         mergedList.addAll(getValue());
         mergedList.addAll(newValue);

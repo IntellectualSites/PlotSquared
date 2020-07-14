@@ -41,7 +41,7 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.minimessage.Template;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -594,7 +594,7 @@ public abstract class Command {
         return object;
     }
 
-    @SneakyThrows protected static void sneakyThrow(@NotNull final Throwable throwable) {
+    @SneakyThrows protected static void sneakyThrow(@Nonnull final Throwable throwable) {
         throw throwable;
     }
 

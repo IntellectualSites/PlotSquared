@@ -26,11 +26,12 @@
 package com.plotsquared.bukkit.entity;
 
 import lombok.Getter;
-import lombok.NonNull;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import javax.annotation.Nonnull;
 
 @Getter
 public abstract class EntityWrapper {
@@ -43,7 +44,7 @@ public abstract class EntityWrapper {
     public double y;
     public double z;
 
-    EntityWrapper(@NonNull final Entity entity) {
+    EntityWrapper(@Nonnull final Entity entity) {
         this.entity = entity;
         this.type = entity.getType();
 

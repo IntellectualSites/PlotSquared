@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class InvincibleFlag extends BooleanFlag<InvincibleFlag> {
 
@@ -38,7 +38,7 @@ public class InvincibleFlag extends BooleanFlag<InvincibleFlag> {
         super(value, Captions.FLAG_DESCRIPTION_INVINCIBLE);
     }
 
-    @Override protected InvincibleFlag flagOf(@NotNull Boolean value) {
+    @Override protected InvincibleFlag flagOf(@Nonnull Boolean value) {
         return value ? INVINCIBLE_TRUE : INVINCIBLE_FALSE;
     }
 

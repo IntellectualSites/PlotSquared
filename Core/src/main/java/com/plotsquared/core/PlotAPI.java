@@ -23,12 +23,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.api;
+package com.plotsquared.core;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -38,6 +36,7 @@ import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.query.PlotQuery;
 import lombok.NoArgsConstructor;
 
 import java.util.Collections;
@@ -64,10 +63,9 @@ import java.util.UUID;
      * Gets all plots.
      *
      * @return all plots
-     * @see PlotSquared#getPlots()
      */
     public Set<Plot> getAllPlots() {
-        return PlotSquared.get().getPlots();
+        return PlotQuery.newQuery().allPlots().asSet();
     }
 
     /**
@@ -76,8 +74,8 @@ import java.util.UUID;
      * @param player Player, whose plots to search for
      * @return all plots that a player owns
      */
-    public Set<Plot> getPlayerPlots(PlotPlayer player) {
-        return PlotSquared.get().getPlots(player);
+    public Set<Plot> getPlayerPlots(PlotPlayer<?> player) {
+        return PlotQuery.newQuery().ownedBy(player).asSet();
     }
 
     /**
@@ -88,26 +86,6 @@ import java.util.UUID;
      */
     public void addPlotArea(PlotArea plotArea) {
         PlotSquared.get().addPlotArea(plotArea);
-    }
-
-    /**
-     * Gets the configuration file for this plugin.
-     *
-     * @return the configuration file for PlotSquared
-     * =
-     */
-    public YamlConfiguration getConfig() {
-        return PlotSquared.get().getConfig();
-    }
-
-    /**
-     * Gets the PlotSquared storage file.
-     *
-     * @return storage configuration
-     * @see PlotSquared#storage
-     */
-    public YamlConfiguration getStorage() {
-        return PlotSquared.get().storage;
     }
 
     /**
@@ -124,7 +102,7 @@ import java.util.UUID;
      * @see ChunkManager
      */
     public ChunkManager getChunkManager() {
-        return ChunkManager.manager;
+        return PlotSquared.platform().getInjector().getInstance(ChunkManager.class);
     }
 
     /**
@@ -133,7 +111,7 @@ import java.util.UUID;
      * @return GlobalBlockQueue.IMP
      */
     public GlobalBlockQueue getBlockQueue() {
-        return GlobalBlockQueue.IMP;
+        return PlotSquared.platform().getGlobalBlockQueue();
     }
 
     /**
@@ -144,7 +122,7 @@ import java.util.UUID;
      * @see SchematicHandler
      */
     public SchematicHandler getSchematicHandler() {
-        return SchematicHandler.manager;
+        return PlotSquared.platform().getInjector().getInstance(SchematicHandler.class);
     }
 
     /**
@@ -157,7 +135,7 @@ import java.util.UUID;
         if (world == null) {
             return Collections.emptySet();
         }
-        return PlotSquared.get().getPlotAreas(world);
+        return PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world);
     }
 
     /**
@@ -167,7 +145,8 @@ import java.util.UUID;
      * @see MainUtil#sendConsoleMessage(Captions, String...)
      */
     public void sendConsoleMessage(String message) {
-        PlotSquared.log(message);
+        // TODO: Re-implement
+        // PlotSquared.log(message);
     }
 
     /**

@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,7 +43,7 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
         super(value, Captions.FLAG_CATEGORY_BOOLEAN, Captions.FLAG_DESCRIPTION_LIQUID_FLOW);
     }
 
-    @Override public LiquidFlowFlag parse(@NotNull final String input) {
+    @Override public LiquidFlowFlag parse(@Nonnull final String input) {
         switch (input.toLowerCase()) {
             case "true":
             case "enabled":
@@ -58,7 +58,7 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
         }
     }
 
-    @Override public LiquidFlowFlag merge(@NotNull final FlowStatus newValue) {
+    @Override public LiquidFlowFlag merge(@Nonnull final FlowStatus newValue) {
         if (newValue == FlowStatus.ENABLED || this.getValue() == FlowStatus.ENABLED) {
             return LIQUID_FLOW_ENABLED;
         }
@@ -73,7 +73,7 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
         return "true";
     }
 
-    @Override protected LiquidFlowFlag flagOf(@NotNull final FlowStatus value) {
+    @Override protected LiquidFlowFlag flagOf(@Nonnull final FlowStatus value) {
         switch (value) {
             case ENABLED:
                 return LIQUID_FLOW_ENABLED;

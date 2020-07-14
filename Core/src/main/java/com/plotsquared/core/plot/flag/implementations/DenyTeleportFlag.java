@@ -30,8 +30,8 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,7 +46,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
      *
      * @param value Flag value
      */
-    protected DenyTeleportFlag(@NotNull DeniedGroup value) {
+    protected DenyTeleportFlag(@Nonnull DeniedGroup value) {
         super(value, Captions.FLAG_CATEGORY_ENUM, Captions.FLAG_DESCRIPTION_DENY_TELEPORT);
     }
 
@@ -79,7 +79,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         return result || player.hasPermission("plots.admin.entry.denied");
     }
 
-    @Override public DenyTeleportFlag parse(@NotNull String input) throws FlagParseException {
+    @Override public DenyTeleportFlag parse(@Nonnull String input) throws FlagParseException {
         final DeniedGroup group = DeniedGroup.fromString(input);
         if (group == null) {
             throw new FlagParseException(this, input, Captions.FLAG_ERROR_ENUM,
@@ -88,7 +88,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         return flagOf(group);
     }
 
-    @Override public DenyTeleportFlag merge(@NotNull DeniedGroup newValue) {
+    @Override public DenyTeleportFlag merge(@Nonnull DeniedGroup newValue) {
         if (getValue().ordinal() < newValue.ordinal()) {
             return flagOf(newValue);
         }
@@ -103,7 +103,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         return "trusted";
     }
 
-    @Override protected DenyTeleportFlag flagOf(@NotNull DeniedGroup value) {
+    @Override protected DenyTeleportFlag flagOf(@Nonnull DeniedGroup value) {
         return new DenyTeleportFlag(value);
     }
 
@@ -114,7 +114,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
     public enum DeniedGroup {
         NONE, MEMBERS, TRUSTED, NONMEMBERS, NONTRUSTED, NONOWNERS;
 
-        @Nullable public static DeniedGroup fromString(@NotNull final String string) {
+        @Nullable public static DeniedGroup fromString(@Nonnull final String string) {
             for (final DeniedGroup group : values()) {
                 if (group.name().equalsIgnoreCase(string)) {
                     return group;

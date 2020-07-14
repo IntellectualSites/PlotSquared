@@ -25,7 +25,7 @@
  */
 package com.plotsquared.bukkit.entity;
 
-import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import org.bukkit.Art;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -55,10 +55,14 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public final class ReplicatingEntityWrapper extends EntityWrapper {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ReplicatingEntityWrapper.class.getSimpleName());
 
     private final short depth;
     private final int hash;
@@ -331,10 +335,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                     this.dataByte = (byte) 0;
                 }
                 storeLiving((LivingEntity) entity);
-                return;
             // END LIVING //
-            default:
-                PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
         }
     }
 
@@ -390,7 +391,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         try {
             entity.getInventory().setContents(this.inventory);
         } catch (IllegalArgumentException e) {
-            PlotSquared.debug("&c[WARN] Failed to restore inventory.\n Reason: " + e.getMessage());
+            logger.error("[P2] Failed to restore inventory", e);
         }
     }
 
@@ -736,7 +737,9 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 restoreLiving((LivingEntity) entity);
                 return entity;
             default:
-                PlotSquared.debug("&cCOULD NOT IDENTIFY ENTITY: " + entity.getType());
+                if (Settings.DEBUG) {
+                    logger.info("[P2] Could not identify entity: {}", entity.getType());
+                }
                 return entity;
             // END LIVING
         }

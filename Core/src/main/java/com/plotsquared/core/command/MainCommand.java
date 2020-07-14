@@ -25,6 +25,8 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Injector;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -40,6 +42,8 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -61,90 +65,95 @@ public class MainCommand extends Command {
     public static MainCommand getInstance() {
         if (instance == null) {
             instance = new MainCommand();
-            new Caps();
-            new Buy();
-            new Save();
-            new Load();
-            new Confirm();
-            new Template();
-            new Download();
-            new Template();
-            new Setup();
-            new Area();
-            new DebugSaveTest();
-            new DebugLoadTest();
-            new CreateRoadSchematic();
-            new DebugAllowUnsafe();
-            new RegenAllRoads();
-            new Claim();
-            new Auto();
-            new HomeCommand();
-            new Visit();
-            new Set();
-            new Clear();
-            new Delete();
-            new Trust();
-            new Add();
-            new Leave();
-            new Deny();
-            new Remove();
-            new Info();
-            new Near();
-            new ListCmd();
-            new Debug();
-            new SchematicCmd();
-            new PluginCmd();
-            new Purge();
-            new Reload();
-            new Relight();
-            new Merge();
-            new DebugPaste();
-            new Unlink();
-            new Kick();
-            new Inbox();
-            new Comment();
-            new DatabaseCommand();
-            new Swap();
-            new Music();
-            new DebugRoadRegen();
-            new Trust();
-            new DebugExec();
-            new FlagCommand();
-            new Target();
-            new Move();
-            new Condense();
-            new Copy();
-            new Chat();
-            new Trim();
-            new Done();
-            new Continue();
-            new Middle();
-            new Grant();
-            // Set commands
-            new Owner();
-            new Desc();
-            new Biome();
-            new Alias();
-            new SetHome();
-            new Cluster();
-            new DebugImportWorlds();
-            new Backup();
+
+            final Injector injector = PlotSquared.platform().getInjector();
+            final List<Class<? extends Command>> commands = new LinkedList<>();
+            commands.add(Caps.class);
+            commands.add(Buy.class);
+            commands.add(Save.class);
+            commands.add(Load.class);
+            commands.add(Confirm.class);
+            commands.add(Template.class);
+            commands.add(Download.class);
+            commands.add(Setup.class);
+            commands.add(Area.class);
+            commands.add(DebugSaveTest.class);
+            commands.add(DebugLoadTest.class);
+            commands.add(CreateRoadSchematic.class);
+            commands.add(DebugAllowUnsafe.class);
+            commands.add(RegenAllRoads.class);
+            commands.add(Claim.class);
+            commands.add(Auto.class);
+            commands.add(HomeCommand.class);
+            commands.add(Visit.class);
+            commands.add(Set.class);
+            commands.add(Clear.class);
+            commands.add(Delete.class);
+            commands.add(Trust.class);
+            commands.add(Add.class);
+            commands.add(Leave.class);
+            commands.add(Deny.class);
+            commands.add(Remove.class);
+            commands.add(Info.class);
+            commands.add(Near.class);
+            commands.add(ListCmd.class);
+            commands.add(Debug.class);
+            commands.add(SchematicCmd.class);
+            commands.add(PluginCmd.class);
+            commands.add(Purge.class);
+            commands.add(Reload.class);
+            commands.add(Relight.class);
+            commands.add(Merge.class);
+            commands.add(DebugPaste.class);
+            commands.add(Unlink.class);
+            commands.add(Kick.class);
+            commands.add(Inbox.class);
+            commands.add(Comment.class);
+            commands.add(DatabaseCommand.class);
+            commands.add(Swap.class);
+            commands.add(Music.class);
+            commands.add(DebugRoadRegen.class);
+            commands.add(DebugExec.class);
+            commands.add(FlagCommand.class);
+            commands.add(Target.class);
+            commands.add(Move.class);
+            commands.add(Condense.class);
+            commands.add(Copy.class);
+            commands.add(Chat.class);
+            commands.add(Trim.class);
+            commands.add(Done.class);
+            commands.add(Continue.class);
+            commands.add(Middle.class);
+            commands.add(Grant.class);
+            commands.add(Owner.class);
+            commands.add(Desc.class);
+            commands.add(Biome.class);
+            commands.add(Alias.class);
+            commands.add(SetHome.class);
+            commands.add(Cluster.class);
+            commands.add(DebugImportWorlds.class);
+            commands.add(Backup.class);
 
             if (Settings.Ratings.USE_LIKES) {
-                new Like();
-                new Dislike();
+                commands.add(Like.class);
+                commands.add(Dislike.class);
             } else {
-                new Rate();
+                commands.add(Rate.class);
+            }
+
+            for (final Class<? extends Command> command : commands) {
+                injector.getInstance(command);
             }
 
             // Referenced commands
-            instance.toggle = new Toggle();
+            instance.toggle = injector.getInstance(Toggle.class);
             instance.help = new Help(instance);
         }
         return instance;
     }
 
-    public static boolean onCommand(final PlotPlayer player, String... args) {
+    public static boolean onCommand(final PlotPlayer<?> player, String... args) {
+        final EconHandler econHandler = PlotSquared.platform().getEconHandler();
         if (args.length >= 1 && args[0].contains(":")) {
             String[] split2 = args[0].split(":");
             if (split2.length == 2) {
@@ -166,14 +175,14 @@ public class MainCommand extends Command {
                 public void run(final Command cmd, final Runnable success, final Runnable failure) {
                     if (cmd.hasConfirmation(player)) {
                         CmdConfirm.addPending(player, cmd.getUsage(), () -> {
-                            if (EconHandler.getEconHandler() != null) {
+                            if (econHandler != null) {
                                 PlotArea area = player.getApplicablePlotArea();
                                 if (area != null) {
                                     Expression<Double> priceEval =
                                         area.getPrices().get(cmd.getFullId());
                                     Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                     if (price != null
-                                        && EconHandler.getEconHandler().getMoney(player) < price) {
+                                        && econHandler.getMoney(player) < price) {
                                         if (failure != null) {
                                             failure.run();
                                         }
@@ -187,12 +196,12 @@ public class MainCommand extends Command {
                         });
                         return;
                     }
-                    if (EconHandler.getEconHandler() != null) {
+                    if (econHandler != null) {
                         PlotArea area = player.getApplicablePlotArea();
                         if (area != null) {
                             Expression<Double> priceEval = area.getPrices().get(cmd.getFullId());
                             Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                            if (price != 0d && EconHandler.getEconHandler().getMoney(player) < price) {
+                            if (price != 0d && econHandler.getMoney(player) < price) {
                                 if (failure != null) {
                                     failure.run();
                                 }
@@ -254,14 +263,14 @@ public class MainCommand extends Command {
                 if ("f".equals(args[0].substring(1))) {
                     confirm = new RunnableVal3<Command, Runnable, Runnable>() {
                         @Override public void run(Command cmd, Runnable success, Runnable failure) {
-                            if (EconHandler.getEconHandler() != null) {
+                            if (PlotSquared.platform().getEconHandler() != null) {
                                 PlotArea area = player.getApplicablePlotArea();
                                 if (area != null) {
                                     Expression<Double> priceEval =
                                         area.getPrices().get(cmd.getFullId());
                                     Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                     if (price != 0d
-                                        && EconHandler.getEconHandler().getMoney(player) < price) {
+                                        && PlotSquared.platform().getEconHandler().getMoney(player) < price) {
                                         if (failure != null) {
                                             failure.run();
                                         }

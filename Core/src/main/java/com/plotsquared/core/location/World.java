@@ -23,25 +23,62 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot.object;
 
-import com.plotsquared.core.location.Location;
-import org.junit.Test;
+package com.plotsquared.core.location;
 
-import java.util.logging.Logger;
+import javax.annotation.Nonnull;
 
-public class LocationTest {
+/**
+ * PlotSquared representation of a platform world
+ *
+ * @param <T> Platform world type
+ */
+public interface World<T> {
 
-    private static final Logger logger = Logger.getLogger(LocationTest.class.getName());
+    /**
+     * Get the platform world represented by this world
+     *
+     * @return Platform world
+     */
+    @Nonnull T getPlatformWorld();
 
-    @Test public void cloning() {
-        String world = "plotworld";
-        Location location1 = new Location(world, 0, 0, 0);
-        logger.info(location1.toString());
-        Location clone = location1.clone();
-        world = "normal";
-        logger.info(clone.toString());
-        //location1.getBlockVector3();
+    /**
+     * Get the name of the world
+     *
+     * @return World name
+     */
+    @Nonnull String getName();
+
+    /**
+     * Get a {@link NullWorld} implementation
+     *
+     * @return NullWorld instance
+     */
+    static <T> NullWorld<T> nullWorld() {
+        return new NullWorld<>();
+    }
+
+    class NullWorld<T> implements World<T> {
+
+        private NullWorld() {
+        }
+
+        @Nonnull @Override public T getPlatformWorld() {
+            throw new UnsupportedOperationException("Cannot get platform world from NullWorld");
+        }
+
+        @Override public @Nonnull String getName() {
+            return "";
+        }
+
+        @Override public boolean equals(final Object obj) {
+            return obj instanceof NullWorld;
+        }
+
+        @Override public int hashCode() {
+            return "null".hashCode();
+        }
 
     }
+
 }

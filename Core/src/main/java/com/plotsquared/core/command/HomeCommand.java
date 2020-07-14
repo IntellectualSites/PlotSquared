@@ -25,13 +25,14 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -40,7 +41,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,12 +56,16 @@ import java.util.concurrent.CompletableFuture;
                     requiredType = RequiredType.PLAYER,
                     category = CommandCategory.TELEPORT)
 public class HomeCommand extends Command {
-    public HomeCommand() {
+
+    private final PlotAreaManager plotAreaManager;
+
+    @Inject public HomeCommand(@Nonnull final PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
+        this.plotAreaManager = plotAreaManager;
     }
 
-    private void home(@NotNull final PlotPlayer<?> player,
-                      @NotNull final PlotQuery query, final int page,
+    private void home(@Nonnull final PlotPlayer<?> player,
+                      @Nonnull final PlotQuery query, final int page,
                       final RunnableVal3<Command, Runnable, Runnable> confirm,
                       final RunnableVal2<Command, CommandResult> whenDone) {
         List<Plot> plots = query.asList();
@@ -82,7 +87,7 @@ public class HomeCommand extends Command {
         }), () -> whenDone.run(HomeCommand.this, CommandResult.FAILURE));
     }
 
-    @NotNull private PlotQuery query(@NotNull final PlotPlayer<?> player) {
+    @Nonnull private PlotQuery query(@Nonnull final PlotPlayer<?> player) {
         // everything plots need to have in common here
         return PlotQuery.newQuery().ownedBy(player);
     }
@@ -134,7 +139,7 @@ public class HomeCommand extends Command {
                 break;
             case 2:
                 // we assume args[0] is a plot area and args[1] an identifier
-                PlotArea plotArea = PlotSquared.get().getPlotAreaByString(args[0]);
+                final PlotArea plotArea = this.plotAreaManager.getPlotAreaByString(args[0]);
                 identifier = args[1];
                 if (plotArea == null) {
                     // invalid command, therefore no plots

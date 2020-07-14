@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -34,8 +35,12 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,6 +57,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
     requiredType = RequiredType.CONSOLE,
     confirmation = true)
 public class Purge extends SubCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Purge.class.getSimpleName());
+
+    private final PlotAreaManager plotAreaManager;
+    private final PlotListener plotListener;
+
+    @Inject public Purge(@Nonnull final PlotAreaManager plotAreaManager,
+                         @Nonnull final PlotListener plotListener) {
+        this.plotAreaManager = plotAreaManager;
+        this.plotListener = plotListener;
+    }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -78,7 +94,7 @@ public class Purge extends SubCommand {
                     break;
                 case "area":
                 case "a":
-                    area = PlotSquared.get().getPlotAreaByString(split[1]);
+                    area = this.plotAreaManager.getPlotAreaByString(split[1]);
                     if (area == null) {
                         Captions.NOT_VALID_PLOT_WORLD.send(player, split[1]);
                         return false;
@@ -170,7 +186,9 @@ public class Purge extends SubCommand {
             "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
         boolean finalClear = clear;
         Runnable run = () -> {
-            PlotSquared.debug("Calculating plots to purge, please wait...");
+            if (Settings.DEBUG) {
+                logger.info("[P2] Calculating plots to purge, please wait...");
+            }
             HashSet<Integer> ids = new HashSet<>();
             Iterator<Plot> iterator = toDelete.iterator();
             AtomicBoolean cleared = new AtomicBoolean(true);
@@ -183,22 +201,21 @@ public class Purge extends SubCommand {
                             try {
                                 ids.add(plot.temp);
                                 if (finalClear) {
-                                    plot.clear(false, true, () -> PlotSquared
-                                        .debug("Plot " + plot.getId() + " cleared by purge."));
+                                    plot.clear(false, true, () -> {
+                                        if (Settings.DEBUG) {
+                                            logger.info("[P2] Plot {} cleared by purge", plot.getId());
+                                        }
+                                    });
                                 } else {
                                     plot.removeSign();
                                 }
                                 plot.getArea().removePlot(plot.getId());
-                                for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                                    PlotListener.plotEntry(pp, plot);
+                                for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
+                                    Purge.this.plotListener.plotEntry(pp, plot);
                                 }
                             } catch (NullPointerException e) {
-                                PlotSquared.log(
-                                    "NullPointer during purge detected. This is likely because you are "
-                                        + "deleting a world that has been removed.");
-                                if (Settings.DEBUG) {
-                                    e.printStackTrace();
-                                }
+                                logger.error("[P2] NullPointer during purge detected. This is likely"
+                                    + " because you are deleting a world that has been removed", e);
                             }
                         }
                         cleared.set(true);

@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 
@@ -54,7 +54,7 @@ public interface PlatformWorldManager<T> {
      * @param generator World generator
      * @return Created world
      */
-    @Nullable T handleWorldCreation(@NotNull final String worldName,
+    @Nullable T handleWorldCreation(@Nonnull final String worldName,
         @Nullable final String generator);
 
     /**

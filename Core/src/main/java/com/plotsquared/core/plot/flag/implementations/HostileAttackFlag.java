@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class HostileAttackFlag extends BooleanFlag<HostileAttackFlag> {
 
@@ -38,7 +38,7 @@ public class HostileAttackFlag extends BooleanFlag<HostileAttackFlag> {
         super(value, Captions.FLAG_DESCRIPTION_HOSTILE_ATTACK);
     }
 
-    @Override protected HostileAttackFlag flagOf(@NotNull Boolean value) {
+    @Override protected HostileAttackFlag flagOf(@Nonnull Boolean value) {
         return value ? HOSTILE_ATTACK_TRUE : HOSTILE_ATTACK_FALSE;
     }
 

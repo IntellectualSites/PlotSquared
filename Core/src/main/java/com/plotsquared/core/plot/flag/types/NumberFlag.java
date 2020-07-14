@@ -29,15 +29,15 @@ import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class NumberFlag<N extends Number & Comparable<N>, F extends PlotFlag<N, F>>
     extends PlotFlag<N, F> {
     protected final N minimum;
     protected final N maximum;
 
-    protected NumberFlag(@NotNull N value, N minimum, N maximum, @NotNull Caption flagCategory,
-        @NotNull Caption flagDescription) {
+    protected NumberFlag(@Nonnull N value, N minimum, N maximum, @Nonnull Caption flagCategory,
+        @Nonnull Caption flagDescription) {
         super(value, flagCategory, flagDescription);
         if (maximum.compareTo(minimum) < 0) {
             throw new IllegalArgumentException(
@@ -47,7 +47,7 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
         this.maximum = maximum;
     }
 
-    @Override public F parse(@NotNull String input) throws FlagParseException {
+    @Override public F parse(@Nonnull String input) throws FlagParseException {
         final N parsed = parseNumber(input);
         if (parsed.compareTo(minimum) < 0 || parsed.compareTo(maximum) > 0) {
             throw new FlagParseException(this, input, Captions.NUMBER_NOT_IN_RANGE, minimum,
@@ -64,5 +64,5 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
      * @param input the string to parse the number from.
      * @return the parsed number.
      */
-    @NotNull protected abstract N parseNumber(String input) throws FlagParseException;
+    @Nonnull protected abstract N parseNumber(String input) throws FlagParseException;
 }

@@ -29,7 +29,7 @@ dependencies {
         exclude(module: "bukkit")
 
     }
-    compile("io.papermc:paperlib:1.0.2")
+    compile("io.papermc:paperlib:1.0.4")
     implementation("net.kyori:text-adapter-bukkit:3.0.3")
     compile("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(module: "bukkit")
@@ -44,6 +44,8 @@ dependencies {
     implementation('net.kyori:adventure-text-minimessage:3.0.0-SNAPSHOT')
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile('com.sk89q:squirrelid:1.0.0-SNAPSHOT'){ transitive = false }
+    // logging
+    implementation('org.apache.logging.log4j:log4j-slf4j-impl:2.8.1')
 }
 
 sourceCompatibility = 1.8
@@ -97,18 +99,28 @@ task copyFiles {
 shadowJar {
     dependencies {
         include(dependency(":PlotSquared-Core"))
-        include(dependency("io.papermc:paperlib:1.0.2"))
+        include(dependency("io.papermc:paperlib:1.0.4"))
         include(dependency("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT"))
         include(dependency("net.kyori:adventure-text-minimessage:3.0.0-SNAPSHOT"))
         include(dependency("org.bstats:bstats-bukkit:1.7"))
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))
+        include(dependency("com.google.inject:guice:4.2.3"))
+        include(dependency("com.google.inject.extensions:guice-assistedinject:4.2.3"))
+        include(dependency("javax.annotation:javax-annotation-api"))
+        include(dependency('org.apache.logging.log4j:log4j-slf4j-impl'))
+        include(dependency('org.slf4j:slf4j-api'))
     }
+
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
     relocate('com.sk89q.squirrelid', 'com.plotsquared.squirrelid')
     relocate('org.khelekore.prtree', 'com.plotsquared.prtree')
+    relocate('org.apache.logging.slf4j', 'com.plotsquared.logging.apache')
+    relocate('org.slf4j', 'com.plotsquared.logging.slf4j')
+    relocate('com.google.inject', 'com.plotsquared.google')
+
     archiveFileName = "${project.name}-${parent.version}.jar"
     destinationDirectory = file "../target"
 }

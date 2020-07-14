@@ -31,7 +31,7 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.ItemUtil;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
 
@@ -46,7 +46,7 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
         super(value, Captions.FLAG_CATEGORY_MUSIC, Captions.FLAG_DESCRIPTION_MUSIC);
     }
 
-    @Override public MusicFlag parse(@NotNull String input) throws FlagParseException {
+    @Override public MusicFlag parse(@Nonnull String input) throws FlagParseException {
         if (!input.isEmpty() && !input.contains("music_disc_")) {
             input = "music_disc_" + input;
         }
@@ -59,7 +59,7 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
         }
     }
 
-    @Override public MusicFlag merge(@NotNull ItemType newValue) {
+    @Override public MusicFlag merge(@Nonnull ItemType newValue) {
         if (getValue().equals(ItemTypes.AIR)) {
             return new MusicFlag(newValue);
         } else if (newValue.equals(ItemTypes.AIR)) {
@@ -77,7 +77,7 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
         return "ward";
     }
 
-    @Override protected MusicFlag flagOf(@NotNull ItemType value) {
+    @Override protected MusicFlag flagOf(@Nonnull ItemType value) {
         return new MusicFlag(value);
     }
 

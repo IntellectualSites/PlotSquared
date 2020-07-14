@@ -25,15 +25,21 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotAreaType;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
+import javax.annotation.Nonnull;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -45,14 +51,26 @@ import java.util.Objects;
     category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {
 
+    private final PlotAreaManager plotAreaManager;
+    private final YamlConfiguration worldConfiguration;
+    private final File worldFile;
+
+    @Inject public Reload(@Nonnull final PlotAreaManager plotAreaManager,
+                          @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                          @WorldFile @Nonnull final File  worldFile) {
+        this.plotAreaManager = plotAreaManager;
+        this.worldConfiguration = worldConfiguration;
+        this.worldFile = worldFile;
+    }
+
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
             PlotSquared.get().setupConfigs();
             Captions.load(PlotSquared.get().translationFile);
-            PlotSquared.get().forEachPlotArea(area -> {
-                ConfigurationSection worldSection = PlotSquared.get().worlds
+            this.plotAreaManager.forEachPlotArea(area -> {
+                ConfigurationSection worldSection = this.worldConfiguration
                     .getConfigurationSection("worlds." + area.getWorldName());
                 if (worldSection == null) {
                     return;
@@ -98,7 +116,7 @@ public class Reload extends SubCommand {
                     area.loadDefaultConfiguration(clone);
                 }
             });
-            PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
+            this.worldConfiguration.save(this.worldFile);
             MainUtil.sendMessage(player, Captions.RELOADED_CONFIGS);
         } catch (IOException e) {
             e.printStackTrace();

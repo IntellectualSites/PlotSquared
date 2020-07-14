@@ -23,11 +23,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.generator;
+package com.plotsquared.core.inject.annotations;
 
-import com.plotsquared.core.generator.HybridUtils;
+import com.google.inject.BindingAnnotation;
 
-public class BukkitHybridUtils extends HybridUtils {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-
+@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@BindingAnnotation
+public @interface DefaultGenerator {
 }

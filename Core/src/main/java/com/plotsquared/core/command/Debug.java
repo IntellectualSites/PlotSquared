@@ -25,17 +25,23 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.entity.EntityCategory;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
+import javax.annotation.Nonnull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -47,6 +53,17 @@ import java.util.Map;
     usage = "/plot debug [msg]",
     permission = "plots.admin")
 public class Debug extends SubCommand {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Debug.class.getSimpleName());
+
+    private final PlotAreaManager plotAreaManager;
+    private final RegionManager regionManager;
+
+    @Inject public Debug(@Nonnull final PlotAreaManager plotAreaManager,
+                         @Nonnull final RegionManager regionManager) {
+        this.plotAreaManager = plotAreaManager;
+        this.regionManager = regionManager;
+    }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length > 0) {
@@ -61,8 +78,7 @@ public class Debug extends SubCommand {
             final long start = System.currentTimeMillis();
             MainUtil.sendMessage(player, "Fetching loaded chunks...");
             TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,
-                "Loaded chunks: " + RegionManager.manager
-                    .getChunkChunks(player.getLocation().getWorld()).size() + "(" + (
+                "Loaded chunks: " + this.regionManager.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (
                     System.currentTimeMillis() - start) + "ms) using thread: " + Thread
                     .currentThread().getName()));
             return true;
@@ -77,6 +93,13 @@ public class Debug extends SubCommand {
             for (final PlotPlayer<?> pp : PlotPlayer.getDebugModePlayers()) {
                 MainUtil.sendMessage(player, "- " + pp.getName());
             }
+            return true;
+        }
+        if (args.length > 0 && "logging".equalsIgnoreCase(args[0])) {
+            logger.info("[P2] Info!");
+            logger.warn("[P2] Warning!");
+            logger.error("[P2] Error!", new RuntimeException());
+            logger.debug("[P2] Debug!");
             return true;
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {
@@ -118,8 +141,8 @@ public class Debug extends SubCommand {
         information.append(header);
         information.append(getSection(section, "PlotArea"));
         information.append(
-            getLine(line, "Plot Worlds", StringMan.join(PlotSquared.get().getPlotAreas(), ", ")));
-        information.append(getLine(line, "Owned Plots", PlotSquared.get().getPlots().size()));
+            getLine(line, "Plot Worlds", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", ")));
+        information.append(getLine(line, "Owned Plots", PlotQuery.newQuery().allPlots().count()));
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", Captions.values().length));
         information.append(getLine(line, "View all captions", "/plot debug msg"));

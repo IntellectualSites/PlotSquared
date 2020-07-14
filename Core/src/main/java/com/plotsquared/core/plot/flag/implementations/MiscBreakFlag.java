@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class MiscBreakFlag extends BooleanFlag<MiscBreakFlag> {
 
@@ -38,7 +38,7 @@ public class MiscBreakFlag extends BooleanFlag<MiscBreakFlag> {
         super(value, Captions.FLAG_DESCRIPTION_MISC_BREAK);
     }
 
-    @Override protected MiscBreakFlag flagOf(@NotNull Boolean value) {
+    @Override protected MiscBreakFlag flagOf(@Nonnull Boolean value) {
         return value ? MISC_BREAK_TRUE : MISC_BREAK_FALSE;
     }
 

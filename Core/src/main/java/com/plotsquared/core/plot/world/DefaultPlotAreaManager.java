@@ -25,14 +25,15 @@
  */
 package com.plotsquared.core.plot.world;
 
+import com.google.inject.Singleton;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotWorld;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,12 +42,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DefaultPlotAreaManager implements PlotAreaManager {
+@Singleton public class DefaultPlotAreaManager implements PlotAreaManager {
 
     final PlotArea[] noPlotAreas = new PlotArea[0];
     private final Map<String, PlotWorld> plotWorlds = new HashMap<>();
 
-    @Override public PlotArea[] getAllPlotAreas() {
+    @Override @Nonnull public PlotArea[] getAllPlotAreas() {
         final Set<PlotArea> area = new HashSet<>();
         for (final PlotWorld world : plotWorlds.values()) {
             area.addAll(world.getAreas());
@@ -54,18 +55,18 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         return area.toArray(new PlotArea[0]);
     }
 
-    @Override @Nullable public PlotArea getApplicablePlotArea(final Location location) {
+    @Override @Nullable public PlotArea getApplicablePlotArea(@Nullable final Location location) {
         if (location == null) {
             return null;
         }
-        final PlotWorld world = this.plotWorlds.get(location.getWorld());
+        final PlotWorld world = this.plotWorlds.get(location.getWorldName());
         if (world == null) {
             return null;
         }
         return world.getArea(location);
     }
 
-    @Override public void addPlotArea(final PlotArea plotArea) {
+    @Override public void addPlotArea(@Nonnull final PlotArea plotArea) {
         PlotWorld world = this.plotWorlds.get(plotArea.getWorldName());
         if (world != null) {
             if (world instanceof StandardPlotWorld && world.getAreas().isEmpty()) {
@@ -84,7 +85,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         this.plotWorlds.put(plotArea.getWorldName(), world);
     }
 
-    @Override public void removePlotArea(final PlotArea area) {
+    @Override public void removePlotArea(@Nonnull final PlotArea area) {
         final PlotWorld world = this.plotWorlds.get(area.getWorldName());
         if (world == null) {
             return;
@@ -99,7 +100,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         }
     }
 
-    @Override public PlotArea getPlotArea(final String world, final String id) {
+    @Override public PlotArea getPlotArea(@Nonnull final String world, @Nullable final String id) {
         final PlotWorld plotWorld = this.plotWorlds.get(world);
         if (plotWorld == null) {
             return null;
@@ -119,11 +120,11 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         return null;
     }
 
-    @Override public PlotArea getPlotArea(@NotNull final Location location) {
+    @Override @Nullable public PlotArea getPlotArea(@Nonnull final Location location) {
         return this.getApplicablePlotArea(location);
     }
 
-    @Override public PlotArea[] getPlotAreas(final String world, final CuboidRegion region) {
+    @Override @Nonnull public PlotArea[] getPlotAreas(@Nonnull final String world, @Nullable final CuboidRegion region) {
         final PlotWorld plotWorld = this.plotWorlds.get(world);
         if (plotWorld == null) {
             return noPlotAreas;
@@ -134,7 +135,7 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         return plotWorld.getAreasInRegion(region).toArray(new PlotArea[0]);
     }
 
-    @Override public void addWorld(final String worldName) {
+    @Override public void addWorld(@Nonnull final String worldName) {
         PlotWorld world = this.plotWorlds.get(worldName);
         if (world != null) {
             return;
@@ -145,11 +146,11 @@ public class DefaultPlotAreaManager implements PlotAreaManager {
         this.plotWorlds.put(worldName, world);
     }
 
-    @Override public void removeWorld(final String worldName) {
+    @Override public void removeWorld(@Nonnull final String worldName) {
         this.plotWorlds.remove(worldName);
     }
 
-    @Override public String[] getAllWorlds() {
+    @Override @Nonnull public String[] getAllWorlds() {
         return this.plotWorlds.keySet().toArray(new String[0]);
     }
 }
