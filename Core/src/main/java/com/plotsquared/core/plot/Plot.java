@@ -66,6 +66,7 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -1946,7 +1947,7 @@ public class Plot {
         this.getId().recalculateHash();
         this.area.addPlotAbs(this);
         DBFunc.movePlot(this, plot);
-        TaskManager.runTaskLater(whenDone, 1);
+        TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
         return true;
     }
 
@@ -2909,7 +2910,7 @@ public class Plot {
                 this.plotListener.plotExit(pp, Plot.this);
                 this.plotListener.plotEntry(pp, Plot.this);
             }
-        }, 1);
+        }, TaskTime.ticks(1L));
     }
 
     public void debug(@Nonnull final String message) {
@@ -3004,7 +3005,7 @@ public class Plot {
                     MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
                     player.teleport(location, cause);
                 }
-            }, Settings.Teleport.DELAY * 20);
+            }, TaskTime.seconds(Settings.Teleport.DELAY));
             resultConsumer.accept(true);
         };
         if (this.area.isHomeAllowNonmember() || plot.isAdded(player.getUUID())) {
@@ -3154,7 +3155,7 @@ public class Plot {
         final int offsetX = db.getX() - ob.getX();
         final int offsetZ = db.getZ() - ob.getZ();
         if (!this.hasOwner()) {
-            TaskManager.runTaskLater(whenDone, 1);
+            TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
             return CompletableFuture.completedFuture(false);
         }
         AtomicBoolean occupied = new AtomicBoolean(false);
@@ -3163,7 +3164,7 @@ public class Plot {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             if (other.hasOwner()) {
                 if (!allowSwap) {
-                    TaskManager.runTaskLater(whenDone, 1);
+                    TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
                     return CompletableFuture.completedFuture(false);
                 }
                 occupied.set(true);
@@ -3270,14 +3271,14 @@ public class Plot {
         final int offsetX = db.getX() - ob.getX();
         final int offsetZ = db.getZ() - ob.getZ();
         if (!this.hasOwner()) {
-            TaskManager.runTaskLater(whenDone, 1);
+            TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
             return false;
         }
         Set<Plot> plots = this.getConnectedPlots();
         for (Plot plot : plots) {
             Plot other = plot.getRelative(destination.getArea(), offset.x, offset.y);
             if (other.hasOwner()) {
-                TaskManager.runTaskLater(whenDone, 1);
+                TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
                 return false;
             }
         }

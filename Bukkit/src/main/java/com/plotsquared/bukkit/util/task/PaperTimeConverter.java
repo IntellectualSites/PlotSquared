@@ -23,31 +23,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.task;
+package com.plotsquared.bukkit.util.task;
 
-import lombok.RequiredArgsConstructor;
+import com.plotsquared.core.util.task.TaskTime;
+import org.bukkit.Bukkit;
 
-import java.util.Iterator;
+import javax.annotation.Nonnegative;
 
-@RequiredArgsConstructor
-public class ObjectTaskRunnable<T> implements Runnable {
+/**
+ * Time converter that uses the server MSPT count to convert between
+ * different time units
+ */
+public final class PaperTimeConverter implements TaskTime.TimeConverter {
 
-    private final Iterator<T> iterator;
-    private final RunnableVal<T> task;
-    private final Runnable whenDone;
+    @Override public long msToTicks(@Nonnegative final long ms) {
+        return (long) (ms / Bukkit.getAverageTickTime());
+    }
 
-    @Override public void run() {
-        long start = System.currentTimeMillis();
-        boolean hasNext;
-        while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
-            task.value = iterator.next();
-            task.run();
-        }
-        if (!hasNext) {
-            TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
-        } else {
-            TaskManager.runTaskLater(this, TaskTime.ticks(1L));
-        }
+    @Override public long ticksToMs(@Nonnegative final long ticks) {
+        return (long) (ticks * Bukkit.getAverageTickTime());
     }
 
 }

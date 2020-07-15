@@ -23,31 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.task;
+package com.plotsquared.bukkit.util.task;
 
+import com.plotsquared.core.util.task.PlotSquaredTask;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Iterator;
+import javax.annotation.Nonnull;
 
+/**
+ * Bukkit implementation of {@link PlotSquaredTask}
+ */
 @RequiredArgsConstructor
-public class ObjectTaskRunnable<T> implements Runnable {
+public final class BukkitPlotSquaredTask extends BukkitRunnable implements PlotSquaredTask {
 
-    private final Iterator<T> iterator;
-    private final RunnableVal<T> task;
-    private final Runnable whenDone;
+    @Nonnull private final Runnable runnable;
 
-    @Override public void run() {
-        long start = System.currentTimeMillis();
-        boolean hasNext;
-        while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
-            task.value = iterator.next();
-            task.run();
-        }
-        if (!hasNext) {
-            TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
-        } else {
-            TaskManager.runTaskLater(this, TaskTime.ticks(1L));
-        }
+    @Override public void runTask() {
+        this.runnable.run();
     }
 
 }

@@ -29,6 +29,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 
 public class CmdConfirm {
 
@@ -46,11 +47,9 @@ public class CmdConfirm {
         if (commandStr != null) {
             MainUtil.sendMessage(player, Captions.REQUIRES_CONFIRM, commandStr);
         }
-        TaskManager.runTaskLater(new Runnable() {
-            @Override public void run() {
-                CmdInstance cmd = new CmdInstance(runnable);
-                player.setMeta("cmdConfirm", cmd);
-            }
-        }, 1);
+        TaskManager.runTaskLater(() -> {
+            CmdInstance cmd = new CmdInstance(runnable);
+            player.setMeta("cmdConfirm", cmd);
+        }, TaskTime.ticks(1L));
     }
 }

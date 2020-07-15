@@ -26,7 +26,7 @@
 package com.plotsquared.bukkit.queue;
 
 import com.google.common.base.Preconditions;
-import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.BukkitPlatform;
 import com.sk89q.worldedit.math.BlockVector2;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Chunk;
@@ -100,7 +100,7 @@ public final class ChunkCoordinator extends BukkitRunnable {
         this.maxIterationTime = maxIterationTime;
         this.whenDone = whenDone;
         this.throwableConsumer = throwableConsumer;
-        this.plugin = JavaPlugin.getPlugin(BukkitMain.class);
+        this.plugin = JavaPlugin.getPlugin(BukkitPlatform.class);
     }
 
     /**

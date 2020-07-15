@@ -26,6 +26,8 @@
 package com.plotsquared.bukkit.inject;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.util.Providers;
 import com.plotsquared.bukkit.BukkitPlatform;
@@ -39,6 +41,8 @@ import com.plotsquared.bukkit.util.BukkitPermHandler;
 import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.task.PaperTimeConverter;
+import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.HybridGen;
@@ -60,8 +64,10 @@ import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
+import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;

@@ -25,29 +25,66 @@
  */
 package com.plotsquared.core.util.task;
 
-import lombok.RequiredArgsConstructor;
+/**
+ * A task that can be run and cancelled (if repeating)
+ */
+public interface PlotSquaredTask extends Runnable {
 
-import java.util.Iterator;
-
-@RequiredArgsConstructor
-public class ObjectTaskRunnable<T> implements Runnable {
-
-    private final Iterator<T> iterator;
-    private final RunnableVal<T> task;
-    private final Runnable whenDone;
-
-    @Override public void run() {
-        long start = System.currentTimeMillis();
-        boolean hasNext;
-        while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
-            task.value = iterator.next();
-            task.run();
+    /**
+     * Run the task. Don't override this, instead
+     * implement {@link #runTask()}
+     */
+    @Override default void run() {
+        if (isCancelled()) {
+            return;
         }
-        if (!hasNext) {
-            TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
-        } else {
-            TaskManager.runTaskLater(this, TaskTime.ticks(1L));
+        this.runTask();
+    }
+
+    /**
+     * Run the task
+     */
+    void runTask();
+
+    /**
+     * Check if the task has been cancelled
+     *
+     * @return {@code true} if the tasks is cancelled,
+     *         {@code false} if not
+     */
+    boolean isCancelled();
+
+    /**
+     * Cancel the task
+     */
+    void cancel();
+
+    /**
+     * Get a new {@link NullTask}
+     *
+     * @return Null task instance
+     */
+    static NullTask nullTask() {
+        return new NullTask();
+    }
+
+
+    /**
+     * Task that does nothing and is always cancelled
+     */
+    class NullTask implements PlotSquaredTask {
+
+        @Override public void runTask() {
         }
+
+        @Override public boolean isCancelled() {
+            return true;
+        }
+
+        @Override public void cancel() {
+        }
+
     }
 
 }
+
