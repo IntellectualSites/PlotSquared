@@ -164,8 +164,9 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            PlotSquared.log(Captions.PREFIX + " (UUID) Request for " + username + " timed out");
-            // This is completely valid, we just don't care anymore
+            if (Settings.DEBUG) {
+                PlotSquared.debug(Captions.PREFIX + " (UUID) Request for " + username + " timed out");
+            }
         }
         return null;
     }
@@ -187,8 +188,9 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            PlotSquared.log(Captions.PREFIX + " (UUID) Request for " + uuid + " timed out");
-            // This is completely valid, we just don't care anymore
+            if (Settings.DEBUG) {
+                PlotSquared.debug(Captions.PREFIX + " (UUID) Request for " + uuid + " timed out");
+            }
         }
         return null;
     }
@@ -321,7 +323,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                PlotSquared.log("Failed to find all usernames");
+                PlotSquared.debug("Failed to find all usernames");
             }
 
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
@@ -384,7 +386,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                PlotSquared.log("Failed to find all UUIDs");
+                PlotSquared.debug("Failed to find all UUIDs");
             }
 
             throw new ServiceError("End of pipeline");
