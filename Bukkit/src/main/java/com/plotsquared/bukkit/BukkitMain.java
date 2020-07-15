@@ -369,14 +369,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 ChatFormatter.formatters.add(new PlaceholderFormatter());
             }
             PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into PlaceholderAPI");
-        } else {
-            PlotSquared
-                .debug(Captions.PREFIX + "&6PlaceholderAPI is not in use. Hook deactivated.");
         }
 
-        if (Bukkit.getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
+        if (Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI") != null) {
             new MVdWPlaceholders(this, PlotSquared.get().getPlaceholderRegistry());
-            PlotSquared.log(Captions.PREFIX + "&cPlotSquared hooked into MVdWPlaceholderAPI");
+            PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into MVdWPlaceholderAPI");
         }
 
         this.startMetrics();
