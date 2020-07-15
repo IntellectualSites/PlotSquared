@@ -61,6 +61,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
@@ -125,7 +126,7 @@ public class PlotListener {
                     }
                 }
             }
-        }, 20);
+        }, TaskTime.seconds(1L));
     }
 
     public boolean plotEntry(final PlotPlayer<?> player, final Plot plot) {
@@ -279,7 +280,7 @@ public class PlotListener {
                                     replacements);
                             player.sendTitle(main, sub);
                         }
-                    }, 20);
+                    }, TaskTime.seconds(1L));
                 }
             }
 

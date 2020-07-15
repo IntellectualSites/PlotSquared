@@ -26,7 +26,6 @@
 package com.plotsquared.bukkit.listener;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
@@ -34,7 +33,9 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.ReflectionUtils.RefClass;
 import com.plotsquared.core.util.ReflectionUtils.RefField;
 import com.plotsquared.core.util.ReflectionUtils.RefMethod;
+import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -53,10 +54,10 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 
@@ -132,7 +133,7 @@ public class ChunkListener implements Listener {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-        }, 1);
+        }, TaskTime.ticks(1L));
     }
 
     public boolean unloadChunk(String world, Chunk chunk, boolean safe) {
@@ -254,16 +255,16 @@ public class ChunkListener implements Listener {
     private void cleanChunk(final Chunk chunk) {
         TaskManager.index.incrementAndGet();
         final Integer currentIndex = TaskManager.index.get();
-        Integer task = TaskManager.runTaskRepeat(() -> {
+        PlotSquaredTask task = TaskManager.runTaskRepeat(() -> {
             if (!chunk.isLoaded()) {
-                Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                TaskManager.tasks.get(currentIndex).cancel();
                 TaskManager.tasks.remove(currentIndex);
                 chunk.unload(true);
                 return;
             }
             BlockState[] tiles = chunk.getTileEntities();
             if (tiles.length == 0) {
-                Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                TaskManager.tasks.get(currentIndex).cancel();
                 TaskManager.tasks.remove(currentIndex);
                 chunk.unload(true);
                 return;
@@ -272,7 +273,7 @@ public class ChunkListener implements Listener {
             int i = 0;
             while (System.currentTimeMillis() - start < 250) {
                 if (i >= tiles.length - Settings.Chunk_Processor.MAX_TILES) {
-                    Bukkit.getScheduler().cancelTask(TaskManager.tasks.get(currentIndex));
+                    TaskManager.tasks.get(currentIndex).cancel();
                     TaskManager.tasks.remove(currentIndex);
                     chunk.unload(true);
                     return;
@@ -280,7 +281,7 @@ public class ChunkListener implements Listener {
                 tiles[i].getBlock().setType(Material.AIR, false);
                 i++;
             }
-        }, 5);
+        }, TaskTime.ticks(5L));
         TaskManager.tasks.put(currentIndex, task);
     }
 

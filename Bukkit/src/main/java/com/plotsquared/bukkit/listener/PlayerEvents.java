@@ -111,6 +111,7 @@ import com.plotsquared.core.util.RegExUtil;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
@@ -281,7 +282,7 @@ import java.util.regex.Pattern;
                     ((BukkitPlayer) player).player.sendBlockChange(bloc, data);
                 }
             }
-        }, 3);
+        }, TaskTime.ticks(3L));
     }
 
     public static boolean checkEntity(Entity entity, Plot plot) {
@@ -701,7 +702,7 @@ import java.util.regex.Pattern;
                 player.saveData();
             }
             this.eventDispatcher.doJoinTask(pp);
-        }, 20);
+        }, TaskTime.seconds(1L));
 
         if (pp.hasPermission(Captions.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
             && Settings.Enabled_Components.UPDATE_NOTIFICATIONS && PremiumVerification.isPremium()

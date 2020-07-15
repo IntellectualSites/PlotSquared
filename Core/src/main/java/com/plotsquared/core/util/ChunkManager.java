@@ -32,6 +32,7 @@ import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 
@@ -172,7 +173,7 @@ public abstract class ChunkManager {
                     task.run();
                 }
                 if (!chunks.isEmpty()) {
-                    TaskManager.runTaskLater(this, 1);
+                    TaskManager.runTaskLater(this, TaskTime.ticks(1L));
                 } else {
                     TaskManager.runTask(whenDone);
                 }

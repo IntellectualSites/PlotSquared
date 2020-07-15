@@ -44,6 +44,7 @@ import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -399,9 +400,9 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
                     });
                 }
                 if (!chunks.isEmpty()) {
-                    TaskManager.runTaskLater(this, 1);
+                    TaskManager.runTaskLater(this, TaskTime.ticks(1L));
                 } else {
-                    TaskManager.runTaskLater(whenDone, 1);
+                    TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
                 }
             }
         });
@@ -456,7 +457,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
         PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(() -> {
             for (ContentMap map : maps) {
                 map.restoreEntities(world1, 0, 0);
-                TaskManager.runTaskLater(whenDone, 1);
+                TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
             }
         });
     }
