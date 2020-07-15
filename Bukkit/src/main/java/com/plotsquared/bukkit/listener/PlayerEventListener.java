@@ -933,7 +933,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
-                System.out.println("cc");
                 break;
             }
             //todo rearrange the right click code. it is all over the place.
@@ -1044,7 +1043,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
         if (!PlotSquared.get().getEventDispatcher()
             .checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
-            System.out.println("dd");
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
         }
