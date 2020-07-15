@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -155,7 +156,7 @@ public class EntitySpawnListener implements Listener {
         }
         switch (entity.getType()) {
             case ENDER_CRYSTAL:
-                if (PlayerEvents.checkEntity(entity, plot)) {
+                if (BukkitEntityUtil.checkEntity(entity, plot)) {
                     event.setCancelled(true);
                 }
             case SHULKER:

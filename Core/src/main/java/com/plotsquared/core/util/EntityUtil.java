@@ -43,7 +43,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  * Entity related general utility methods
  */
 @UtilityClass
-public final class EntityUtil {
+public class EntityUtil {
 
     private static int capNumeral(@NonNull final String flagName) {
         int i;

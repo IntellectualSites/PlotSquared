@@ -27,10 +27,13 @@ package com.plotsquared.bukkit;
 
 import com.plotsquared.bukkit.generator.BukkitHybridUtils;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
+import com.plotsquared.bukkit.listener.BlockEventListener;
 import com.plotsquared.bukkit.listener.ChunkListener;
+import com.plotsquared.bukkit.listener.EntityEventListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
 import com.plotsquared.bukkit.listener.PaperListener;
-import com.plotsquared.bukkit.listener.PlayerEvents;
+import com.plotsquared.bukkit.listener.PlayerEventListener;
+import com.plotsquared.bukkit.listener.ProjectileEventListener;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.managers.BukkitWorldManager;
@@ -895,9 +898,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         return (ChunkGenerator) result.specify(worldName);
     }
 
-    @Override public void registerPlayerEvents() {
-        final PlayerEvents main = new PlayerEvents();
-        getServer().getPluginManager().registerEvents(main, this);
+    @Override public void registerEvents() {
+        getServer().getPluginManager().registerEvents(new PlayerEventListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockEventListener(), this);
+        getServer().getPluginManager().registerEvents(new EntityEventListener(), this);
+        getServer().getPluginManager().registerEvents(new ProjectileEventListener(), this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
         if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
             getServer().getPluginManager().registerEvents(new PaperListener(), this);
