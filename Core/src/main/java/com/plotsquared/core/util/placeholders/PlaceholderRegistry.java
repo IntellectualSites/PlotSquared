@@ -159,7 +159,7 @@ public final class PlaceholderRegistry {
         final Placeholder previous = this.placeholders
             .put(placeholder.getKey().toLowerCase(Locale.ENGLISH),
                 Preconditions.checkNotNull(placeholder, "Placeholder may not be null"));
-        if (previous != null) {
+        if (previous == null) {
             this.eventDispatcher.callGenericEvent(new PlaceholderAddedEvent(placeholder));
         }
     }

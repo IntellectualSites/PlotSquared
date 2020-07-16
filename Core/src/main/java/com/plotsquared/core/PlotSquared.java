@@ -262,6 +262,7 @@ public class PlotSquared {
                 this.IMP.registerPlayerEvents();
             }
             // Required
+            this.IMP.registerServerEvents();
             this.IMP.registerWorldEvents();
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 this.IMP.registerChunkProcessor();

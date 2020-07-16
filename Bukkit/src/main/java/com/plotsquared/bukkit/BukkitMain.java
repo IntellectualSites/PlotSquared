@@ -31,12 +31,12 @@ import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
 import com.plotsquared.bukkit.listener.PaperListener;
 import com.plotsquared.bukkit.listener.PlayerEvents;
+import com.plotsquared.bukkit.listener.ServerListener;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.managers.BukkitWorldManager;
 import com.plotsquared.bukkit.managers.HyperverseWorldManager;
 import com.plotsquared.bukkit.managers.MultiverseWorldManager;
-import com.plotsquared.bukkit.placeholder.MVdWPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
@@ -369,11 +369,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 ChatFormatter.formatters.add(new PlaceholderFormatter());
             }
             PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into PlaceholderAPI");
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI") != null) {
-            new MVdWPlaceholders(this, PlotSquared.get().getPlaceholderRegistry());
-            PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into MVdWPlaceholderAPI");
         }
 
         this.startMetrics();
@@ -1050,6 +1045,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
 
     @Override public void registerWorldEvents() {
         getServer().getPluginManager().registerEvents(new WorldEvents(), this);
+    }
+
+    @Override
+    public void registerServerEvents() {
+        getServer().getPluginManager().registerEvents(new ServerListener(this), this);
     }
 
     @NotNull @Override public IndependentPlotGenerator getDefaultGenerator() {

@@ -271,6 +271,11 @@ public interface IPlotMain<P> extends ILogger {
     void registerWorldEvents();
 
     /**
+     * Register events related to the server
+     */
+    void registerServerEvents();
+
+    /**
      * Usually HybridGen
      *
      * @return Default implementation generator

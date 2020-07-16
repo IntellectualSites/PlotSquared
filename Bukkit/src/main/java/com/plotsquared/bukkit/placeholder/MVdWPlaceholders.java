@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MVdWPlaceholders {
 
+    private static final String PREFIX = "plotsquared_";
     private final Plugin plugin;
     private final PlaceholderRegistry registry;
 
@@ -60,7 +61,7 @@ public class MVdWPlaceholders {
     }
 
     private void addPlaceholder(@NotNull final Placeholder placeholder) {
-        PlaceholderAPI.registerPlaceholder(plugin, String.format("plotsquared_%s", placeholder.getKey()),
+        PlaceholderAPI.registerPlaceholder(plugin, PREFIX + String.format("%s", placeholder.getKey()),
             placeholderReplaceEvent -> {
                 if (!placeholderReplaceEvent.isOnline() || placeholderReplaceEvent.getPlayer() == null) {
                     return "";
@@ -69,7 +70,8 @@ public class MVdWPlaceholders {
                 if (player == null) {
                     return "";
                 }
-                return registry.getPlaceholderValue(placeholderReplaceEvent.getPlaceholder(), player);
+                String key = placeholderReplaceEvent.getPlaceholder().substring(PREFIX.length());
+                return registry.getPlaceholderValue(key, player);
             });
     }
 
