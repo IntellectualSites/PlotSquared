@@ -46,9 +46,6 @@ public class ServerListener implements Listener {
         if (Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI") != null) {
             new MVdWPlaceholders(this.plugin, PlotSquared.get().getPlaceholderRegistry());
             PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into MVdWPlaceholderAPI");
-        } else {
-            System.out.println("Nope");
         }
-
     }
 }
