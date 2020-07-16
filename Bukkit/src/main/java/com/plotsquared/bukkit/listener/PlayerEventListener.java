@@ -1509,6 +1509,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (plot.getFlag(KeepInventoryFlag.class)) {
                 plot.debug(event.getEntity().getName()
                     + " kept their inventory because of keep-inventory = true");
+                event.getDrops().clear();
                 event.setKeepInventory(true);
             }
         }
