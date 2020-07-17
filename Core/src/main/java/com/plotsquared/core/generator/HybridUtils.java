@@ -479,21 +479,20 @@ public class HybridUtils {
                                 }
                             }
                             if (!chunks.isEmpty()) {
-                                TaskManager.getImplementation().sync(new RunnableVal<Object>() {
-                                    @Override public void run(Object value) {
-                                        long start = System.currentTimeMillis();
-                                        Iterator<BlockVector2> iterator = chunks.iterator();
-                                        while (System.currentTimeMillis() - start < 20 && !chunks
-                                            .isEmpty()) {
-                                            final BlockVector2 chunk = iterator.next();
-                                            iterator.remove();
-                                            boolean regenedRoads =
-                                                regenerateRoad(area, chunk, extend);
-                                            if (!regenedRoads && Settings.DEBUG) {
-                                                logger.info("[P2] Failed to regenerate road");
-                                            }
+                                TaskManager.getImplementation().sync(() -> {
+                                    long start = System.currentTimeMillis();
+                                    Iterator<BlockVector2> iterator = chunks.iterator();
+                                    while (System.currentTimeMillis() - start < 20 && !chunks
+                                        .isEmpty()) {
+                                        final BlockVector2 chunk = iterator.next();
+                                        iterator.remove();
+                                        boolean regenedRoads =
+                                            regenerateRoad(area, chunk, extend);
+                                        if (!regenedRoads && Settings.DEBUG) {
+                                            logger.info("[P2] Failed to regenerate road");
                                         }
                                     }
+                                    return null;
                                 });
                             }
                         } catch (Exception e) {

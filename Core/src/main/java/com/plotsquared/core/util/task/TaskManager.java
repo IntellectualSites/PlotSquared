@@ -26,20 +26,30 @@
 package com.plotsquared.core.util.task;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.util.RuntimeExceptionRunnableVal;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Task manager that handles scheduling of tasks.
+ * Synchronous methods make no guarantee of being scheduled on the
+ * server thread, instead they guarantee that no two synchronous
+ * operations happen at the same time. Implementations of
+ * the task manager might make other guarantees. All asynchronous
+ * operations will happen on another thread, no matter where
+ * they're scheduled from.
+ */
 public abstract class TaskManager {
 
     public static final HashSet<String> TELEPORT_QUEUE = new HashSet<>();
@@ -57,31 +67,12 @@ public abstract class TaskManager {
      * @return Created task object, can be used to cancel the task
      */
     @Nonnull public static PlotSquaredTask runTaskRepeat(@Nullable final Runnable runnable,
-                                                         @Nonnull final TaskTime taskTime) {
+        @Nonnull final TaskTime taskTime) {
         if (runnable != null) {
             if (getImplementation() == null) {
                 throw new IllegalArgumentException("disabled");
             }
             return getImplementation().taskRepeat(runnable, taskTime);
-        }
-        return PlotSquaredTask.nullTask();
-    }
-
-    /**
-     * Run a repeating asynchronous task. This will never run on the
-     * server thread
-     *
-     * @param runnable Task to run
-     * @param taskTime Task interval
-     * @return Created task object, can be used to cancel the task
-     */
-    @Nonnull public static PlotSquaredTask runTaskRepeatAsync(@Nullable final Runnable runnable,
-                                                              @NotNull final TaskTime taskTime) {
-        if (runnable != null) {
-            if (getImplementation() == null) {
-                throw new IllegalArgumentException("disabled");
-            }
-            return getImplementation().taskRepeatAsync(runnable, taskTime);
         }
         return PlotSquaredTask.nullTask();
     }
@@ -125,7 +116,7 @@ public abstract class TaskManager {
      * @param taskTime Task delay
      */
     public static void runTaskLater(@Nullable final Runnable runnable,
-                                    @Nonnull final TaskTime taskTime) {
+        @Nonnull final TaskTime taskTime) {
         if (runnable != null) {
             if (getImplementation() == null) {
                 runnable.run();
@@ -143,7 +134,7 @@ public abstract class TaskManager {
      * @param taskTime Task delay
      */
     public static void runTaskLaterAsync(@Nullable final Runnable runnable,
-                                         @Nonnull final TaskTime taskTime) {
+        @Nonnull final TaskTime taskTime) {
         if (runnable != null) {
             if (getImplementation() == null) {
                 runnable.run();
@@ -162,33 +153,43 @@ public abstract class TaskManager {
         TaskManager.runTask(new ObjectTaskRunnable<>(iterator, task, whenDone));
     }
 
-    public <T> T sync(final RunnableVal<T> function) {
+    /**
+     * Make a synchronous method call and return the result
+     *
+     * @param function Method to call
+     * @param <T>      Return type
+     * @return Method result
+     * @throws Exception If the call fails
+     */
+    public <T> T sync(final Callable<T> function) throws Exception {
         return sync(function, Integer.MAX_VALUE);
     }
 
-    public <T> T sync(final RunnableVal<T> function, int timeout) {
+    /**
+     * Make a synchronous method call and return the result
+     *
+     * @param function Method to call
+     * @param timeout  Timeout (ms)
+     * @param <T>      Return type
+     * @return Method result
+     * @throws Exception If the call fails
+     */
+    public <T> T sync(final Callable<T> function, int timeout) throws Exception {
         if (PlotSquared.get().isMainThread(Thread.currentThread())) {
-            function.run();
-            return function.value;
+            return function.call();
         }
-        final AtomicBoolean running = new AtomicBoolean(true);
-        final RuntimeExceptionRunnableVal<T> run =
-            new RuntimeExceptionRunnableVal<>(function, running);
-        TaskManager.getImplementation().task(run);
-        try {
-            synchronized (function) {
-                while (running.get()) {
-                    function.wait(timeout);
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (run.value != null) {
-            throw run.value;
-        }
-        return function.value;
+        return this.callMethodSync(function).get(timeout, TimeUnit.MILLISECONDS);
     }
+
+    /**
+     * Call a method synchronously and return a future with
+     * the result of the result
+     *
+     * @param method Method to be ran synchronously
+     * @param <T>    Return type
+     * @return Future completing with the result
+     */
+    public abstract <T> Future<T> callMethodSync(@Nonnegative final Callable<T> method);
 
     /**
      * Run a repeating synchronous task. If using a platform scheduler,
@@ -199,7 +200,7 @@ public abstract class TaskManager {
      * @return Created task object, can be used to cancel the task
      */
     public abstract PlotSquaredTask taskRepeat(@Nonnull Runnable runnable,
-                                               @Nonnull TaskTime taskTime);
+        @Nonnull TaskTime taskTime);
 
     /**
      * Run a repeating asynchronous task. This will never run on the
@@ -210,7 +211,7 @@ public abstract class TaskManager {
      * @return Created task object, can be used to cancel the task
      */
     public abstract PlotSquaredTask taskRepeatAsync(@Nonnull Runnable runnable,
-                                                    @Nonnull TaskTime taskTime);
+        @Nonnull TaskTime taskTime);
 
     /**
      * Run an asynchronous task. This will never run on the server thread
@@ -234,8 +235,7 @@ public abstract class TaskManager {
      * @param runnable Task to run
      * @param taskTime Task delay
      */
-    public abstract void taskLater(@Nonnull Runnable runnable,
-                                   @Nonnull TaskTime taskTime);
+    public abstract void taskLater(@Nonnull Runnable runnable, @Nonnull TaskTime taskTime);
 
     /**
      * Run an asynchronous task after a given delay. This will never
@@ -244,7 +244,6 @@ public abstract class TaskManager {
      * @param runnable Task to run
      * @param taskTime Task delay
      */
-    public abstract void taskLaterAsync(@Nonnull Runnable runnable,
-                                        @Nonnull TaskTime taskTime);
+    public abstract void taskLaterAsync(@Nonnull Runnable runnable, @Nonnull TaskTime taskTime);
 
 }

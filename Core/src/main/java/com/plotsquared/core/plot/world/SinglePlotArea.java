@@ -47,11 +47,10 @@ import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -141,15 +140,18 @@ public class SinglePlotArea extends GridPlotWorld {
             }
         }
 
-        TaskManager.getImplementation().sync(new RunnableVal<Object>() {
-            @Override public void run(Object value) {
-                String worldName = id.getX() + "." + id.getY();
-                if (PlotSquared.platform().getWorldUtil().isWorld(worldName)) {
-                    return;
+        try {
+            TaskManager.getImplementation().sync(() -> {
+                final String name = id.getX() + "." + id.getY();
+                if (!PlotSquared.platform().getWorldUtil().isWorld(name)) {
+                    PlotSquared.platform().getSetupUtils().setupWorld(builder);
                 }
-                PlotSquared.platform().getSetupUtils().setupWorld(builder);
-            }
-        });
+                return null;
+            });
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+
         //        String worldName = plot.getWorldName();
         //        World world = Bukkit.getWorld(worldName);
         //        if (world != null) {
