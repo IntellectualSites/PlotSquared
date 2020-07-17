@@ -37,11 +37,11 @@ import javax.annotation.Nonnegative;
 public final class PaperTimeConverter implements TaskTime.TimeConverter {
 
     @Override public long msToTicks(@Nonnegative final long ms) {
-        return (long) (ms / Bukkit.getAverageTickTime());
+        return Math.max(1L, (long) (ms / Bukkit.getAverageTickTime()));
     }
 
     @Override public long ticksToMs(@Nonnegative final long ticks) {
-        return (long) (ticks * Bukkit.getAverageTickTime());
+        return Math.max(1L, (long) (ticks * Bukkit.getAverageTickTime()));
     }
 
 }
