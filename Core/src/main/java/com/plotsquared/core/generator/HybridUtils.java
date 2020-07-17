@@ -26,7 +26,6 @@
 package com.plotsquared.core.generator;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
@@ -479,7 +478,7 @@ public class HybridUtils {
                                 }
                             }
                             if (!chunks.isEmpty()) {
-                                TaskManager.getImplementation().sync(() -> {
+                                TaskManager.getPlatformImplementation().sync(() -> {
                                     long start = System.currentTimeMillis();
                                     Iterator<BlockVector2> iterator = chunks.iterator();
                                     while (System.currentTimeMillis() - start < 20 && !chunks

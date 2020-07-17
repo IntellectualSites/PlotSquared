@@ -43,6 +43,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.slf4j.Logger;
@@ -102,7 +103,7 @@ public class Trim extends SubCommand {
         MainUtil.sendMessage(null, " - MCA #: " + result.value1.size());
         MainUtil.sendMessage(null, " - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
         MainUtil.sendMessage(null, " - TIME ESTIMATE: 12 Parsecs");
-        TaskManager.objectTask(plots, new RunnableVal<Plot>() {
+        TaskManager.getPlatformImplementation().objectTask(plots, new RunnableVal<Plot>() {
             @Override public void run(Plot plot) {
                 Location pos1 = plot.getCorners()[0];
                 Location pos2 = plot.getCorners()[1];
@@ -119,7 +120,8 @@ public class Trim extends SubCommand {
                     }
                 }
             }
-        }, result);
+        }).thenAccept(ignore ->
+            TaskManager.getPlatformImplementation().taskLater(result, TaskTime.ticks(1)));
         return true;
     }
 
@@ -189,11 +191,12 @@ public class Trim extends SubCommand {
                                 }
                             }
                             final LocalBlockQueue queue = blockQueue.getNewQueue(world, false);
-                            TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
+                            TaskManager.getPlatformImplementation().objectTask(chunks, new RunnableVal<BlockVector2>() {
                                 @Override public void run(BlockVector2 value) {
                                     queue.regenChunk(value.getX(), value.getZ());
                                 }
-                            }, this);
+                            }).thenAccept(ignore -> TaskManager.getPlatformImplementation()
+                                .taskLater(this, TaskTime.ticks(1)));
                         }
                     };
                 } else {

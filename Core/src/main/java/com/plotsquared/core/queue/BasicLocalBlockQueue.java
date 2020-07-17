@@ -185,7 +185,7 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
     @Override public void flush() {
         this.globalBlockQueue.dequeue(this);
         try {
-            TaskManager.getImplementation().sync(() -> {
+            TaskManager.getPlatformImplementation().sync(() -> {
                 while (next()) {
                 }
                 return null;

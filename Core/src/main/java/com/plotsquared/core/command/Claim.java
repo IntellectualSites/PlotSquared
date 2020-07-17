@@ -142,7 +142,7 @@ public class Claim extends SubCommand {
         final String finalSchematic = schematic;
         DBFunc.createPlotSafe(plot, () -> {
             try {
-                TaskManager.getImplementation().sync(() -> {
+                TaskManager.getPlatformImplementation().sync(() -> {
                     if (!plot.claim(player, true, finalSchematic, false)) {
                         logger.info(Captions.PREFIX.getTranslated() + String
                             .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));

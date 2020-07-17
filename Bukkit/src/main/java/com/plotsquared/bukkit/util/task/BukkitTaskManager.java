@@ -28,6 +28,7 @@ package com.plotsquared.bukkit.util.task;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.BukkitPlatform;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Bukkit implementation of {@link TaskManager} using
@@ -77,6 +79,13 @@ import java.util.concurrent.Future;
         } else {
             runnable.run();
         }
+    }
+
+    @Override public <T> T sync(@Nonnull final Callable<T> function, final int timeout) throws Exception {
+        if (PlotSquared.get().isMainThread(Thread.currentThread())) {
+            return function.call();
+        }
+        return this.callMethodSync(function).get(timeout, TimeUnit.MILLISECONDS);
     }
 
     @Override public <T> Future<T> callMethodSync(@NotNull final Callable<T> method) {

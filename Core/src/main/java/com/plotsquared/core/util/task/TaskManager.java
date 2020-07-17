@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.util.task;
 
-import com.plotsquared.core.PlotSquared;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,8 +36,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -56,7 +55,7 @@ public abstract class TaskManager {
     public static final HashMap<Integer, PlotSquaredTask> tasks = new HashMap<>();
     public static AtomicInteger index = new AtomicInteger(0);
 
-    @Getter @Setter private static TaskManager implementation;
+    @Getter @Setter private static TaskManager platformImplementation;
 
     /**
      * Run a repeating synchronous task. If using a platform scheduler,
@@ -69,10 +68,10 @@ public abstract class TaskManager {
     @Nonnull public static PlotSquaredTask runTaskRepeat(@Nullable final Runnable runnable,
         @Nonnull final TaskTime taskTime) {
         if (runnable != null) {
-            if (getImplementation() == null) {
+            if (getPlatformImplementation() == null) {
                 throw new IllegalArgumentException("disabled");
             }
-            return getImplementation().taskRepeat(runnable, taskTime);
+            return getPlatformImplementation().taskRepeat(runnable, taskTime);
         }
         return PlotSquaredTask.nullTask();
     }
@@ -84,11 +83,11 @@ public abstract class TaskManager {
      */
     public static void runTaskAsync(@Nullable final Runnable runnable) {
         if (runnable != null) {
-            if (getImplementation() == null) {
+            if (getPlatformImplementation() == null) {
                 runnable.run();
                 return;
             }
-            getImplementation().taskAsync(runnable);
+            getPlatformImplementation().taskAsync(runnable);
         }
     }
 
@@ -100,11 +99,11 @@ public abstract class TaskManager {
      */
     public static void runTask(@Nullable final Runnable runnable) {
         if (runnable != null) {
-            if (getImplementation() == null) {
+            if (getPlatformImplementation() == null) {
                 runnable.run();
                 return;
             }
-            getImplementation().task(runnable);
+            getPlatformImplementation().task(runnable);
         }
     }
 
@@ -118,11 +117,11 @@ public abstract class TaskManager {
     public static void runTaskLater(@Nullable final Runnable runnable,
         @Nonnull final TaskTime taskTime) {
         if (runnable != null) {
-            if (getImplementation() == null) {
+            if (getPlatformImplementation() == null) {
                 runnable.run();
                 return;
             }
-            getImplementation().taskLater(runnable, taskTime);
+            getPlatformImplementation().taskLater(runnable, taskTime);
         }
     }
 
@@ -136,21 +135,28 @@ public abstract class TaskManager {
     public static void runTaskLaterAsync(@Nullable final Runnable runnable,
         @Nonnull final TaskTime taskTime) {
         if (runnable != null) {
-            if (getImplementation() == null) {
+            if (getPlatformImplementation() == null) {
                 runnable.run();
                 return;
             }
-            getImplementation().taskLaterAsync(runnable, taskTime);
+            getPlatformImplementation().taskLaterAsync(runnable, taskTime);
         }
     }
 
     /**
-     * Break up a series of tasks so that they can run without lagging the server.
+     * Break up a series of tasks so that they can run without lagging the server
+     *
+     * @param objects Objects to perform the task on
+     * @param task    Task to perform
+     * @param <T>     Object type
+     * @return Future that completes when the tasks are done
      */
-    public static <T> void objectTask(Collection<T> objects, final RunnableVal<T> task,
-        final Runnable whenDone) {
+    public <T> CompletableFuture<Void> objectTask(@Nonnull final Collection<T> objects,
+        @Nonnull final RunnableVal<T> task) {
         final Iterator<T> iterator = objects.iterator();
-        TaskManager.runTask(new ObjectTaskRunnable<>(iterator, task, whenDone));
+        final ObjectTaskRunnable<T> taskRunnable = new ObjectTaskRunnable<>(iterator, task);
+        TaskManager.runTask(taskRunnable);
+        return taskRunnable.getCompletionFuture();
     }
 
     /**
@@ -161,7 +167,7 @@ public abstract class TaskManager {
      * @return Method result
      * @throws Exception If the call fails
      */
-    public <T> T sync(final Callable<T> function) throws Exception {
+    public <T> T sync(@Nonnull final Callable<T> function) throws Exception {
         return sync(function, Integer.MAX_VALUE);
     }
 
@@ -174,12 +180,8 @@ public abstract class TaskManager {
      * @return Method result
      * @throws Exception If the call fails
      */
-    public <T> T sync(final Callable<T> function, int timeout) throws Exception {
-        if (PlotSquared.get().isMainThread(Thread.currentThread())) {
-            return function.call();
-        }
-        return this.callMethodSync(function).get(timeout, TimeUnit.MILLISECONDS);
-    }
+    public abstract <T> T sync(@Nonnull final Callable<T> function, final int timeout)
+        throws Exception;
 
     /**
      * Call a method synchronously and return a future with

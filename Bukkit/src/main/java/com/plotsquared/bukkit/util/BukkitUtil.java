@@ -422,7 +422,7 @@ import java.util.stream.Stream;
         Block block = getWorld(location.getWorldName())
             .getBlockAt(location.getX(), location.getY(), location.getZ());
         try {
-            return TaskManager.getImplementation().sync(() -> {
+            return TaskManager.getPlatformImplementation().sync(() -> {
                 if (block.getState() instanceof Sign) {
                     Sign sign = (Sign) block.getState();
                     return sign.getLines();
