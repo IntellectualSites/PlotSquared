@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.events.TeleportCause;
@@ -45,7 +46,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.util.MainUtil;
@@ -244,8 +244,8 @@ public class Area extends SubCommand {
                         PlotSquared.get().loadWorld(world, null);
                         player.sendMessage(TranslatableCaption.of("single.single_area_created"));
                     } else {
-                        player.sendMessage(TranslatableCaption.of("errors.error_create",
-                                           Template.of("world", hybridPlotWorld.getWorldName())));
+                        player.sendMessage(TranslatableCaption.of("errors.error_create"),
+                                           Template.of("world", hybridPlotWorld.getWorldName()));
                     }
                 };
                 singleRun.run();
@@ -260,16 +260,16 @@ public class Area extends SubCommand {
                 }
                 switch (args.length) {
                     case 1:
-                        Captions.COMMAND_SYNTAX
-                            .send(player, "/plot area create [world[:id]] [<modifier>=<value>]...");
+                        player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
+                            Templates.of("value", "/plot area create [world[:id]] [<modifier>=<value>]..."));
                         return false;
                     case 2:
                         switch (args[1].toLowerCase()) {
                             case "pos1": { // Set position 1
                                 HybridPlotWorld area = player.getMeta("area_create_area");
                                 if (area == null) {
-                                    Captions.COMMAND_SYNTAX.send(player,
-                                        "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                    player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
+                                        Templates.of("value", "/plot area create [world[:id]] [<modifier>=<value>]..."));
                                     return false;
                                 }
                                 Location location = player.getLocation();
@@ -277,16 +277,14 @@ public class Area extends SubCommand {
                                 player.sendMessage(TranslatableCaption.of("set.set_attribute"),
                                         Template.of("attribute", "area_pos1"),
                                         Template.of("value", location.getX() + "," + location.getZ()));
-                                MainUtil.sendMessage(player,
-                                    "You will now set pos2: /plot area create pos2"
-                                        + "\nNote: The chosen plot size may result in the created area not exactly matching your second position.");
+                                player.sendMessage(TranslatableCaption.of("area.set_pos2"));
                                 return true;
                             }
                             case "pos2":  // Set position 2 and finish creation for type=2 (partial)
                                 final HybridPlotWorld area = player.getMeta("area_create_area");
                                 if (area == null) {
-                                    Captions.COMMAND_SYNTAX.send(player,
-                                        "/plot area create [world[:id]] [<modifier>=<value>]...");
+                                    player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
+                                        Templates.of("value", "/plot area create [world[:id]] [<modifier>=<value>]..."));
                                     return false;
                                 }
                                 Location pos1 = player.getLocation();

@@ -15,6 +15,8 @@
   "debug.plot_debug": "<gray>[<gold>Plot </gold><gray>Debug] (</gray><gold><plot></gold><gray>): <message></gray>",
   
   "set.set_attribute": "<prefix><dark_aqua>Successfully set <attribute> to <value>.</dark_aqua>",
+
+  "area.set_pos2": "You will now set pos2: /plot area create pos2. Note: The chosen plot size may result in the created area not exactly matching your second position.",
   
   "web.generating_link": "<prefix><gold>Processing plot...</gold>",
   "web.generating_link_failed": "<prefix><red>Failed to generate download link!</red>",
@@ -223,6 +225,7 @@
   "invalid.not_a_number": "<prefix><red><gray><value></gray> is not a valid number.</red>",
   
   "errors.invalid_player": "<prefix><red>Player not found: <gray><value></gray>.</red>",
+
   "errors.invalid_player_offline": "<prefix><red>The player must be online: <gray><player></gray>.</red>",
   "errors.invalid_command_flag": "<prefix><red>Invalid command flag: </red><value></gray>",
   "errors.error": "<prefix><red>An error occurred: </gray><value></gray></red>",

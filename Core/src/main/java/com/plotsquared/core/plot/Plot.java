@@ -104,7 +104,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static com.plotsquared.core.command.SubCommand.sendMessage;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MISC;

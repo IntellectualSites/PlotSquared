@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 
@@ -39,7 +40,7 @@ public class Chat extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (player.getPlotAreaAbs().isForcingPlotChat()) {
-            MainUtil.sendMessage(player, Captions.PLOT_CHAT_FORCED);
+            player.sendMessage(TranslatableCaption.of("chat.plot_chat_forced"));
             return true;
         }
         MainCommand.getInstance().toggle.chat(this, player, args, null, null);

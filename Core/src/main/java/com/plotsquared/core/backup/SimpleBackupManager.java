@@ -30,8 +30,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -94,17 +95,18 @@ import java.util.concurrent.TimeUnit;
             whenDone.run();
         } else {
             if (player != null) {
-                Captions.BACKUP_AUTOMATIC_STARTED.send(player);
+                player.sendMessage(TranslatableCaption.of("backups.backup_automatic_started"));
             }
             profile.createBackup().whenComplete((backup, throwable) -> {
                if (throwable != null) {
                    if (player != null) {
-                       Captions.BACKUP_AUTOMATIC_FAILURE.send(player, throwable.getMessage());
+                       player.sendMessage(TranslatableCaption.of("backups.backup_automatic_failure"),
+                           Templates.of("reason", throwable.getMessage()));
                    }
                    throwable.printStackTrace();
                } else {
                    if (player != null) {
-                       Captions.BACKUP_AUTOMATIC_FINISHED.send(player);
+                       player.sendMessage(TranslatableCaption.of("backups.backup_automatic_finished"));
                        TaskManager.runTaskAsync(whenDone);
                    }
                }

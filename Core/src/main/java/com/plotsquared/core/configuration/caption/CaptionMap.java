@@ -25,14 +25,12 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import net.kyori.text.Component;
-
 import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
  * Map containing mappings between {@link TranslatableCaption captions} and
- * {@link Component components}
+ * {@link net.kyori.adventure.text.Component components}
  */
 public interface CaptionMap {
 

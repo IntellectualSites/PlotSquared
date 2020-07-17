@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -46,11 +45,6 @@ public abstract class SubCommand extends Command {
     public SubCommand(Argument... arguments) {
         this();
         setRequiredArguments(arguments);
-    }
-
-    public static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
-        message.send(player, args);
-        return true;
     }
 
     @Override

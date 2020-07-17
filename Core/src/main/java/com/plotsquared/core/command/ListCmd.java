@@ -37,7 +37,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
-import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MainUtil;
@@ -56,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -391,7 +391,7 @@ public class ListCmd extends SubCommand {
                         final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline()
                             .getNames(plot.getOwners()).get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
                         for (final UUIDMapping uuidMapping : names) {
-                            PlotPlayer pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
+                            PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
                             if (pp != null) {
                                 message = message.text(prefix).color("$4").text(uuidMapping.getUsername()).color("$1")
                                     .tooltip(new PlotMessage("Online").color("$4"));
@@ -402,9 +402,19 @@ public class ListCmd extends SubCommand {
                             prefix = ", ";
                         }
                     } catch (InterruptedException | ExecutionException e) {
-                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER);
+                        final StringBuilder playerBuilder = new StringBuilder();
+                        final Iterator<UUID> uuidIterator = plot.getOwners().iterator();
+                        while (uuidIterator.hasNext()) {
+                            final UUID uuid = uuidIterator.next();
+                            playerBuilder.append(uuid);
+                            if (uuidIterator.hasNext()) {
+                                playerBuilder.append(", ");
+                            }
+                        }
+                        player.sendMessage(TranslatableCaption.of("errors.invalid_player"),
+                            Templates.of("value", playerBuilder.toString()));
                     } catch (TimeoutException e) {
-                        MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                        player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                     }
                 }
             }, "/plot list " + args[0], Captions.PLOT_LIST_HEADER_PAGED.getTranslated());

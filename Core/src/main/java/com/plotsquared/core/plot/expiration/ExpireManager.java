@@ -27,6 +27,8 @@ package com.plotsquared.core.plot.expiration;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
@@ -40,7 +42,6 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
-import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -417,15 +418,17 @@ public class ExpireManager {
             }
         }
         for (UUID helper : plot.getTrusted()) {
-            PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
-                MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
+                player.sendMessage(TranslatableCaption.of("trusted.plot_removed_user"),
+                    Templates.of("plot", plot.toString()));
             }
         }
         for (UUID helper : plot.getMembers()) {
-            PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
-                MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
+                player.sendMessage(TranslatableCaption.of("trusted.plot_removed_user"),
+                    Templates.of("plot", plot.toString()));
             }
         }
         plot.deletePlot(whenDone);

@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -125,7 +126,7 @@ public class Trust extends Command {
                         }
                         currentPlot.addTrusted(uuid);
                         this.eventDispatcher.callTrusted(player, currentPlot, uuid, true);
-                        MainUtil.sendMessage(player, Captions.TRUSTED_ADDED);
+                        player.sendMessage(TranslatableCaption.of("trusted.trusted_added"));
                     }
                 }, null);
             }
