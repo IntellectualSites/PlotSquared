@@ -37,11 +37,11 @@ public final class SpigotTimeConverter implements TaskTime.TimeConverter {
     private static final long MS_PER_TICKS = 50L;
 
     @Override public long msToTicks(@Nonnegative final long ms) {
-        return ms / MS_PER_TICKS;
+        return Math.max(1L, ms / MS_PER_TICKS);
     }
 
     @Override public long ticksToMs(@Nonnegative final long ticks) {
-        return ticks * MS_PER_TICKS;
+        return Math.max(1L, ticks * MS_PER_TICKS);
     }
 
 }

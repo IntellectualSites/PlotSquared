@@ -96,7 +96,7 @@ public abstract class TaskManager {
      * @return Task if stored, or {@code null}
      */
     @Nullable public static PlotSquaredTask removeTask(final int id) {
-        return tasks.get(id);
+        return tasks.remove(id);
     }
 
     /**
