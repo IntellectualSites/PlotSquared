@@ -1827,7 +1827,7 @@ public class Plot {
             DBFunc.createPlotAndSettings(this, () -> {
                 PlotArea plotworld = Plot.this.area;
                 if (notify && plotworld.isAutoMerge()) {
-                    PlotPlayer player = this.worldUtil.wrapPlayer(uuid);
+                    PlotPlayer player = this.worldUtil.getPlayer(uuid);
                     PlotMergeEvent event = this.eventDispatcher
                         .callMerge(this, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {

@@ -41,8 +41,10 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.entity.EntityType;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -68,58 +70,149 @@ public abstract class WorldUtil {
         this.regionManager = regionManager;
     }
 
-    public abstract String getMainWorld();
-
-    public abstract boolean isWorld(String worldName);
-
-    public abstract void getSign(Location location, Consumer<String[]> result);
+    /**
+     * Check if a given world name corresponds to a real world
+     *
+     * @param worldName World name
+     * @return {@code true} if there exists a world with the given world name,
+     * {@code false} if not
+     */
+    public abstract boolean isWorld(@Nonnull String worldName);
 
     /**
+     * @param location Sign location
+     * @return Sign content (or an empty string array if the block is not a sign)
      * @deprecated May result in synchronous chunk loading
      */
-    @Deprecated public abstract String[] getSignSynchronous(Location location);
-
-    public abstract Location getSpawn(String world);
-
-    public abstract void setSpawn(Location location);
-
-    public abstract void saveWorld(String world);
-
-    public abstract String getClosestMatchingName(BlockState plotBlock);
-
-    public abstract boolean isBlockSolid(BlockState block);
-
-    public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(String name);
-
-    public abstract void getBiome(String world, int x, int z, Consumer<BiomeType> result);
+    @Deprecated @Nonnull public abstract String[] getSignSynchronous(@Nonnull Location location);
 
     /**
-     * @deprecated May result in synchronous chunk loading
+     * Get the world spawn location
+     *
+     * @param world World name
+     * @return World spawn location
      */
-    @Deprecated public abstract BiomeType getBiomeSynchronous(String world, int x, int z);
-
-    public abstract void getBlock(Location location, Consumer<BlockState> result);
+    @Nonnull public abstract Location getSpawn(@Nonnull String world);
 
     /**
-     * @deprecated May result in synchronous chunk loading
+     * Set the world spawn location
+     *
+     * @param location New spawn
      */
-    @Deprecated public abstract BlockState getBlockSynchronous(Location location);
-
-    public abstract void getHighestBlock(String world, int x, int z, final IntConsumer result);
+    public abstract void setSpawn(@Nonnull Location location);
 
     /**
-     * @deprecated May result in synchronous chunk loading
+     * Save a world
+     *
+     * @param world World name
      */
-    @Deprecated public abstract int getHighestBlockSynchronous(String world, int x, int z);
+    public abstract void saveWorld(@Nonnull String world);
 
-    public abstract void setSign(String world, int x, int y, int z, String[] lines);
+    /**
+     * Get a string comparison with the closets block state matching a given string
+     *
+     * @param name Block name
+     * @return Comparison result containing the closets matching block
+     */
+    @Nonnull public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(
+        @Nonnull String name);
 
-    public abstract void setBiomes(String world, CuboidRegion region, BiomeType biome);
+    /**
+     * Get the biome in a given chunk, asynchronously
+     *
+     * @param world  World
+     * @param x      Chunk X coordinate
+     * @param z      Chunk Z coordinate
+     * @param result Result consumer
+     */
+    public abstract void getBiome(@Nonnull String world, int x, int z,
+        @Nonnull Consumer<BiomeType> result);
 
-    public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
+    /**
+     * Get the biome in a given chunk, asynchronously
+     *
+     * @param world World
+     * @param x     Chunk X coordinate
+     * @param z     Chunk Z coordinate
+     * @return Biome
+     * @deprecated Use {@link #getBiome(String, int, int, Consumer)}
+     */
+    @Deprecated @Nonnull public abstract BiomeType getBiomeSynchronous(@Nonnull String world, int x,
+        int z);
 
-    public void upload(@Nonnull final Plot plot, UUID uuid, String file,
-        RunnableVal<URL> whenDone) {
+    /**
+     * Get the block at a given location (asynchronously)
+     *
+     * @param location Block location
+     * @param result   Result consumer
+     */
+    public abstract void getBlock(@Nonnull Location location, @Nonnull Consumer<BlockState> result);
+
+    /**
+     * Get the block at a given location (synchronously)
+     *
+     * @param location Block location
+     * @return Result
+     * @deprecated Use {@link #getBlock(Location, Consumer)}
+     */
+    @Deprecated @Nonnull public abstract BlockState getBlockSynchronous(@Nonnull Location location);
+
+    /**
+     * Get the Y coordinate of the highest non-air block in the world, asynchronously
+     *
+     * @param world  World name
+     * @param x      X coordinate
+     * @param z      Z coordinate
+     * @param result Result consumer
+     */
+    public abstract void getHighestBlock(@Nonnull String world, int x, int z,
+        @Nonnull IntConsumer result);
+
+
+    /**
+     * Get the Y coordinate of the highest non-air block in the world, synchronously
+     *
+     * @param world World name
+     * @param x     X coordinate
+     * @param z     Z coordinate
+     * @return Result
+     * @deprecated Use {@link #getHighestBlock(String, int, int, IntConsumer)}
+     */
+    @Deprecated @Nonnegative
+    public abstract int getHighestBlockSynchronous(@Nonnull String world, int x, int z);
+
+    /**
+     * Set the text in a sign
+     *
+     * @param world World name
+     * @param x     X coordinate
+     * @param y     Y coordinate
+     * @param z     Z coordinate
+     * @param lines Sign text
+     */
+    public abstract void setSign(@Nonnull String world, int x, int y, int z,
+        @Nonnull String[] lines);
+
+    /**
+     * Set the biome in a region
+     *
+     * @param world  World name
+     * @param region Region
+     * @param biome  New biome
+     */
+    public abstract void setBiomes(@Nonnull String world, @Nonnull CuboidRegion region,
+        @Nonnull BiomeType biome);
+
+    /**
+     * Get the WorldEdit {@link com.sk89q.worldedit.world.World} corresponding to a world name
+     *
+     * @param world World name
+     * @return World object
+     */
+    @Nonnull public abstract com.sk89q.worldedit.world.World getWeWorld(@Nonnull String world);
+
+    public void upload(@Nonnull final Plot plot, @Nullable final UUID uuid,
+        @Nullable final String file, @Nonnull final RunnableVal<URL> whenDone) {
         plot.getHome(home -> MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
@@ -189,7 +282,7 @@ public abstract class WorldUtil {
         }, whenDone));
     }
 
-    public File getDat(String world) {
+    @Nullable final File getDat(@Nonnull final String world) {
         File file = new File(
             PlotSquared.platform().getWorldContainer() + File.separator + world + File.separator
                 + "level.dat");
@@ -199,8 +292,8 @@ public abstract class WorldUtil {
         return null;
     }
 
-    public File getMcr(String world, int x, int z) {
-        File file = new File(PlotSquared.platform().getWorldContainer(),
+    @Nullable private File getMcr(@Nonnull final String world, final int x, final int z) {
+        final File file = new File(PlotSquared.platform().getWorldContainer(),
             world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
         if (file.exists()) {
             return file;
@@ -208,22 +301,78 @@ public abstract class WorldUtil {
         return null;
     }
 
-    public abstract boolean isBlockSame(BlockState block1, BlockState block2);
+    /**
+     * Check if two blocks are the same type)
+     *
+     * @param block1 First block
+     * @param block2 Second block
+     * @return {@code true} if the blocks have the same type, {@code false} if not
+     */
+    public abstract boolean isBlockSame(@Nonnull BlockState block1, @Nonnull BlockState block2);
 
-    public abstract PlotPlayer wrapPlayer(UUID uuid);
+    /**
+     * Get a player object for the player with the given UUID
+     *
+     * @param uuid Player UUID
+     * @return Player object
+     */
+    @Nonnull public abstract PlotPlayer<?> getPlayer(@Nonnull UUID uuid);
 
-    public abstract double getHealth(PlotPlayer player);
+    /**
+     * Get the player health
+     *
+     * @param player Player
+     * @return Non-negative health
+     */
+    @Nonnegative public abstract double getHealth(@Nonnull PlotPlayer<?> player);
 
-    public abstract void setHealth(PlotPlayer player, double health);
+    /**
+     * Set the player health
+     *
+     * @param player Player health
+     * @param health Non-negative health
+     */
+    public abstract void setHealth(@Nonnull PlotPlayer<?> player, @Nonnegative double health);
 
-    public abstract int getFoodLevel(PlotPlayer player);
+    /**
+     * Get the player food level
+     *
+     * @param player Player
+     * @return Non-negative food level
+     */
+    @Nonnegative public abstract int getFoodLevel(@Nonnull PlotPlayer<?> player);
 
-    public abstract void setFoodLevel(PlotPlayer player, int foodLevel);
+    /**
+     * Set the player food level
+     *
+     * @param player    Player food level
+     * @param foodLevel Non-negative food level
+     */
+    public abstract void setFoodLevel(@Nonnull PlotPlayer<?> player, @Nonnegative int foodLevel);
 
-    public abstract Set<EntityType> getTypesInCategory(final String category);
+    /**
+     * Get all entity types belonging to an entity category
+     *
+     * @param category Entity category
+     * @return Set containing all entities belonging to the given category
+     */
+    @Nonnull public abstract Set<EntityType> getTypesInCategory(@Nonnull String category);
 
-    public abstract Collection<BlockType> getTileEntityTypes();
+    /**
+     * Get all recognized tile entity types
+     *
+     * @return Collection containing all known tile entity types
+     */
+    @Nonnull public abstract Collection<BlockType> getTileEntityTypes();
 
-    public abstract int getTileEntityCount(String world, BlockVector2 chunk);
+    /**
+     * Get the tile entity count in a chunk
+     *
+     * @param world World
+     * @param chunk Chunk coordinates
+     * @return Tile entity count
+     */
+    @Nonnegative public abstract int getTileEntityCount(@Nonnull String world,
+        @Nonnull BlockVector2 chunk);
 
 }

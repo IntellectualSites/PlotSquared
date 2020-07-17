@@ -226,7 +226,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         // Stuff that needs to be created before the PlotSquared instance
-        PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
+        PlotPlayer.registerConverter(Player.class, BukkitUtil::adapt);
         TaskManager.setPlatformImplementation(new BukkitTaskManager(this, timeConverter));
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
@@ -772,7 +772,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                         case "BOAT":
                             if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                                 com.plotsquared.core.location.Location location =
-                                    BukkitUtil.getLocation(entity.getLocation());
+                                    BukkitUtil.adapt(entity.getLocation());
                                 Plot plot = location.getPlot();
                                 if (plot == null) {
                                     if (location.isPlotArea()) {
@@ -803,7 +803,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                         case "DRAGON_FIREBALL":
                         case "DROPPED_ITEM":
                             if (Settings.Enabled_Components.KILL_ROAD_ITEMS && plotArea
-                                .getOwnedPlotAbs(BukkitUtil.getLocation(entity.getLocation()))
+                                .getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation()))
                                 == null) {
                                 entity.remove();
                             }
@@ -829,7 +829,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                                     PlotId originalPlotId = (PlotId) meta.get(0).value();
                                     if (originalPlotId != null) {
                                         com.plotsquared.core.location.Location pLoc =
-                                            BukkitUtil.getLocation(entity.getLocation());
+                                            BukkitUtil.adapt(entity.getLocation());
                                         PlotArea area = pLoc.getPlotArea();
                                         if (area != null) {
                                             PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
@@ -848,7 +848,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                                 } else {
                                     //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
                                     com.plotsquared.core.location.Location pLoc =
-                                        BukkitUtil.getLocation(entity.getLocation());
+                                        BukkitUtil.adapt(entity.getLocation());
                                     PlotArea area = pLoc.getPlotArea();
                                     if (area != null) {
                                         PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
@@ -933,7 +933,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                         default: {
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                 Location location = entity.getLocation();
-                                if (BukkitUtil.getLocation(location).isPlotRoad()) {
+                                if (BukkitUtil.adapt(location).isPlotRoad()) {
                                     if (entity instanceof LivingEntity) {
                                         LivingEntity livingEntity = (LivingEntity) entity;
                                         if (!livingEntity.isLeashed() || !entity
@@ -1037,8 +1037,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 "WorldEdit"));
     }
 
-    @Override public void unregister(@Nonnull final PlotPlayer player) {
-        BukkitUtil.removePlayer(player.getUUID());
+    @Override public void unregister(@Nonnull final PlotPlayer<?> player) {
+        PlotSquared.platform().getPlayerManager().removePlayer(player.getUUID());
     }
 
     @Override public void setGenerator(@Nonnull final String worldName) {
@@ -1094,10 +1094,10 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
      */
     @Override @Nullable public PlotPlayer<Player> wrapPlayer(final Object player) {
         if (player instanceof Player) {
-            return BukkitUtil.getPlayer((Player) player);
+            return BukkitUtil.adapt((Player) player);
         }
         if (player instanceof OfflinePlayer) {
-            return BukkitUtil.getPlayer((OfflinePlayer) player);
+            return BukkitUtil.adapt((OfflinePlayer) player);
         }
         if (player instanceof String) {
             return (PlotPlayer<Player>) PlotSquared.platform().getPlayerManager()

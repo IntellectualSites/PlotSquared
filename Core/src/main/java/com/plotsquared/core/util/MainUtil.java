@@ -55,11 +55,11 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -154,8 +154,9 @@ public class MainUtil {
         }
     }
 
-    public static void upload(UUID uuid, String file, String extension,
-        final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
+    public static void upload(@Nullable UUID uuid, @Nullable final String file,
+        @Nonnull final String extension, @Nullable final RunnableVal<OutputStream> writeTask,
+        @Nonnull final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
             TaskManager.runTask(whenDone);
             return;

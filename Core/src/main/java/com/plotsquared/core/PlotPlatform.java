@@ -137,7 +137,7 @@ public interface PlotPlatform<P> extends ILogger {
      *
      * @param player the player to remove
      */
-    void unregister(PlotPlayer player);
+    void unregister(PlotPlayer<?> player);
 
     /**
      * Gets the generator wrapper for a world (world) and generator (name).
