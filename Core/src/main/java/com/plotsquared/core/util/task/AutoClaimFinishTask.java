@@ -36,7 +36,9 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EventDispatcher;
 
-public final class AutoClaimFinishTask extends RunnableVal<Object> {
+import java.util.concurrent.Callable;
+
+public final class AutoClaimFinishTask implements Callable<Boolean> {
 
     private final PlotPlayer player;
     private final Plot plot;
@@ -53,11 +55,11 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
         this.eventDispatcher = eventDispatcher;
     }
 
-    @Override public void run(Object value) {
+    @Override public Boolean call() {
         player.deleteMeta(Auto.class.getName());
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
-            return;
+            return false;
         }
         plot.claim(player, true, schematic, false);
         if (area.isAutoMerge()) {
@@ -69,5 +71,7 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
                 plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
             }
         }
+        return true;
     }
+
 }

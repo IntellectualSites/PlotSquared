@@ -25,39 +25,66 @@
  */
 package com.plotsquared.core.util.task;
 
-import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
+/**
+ * A task that can be run and cancelled (if repeating)
+ */
+public interface PlotSquaredTask extends Runnable {
 
-public class ObjectTaskRunnable<T> implements Runnable {
-
-    private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
-
-    private final Iterator<T> iterator;
-    private final RunnableVal<T> task;
-
-    public ObjectTaskRunnable(final Iterator<T> iterator,
-        final RunnableVal<T> task, final Runnable whenDone) {
-        this.iterator = iterator;
-        this.task = task;
-        this.whenDone = whenDone;
+    /**
+     * Run the task. Don't override this, instead
+     * implement {@link #runTask()}
+     */
+    @Override default void run() {
+        if (isCancelled()) {
+            return;
+        }
+        this.runTask();
     }
 
-    public CompletableFuture<Void> getCompletionFuture() {
-        return this.completionFuture;
+    /**
+     * Run the task
+     */
+    void runTask();
+
+    /**
+     * Check if the task has been cancelled
+     *
+     * @return {@code true} if the tasks is cancelled,
+     *         {@code false} if not
+     */
+    boolean isCancelled();
+
+    /**
+     * Cancel the task
+     */
+    void cancel();
+
+    /**
+     * Get a new {@link NullTask}
+     *
+     * @return Null task instance
+     */
+    static NullTask nullTask() {
+        return new NullTask();
     }
 
-    @Override public void run() {
-        long start = System.currentTimeMillis();
-        boolean hasNext;
-        while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
-            task.value = iterator.next();
-            task.run();
+
+    /**
+     * Task that does nothing and is always cancelled
+     */
+    class NullTask implements PlotSquaredTask {
+
+        @Override public void runTask() {
         }
-        if (!hasNext) {
-            completionFuture.complete(null);
-        } else {
-            TaskManager.runTaskLater(this, TaskTime.ticks(1L));
+
+        @Override public boolean isCancelled() {
+            return true;
         }
+
+        @Override public void cancel() {
+        }
+
     }
 
 }
+

@@ -23,41 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.task;
+package com.plotsquared.bukkit.util.task;
 
-import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
+import com.plotsquared.core.util.task.PlotSquaredTask;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class ObjectTaskRunnable<T> implements Runnable {
+import javax.annotation.Nonnull;
 
-    private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+/**
+ * Bukkit implementation of {@link PlotSquaredTask}
+ */
+@RequiredArgsConstructor
+public final class BukkitPlotSquaredTask extends BukkitRunnable implements PlotSquaredTask {
 
-    private final Iterator<T> iterator;
-    private final RunnableVal<T> task;
+    @Nonnull private final Runnable runnable;
 
-    public ObjectTaskRunnable(final Iterator<T> iterator,
-        final RunnableVal<T> task, final Runnable whenDone) {
-        this.iterator = iterator;
-        this.task = task;
-        this.whenDone = whenDone;
-    }
-
-    public CompletableFuture<Void> getCompletionFuture() {
-        return this.completionFuture;
-    }
-
-    @Override public void run() {
-        long start = System.currentTimeMillis();
-        boolean hasNext;
-        while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
-            task.value = iterator.next();
-            task.run();
-        }
-        if (!hasNext) {
-            completionFuture.complete(null);
-        } else {
-            TaskManager.runTaskLater(this, TaskTime.ticks(1L));
-        }
+    @Override public void runTask() {
+        this.runnable.run();
     }
 
 }

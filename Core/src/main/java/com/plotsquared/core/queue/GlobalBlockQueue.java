@@ -28,6 +28,7 @@ package com.plotsquared.core.queue;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -165,7 +166,7 @@ public class GlobalBlockQueue {
                     SET_TASK.value2.endSet(true);
                 }
             }
-        }, 1);
+        }, TaskTime.ticks(1L));
         return true;
     }
 

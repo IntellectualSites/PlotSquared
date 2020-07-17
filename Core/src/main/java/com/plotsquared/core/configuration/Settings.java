@@ -482,9 +482,9 @@ public class Settings extends Config {
         @Comment("Teleport to your plot on death") public static boolean ON_DEATH = false;
         @Comment("Teleport to your plot on login") public static boolean ON_LOGIN = false;
         @Comment("Teleport to your plot on claim") public static boolean ON_CLAIM = true;
-        @Comment({"Add a delay to all teleport commands",
-            "Assign `plots.teleport.delay.bypass` to bypass the cooldown."}) public static int
-            DELAY = 0;
+        @Comment({"Add a delay to all teleport commands (in seconds)",
+            "Assign `plots.teleport.delay.bypass` to bypass the cooldown"})
+        public static int DELAY = 0;
         @Comment("The visit command is ordered by world instead of globally") public static boolean
             PER_WORLD_VISIT = false;
     }

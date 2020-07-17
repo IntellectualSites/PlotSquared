@@ -35,6 +35,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -177,7 +178,7 @@ public class Condense extends SubCommand {
                                     if (result.get()) {
                                         MainUtil.sendMessage(player,
                                             "Moving: " + origin + " -> " + possible);
-                                        TaskManager.runTaskLater(task, 1);
+                                        TaskManager.runTaskLater(task, TaskTime.ticks(1L));
                                     }
                                 }, false).get());
                             } catch (InterruptedException | ExecutionException e) {

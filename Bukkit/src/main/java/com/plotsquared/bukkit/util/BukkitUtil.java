@@ -42,7 +42,6 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
@@ -409,14 +408,18 @@ import java.util.stream.Stream;
     @Override @Nullable public String[] getSignSynchronous(@Nonnull final Location location) {
         Block block = getWorld(location.getWorldName())
             .getBlockAt(location.getX(), location.getY(), location.getZ());
-        return TaskManager.getImplementation().sync(new RunnableVal<String[]>() {
-            @Override public void run(String[] value) {
+        try {
+            return TaskManager.getPlatformImplementation().sync(() -> {
                 if (block.getState() instanceof Sign) {
                     Sign sign = (Sign) block.getState();
-                    this.value = sign.getLines();
+                    return sign.getLines();
                 }
-            }
-        });
+                return new String[0];
+            });
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        return new String[0];
     }
 
     @Override public Location getSpawn(@Nonnull final String world) {

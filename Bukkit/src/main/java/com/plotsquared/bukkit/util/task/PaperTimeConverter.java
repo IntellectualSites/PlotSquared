@@ -23,41 +23,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util.task;
+package com.plotsquared.bukkit.util.task;
 
-import java.util.Iterator;
-import java.util.concurrent.CompletableFuture;
+import com.plotsquared.core.util.task.TaskTime;
+import org.bukkit.Bukkit;
 
-public class ObjectTaskRunnable<T> implements Runnable {
+import javax.annotation.Nonnegative;
 
-    private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+/**
+ * Time converter that uses the server MSPT count to convert between
+ * different time units
+ */
+public final class PaperTimeConverter implements TaskTime.TimeConverter {
 
-    private final Iterator<T> iterator;
-    private final RunnableVal<T> task;
-
-    public ObjectTaskRunnable(final Iterator<T> iterator,
-        final RunnableVal<T> task, final Runnable whenDone) {
-        this.iterator = iterator;
-        this.task = task;
-        this.whenDone = whenDone;
+    @Override public long msToTicks(@Nonnegative final long ms) {
+        return Math.max(1L, (long) (ms / Bukkit.getAverageTickTime()));
     }
 
-    public CompletableFuture<Void> getCompletionFuture() {
-        return this.completionFuture;
-    }
-
-    @Override public void run() {
-        long start = System.currentTimeMillis();
-        boolean hasNext;
-        while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
-            task.value = iterator.next();
-            task.run();
-        }
-        if (!hasNext) {
-            completionFuture.complete(null);
-        } else {
-            TaskManager.runTaskLater(this, TaskTime.ticks(1L));
-        }
+    @Override public long ticksToMs(@Nonnegative final long ticks) {
+        return Math.max(1L, (long) (ticks * Bukkit.getAverageTickTime()));
     }
 
 }

@@ -47,6 +47,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -325,7 +326,8 @@ public class ExpireManager {
                     }
                     for (ExpiryTask expiryTask : expired) {
                         if (!expiryTask.needsAnalysis()) {
-                            expiredTask.run(newPlot, () -> TaskManager.getImplementation().taskLaterAsync(task, 1),
+                            expiredTask.run(newPlot, () -> TaskManager.getPlatformImplementation()
+                                    .taskLaterAsync(task, TaskTime.ticks(1L)),
                                 expiryTask.requiresConfirmation());
                             return;
                         }
@@ -336,7 +338,7 @@ public class ExpireManager {
                                 passesComplexity(changed, expired, new RunnableVal<Boolean>() {
                                     @Override public void run(Boolean confirmation) {
                                         expiredTask.run(newPlot,
-                                            () -> TaskManager.getImplementation().taskLaterAsync(task, 1),
+                                            () -> TaskManager.getPlatformImplementation().taskLaterAsync(task, TaskTime.ticks(1L)),
                                             confirmation);
                                     }
                                 }, () -> {
@@ -349,7 +351,7 @@ public class ExpireManager {
                                         return;
                                     }
                                     newPlot.setFlag(event.getFlag());
-                                    TaskManager.runTaskLaterAsync(task, 20);
+                                    TaskManager.runTaskLaterAsync(task, TaskTime.seconds(1L));
                                 });
                             }
                         };
@@ -362,7 +364,7 @@ public class ExpireManager {
                             @Override public void run(Boolean value) {
                                 doAnalysis.run();
                             }
-                        }, () -> TaskManager.getImplementation().taskLaterAsync(task, 1));
+                        }, () -> TaskManager.getPlatformImplementation().taskLaterAsync(task, TaskTime.ticks(1L)));
                     } else {
                         doAnalysis.run();
                     }
@@ -375,9 +377,9 @@ public class ExpireManager {
                             ExpireManager.this.running = 2;
                             runTask(expiredTask);
                         }
-                    }, 86400000);
+                    }, TaskTime.ticks(86400000L));
                 } else {
-                    TaskManager.runTaskLaterAsync(task, 20 * 10);
+                    TaskManager.runTaskLaterAsync(task, TaskTime.seconds(10L));
                 }
             }
         });

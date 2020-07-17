@@ -53,6 +53,7 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -365,7 +366,7 @@ public class HybridUtils {
                 analyzeRegion(origin.getWorldName(), region, new RunnableVal<PlotAnalysis>() {
                     @Override public void run(PlotAnalysis value) {
                         analysis.add(value);
-                        TaskManager.runTaskLater(task, 1);
+                        TaskManager.runTaskLater(task, TaskTime.ticks(1L));
                     }
                 });
             }
@@ -477,21 +478,20 @@ public class HybridUtils {
                                 }
                             }
                             if (!chunks.isEmpty()) {
-                                TaskManager.getImplementation().sync(new RunnableVal<Object>() {
-                                    @Override public void run(Object value) {
-                                        long start = System.currentTimeMillis();
-                                        Iterator<BlockVector2> iterator = chunks.iterator();
-                                        while (System.currentTimeMillis() - start < 20 && !chunks
-                                            .isEmpty()) {
-                                            final BlockVector2 chunk = iterator.next();
-                                            iterator.remove();
-                                            boolean regenedRoads =
-                                                regenerateRoad(area, chunk, extend);
-                                            if (!regenedRoads && Settings.DEBUG) {
-                                                logger.info("[P2] Failed to regenerate road");
-                                            }
+                                TaskManager.getPlatformImplementation().sync(() -> {
+                                    long start = System.currentTimeMillis();
+                                    Iterator<BlockVector2> iterator = chunks.iterator();
+                                    while (System.currentTimeMillis() - start < 20 && !chunks
+                                        .isEmpty()) {
+                                        final BlockVector2 chunk = iterator.next();
+                                        iterator.remove();
+                                        boolean regenedRoads =
+                                            regenerateRoad(area, chunk, extend);
+                                        if (!regenedRoads && Settings.DEBUG) {
+                                            logger.info("[P2] Failed to regenerate road");
                                         }
                                     }
+                                    return null;
                                 });
                             }
                         } catch (Exception e) {
@@ -510,7 +510,7 @@ public class HybridUtils {
                                 }
                             }
                         }
-                        blockQueue.addEmptyTask(() -> TaskManager.runTaskLater(task, 20));
+                        blockQueue.addEmptyTask(() -> TaskManager.runTaskLater(task, TaskTime.seconds(1L)));
                     });
                 }
             }

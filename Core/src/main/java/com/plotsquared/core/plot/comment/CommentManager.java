@@ -34,6 +34,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import com.plotsquared.core.util.task.TaskTime;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -77,7 +78,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                     }
                 });
             }
-        }, 20);
+        }, TaskTime.seconds(1L));
     }
 
     public static long getTimestamp(PlotPlayer<?> player, String inbox) {

@@ -182,7 +182,7 @@ public class DebugExec extends SubCommand {
         if (this.worldEdit != null) {
             this.scope.put("WEManager", new WEManager());
         }
-        this.scope.put("TaskManager", TaskManager.getImplementation());
+        this.scope.put("TaskManager", TaskManager.getPlatformImplementation());
         this.scope.put("ConsolePlayer", ConsolePlayer.getConsole());
         this.scope.put("SchematicHandler", this.schematicHandler);
         this.scope.put("ChunkManager", this.chunkManager);

@@ -150,13 +150,17 @@ public class Auto extends SubCommand {
      * @param start
      * @param schematic
      */
-    public static void autoClaimSafe(final PlotPlayer player, final PlotArea area, PlotId start,
+    public static void autoClaimSafe(final PlotPlayer<?> player, final PlotArea area, PlotId start,
         final String schematic) {
         player.setMeta(Auto.class.getName(), true);
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
-                TaskManager.getImplementation().sync(new AutoClaimFinishTask(player, plot, area, schematic,
-                    PlotSquared.get().getEventDispatcher()));
+                try {
+                    TaskManager.getPlatformImplementation().sync(new AutoClaimFinishTask(player, plot, area, schematic,
+                        PlotSquared.get().getEventDispatcher()));
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
