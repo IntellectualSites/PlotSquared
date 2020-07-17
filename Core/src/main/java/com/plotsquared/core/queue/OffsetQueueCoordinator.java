@@ -25,15 +25,17 @@
  */
 package com.plotsquared.core.queue;
 
+import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
-public class OffsetLocalBlockQueue extends DelegateLocalBlockQueue {
+public class OffsetQueueCoordinator extends DelegateQueueCoordinator {
     private final int ox;
     private final int oy;
     private final int oz;
 
-    public OffsetLocalBlockQueue(LocalBlockQueue parent, int ox, int oy, int oz) {
+    public OffsetQueueCoordinator(QueueCoordinator parent, int ox, int oy, int oz) {
         super(parent);
         this.ox = ox;
         this.oy = oy;
@@ -46,5 +48,13 @@ public class OffsetLocalBlockQueue extends DelegateLocalBlockQueue {
 
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
         return super.setBlock(ox + x, oy + y, oz + z, id);
+    }
+
+    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+        return super.setBlock(ox + x, oy + y, oz + z, pattern);
+    }
+
+    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
+        return super.setTile(ox + x, oy + y, oz + z, tag);
     }
 }

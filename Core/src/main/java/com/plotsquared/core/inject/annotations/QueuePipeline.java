@@ -23,33 +23,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.queue;
+package com.plotsquared.core.inject.annotations;
 
-public abstract class QueueProvider {
-    public static QueueProvider of(final Class<? extends QueueCoordinator> primary,
-        final Class<? extends QueueCoordinator> fallback) {
-        return new QueueProvider() {
+import com.google.inject.BindingAnnotation;
 
-            private boolean failed = false;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-            @Override public QueueCoordinator getNewQueue(String world) {
-                if (!failed) {
-                    try {
-                        return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        failed = true;
-                    }
-                }
-                try {
-                    return (QueueCoordinator) fallback.getConstructors()[0].newInstance(world);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        };
-    }
-
-    public abstract QueueCoordinator getNewQueue(String world);
+@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@BindingAnnotation
+public @interface QueuePipeline {
 }

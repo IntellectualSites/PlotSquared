@@ -28,58 +28,30 @@ package com.plotsquared.core.queue;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.PatternUtil;
-import com.plotsquared.core.util.SchematicHandler;
-import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
-import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import lombok.Getter;
 import lombok.Setter;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class LocalBlockQueue {
+public abstract class QueueCoordinator {
 
     @Getter @Setter private boolean forceSync = false;
     @Getter @Setter @Nullable private Object chunkObject;
 
-    @Inject private SchematicHandler schematicHandler;
-    @Inject private WorldUtil worldUtil;
     @Inject private GlobalBlockQueue blockQueue;
 
-    /**
-     * Needed for compatibility with FAWE.
-     *
-     * @param world unused
-     */
-    @Deprecated public LocalBlockQueue(String world) {
+    public QueueCoordinator() {
         PlotSquared.platform().getInjector().injectMembers(this);
     }
 
-    public ScopedLocalBlockQueue getForChunk(int x, int z) {
-        int bx = x << 4;
-        int bz = z << 4;
-        return new ScopedLocalBlockQueue(this, Location.at(getWorld(), bx, 0, bz),
-            Location.at(getWorld(), bx + 15, 255, bz + 255));
-    }
-
-    public abstract boolean next();
-
-    public abstract void startSet(boolean parallel);
-
-    public abstract void endSet(boolean parallel);
-
     public abstract int size();
-
-    public abstract void optimize();
-
-    public abstract long getModified();
 
     public abstract void setModified(long modified);
 
@@ -99,48 +71,22 @@ public abstract class LocalBlockQueue {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 
-    public boolean setTile(int x, int y, int z, CompoundTag tag) {
-        this.schematicHandler.restoreTile(this, tag, x, y, z);
-        return true;
-    }
+    public abstract boolean setTile(int x, int y, int z, CompoundTag tag);
 
     public abstract BlockState getBlock(int x, int y, int z);
 
     public abstract boolean setBiome(int x, int z, BiomeType biome);
 
-    public abstract boolean setBiome();
+    public abstract boolean settingBiome();
 
     public abstract String getWorld();
-
-    public abstract void flush();
 
     public final void setModified() {
         setModified(System.currentTimeMillis());
     }
 
-    public abstract void refreshChunk(int x, int z);
-
-    public abstract void fixChunkLighting(int x, int z);
-
-    public abstract void regenChunk(int x, int z);
-
-    public final void regenChunkSafe(int x, int z) {
-        regenChunk(x, z);
-        fixChunkLighting(x, z);
-        BlockVector2 loc = BlockVector2.at(x, z);
-
-        for (final PlotPlayer<?> pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
-            Location pLoc = pp.getLocation();
-            if (!StringMan.isEqual(getWorld(), pLoc.getWorldName()) || !pLoc.getChunkLocation()
-                .equals(loc)) {
-                continue;
-            }
-            pp.teleport(pLoc.withY(this.worldUtil.getHighestBlockSynchronous(getWorld(), pLoc.getX(), pLoc.getZ())));
-        }
-    }
-
     public boolean enqueue() {
-        return blockQueue.enqueue(this);
+        return this.blockQueue.enqueue(this);
     }
 
     public void setCuboid(Location pos1, Location pos2, BlockState block) {

@@ -23,33 +23,30 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.queue;
+package com.plotsquared.bukkit.queue;
 
-public abstract class QueueProvider {
-    public static QueueProvider of(final Class<? extends QueueCoordinator> primary,
-        final Class<? extends QueueCoordinator> fallback) {
-        return new QueueProvider() {
+import com.plotsquared.bukkit.util.BukkitBlockUtil;
+import com.plotsquared.core.queue.BasicQueueCoordinator;
+import com.plotsquared.core.util.BlockUtil;
+import com.sk89q.worldedit.world.block.BlockState;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 
-            private boolean failed = false;
+public class BukkitQueueCoordinator extends BasicQueueCoordinator {
 
-            @Override public QueueCoordinator getNewQueue(String world) {
-                if (!failed) {
-                    try {
-                        return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        failed = true;
-                    }
-                }
-                try {
-                    return (QueueCoordinator) fallback.getConstructors()[0].newInstance(world);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        };
+    public BukkitQueueCoordinator(String world) {
+        super(world);
     }
 
-    public abstract QueueCoordinator getNewQueue(String world);
+    @Override public BlockState getBlock(int x, int y, int z) {
+        World worldObj = Bukkit.getWorld(getWorld());
+        if (worldObj != null) {
+            Block block = worldObj.getBlockAt(x, y, z);
+            return BukkitBlockUtil.get(block);
+        } else {
+            return BlockUtil.get(0, 0);
+        }
+    }
+
 }

@@ -25,53 +25,62 @@
  */
 package com.plotsquared.core.queue;
 
-import com.plotsquared.core.plot.PlotArea;
+import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import lombok.Getter;
-import javax.annotation.Nonnull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
-public class AreaBoundDelegateLocalBlockQueue extends DelegateLocalBlockQueue {
+public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordinator {
 
-    @Getter private final PlotArea area;
+    private static final Logger logger = LoggerFactory
+        .getLogger("P2/" + LocationOffsetDelegateQueueCoordinator.class.getSimpleName());
 
-    public AreaBoundDelegateLocalBlockQueue(@Nonnull final PlotArea area,
-        @Nullable final LocalBlockQueue parent) {
+    private final boolean[][] canPlace;
+    private final int blockX;
+    private final int blockZ;
+
+    public LocationOffsetDelegateQueueCoordinator(final boolean[][] canPlace, final int blockX,
+        final int blockZ, @Nullable QueueCoordinator parent) {
         super(parent);
-        this.area = Objects.requireNonNull(area);
+        this.canPlace = canPlace;
+        this.blockX = blockX;
+        this.blockZ = blockZ;
     }
 
     @Override public boolean setBlock(int x, int y, int z, BlockState id) {
-        if (area.contains(x, z)) {
+        if (canPlace[x - blockX][z - blockZ]) {
             return super.setBlock(x, y, z, id);
         }
         return false;
     }
 
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
-        if (area.contains(x, z)) {
-            return super.setBlock(x, y, z, id);
+        try {
+            if (canPlace[x - blockX][z - blockZ]) {
+                return super.setBlock(x, y, z, id);
+            }
+        } catch (final Exception e) {
+            throw e;
         }
         return false;
     }
 
     @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
-        if (area.contains(x, z)) {
-            return super.setBlock(x, y, z, pattern);
-        }
-        return false;
+        final BlockVector3 blockVector3 = BlockVector3.at(x + blockX, y, z + blockZ);
+        return this.setBlock(x, y, z, pattern.apply(blockVector3));
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biome) {
-        if (area.contains(x, z)) {
-            return super.setBiome(x, z, biome);
-        }
-        return false;
+    @Override public boolean setBiome(int x, int y, BiomeType biome) {
+        return super.setBiome(x, y, biome);
     }
 
+    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
+        return super.setTile(x, y, z, tag);
+    }
 }

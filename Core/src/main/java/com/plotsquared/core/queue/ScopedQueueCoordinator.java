@@ -26,12 +26,13 @@
 package com.plotsquared.core.queue;
 
 import com.plotsquared.core.location.Location;
+import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 
-public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
+public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
     private final int minX;
     private final int minY;
     private final int minZ;
@@ -44,7 +45,7 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     private final int dy;
     private final int dz;
 
-    public ScopedLocalBlockQueue(LocalBlockQueue parent, Location min, Location max) {
+    public ScopedQueueCoordinator(QueueCoordinator parent, Location min, Location max) {
         super(parent);
         this.minX = min.getX();
         this.minY = min.getY();
@@ -84,6 +85,11 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
         return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
             .setBlock(x + minX, y + minY, z + minZ, pattern);
+    }
+
+    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
+            .setTile(x + minX, y + minY, z + minZ, tag);
     }
 
     public Location getMin() {

@@ -31,26 +31,24 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Arrays;
 
-public class ChunkBlockQueue extends ScopedLocalBlockQueue {
+public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
 
     public final BiomeType[] biomeGrid;
     public final BlockState[][][] result;
     private final int width;
     private final int length;
-    @Deprecated private final int area;
     private final BlockVector3 bot;
     private final BlockVector3 top;
 
-    public ChunkBlockQueue(BlockVector3 bot, BlockVector3 top, boolean biomes) {
+    public ChunkQueueCoordinator(BlockVector3 bot, BlockVector3 top, boolean biomes) {
         super(null, Location.at("", 0, 0, 0), Location.at("", 15, 255, 15));
         this.width = top.getX() - bot.getX() + 1;
         this.length = top.getZ() - bot.getZ() + 1;
-        this.area = width * length;
         this.result = new BlockState[256][][];
         this.biomeGrid = biomes ? new BiomeType[width * length] : null;
         this.bot = bot;

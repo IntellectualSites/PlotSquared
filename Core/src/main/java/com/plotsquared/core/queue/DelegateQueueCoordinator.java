@@ -25,61 +25,35 @@
  */
 package com.plotsquared.core.queue;
 
+import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import lombok.Getter;
+import lombok.Setter;
 
-public class DelegateLocalBlockQueue extends LocalBlockQueue {
+import javax.annotation.Nullable;
 
-    private final LocalBlockQueue parent;
+public class DelegateQueueCoordinator extends QueueCoordinator {
 
-    public DelegateLocalBlockQueue(LocalBlockQueue parent) {
-        super(parent == null ? null : parent.getWorld());
+    private final QueueCoordinator parent;
+
+    public DelegateQueueCoordinator(QueueCoordinator parent) {
         this.parent = parent;
 
         if (parent != null) {
             this.setForceSync(parent.isForceSync());
-            this.setChunkObject(parent.getChunkObject());
         }
     }
 
-    public LocalBlockQueue getParent() {
+    public QueueCoordinator getParent() {
         return parent;
-    }
-
-    @Override public boolean next() {
-        return parent.next();
-    }
-
-    @Override public void startSet(boolean parallel) {
-        if (parent != null) {
-            parent.startSet(parallel);
-        }
-    }
-
-    @Override public void endSet(boolean parallel) {
-        if (parent != null) {
-            parent.endSet(parallel);
-        }
     }
 
     @Override public int size() {
         if (parent != null) {
             return parent.size();
-        }
-        return 0;
-    }
-
-    @Override public void optimize() {
-        if (parent != null) {
-            parent.optimize();
-        }
-    }
-
-    @Override public long getModified() {
-        if (parent != null) {
-            return parent.getModified();
         }
         return 0;
     }
@@ -110,36 +84,16 @@ public class DelegateLocalBlockQueue extends LocalBlockQueue {
         return parent.setBiome(x, z, biome);
     }
 
-    @Override public boolean setBiome() {
-        return parent.setBiome();
+    @Override public boolean settingBiome() {
+        return parent.settingBiome();
     }
 
     @Override public String getWorld() {
         return parent.getWorld();
     }
 
-    @Override public void flush() {
-        if (parent != null) {
-            parent.flush();
-        }
-    }
-
-    @Override public void refreshChunk(int x, int z) {
-        if (parent != null) {
-            parent.refreshChunk(x, z);
-        }
-    }
-
-    @Override public void fixChunkLighting(int x, int z) {
-        if (parent != null) {
-            parent.fixChunkLighting(x, z);
-        }
-    }
-
-    @Override public void regenChunk(int x, int z) {
-        if (parent != null) {
-            parent.regenChunk(x, z);
-        }
+    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
+        return parent.setTile(x, y, z, tag);
     }
 
     @Override public boolean enqueue() {
