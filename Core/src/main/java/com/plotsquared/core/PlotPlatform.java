@@ -129,7 +129,7 @@ public interface PlotPlatform<P> {
      *
      * @param player the player to remove
      */
-    void unregister(PlotPlayer player);
+    void unregister(PlotPlayer<?> player);
 
     /**
      * Gets the generator wrapper for a world (world) and generator (name).

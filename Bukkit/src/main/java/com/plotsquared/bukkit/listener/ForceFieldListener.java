@@ -49,7 +49,7 @@ public class ForceFieldListener {
         for (Player nearPlayer : Iterables
             .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
             PlotPlayer plotPlayer;
-            if ((plotPlayer = BukkitUtil.getPlayer(nearPlayer)) == null || !plot
+            if ((plotPlayer = BukkitUtil.adapt(nearPlayer)) == null || !plot
                 .equals(plotPlayer.getCurrentPlot())) {
                 continue;
             }
@@ -64,7 +64,7 @@ public class ForceFieldListener {
         for (Player nearPlayer : Iterables
             .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
             PlotPlayer plotPlayer;
-            if ((plotPlayer = BukkitUtil.getPlayer(nearPlayer)) == null || !plot
+            if ((plotPlayer = BukkitUtil.adapt(nearPlayer)) == null || !plot
                 .equals(plotPlayer.getCurrentPlot())) {
                 continue;
             }

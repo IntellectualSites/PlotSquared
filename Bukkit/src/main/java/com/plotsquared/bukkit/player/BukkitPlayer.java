@@ -112,11 +112,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return this.player;
     }
 
-    @Nonnull @Override public Location getLocation() {
-        final Location location = super.getLocation();
-        return location == null ? BukkitUtil.getLocation(this.player) : location;
-    }
-
     @Nonnull @Override public UUID getUUID() {
         if (Settings.UUID.OFFLINE) {
             if (Settings.UUID.FORCE_LOWERCASE) {
@@ -135,7 +130,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     }
 
     @Override public boolean canTeleport(@Nonnull final Location location) {
-        final org.bukkit.Location to = BukkitUtil.getLocation(location);
+        final org.bukkit.Location to = BukkitUtil.adapt(location);
         final org.bukkit.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
         callEvent(event);
@@ -261,7 +256,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     }
 
     @Override public Location getLocationFull() {
-        return BukkitUtil.getLocationFull(this.player);
+        return BukkitUtil.adaptComplete(this.player.getLocation());
     }
 
     @Override public void setWeather(@Nonnull final PlotWeather weather) {
@@ -332,7 +327,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, Material.AIR);
         } else {
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, id.to(Material.class));
-            this.player.playSound(BukkitUtil.getLocation(location),
+            this.player.playSound(BukkitUtil.adapt(location),
                 Sound.valueOf(BukkitAdapter.adapt(id).name()), Float.MAX_VALUE, 1f);
         }
     }

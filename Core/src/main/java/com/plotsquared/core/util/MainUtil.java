@@ -154,8 +154,9 @@ public class MainUtil {
         }
     }
 
-    public static void upload(UUID uuid, String file, String extension,
-        final RunnableVal<OutputStream> writeTask, final RunnableVal<URL> whenDone) {
+    public static void upload(@Nullable UUID uuid, @Nullable final String file,
+        @Nonnull final String extension, @Nullable final RunnableVal<OutputStream> writeTask,
+        @Nonnull final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
             TaskManager.runTask(whenDone);
             return;

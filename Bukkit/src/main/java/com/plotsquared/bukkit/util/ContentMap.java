@@ -77,7 +77,7 @@ public class ContentMap {
 
     void saveEntitiesOut(Chunk chunk, CuboidRegion region) {
         for (Entity entity : chunk.getEntities()) {
-            Location location = BukkitUtil.getLocation(entity);
+            Location location = BukkitUtil.adapt(entity.getLocation());
             int x = location.getX();
             int z = location.getZ();
             if (BukkitChunkManager.isIn(region, x, z)) {
@@ -99,7 +99,7 @@ public class ContentMap {
     void saveEntitiesIn(Chunk chunk, CuboidRegion region, int offsetX, int offsetZ,
         boolean delete) {
         for (Entity entity : chunk.getEntities()) {
-            Location location = BukkitUtil.getLocation(entity);
+            Location location = BukkitUtil.adapt(entity.getLocation());
             int x = location.getX();
             int z = location.getZ();
             if (!BukkitChunkManager.isIn(region, x, z)) {
