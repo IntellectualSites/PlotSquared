@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Objects;
 
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
@@ -257,15 +258,13 @@ public class ChunkListener implements Listener {
         final Integer currentIndex = TaskManager.index.get();
         PlotSquaredTask task = TaskManager.runTaskRepeat(() -> {
             if (!chunk.isLoaded()) {
-                TaskManager.tasks.get(currentIndex).cancel();
-                TaskManager.tasks.remove(currentIndex);
+                Objects.requireNonNull(TaskManager.removeTask(currentIndex)).cancel();
                 chunk.unload(true);
                 return;
             }
             BlockState[] tiles = chunk.getTileEntities();
             if (tiles.length == 0) {
-                TaskManager.tasks.get(currentIndex).cancel();
-                TaskManager.tasks.remove(currentIndex);
+                Objects.requireNonNull(TaskManager.removeTask(currentIndex)).cancel();
                 chunk.unload(true);
                 return;
             }
@@ -273,8 +272,7 @@ public class ChunkListener implements Listener {
             int i = 0;
             while (System.currentTimeMillis() - start < 250) {
                 if (i >= tiles.length - Settings.Chunk_Processor.MAX_TILES) {
-                    TaskManager.tasks.get(currentIndex).cancel();
-                    TaskManager.tasks.remove(currentIndex);
+                    Objects.requireNonNull(TaskManager.removeTask(currentIndex)).cancel();
                     chunk.unload(true);
                     return;
                 }
@@ -282,7 +280,7 @@ public class ChunkListener implements Listener {
                 i++;
             }
         }, TaskTime.ticks(5L));
-        TaskManager.tasks.put(currentIndex, task);
+        TaskManager.addTask(task, currentIndex);
     }
 
     public boolean processChunk(Chunk chunk, boolean unload) {

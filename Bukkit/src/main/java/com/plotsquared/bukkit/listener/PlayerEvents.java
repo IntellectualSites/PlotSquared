@@ -842,7 +842,7 @@ import java.util.regex.Pattern;
             Player player = event.getPlayer();
             BukkitPlayer pp = BukkitUtil.getPlayer(player);
             // Cancel teleport
-            if (TaskManager.TELEPORT_QUEUE.remove(pp.getName())) {
+            if (TaskManager.removeFromTeleportQueue(pp.getName())) {
                 MainUtil.sendMessage(pp, Captions.TELEPORT_FAILED);
             }
             // Set last location
@@ -904,7 +904,7 @@ import java.util.regex.Pattern;
             Player player = event.getPlayer();
             BukkitPlayer pp = BukkitUtil.getPlayer(player);
             // Cancel teleport
-            if (TaskManager.TELEPORT_QUEUE.remove(pp.getName())) {
+            if (TaskManager.removeFromTeleportQueue(pp.getName())) {
                 MainUtil.sendMessage(pp, Captions.TELEPORT_FAILED);
             }
             // Set last location
@@ -2417,7 +2417,7 @@ import java.util.regex.Pattern;
     }
 
     @EventHandler(priority = EventPriority.MONITOR) public void onLeave(PlayerQuitEvent event) {
-        TaskManager.TELEPORT_QUEUE.remove(event.getPlayer().getName());
+        TaskManager.removeFromTeleportQueue(event.getPlayer().getName());
         BukkitPlayer pp = BukkitUtil.getPlayer(event.getPlayer());
         pp.unregister();
         this.logout(pp.getUUID());

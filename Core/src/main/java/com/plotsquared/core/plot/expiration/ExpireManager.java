@@ -377,7 +377,7 @@ public class ExpireManager {
                             ExpireManager.this.running = 2;
                             runTask(expiredTask);
                         }
-                    }, TaskTime.ticks(86400000));
+                    }, TaskTime.ticks(86400000L));
                 } else {
                     TaskManager.runTaskLaterAsync(task, TaskTime.seconds(10L));
                 }

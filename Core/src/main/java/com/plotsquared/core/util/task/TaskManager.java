@@ -35,6 +35,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -51,11 +53,51 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class TaskManager {
 
-    public static final HashSet<String> TELEPORT_QUEUE = new HashSet<>();
-    public static final HashMap<Integer, PlotSquaredTask> tasks = new HashMap<>();
+    private static final Set<String> teleportQueue = new HashSet<>();
+    private static final Map<Integer, PlotSquaredTask> tasks = new HashMap<>();
+
     public static AtomicInteger index = new AtomicInteger(0);
 
     @Getter @Setter private static TaskManager platformImplementation;
+
+    /**
+     * Add a string to the teleport queue
+     *
+     * @param string String to add
+     */
+    public static void addToTeleportQueue(@Nonnull final String string) {
+        teleportQueue.add(string);
+    }
+
+    /**
+     * Remove a string from the teleport queue
+     *
+     * @param string String to remove
+     * return {@code true} if the value was stored in the map, or {@code false}
+     */
+    public static boolean removeFromTeleportQueue(@Nonnull final String string) {
+        return teleportQueue.remove(string);
+    }
+
+    /**
+     * Add a task to the task map
+     *
+     * @param task Task
+     * @param id   Task ID
+     */
+    public static void addTask(@Nonnull final PlotSquaredTask task, final int id) {
+        tasks.put(id, task);
+    }
+
+    /**
+     * Remove a task from the task map and return the stored value
+     *
+     * @param id Task ID
+     * @return Task if stored, or {@code null}
+     */
+    @Nullable public static PlotSquaredTask removeTask(final int id) {
+        return tasks.get(id);
+    }
 
     /**
      * Run a repeating synchronous task. If using a platform scheduler,
