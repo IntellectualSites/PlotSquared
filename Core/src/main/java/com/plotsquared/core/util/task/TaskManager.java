@@ -25,144 +25,269 @@
  */
 package com.plotsquared.core.util.task;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.util.RuntimeExceptionRunnableVal;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Task manager that handles scheduling of tasks.
+ * Synchronous methods make no guarantee of being scheduled on the
+ * server thread, instead they guarantee that no two synchronous
+ * operations happen at the same time. Implementations of
+ * the task manager might make other guarantees. All asynchronous
+ * operations will happen on another thread, no matter where
+ * they're scheduled from.
+ */
 public abstract class TaskManager {
 
-    public static final HashSet<String> TELEPORT_QUEUE = new HashSet<>();
-    public static final HashMap<Integer, Integer> tasks = new HashMap<>();
+    private static final Set<String> teleportQueue = new HashSet<>();
+    private static final Map<Integer, PlotSquaredTask> tasks = new HashMap<>();
+
     public static AtomicInteger index = new AtomicInteger(0);
 
-    @Getter @Setter private static TaskManager implementation;
+    @Getter @Setter private static TaskManager platformImplementation;
 
-    public static int runTaskRepeat(Runnable runnable, int interval) {
-        if (runnable != null) {
-            if (getImplementation() == null) {
-                throw new IllegalArgumentException("disabled");
-            }
-            return getImplementation().taskRepeat(runnable, interval);
-        }
-        return -1;
+    /**
+     * Add a string to the teleport queue
+     *
+     * @param string String to add
+     */
+    public static void addToTeleportQueue(@Nonnull final String string) {
+        teleportQueue.add(string);
     }
 
-    public static int runTaskRepeatAsync(Runnable runnable, int interval) {
-        if (runnable != null) {
-            if (getImplementation() == null) {
-                throw new IllegalArgumentException("disabled");
-            }
-            return getImplementation().taskRepeatAsync(runnable, interval);
-        }
-        return -1;
+    /**
+     * Remove a string from the teleport queue
+     *
+     * @param string String to remove
+     * return {@code true} if the value was stored in the map, or {@code false}
+     */
+    public static boolean removeFromTeleportQueue(@Nonnull final String string) {
+        return teleportQueue.remove(string);
     }
 
-    public static void runTaskAsync(Runnable runnable) {
+    /**
+     * Add a task to the task map
+     *
+     * @param task Task
+     * @param id   Task ID
+     */
+    public static void addTask(@Nonnull final PlotSquaredTask task, final int id) {
+        tasks.put(id, task);
+    }
+
+    /**
+     * Remove a task from the task map and return the stored value
+     *
+     * @param id Task ID
+     * @return Task if stored, or {@code null}
+     */
+    @Nullable public static PlotSquaredTask removeTask(final int id) {
+        return tasks.remove(id);
+    }
+
+    /**
+     * Run a repeating synchronous task. If using a platform scheduler,
+     * this is guaranteed to run on the server thread
+     *
+     * @param runnable Task to run
+     * @param taskTime Task interval
+     * @return Created task object, can be used to cancel the task
+     */
+    @Nonnull public static PlotSquaredTask runTaskRepeat(@Nullable final Runnable runnable,
+        @Nonnull final TaskTime taskTime) {
         if (runnable != null) {
-            if (getImplementation() == null) {
+            if (getPlatformImplementation() == null) {
+                throw new IllegalArgumentException("disabled");
+            }
+            return getPlatformImplementation().taskRepeat(runnable, taskTime);
+        }
+        return PlotSquaredTask.nullTask();
+    }
+
+    /**
+     * Run an asynchronous task. This will never run on the server thread
+     *
+     * @param runnable Task to run
+     */
+    public static void runTaskAsync(@Nullable final Runnable runnable) {
+        if (runnable != null) {
+            if (getPlatformImplementation() == null) {
                 runnable.run();
                 return;
             }
-            getImplementation().taskAsync(runnable);
-        }
-    }
-
-    public static void runTask(Runnable runnable) {
-        if (runnable != null) {
-            if (getImplementation() == null) {
-                runnable.run();
-                return;
-            }
-            getImplementation().task(runnable);
+            getPlatformImplementation().taskAsync(runnable);
         }
     }
 
     /**
-     * Run task later.
+     * Run a synchronous task. If using a platform scheduler, this is guaranteed
+     * to run on the server thread
      *
-     * @param runnable The task
-     * @param delay    The delay in ticks
+     * @param runnable Task to run
      */
-    public static void runTaskLater(Runnable runnable, int delay) {
+    public static void runTask(@Nullable final Runnable runnable) {
         if (runnable != null) {
-            if (getImplementation() == null) {
+            if (getPlatformImplementation() == null) {
                 runnable.run();
                 return;
             }
-            getImplementation().taskLater(runnable, delay);
-        }
-    }
-
-    public static void runTaskLaterAsync(Runnable runnable, int delay) {
-        if (runnable != null) {
-            if (getImplementation() == null) {
-                runnable.run();
-                return;
-            }
-            getImplementation().taskLaterAsync(runnable, delay);
+            getPlatformImplementation().task(runnable);
         }
     }
 
     /**
-     * Break up a series of tasks so that they can run without lagging the server.
+     * Run a synchronous task after a given delay.
+     * If using a platform scheduler, this is guaranteed to run on the server thread
      *
-     * @param objects
-     * @param task
-     * @param whenDone
+     * @param runnable Task to run
+     * @param taskTime Task delay
      */
-    public static <T> void objectTask(Collection<T> objects, final RunnableVal<T> task,
-        final Runnable whenDone) {
+    public static void runTaskLater(@Nullable final Runnable runnable,
+        @Nonnull final TaskTime taskTime) {
+        if (runnable != null) {
+            if (getPlatformImplementation() == null) {
+                runnable.run();
+                return;
+            }
+            getPlatformImplementation().taskLater(runnable, taskTime);
+        }
+    }
+
+    /**
+     * Run an asynchronous task after a given delay. This will never
+     * run on the server thread
+     *
+     * @param runnable Task to run
+     * @param taskTime Task delay
+     */
+    public static void runTaskLaterAsync(@Nullable final Runnable runnable,
+        @Nonnull final TaskTime taskTime) {
+        if (runnable != null) {
+            if (getPlatformImplementation() == null) {
+                runnable.run();
+                return;
+            }
+            getPlatformImplementation().taskLaterAsync(runnable, taskTime);
+        }
+    }
+
+    /**
+     * Break up a series of tasks so that they can run without lagging the server
+     *
+     * @param objects Objects to perform the task on
+     * @param task    Task to perform
+     * @param <T>     Object type
+     * @return Future that completes when the tasks are done
+     */
+    public <T> CompletableFuture<Void> objectTask(@Nonnull final Collection<T> objects,
+        @Nonnull final RunnableVal<T> task) {
         final Iterator<T> iterator = objects.iterator();
-        TaskManager.runTask(new ObjectTaskRunnable<>(iterator, task, whenDone));
+        final ObjectTaskRunnable<T> taskRunnable = new ObjectTaskRunnable<>(iterator, task);
+        TaskManager.runTask(taskRunnable);
+        return taskRunnable.getCompletionFuture();
     }
 
-    public <T> T sync(final RunnableVal<T> function) {
+    /**
+     * Make a synchronous method call and return the result
+     *
+     * @param function Method to call
+     * @param <T>      Return type
+     * @return Method result
+     * @throws Exception If the call fails
+     */
+    public <T> T sync(@Nonnull final Callable<T> function) throws Exception {
         return sync(function, Integer.MAX_VALUE);
     }
 
-    public <T> T sync(final RunnableVal<T> function, int timeout) {
-        if (PlotSquared.get().isMainThread(Thread.currentThread())) {
-            function.run();
-            return function.value;
-        }
-        final AtomicBoolean running = new AtomicBoolean(true);
-        final RuntimeExceptionRunnableVal<T> run =
-            new RuntimeExceptionRunnableVal<>(function, running);
-        TaskManager.getImplementation().task(run);
-        try {
-            synchronized (function) {
-                while (running.get()) {
-                    function.wait(timeout);
-                }
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (run.value != null) {
-            throw run.value;
-        }
-        return function.value;
-    }
+    /**
+     * Make a synchronous method call and return the result
+     *
+     * @param function Method to call
+     * @param timeout  Timeout (ms)
+     * @param <T>      Return type
+     * @return Method result
+     * @throws Exception If the call fails
+     */
+    public abstract <T> T sync(@Nonnull final Callable<T> function, final int timeout)
+        throws Exception;
 
-    public abstract int taskRepeat(Runnable runnable, int interval);
+    /**
+     * Call a method synchronously and return a future with
+     * the result of the result
+     *
+     * @param method Method to be ran synchronously
+     * @param <T>    Return type
+     * @return Future completing with the result
+     */
+    public abstract <T> Future<T> callMethodSync(@Nonnegative final Callable<T> method);
 
-    public abstract int taskRepeatAsync(Runnable runnable, int interval);
+    /**
+     * Run a repeating synchronous task. If using a platform scheduler,
+     * this is guaranteed to run on the server thread
+     *
+     * @param runnable Task to run
+     * @param taskTime Task interval
+     * @return Created task object, can be used to cancel the task
+     */
+    public abstract PlotSquaredTask taskRepeat(@Nonnull Runnable runnable,
+        @Nonnull TaskTime taskTime);
 
-    public abstract void taskAsync(Runnable runnable);
+    /**
+     * Run a repeating asynchronous task. This will never run on the
+     * server thread
+     *
+     * @param runnable Task to run
+     * @param taskTime Task interval
+     * @return Created task object, can be used to cancel the task
+     */
+    public abstract PlotSquaredTask taskRepeatAsync(@Nonnull Runnable runnable,
+        @Nonnull TaskTime taskTime);
 
-    public abstract void task(Runnable runnable);
+    /**
+     * Run an asynchronous task. This will never run on the server thread
+     *
+     * @param runnable Task to run
+     */
+    public abstract void taskAsync(@Nonnull Runnable runnable);
 
-    public abstract void taskLater(Runnable runnable, int delay);
+    /**
+     * Run a synchronous task. If using a platform scheduler, this is guaranteed
+     * to run on the server thread
+     *
+     * @param runnable Task to run
+     */
+    public abstract void task(@Nonnull Runnable runnable);
 
-    public abstract void taskLaterAsync(Runnable runnable, int delay);
+    /**
+     * Run a synchronous task after a given delay.
+     * If using a platform scheduler, this is guaranteed to run on the server thread
+     *
+     * @param runnable Task to run
+     * @param taskTime Task delay
+     */
+    public abstract void taskLater(@Nonnull Runnable runnable, @Nonnull TaskTime taskTime);
 
-    public abstract void cancelTask(int task);
+    /**
+     * Run an asynchronous task after a given delay. This will never
+     * run on the server thread
+     *
+     * @param runnable Task to run
+     * @param taskTime Task delay
+     */
+    public abstract void taskLaterAsync(@Nonnull Runnable runnable, @Nonnull TaskTime taskTime);
+
 }

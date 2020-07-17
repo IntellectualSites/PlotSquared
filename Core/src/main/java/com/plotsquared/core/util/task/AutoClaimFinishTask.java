@@ -36,10 +36,12 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EventDispatcher;
 import lombok.RequiredArgsConstructor;
 
+import java.util.concurrent.Callable;
+
 import static com.plotsquared.core.util.MainUtil.sendMessage;
 
 @RequiredArgsConstructor
-public final class AutoClaimFinishTask extends RunnableVal<Object> {
+public final class AutoClaimFinishTask implements Callable<Boolean> {
 
     private final PlotPlayer player;
     private final Plot plot;
@@ -47,11 +49,11 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
     private final String schematic;
     private final EventDispatcher eventDispatcher;
 
-    @Override public void run(Object value) {
+    @Override public Boolean call() {
         player.deleteMeta(Auto.class.getName());
         if (plot == null) {
             sendMessage(player, Captions.NO_FREE_PLOTS);
-            return;
+            return false;
         }
         plot.claim(player, true, schematic, false);
         if (area.isAutoMerge()) {
@@ -62,5 +64,7 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
                 plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
             }
         }
+        return true;
     }
+
 }

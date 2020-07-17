@@ -44,11 +44,13 @@ import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.Placeholders;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.util.BukkitChatManager;
-import com.plotsquared.bukkit.util.BukkitTaskManager;
+import com.plotsquared.bukkit.util.task.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
+import com.plotsquared.bukkit.util.task.PaperTimeConverter;
+import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
 import com.plotsquared.bukkit.uuid.BungeePermsUUIDService;
 import com.plotsquared.bukkit.uuid.EssentialsUUIDService;
 import com.plotsquared.bukkit.uuid.LuckPermsUUIDService;
@@ -104,6 +106,7 @@ import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.plotsquared.core.uuid.CacheUUIDService;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
@@ -216,9 +219,16 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override public void onEnable() {
         this.pluginName = getDescription().getName();
 
+        final TaskTime.TimeConverter timeConverter;
+        if (PaperLib.isPaper()) {
+            timeConverter = new PaperTimeConverter();
+        } else {
+            timeConverter = new SpigotTimeConverter();
+        }
+
         // Stuff that needs to be created before the PlotSquared instance
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
-        TaskManager.setImplementation(new BukkitTaskManager(this));
+        TaskManager.setPlatformImplementation(new BukkitTaskManager(this, timeConverter));
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
 
@@ -380,7 +390,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         this.setGenerator(world);
                     }
                 }
-            }, 1);
+            }, TaskTime.ticks(1L));
         }
 
         // Services are accessed in order
@@ -513,7 +523,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         this.startMetrics();
         if (Settings.Enabled_Components.WORLDS) {
-            TaskManager.getImplementation().taskRepeat(this::unload, 20);
+            TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(1L));
             try {
                 singleWorldListener = getInjector().getInstance(SingleWorldListener.class);
             } catch (Exception e) {
@@ -978,7 +988,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-        }), 20);
+        }), TaskTime.seconds(1L));
     }
 
     @Override @Nullable

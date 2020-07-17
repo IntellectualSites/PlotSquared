@@ -27,7 +27,6 @@ package com.plotsquared.core.command;
 
 import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -44,29 +43,24 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@CommandDeclaration(command = "claim",
-    aliases = "c",
-    description = "Claim the current plot you're standing on",
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.PLAYER,
-    permission = "plots.claim",
-    usage = "/plot claim")
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@CommandDeclaration(command = "claim", aliases = "c", description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING, requiredType = RequiredType.PLAYER, permission = "plots.claim", usage = "/plot claim")
 public class Claim extends SubCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + Claim.class.getSimpleName());
+    private static final Logger logger =
+        LoggerFactory.getLogger("P2/" + Claim.class.getSimpleName());
 
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
 
     @Inject public Claim(@Nonnull final EventDispatcher eventDispatcher,
-                         @Nullable final EconHandler econHandler) {
+        @Nullable final EconHandler econHandler) {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
@@ -146,24 +140,29 @@ public class Claim extends SubCommand {
         }
         plot.setOwnerAbs(player.getUUID());
         final String finalSchematic = schematic;
-        DBFunc.createPlotSafe(plot, () -> TaskManager.getImplementation().sync(new RunnableVal<Object>() {
-            @Override public void run(Object value) {
-                if (!plot.claim(player, true, finalSchematic, false)) {
-                    logger.info(Captions.PREFIX.getTranslated() + String
-                        .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
-                    sendMessage(player, Captions.PLOT_NOT_CLAIMED);
-                    plot.setOwnerAbs(null);
-                } else if (area.isAutoMerge()) {
-                    PlotMergeEvent event = Claim.this.eventDispatcher
-                        .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
-                    if (event.getEventResult() == Result.DENY) {
-                        sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
-                    } else {
-                        plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
+        DBFunc.createPlotSafe(plot, () -> {
+            try {
+                TaskManager.getPlatformImplementation().sync(() -> {
+                    if (!plot.claim(player, true, finalSchematic, false)) {
+                        logger.info(Captions.PREFIX.getTranslated() + String
+                            .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
+                        sendMessage(player, Captions.PLOT_NOT_CLAIMED);
+                        plot.setOwnerAbs(null);
+                    } else if (area.isAutoMerge()) {
+                        PlotMergeEvent mergeEvent = Claim.this.eventDispatcher
+                            .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
+                        if (mergeEvent.getEventResult() == Result.DENY) {
+                            sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
+                        } else {
+                            plot.autoMerge(mergeEvent.getDir(), mergeEvent.getMax(), player.getUUID(), true);
+                        }
                     }
-                }
+                    return null;
+                });
+            } catch (final Exception e) {
+                e.printStackTrace();
             }
-        }), () -> {
+        }, () -> {
             logger.info(Captions.PREFIX.getTranslated() + String
                 .format("Failed to add plot %s to the database",
                     plot.getId().toCommaSeparatedString()));

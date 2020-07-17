@@ -33,6 +33,7 @@ import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -94,11 +95,12 @@ public abstract class RegionManager {
                     }
                 }
             }
-            TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
+            TaskManager.getPlatformImplementation().objectTask(chunks, new RunnableVal<BlockVector2>() {
                 @Override public void run(BlockVector2 value) {
                     chunkManager.loadChunk(world, value, false).thenRun(() -> task.run(value));
                 }
-            }, whenDone);
+            }).thenAccept(ignore ->
+                TaskManager.getPlatformImplementation().taskLater(whenDone, TaskTime.ticks(1L)));
         });
     }
 

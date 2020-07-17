@@ -23,33 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.command;
+package com.plotsquared.bukkit.util.task;
 
-import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.task.TaskTime;
+import com.plotsquared.core.util.task.PlotSquaredTask;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class CmdConfirm {
+import javax.annotation.Nonnull;
 
-    public static CmdInstance getPending(PlotPlayer<?> player) {
-        return player.getMeta("cmdConfirm");
+/**
+ * Bukkit implementation of {@link PlotSquaredTask}
+ */
+@RequiredArgsConstructor
+public final class BukkitPlotSquaredTask extends BukkitRunnable implements PlotSquaredTask {
+
+    @Nonnull private final Runnable runnable;
+
+    @Override public void runTask() {
+        this.runnable.run();
     }
 
-    public static void removePending(PlotPlayer<?> player) {
-        player.deleteMeta("cmdConfirm");
-    }
-
-    public static void addPending(final PlotPlayer<?> player, String commandStr,
-        final Runnable runnable) {
-        removePending(player);
-        if (commandStr != null) {
-            MainUtil.sendMessage(player, Captions.REQUIRES_CONFIRM, commandStr);
-        }
-        TaskManager.runTaskLater(() -> {
-            CmdInstance cmd = new CmdInstance(runnable);
-            player.setMeta("cmdConfirm", cmd);
-        }, TaskTime.ticks(1L));
-    }
 }

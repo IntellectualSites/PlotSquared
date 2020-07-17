@@ -23,33 +23,68 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.command;
+package com.plotsquared.core.util.task;
 
-import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.task.TaskTime;
+/**
+ * A task that can be run and cancelled (if repeating)
+ */
+public interface PlotSquaredTask extends Runnable {
 
-public class CmdConfirm {
-
-    public static CmdInstance getPending(PlotPlayer<?> player) {
-        return player.getMeta("cmdConfirm");
-    }
-
-    public static void removePending(PlotPlayer<?> player) {
-        player.deleteMeta("cmdConfirm");
-    }
-
-    public static void addPending(final PlotPlayer<?> player, String commandStr,
-        final Runnable runnable) {
-        removePending(player);
-        if (commandStr != null) {
-            MainUtil.sendMessage(player, Captions.REQUIRES_CONFIRM, commandStr);
+    /**
+     * Run the task. Don't override this, instead
+     * implement {@link #runTask()}
+     */
+    @Override default void run() {
+        if (isCancelled()) {
+            return;
         }
-        TaskManager.runTaskLater(() -> {
-            CmdInstance cmd = new CmdInstance(runnable);
-            player.setMeta("cmdConfirm", cmd);
-        }, TaskTime.ticks(1L));
+        this.runTask();
     }
+
+    /**
+     * Run the task
+     */
+    void runTask();
+
+    /**
+     * Check if the task has been cancelled
+     *
+     * @return {@code true} if the tasks is cancelled,
+     *         {@code false} if not
+     */
+    boolean isCancelled();
+
+    /**
+     * Cancel the task
+     */
+    void cancel();
+
+    /**
+     * Get a new {@link NullTask}
+     *
+     * @return Null task instance
+     */
+    static NullTask nullTask() {
+        return new NullTask();
+    }
+
+
+    /**
+     * Task that does nothing and is always cancelled
+     */
+    class NullTask implements PlotSquaredTask {
+
+        @Override public void runTask() {
+        }
+
+        @Override public boolean isCancelled() {
+            return true;
+        }
+
+        @Override public void cancel() {
+        }
+
+    }
+
 }
+

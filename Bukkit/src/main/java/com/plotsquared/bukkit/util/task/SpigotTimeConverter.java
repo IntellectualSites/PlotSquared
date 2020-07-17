@@ -23,33 +23,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.command;
+package com.plotsquared.bukkit.util.task;
 
-import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 
-public class CmdConfirm {
+import javax.annotation.Nonnegative;
 
-    public static CmdInstance getPending(PlotPlayer<?> player) {
-        return player.getMeta("cmdConfirm");
+/**
+ * Naive time converter that assumes that all ticks are 50 milliseconds
+ */
+public final class SpigotTimeConverter implements TaskTime.TimeConverter {
+
+    private static final long MS_PER_TICKS = 50L;
+
+    @Override public long msToTicks(@Nonnegative final long ms) {
+        return Math.max(1L, ms / MS_PER_TICKS);
     }
 
-    public static void removePending(PlotPlayer<?> player) {
-        player.deleteMeta("cmdConfirm");
+    @Override public long ticksToMs(@Nonnegative final long ticks) {
+        return Math.max(1L, ticks * MS_PER_TICKS);
     }
 
-    public static void addPending(final PlotPlayer<?> player, String commandStr,
-        final Runnable runnable) {
-        removePending(player);
-        if (commandStr != null) {
-            MainUtil.sendMessage(player, Captions.REQUIRES_CONFIRM, commandStr);
-        }
-        TaskManager.runTaskLater(() -> {
-            CmdInstance cmd = new CmdInstance(runnable);
-            player.setMeta("cmdConfirm", cmd);
-        }, TaskTime.ticks(1L));
-    }
 }

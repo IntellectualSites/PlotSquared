@@ -35,6 +35,7 @@ import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.jnbt.ByteArrayTag;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.IntArrayTag;
@@ -662,7 +663,7 @@ public abstract class SchematicHandler {
                                 zTask.run();
                             }
                             if (yiter.hasNext()) {
-                                TaskManager.runTaskLater(this, 1);
+                                TaskManager.runTaskLater(this, TaskTime.ticks(1L));
                             } else {
                                 regionTask.run();
                             }

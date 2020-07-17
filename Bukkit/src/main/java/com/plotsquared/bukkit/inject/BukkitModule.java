@@ -26,6 +26,8 @@
 package com.plotsquared.bukkit.inject;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.util.Providers;
 import com.plotsquared.bukkit.BukkitPlatform;
@@ -39,6 +41,8 @@ import com.plotsquared.bukkit.util.BukkitPermHandler;
 import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.task.PaperTimeConverter;
+import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.HybridGen;
