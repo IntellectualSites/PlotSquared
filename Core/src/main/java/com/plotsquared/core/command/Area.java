@@ -244,9 +244,8 @@ public class Area extends SubCommand {
                         PlotSquared.get().loadWorld(world, null);
                         player.sendMessage(TranslatableCaption.of("single.single_area_created"));
                     } else {
-                        MainUtil.sendMessage(player,
-                            "An error occurred while creating the world: " + hybridPlotWorld
-                                .getWorldName());
+                        player.sendMessage(TranslatableCaption.of("errors.error_create",
+                                           Template.of("world", hybridPlotWorld.getWorldName())));
                     }
                 };
                 singleRun.run();

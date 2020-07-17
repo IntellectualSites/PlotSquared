@@ -25,8 +25,7 @@
  */
 package com.plotsquared.core.util.task;
 
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import com.google.common.base.Objects;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -34,7 +33,6 @@ import javax.annotation.Nonnull;
 /**
  * Task timings
  */
-@EqualsAndHashCode @ToString @SuppressWarnings("unused")
 public final class TaskTime {
 
     private final long time;
@@ -93,7 +91,22 @@ public final class TaskTime {
         return this.unit;
     }
 
-    
+    @Override public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final TaskTime taskTime = (TaskTime) o;
+        return getTime() == taskTime.getTime() && getUnit() == taskTime.getUnit();
+    }
+
+    @Override public int hashCode() {
+        return Objects.hashCode(getTime(), getUnit());
+    }
+
+
     public enum TaskUnit {
         TICKS, MILLISECONDS
     }

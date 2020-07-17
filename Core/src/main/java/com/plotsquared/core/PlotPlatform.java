@@ -42,7 +42,6 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.util.logger.ILogger;
 import net.kyori.adventure.audience.Audience;
 
 import javax.annotation.Nonnull;
@@ -56,7 +55,7 @@ import java.util.Map;
  *
  * @param <P> Player type
  */
-public interface PlotPlatform<P> extends ILogger {
+public interface PlotPlatform<P> {
 
     /**
      * Logs a message to console.

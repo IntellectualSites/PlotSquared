@@ -65,7 +65,6 @@ import com.plotsquared.core.util.LegacyConverter;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
-import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
@@ -143,8 +142,6 @@ public class PlotSquared {
     private YamlConfiguration config;
     // Localization
     private CaptionMap captionMap;
-    // Implementation logger
-    private ILogger logger;
     // Platform / Version / Update URL
     private PlotVersion version;
     // Files and configuration
@@ -1475,10 +1472,6 @@ public class PlotSquared {
         return this.captionMap;
     }
 
-    public ILogger getLogger() {
-        return this.logger;
-    }
-
     public File getJarFile() {
         return this.jarFile;
     }
@@ -1489,10 +1482,6 @@ public class PlotSquared {
 
     public PlotListener getPlotListener() {
         return this.plotListener;
-    }
-
-    public void setLogger(ILogger logger) {
-        this.logger = logger;
     }
 
     public enum SortType {
