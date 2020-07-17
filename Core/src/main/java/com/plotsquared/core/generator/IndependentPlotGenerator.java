@@ -29,7 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.SetupObject;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 
 /**
@@ -52,9 +52,9 @@ public abstract class IndependentPlotGenerator {
      * @param result
      * @param settings
      */
-    public abstract void generateChunk(ScopedLocalBlockQueue result, PlotArea settings);
+    public abstract void generateChunk(ScopedQueueCoordinator result, PlotArea settings);
 
-    public boolean populateChunk(ScopedLocalBlockQueue result, PlotArea setting) {
+    public boolean populateChunk(ScopedQueueCoordinator result, PlotArea setting) {
         return false;
     }
 
@@ -75,8 +75,7 @@ public abstract class IndependentPlotGenerator {
      *
      * @param setup
      */
-    @Deprecated
-    public void processSetup(SetupObject setup) {
+    @Deprecated public void processSetup(SetupObject setup) {
     }
 
     /**
@@ -85,7 +84,8 @@ public abstract class IndependentPlotGenerator {
      *
      * @param builder the area builder to modify
      */
-    public void processAreaSetup(PlotAreaBuilder builder) { }
+    public void processAreaSetup(PlotAreaBuilder builder) {
+    }
 
     /**
      * It is preferred for the PlotArea object to do most of the initialization necessary.

@@ -28,7 +28,7 @@ package com.plotsquared.bukkit.util;
 import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.listener.WEExtent;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
@@ -54,7 +54,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
-@Singleton public class BukkitChunkManager extends ChunkManager {
+@Singleton
+public class BukkitChunkManager extends ChunkManager {
 
     public static boolean isIn(CuboidRegion region, int x, int z) {
         return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX()
@@ -79,8 +80,10 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
         BukkitWorld bukkitWorld1 = new BukkitWorld(world1);
         BukkitWorld bukkitWorld2 = new BukkitWorld(world2);
 
-        LocalBlockQueue queue1 = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(worldName1, false);
-        LocalBlockQueue queue2 = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(worldName2, false);
+        QueueCoordinator queue1 =
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(worldName1, false);
+        QueueCoordinator queue2 =
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(worldName2, false);
 
         for (int x = Math.max(r1.getMinimumPoint().getX(), sx);
              x <= Math.min(r1.getMaximumPoint().getX(), sx + 15); x++) {

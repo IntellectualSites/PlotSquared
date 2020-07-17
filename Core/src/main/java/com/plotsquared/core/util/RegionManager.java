@@ -30,7 +30,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -39,8 +39,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
@@ -48,20 +48,20 @@ import java.util.Set;
 
 public abstract class RegionManager {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + RegionManager.class.getSimpleName());
+    private static final Logger logger =
+        LoggerFactory.getLogger("P2/" + RegionManager.class.getSimpleName());
 
     public static RegionManager manager = null;
+    private final ChunkManager chunkManager;
+
+    public RegionManager(@Nonnull final ChunkManager chunkManager) {
+        this.chunkManager = chunkManager;
+    }
 
     public static BlockVector2 getRegion(Location location) {
         int x = location.getX() >> 9;
         int z = location.getZ() >> 9;
         return BlockVector2.at(x, z);
-    }
-
-    private final ChunkManager chunkManager;
-
-    public RegionManager(@Nonnull final ChunkManager chunkManager) {
-        this.chunkManager = chunkManager;
     }
 
     public void largeRegionTask(final String world, final CuboidRegion region,
@@ -96,8 +96,7 @@ public abstract class RegionManager {
             }
             TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
                 @Override public void run(BlockVector2 value) {
-                    chunkManager.loadChunk(world, value, false)
-                        .thenRun(() -> task.run(value));
+                    chunkManager.loadChunk(world, value, false).thenRun(() -> task.run(value));
                 }
             }, whenDone);
         });
@@ -164,7 +163,7 @@ public abstract class RegionManager {
 
     public boolean setCuboids(final PlotArea area, final Set<CuboidRegion> regions,
         final Pattern blocks, int minY, int maxY) {
-        LocalBlockQueue queue = area.getQueue(false);
+        QueueCoordinator queue = area.getQueue(false);
         for (CuboidRegion region : regions) {
             Location pos1 = Location.at(area.getWorldName(), region.getMinimumPoint().getX(), minY,
                 region.getMinimumPoint().getZ());

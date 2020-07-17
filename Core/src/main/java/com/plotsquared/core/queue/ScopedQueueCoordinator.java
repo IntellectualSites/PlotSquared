@@ -64,10 +64,17 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
         return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBiome(x + minX, z + minZ, biome);
     }
 
+    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
+            .setBiome(x + minX, y + minY, z + minZ, biome);
+    }
+
     public void fillBiome(BiomeType biome) {
-        for (int x = 0; x <= dx; x++) {
-            for (int z = 0; z < dz; z++) {
-                setBiome(x, z, biome);
+        for (int y = 0; y <= dy; y++) {
+            for (int x = 0; x <= dx; x++) {
+                for (int z = 0; z < dz; z++) {
+                    setBiome(x, y, z, biome);
+                }
             }
         }
     }

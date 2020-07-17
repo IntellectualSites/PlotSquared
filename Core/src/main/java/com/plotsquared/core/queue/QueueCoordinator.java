@@ -52,6 +52,13 @@ public abstract class QueueCoordinator {
         PlotSquared.platform().getInjector().injectMembers(this);
     }
 
+    public ScopedQueueCoordinator getForChunk(int x, int z) {
+        int bx = x << 4;
+        int bz = z << 4;
+        return new ScopedQueueCoordinator(this, Location.at(getWorld().getName(), bx, 0, bz),
+            Location.at(getWorld().getName(), bx + 15, 255, bz + 255));
+    }
+
     public abstract int size();
 
     public abstract void setModified(long modified);
@@ -78,7 +85,9 @@ public abstract class QueueCoordinator {
 
     public abstract BlockState getBlock(int x, int y, int z);
 
-    public abstract boolean setBiome(int x, int z, BiomeType biome);
+    @Deprecated public abstract boolean setBiome(int x, int z, BiomeType biome);
+
+    public abstract boolean setBiome(int x, int y, int z, BiomeType biome);
 
     public abstract boolean isSettingBiomes();
 
@@ -91,6 +100,8 @@ public abstract class QueueCoordinator {
     public boolean enqueue() {
         return blockQueue.enqueue(this);
     }
+
+    public abstract void setCompleteTask(Runnable whenDone);
 
     public void setCuboid(Location pos1, Location pos2, BlockState block) {
         int yMin = Math.min(pos1.getY(), pos2.getY());

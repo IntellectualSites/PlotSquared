@@ -35,11 +35,10 @@ import com.sk89q.worldedit.world.block.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 
 public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
 
-    public final BiomeType[] biomeGrid;
+    public final BiomeType[][][] biomeResult;
     public final BlockState[][][] result;
     private final int width;
     private final int length;
@@ -51,7 +50,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         this.width = top.getX() - bot.getX() + 1;
         this.length = top.getZ() - bot.getZ() + 1;
         this.result = new BlockState[256][][];
-        this.biomeGrid = biomes ? new BiomeType[width * length] : null;
+        this.biomeResult = biomes ? new BiomeType[256][][] : null;
         this.bot = bot;
         this.top = top;
     }
@@ -60,16 +59,19 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         return result;
     }
 
-    @Override public void fillBiome(BiomeType biomeType) {
-        if (biomeGrid == null) {
-            return;
+    @Override public boolean setBiome(int x, int z, BiomeType biomeType) {
+        if (this.biomeResult != null) {
+            for (int y = 0; y < 256; y++) {
+                this.storeCacheBiome(x, y, z, biomeType);
+            }
+            return true;
         }
-        Arrays.fill(biomeGrid, biomeType);
+        return false;
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biomeType) {
-        if (this.biomeGrid != null) {
-            biomeGrid[(z * width) + x] = biomeType;
+    @Override public boolean setBiome(int x, int y, int z, BiomeType biomeType) {
+        if (this.biomeResult != null) {
+            this.storeCacheBiome(x, y, z, biomeType);
             return true;
         }
         return false;
@@ -93,6 +95,18 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         BlockState[] resultYZ = resultY[z];
         if (resultYZ == null) {
             resultY[z] = resultYZ = new BlockState[width];
+        }
+        resultYZ[x] = id;
+    }
+
+    private void storeCacheBiome(final int x, final int y, final int z, final BiomeType id) {
+        BiomeType[][] resultY = biomeResult[y];
+        if (resultY == null) {
+            biomeResult[y] = resultY = new BiomeType[length][];
+        }
+        BiomeType[] resultYZ = resultY[z];
+        if (resultYZ == null) {
+            resultY[z] = resultYZ = new BiomeType[width];
         }
         resultYZ[x] = id;
     }

@@ -30,7 +30,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.util.Providers;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
-import com.plotsquared.bukkit.queue.BukkitLocalQueue;
+import com.plotsquared.bukkit.queue.BukkitQueueCoordinator;
 import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
 import com.plotsquared.bukkit.util.BukkitEconHandler;
@@ -66,9 +66,11 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import javax.annotation.Nonnull;
 
-@RequiredArgsConstructor public class BukkitModule extends AbstractModule {
+@RequiredArgsConstructor
+public class BukkitModule extends AbstractModule {
 
     private final BukkitPlatform bukkitPlatform;
 
@@ -76,16 +78,19 @@ import javax.annotation.Nonnull;
         bind(PlayerManager.class).to(BukkitPlayerManager.class);
         bind(JavaPlugin.class).toInstance(bukkitPlatform);
         bind(PlotPlatform.class).toInstance(bukkitPlatform);
-        bind(IndependentPlotGenerator.class).annotatedWith(DefaultGenerator.class).to(HybridGen.class);
+        bind(IndependentPlotGenerator.class).annotatedWith(DefaultGenerator.class)
+            .to(HybridGen.class);
         // Console actor
         @Nonnull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-        WorldEditPlugin wePlugin = ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
-        bind(Actor.class).annotatedWith(ConsoleActor.class).toInstance(wePlugin.wrapCommandSender(console));
+        WorldEditPlugin wePlugin =
+            ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
+        bind(Actor.class).annotatedWith(ConsoleActor.class)
+            .toInstance(wePlugin.wrapCommandSender(console));
         bind(InventoryUtil.class).to(BukkitInventoryUtil.class);
         bind(SetupUtils.class).to(BukkitSetupUtils.class);
         bind(WorldUtil.class).to(BukkitUtil.class);
         bind(GlobalBlockQueue.class).toInstance(new GlobalBlockQueue(
-            QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class), 1, Settings.QUEUE.TARGET_TIME));
+            QueueProvider.of(BukkitQueueCoordinator.class, BukkitQueueCoordinator.class)));
         bind(ChunkManager.class).to(BukkitChunkManager.class);
         bind(RegionManager.class).to(BukkitRegionManager.class);
         bind(SchematicHandler.class).to(BukkitSchematicHandler.class);
@@ -108,7 +113,8 @@ import javax.annotation.Nonnull;
                 bind(PermHandler.class).toProvider(Providers.of(null));
             }
             try {
-                final BukkitEconHandler bukkitEconHandler = new BukkitEconHandler(bukkitPermHandler);
+                final BukkitEconHandler bukkitEconHandler =
+                    new BukkitEconHandler(bukkitPermHandler);
                 bind(EconHandler.class).toInstance(bukkitEconHandler);
             } catch (final Exception ignored) {
                 bind(EconHandler.class).toProvider(Providers.of(null));

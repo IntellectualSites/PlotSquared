@@ -31,15 +31,10 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 
 public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordinator {
-
-    private static final Logger logger = LoggerFactory
-        .getLogger("P2/" + LocationOffsetDelegateQueueCoordinator.class.getSimpleName());
 
     private final boolean[][] canPlace;
     private final int blockX;
@@ -76,8 +71,12 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
         return this.setBlock(x, y, z, pattern.apply(blockVector3));
     }
 
-    @Override public boolean setBiome(int x, int y, BiomeType biome) {
-        return super.setBiome(x, y, biome);
+    @Override public boolean setBiome(int x, int z, BiomeType biome) {
+        return super.setBiome(x, z, biome);
+    }
+
+    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
+        return super.setBiome(x, y, z, biome);
     }
 
     @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {

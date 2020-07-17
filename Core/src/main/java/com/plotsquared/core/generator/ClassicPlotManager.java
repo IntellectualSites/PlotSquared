@@ -33,7 +33,7 @@ import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
@@ -136,7 +136,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             return false;
         }
         Location[] corners = plot.getCorners();
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
 
         int x = MathMan.average(corners[0].getX(), corners[1].getX());
         int z = MathMan.average(corners[0].getZ(), corners[1].getZ());
@@ -157,7 +157,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         Location bottom = plot.getBottomAbs();
         Location top = plot.getExtendedTopAbs();
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
         int maxY = classicPlotWorld.getPlotManager().getWorldHeight();
         if (!plot.getMerged(Direction.NORTH)) {
             int z = bottom.getZ();
@@ -221,7 +221,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             .subtract(plot.getMerged(Direction.WEST) ? 0 : 1, 0,
                 plot.getMerged(Direction.NORTH) ? 0 : 1);
         Location top = plot.getExtendedTopAbs().add(1, 0, 1);
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
         if (!plot.getMerged(Direction.NORTH)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
@@ -274,7 +274,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             .subtract(plot.getMerged(Direction.WEST) ? 0 : 1, 0,
                 plot.getMerged(Direction.NORTH) ? 0 : 1);
         Location top = plot.getExtendedTopAbs().add(1, 0, 1);
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
         int y = classicPlotWorld.WALL_HEIGHT + 1;
         if (!plot.getMerged(Direction.NORTH)) {
             int z = bot.getZ();
@@ -315,7 +315,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int ex = sx + classicPlotWorld.ROAD_WIDTH - 1;
         int sz = pos1.getZ() - 2;
         int ez = pos2.getZ() + 2;
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
         int maxY = getWorldHeight();
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx,
                 Math.min(classicPlotWorld.WALL_HEIGHT, classicPlotWorld.ROAD_HEIGHT) + 1, sz + 1),
@@ -353,7 +353,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int ez = sz + classicPlotWorld.ROAD_WIDTH - 1;
         int sx = pos1.getX() - 2;
         int ex = pos2.getX() + 2;
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1,
                 Math.min(classicPlotWorld.WALL_HEIGHT, classicPlotWorld.ROAD_HEIGHT) + 1, sz),
             Location.at(classicPlotWorld.getWorldName(), ex - 1,
@@ -390,7 +390,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int ex = sx + classicPlotWorld.ROAD_WIDTH - 1;
         int sz = pos2.getZ() + 1;
         int ez = sz + classicPlotWorld.ROAD_WIDTH - 1;
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
         queue.setCuboid(
             Location.at(classicPlotWorld.getWorldName(), sx + 1, classicPlotWorld.ROAD_HEIGHT + 1,
                 sz + 1), Location.at(classicPlotWorld.getWorldName(), ex - 1,
@@ -412,7 +412,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int ex = sx + classicPlotWorld.ROAD_WIDTH - 1;
         int sz = pos1.getZ() - 1;
         int ez = pos2.getZ() + 1;
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx,
                 Math.min(classicPlotWorld.PLOT_HEIGHT, classicPlotWorld.ROAD_HEIGHT) + 1, sz),
             Location.at(classicPlotWorld.getWorldName(), ex,
@@ -435,7 +435,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int ez = sz + classicPlotWorld.ROAD_WIDTH - 1;
         int sx = pos1.getX() - 1;
         int ex = pos2.getX() + 1;
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx,
                 Math.min(classicPlotWorld.PLOT_HEIGHT, classicPlotWorld.ROAD_HEIGHT) + 1, sz),
             Location.at(classicPlotWorld.getWorldName(), ex,
@@ -457,7 +457,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         int ex = sx + classicPlotWorld.ROAD_WIDTH - 1;
         int sz = location.getZ() + 1;
         int ez = sz + classicPlotWorld.ROAD_WIDTH - 1;
-        LocalBlockQueue queue = classicPlotWorld.getQueue(false);
+        QueueCoordinator queue = classicPlotWorld.getQueue(false);
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx,
                         Math.min(classicPlotWorld.PLOT_HEIGHT, classicPlotWorld.ROAD_HEIGHT) + 1, sz),
                 Location.at(classicPlotWorld.getWorldName(), ex,

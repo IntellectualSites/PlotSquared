@@ -99,7 +99,16 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     @Override public final boolean setBiome(int x, int z, BiomeType biomeType) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
-        chunk.setBiome(x & 15, z & 15, biomeType);
+        for (int y = 0; y < 256; y++) {
+            chunk.setBiome(x & 15, y, z & 15, biomeType);
+        }
+        settingBiomes = true;
+        return true;
+    }
+
+    @Override public final boolean setBiome(int x, int y, int z, BiomeType biomeType) {
+        LocalChunk chunk = getChunk(x >> 4, z >> 4);
+        chunk.setBiome(x & 15, y, z & 15, biomeType);
         settingBiomes = true;
         return true;
     }

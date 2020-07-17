@@ -42,9 +42,9 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.queue.ChunkBlockQueue;
+import com.plotsquared.core.queue.ChunkQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
@@ -128,7 +128,7 @@ public class HybridUtils {
          *
          */
         TaskManager.runTaskAsync(() -> {
-            final LocalBlockQueue queue = blockQueue.getNewQueue(world, false);
+            final QueueCoordinator queue = blockQueue.getNewQueue(world, false);
 
             final BlockVector3 bot = region.getMinimumPoint();
             final BlockVector3 top = region.getMaximumPoint();
@@ -152,7 +152,7 @@ public class HybridUtils {
             }
 
             HybridPlotWorld hpw = (HybridPlotWorld) area;
-            ChunkBlockQueue chunk = new ChunkBlockQueue(bot, top, false);
+            ChunkQueueCoordinator chunk = new ChunkQueueCoordinator(bot, top, false);
             hpw.getGenerator().generateChunk(chunk, hpw);
 
             final BlockState[][][] oldBlocks = chunk.getBlocks();
@@ -374,7 +374,7 @@ public class HybridUtils {
         run.run();
     }
 
-    public int checkModified(LocalBlockQueue queue, int x1, int x2, int y1, int y2, int z1, int z2,
+    public int checkModified(QueueCoordinator queue, int x1, int x2, int y1, int y2, int z1, int z2,
         BlockState[] blocks) {
         int count = 0;
         for (int y = y1; y <= y2; y++) {
@@ -521,7 +521,7 @@ public class HybridUtils {
 
     public boolean setupRoadSchematic(Plot plot) {
         final String world = plot.getWorldName();
-        final LocalBlockQueue queue = blockQueue.getNewQueue(world, false);
+        final QueueCoordinator queue = blockQueue.getNewQueue(world, false);
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
@@ -564,7 +564,7 @@ public class HybridUtils {
         return true;
     }
 
-    public int get_ey(final PlotManager pm, LocalBlockQueue queue, int sx, int ex, int sz, int ez,
+    public int get_ey(final PlotManager pm, QueueCoordinator queue, int sx, int ex, int sz, int ez,
         int sy) {
         int ey = sy;
         for (int x = sx; x <= ex; x++) {
@@ -608,7 +608,7 @@ public class HybridUtils {
         z -= plotWorld.ROAD_OFFSET_Z;
         final int finalX = x;
         final int finalZ = z;
-        LocalBlockQueue queue = this.blockQueue.getNewQueue(plotWorld.getWorldName(), false);
+        QueueCoordinator queue = this.blockQueue.getNewQueue(plotWorld.getWorldName(), false);
         if (id1 == null || id2 == null || id1 != id2) {
             this.chunkManager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
                 if (id1 != null) {

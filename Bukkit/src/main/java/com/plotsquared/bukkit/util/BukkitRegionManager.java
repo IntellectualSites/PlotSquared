@@ -35,8 +35,8 @@ import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
@@ -78,9 +78,11 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
-@Singleton public class BukkitRegionManager extends RegionManager {
+@Singleton
+public class BukkitRegionManager extends RegionManager {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
+    private static final Logger logger =
+        LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
 
     @Inject public BukkitRegionManager(@Nonnull final ChunkManager chunkManager) {
         super(chunkManager);
@@ -102,14 +104,16 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
             final Semaphore semaphore = new Semaphore(1);
             try {
                 semaphore.acquire();
-                Bukkit.getScheduler().runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> {
-                    for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))
-                        .getLoadedChunks()) {
-                        BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
-                        chunks.add(loc);
-                    }
-                    semaphore.release();
-                });
+                Bukkit.getScheduler()
+                    .runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> {
+                        for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))
+                            .getLoadedChunks()) {
+                            BlockVector2 loc =
+                                BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
+                            chunks.add(loc);
+                        }
+                        semaphore.release();
+                    });
                 semaphore.acquireUninterruptibly();
             } catch (final Exception e) {
                 e.printStackTrace();
@@ -198,8 +202,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
         return count;
     }
 
-    @Override
-    public boolean copyRegion(Location pos1, Location pos2, Location newPos,
+    @Override public boolean copyRegion(Location pos1, Location pos2, Location newPos,
         final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
@@ -213,7 +216,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
         assert oldWorld != null;
         final String newWorldName = newWorld.getName();
         final ContentMap map = new ContentMap();
-        final LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(newWorldName, false);
+        final QueueCoordinator queue =
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(newWorldName, false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 int bx = value[2];
@@ -243,18 +247,17 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
                     }
                 }
             }
-            queue.enqueue();
-            PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(() -> {
+            queue.setCompleteTask(() -> {
                 //map.restoreBlocks(newWorld, 0, 0);
                 map.restoreEntities(newWorld, relX, relZ);
                 TaskManager.runTask(whenDone);
             });
+            queue.enqueue();
         }, 5);
         return true;
     }
 
-    @Override
-    public boolean regenerateRegion(final Location pos1, final Location pos2,
+    @Override public boolean regenerateRegion(final Location pos1, final Location pos2,
         final boolean ignoreAugment, final Runnable whenDone) {
         final String world = pos1.getWorldName();
 
@@ -292,8 +295,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
                         if (chunkObj == null) {
                             return;
                         }
-                        final LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue()
-                            .getNewQueue(world, false);
+                        final QueueCoordinator queue =
+                            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
                         if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
                             AugmentedUtils.bypass(ignoreAugment,
                                 () -> queue.regenChunkSafe(chunk.getX(), chunk.getZ()));
@@ -362,8 +365,8 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
                             .createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
                         map.saveEntitiesOut(chunkObj, currentPlotClear);
                         AugmentedUtils.bypass(ignoreAugment, () -> ChunkManager
-                            .setChunkInPlotArea(null, new RunnableVal<ScopedLocalBlockQueue>() {
-                                @Override public void run(ScopedLocalBlockQueue value) {
+                            .setChunkInPlotArea(null, new RunnableVal<ScopedQueueCoordinator>() {
+                                @Override public void run(ScopedQueueCoordinator value) {
                                     Location min = value.getMin();
                                     int bx = min.getX();
                                     int bz = min.getZ();
@@ -429,8 +432,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
         }
     }
 
-    @Override
-    public void swap(Location bot1, Location top1, Location bot2, Location top2,
+    @Override public void swap(Location bot1, Location top1, Location bot2, Location top2,
         final Runnable whenDone) {
         CuboidRegion region1 =
             RegionUtil.createRegion(bot1.getX(), top1.getX(), bot1.getZ(), top1.getZ());
@@ -468,16 +470,17 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
             region.getMinimumPoint().getY(), region.getMinimumPoint().getZ() - extendBiome);
         Location pos2 = Location.at(world, region.getMaximumPoint().getX() + extendBiome,
             region.getMaximumPoint().getY(), region.getMaximumPoint().getZ() + extendBiome);
-        final LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue()
-            .getNewQueue(world, false);
+        final QueueCoordinator queue =
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
 
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 BlockVector2 loc = BlockVector2.at(value[0], value[1]);
-                PlotSquared.platform().getChunkManager().loadChunk(world, loc, false).thenRun(() -> {
-                    MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
-                    queue.refreshChunk(value[0], value[1]);
-                });
+                PlotSquared.platform().getChunkManager().loadChunk(world, loc, false)
+                    .thenRun(() -> {
+                        MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
+                        queue.refreshChunk(value[0], value[1]);
+                    });
             }
         }, whenDone, 5);
     }

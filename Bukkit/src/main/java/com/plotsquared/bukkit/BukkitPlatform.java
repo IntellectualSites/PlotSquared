@@ -90,7 +90,6 @@ import com.plotsquared.core.plot.message.PlainChatManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.ChatManager;
@@ -156,9 +155,11 @@ import static com.plotsquared.core.util.PremiumVerification.getResourceID;
 import static com.plotsquared.core.util.PremiumVerification.getUserID;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
-@SuppressWarnings("unused") public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
+@SuppressWarnings("unused")
+public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitPlatform.class.getSimpleName());
+    private static final Logger logger =
+        LoggerFactory.getLogger("P2/" + BukkitPlatform.class.getSimpleName());
     private static final int BSTATS_ID = 1404;
 
     static {
@@ -233,8 +234,9 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
         // We create the injector after PlotSquared has been initialized, so that we have access
         // to generated instances and settings
-        this.injector = Guice.createInjector(Stage.PRODUCTION, new WorldManagerModule(), new PlotSquaredModule(),
-            new BukkitModule(this), new BackupModule());
+        this.injector = Guice
+            .createInjector(Stage.PRODUCTION, new WorldManagerModule(), new PlotSquaredModule(),
+                new BukkitModule(this), new BackupModule());
         this.injector.injectMembers(this);
 
         if (PremiumVerification.isPremium() && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
@@ -288,33 +290,36 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
             try {
                 logger.info("[P2] {} hooked into WorldEdit", this.getPluginName());
-                WorldEdit.getInstance().getEventBus().register(this.getInjector().getInstance(WESubscriber.class));
+                WorldEdit.getInstance().getEventBus()
+                    .register(this.getInjector().getInstance(WESubscriber.class));
                 if (Settings.Enabled_Components.COMMANDS) {
                     new WE_Anywhere();
                 }
             } catch (Throwable e) {
-                logger.error("[P2] Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
+                logger.error(
+                    "[P2] Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
             }
         }
 
         if (Settings.Enabled_Components.EVENTS) {
-            getServer().getPluginManager().registerEvents(getInjector().getInstance(PlayerEvents.class), this);
-            getServer().getPluginManager().registerEvents(getInjector().getInstance(EntitySpawnListener.class), this);
+            getServer().getPluginManager()
+                .registerEvents(getInjector().getInstance(PlayerEvents.class), this);
+            getServer().getPluginManager()
+                .registerEvents(getInjector().getInstance(EntitySpawnListener.class), this);
             if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
-                getServer().getPluginManager().registerEvents(getInjector().getInstance(PaperListener.class), this);
+                getServer().getPluginManager()
+                    .registerEvents(getInjector().getInstance(PaperListener.class), this);
             }
             this.plotListener.startRunnable();
         }
 
         // Required
-        getServer().getPluginManager().registerEvents(getInjector().getInstance(WorldEvents.class), this);
+        getServer().getPluginManager()
+            .registerEvents(getInjector().getInstance(WorldEvents.class), this);
         if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
-            getServer().getPluginManager().registerEvents(getInjector().getInstance(ChunkListener.class), this);
+            getServer().getPluginManager()
+                .registerEvents(getInjector().getInstance(ChunkListener.class), this);
         }
-
-        // Start the global block queue
-        final GlobalBlockQueue globalBlockQueue = this.injector.getInstance(GlobalBlockQueue.class);
-        globalBlockQueue.runTask();
 
         // Commands
         if (Settings.Enabled_Components.COMMANDS) {
@@ -344,7 +349,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         // World generators:
-        final ConfigurationSection section = this.worldConfiguration.getConfigurationSection("worlds");
+        final ConfigurationSection section =
+            this.worldConfiguration.getConfigurationSection("worlds");
         final WorldUtil worldUtil = getInjector().getInstance(WorldUtil.class);
 
         if (section != null) {
@@ -362,11 +368,15 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                         continue;
                     }
                     if (!worldUtil.isWorld(world) && !world.equals("*")) {
-                        logger.warn("[P2] `{}` was not properly loaded - {} will now try to load it properly",
+                        logger.warn(
+                            "[P2] `{}` was not properly loaded - {} will now try to load it properly",
                             world, this.getPluginName());
-                        logger.warn("[P2]  - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
-                        logger.warn("[P2]  - Your world management plugin may be faulty (or non existent)");
-                        logger.warn("[P2]  This message may also be a false positive and could be ignored.");
+                        logger.warn(
+                            "[P2]  - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
+                        logger.warn(
+                            "[P2]  - Your world management plugin may be faulty (or non existent)");
+                        logger.warn(
+                            "[P2]  This message may also be a false positive and could be ignored.");
                         this.setGenerator(world);
                     }
                 }
@@ -374,7 +384,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         // Services are accessed in order
-        final CacheUUIDService cacheUUIDService = new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
+        final CacheUUIDService cacheUUIDService =
+            new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
         this.impromptuPipeline.registerService(cacheUUIDService);
         this.backgroundPipeline.registerService(cacheUUIDService);
         this.impromptuPipeline.registerConsumer(cacheUUIDService);
@@ -390,7 +401,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         if (Settings.UUID.SERVICE_BUKKIT) {
-            final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
+            final OfflinePlayerUUIDService offlinePlayerUUIDService =
+                new OfflinePlayerUUIDService();
             this.impromptuPipeline.registerService(offlinePlayerUUIDService);
             this.backgroundPipeline.registerService(offlinePlayerUUIDService);
         }
@@ -406,8 +418,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         final LuckPermsUUIDService luckPermsUUIDService;
-        if (Settings.UUID.SERVICE_LUCKPERMS &&
-            Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+        if (Settings.UUID.SERVICE_LUCKPERMS
+            && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
             logger.info("[P2] (UUID) Using LuckPerms as a complementary UUID service");
         } else {
@@ -415,8 +427,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         final BungeePermsUUIDService bungeePermsUUIDService;
-        if (Settings.UUID.SERVICE_BUNGEE_PERMS &&
-            Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
+        if (Settings.UUID.SERVICE_BUNGEE_PERMS
+            && Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
             bungeePermsUUIDService = new BungeePermsUUIDService();
             logger.info("[P2] (UUID) Using BungeePerms as a complementary UUID service");
         } else {
@@ -424,7 +436,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
 
         final EssentialsUUIDService essentialsUUIDService;
-        if (Settings.UUID.SERVICE_ESSENTIALSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
+        if (Settings.UUID.SERVICE_ESSENTIALSX
+            && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
             logger.info("[P2] (UUID) Using EssentialsX as a complementary UUID service");
         } else {
@@ -511,8 +524,10 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         // Clean up potential memory leak
         Bukkit.getScheduler().runTaskTimer(this, () -> {
             try {
-                for (final PlotPlayer<? extends Player> player : this.getPlayerManager().getPlayers()) {
-                    if (player.getPlatformPlayer() == null || !player.getPlatformPlayer().isOnline()) {
+                for (final PlotPlayer<? extends Player> player : this.getPlayerManager()
+                    .getPlayers()) {
+                    if (player.getPlatformPlayer() == null || !player.getPlatformPlayer()
+                        .isOnline()) {
                         this.getPlayerManager().removePlayer(player);
                     }
                 }
@@ -626,7 +641,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
             // Now fetch names for all known UUIDs
             final int totalSize = uuidQueue.size();
             int read = 0;
-            logger.info("[P2] (UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
+            logger.info("[P2] (UUID) PlotSquared will fetch UUIDs in groups of {}",
+                Settings.UUID.BACKGROUND_LIMIT);
             final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
 
             // Used to indicate that the second retrieval has been attempted
@@ -659,7 +675,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                     // Print progress
                     final double percentage = ((double) read / (double) totalSize) * 100.0D;
                     if (Settings.DEBUG) {
-                        logger.info("[P2] (UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
+                        logger.info("[P2] (UUID) PlotSquared has cached {} of UUIDs",
+                            String.format("%.1f%%", percentage));
                     }
                 } catch (final InterruptedException | ExecutionException e) {
                     logger.error("[P2] (UUID) Failed to retrieve last batch. Will try again", e);
@@ -845,7 +862,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                                         if (currentPlotId != null) {
                                             entity.setMetadata("shulkerPlot",
                                                 new FixedMetadataValue(
-                                                    (Plugin) PlotSquared.platform(), currentPlotId));
+                                                    (Plugin) PlotSquared.platform(),
+                                                    currentPlotId));
                                         }
                                     }
                                 }
@@ -970,7 +988,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         if (id != null && id.equalsIgnoreCase("single")) {
             result = getInjector().getInstance(SingleWorldGenerator.class);
         } else {
-            result = getInjector().getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class));
+            result = getInjector()
+                .getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class));
             if (!PlotSquared.get().setupPlotWorld(worldName, id, result)) {
                 return null;
             }
@@ -992,7 +1011,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
             return new BukkitPlotGenerator(world, gen, this.plotAreaManager);
         } else {
             return new BukkitPlotGenerator(world, getInjector()
-                .getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class)), this.plotAreaManager);
+                .getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class)),
+                this.plotAreaManager);
         }
     }
 
@@ -1035,7 +1055,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         World world = BukkitUtil.getWorld(worldName);
         if (world == null) {
             // create world
-            ConfigurationSection worldConfig = this.worldConfiguration.getConfigurationSection("worlds." + worldName);
+            ConfigurationSection worldConfig =
+                this.worldConfiguration.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", getPluginName());
             PlotAreaBuilder builder = PlotAreaBuilder.newBuilder().plotManager(manager)
                 .generatorName(worldConfig.getString("generator.init", manager))
@@ -1061,7 +1082,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         if (gen instanceof BukkitPlotGenerator) {
             PlotSquared.get().loadWorld(worldName, (BukkitPlotGenerator) gen);
         } else if (gen != null) {
-            PlotSquared.get().loadWorld(worldName, new BukkitPlotGenerator(worldName, gen, this.plotAreaManager));
+            PlotSquared.get().loadWorld(worldName,
+                new BukkitPlotGenerator(worldName, gen, this.plotAreaManager));
         } else if (this.worldConfiguration.contains("worlds." + worldName)) {
             PlotSquared.get().loadWorld(worldName, null);
         }
@@ -1128,7 +1150,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return names;
     }
 
-    @Override public com.plotsquared.core.location.World<?> getPlatformWorld(@Nonnull final String worldName) {
+    @Override public com.plotsquared.core.location.World<?> getPlatformWorld(
+        @Nonnull final String worldName) {
         return BukkitWorld.of(worldName);
     }
 

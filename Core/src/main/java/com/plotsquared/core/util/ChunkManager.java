@@ -28,8 +28,8 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -42,19 +42,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class ChunkManager {
 
-    private static final Map<BlockVector2, RunnableVal<ScopedLocalBlockQueue>> forceChunks =
+    private static final Map<BlockVector2, RunnableVal<ScopedQueueCoordinator>> forceChunks =
         new ConcurrentHashMap<>();
-    private static final Map<BlockVector2, RunnableVal<ScopedLocalBlockQueue>> addChunks =
+    private static final Map<BlockVector2, RunnableVal<ScopedQueueCoordinator>> addChunks =
         new ConcurrentHashMap<>();
 
-    public static void setChunkInPlotArea(RunnableVal<ScopedLocalBlockQueue> force,
-        RunnableVal<ScopedLocalBlockQueue> add, String world, BlockVector2 loc) {
-        LocalBlockQueue queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
-        if (PlotSquared.get().getPlotAreaManager().isAugmented(world) && PlotSquared.get().isNonStandardGeneration(world, loc)) {
+    public static void setChunkInPlotArea(RunnableVal<ScopedQueueCoordinator> force,
+        RunnableVal<ScopedQueueCoordinator> add, String world, BlockVector2 loc) {
+        QueueCoordinator queue =
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
+        if (PlotSquared.get().getPlotAreaManager().isAugmented(world) && PlotSquared.get()
+            .isNonStandardGeneration(world, loc)) {
             int blockX = loc.getX() << 4;
             int blockZ = loc.getZ() << 4;
-            ScopedLocalBlockQueue scoped =
-                new ScopedLocalBlockQueue(queue, Location.at(world, blockX, 0, blockZ),
+            ScopedQueueCoordinator scoped =
+                new ScopedQueueCoordinator(queue, Location.at(world, blockX, 0, blockZ),
                     Location.at(world, blockX + 15, 255, blockZ + 15));
             if (force != null) {
                 force.run(scoped);
@@ -64,7 +66,7 @@ public abstract class ChunkManager {
                     add.run(scoped);
                 }
             }
-            queue.flush();
+            queue.enqueue();
         } else {
             if (force != null) {
                 forceChunks.put(loc, force);
@@ -76,8 +78,8 @@ public abstract class ChunkManager {
         }
     }
 
-    public static boolean preProcessChunk(BlockVector2 loc, ScopedLocalBlockQueue queue) {
-        final RunnableVal<ScopedLocalBlockQueue> forceChunk = forceChunks.get(loc);
+    public static boolean preProcessChunk(BlockVector2 loc, ScopedQueueCoordinator queue) {
+        final RunnableVal<ScopedQueueCoordinator> forceChunk = forceChunks.get(loc);
         if (forceChunk != null) {
             forceChunk.run(queue);
             forceChunks.remove(loc);
@@ -86,8 +88,8 @@ public abstract class ChunkManager {
         return false;
     }
 
-    public static boolean postProcessChunk(BlockVector2 loc, ScopedLocalBlockQueue queue) {
-        final RunnableVal<ScopedLocalBlockQueue> addChunk = forceChunks.get(loc);
+    public static boolean postProcessChunk(BlockVector2 loc, ScopedQueueCoordinator queue) {
+        final RunnableVal<ScopedQueueCoordinator> addChunk = forceChunks.get(loc);
         if (addChunk != null) {
             addChunk.run(queue);
             addChunks.remove(loc);

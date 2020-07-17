@@ -27,7 +27,6 @@ package com.plotsquared.core.plot;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -49,7 +48,7 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
@@ -172,7 +171,7 @@ public abstract class PlotArea {
 
     @Nonnull protected abstract PlotManager createManager();
 
-    public LocalBlockQueue getQueue(final boolean autoQueue) {
+    public QueueCoordinator getQueue(final boolean autoQueue) {
         return this.globalBlockQueue.getNewQueue(worldName, autoQueue);
     }
 

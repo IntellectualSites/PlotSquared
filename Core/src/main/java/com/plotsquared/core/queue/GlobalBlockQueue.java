@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.PlotSquared;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,6 +41,16 @@ public class GlobalBlockQueue {
     public GlobalBlockQueue(QueueProvider provider) {
         this.provider = provider;
         this.activeQueues = new ConcurrentLinkedDeque<>();
+    }
+
+    public QueueCoordinator getNewQueue(String world, boolean autoQueue) {
+        QueueCoordinator queue = provider.getNewQueue(world);
+        // Auto-inject into the queue
+        PlotSquared.platform().getInjector().injectMembers(queue);
+        if (autoQueue) {
+            queue.enqueue();
+        }
+        return queue;
     }
 
     /**

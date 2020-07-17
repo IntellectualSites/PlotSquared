@@ -34,7 +34,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.FileBytes;
 import com.plotsquared.core.util.MainUtil;
@@ -47,8 +47,8 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,7 +62,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     private final RegionManager regionManager;
 
     public HybridPlotManager(@Nonnull final HybridPlotWorld hybridPlotWorld,
-                             @Nonnull final RegionManager regionManager) {
+        @Nonnull final RegionManager regionManager) {
         super(hybridPlotWorld, regionManager);
         this.hybridPlotWorld = hybridPlotWorld;
         this.regionManager = regionManager;
@@ -106,20 +106,22 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x + 1, id.y);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
-        Location pos1 = Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
-        Location pos2 = Location.at(hybridPlotWorld.getWorldName(), bot.getX(),
-            Math.min(getWorldHeight(), 255), top.getZ() + 1);
+        Location pos1 =
+            Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
+        Location pos2 = Location
+            .at(hybridPlotWorld.getWorldName(), bot.getX(), Math.min(getWorldHeight(), 255),
+                top.getZ() + 1);
         MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
+        QueueCoordinator queue = hybridPlotWorld.getQueue(false);
         createSchemAbs(queue, pos1, pos2, true);
         queue.enqueue();
         return true;
     }
 
-    private void createSchemAbs(LocalBlockQueue queue, Location pos1, Location pos2,
+    private void createSchemAbs(QueueCoordinator queue, Location pos1, Location pos2,
         boolean isRoad) {
         int size = hybridPlotWorld.SIZE;
         int minY;
@@ -167,14 +169,16 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x, id.y + 1);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
-        Location pos1 = Location.at(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
-        Location pos2 = Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1,
-            Math.min(getWorldHeight(), 255), bot.getZ());
+        Location pos1 =
+            Location.at(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
+        Location pos2 = Location
+            .at(hybridPlotWorld.getWorldName(), top.getX() + 1, Math.min(getWorldHeight(), 255),
+                bot.getZ());
         MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
+        QueueCoordinator queue = hybridPlotWorld.getQueue(false);
         createSchemAbs(queue, pos1, pos2, true);
         queue.enqueue();
         return true;
@@ -186,7 +190,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x + 1, id.y + 1);
         Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1).withY(0);
         Location pos2 = getPlotBottomLocAbs(id2).withY(Math.min(getWorldHeight(), 255));
-        LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
+        QueueCoordinator queue = hybridPlotWorld.getQueue(false);
         createSchemAbs(queue, pos1, pos2, true);
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             createSchemAbs(queue, pos1, pos2, true);
@@ -228,7 +232,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         }
 
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
-        final LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
+        final QueueCoordinator queue = hybridPlotWorld.getQueue(false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
@@ -257,14 +261,14 @@ public class HybridPlotManager extends ClassicPlotManager {
                 pastePlotSchematic(queue, bot, top);
             }
         }, () -> {
-            queue.enqueue();
             // And notify whatever called this when plot clearing is done
-            PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(whenDone);
+            queue.setCompleteTask(whenDone);
+            queue.enqueue();
         }, 10);
         return true;
     }
 
-    public void pastePlotSchematic(LocalBlockQueue queue, Location bottom, Location top) {
+    public void pastePlotSchematic(QueueCoordinator queue, Location bottom, Location top) {
         if (!hybridPlotWorld.PLOT_SCHEMATIC) {
             return;
         }

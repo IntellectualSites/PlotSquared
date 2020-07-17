@@ -30,7 +30,7 @@ import com.plotsquared.bukkit.util.BukkitBlockUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -41,16 +41,17 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
-public class GenChunk extends ScopedLocalBlockQueue {
+public class GenChunk extends ScopedQueueCoordinator {
 
     public final Biome[] biomes;
     public BlockState[][] result;
@@ -191,16 +192,18 @@ public class GenChunk extends ScopedLocalBlockQueue {
         return chunk == null ? chunkZ : chunk.getZ();
     }
 
-    @Override public String getWorld() {
-        return chunk == null ? world : chunk.getWorld().getName();
+    @Override public com.sk89q.worldedit.world.World getWorld() {
+        return chunk == null ?
+            BukkitAdapter.adapt(Bukkit.getWorld(world)) :
+            BukkitAdapter.adapt(chunk.getWorld());
     }
 
     @Override public Location getMax() {
-        return Location.at(getWorld(), 15 + (getX() << 4), 255, 15 + (getZ() << 4));
+        return Location.at(getWorld().getName(), 15 + (getX() << 4), 255, 15 + (getZ() << 4));
     }
 
     @Override public Location getMin() {
-        return Location.at(getWorld(), getX() << 4, 0, getZ() << 4);
+        return Location.at(getWorld().getName(), getX() << 4, 0, getZ() << 4);
     }
 
     public GenChunk clone() {

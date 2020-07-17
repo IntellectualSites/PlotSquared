@@ -34,7 +34,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
@@ -188,7 +188,7 @@ public class Trim extends SubCommand {
                                     }
                                 }
                             }
-                            final LocalBlockQueue queue = blockQueue.getNewQueue(world, false);
+                            final QueueCoordinator queue = blockQueue.getNewQueue(world, false);
                             TaskManager.objectTask(chunks, new RunnableVal<BlockVector2>() {
                                 @Override public void run(BlockVector2 value) {
                                     queue.regenChunk(value.getX(), value.getZ());

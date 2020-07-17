@@ -32,7 +32,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import javax.annotation.Nonnull;
@@ -56,7 +56,7 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         return "PlotSquared:single";
     }
 
-    @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
+    @Override public void generateChunk(ScopedQueueCoordinator result, PlotArea settings) {
         SinglePlotArea area = (SinglePlotArea) settings;
         if (area.VOID) {
             Location min = result.getMin();

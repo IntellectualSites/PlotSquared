@@ -32,7 +32,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.schematic.Schematic;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.jnbt.ByteArrayTag;
@@ -58,12 +58,12 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import javax.annotation.Nonnull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -96,12 +96,11 @@ import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + SchematicHandler.class.getSimpleName());
+    private static final Logger logger =
+        LoggerFactory.getLogger("P2/" + SchematicHandler.class.getSimpleName());
     public static SchematicHandler manager;
-
-    private boolean exportAll = false;
-
     private final WorldUtil worldUtil;
+    private boolean exportAll = false;
 
     public SchematicHandler(@Nonnull final WorldUtil worldUtil) {
         this.worldUtil = worldUtil;
@@ -158,7 +157,8 @@ public abstract class SchematicHandler {
                     @Override public void run(final CompoundTag value) {
                         if (value != null) {
                             TaskManager.runTaskAsync(() -> {
-                                boolean result = save(value, directory + File.separator + name + ".schem");
+                                boolean result =
+                                    save(value, directory + File.separator + name + ".schem");
                                 if (!result) {
                                     logger.error("[P2] Failed to save {}", plot.getId());
                                 }
@@ -193,7 +193,7 @@ public abstract class SchematicHandler {
                 return;
             }
             try {
-                final LocalBlockQueue queue = plot.getArea().getQueue(false);
+                final QueueCoordinator queue = plot.getArea().getQueue(false);
                 BlockVector3 dimension = schematic.getClipboard().getDimensions();
                 final int WIDTH = dimension.getX();
                 final int LENGTH = dimension.getZ();
@@ -219,7 +219,7 @@ public abstract class SchematicHandler {
                         if (pw instanceof ClassicPlotWorld) {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
-                            y_offset_actual = yOffset + 1 +  this.worldUtil
+                            y_offset_actual = yOffset + 1 + this.worldUtil
                                 .getHighestBlockSynchronous(plot.getWorldName(),
                                     region.getMinimumPoint().getX() + 1,
                                     region.getMinimumPoint().getZ() + 1);
@@ -229,8 +229,9 @@ public abstract class SchematicHandler {
                     y_offset_actual = yOffset;
                 }
 
-                final Location pos1 = Location.at(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual,
-                    region.getMinimumPoint().getZ() + zOffset);
+                final Location pos1 = Location
+                    .at(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset,
+                        y_offset_actual, region.getMinimumPoint().getZ() + zOffset);
                 final Location pos2 = pos1.add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
 
                 final int p1x = pos1.getX();
@@ -300,7 +301,7 @@ public abstract class SchematicHandler {
         });
     }
 
-    public abstract boolean restoreTile(LocalBlockQueue queue, CompoundTag tag, int x, int y,
+    public abstract boolean restoreTile(QueueCoordinator queue, CompoundTag tag, int x, int y,
         int z);
 
     /**

@@ -33,7 +33,7 @@ import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -52,7 +52,7 @@ public class HybridGen extends IndependentPlotGenerator {
         return PlotSquared.platform().getPluginName();
     }
 
-    private void placeSchem(HybridPlotWorld world, ScopedLocalBlockQueue result, short relativeX,
+    private void placeSchem(HybridPlotWorld world, ScopedQueueCoordinator result, short relativeX,
         short relativeZ, int x, int z, boolean isRoad) {
         int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
         if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad
@@ -76,7 +76,7 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override
-    public void generateChunk(@Nonnull ScopedLocalBlockQueue result, @Nonnull PlotArea settings) {
+    public void generateChunk(@Nonnull ScopedQueueCoordinator result, @Nonnull PlotArea settings) {
         Preconditions.checkNotNull(result, "result cannot be null");
         Preconditions.checkNotNull(settings, "settings cannot be null");
 

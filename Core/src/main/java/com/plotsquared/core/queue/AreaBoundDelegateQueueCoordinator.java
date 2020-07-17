@@ -75,6 +75,13 @@ public class AreaBoundDelegateQueueCoordinator extends DelegateQueueCoordinator 
         return false;
     }
 
+    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
+        if (area.contains(x, z)) {
+            return super.setBiome(x, y, z, biome);
+        }
+        return false;
+    }
+
     @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
         if (area.contains(x, z)) {
             return super.setTile(x, y, z, tag);

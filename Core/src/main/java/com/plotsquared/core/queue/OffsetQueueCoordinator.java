@@ -42,8 +42,12 @@ public class OffsetQueueCoordinator extends DelegateQueueCoordinator {
         this.oz = oz;
     }
 
-    @Override public boolean setBiome(int x, int y, BiomeType biome) {
-        return super.setBiome(ox + x, oy + y, biome);
+    @Override public boolean setBiome(int x, int z, BiomeType biome) {
+        return super.setBiome(ox + x, oz + z, biome);
+    }
+
+    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
+        return super.setBiome(ox + x, oy + y, oz + z, biome);
     }
 
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {

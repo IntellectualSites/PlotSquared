@@ -81,6 +81,10 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         return parent.setBiome(x, z, biome);
     }
 
+    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
+        return parent.setBiome(x, y, z, biome);
+    }
+
     @Override public boolean isSettingBiomes() {
         return parent.isSettingBiomes();
     }
@@ -102,5 +106,9 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
             return parent.enqueue();
         }
         return false;
+    }
+
+    @Override public void setCompleteTask(Runnable whenDone) {
+        parent.setCompleteTask(whenDone);
     }
 }
