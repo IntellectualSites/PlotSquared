@@ -34,8 +34,8 @@ import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
 

@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
+
 import javax.annotation.Nonnull;
 
 public class BlockBurnFlag extends BooleanFlag<BlockBurnFlag> {

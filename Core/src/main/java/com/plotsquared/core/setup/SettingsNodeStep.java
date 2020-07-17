@@ -32,10 +32,9 @@ import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.TabCompletions;
-import lombok.Getter;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
 
@@ -43,11 +42,13 @@ import java.util.Collections;
  * A SettingsNodeStep is a step wrapping a {@link ConfigurationNode}.
  */
 public class SettingsNodeStep implements SetupStep {
-    @Getter private final ConfigurationNode configurationNode;
-    @Getter private final int id;
+
+    private final ConfigurationNode configurationNode;
+    private final int id;
     private final SetupStep next;
 
-    public SettingsNodeStep(ConfigurationNode configurationNode, int id, SettingsNodesWrapper wrapper) {
+    public SettingsNodeStep(final ConfigurationNode configurationNode, final int id,
+        final SettingsNodesWrapper wrapper) {
         this.configurationNode = configurationNode;
         this.id = id;
         if (wrapper.getSettingsNodes().length > id + 1) {
@@ -91,5 +92,13 @@ public class SettingsNodeStep implements SetupStep {
                 return TabCompletions.completeBoolean(argument);
         }
         return Collections.emptyList();
+    }
+
+    public ConfigurationNode getConfigurationNode() {
+        return this.configurationNode;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }

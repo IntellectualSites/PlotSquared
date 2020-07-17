@@ -31,8 +31,8 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.function.Consumer;

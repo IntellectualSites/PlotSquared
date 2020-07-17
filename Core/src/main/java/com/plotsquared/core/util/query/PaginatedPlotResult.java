@@ -27,8 +27,8 @@ package com.plotsquared.core.util.query;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.plot.Plot;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 

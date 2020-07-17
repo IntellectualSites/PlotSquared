@@ -27,7 +27,6 @@ package com.plotsquared.core.plot;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -63,14 +62,11 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -92,39 +88,39 @@ public abstract class PlotArea {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotArea.class.getSimpleName());
 
     protected final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
-    @Getter @Nonnull private final String worldName;
-    @Getter private final String id;
-    @Getter @Nonnull private final PlotManager plotManager;
-    @Getter private final int worldHash;
+    @Nonnull private final String worldName;
+    private final String id;
+    @Nonnull private final PlotManager plotManager;
+    private final int worldHash;
     private final PlotId min;
     private final PlotId max;
-    @Getter @Nonnull private final IndependentPlotGenerator generator;
-    @Getter private int maxPlotMembers = 128;
-    @Getter private boolean autoMerge = false;
-    @Setter private boolean allowSigns = true;
-    @Getter private boolean miscSpawnUnowned = false;
-    @Getter private boolean mobSpawning = false;
-    @Getter private boolean mobSpawnerSpawning = false;
-    @Getter private BiomeType plotBiome = BiomeTypes.FOREST;
-    @Getter private boolean plotChat = true;
-    @Getter private boolean forcingPlotChat = false;
-    @Getter private boolean schematicClaimSpecify = false;
-    @Getter private boolean schematicOnClaim = false;
-    @Getter private String schematicFile = "null";
-    @Getter private boolean spawnEggs = false;
-    @Getter private boolean spawnCustom = true;
-    @Getter private boolean spawnBreeding = false;
-    @Getter private PlotAreaType type = PlotAreaType.NORMAL;
-    @Getter private PlotAreaTerrainType terrain = PlotAreaTerrainType.NONE;
-    @Getter private boolean homeAllowNonmember = false;
-    @Getter private PlotLoc nonmemberHome;
-    @Getter @Setter(AccessLevel.PROTECTED) private PlotLoc defaultHome;
-    @Getter private int maxBuildHeight = 256;
-    @Getter private int minBuildHeight = 1;
-    @Getter private GameMode gameMode = GameModes.CREATIVE;
-    @Getter private Map<String, Expression<Double>> prices = new HashMap<>();
-    @Getter(AccessLevel.PROTECTED) private List<String> schematics = new ArrayList<>();
-    @Getter private boolean roadFlags = false;
+    @Nonnull private final IndependentPlotGenerator generator;
+    private int maxPlotMembers = 128;
+    private boolean autoMerge = false;
+    private boolean allowSigns = true;
+    private boolean miscSpawnUnowned = false;
+    private boolean mobSpawning = false;
+    private boolean mobSpawnerSpawning = false;
+    private BiomeType plotBiome = BiomeTypes.FOREST;
+    private boolean plotChat = true;
+    private boolean forcingPlotChat = false;
+    private boolean schematicClaimSpecify = false;
+    private boolean schematicOnClaim = false;
+    private String schematicFile = "null";
+    private boolean spawnEggs = false;
+    private boolean spawnCustom = true;
+    private boolean spawnBreeding = false;
+    private PlotAreaType type = PlotAreaType.NORMAL;
+    private PlotAreaTerrainType terrain = PlotAreaTerrainType.NONE;
+    private boolean homeAllowNonmember = false;
+    private PlotLoc nonmemberHome;
+    private PlotLoc defaultHome;
+    private int maxBuildHeight = 256;
+    private int minBuildHeight = 1;
+    private GameMode gameMode = GameModes.CREATIVE;
+    private Map<String, Expression<Double>> prices = new HashMap<>();
+    private List<String> schematics = new ArrayList<>();
+    private boolean roadFlags = false;
     private boolean worldBorder = false;
     private boolean useEconomy = false;
     private int hash;
@@ -134,9 +130,9 @@ public abstract class PlotArea {
     /**
      * Area flag container
      */
-    @Getter private final FlagContainer flagContainer =
+    private final FlagContainer flagContainer =
         new FlagContainer(GlobalFlagContainer.getInstance());
-    @Getter private final FlagContainer roadFlagContainer =
+    private final FlagContainer roadFlagContainer =
         new FlagContainer(GlobalFlagContainer.getInstance());
 
     private final YamlConfiguration worldConfiguration;
@@ -1175,5 +1171,141 @@ public abstract class PlotArea {
         final Class<?> flagClass = flag.getClass();
         final PlotFlag<?, ?> flagInstance = this.roadFlagContainer.getFlagErased(flagClass);
         return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
+    }
+
+    @Nonnull public String getWorldName() {
+        return this.worldName;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    @Nonnull public PlotManager getPlotManager() {
+        return this.plotManager;
+    }
+
+    public int getWorldHash() {
+        return this.worldHash;
+    }
+
+    @Nonnull public IndependentPlotGenerator getGenerator() {
+        return this.generator;
+    }
+
+    public int getMaxPlotMembers() {
+        return this.maxPlotMembers;
+    }
+
+    public boolean isAutoMerge() {
+        return this.autoMerge;
+    }
+
+    public boolean isMiscSpawnUnowned() {
+        return this.miscSpawnUnowned;
+    }
+
+    public boolean isMobSpawning() {
+        return this.mobSpawning;
+    }
+
+    public boolean isMobSpawnerSpawning() {
+        return this.mobSpawnerSpawning;
+    }
+
+    public BiomeType getPlotBiome() {
+        return this.plotBiome;
+    }
+
+    public boolean isPlotChat() {
+        return this.plotChat;
+    }
+
+    public boolean isForcingPlotChat() {
+        return this.forcingPlotChat;
+    }
+
+    public boolean isSchematicClaimSpecify() {
+        return this.schematicClaimSpecify;
+    }
+
+    public boolean isSchematicOnClaim() {
+        return this.schematicOnClaim;
+    }
+
+    public String getSchematicFile() {
+        return this.schematicFile;
+    }
+
+    public boolean isSpawnEggs() {
+        return this.spawnEggs;
+    }
+
+    public boolean isSpawnCustom() {
+        return this.spawnCustom;
+    }
+
+    public boolean isSpawnBreeding() {
+        return this.spawnBreeding;
+    }
+
+    public PlotAreaType getType() {
+        return this.type;
+    }
+
+    public PlotAreaTerrainType getTerrain() {
+        return this.terrain;
+    }
+
+    public boolean isHomeAllowNonmember() {
+        return this.homeAllowNonmember;
+    }
+
+    public PlotLoc getNonmemberHome() {
+        return this.nonmemberHome;
+    }
+
+    public PlotLoc getDefaultHome() {
+        return this.defaultHome;
+    }
+
+    public int getMaxBuildHeight() {
+        return this.maxBuildHeight;
+    }
+
+    public int getMinBuildHeight() {
+        return this.minBuildHeight;
+    }
+
+    public GameMode getGameMode() {
+        return this.gameMode;
+    }
+
+    public Map<String, Expression<Double>> getPrices() {
+        return this.prices;
+    }
+
+    protected List<String> getSchematics() {
+        return this.schematics;
+    }
+
+    public boolean isRoadFlags() {
+        return this.roadFlags;
+    }
+
+    public FlagContainer getFlagContainer() {
+        return this.flagContainer;
+    }
+
+    public FlagContainer getRoadFlagContainer() {
+        return this.roadFlagContainer;
+    }
+
+    public void setAllowSigns(boolean allowSigns) {
+        this.allowSigns = allowSigns;
+    }
+
+    protected void setDefaultHome(PlotLoc defaultHome) {
+        this.defaultHome = defaultHome;
     }
 }

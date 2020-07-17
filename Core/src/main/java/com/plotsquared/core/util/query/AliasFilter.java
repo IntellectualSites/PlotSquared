@@ -26,6 +26,7 @@
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
+
 import javax.annotation.Nonnull;
 
 class AliasFilter implements PlotFilter {

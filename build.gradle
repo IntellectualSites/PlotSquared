@@ -79,26 +79,15 @@ subprojects { subproject ->
 
     dependencies {
         compile group: 'org.json', name: 'json', version: '20200518'
-
         implementation("com.sk89q.worldedit:worldedit-core:7.0.0") {
             exclude(module: "bukkit-classloader-check")
             exclude(module: "mockito-core")
             exclude(module: "dummypermscompat")
         }
-
-        implementation("net.kyori:text-api:3.0.2")
-        implementation("net.kyori:text-serializer-gson:3.0.2")
-        implementation("net.kyori:text-serializer-legacy:3.0.2")
-        implementation("net.kyori:text-serializer-plain:3.0.2")
         implementation("com.google.guava:guava:21.0") {
             because("Minecraft uses Guava 21 as of 1.13")
         }
-        compileClasspath("org.projectlombok:lombok:1.18.12")
-        testCompileOnly("org.projectlombok:lombok:1.18.12")
-        annotationProcessor("org.projectlombok:lombok:1.18.8")
-        testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
         testImplementation("junit:junit:4.13")
-
         compile group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
     }
 

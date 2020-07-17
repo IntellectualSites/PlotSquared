@@ -27,16 +27,15 @@ package com.plotsquared.bukkit.uuid;
 
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import net.luckperms.api.model.user.UserManager;
+import net.alpenblock.bungeeperms.BungeePerms;
+import net.alpenblock.bungeeperms.io.UUIDPlayerDB;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import net.alpenblock.bungeeperms.BungeePerms;
-import net.alpenblock.bungeeperms.io.UUIDPlayerDB;
 
 /**
  * UUID service that uses the BungeePerms API

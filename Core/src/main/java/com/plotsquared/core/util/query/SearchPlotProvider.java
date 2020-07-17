@@ -27,8 +27,8 @@ package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 class SearchPlotProvider implements PlotProvider {

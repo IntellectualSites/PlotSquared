@@ -40,8 +40,8 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;

@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.PlotFlag;
+
 import javax.annotation.Nonnull;
 
 public class FarewellFlag extends PlotFlag<String, FarewellFlag> {

@@ -31,12 +31,11 @@ import com.plotsquared.core.configuration.Settings;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
-import lombok.Getter;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +49,7 @@ public class BlockTypeWrapper {
 
     private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
     private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();
-    @Nullable @Getter private final BlockType blockType;
+    @Nullable private final BlockType blockType;
     @Nullable private final String blockCategoryId;
     @Nullable private BlockCategory blockCategory;
 
@@ -154,6 +153,10 @@ public class BlockTypeWrapper {
 
     @Override public int hashCode() {
         return Objects.hashCode(this.blockType, this.blockCategoryId);
+    }
+
+    @Nullable public BlockType getBlockType() {
+        return this.blockType;
     }
 
 

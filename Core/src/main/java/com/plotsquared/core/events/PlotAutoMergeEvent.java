@@ -27,9 +27,8 @@ package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
-import lombok.Getter;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +39,7 @@ import java.util.List;
 public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePlotEvent {
 
     private final List<PlotId> plots;
-    @Getter private final String world;
+    private final String world;
     private Result eventResult;
 
     /**
@@ -72,5 +71,9 @@ public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePl
 
     @Override public void setEventResult(Result e) {
         this.eventResult = e;
+    }
+
+    public String getWorld() {
+        return this.world;
     }
 }

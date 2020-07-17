@@ -26,9 +26,13 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
-import lombok.experimental.UtilityClass;
 
-@UtilityClass public class ThreadUtils {
+public final class ThreadUtils {
+
+    private ThreadUtils() {
+        throw new UnsupportedOperationException(
+            "This is a utility class and cannot be instantiated");
+    }
 
     /**
      * Throws {@link IllegalStateException} if the method
@@ -36,7 +40,7 @@ import lombok.experimental.UtilityClass;
      *
      * @param message Message describing the issue
      */
-    public void catchSync(final String message) {
+    public static void catchSync(final String message) {
         if (PlotSquared.get().isMainThread(Thread.currentThread())) {
             throw new IllegalStateException(message);
         }
@@ -48,7 +52,7 @@ import lombok.experimental.UtilityClass;
      *
      * @param message Message describing the issue
      */
-    public void catchAsync(final String message) {
+    public static void catchAsync(final String message) {
         if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
             throw new IllegalStateException(message);
         }

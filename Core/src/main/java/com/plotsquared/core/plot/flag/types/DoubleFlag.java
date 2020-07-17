@@ -28,6 +28,7 @@ package com.plotsquared.core.plot.flag.types;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
+
 import javax.annotation.Nonnull;
 
 public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends NumberFlag<Double, F> {

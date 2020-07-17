@@ -38,13 +38,12 @@ import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.sk89q.worldedit.math.BlockVector2;
-import lombok.Getter;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -62,7 +61,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
     private List<BlockPopulator> populators;
     private boolean loaded = false;
 
-    @Getter private final String levelName;
+    private final String levelName;
 
     public BukkitPlotGenerator(@Nonnull final  String name,
                                @Nonnull final IndependentPlotGenerator generator,
@@ -258,4 +257,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return toString().equals(obj.toString()) || toString().equals(obj.getClass().getName());
     }
 
+    public String getLevelName() {
+        return this.levelName;
+    }
 }

@@ -26,9 +26,6 @@
 package com.plotsquared.core.configuration;
 
 import com.plotsquared.core.player.PlotPlayer;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,14 +39,40 @@ public interface ChatFormatter {
 
     void format(ChatContext context);
 
-    @AllArgsConstructor
     final class ChatContext {
 
-        @Getter private final PlotPlayer recipient;
-        @Getter @Setter private String message;
-        @Getter private final Object[] args;
-        @Getter private final boolean rawOutput;
+        private final PlotPlayer<?> recipient;
+        private String message;
+        private final Object[] args;
+        private final boolean rawOutput;
 
+        public ChatContext(final PlotPlayer<?> recipient, final String message, final Object[] args,
+            final boolean rawOutput) {
+            this.recipient = recipient;
+            this.message = message;
+            this.args = args;
+            this.rawOutput = rawOutput;
+        }
+
+        public PlotPlayer<?> getRecipient() {
+            return this.recipient;
+        }
+
+        public String getMessage() {
+            return this.message;
+        }
+
+        public Object[] getArgs() {
+            return this.args;
+        }
+
+        public boolean isRawOutput() {
+            return this.rawOutput;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 
 }

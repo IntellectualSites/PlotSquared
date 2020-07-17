@@ -107,7 +107,6 @@ import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import io.papermc.lib.PaperLib;
-import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -167,15 +166,15 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
     }
 
     private int[] version;
-    @Getter private String pluginName;
-    @Getter private SingleWorldListener singleWorldListener;
+    private String pluginName;
+    private SingleWorldListener singleWorldListener;
     private Method methodUnloadChunk0;
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
     private EconHandler econ;
     private PermHandler perm;
 
-    @Getter private Injector injector;
+    private Injector injector;
 
     @Inject private PlotAreaManager plotAreaManager;
     @Inject private EventDispatcher eventDispatcher;
@@ -1123,4 +1122,15 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return BukkitUtil.BUKKIT_AUDIENCES.audience(Bukkit.getConsoleSender());
     }
 
+    public String getPluginName() {
+        return this.pluginName;
+    }
+
+    public SingleWorldListener getSingleWorldListener() {
+        return this.singleWorldListener;
+    }
+
+    public Injector getInjector() {
+        return this.injector;
+    }
 }

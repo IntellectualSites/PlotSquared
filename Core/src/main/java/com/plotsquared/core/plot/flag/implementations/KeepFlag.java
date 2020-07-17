@@ -30,6 +30,7 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
+
 import javax.annotation.Nonnull;
 
 public class KeepFlag extends PlotFlag<Object, KeepFlag> {

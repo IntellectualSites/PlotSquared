@@ -27,23 +27,22 @@ package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Container type for {@link PlotFlag plot flags}.
  */
-@EqualsAndHashCode(of = "flagMap") public class FlagContainer {
+public class FlagContainer {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + FlagContainer.class.getSimpleName());
 
@@ -51,7 +50,7 @@ import java.util.Map;
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
     private final PlotFlagUpdateHandler plotFlagUpdateHandler;
     private final Collection<PlotFlagUpdateHandler> updateSubscribers = new ArrayList<>();
-    @Setter private FlagContainer parentContainer;
+    private FlagContainer parentContainer;
 
     /**
      * Construct a new flag container with an optional parent container and update handler.
@@ -316,6 +315,38 @@ import java.util.Map;
      */
     public void addUnknownFlag(final String flagName, final String value) {
         this.unknownFlags.put(flagName.toLowerCase(Locale.ENGLISH), value);
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof FlagContainer)) {
+            return false;
+        }
+        final FlagContainer other = (FlagContainer) o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        final Object this$flagMap = this.getFlagMap();
+        final Object other$flagMap = other.getFlagMap();
+        return Objects.equals(this$flagMap, other$flagMap);
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof FlagContainer;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $flagMap = this.getFlagMap();
+        result = result * PRIME + ($flagMap == null ? 43 : $flagMap.hashCode());
+        return result;
+    }
+
+    public void setParentContainer(FlagContainer parentContainer) {
+        this.parentContainer = parentContainer;
     }
 
     /**

@@ -26,16 +26,12 @@
 package com.plotsquared.core.location;
 
 import com.plotsquared.core.util.StringMan;
-import lombok.AllArgsConstructor;
+
 import javax.annotation.Nullable;
-
-//todo better description needed
-
 
 /**
  * (x,y,z) or (x,z) representation for PlotSquared (hence the "Plot" prefix)
  */
-@AllArgsConstructor
 public final class PlotLoc {
 
     private final int x;
@@ -50,6 +46,12 @@ public final class PlotLoc {
      */
     public PlotLoc(final int x, final int z) {
         this(x, -1, z);
+    }
+
+    public PlotLoc(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     @Nullable public static PlotLoc fromString(final String input) {

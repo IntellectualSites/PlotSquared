@@ -35,8 +35,8 @@ import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 final class BlockStatePopulator extends BlockPopulator {

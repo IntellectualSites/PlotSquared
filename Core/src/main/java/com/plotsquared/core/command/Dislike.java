@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.player.PlotPlayer;
+
 import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "dislike",

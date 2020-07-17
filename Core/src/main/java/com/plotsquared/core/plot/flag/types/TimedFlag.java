@@ -29,6 +29,7 @@ import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
+
 import javax.annotation.Nonnull;
 
 public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>

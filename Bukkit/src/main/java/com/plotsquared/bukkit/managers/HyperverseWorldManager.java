@@ -27,13 +27,14 @@ package com.plotsquared.bukkit.managers;
 
 import com.google.inject.Singleton;
 import org.bukkit.World;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import se.hyperver.hyperverse.Hyperverse;
 import se.hyperver.hyperverse.world.WorldConfiguration;
 import se.hyperver.hyperverse.world.WorldConfigurationBuilder;
 import se.hyperver.hyperverse.world.WorldFeatures;
 import se.hyperver.hyperverse.world.WorldType;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Hyperverse specific manager that creates worlds

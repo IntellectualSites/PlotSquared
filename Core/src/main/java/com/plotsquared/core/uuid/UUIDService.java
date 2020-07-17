@@ -27,7 +27,6 @@ package com.plotsquared.core.uuid;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

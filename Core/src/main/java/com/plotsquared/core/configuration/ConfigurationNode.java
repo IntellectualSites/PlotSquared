@@ -28,7 +28,6 @@ package com.plotsquared.core.configuration;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.world.block.BlockState;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,11 +39,11 @@ import java.util.List;
  */
 public class ConfigurationNode {
 
-    @Getter private final String constant;
+    private final String constant;
     private final Object defaultValue;
-    @Getter private final String description;
+    private final String description;
     private final ConfigurationUtil.SettingValue type;
-    @Getter private final Collection<String> suggestions;
+    private final Collection<String> suggestions;
     private Object value;
 
     public ConfigurationNode(String constant, Object defaultValue, String description,
@@ -111,5 +110,17 @@ public class ConfigurationNode {
             return StringMan.join((Object[]) this.defaultValue, ",");
         }
         return this.defaultValue;
+    }
+
+    public String getConstant() {
+        return this.constant;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public Collection<String> getSuggestions() {
+        return this.suggestions;
     }
 }

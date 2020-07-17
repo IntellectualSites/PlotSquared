@@ -28,8 +28,8 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 

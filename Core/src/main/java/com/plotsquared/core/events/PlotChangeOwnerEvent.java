@@ -28,8 +28,8 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
-import javax.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEvent {

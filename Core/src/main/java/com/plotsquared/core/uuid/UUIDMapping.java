@@ -25,15 +25,14 @@
  */
 package com.plotsquared.core.uuid;
 
-import lombok.EqualsAndHashCode;
 import javax.annotation.Nonnull;
-
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * A pair consisting of a UUID and a username
  */
-@EqualsAndHashCode public class UUIDMapping {
+public class UUIDMapping {
 
     private final UUID uuid;
     private final String username;
@@ -51,4 +50,38 @@ import java.util.UUID;
         return this.uuid;
     }
 
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof UUIDMapping)) {
+            return false;
+        }
+        final UUIDMapping other = (UUIDMapping) o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        final Object this$uuid = this.getUuid();
+        final Object other$uuid = other.getUuid();
+        if (!Objects.equals(this$uuid, other$uuid)) {
+            return false;
+        }
+        final Object this$username = this.getUsername();
+        final Object other$username = other.getUsername();
+        return Objects.equals(this$username, other$username);
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof UUIDMapping;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $uuid = this.getUuid();
+        result = result * PRIME + $uuid.hashCode();
+        final Object $username = this.getUsername();
+        result = result * PRIME + $username.hashCode();
+        return result;
+    }
 }

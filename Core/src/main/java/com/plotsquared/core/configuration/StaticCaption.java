@@ -27,21 +27,18 @@ package com.plotsquared.core.configuration;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
-import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
 
-@RequiredArgsConstructor
 public final class StaticCaption implements Caption {
 
     private final String value;
-    private final boolean usePrefix;
 
     /**
      * @deprecated Use {@link #of(String)}
      */
     @Deprecated public StaticCaption(final String value) {
-        this(value, true);
+        this.value = value;
     }
 
     /**

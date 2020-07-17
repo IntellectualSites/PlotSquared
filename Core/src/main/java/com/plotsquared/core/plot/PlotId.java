@@ -26,6 +26,7 @@
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.location.Direction;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

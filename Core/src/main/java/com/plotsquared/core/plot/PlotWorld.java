@@ -27,16 +27,15 @@ package com.plotsquared.core.plot;
 
 import com.plotsquared.core.location.Location;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import lombok.EqualsAndHashCode;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * A world that contains plots
  */
-@EqualsAndHashCode
 public abstract class PlotWorld {
 
     private final String world;
@@ -102,4 +101,31 @@ public abstract class PlotWorld {
         return this.world;
     }
 
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof PlotWorld)) {
+            return false;
+        }
+        final PlotWorld other = (PlotWorld) o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        final Object this$world = this.getWorld();
+        final Object other$world = other.getWorld();
+        return Objects.equals(this$world, other$world);
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof PlotWorld;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $world = this.getWorld();
+        result = result * PRIME + ($world == null ? 43 : $world.hashCode());
+        return result;
+    }
 }

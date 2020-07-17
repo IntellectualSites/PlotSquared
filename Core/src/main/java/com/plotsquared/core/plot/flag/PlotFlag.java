@@ -28,9 +28,8 @@ package com.plotsquared.core.plot.flag;
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
-import lombok.EqualsAndHashCode;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -41,7 +40,7 @@ import java.util.Collections;
  *
  * @param <T> Value contained in the flag.
  */
-@EqualsAndHashCode(of = "value") public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
+public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
 
     private final T value;
     private final Caption flagCategory;
@@ -177,4 +176,30 @@ import java.util.Collections;
         return Collections.emptyList();
     }
 
+    public boolean equals(final Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof PlotFlag))
+            return false;
+        final PlotFlag<?, ?> other = (PlotFlag<?, ?>) o;
+        if (!other.canEqual((Object) this))
+            return false;
+        final Object this$value = this.getValue();
+        final Object other$value = other.getValue();
+        if (this$value == null ? other$value != null : !this$value.equals(other$value))
+            return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof PlotFlag;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $value = this.getValue();
+        result = result * PRIME + ($value == null ? 43 : $value.hashCode());
+        return result;
+    }
 }

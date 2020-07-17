@@ -31,6 +31,7 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.ItemUtil;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
+
 import javax.annotation.Nonnull;
 
 public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {

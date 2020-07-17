@@ -27,8 +27,8 @@ package com.plotsquared.core.plot;
 
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
-import lombok.Getter;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -40,12 +40,12 @@ public enum PlotAreaType {
     AUGMENTED(Captions.PLOT_AREA_TYPE_AUGMENTED),
     PARTIAL(Captions.PLOT_AREA_TYPE_PARTIAL);
 
-    @Getter private final Caption description;
+    private final Caption description;
 
     private static final Map<String, PlotAreaType> types = Stream.of(values())
         .collect(Collectors.toMap(e -> e.toString().toLowerCase(), Function.identity()));
 
-    PlotAreaType(Caption description) {
+    PlotAreaType(@Nonnull final Caption description) {
         this.description = description;
     }
 
@@ -62,5 +62,9 @@ public enum PlotAreaType {
             return Optional.empty();
         }
         return Optional.of(values()[typeId]);
+    }
+
+    public Caption getDescription() {
+        return this.description;
     }
 }

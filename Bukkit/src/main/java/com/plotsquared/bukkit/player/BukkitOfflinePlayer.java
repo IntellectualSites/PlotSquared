@@ -27,8 +27,8 @@ package com.plotsquared.bukkit.player;
 
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import org.bukkit.OfflinePlayer;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class BukkitOfflinePlayer implements OfflinePlotPlayer {

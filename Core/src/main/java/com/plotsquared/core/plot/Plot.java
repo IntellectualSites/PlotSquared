@@ -74,12 +74,11 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import lombok.Getter;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -112,7 +111,6 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
-
 /**
  * The plot class<br>
  * [IMPORTANT]
@@ -144,7 +142,7 @@ public class Plot {
     /**
      * Plot flag container
      */
-    @Getter private final FlagContainer flagContainer = new FlagContainer(null);
+    private final FlagContainer flagContainer = new FlagContainer(null);
     /**
      * Has the plot changed since the last save cycle?
      */
@@ -3398,4 +3396,7 @@ public class Plot {
         return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
     }
 
+    public FlagContainer getFlagContainer() {
+        return this.flagContainer;
+    }
 }

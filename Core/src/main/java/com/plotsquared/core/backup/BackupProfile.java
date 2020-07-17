@@ -26,7 +26,6 @@
 package com.plotsquared.core.backup;
 
 import javax.annotation.Nonnull;
-
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

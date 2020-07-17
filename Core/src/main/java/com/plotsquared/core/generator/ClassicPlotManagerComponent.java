@@ -26,7 +26,6 @@
 package com.plotsquared.core.generator;
 
 import javax.annotation.Nonnull;
-
 import java.util.Optional;
 
 /**

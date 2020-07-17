@@ -62,15 +62,19 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import javax.annotation.Nonnull;
 
-@RequiredArgsConstructor public class BukkitModule extends AbstractModule {
+public class BukkitModule extends AbstractModule {
 
     private final BukkitPlatform bukkitPlatform;
+
+    public BukkitModule(@Nonnull final BukkitPlatform bukkitPlatform) {
+        this.bukkitPlatform = bukkitPlatform;
+    }
 
     @Override protected void configure() {
         bind(PlayerManager.class).to(BukkitPlayerManager.class);

@@ -37,7 +37,6 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.query.PlotQuery;
-import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.Set;
@@ -57,7 +56,10 @@ import java.util.UUID;
  *
  * @version 5
  */
-@SuppressWarnings({"unused", "WeakerAccess"}) @NoArgsConstructor public class PlotAPI {
+@SuppressWarnings({"unused", "WeakerAccess"}) public class PlotAPI {
+
+    public PlotAPI() {
+    }
 
     /**
      * Gets all plots.

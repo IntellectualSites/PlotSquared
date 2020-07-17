@@ -26,6 +26,7 @@
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
+
 import javax.annotation.Nonnull;
 
 public abstract class PlotEvent {

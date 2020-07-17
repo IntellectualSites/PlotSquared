@@ -35,6 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
+
 import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "setdescription",

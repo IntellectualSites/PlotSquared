@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.NonNegativeIntegerFlag;
+
 import javax.annotation.Nonnull;
 
 public class AnimalCapFlag extends NonNegativeIntegerFlag<AnimalCapFlag> {

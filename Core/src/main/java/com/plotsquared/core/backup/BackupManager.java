@@ -28,9 +28,9 @@ package com.plotsquared.core.backup;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.nio.file.Path;
 import java.util.Objects;
 

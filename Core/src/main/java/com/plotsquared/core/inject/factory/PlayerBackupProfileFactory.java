@@ -27,8 +27,8 @@ package com.plotsquared.core.inject.factory;
 
 import com.plotsquared.core.backup.PlayerBackupProfile;
 import com.plotsquared.core.plot.Plot;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public interface PlayerBackupProfileFactory {

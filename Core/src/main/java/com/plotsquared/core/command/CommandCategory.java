@@ -26,12 +26,10 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
-import lombok.RequiredArgsConstructor;
 
 /**
  * CommandCategory.
  */
-@RequiredArgsConstructor
 public enum CommandCategory {
     /**
      * Claiming CommandConfig.
@@ -77,6 +75,10 @@ public enum CommandCategory {
      * The category name (Readable).
      */
     private final Captions caption;
+
+    CommandCategory(final Captions caption) {
+        this.caption = caption;
+    }
 
     @Override public String toString() {
         return this.caption.getTranslated();

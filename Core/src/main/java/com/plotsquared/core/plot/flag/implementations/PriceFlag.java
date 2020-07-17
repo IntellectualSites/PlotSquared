@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
+
 import javax.annotation.Nonnull;
 
 public class PriceFlag extends DoubleFlag<PriceFlag> {

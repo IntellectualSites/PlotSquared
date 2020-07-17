@@ -29,14 +29,13 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import com.sk89q.worldedit.world.registry.LegacyMapper;
-import lombok.Getter;
 
 public class PlotItemStack {
 
     public final int amount;
     public final String name;
     public final String[] lore;
-    @Getter private final ItemType type;
+    private final ItemType type;
 
     /**
      * @param id     Legacy numerical item ID
@@ -71,5 +70,9 @@ public class PlotItemStack {
 
     public BlockState getBlockState() {
         return type.getBlockType().getDefaultState();
+    }
+
+    public ItemType getType() {
+        return this.type;
     }
 }

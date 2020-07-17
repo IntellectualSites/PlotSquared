@@ -25,12 +25,10 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
@@ -39,9 +37,7 @@ import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import lombok.SneakyThrows;
 import net.kyori.adventure.text.minimessage.Template;
-import javax.annotation.Nonnull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -592,10 +588,6 @@ public abstract class Command {
             throw new CommandException(message, args);
         }
         return object;
-    }
-
-    @SneakyThrows protected static void sneakyThrow(@Nonnull final Throwable throwable) {
-        throw throwable;
     }
 
     public enum CommandResult {

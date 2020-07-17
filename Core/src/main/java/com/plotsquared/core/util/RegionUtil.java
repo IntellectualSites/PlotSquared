@@ -29,8 +29,8 @@ import com.plotsquared.core.plot.Plot;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.awt.geom.Rectangle2D;
 
 public class RegionUtil {

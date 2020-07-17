@@ -27,8 +27,6 @@ package com.plotsquared.core.util.task;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.util.RuntimeExceptionRunnableVal;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,7 +41,7 @@ public abstract class TaskManager {
     public static final HashMap<Integer, Integer> tasks = new HashMap<>();
     public static AtomicInteger index = new AtomicInteger(0);
 
-    @Getter @Setter private static TaskManager implementation;
+    private static TaskManager implementation;
 
     public static int runTaskRepeat(Runnable runnable, int interval) {
         if (runnable != null) {
@@ -122,6 +120,14 @@ public abstract class TaskManager {
         final Runnable whenDone) {
         final Iterator<T> iterator = objects.iterator();
         TaskManager.runTask(new ObjectTaskRunnable<>(iterator, task, whenDone));
+    }
+
+    public static TaskManager getImplementation() {
+        return TaskManager.implementation;
+    }
+
+    public static void setImplementation(TaskManager implementation) {
+        TaskManager.implementation = implementation;
     }
 
     public <T> T sync(final RunnableVal<T> function) {

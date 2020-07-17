@@ -55,12 +55,11 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import lombok.Getter;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -80,7 +79,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public HashMap<Integer, BiomeType> G_SCH_B;
     public int SCHEM_Y;
     private Location SIGN_LOCATION;
-    @Getter private File root = null;
+    private File root = null;
 
     private final RegionManager regionManager;
     private final SchematicHandler schematicHandler;
@@ -403,5 +402,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         int pair = MathMan.pair(x, z);
         this.G_SCH_B.put(pair, id);
+    }
+
+    public File getRoot() {
+        return this.root;
     }
 }

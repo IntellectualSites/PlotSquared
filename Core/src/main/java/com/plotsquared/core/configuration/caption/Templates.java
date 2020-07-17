@@ -28,7 +28,6 @@ package com.plotsquared.core.configuration.caption;
 import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.MainUtil;
-import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
@@ -38,10 +37,14 @@ import java.util.UUID;
 /**
  * Utility class that generates {@link net.kyori.adventure.text.minimessage.Template templates}
  */
-@UtilityClass
-public class Templates {
+public final class Templates {
 
-    private final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+
+    private Templates() {
+        throw new UnsupportedOperationException(
+            "This is a utility class and cannot be instantiated");
+    }
 
     /**
      * Create a {@link net.kyori.adventure.text.minimessage.Template} from a PlotSquared {@link Caption}
@@ -52,10 +55,9 @@ public class Templates {
      * @param replacements Replacements
      * @return Generated template
      */
-    @Nonnull public Template of(@Nonnull final LocaleHolder localeHolder,
-                                @Nonnull final String key,
-                                @Nonnull final Caption caption,
-                                @Nonnull final Template... replacements) {
+    @Nonnull public static Template of(@Nonnull final LocaleHolder localeHolder,
+        @Nonnull final String key, @Nonnull final Caption caption,
+        @Nonnull final Template... replacements) {
         return Template.of(key, MINI_MESSAGE.parse(caption.getComponent(localeHolder), replacements));
     }
 
@@ -66,8 +68,7 @@ public class Templates {
      * @param uuid         Player UUID
      * @return Generated template
      */
-    @Nonnull public Template of(@Nonnull final String key,
-                                @Nonnull final UUID uuid) {
+    @Nonnull public static Template of(@Nonnull final String key, @Nonnull final UUID uuid) {
         final String username = MainUtil.getName(uuid);
         return Template.of(key, username);
     }
@@ -79,8 +80,7 @@ public class Templates {
      * @param value Template value
      * @return Generated template
      */
-    @Nonnull public Template of(@Nonnull final String key,
-                                @Nonnull final String value) {
+    @Nonnull public static Template of(@Nonnull final String key, @Nonnull final String value) {
         return Template.of(key, value);
     }
 
@@ -91,8 +91,7 @@ public class Templates {
      * @param area Plot area
      * @return Generated template
      */
-    @Nonnull public Template of(@Nonnull final String key,
-                                @Nonnull final PlotArea area) {
+    @Nonnull public static Template of(@Nonnull final String key, @Nonnull final PlotArea area) {
         return Template.of(key, area.toString());
     }
 
@@ -103,8 +102,7 @@ public class Templates {
      * @param number Number
      * @return Generated template
      */
-    @Nonnull public Template of(@Nonnull final String key,
-                                @Nonnull final Number number) {
+    @Nonnull public static Template of(@Nonnull final String key, @Nonnull final Number number) {
         return Template.of(key, number.toString());
     }
 

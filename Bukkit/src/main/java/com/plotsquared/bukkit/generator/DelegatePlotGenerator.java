@@ -38,8 +38,8 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 final class DelegatePlotGenerator extends IndependentPlotGenerator {

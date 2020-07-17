@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.PlotFlag;
+
 import javax.annotation.Nonnull;
 
 public class DescriptionFlag extends PlotFlag<String, DescriptionFlag> {

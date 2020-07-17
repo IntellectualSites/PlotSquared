@@ -29,8 +29,6 @@ import com.google.common.collect.ImmutableList;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.plot.comment.PlotComment;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,19 +47,19 @@ public class PlotSettings {
     /**
      * Merged plots.
      */
-    @Getter private boolean[] merged = new boolean[] {false, false, false, false};
+    private boolean[] merged = new boolean[] {false, false, false, false};
     /**
      * Plot alias.
      */
-    @Getter @Setter private String alias = "";
+    private String alias = "";
     /**
      * The ratings for a plot.
      */
-    @Setter private HashMap<UUID, Integer> ratings;
+    private HashMap<UUID, Integer> ratings;
     /**
      * Plot comments.
      */
-    @Setter private List<PlotComment> comments = null;
+    private List<PlotComment> comments = null;
     /**
      * Home Position.
      */
@@ -147,5 +145,25 @@ public class PlotSettings {
             this.comments = new ArrayList<>();
         }
         this.comments.add(comment);
+    }
+
+    public boolean[] getMerged() {
+        return this.merged;
+    }
+
+    public String getAlias() {
+        return this.alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public void setRatings(HashMap<UUID, Integer> ratings) {
+        this.ratings = ratings;
+    }
+
+    public void setComments(List<PlotComment> comments) {
+        this.comments = comments;
     }
 }

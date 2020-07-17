@@ -26,7 +26,6 @@
 package com.plotsquared.core.configuration.caption;
 
 import com.plotsquared.core.PlotSquared;
-import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
@@ -36,7 +35,7 @@ import java.util.Locale;
  */
 public final class TranslatableCaption implements KeyedCaption {
 
-    @Getter private final String key;
+    private final String key;
 
     private TranslatableCaption(@Nonnull final String key) {
         this.key = key;
@@ -56,4 +55,7 @@ public final class TranslatableCaption implements KeyedCaption {
         return PlotSquared.get().getCaptionMap().getMessage(this, localeHolder);
     }
 
+    @Nonnull public String getKey() {
+        return this.key;
+    }
 }

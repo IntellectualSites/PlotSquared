@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
+
 import javax.annotation.Nonnull;
 
 public class HostileAttackFlag extends BooleanFlag<HostileAttackFlag> {

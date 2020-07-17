@@ -27,7 +27,6 @@ package com.plotsquared.core.util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Collection;
 
 /**

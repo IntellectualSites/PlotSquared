@@ -28,6 +28,7 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
+
 import javax.annotation.Nonnull;
 
 public class FeedFlag extends TimedFlag<Integer, FeedFlag> {

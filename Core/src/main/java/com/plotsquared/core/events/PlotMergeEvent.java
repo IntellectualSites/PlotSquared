@@ -28,8 +28,7 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import lombok.Getter;
-import lombok.Setter;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -38,11 +37,11 @@ import javax.annotation.Nonnull;
  */
 public final class PlotMergeEvent extends PlotPlayerEvent implements CancellablePlotEvent {
 
-    @Getter private final String world;
-    @Getter @Setter private Direction dir;
-    @Getter @Setter private int max;
+    private final String world;
+    private Direction dir;
+    private int max;
     private Result eventResult;
-    @Getter private PlotPlayer player;
+    private PlotPlayer player;
 
     /**
      * PlotMergeEvent: Called when plots are merged
@@ -54,7 +53,7 @@ public final class PlotMergeEvent extends PlotPlayerEvent implements Cancellable
      * @param player The player attempting the merge
      */
     public PlotMergeEvent(@Nonnull final String world, @Nonnull final Plot plot,
-        @Nonnull final Direction dir, final int max, PlotPlayer player) {
+        @Nonnull final Direction dir, final int max, final PlotPlayer<?> player) {
         super(player, plot);
         this.world = world;
         this.dir = dir;
@@ -69,5 +68,29 @@ public final class PlotMergeEvent extends PlotPlayerEvent implements Cancellable
 
     @Override public void setEventResult(Result e) {
         this.eventResult = e;
+    }
+
+    public String getWorld() {
+        return this.world;
+    }
+
+    public Direction getDir() {
+        return this.dir;
+    }
+
+    public int getMax() {
+        return this.max;
+    }
+
+    public PlotPlayer getPlayer() {
+        return this.player;
+    }
+
+    public void setDir(Direction dir) {
+        this.dir = dir;
+    }
+
+    public void setMax(int max) {
+        this.max = max;
     }
 }

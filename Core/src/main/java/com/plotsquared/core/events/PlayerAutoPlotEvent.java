@@ -28,8 +28,6 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.annotation.Nullable;
 
@@ -37,10 +35,10 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
 
     private Result eventResult;
     private String schematic;
-    @Getter private PlotPlayer player;
-    @Getter private PlotArea plotArea;
-    @Getter @Setter private int size_x;
-    @Getter @Setter private int size_z;
+    private final PlotPlayer<?> player;
+    private final PlotArea plotArea;
+    private int size_x;
+    private int size_z;
 
     /**
      * PlayerAutoPlotEvent: called when a player attempts to auto claim a plot.
@@ -51,7 +49,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      * @param size_x    The size of the auto area
      * @param size_z    The size of the auto area
      */
-    public PlayerAutoPlotEvent(PlotPlayer player, PlotArea plotArea, @Nullable String schematic,
+    public PlayerAutoPlotEvent(PlotPlayer<?> player, PlotArea plotArea, @Nullable String schematic,
         int size_x, int size_z) {
         super(null);
         this.player = player;
@@ -83,5 +81,29 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
 
     @Override public void setEventResult(Result e) {
         this.eventResult = e;
+    }
+
+    public PlotPlayer<?> getPlayer() {
+        return this.player;
+    }
+
+    public PlotArea getPlotArea() {
+        return this.plotArea;
+    }
+
+    public int getSize_x() {
+        return this.size_x;
+    }
+
+    public int getSize_z() {
+        return this.size_z;
+    }
+
+    public void setSize_x(int size_x) {
+        this.size_x = size_x;
+    }
+
+    public void setSize_z(int size_z) {
+        this.size_z = size_z;
     }
 }

@@ -26,6 +26,7 @@
 package com.plotsquared.core.plot.flag.types;
 
 import com.plotsquared.core.configuration.Caption;
+
 import javax.annotation.Nonnull;
 
 public abstract class NonNegativeIntegerFlag<F extends IntegerFlag<F>> extends IntegerFlag<F> {

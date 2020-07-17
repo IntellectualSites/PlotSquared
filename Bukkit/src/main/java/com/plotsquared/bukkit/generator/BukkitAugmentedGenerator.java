@@ -29,8 +29,8 @@ import com.plotsquared.core.generator.AugmentedUtils;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 public class BukkitAugmentedGenerator extends BlockPopulator {

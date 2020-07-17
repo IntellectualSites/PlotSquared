@@ -30,8 +30,8 @@ import com.plotsquared.core.database.SQLite;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

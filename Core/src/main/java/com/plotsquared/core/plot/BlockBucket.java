@@ -36,21 +36,18 @@ import com.sk89q.worldedit.function.pattern.BlockPattern;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
-import lombok.RequiredArgsConstructor;
 import javax.annotation.Nonnull;
-
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 
 /**
  * A block bucket is a container of block types, where each block
  * has a specified chance of being randomly picked
  */
-@EqualsAndHashCode(of = {"input"})
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class BlockBucket implements ConfigurationSerializable {
     private static java.util.regex.Pattern regex = java.util.regex.Pattern.compile(
@@ -60,21 +57,21 @@ public final class BlockBucket implements ConfigurationSerializable {
     private BlockState single;
     private Pattern pattern;
 
-    public BlockBucket(BlockType type) {
+    public BlockBucket(@NotNull final BlockType type) {
         this(type.getId());
         this.single = type.getDefaultState();
         this.pattern = new BlockPattern(this.single);
         this.compiled = true;
     }
 
-    public BlockBucket(BlockState state) {
+    public BlockBucket(@NotNull final BlockState state) {
         this(state.getAsString());
         this.single = state;
         this.pattern = new BlockPattern(this.single);
         this.compiled = true;
     }
 
-    public BlockBucket(String input) {
+    public BlockBucket(@NotNull final String input) {
         this.input = new StringBuilder(input);
     }
 
@@ -194,14 +191,38 @@ public final class BlockBucket implements ConfigurationSerializable {
         return ImmutableMap.of("blocks", this.toString());
     }
 
-    @Getter
-    @EqualsAndHashCode
-    @RequiredArgsConstructor
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof BlockBucket)) {
+            return false;
+        }
+        final BlockBucket other = (BlockBucket) o;
+        final Object this$input = this.input;
+        final Object other$input = other.input;
+        return Objects.equals(this$input, other$input);
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $input = this.input;
+        result = result * PRIME + ($input == null ? 43 : $input.hashCode());
+        return result;
+    }
+
     private static final class Range {
 
         private final int min;
         private final int max;
-        @Getter private final boolean automatic;
+        private final boolean automatic;
+
+        public Range(int min, int max, boolean automatic) {
+            this.min = min;
+            this.max = max;
+            this.automatic = automatic;
+        }
 
         public int getWeight() {
             return max - min;
@@ -209,6 +230,42 @@ public final class BlockBucket implements ConfigurationSerializable {
 
         public boolean isInRange(final int num) {
             return num <= max && num >= min;
+        }
+
+        public int getMin() {
+            return this.min;
+        }
+
+        public int getMax() {
+            return this.max;
+        }
+
+        public boolean equals(final Object o) {
+            if (o == this)
+                return true;
+            if (!(o instanceof Range))
+                return false;
+            final Range other = (Range) o;
+            if (this.getMin() != other.getMin())
+                return false;
+            if (this.getMax() != other.getMax())
+                return false;
+            if (this.isAutomatic() != other.isAutomatic())
+                return false;
+            return true;
+        }
+
+        public int hashCode() {
+            final int PRIME = 59;
+            int result = 1;
+            result = result * PRIME + this.getMin();
+            result = result * PRIME + this.getMax();
+            result = result * PRIME + (this.isAutomatic() ? 79 : 97);
+            return result;
+        }
+
+        public boolean isAutomatic() {
+            return this.automatic;
         }
     }
 }

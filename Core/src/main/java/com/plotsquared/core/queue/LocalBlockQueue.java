@@ -39,15 +39,14 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import lombok.Getter;
-import lombok.Setter;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class LocalBlockQueue {
 
-    @Getter @Setter private boolean forceSync = false;
-    @Getter @Setter @Nullable private Object chunkObject;
+    private boolean forceSync = false;
+    @Nullable private Object chunkObject;
 
     @Inject private SchematicHandler schematicHandler;
     @Inject private WorldUtil worldUtil;
@@ -173,5 +172,21 @@ public abstract class LocalBlockQueue {
                 }
             }
         }
+    }
+
+    public boolean isForceSync() {
+        return this.forceSync;
+    }
+
+    @Nullable public Object getChunkObject() {
+        return this.chunkObject;
+    }
+
+    public void setForceSync(boolean forceSync) {
+        this.forceSync = forceSync;
+    }
+
+    public void setChunkObject(@Nullable Object chunkObject) {
+        this.chunkObject = chunkObject;
     }
 }

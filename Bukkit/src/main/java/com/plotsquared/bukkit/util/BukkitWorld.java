@@ -27,14 +27,13 @@ package com.plotsquared.bukkit.util;
 
 import com.google.common.collect.Maps;
 import com.plotsquared.core.location.World;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.bukkit.Bukkit;
+
 import javax.annotation.Nonnull;
-
 import java.util.Map;
+import java.util.Objects;
 
-@EqualsAndHashCode @ToString public class BukkitWorld implements World<org.bukkit.World> {
+public class BukkitWorld implements World<org.bukkit.World> {
 
     private static final Map<String, BukkitWorld> worldMap = Maps.newHashMap();
 
@@ -82,4 +81,36 @@ import java.util.Map;
         return this.world.getName();
     }
 
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof BukkitWorld)) {
+            return false;
+        }
+        final BukkitWorld other = (BukkitWorld) o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        if (!Objects.equals(this.world, other.world)) {
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof BukkitWorld;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $world = this.world;
+        result = result * PRIME + ($world == null ? 43 : $world.hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "BukkitWorld(world=" + this.world + ")";
+    }
 }

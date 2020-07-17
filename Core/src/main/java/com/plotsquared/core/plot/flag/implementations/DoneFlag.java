@@ -29,6 +29,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.PlotFlag;
+
 import javax.annotation.Nonnull;
 
 public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag {

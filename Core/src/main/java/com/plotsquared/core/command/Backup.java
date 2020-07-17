@@ -36,8 +36,8 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.nio.file.Files;
 import java.time.Instant;
 import java.time.ZoneId;

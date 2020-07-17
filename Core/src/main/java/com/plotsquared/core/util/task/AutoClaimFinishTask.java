@@ -35,9 +35,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EventDispatcher;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public final class AutoClaimFinishTask extends RunnableVal<Object> {
 
     private final PlotPlayer player;
@@ -45,6 +43,15 @@ public final class AutoClaimFinishTask extends RunnableVal<Object> {
     private final PlotArea area;
     private final String schematic;
     private final EventDispatcher eventDispatcher;
+
+    public AutoClaimFinishTask(final PlotPlayer player, final Plot plot, final PlotArea area,
+        final String schematic, final EventDispatcher eventDispatcher) {
+        this.player = player;
+        this.plot = plot;
+        this.area = area;
+        this.schematic = schematic;
+        this.eventDispatcher = eventDispatcher;
+    }
 
     @Override public void run(Object value) {
         player.deleteMeta(Auto.class.getName());

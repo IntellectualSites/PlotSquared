@@ -37,10 +37,9 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
-import lombok.Getter;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -227,7 +226,7 @@ public enum CommonSetupSteps implements SetupStep {
         }
     };
 
-    @Getter @Nonnull private final Collection<String> suggestions;
+    @Nonnull private final Collection<String> suggestions;
     private final Caption description;
 
     /**
@@ -267,5 +266,9 @@ public enum CommonSetupSteps implements SetupStep {
         return s.chars().allMatch((i) -> {
             return i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 48 && i <= 57 || i == 46;
         });
+    }
+
+    @Nonnull public Collection<String> getSuggestions() {
+        return this.suggestions;
     }
 }

@@ -25,15 +25,13 @@
  */
 package com.plotsquared.bukkit.entity;
 
-import lombok.Getter;
-
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+
 import javax.annotation.Nonnull;
 
-@Getter
 public abstract class EntityWrapper {
 
     protected final float yaw;
@@ -64,4 +62,31 @@ public abstract class EntityWrapper {
 
     public abstract void saveEntity();
 
+    public float getYaw() {
+        return this.yaw;
+    }
+
+    public float getPitch() {
+        return this.pitch;
+    }
+
+    public Entity getEntity() {
+        return this.entity;
+    }
+
+    public EntityType getType() {
+        return this.type;
+    }
+
+    public double getX() {
+        return this.x;
+    }
+
+    public double getY() {
+        return this.y;
+    }
+
+    public double getZ() {
+        return this.z;
+    }
 }

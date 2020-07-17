@@ -36,12 +36,9 @@ import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.TaskManager;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -51,11 +48,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * {@inheritDoc}
  */
-@RequiredArgsConstructor @Singleton public class SimpleBackupManager implements BackupManager {
+@Singleton public class SimpleBackupManager implements BackupManager {
 
-    @Getter private final Path backupPath;
+    private final Path backupPath;
     private final boolean automaticBackup;
-    @Getter private final int backupLimit;
+    private final int backupLimit;
     private final Cache<PlotCacheKey, BackupProfile> backupProfileCache = CacheBuilder.newBuilder()
         .expireAfterAccess(3, TimeUnit.MINUTES).build();
     private final PlayerBackupProfileFactory playerBackupProfileFactory;
@@ -68,6 +65,14 @@ import java.util.concurrent.TimeUnit;
         }
         this.automaticBackup = Settings.Backup.AUTOMATIC_BACKUPS;
         this.backupLimit = Settings.Backup.BACKUP_LIMIT;
+    }
+
+    public SimpleBackupManager(final Path backupPath, final boolean automaticBackup,
+        final int backupLimit, final PlayerBackupProfileFactory playerBackupProfileFactory) {
+        this.backupPath = backupPath;
+        this.automaticBackup = automaticBackup;
+        this.backupLimit = backupLimit;
+        this.playerBackupProfileFactory = playerBackupProfileFactory;
     }
 
     @Override @Nonnull public BackupProfile getProfile(@Nonnull final Plot plot) {
@@ -111,9 +116,21 @@ import java.util.concurrent.TimeUnit;
         return this.automaticBackup;
     }
 
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE) private static final class PlotCacheKey {
+    public Path getBackupPath() {
+        return this.backupPath;
+    }
+
+    public int getBackupLimit() {
+        return this.backupLimit;
+    }
+
+    private static final class PlotCacheKey {
 
         private final Plot plot;
+
+        private PlotCacheKey(Plot plot) {
+            this.plot = plot;
+        }
 
         @Override public boolean equals(final Object o) {
             if (this == o) {

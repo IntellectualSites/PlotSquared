@@ -27,8 +27,7 @@ package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import lombok.Getter;
-import lombok.Setter;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -37,10 +36,10 @@ import javax.annotation.Nonnull;
  */
 public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotEvent {
 
-    @Getter private final PlotArea area;
-    @Getter @Setter boolean createRoad;
-    @Getter @Setter boolean createSign;
-    @Getter REASON reason;
+    private final PlotArea area;
+    boolean createRoad;
+    boolean createSign;
+    REASON reason;
     private Result eventResult = Result.ACCEPT;
 
     /**
@@ -67,6 +66,30 @@ public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotE
 
     @Override public void setEventResult(Result e) {
         this.eventResult = e;
+    }
+
+    public PlotArea getArea() {
+        return this.area;
+    }
+
+    public boolean isCreateRoad() {
+        return this.createRoad;
+    }
+
+    public boolean isCreateSign() {
+        return this.createSign;
+    }
+
+    public REASON getReason() {
+        return this.reason;
+    }
+
+    public void setCreateRoad(boolean createRoad) {
+        this.createRoad = createRoad;
+    }
+
+    public void setCreateSign(boolean createSign) {
+        this.createSign = createSign;
     }
 
     public enum REASON {

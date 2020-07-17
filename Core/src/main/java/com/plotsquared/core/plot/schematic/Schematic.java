@@ -32,7 +32,6 @@ import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicWriter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,11 +40,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Schematic {
-    // Lossy but fast
-    @Getter private final Clipboard clipboard;
-    @Getter private Map<String, Tag> flags = new HashMap<>();
 
-    public Schematic(Clipboard clip) {
+    // Lossy but fast
+    private final Clipboard clipboard;
+    private Map<String, Tag> flags = new HashMap<>();
+
+    public Schematic(final Clipboard clip) {
         this.clipboard = clip;
     }
 
@@ -68,5 +68,13 @@ public class Schematic {
             new NBTOutputStream(new FileOutputStream(file)))) {
             schematicWriter.write(clipboard);
         }
+    }
+
+    public Clipboard getClipboard() {
+        return this.clipboard;
+    }
+
+    public Map<String, Tag> getFlags() {
+        return this.flags;
     }
 }

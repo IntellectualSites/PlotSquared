@@ -25,16 +25,20 @@
  */
 package com.plotsquared.core.util.task;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.Iterator;
 
-@RequiredArgsConstructor
 public class ObjectTaskRunnable<T> implements Runnable {
 
     private final Iterator<T> iterator;
     private final RunnableVal<T> task;
     private final Runnable whenDone;
+
+    public ObjectTaskRunnable(final Iterator<T> iterator,
+        final RunnableVal<T> task, final Runnable whenDone) {
+        this.iterator = iterator;
+        this.task = task;
+        this.whenDone = whenDone;
+    }
 
     @Override public void run() {
         long start = System.currentTimeMillis();

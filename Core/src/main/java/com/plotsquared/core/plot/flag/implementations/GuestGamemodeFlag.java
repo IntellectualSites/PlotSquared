@@ -30,6 +30,7 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+
 import javax.annotation.Nonnull;
 
 public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {

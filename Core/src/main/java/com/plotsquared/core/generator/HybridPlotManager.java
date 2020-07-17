@@ -46,9 +46,8 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import lombok.Getter;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -58,7 +57,7 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     public static boolean REGENERATIVE_CLEAR = true;
 
-    @Getter private final HybridPlotWorld hybridPlotWorld;
+    private final HybridPlotWorld hybridPlotWorld;
     private final RegionManager regionManager;
 
     public HybridPlotManager(@Nonnull final HybridPlotWorld hybridPlotWorld,
@@ -279,5 +278,9 @@ public class HybridPlotManager extends ClassicPlotManager {
      */
     @Override public Location getSignLoc(Plot plot) {
         return hybridPlotWorld.getSignLocation(plot);
+    }
+
+    public HybridPlotWorld getHybridPlotWorld() {
+        return this.hybridPlotWorld;
     }
 }

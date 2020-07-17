@@ -31,8 +31,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.SimpleMBR;
 
@@ -42,12 +40,12 @@ import javax.annotation.Nullable;
 /**
  * An unmodifiable 6-tuple (world,x,y,z,yaw,pitch)
  */
-@EqualsAndHashCode @SuppressWarnings("unused")
+@SuppressWarnings("unused")
 public final class Location implements Comparable<Location> {
 
-    @Getter private final float yaw;
-    @Getter private final float pitch;
-    @Getter private final BlockVector3 blockVector3;
+    private final float yaw;
+    private final float pitch;
+    private final BlockVector3 blockVector3;
     private final World<?> world;
 
     private Location(@Nonnull final World<?> world, @Nonnull final BlockVector3 blockVector3,
@@ -450,5 +448,52 @@ public final class Location implements Comparable<Location> {
         return "\"plotsquaredlocation\":{\"x\":" + this.getX() + ",\"y\":" + this.getY() + ",\"z\":"
             + this.getZ() + ",\"yaw\":" + this.yaw + ",\"pitch\":" + this.pitch + ",\"world\":\""
             + this.world + "\"}";
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Location))
+            return false;
+        final Location other = (Location) o;
+        if (Float.compare(this.yaw, other.yaw) != 0)
+            return false;
+        if (Float.compare(this.pitch, other.pitch) != 0)
+            return false;
+        final Object this$blockVector3 = this.blockVector3;
+        final Object other$blockVector3 = other.blockVector3;
+        if (this$blockVector3 == null ?
+            other$blockVector3 != null :
+            !this$blockVector3.equals(other$blockVector3))
+            return false;
+        final Object this$world = this.getWorld();
+        final Object other$world = other.getWorld();
+        if (this$world == null ? other$world != null : !this$world.equals(other$world))
+            return false;
+        return true;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        result = result * PRIME + Float.floatToIntBits(this.yaw);
+        result = result * PRIME + Float.floatToIntBits(this.pitch);
+        final Object $blockVector3 = this.blockVector3;
+        result = result * PRIME + ($blockVector3 == null ? 43 : $blockVector3.hashCode());
+        final Object $world = this.getWorld();
+        result = result * PRIME + ($world == null ? 43 : $world.hashCode());
+        return result;
+    }
+
+    public float getYaw() {
+        return this.yaw;
+    }
+
+    public float getPitch() {
+        return this.pitch;
+    }
+
+    public BlockVector3 getBlockVector3() {
+        return this.blockVector3;
     }
 }

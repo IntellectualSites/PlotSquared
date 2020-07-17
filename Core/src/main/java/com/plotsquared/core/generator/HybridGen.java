@@ -38,6 +38,7 @@ import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
+
 import javax.annotation.Nonnull;
 
 public class HybridGen extends IndependentPlotGenerator {

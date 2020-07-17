@@ -25,11 +25,6 @@
  */
 package com.plotsquared.core;
 
-import com.plotsquared.core.command.WE_Anywhere;
-import com.plotsquared.core.components.ComponentPresetManager;
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.caption.CaptionMap;
-import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -37,6 +32,7 @@ import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.CaptionLoader;
+import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
 import com.plotsquared.core.database.DBFunc;
@@ -64,20 +60,17 @@ import com.plotsquared.core.plot.expiration.ExpiryTask;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.LegacyConverter;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
+import com.plotsquared.core.util.logger.ILogger;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
-import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,32 +126,32 @@ public class PlotSquared {
     // Current thread
     private final Thread thread;
     // UUID pipelines
-    @Getter private final UUIDPipeline impromptuUUIDPipeline =
+    private final UUIDPipeline impromptuUUIDPipeline =
         new UUIDPipeline(Executors.newCachedThreadPool());
-    @Getter private final UUIDPipeline backgroundUUIDPipeline =
+    private final UUIDPipeline backgroundUUIDPipeline =
         new UUIDPipeline(Executors.newSingleThreadExecutor());
     // WorldEdit instance
-    @Getter private WorldEdit worldedit;
-    @Getter private File configFile;
-    @Getter private File worldsFile;
+    private WorldEdit worldedit;
+    private File configFile;
+    private File worldsFile;
     public File translationFile; // TODO: REMOVE
     public YamlConfiguration style; // TODO: REMOVE
-    @Getter private YamlConfiguration worldConfiguration;
+    private YamlConfiguration worldConfiguration;
     // Temporary hold the plots/clusters before the worlds load
     private HashMap<String, Set<PlotCluster>> clustersTmp;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     private YamlConfiguration config;
     // Localization
-    @Getter private CaptionMap captionMap;
+    private CaptionMap captionMap;
     // Implementation logger
-    @Setter @Getter private ILogger logger;
+    private ILogger logger;
     // Platform / Version / Update URL
     private PlotVersion version;
     // Files and configuration
-    @Getter private File jarFile = null; // This file
+    private File jarFile = null; // This file
     private File storageFile;
-    @Getter private EventDispatcher eventDispatcher;
-    @Getter private PlotListener plotListener;
+    private EventDispatcher eventDispatcher;
+    private PlotListener plotListener;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -1452,6 +1445,54 @@ public class PlotSquared {
 
     public YamlConfiguration getConfig() {
         return config;
+    }
+
+    public UUIDPipeline getImpromptuUUIDPipeline() {
+        return this.impromptuUUIDPipeline;
+    }
+
+    public UUIDPipeline getBackgroundUUIDPipeline() {
+        return this.backgroundUUIDPipeline;
+    }
+
+    public WorldEdit getWorldedit() {
+        return this.worldedit;
+    }
+
+    public File getConfigFile() {
+        return this.configFile;
+    }
+
+    public File getWorldsFile() {
+        return this.worldsFile;
+    }
+
+    public YamlConfiguration getWorldConfiguration() {
+        return this.worldConfiguration;
+    }
+
+    public CaptionMap getCaptionMap() {
+        return this.captionMap;
+    }
+
+    public ILogger getLogger() {
+        return this.logger;
+    }
+
+    public File getJarFile() {
+        return this.jarFile;
+    }
+
+    public EventDispatcher getEventDispatcher() {
+        return this.eventDispatcher;
+    }
+
+    public PlotListener getPlotListener() {
+        return this.plotListener;
+    }
+
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
     }
 
     public enum SortType {

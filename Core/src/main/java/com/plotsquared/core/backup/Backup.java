@@ -25,11 +25,7 @@
  */
 package com.plotsquared.core.backup;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import javax.annotation.Nullable;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,11 +34,17 @@ import java.nio.file.Path;
  * Object representing a plot backup. This does not actually contain the
  * backup itself, it is just a pointer to an available backup
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE) @Getter public class Backup {
+public class Backup {
 
     private final BackupProfile owner;
     private final long creationTime;
     @Nullable private final Path file;
+
+    Backup(final BackupProfile owner, final long creationTime, final Path file) {
+        this.owner = owner;
+        this.creationTime = creationTime;
+        this.file = file;
+    }
 
     /**
      * Delete the backup
@@ -57,4 +59,15 @@ import java.nio.file.Path;
         }
     }
 
+    public BackupProfile getOwner() {
+        return this.owner;
+    }
+
+    public long getCreationTime() {
+        return this.creationTime;
+    }
+
+    @Nullable public Path getFile() {
+        return this.file;
+    }
 }

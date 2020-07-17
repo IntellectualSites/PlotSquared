@@ -104,7 +104,6 @@ import com.plotsquared.core.plot.flag.implementations.VehicleUseFlag;
 import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
-import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -114,7 +113,7 @@ import java.util.Map;
 
 public final class GlobalFlagContainer extends FlagContainer {
 
-    @Getter private static final GlobalFlagContainer instance = new GlobalFlagContainer();
+    private static final GlobalFlagContainer instance = new GlobalFlagContainer();
     private static Map<String, Class<?>> stringClassMap;
 
     private GlobalFlagContainer() {
@@ -219,6 +218,10 @@ public final class GlobalFlagContainer extends FlagContainer {
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));
         this.addFlag(new DoneFlag(""));
+    }
+
+    public static GlobalFlagContainer getInstance() {
+        return GlobalFlagContainer.instance;
     }
 
     @Override public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {

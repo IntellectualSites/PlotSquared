@@ -39,15 +39,13 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public class GenChunk extends ScopedLocalBlockQueue {
@@ -59,7 +57,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     public String world;
     public int chunkX;
     public int chunkZ;
-    @Getter @Setter private ChunkData chunkData = null;
+    private ChunkData chunkData = null;
 
     public GenChunk() {
         super(null, Location.at("", 0, 0, 0), Location.at("", 15, 255, 15));
@@ -216,5 +214,13 @@ public class GenChunk extends ScopedLocalBlockQueue {
         }
         toReturn.chunkData = this.chunkData;
         return toReturn;
+    }
+
+    public ChunkData getChunkData() {
+        return this.chunkData;
+    }
+
+    public void setChunkData(ChunkData chunkData) {
+        this.chunkData = chunkData;
     }
 }

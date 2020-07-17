@@ -30,8 +30,8 @@ import com.plotsquared.core.configuration.serialization.SerializableAs;
 import com.plotsquared.core.generator.ClassicPlotManagerComponent;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

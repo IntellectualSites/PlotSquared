@@ -27,9 +27,9 @@ package com.plotsquared.core.uuid;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

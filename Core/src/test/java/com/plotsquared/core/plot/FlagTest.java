@@ -30,8 +30,6 @@ import com.plotsquared.core.database.DBFunc;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.junit.Before;
 
-import static org.junit.Assert.assertEquals;
-
 public class FlagTest {
 
     private ItemType testBlock;
