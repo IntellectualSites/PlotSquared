@@ -31,6 +31,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -73,20 +74,22 @@ public abstract class QueueCoordinator {
 
     public abstract boolean setTile(int x, int y, int z, CompoundTag tag);
 
+    public abstract boolean isSettingTiles();
+
     public abstract BlockState getBlock(int x, int y, int z);
 
     public abstract boolean setBiome(int x, int z, BiomeType biome);
 
-    public abstract boolean settingBiome();
+    public abstract boolean isSettingBiomes();
 
-    public abstract String getWorld();
+    public abstract World getWorld();
 
     public final void setModified() {
         setModified(System.currentTimeMillis());
     }
 
     public boolean enqueue() {
-        return this.blockQueue.enqueue(this);
+        return blockQueue.enqueue(this);
     }
 
     public void setCuboid(Location pos1, Location pos2, BlockState block) {

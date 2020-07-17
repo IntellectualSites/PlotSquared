@@ -28,26 +28,31 @@ package com.plotsquared.core.queue;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
-    private final String world;
-    private final ConcurrentHashMap<Long, LocalChunk> blockChunks = new ConcurrentHashMap<>();
+    private final World world;
+    @Getter private final ConcurrentHashMap<BlockVector2, LocalChunk> blockChunks =
+        new ConcurrentHashMap<>();
     private long modified;
     private LocalChunk lastWrappedChunk;
     private int lastX = Integer.MIN_VALUE;
     private int lastZ = Integer.MIN_VALUE;
-    private boolean setbiome = false;
+    @Getter private boolean settingBiomes = false;
+    @Getter private boolean settingTiles = false;
 
     private GlobalBlockQueue globalBlockQueue;
 
-    public BasicQueueCoordinator(String world) {
+    public BasicQueueCoordinator(World world) {
         this.world = world;
         this.modified = System.currentTimeMillis();
     }
@@ -60,7 +65,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     @Override public abstract BlockState getBlock(int x, int y, int z);
 
-    @Override public final String getWorld() {
+    @Override public final World getWorld() {
         return world;
     }
 
@@ -95,32 +100,29 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     @Override public final boolean setBiome(int x, int z, BiomeType biomeType) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         chunk.setBiome(x & 15, z & 15, biomeType);
-        setbiome = true;
+        settingBiomes = true;
         return true;
     }
 
     @Override public final boolean setTile(int x, int y, int z, CompoundTag tag) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         chunk.setTile(x, y, z, tag);
+        settingTiles = true;
         return true;
     }
 
-    @Override public final boolean settingBiome() {
-        return setbiome;
-    }
-
     public final void setChunk(LocalChunk chunk) {
-        this.blockChunks.put(chunk.longHash(), chunk);
+        this.blockChunks.put(BlockVector2.at(chunk.getX(), chunk.getZ()), chunk);
     }
 
-    private LocalChunk getChunk(final int chunkX, final int ChunkZ) {
-        if (chunkX != lastX || ChunkZ != lastZ) {
+    private LocalChunk getChunk(final int chunkX, final int chunkZ) {
+        if (chunkX != lastX || chunkZ != lastZ) {
             lastX = chunkX;
-            lastZ = ChunkZ;
-            long pair = (long) (chunkX) << 32 | (ChunkZ) & 0xFFFFFFFFL;
+            lastZ = chunkZ;
+            BlockVector2 pair = BlockVector2.at(chunkX, chunkZ);
             lastWrappedChunk = this.blockChunks.get(pair);
             if (lastWrappedChunk == null) {
-                lastWrappedChunk = this.getLocalChunk(chunkX, ChunkZ);
+                lastWrappedChunk = this.getLocalChunk(chunkX, chunkZ);
                 LocalChunk previous = this.blockChunks.put(pair, lastWrappedChunk);
                 if (previous == null) {
                     return lastWrappedChunk;

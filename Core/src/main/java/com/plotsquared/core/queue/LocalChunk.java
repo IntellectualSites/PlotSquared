@@ -6,55 +6,35 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import lombok.Getter;
 
 import java.util.HashMap;
 
 public class LocalChunk {
-    public final BasicQueueCoordinator parent;
-    public final int z;
-    public final int x;
+    @Getter private final BasicQueueCoordinator parent;
+    @Getter private final int z;
+    @Getter private final int x;
 
-    public BaseBlock[][] baseblocks;
-    public BiomeType[][] biomes;
-    public HashMap<BlockVector3, CompoundTag> tiles = null;
+    @Getter private final BaseBlock[][] baseblocks;
+    @Getter private final BiomeType[][] biomes;
+    @Getter private final HashMap<BlockVector3, CompoundTag> tiles = new HashMap<>();
 
     public LocalChunk(BasicQueueCoordinator parent, int x, int z) {
         this.parent = parent;
         this.x = x;
         this.z = z;
         baseblocks = new BaseBlock[16][];
+        biomes = new BiomeType[16][];
     }
 
-    /**
-     * Get the parent queue this chunk belongs to
-     *
-     * @return
-     */
-    public BasicQueueCoordinator getParent() {
-        return parent;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getZ() {
-        return z;
-    }
-
-    public void setBiome(int x, int z, BiomeType biomeType) {
-        if (this.biomes == null) {
-            this.biomes = new BiomeType[16][];
+    public void setBiome(final int x, final int y, final int z, final BiomeType biomeType) {
+        final int i = MainUtil.CACHE_I[y][x][z];
+        final int j = MainUtil.CACHE_J[y][x][z];
+        BiomeType[] array = this.biomes[i];
+        if (array == null) {
+            array = this.biomes[i] = new BiomeType[4096];
         }
-        BiomeType[] index = this.biomes[x];
-        if (index == null) {
-            index = this.biomes[x] = new BiomeType[16];
-        }
-        index[z] = biomeType;
-    }
-
-    public long longHash() {
-        return MathMan.pairInt(x, z);
+        array[j] = biomeType;
     }
 
     @Override public int hashCode() {
@@ -72,9 +52,6 @@ public class LocalChunk {
     }
 
     public void setTile(final int x, final int y, final int z, final CompoundTag tag) {
-        if (tiles == null) {
-            tiles = new HashMap<>();
-        }
         tiles.put(BlockVector3.at(x, y, z), tag);
     }
 }

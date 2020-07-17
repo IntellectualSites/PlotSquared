@@ -27,13 +27,10 @@ package com.plotsquared.core.queue;
 
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.annotation.Nullable;
 
 public class DelegateQueueCoordinator extends QueueCoordinator {
 
@@ -84,16 +81,20 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         return parent.setBiome(x, z, biome);
     }
 
-    @Override public boolean settingBiome() {
-        return parent.settingBiome();
+    @Override public boolean isSettingBiomes() {
+        return parent.isSettingBiomes();
     }
 
-    @Override public String getWorld() {
+    @Override public World getWorld() {
         return parent.getWorld();
     }
 
     @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
         return parent.setTile(x, y, z, tag);
+    }
+
+    @Override public boolean isSettingTiles() {
+        return parent.isSettingTiles();
     }
 
     @Override public boolean enqueue() {

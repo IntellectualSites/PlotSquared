@@ -93,11 +93,11 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
     }
 
     public Location getMin() {
-        return Location.at(this.getWorld(), this.minX, this.minY, this.minZ);
+        return Location.at(this.getWorld().getName(), this.minX, this.minY, this.minZ);
     }
 
     public Location getMax() {
-        return Location.at(this.getWorld(), this.maxX, this.maxY, this.maxZ);
+        return Location.at(this.getWorld().getName(), this.maxX, this.maxY, this.maxZ);
     }
 
 }

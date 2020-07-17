@@ -28,6 +28,7 @@ package com.plotsquared.core.queue;
 import com.plotsquared.core.location.Location;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -112,15 +113,15 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         return null;
     }
 
-    @Override @Nonnull public String getWorld() {
-        return "";
+    @Override @Nonnull public World getWorld() {
+        return super.getWorld();
     }
 
     @Override public Location getMax() {
-        return Location.at(getWorld(), top.getX(), top.getY(), top.getZ());
+        return Location.at(getWorld().getName(), top.getX(), top.getY(), top.getZ());
     }
 
     @Override public Location getMin() {
-        return Location.at(getWorld(), bot.getX(), bot.getY(), bot.getZ());
+        return Location.at(getWorld().getName(), bot.getX(), bot.getY(), bot.getZ());
     }
 }
