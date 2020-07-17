@@ -101,7 +101,7 @@ public abstract class RegionManager {
                         .thenRun(() -> task.run(value));
                 }
             }).thenAccept(ignore ->
-                TaskManager.getPlatformImplementation().taskLater(whenDone, TaskTime.ticks(1)));
+                TaskManager.getPlatformImplementation().taskLater(whenDone, TaskTime.ticks(1L)));
         });
     }
 

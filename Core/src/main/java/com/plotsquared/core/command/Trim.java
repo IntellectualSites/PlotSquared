@@ -121,7 +121,7 @@ public class Trim extends SubCommand {
                 }
             }
         }).thenAccept(ignore ->
-            TaskManager.getPlatformImplementation().taskLater(result, TaskTime.ticks(1)));
+            TaskManager.getPlatformImplementation().taskLater(result, TaskTime.ticks(1L)));
         return true;
     }
 
@@ -196,7 +196,7 @@ public class Trim extends SubCommand {
                                     queue.regenChunk(value.getX(), value.getZ());
                                 }
                             }).thenAccept(ignore -> TaskManager.getPlatformImplementation()
-                                .taskLater(this, TaskTime.ticks(1)));
+                                .taskLater(this, TaskTime.ticks(1L)));
                         }
                     };
                 } else {

@@ -2996,9 +2996,9 @@ public class Plot {
             MainUtil
                 .sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
             final String name = player.getName();
-            TaskManager.TELEPORT_QUEUE.add(name);
+            TaskManager.addToTeleportQueue(name);
             TaskManager.runTaskLater(() -> {
-                if (!TaskManager.TELEPORT_QUEUE.remove(name)) {
+                if (!TaskManager.removeFromTeleportQueue(name)) {
                     return;
                 }
                 if (player.isOnline()) {
