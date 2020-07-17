@@ -31,8 +31,12 @@ import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
+import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /**
  * Bukkit implementation of {@link TaskManager} using
@@ -73,6 +77,10 @@ import javax.annotation.Nonnull;
         } else {
             runnable.run();
         }
+    }
+
+    @Override public <T> Future<T> callMethodSync(@NotNull final Callable<T> method) {
+        return Bukkit.getScheduler().callSyncMethod(this.bukkitMain, method);
     }
 
     @Override public void task(@Nonnull final Runnable runnable) {
