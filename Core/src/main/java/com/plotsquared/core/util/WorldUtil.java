@@ -195,18 +195,6 @@ public abstract class WorldUtil {
     public abstract int getHighestBlockSynchronous(@Nonnull String world, int x, int z);
 
     /**
-     * Set the text in a sign
-     *
-     * @param world World name
-     * @param x     X coordinate
-     * @param y     Y coordinate
-     * @param z     Z coordinate
-     * @param lines Sign text
-     */
-    public abstract void setSign(@Nonnull String world, int x, int y, int z,
-        @Nonnull String[] lines);
-
-    /**
      * Set the biome in a region
      *
      * @param world  World name

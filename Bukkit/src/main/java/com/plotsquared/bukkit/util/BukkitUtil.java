@@ -117,7 +117,7 @@ import java.util.stream.Stream;
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
 
-    public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitMain.getPlugin(BukkitMain.class));
+    public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitPlatform.getPlugin(BukkitPlatform.class));
     public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacy();
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
