@@ -141,7 +141,7 @@ public class SinglePlotArea extends GridPlotWorld {
         }
 
         try {
-            TaskManager.getImplementation().sync(() -> {
+            TaskManager.getPlatformImplementation().sync(() -> {
                 final String name = id.getX() + "." + id.getY();
                 if (!PlotSquared.platform().getWorldUtil().isWorld(name)) {
                     PlotSquared.platform().getSetupUtils().setupWorld(builder);

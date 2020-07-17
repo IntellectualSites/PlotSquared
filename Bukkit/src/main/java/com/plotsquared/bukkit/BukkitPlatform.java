@@ -227,7 +227,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
         // Stuff that needs to be created before the PlotSquared instance
         PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
-        TaskManager.setImplementation(new BukkitTaskManager(this, timeConverter));
+        TaskManager.setPlatformImplementation(new BukkitTaskManager(this, timeConverter));
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
 
@@ -510,7 +510,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
         this.startMetrics();
         if (Settings.Enabled_Components.WORLDS) {
-            TaskManager.getImplementation().taskRepeat(this::unload, TaskTime.seconds(1L));
+            TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(1L));
             try {
                 singleWorldListener = getInjector().getInstance(SingleWorldListener.class);
             } catch (Exception e) {

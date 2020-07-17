@@ -25,16 +25,19 @@
  */
 package com.plotsquared.core.util.task;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 public class ObjectTaskRunnable<T> implements Runnable {
 
+    @Getter private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+
     private final Iterator<T> iterator;
     private final RunnableVal<T> task;
-    private final Runnable whenDone;
 
     @Override public void run() {
         long start = System.currentTimeMillis();
@@ -44,7 +47,7 @@ public class ObjectTaskRunnable<T> implements Runnable {
             task.run();
         }
         if (!hasNext) {
-            TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
+            completionFuture.complete(null);
         } else {
             TaskManager.runTaskLater(this, TaskTime.ticks(1L));
         }

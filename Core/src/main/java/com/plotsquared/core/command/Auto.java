@@ -153,7 +153,7 @@ public class Auto extends SubCommand {
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
                 try {
-                    TaskManager.getImplementation().sync(new AutoClaimFinishTask(player, plot, area, schematic,
+                    TaskManager.getPlatformImplementation().sync(new AutoClaimFinishTask(player, plot, area, schematic,
                         PlotSquared.get().getEventDispatcher()));
                 } catch (final Exception e) {
                     e.printStackTrace();

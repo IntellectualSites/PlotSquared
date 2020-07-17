@@ -326,7 +326,7 @@ public class ExpireManager {
                     }
                     for (ExpiryTask expiryTask : expired) {
                         if (!expiryTask.needsAnalysis()) {
-                            expiredTask.run(newPlot, () -> TaskManager.getImplementation()
+                            expiredTask.run(newPlot, () -> TaskManager.getPlatformImplementation()
                                     .taskLaterAsync(task, TaskTime.ticks(1L)),
                                 expiryTask.requiresConfirmation());
                             return;
@@ -338,7 +338,7 @@ public class ExpireManager {
                                 passesComplexity(changed, expired, new RunnableVal<Boolean>() {
                                     @Override public void run(Boolean confirmation) {
                                         expiredTask.run(newPlot,
-                                            () -> TaskManager.getImplementation().taskLaterAsync(task, TaskTime.ticks(1L)),
+                                            () -> TaskManager.getPlatformImplementation().taskLaterAsync(task, TaskTime.ticks(1L)),
                                             confirmation);
                                     }
                                 }, () -> {
@@ -364,7 +364,7 @@ public class ExpireManager {
                             @Override public void run(Boolean value) {
                                 doAnalysis.run();
                             }
-                        }, () -> TaskManager.getImplementation().taskLaterAsync(task, TaskTime.ticks(1L)));
+                        }, () -> TaskManager.getPlatformImplementation().taskLaterAsync(task, TaskTime.ticks(1L)));
                     } else {
                         doAnalysis.run();
                     }
