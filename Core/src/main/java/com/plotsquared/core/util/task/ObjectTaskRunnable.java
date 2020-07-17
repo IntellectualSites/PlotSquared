@@ -36,10 +36,9 @@ public class ObjectTaskRunnable<T> implements Runnable {
     private final RunnableVal<T> task;
 
     public ObjectTaskRunnable(final Iterator<T> iterator,
-        final RunnableVal<T> task, final Runnable whenDone) {
+        final RunnableVal<T> task) {
         this.iterator = iterator;
         this.task = task;
-        this.whenDone = whenDone;
     }
 
     public CompletableFuture<Void> getCompletionFuture() {

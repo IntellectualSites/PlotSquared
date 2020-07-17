@@ -25,9 +25,6 @@
  */
 package com.plotsquared.core.util.task;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.util.RuntimeExceptionRunnableVal;
-
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,7 +69,7 @@ public abstract class TaskManager {
      * Remove a string from the teleport queue
      *
      * @param string String to remove
-     * return {@code true} if the value was stored in the map, or {@code false}
+     *               return {@code true} if the value was stored in the map, or {@code false}
      */
     public static boolean removeFromTeleportQueue(@Nonnull final String string) {
         return teleportQueue.remove(string);
@@ -200,15 +197,14 @@ public abstract class TaskManager {
         return taskRunnable.getCompletionFuture();
     }
 
-    @Nonnull public static TaskManager getPlatformImplementation() {
-        return implementation;
+    @Nullable public static TaskManager getPlatformImplementation() {
+        return platformImplementation;
     }
 
-    @Nonnull public static void setPlatformImplementation(TaskManager implementation) {
-        implementation = implementation;
+    public static void setPlatformImplementation(@Nonnull final TaskManager implementation) {
+        platformImplementation = implementation;
     }
 
-    public <T> T sync(final RunnableVal<T> function) {
     /**
      * Make a synchronous method call and return the result
      *
@@ -217,7 +213,7 @@ public abstract class TaskManager {
      * @return Method result
      * @throws Exception If the call fails
      */
-    public <T> T sync(@Nonnull final Callable<T> function) throws Exception {
+    public <T> T sync(@Nonnull final Callable<T>function) throws Exception {
         return sync(function, Integer.MAX_VALUE);
     }
 
