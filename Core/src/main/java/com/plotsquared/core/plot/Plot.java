@@ -1687,7 +1687,7 @@ public class Plot {
      * This should not need to be called
      */
     public void refreshChunks() {
-        QueueCoordinator queue = this.blockQueue.getNewQueue(getWorldName(), false);
+        QueueCoordinator queue = this.blockQueue.getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(getWorldName()), false);
         HashSet<BlockVector2> chunks = new HashSet<>();
         for (CuboidRegion region : Plot.this.getRegions()) {
             for (int x = region.getMinimumPoint().getX() >> 4;

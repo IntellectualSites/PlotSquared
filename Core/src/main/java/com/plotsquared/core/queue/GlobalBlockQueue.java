@@ -26,13 +26,9 @@
 package com.plotsquared.core.queue;
 
 import com.plotsquared.core.PlotSquared;
-<<<<<<< HEAD
+import com.sk89q.worldedit.world.World;
 import lombok.Getter;
 import lombok.Setter;
-=======
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.task.TaskTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +44,7 @@ public class GlobalBlockQueue {
         this.activeQueues = new ConcurrentLinkedDeque<>();
     }
 
-    public QueueCoordinator getNewQueue(String world, boolean autoQueue) {
+    public QueueCoordinator getNewQueue(World world, boolean autoQueue) {
         QueueCoordinator queue = provider.getNewQueue(world);
         // Auto-inject into the queue
         PlotSquared.platform().getInjector().injectMembers(queue);

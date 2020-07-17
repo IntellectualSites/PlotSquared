@@ -25,6 +25,8 @@
  */
 package com.plotsquared.core.queue;
 
+import com.sk89q.worldedit.world.World;
+
 public abstract class QueueProvider {
     public static QueueProvider of(final Class<? extends QueueCoordinator> primary,
         final Class<? extends QueueCoordinator> fallback) {
@@ -32,7 +34,7 @@ public abstract class QueueProvider {
 
             private boolean failed = false;
 
-            @Override public QueueCoordinator getNewQueue(String world) {
+            @Override public QueueCoordinator getNewQueue(World world) {
                 if (!failed) {
                     try {
                         return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
@@ -51,5 +53,5 @@ public abstract class QueueProvider {
         };
     }
 
-    public abstract QueueCoordinator getNewQueue(String world);
+    public abstract QueueCoordinator getNewQueue(World world);
 }

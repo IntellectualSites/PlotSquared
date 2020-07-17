@@ -51,7 +51,7 @@ public abstract class ChunkManager {
     public static void setChunkInPlotArea(RunnableVal<ScopedQueueCoordinator> force,
         RunnableVal<ScopedQueueCoordinator> add, String world, BlockVector2 loc) {
         QueueCoordinator queue =
-            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(world), false);
         if (PlotSquared.get().getPlotAreaManager().isAugmented(world) && PlotSquared.get()
             .isNonStandardGeneration(world, loc)) {
             int blockX = loc.getX() << 4;

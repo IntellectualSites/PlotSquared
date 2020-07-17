@@ -41,6 +41,7 @@ import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -84,9 +85,12 @@ public class BukkitRegionManager extends RegionManager {
 
     private static final Logger logger =
         LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
+    private final WorldUtil worldUtil;
 
-    @Inject public BukkitRegionManager(@Nonnull final ChunkManager chunkManager) {
-        super(chunkManager);
+    @Inject public BukkitRegionManager(@Nonnull final ChunkManager chunkManager,
+        @Nonnull final WorldUtil worldUtil) {
+        super(chunkManager, worldUtil);
+        this.worldUtil = worldUtil;
     }
 
     public static boolean isIn(CuboidRegion region, int x, int z) {
@@ -210,15 +214,11 @@ public class BukkitRegionManager extends RegionManager {
 
         final CuboidRegion region =
             RegionUtil.createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
-        final World oldWorld = Bukkit.getWorld(pos1.getWorldName());
-        final BukkitWorld oldBukkitWorld = new BukkitWorld(oldWorld);
-        final World newWorld = Bukkit.getWorld(newPos.getWorldName());
-        assert newWorld != null;
-        assert oldWorld != null;
-        final String newWorldName = newWorld.getName();
+        final BukkitWorld oldWorld = new BukkitWorld((World) pos1.getWorld());
+        final BukkitWorld newWorld = new BukkitWorld((World) newPos.getWorld());
         final ContentMap map = new ContentMap();
         final QueueCoordinator queue =
-            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(newWorldName, false);
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(newWorld, false);
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 int bx = value[2];
@@ -232,7 +232,7 @@ public class BukkitRegionManager extends RegionManager {
                     .thenAccept(chunk1 -> map.saveEntitiesIn(chunk1, region)).thenRun(() -> {
                     for (int x = bx & 15; x <= (tx & 15); x++) {
                         for (int z = bz & 15; z <= (tz & 15); z++) {
-                            map.saveBlocks(oldBukkitWorld, 256, cxx + x, czz + z, relX, relZ);
+                            map.saveBlocks(oldWorld, 256, cxx + x, czz + z, relX, relZ);
                         }
                     }
                 });
@@ -250,7 +250,7 @@ public class BukkitRegionManager extends RegionManager {
             }
             queue.setCompleteTask(() -> {
                 //map.restoreBlocks(newWorld, 0, 0);
-                map.restoreEntities(newWorld, relX, relZ);
+                map.restoreEntities((World) newPos.getWorld(), relX, relZ);
                 TaskManager.runTask(whenDone);
             });
             queue.enqueue();

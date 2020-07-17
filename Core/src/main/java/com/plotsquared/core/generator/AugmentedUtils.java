@@ -87,7 +87,7 @@ public class AugmentedUtils {
             IndependentPlotGenerator generator = area.getGenerator();
             // Mask
             if (queue == null) {
-                queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
+                queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(world), false);
                 queue.setChunkObject(chunkObject);
             }
             QueueCoordinator primaryMask;

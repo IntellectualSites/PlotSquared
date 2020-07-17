@@ -55,7 +55,7 @@ public abstract class RegionManager {
     public static RegionManager manager = null;
     private final ChunkManager chunkManager;
 
-    public RegionManager(@Nonnull final ChunkManager chunkManager) {
+    public RegionManager(@Nonnull final ChunkManager chunkManager, @Nonnull WorldUtil worldUtil) {
         this.chunkManager = chunkManager;
     }
 
