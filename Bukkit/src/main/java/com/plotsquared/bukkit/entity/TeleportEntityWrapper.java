@@ -69,7 +69,7 @@ public class TeleportEntityWrapper extends EntityWrapper {
         this.oldLocation = oldLocation.clone();
         this.oldLocation.setX(this.getX());
         this.oldLocation.setY(this.getY());
-        this.oldLocation.setZ(this.z);
+        this.oldLocation.setZ(this.getZ());
 
         this.gravityOld = this.getEntity().hasGravity();
         this.getEntity().setGravity(false);
