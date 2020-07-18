@@ -30,13 +30,15 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -45,18 +47,21 @@ import java.util.Set;
  */
 public abstract class SquarePlotManager extends GridPlotManager {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + SquarePlotManager.class.getSimpleName());
+    private static final Logger logger =
+        LoggerFactory.getLogger("P2/" + SquarePlotManager.class.getSimpleName());
 
     private final SquarePlotWorld squarePlotWorld;
     private final RegionManager regionManager;
 
-    public SquarePlotManager(@Nonnull final SquarePlotWorld squarePlotWorld, @Nonnull final RegionManager regionManager) {
+    public SquarePlotManager(@Nonnull final SquarePlotWorld squarePlotWorld,
+        @Nonnull final RegionManager regionManager) {
         super(squarePlotWorld);
         this.squarePlotWorld = squarePlotWorld;
         this.regionManager = regionManager;
     }
 
-    @Override public boolean clearPlot(final Plot plot, final Runnable whenDone) {
+    @Override public boolean clearPlot(final Plot plot, final Runnable whenDone,
+        @Nullable QueueCoordinator queue) {
         final Set<CuboidRegion> regions = plot.getRegions();
         Runnable run = new Runnable() {
             @Override public void run() {
@@ -230,8 +235,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
                     return plot.getMerged(Direction.NORTHWEST) ? id : null;
             }
         } catch (Exception ignored) {
-            logger.error( "Invalid plot / road width in settings.yml for world: {}", squarePlotWorld
-                .getWorldName());
+            logger.error("Invalid plot / road width in settings.yml for world: {}",
+                squarePlotWorld.getWorldName());
         }
         return null;
     }
@@ -248,6 +253,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
             + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH - (int) Math
             .floor(squarePlotWorld.ROAD_WIDTH / 2);
-        return Location.at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinBuildHeight(), z);
+        return Location
+            .at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinBuildHeight(), z);
     }
 }

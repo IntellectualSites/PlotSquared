@@ -78,9 +78,9 @@ public class BukkitChunkManager extends ChunkManager {
         BukkitWorld bukkitWorld2 = new BukkitWorld(world2);
 
         QueueCoordinator queue1 =
-            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(bukkitWorld1, false);
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(bukkitWorld1);
         QueueCoordinator queue2 =
-            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(bukkitWorld2, false);
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(bukkitWorld2);
 
         for (int x = Math.max(r1.getMinimumPoint().getX(), sx);
              x <= Math.min(r1.getMaximumPoint().getX(), sx + 15); x++) {

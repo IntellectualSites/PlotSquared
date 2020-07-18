@@ -46,6 +46,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+/**
+ * Utility that allows for the loading and coordination of chunk actions
+ * <p>
+ * The coordinator takes in collection of chunk coordinates, loads them
+ * and allows the caller to specify a sink for the loaded chunks. The
+ * coordinator will prevent the chunks from being unloaded until the sink
+ * has fully consumed the chunk
+ * <p>
+ **/
 public final class BukkitChunkCoordinator extends ChunkCoordinator {
 
     private final List<ProgressSubscriber> progressSubscribers = new LinkedList<>();

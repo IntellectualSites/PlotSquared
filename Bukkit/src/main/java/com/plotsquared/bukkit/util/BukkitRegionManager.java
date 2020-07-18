@@ -220,7 +220,7 @@ public class BukkitRegionManager extends RegionManager {
         assert oldWorld.equals(newWorld);
         final ContentMap map = new ContentMap();
         final QueueCoordinator queue =
-            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(newWorld, false);
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(newWorld);
         chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(newWorld)
             .withRegion(pos1, pos2).withThrowableConsumer(Throwable::printStackTrace)
             .withRegion(pos1, pos2).withInitialBatchSize(4).withMaxIterationTime(45)
@@ -279,7 +279,7 @@ public class BukkitRegionManager extends RegionManager {
         }
 
         final QueueCoordinator queue =
-            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world, false);
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(world);
         chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(world)
             .withRegion(pos1, pos2).withThrowableConsumer(Throwable::printStackTrace)
             .withRegion(pos1, pos2).withInitialBatchSize(4).withMaxIterationTime(45)
@@ -457,7 +457,7 @@ public class BukkitRegionManager extends RegionManager {
         Location pos2 = Location.at(world, region.getMaximumPoint().getX() + extendBiome,
             region.getMaximumPoint().getY(), region.getMaximumPoint().getZ() + extendBiome);
         final QueueCoordinator queue = PlotSquared.platform().getGlobalBlockQueue()
-            .getNewQueue(worldUtil.getWeWorld(world), false);
+            .getNewQueue(worldUtil.getWeWorld(world));
 
         final int minX = pos1.getX();
         final int minZ = pos1.getZ();

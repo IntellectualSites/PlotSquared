@@ -115,7 +115,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        QueueCoordinator queue = hybridPlotWorld.getQueue(false);
+        QueueCoordinator queue = hybridPlotWorld.getQueue();
         createSchemAbs(queue, pos1, pos2, true);
         queue.enqueue();
         return true;
@@ -178,7 +178,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        QueueCoordinator queue = hybridPlotWorld.getQueue(false);
+        QueueCoordinator queue = hybridPlotWorld.getQueue();
         createSchemAbs(queue, pos1, pos2, true);
         queue.enqueue();
         return true;
@@ -190,7 +190,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         PlotId id2 = new PlotId(id.x + 1, id.y + 1);
         Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1).withY(0);
         Location pos2 = getPlotBottomLocAbs(id2).withY(Math.min(getWorldHeight(), 255));
-        QueueCoordinator queue = hybridPlotWorld.getQueue(false);
+        QueueCoordinator queue = hybridPlotWorld.getQueue();
         createSchemAbs(queue, pos1, pos2, true);
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             createSchemAbs(queue, pos1, pos2, true);
@@ -232,7 +232,7 @@ public class HybridPlotManager extends ClassicPlotManager {
         }
 
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
-        final QueueCoordinator queue = hybridPlotWorld.getQueue(false);
+        final QueueCoordinator queue = hybridPlotWorld.getQueue();
         ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk

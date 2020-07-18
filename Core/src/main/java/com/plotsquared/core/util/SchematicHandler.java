@@ -194,7 +194,7 @@ public abstract class SchematicHandler {
                 return;
             }
             try {
-                final QueueCoordinator queue = plot.getArea().getQueue(false);
+                final QueueCoordinator queue = plot.getArea().getQueue();
                 BlockVector3 dimension = schematic.getClipboard().getDimensions();
                 final int WIDTH = dimension.getX();
                 final int LENGTH = dimension.getZ();

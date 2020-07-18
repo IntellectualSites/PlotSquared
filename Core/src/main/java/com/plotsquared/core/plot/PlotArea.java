@@ -172,8 +172,8 @@ public abstract class PlotArea {
 
     @Nonnull protected abstract PlotManager createManager();
 
-    public QueueCoordinator getQueue(final boolean autoQueue) {
-        return this.globalBlockQueue.getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(worldName), autoQueue);
+    public QueueCoordinator getQueue() {
+        return this.globalBlockQueue.getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(worldName));
     }
 
     /**

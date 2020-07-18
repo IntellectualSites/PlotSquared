@@ -190,7 +190,7 @@ public class Trim extends SubCommand {
                                     }
                                 }
                             }
-                            final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world), false);
+                            final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
                             TaskManager.getPlatformImplementation().objectTask(chunks, new RunnableVal<BlockVector2>() {
                                 @Override public void run(BlockVector2 value) {
                                     queue.regenChunk(value.getX(), value.getZ());

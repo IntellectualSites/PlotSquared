@@ -1033,26 +1033,28 @@ public class Plot {
             ids.add(current.getId());
         }
         this.clearRatings();
+        QueueCoordinator queue = null;
         if (createSign) {
             this.removeSign();
+            queue = getArea().getQueue();
         }
         PlotManager manager = this.area.getPlotManager();
         if (createRoad) {
-            manager.startPlotUnlink(ids);
+            manager.startPlotUnlink(ids, queue);
         }
         if (this.area.getTerrain() != PlotAreaTerrainType.ALL && createRoad) {
             for (Plot current : plots) {
                 if (current.getMerged(Direction.EAST)) {
-                    manager.createRoadEast(current);
+                    manager.createRoadEast(current, queue);
                     if (current.getMerged(Direction.SOUTH)) {
-                        manager.createRoadSouth(current);
+                        manager.createRoadSouth(current, queue);
                         if (current.getMerged(Direction.SOUTHEAST)) {
-                            manager.createRoadSouthEast(current);
+                            manager.createRoadSouthEast(current, queue);
                         }
                     }
                 }
                 if (current.getMerged(Direction.SOUTH)) {
-                    manager.createRoadSouth(current);
+                    manager.createRoadSouth(current, queue);
                 }
             }
         }
@@ -1061,14 +1063,14 @@ public class Plot {
             current.setMerged(merged);
         }
         if (createSign) {
-            TaskManager.runTaskAsync(() -> {
+            queue.setCompleteTask(() -> TaskManager.runTaskAsync(() -> {
                 for (Plot current : plots) {
                     current.setSign(MainUtil.getName(current.getOwnerAbs()));
                 }
-            });
+            }));
         }
         if (createRoad) {
-            manager.finishPlotUnlink(ids);
+            manager.finishPlotUnlink(ids, queue);
         }
         return true;
     }
@@ -1686,7 +1688,7 @@ public class Plot {
      */
     public void refreshChunks() {
         QueueCoordinator queue = this.blockQueue
-            .getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(getWorldName()), false);
+            .getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(getWorldName()));
         HashSet<BlockVector2> chunks = new HashSet<>();
         for (CuboidRegion region : Plot.this.getRegions()) {
             for (int x = region.getMinimumPoint().getX() >> 4;
@@ -1710,8 +1712,7 @@ public class Plot {
             return;
         }
         Location location = manager.getSignLoc(this);
-        QueueCoordinator queue =
-            this.blockQueue.getNewQueue(worldUtil.getWeWorld(getWorldName()), false);
+        QueueCoordinator queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(getWorldName()));
         queue.setBlock(location.getX(), location.getY(), location.getZ(),
             BlockTypes.AIR.getDefaultState());
         queue.enqueue();
@@ -1852,12 +1853,13 @@ public class Plot {
      * Sets components such as border, wall, floor.
      * (components are generator specific)
      */
-    @Deprecated public boolean setComponent(String component, String blocks) {
+    @Deprecated public boolean setComponent(String component, String blocks,
+        QueueCoordinator queue) {
         BlockBucket parsed = ConfigurationUtil.BLOCK_BUCKET.parseString(blocks);
         if (parsed != null && parsed.isEmpty()) {
             return false;
         }
-        return this.setComponent(component, parsed.toPattern());
+        return this.setComponent(component, parsed.toPattern(), queue);
     }
 
     /**
@@ -3052,12 +3054,13 @@ public class Plot {
      * @param blocks    Pattern to use the generation
      * @return True if the component was set successfully
      */
-    public boolean setComponent(String component, Pattern blocks) {
+    public boolean setComponent(String component, Pattern blocks,
+        @Nullable QueueCoordinator queue) {
         PlotComponentSetEvent event =
             this.eventDispatcher.callComponentSet(this, component, blocks);
         component = event.getComponent();
         blocks = event.getPattern();
-        return this.getManager().setComponent(this.getId(), component, blocks);
+        return this.getManager().setComponent(this.getId(), component, blocks, queue);
     }
 
     public int getDistanceFromOrigin() {

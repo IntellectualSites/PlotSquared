@@ -57,7 +57,7 @@ final class BlockStatePopulator extends BlockPopulator {
         @Nonnull final Chunk source) {
         if (this.queue == null) {
             this.queue = PlotSquared.platform().getGlobalBlockQueue()
-                .getNewQueue(world.getName(), false);
+                .getNewQueue(world.getName());
         }
         final PlotArea area = this.plotAreaManager.getPlotArea(world.getName(), null);
         if (area == null) {

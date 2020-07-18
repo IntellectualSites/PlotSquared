@@ -35,6 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
@@ -157,11 +158,13 @@ public class Set extends SubCommand {
 
                         BackupManager.backup(player, plot, () -> {
                             plot.addRunning();
+                            QueueCoordinator queue = plotArea.getQueue();
                             for (Plot current : plot.getConnectedPlots()) {
-                                current.setComponent(component, pattern);
+                                current.setComponent(component, pattern, queue);
                             }
+                            queue.setCompleteTask(plot::removeRunning);
+                            queue.enqueue();
                             MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
-                            blockQueue.addEmptyTask(plot::removeRunning);
                         });
                         return true;
                     }

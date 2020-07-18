@@ -42,13 +42,10 @@ public class GlobalBlockQueue {
         this.activeQueues = new ConcurrentLinkedDeque<>();
     }
 
-    public QueueCoordinator getNewQueue(World world, boolean autoQueue) {
+    public QueueCoordinator getNewQueue(World world) {
         QueueCoordinator queue = provider.getNewQueue(world);
         // Auto-inject into the queue
         PlotSquared.platform().getInjector().injectMembers(queue);
-        if (autoQueue) {
-            queue.enqueue();
-        }
         return queue;
     }
 

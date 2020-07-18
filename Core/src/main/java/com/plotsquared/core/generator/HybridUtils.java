@@ -128,7 +128,7 @@ public class HybridUtils {
          *
          */
         TaskManager.runTaskAsync(() -> {
-            final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world), false);
+            final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
 
             final BlockVector3 bot = region.getMinimumPoint();
             final BlockVector3 top = region.getMaximumPoint();
@@ -520,7 +520,7 @@ public class HybridUtils {
 
     public boolean setupRoadSchematic(Plot plot) {
         final String world = plot.getWorldName();
-        final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world), false);
+        final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
@@ -607,7 +607,7 @@ public class HybridUtils {
         z -= plotWorld.ROAD_OFFSET_Z;
         final int finalX = x;
         final int finalZ = z;
-        QueueCoordinator queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()), false);
+        QueueCoordinator queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()));
         if (id1 == null || id2 == null || id1 != id2) {
             this.chunkManager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
                 if (id1 != null) {

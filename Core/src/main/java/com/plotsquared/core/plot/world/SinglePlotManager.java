@@ -31,11 +31,13 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 
@@ -61,9 +63,11 @@ public class SinglePlotManager extends PlotManager {
         return Location.at(plotId.toCommaSeparatedString(), 30000000, 0, 30000000);
     }
 
-    @Override public boolean clearPlot(Plot plot, final Runnable whenDone) {
+    @Override
+    public boolean clearPlot(Plot plot, final Runnable whenDone, @Nullable QueueCoordinator queue) {
         PlotSquared.platform().getSetupUtils().unload(plot.getWorldName(), false);
-        final File worldFolder = new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
+        final File worldFolder =
+            new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
         TaskManager.getPlatformImplementation().taskAsync(() -> {
             MainUtil.deleteDirectory(worldFolder);
             if (whenDone != null) {
@@ -73,12 +77,13 @@ public class SinglePlotManager extends PlotManager {
         return true;
     }
 
-    @Override public boolean claimPlot(Plot plot) {
+    @Override public boolean claimPlot(Plot plot, @Nullable QueueCoordinator queue) {
         // TODO
         return true;
     }
 
-    @Override public boolean unClaimPlot(Plot plot, Runnable whenDone) {
+    @Override
+    public boolean unClaimPlot(Plot plot, Runnable whenDone, @Nullable QueueCoordinator queue) {
         if (whenDone != null) {
             whenDone.run();
         }
@@ -93,51 +98,56 @@ public class SinglePlotManager extends PlotManager {
         return new String[0];
     }
 
-    @Override public boolean setComponent(PlotId plotId, String component, Pattern blocks) {
+    @Override public boolean setComponent(PlotId plotId, String component, Pattern blocks,
+        @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean createRoadEast(Plot plot) {
+    @Override public boolean createRoadEast(Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean createRoadSouth(Plot plot) {
+    @Override public boolean createRoadSouth(Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean createRoadSouthEast(Plot plot) {
+    @Override public boolean createRoadSouthEast(Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean removeRoadEast(Plot plot) {
+    @Override public boolean removeRoadEast(Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean removeRoadSouth(Plot plot) {
+    @Override public boolean removeRoadSouth(Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean removeRoadSouthEast(Plot plot) {
+    @Override public boolean removeRoadSouthEast(Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean startPlotMerge(List<PlotId> plotIds) {
+    @Override
+    public boolean startPlotMerge(List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean startPlotUnlink(List<PlotId> plotIds) {
+    @Override
+    public boolean startPlotUnlink(List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean finishPlotMerge(List<PlotId> plotIds) {
+    @Override
+    public boolean finishPlotMerge(List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean finishPlotUnlink(List<PlotId> plotIds) {
+    @Override
+    public boolean finishPlotUnlink(List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean regenerateAllPlotWalls() {
+    @Override public boolean regenerateAllPlotWalls(@Nullable QueueCoordinator queue) {
         return false;
     }
 }

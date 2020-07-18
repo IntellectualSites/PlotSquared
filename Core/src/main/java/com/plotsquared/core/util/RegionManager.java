@@ -31,7 +31,6 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.queue.ChunkCoordinatorBuilder;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -44,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
@@ -169,7 +169,17 @@ public abstract class RegionManager {
 
     public boolean setCuboids(final PlotArea area, final Set<CuboidRegion> regions,
         final Pattern blocks, int minY, int maxY) {
-        QueueCoordinator queue = area.getQueue(false);
+        return setCuboids(area, regions, blocks, minY, maxY, null);
+    }
+
+
+    public boolean setCuboids(final PlotArea area, final Set<CuboidRegion> regions,
+        final Pattern blocks, int minY, int maxY, @Nullable QueueCoordinator queue) {
+        boolean enqueue = false;
+        if(queue == null) {
+            queue = area.getQueue();
+            enqueue = true;
+        }
         for (CuboidRegion region : regions) {
             Location pos1 = Location.at(area.getWorldName(), region.getMinimumPoint().getX(), minY,
                 region.getMinimumPoint().getZ());
@@ -177,7 +187,7 @@ public abstract class RegionManager {
                 region.getMaximumPoint().getZ());
             queue.setCuboid(pos1, pos2, blocks);
         }
-        return queue.enqueue();
+        return !enqueue || queue.enqueue();
     }
 
     /**
