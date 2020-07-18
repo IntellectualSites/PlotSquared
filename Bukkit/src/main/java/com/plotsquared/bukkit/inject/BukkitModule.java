@@ -26,12 +26,11 @@
 package com.plotsquared.bukkit.inject;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.util.Providers;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
+import com.plotsquared.bukkit.queue.BukkitChunkCoordinator;
 import com.plotsquared.bukkit.queue.BukkitQueueCoordinator;
 import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
@@ -41,18 +40,20 @@ import com.plotsquared.bukkit.util.BukkitPermHandler;
 import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.bukkit.util.task.PaperTimeConverter;
-import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.HybridGen;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.annotations.ConsoleActor;
 import com.plotsquared.core.inject.annotations.DefaultGenerator;
+import com.plotsquared.core.inject.factory.ChunkCoordinatorBuilderFactory;
+import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.queue.ChunkCoordinator;
+import com.plotsquared.core.queue.ChunkCoordinatorBuilder;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueProvider;
 import com.plotsquared.core.util.ChunkManager;
@@ -105,6 +106,10 @@ public class BukkitModule extends AbstractModule {
             bind(PlotAreaManager.class).to(DefaultPlotAreaManager.class);
         }
         install(new FactoryModuleBuilder().build(HybridPlotWorldFactory.class));
+        install(new FactoryModuleBuilder()
+            .implement(ChunkCoordinator.class, BukkitChunkCoordinator.class)
+            .build(ChunkCoordinatorFactory.class));
+        install(new FactoryModuleBuilder().build(ChunkCoordinatorBuilderFactory.class));
     }
 
     private void setupVault() {

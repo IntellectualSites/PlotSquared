@@ -31,20 +31,21 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import lombok.Getter;
-import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 public abstract class QueueCoordinator {
 
-    @Getter @Setter private boolean forceSync = false;
-    @Getter @Setter @Nullable private Object chunkObject;
+    private boolean forceSync = false;
+    @Nullable private Object chunkObject;
 
     @Inject private GlobalBlockQueue blockQueue;
 
@@ -62,6 +63,22 @@ public abstract class QueueCoordinator {
     public abstract int size();
 
     public abstract void setModified(long modified);
+
+    public boolean isForceSync() {
+        return forceSync;
+    }
+
+    public void setForceSync(boolean forceSync) {
+        this.forceSync = forceSync;
+    }
+
+    @Nullable public Object getChunkObject() {
+        return chunkObject;
+    }
+
+    public void setChunkObject(@NotNull Object chunkObject) {
+        this.chunkObject = chunkObject;
+    }
 
     /**
      * Sets the block at the coordinates provided to the given id.
@@ -102,6 +119,8 @@ public abstract class QueueCoordinator {
     }
 
     public abstract void setCompleteTask(Runnable whenDone);
+
+    public abstract void setChunkConsumer(Consumer<BlockVector2> consumer);
 
     public void setCuboid(Location pos1, Location pos2, BlockState block) {
         int yMin = Math.min(pos1.getY(), pos2.getY());

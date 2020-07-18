@@ -510,7 +510,7 @@ public class HybridUtils {
                                 }
                             }
                         }
-                        blockQueue.addEmptyTask(() -> TaskManager.runTaskLater(task, TaskTime.seconds(1L)));
+                        TaskManager.runTaskLater(task, TaskTime.seconds(1L));
                     });
                 }
             }

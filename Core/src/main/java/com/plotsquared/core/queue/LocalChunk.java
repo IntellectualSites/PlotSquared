@@ -6,18 +6,17 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import lombok.Getter;
 
 import java.util.HashMap;
 
 public class LocalChunk {
-    @Getter private final BasicQueueCoordinator parent;
-    @Getter private final int z;
-    @Getter private final int x;
+    private final BasicQueueCoordinator parent;
+    private final int x;
+    private final int z;
 
-    @Getter private final BaseBlock[][] baseblocks;
-    @Getter private final BiomeType[][] biomes;
-    @Getter private final HashMap<BlockVector3, CompoundTag> tiles = new HashMap<>();
+    private final BaseBlock[][] baseblocks;
+    private final BiomeType[][] biomes;
+    private final HashMap<BlockVector3, CompoundTag> tiles = new HashMap<>();
 
     public LocalChunk(BasicQueueCoordinator parent, int x, int z) {
         this.parent = parent;
@@ -25,6 +24,30 @@ public class LocalChunk {
         this.z = z;
         baseblocks = new BaseBlock[16][];
         biomes = new BiomeType[16][];
+    }
+
+    public BasicQueueCoordinator getParent() {
+        return this.parent;
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public int getZ() {
+        return this.z;
+    }
+
+    public BaseBlock[][] getBaseblocks() {
+        return this.baseblocks;
+    }
+
+    public BiomeType[][] getBiomes() {
+        return this.biomes;
+    }
+
+    public HashMap<BlockVector3, CompoundTag> getTiles() {
+        return this.tiles;
     }
 
     public void setBiome(final int x, final int y, final int z, final BiomeType biomeType) {

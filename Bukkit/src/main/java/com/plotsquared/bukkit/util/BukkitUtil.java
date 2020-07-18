@@ -111,15 +111,18 @@ import java.util.function.IntConsumer;
 import java.util.stream.Stream;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-@Singleton public class BukkitUtil extends WorldUtil {
+@Singleton
+public class BukkitUtil extends WorldUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
+    private static final Logger logger =
+        LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
 
     private static String lastString = null;
     private static World lastWorld = null;
 
     private static Player lastPlayer = null;
     private static BukkitPlayer lastPlotPlayer = null;
+    private final Collection<BlockType> tileEntityTypes = new HashSet<>();
 
     @Inject public BukkitUtil(@Nonnull final RegionManager regionManager) {
         super(regionManager);
@@ -139,7 +142,8 @@ import java.util.stream.Stream;
         final Player player = OfflinePlayerUtil.loadPlayer(op);
         player.loadData();
         return new BukkitPlayer(PlotSquared.get().getPlotAreaManager(),
-            PlotSquared.get().getEventDispatcher(), player, true, PlotSquared.platform().getEconHandler());
+            PlotSquared.get().getEventDispatcher(), player, true,
+            PlotSquared.platform().getEconHandler());
     }
 
     /**
@@ -192,18 +196,6 @@ import java.util.stream.Stream;
      */
     public static PlotPlayer<?> wrapPlayer(Player player) {
         return PlotPlayer.wrap(player);
-    }
-
-    /**
-     * Gets the PlotPlayer for a UUID. The PlotPlayer is usually cached and
-     * will provide useful functions relating to players.
-     *
-     * @param uuid the uuid to wrap
-     * @return a {@code PlotPlayer}
-     * @see PlotPlayer#wrap(Object)
-     */
-    @Override public PlotPlayer<?> wrapPlayer(UUID uuid) {
-        return PlotPlayer.wrap(Bukkit.getOfflinePlayer(uuid));
     }
 
     /**
@@ -287,18 +279,19 @@ import java.util.stream.Stream;
 
     public static Location getLocation(final org.bukkit.Location location) {
         return Location.at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
-            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()));
+            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()),
+            MathMan.roundInt(location.getZ()));
     }
 
     public static Location getLocationFull(final org.bukkit.Location location) {
         return Location.at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
-            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()), location.getYaw(),
-            location.getPitch());
+            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()),
+            MathMan.roundInt(location.getZ()), location.getYaw(), location.getPitch());
     }
 
     public static org.bukkit.Location getLocation(@Nonnull final Location location) {
-        return new org.bukkit.Location((World) location.getWorld().getPlatformWorld(), location.getX(),
-            location.getY(), location.getZ());
+        return new org.bukkit.Location((World) location.getWorld().getPlatformWorld(),
+            location.getX(), location.getY(), location.getZ());
     }
 
     public static World getWorld(@Nonnull final String string) {
@@ -321,8 +314,7 @@ import java.util.stream.Stream;
     public static Location getLocation(@Nonnull final Entity entity) {
         final org.bukkit.Location location = entity.getLocation();
         String world = location.getWorld().getName();
-        return Location.at(world, location.getBlockX(), location.getBlockY(),
-            location.getBlockZ());
+        return Location.at(world, location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Nonnull public static Location getLocationFull(@Nonnull final Entity entity) {
@@ -334,6 +326,38 @@ import java.util.stream.Stream;
 
     public static Material getMaterial(@Nonnull final BlockState plotBlock) {
         return BukkitAdapter.adapt(plotBlock.getBlockType());
+    }
+
+    private static void ensureLoaded(final String world, final int x, final int z,
+        final Consumer<Chunk> chunkConsumer) {
+        PaperLib.getChunkAtAsync(getWorld(world), x >> 4, z >> 4, true)
+            .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
+    }
+
+    private static void ensureLoaded(final Location location, final Consumer<Chunk> chunkConsumer) {
+        PaperLib.getChunkAtAsync(getLocation(location), true)
+            .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
+    }
+
+    private static <T> void ensureMainThread(final Consumer<T> consumer, final T value) {
+        if (Bukkit.isPrimaryThread()) {
+            consumer.accept(value);
+        } else {
+            Bukkit.getScheduler().runTask(BukkitPlatform.getPlugin(BukkitPlatform.class),
+                () -> consumer.accept(value));
+        }
+    }
+
+    /**
+     * Gets the PlotPlayer for a UUID. The PlotPlayer is usually cached and
+     * will provide useful functions relating to players.
+     *
+     * @param uuid the uuid to wrap
+     * @return a {@code PlotPlayer}
+     * @see PlotPlayer#wrap(Object)
+     */
+    @Override public PlotPlayer<?> wrapPlayer(UUID uuid) {
+        return PlotPlayer.wrap(Bukkit.getOfflinePlayer(uuid));
     }
 
     @Override public boolean isBlockSame(BlockState block1, BlockState block2) {
@@ -357,8 +381,7 @@ import java.util.stream.Stream;
         return BukkitAdapter.adapt(getWorld(world).getBiome(x, z));
     }
 
-    @Override
-    public void getHighestBlock(@Nonnull final String world, final int x, final int z,
+    @Override public void getHighestBlock(@Nonnull final String world, final int x, final int z,
         final IntConsumer result) {
         ensureLoaded(world, x, z, chunk -> {
             final World bukkitWorld = getWorld(world);
@@ -437,8 +460,9 @@ import java.util.stream.Stream;
 
     @Override public Location getSpawn(@Nonnull final String world) {
         final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
-        return Location.at(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(),
-            temp.getYaw(), temp.getPitch());
+        return Location
+            .at(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), temp.getYaw(),
+                temp.getPitch());
     }
 
     @Override public void setSpawn(@Nonnull final Location location) {
@@ -518,7 +542,8 @@ import java.util.stream.Stream;
         @Nonnull final BiomeType biomeType) {
         final World world = getWorld(worldName);
         if (world == null) {
-            logger.warn("[P2] An error occured while setting the biome because the world was null", new RuntimeException());
+            logger.warn("[P2] An error occured while setting the biome because the world was null",
+                new RuntimeException());
             return;
         }
         final Biome biome = BukkitAdapter.adapt(biomeType);
@@ -534,6 +559,10 @@ import java.util.stream.Stream;
 
     public com.sk89q.worldedit.world.World getWeWorld(String world) {
         return new BukkitWorld(Bukkit.getWorld(world));
+    }
+
+    @Override public void refreshChunk(int x, int z, String world) {
+        Bukkit.getWorld(world).refreshChunk(x, z);
     }
 
     @Override
@@ -571,8 +600,7 @@ import java.util.stream.Stream;
         Bukkit.getPlayer(player.getUUID()).setFoodLevel(foodLevel);
     }
 
-    @Override
-    public Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(
+    @Override public Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(
         final String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
         switch (category) {
@@ -653,7 +681,6 @@ import java.util.stream.Stream;
         return types;
     }
 
-    private final Collection<BlockType> tileEntityTypes = new HashSet<>();
     @Override public Collection<BlockType> getTileEntityTypes() {
         if (this.tileEntityTypes.isEmpty()) {
             // Categories
@@ -665,44 +692,21 @@ import java.util.stream.Stream;
             // Add these from strings
             Stream.of("barrel", "beacon", "beehive", "bee_nest", "bell", "blast_furnace",
                 "brewing_stand", "campfire", "chest", "ender_chest", "trapped_chest",
-                "command_block", "end_gateway", "hopper", "jigsaw", "jubekox",
-                "lectern", "note_block", "black_shulker_box", "blue_shulker_box",
-                "brown_shulker_box", "cyan_shulker_box", "gray_shulker_box", "green_shulker_box",
+                "command_block", "end_gateway", "hopper", "jigsaw", "jubekox", "lectern",
+                "note_block", "black_shulker_box", "blue_shulker_box", "brown_shulker_box",
+                "cyan_shulker_box", "gray_shulker_box", "green_shulker_box",
                 "light_blue_shulker_box", "light_gray_shulker_box", "lime_shulker_box",
                 "magenta_shulker_box", "orange_shulker_box", "pink_shulker_box",
                 "purple_shulker_box", "red_shulker_box", "shulker_box", "white_shulker_box",
                 "yellow_shulker_box", "smoker", "structure_block", "structure_void")
-                .map(BlockTypes::get)
-                .filter(Objects::nonNull)
-                .forEach(tileEntityTypes::add);
+                .map(BlockTypes::get).filter(Objects::nonNull).forEach(tileEntityTypes::add);
         }
         return this.tileEntityTypes;
     }
 
-    @Override
-    public int getTileEntityCount(String world, BlockVector2 chunk) {
+    @Override public int getTileEntityCount(String world, BlockVector2 chunk) {
         return Bukkit.getWorld(world).getChunkAt(chunk.getBlockX(), chunk.getBlockZ())
             .getTileEntities().length;
-    }
-
-    private static void ensureLoaded(final String world, final int x, final int z,
-        final Consumer<Chunk> chunkConsumer) {
-        PaperLib.getChunkAtAsync(getWorld(world), x >> 4, z >> 4, true)
-            .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
-    }
-
-    private static void ensureLoaded(final Location location, final Consumer<Chunk> chunkConsumer) {
-        PaperLib.getChunkAtAsync(getLocation(location), true)
-            .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
-    }
-
-    private static <T> void ensureMainThread(final Consumer<T> consumer, final T value) {
-        if (Bukkit.isPrimaryThread()) {
-            consumer.accept(value);
-        } else {
-            Bukkit.getScheduler()
-                .runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> consumer.accept(value));
-        }
     }
 
 }

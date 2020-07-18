@@ -42,6 +42,8 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.util.task.TaskManager;
+
 import javax.annotation.Nonnull;
 
 import java.util.concurrent.CompletableFuture;
@@ -91,7 +93,7 @@ public class Clear extends Command {
                 final long start = System.currentTimeMillis();
                 boolean result = plot.clear(true, false, () -> {
                     plot.unlink();
-                    this.blockQueue.addEmptyTask(() -> {
+                    TaskManager.runTask(() -> {
                         plot.removeRunning();
                         // If the state changes, then mark it as no longer done
                         if (DoneFlag.isDone(plot)) {

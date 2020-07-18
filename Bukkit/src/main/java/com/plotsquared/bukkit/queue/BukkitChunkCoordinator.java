@@ -25,17 +25,19 @@
  */
 package com.plotsquared.bukkit.queue;
 
-import com.google.common.base.Preconditions;
 import com.plotsquared.bukkit.BukkitPlatform;
+import com.plotsquared.core.queue.ChunkCoordinator;
+import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.world.World;
 import io.papermc.lib.PaperLib;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,32 +46,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-/**
- * Utility that allows for the loading and coordination of chunk actions
- * <p>
- * The coordinator takes in collection of chunk coordinates, loads them
- * and allows the caller to specify a sink for the loaded chunks. The
- * coordinator will prevent the chunks from being unloaded until the sink
- * has fully consumed the chunk
- * <p>
- * Usage:
- * <pre>{@code
- * final ChunkCoordinator chunkCoordinator = ChunkCoordinator.builder()
- *     .inWorld(Objects.requireNonNull(Bukkit.getWorld("world"))).withChunk(BlockVector2.at(0, 0))
- *     .withConsumer(chunk -> System.out.printf("Got chunk %d;%d", chunk.getX(), chunk.getZ()))
- *     .withFinalAction(() -> System.out.println("All chunks have been loaded"))
- *     .withThrowableConsumer(throwable -> System.err.println("Something went wrong... =("))
- *     .withMaxIterationTime(25L)
- *     .build();
- * chunkCoordinator.subscribeToProgress((coordinator, progress) ->
- *     System.out.printf("Progress: %.1f", progress * 100.0f));
- * chunkCoordinator.start();
- * }</pre>
- *
- * @author Alexander Söderberg
- * @see #builder() To create a new coordinator instance
- */
-public final class BukkitChunkCoordinator extends BukkitRunnable {
+public final class BukkitChunkCoordinator extends ChunkCoordinator {
 
     private final List<ProgressSubscriber> progressSubscribers = new LinkedList<>();
 
@@ -77,52 +54,44 @@ public final class BukkitChunkCoordinator extends BukkitRunnable {
     private final Queue<Chunk> availableChunks;
     private final long maxIterationTime;
     private final Plugin plugin;
-    private final Consumer<Chunk> chunkConsumer;
-    private final World world;
+    private final Consumer<BlockVector2> chunkConsumer;
+    private final org.bukkit.World bukkitWorld;
     private final Runnable whenDone;
     private final Consumer<Throwable> throwableConsumer;
     private final int totalSize;
 
-    private AtomicInteger expectedSize;
+    private final AtomicInteger expectedSize;
     private int batchSize;
 
     private BukkitChunkCoordinator(final long maxIterationTime, final int initialBatchSize,
-        @NotNull final Consumer<Chunk> chunkConsumer, @NotNull final World world,
-        @NotNull final Collection<BlockVector2> requestedChunks, @NotNull final Runnable whenDone,
-        @NotNull final Consumer<Throwable> throwableConsumer) {
+        @Nonnull final Consumer<BlockVector2> chunkConsumer, @Nonnull final World world,
+        @Nonnull final Collection<BlockVector2> requestedChunks, @Nonnull final Runnable whenDone,
+        @Nonnull final Consumer<Throwable> throwableConsumer) {
         this.requestedChunks = new LinkedBlockingQueue<>(requestedChunks);
         this.availableChunks = new LinkedBlockingQueue<>();
         this.totalSize = requestedChunks.size();
         this.expectedSize = new AtomicInteger(this.totalSize);
-        this.world = world;
         this.batchSize = initialBatchSize;
         this.chunkConsumer = chunkConsumer;
         this.maxIterationTime = maxIterationTime;
         this.whenDone = whenDone;
         this.throwableConsumer = throwableConsumer;
         this.plugin = JavaPlugin.getPlugin(BukkitPlatform.class);
-    }
-
-    /**
-     * Create a new {@link BukkitChunkCoordinator} instance
-     *
-     * @return Coordinator builder instance
-     */
-    @NotNull public static ChunkCoordinatorBuilder builder() {
-        return new ChunkCoordinatorBuilder();
+        this.bukkitWorld = Bukkit.getWorld(world.getName());
     }
 
     /**
      * Start the coordinator instance
      */
-    public void start() {
+    @Override public void start() {
         // Request initial batch
         this.requestBatch();
         // Wait until next tick to give the chunks a chance to be loaded
-        this.runTaskTimer(this.plugin, 1L, 1L);
+        TaskManager.runTaskLater(() -> TaskManager.runTaskRepeat(this, TaskTime.ticks(1)),
+            TaskTime.ticks(1));
     }
 
-    @Override public void run() {
+    @Override public void runTask() {
         Chunk chunk = this.availableChunks.poll();
         if (chunk == null) {
             return;
@@ -132,7 +101,7 @@ public final class BukkitChunkCoordinator extends BukkitRunnable {
         do {
             final long start = System.currentTimeMillis();
             try {
-                this.chunkConsumer.accept(chunk);
+                this.chunkConsumer.accept(BlockVector2.at(chunk.getX(), chunk.getZ()));
             } catch (final Throwable throwable) {
                 this.throwableConsumer.accept(throwable);
             }
@@ -173,7 +142,7 @@ public final class BukkitChunkCoordinator extends BukkitRunnable {
         BlockVector2 chunk;
         for (int i = 0; i < this.batchSize && (chunk = this.requestedChunks.poll()) != null; i++) {
             // This required PaperLib to be bumped to version 1.0.4 to mark the request as urgent
-            PaperLib.getChunkAtAsync(this.world, chunk.getX(), chunk.getZ(), true, true)
+            PaperLib.getChunkAtAsync(this.bukkitWorld, chunk.getX(), chunk.getZ(), true, true)
                 .whenComplete((chunkObject, throwable) -> {
                     if (throwable != null) {
                         throwable.printStackTrace();
@@ -186,7 +155,7 @@ public final class BukkitChunkCoordinator extends BukkitRunnable {
         }
     }
 
-    private void processChunk(@NotNull final Chunk chunk) {
+    private void processChunk(@Nonnull final Chunk chunk) {
         if (!chunk.isLoaded()) {
             throw new IllegalArgumentException(
                 String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
@@ -195,7 +164,7 @@ public final class BukkitChunkCoordinator extends BukkitRunnable {
         this.availableChunks.add(chunk);
     }
 
-    private void freeChunk(@NotNull final Chunk chunk) {
+    private void freeChunk(@Nonnull final Chunk chunk) {
         if (!chunk.isLoaded()) {
             throw new IllegalArgumentException(
                 String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
@@ -208,7 +177,7 @@ public final class BukkitChunkCoordinator extends BukkitRunnable {
      *
      * @return Snapshot view of remaining chunk count
      */
-    public int getRemainingChunks() {
+    @Override public int getRemainingChunks() {
         return this.expectedSize.get();
     }
 
@@ -217,7 +186,7 @@ public final class BukkitChunkCoordinator extends BukkitRunnable {
      *
      * @return Requested chunk count
      */
-    public int getTotalChunks() {
+    @Override public int getTotalChunks() {
         return this.totalSize;
     }
 
@@ -227,10 +196,9 @@ public final class BukkitChunkCoordinator extends BukkitRunnable {
      * @param subscriber Subscriber
      */
     public void subscribeToProgress(
-        @NotNull final BukkitChunkCoordinator.ProgressSubscriber subscriber) {
+        @Nonnull final BukkitChunkCoordinator.ProgressSubscriber subscriber) {
         this.progressSubscribers.add(subscriber);
     }
-
 
     @FunctionalInterface
     public interface ProgressSubscriber {
@@ -241,87 +209,8 @@ public final class BukkitChunkCoordinator extends BukkitRunnable {
          * @param coordinator Coordinator instance that triggered the notification
          * @param progress    Progress in the range [0, 1]
          */
-        void notifyProgress(@NotNull final BukkitChunkCoordinator coordinator,
+        void notifyProgress(@Nonnull final BukkitChunkCoordinator coordinator,
             final float progress);
-
-    }
-
-
-    public static final class ChunkCoordinatorBuilder {
-
-        private final List<BlockVector2> requestedChunks = new LinkedList<>();
-        private Consumer<Throwable> throwableConsumer = Throwable::printStackTrace;
-        private World world;
-        private Consumer<Chunk> chunkConsumer;
-        private Runnable whenDone = () -> {
-        };
-        private long maxIterationTime = 60; // A little over 1 tick;
-        private int initialBatchSize = 4;
-
-        private ChunkCoordinatorBuilder() {
-        }
-
-        @NotNull public ChunkCoordinatorBuilder inWorld(@NotNull final World world) {
-            this.world = Preconditions.checkNotNull(world, "World may not be null");
-            return this;
-        }
-
-        @NotNull
-        public ChunkCoordinatorBuilder withChunk(@NotNull final BlockVector2 chunkLocation) {
-            this.requestedChunks
-                .add(Preconditions.checkNotNull(chunkLocation, "Chunk location may not be null"));
-            return this;
-        }
-
-        @NotNull public ChunkCoordinatorBuilder withChunks(
-            @NotNull final Collection<BlockVector2> chunkLocations) {
-            chunkLocations.forEach(this::withChunk);
-            return this;
-        }
-
-        @NotNull
-        public ChunkCoordinatorBuilder withConsumer(@NotNull final Consumer<Chunk> chunkConsumer) {
-            this.chunkConsumer =
-                Preconditions.checkNotNull(chunkConsumer, "Chunk consumer may not be null");
-            return this;
-        }
-
-        @NotNull public ChunkCoordinatorBuilder withFinalAction(@NotNull final Runnable whenDone) {
-            this.whenDone = Preconditions.checkNotNull(whenDone, "Final action may not be null");
-            return this;
-        }
-
-        @NotNull public ChunkCoordinatorBuilder withMaxIterationTime(final long maxIterationTime) {
-            Preconditions
-                .checkArgument(maxIterationTime > 0, "Max iteration time must be positive");
-            this.maxIterationTime = maxIterationTime;
-            return this;
-        }
-
-        @NotNull public ChunkCoordinatorBuilder withInitialBatchSize(final int initialBatchSize) {
-            Preconditions
-                .checkArgument(initialBatchSize > 0, "Initial batch size must be positive");
-            this.initialBatchSize = initialBatchSize;
-            return this;
-        }
-
-        @NotNull public ChunkCoordinatorBuilder withThrowableConsumer(
-            @NotNull final Consumer<Throwable> throwableConsumer) {
-            this.throwableConsumer =
-                Preconditions.checkNotNull(throwableConsumer, "Throwable consumer may not be null");
-            return this;
-        }
-
-        @NotNull public BukkitChunkCoordinator build() {
-            Preconditions.checkNotNull(this.world, "No world was supplied");
-            Preconditions.checkNotNull(this.chunkConsumer, "No chunk consumer was supplied");
-            Preconditions.checkNotNull(this.whenDone, "No final action was supplied");
-            Preconditions
-                .checkNotNull(this.throwableConsumer, "No throwable consumer was supplied");
-            return new BukkitChunkCoordinator(this.maxIterationTime, this.initialBatchSize,
-                this.chunkConsumer, this.world, this.requestedChunks, this.whenDone,
-                this.throwableConsumer);
-        }
 
     }
 

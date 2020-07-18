@@ -27,10 +27,13 @@ package com.plotsquared.core.queue;
 
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+
+import java.util.function.Consumer;
 
 public class DelegateQueueCoordinator extends QueueCoordinator {
 
@@ -110,5 +113,9 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
 
     @Override public void setCompleteTask(Runnable whenDone) {
         parent.setCompleteTask(whenDone);
+    }
+
+    @Override public void setChunkConsumer(Consumer<BlockVector2> consumer) {
+        parent.setChunkConsumer(consumer);
     }
 }

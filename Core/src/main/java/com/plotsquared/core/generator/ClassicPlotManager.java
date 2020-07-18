@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
@@ -37,6 +36,7 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
+import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -92,7 +92,8 @@ public class ClassicPlotManager extends SquarePlotManager {
             .equals(classicPlotWorld.CLAIMED_WALL_BLOCK)) {
             setWall(plot.getId(), classicPlotWorld.WALL_BLOCK.toPattern());
         }
-        return PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(whenDone);
+        TaskManager.runTask(whenDone);
+        return true;
     }
 
     public boolean setFloor(PlotId plotId, Pattern blocks) {

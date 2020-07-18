@@ -26,10 +26,12 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.inject.factory.ChunkCoordinatorBuilderFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
+import com.plotsquared.core.queue.ChunkCoordinatorBuilder;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -55,7 +57,8 @@ public abstract class RegionManager {
     public static RegionManager manager = null;
     private final ChunkManager chunkManager;
 
-    public RegionManager(@Nonnull final ChunkManager chunkManager, @Nonnull WorldUtil worldUtil) {
+    public RegionManager(@Nonnull final ChunkManager chunkManager, @Nonnull WorldUtil worldUtil,
+        @Nonnull ChunkCoordinatorBuilderFactory chunkCoordinatorBuilderFactory) {
         this.chunkManager = chunkManager;
     }
 
@@ -95,12 +98,13 @@ public abstract class RegionManager {
                     }
                 }
             }
-            TaskManager.getPlatformImplementation().objectTask(chunks, new RunnableVal<BlockVector2>() {
-                @Override public void run(BlockVector2 value) {
-                    chunkManager.loadChunk(world, value, false).thenRun(() -> task.run(value));
-                }
-            }).thenAccept(ignore ->
-                TaskManager.getPlatformImplementation().taskLater(whenDone, TaskTime.ticks(1L)));
+            TaskManager.getPlatformImplementation()
+                .objectTask(chunks, new RunnableVal<BlockVector2>() {
+                    @Override public void run(BlockVector2 value) {
+                        chunkManager.loadChunk(world, value, false).thenRun(() -> task.run(value));
+                    }
+                }).thenAccept(ignore -> TaskManager.getPlatformImplementation()
+                .taskLater(whenDone, TaskTime.ticks(1L)));
         });
     }
 

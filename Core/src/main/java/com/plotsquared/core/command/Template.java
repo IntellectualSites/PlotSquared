@@ -70,20 +70,17 @@ public class Template extends SubCommand {
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
     private final SetupUtils setupUtils;
-    private final GlobalBlockQueue globalBlockQueue;
     private final WorldUtil worldUtil;
 
     @Inject public Template(@Nonnull final PlotAreaManager plotAreaManager,
                             @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
                             @WorldFile @Nonnull final File worldFile,
                             @Nonnull final SetupUtils setupUtils,
-                            @Nonnull final GlobalBlockQueue globalBlockQueue,
                             @Nonnull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;
         this.setupUtils = setupUtils;
-        this.globalBlockQueue = globalBlockQueue;
         this.worldUtil = worldUtil;
     }
 
@@ -216,7 +213,7 @@ public class Template extends SubCommand {
                         .worldName(world);
 
                 this.setupUtils.setupWorld(builder);
-                this.globalBlockQueue.addEmptyTask(() -> {
+                TaskManager.runTask(() -> {
                     MainUtil.sendMessage(player, "Done!");
                     player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
                 });

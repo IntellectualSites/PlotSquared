@@ -27,8 +27,6 @@ package com.plotsquared.core.queue;
 
 import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +35,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class GlobalBlockQueue {
 
     private final ConcurrentLinkedDeque<QueueCoordinator> activeQueues;
-    @Getter @Setter private QueueProvider provider;
+    private QueueProvider provider;
 
     public GlobalBlockQueue(QueueProvider provider) {
         this.provider = provider;
@@ -52,6 +50,14 @@ public class GlobalBlockQueue {
             queue.enqueue();
         }
         return queue;
+    }
+
+    public QueueProvider getProvider() {
+        return this.provider;
+    }
+
+    public void setQueueProvider(QueueProvider provider) {
+        this.provider = provider;
     }
 
     /**

@@ -33,22 +33,23 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     private final World world;
-    @Getter private final ConcurrentHashMap<BlockVector2, LocalChunk> blockChunks =
+    private final ConcurrentHashMap<BlockVector2, LocalChunk> blockChunks =
         new ConcurrentHashMap<>();
     private long modified;
     private LocalChunk lastWrappedChunk;
     private int lastX = Integer.MIN_VALUE;
     private int lastZ = Integer.MIN_VALUE;
-    @Getter private boolean settingBiomes = false;
-    @Getter private boolean settingTiles = false;
+    private boolean settingBiomes = false;
+    private boolean settingTiles = false;
+    private Consumer<BlockVector2> consumer = null;
 
     private GlobalBlockQueue globalBlockQueue;
 
@@ -97,7 +98,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return setBlock(x, y, z, id.toBaseBlock());
     }
 
-    @Override public final boolean setBiome(int x, int z, BiomeType biomeType) {
+    @Override public boolean setBiome(int x, int z, BiomeType biomeType) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         for (int y = 0; y < 256; y++) {
             chunk.setBiome(x & 15, y, z & 15, biomeType);
@@ -113,15 +114,35 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return true;
     }
 
-    @Override public final boolean setTile(int x, int y, int z, CompoundTag tag) {
+    @Override public boolean isSettingBiomes() {
+        return this.settingBiomes;
+    }
+
+    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         chunk.setTile(x, y, z, tag);
         settingTiles = true;
         return true;
     }
 
+    @Override public boolean isSettingTiles() {
+        return this.settingTiles;
+    }
+
+    public ConcurrentHashMap<BlockVector2, LocalChunk> getBlockChunks() {
+        return this.blockChunks;
+    }
+
     public final void setChunk(LocalChunk chunk) {
         this.blockChunks.put(BlockVector2.at(chunk.getX(), chunk.getZ()), chunk);
+    }
+
+    public final Consumer<BlockVector2> getChunkConsumer() {
+        return this.consumer;
+    }
+
+    public final void setChunkConsumer(Consumer<BlockVector2> consumer) {
+        this.consumer = consumer;
     }
 
     private LocalChunk getChunk(final int chunkX, final int chunkZ) {

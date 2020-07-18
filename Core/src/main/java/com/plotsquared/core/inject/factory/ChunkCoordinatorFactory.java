@@ -25,12 +25,24 @@
  */
 package com.plotsquared.core.inject.factory;
 
-import com.plotsquared.core.queue.QueueCoordinator;
+import com.google.inject.assistedinject.Assisted;
+import com.plotsquared.core.queue.ChunkCoordinator;
+import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.function.Consumer;
 
-public interface QueueCoordinatorFactory {
+public interface ChunkCoordinatorFactory {
 
-    @Nonnull QueueCoordinator create();
+    @Nonnull ChunkCoordinator create(@Assisted final long maxIterationTime,
+        @Assisted final int initialBatchSize,
+        @NotNull @Assisted final Consumer<BlockVector2> chunkConsumer,
+        @NotNull @Assisted final World world,
+        @NotNull @Assisted final Collection<BlockVector2> requestedChunks,
+        @NotNull @Assisted final Runnable whenDone,
+        @NotNull @Assisted final Consumer<Throwable> throwableConsumer);
 
 }

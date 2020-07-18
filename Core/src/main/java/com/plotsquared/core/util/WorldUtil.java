@@ -118,6 +118,8 @@ public abstract class WorldUtil {
 
     public abstract com.sk89q.worldedit.world.World getWeWorld(String world);
 
+    public abstract void refreshChunk(int x, int z, String world);
+
     public void upload(@Nonnull final Plot plot, UUID uuid, String file,
         RunnableVal<URL> whenDone) {
         plot.getHome(home -> MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {

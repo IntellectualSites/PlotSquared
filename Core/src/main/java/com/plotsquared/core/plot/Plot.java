@@ -965,7 +965,7 @@ public class Plot {
                             manager.claimPlot(current);
                         }
                     }
-                    blockQueue.addEmptyTask(run);
+                    TaskManager.runTask(run);
                     return;
                 }
                 Plot current = queue.poll();
@@ -1061,12 +1061,10 @@ public class Plot {
             current.setMerged(merged);
         }
         if (createSign) {
-            blockQueue.addEmptyTask(() -> {
-                TaskManager.runTaskAsync(() -> {
-                    for (Plot current : plots) {
-                        current.setSign(MainUtil.getName(current.getOwnerAbs()));
-                    }
-                });
+            TaskManager.runTaskAsync(() -> {
+                for (Plot current : plots) {
+                    current.setSign(MainUtil.getName(current.getOwnerAbs()));
+                }
             });
         }
         if (createRoad) {
@@ -1687,7 +1685,8 @@ public class Plot {
      * This should not need to be called
      */
     public void refreshChunks() {
-        QueueCoordinator queue = this.blockQueue.getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(getWorldName()), false);
+        QueueCoordinator queue = this.blockQueue
+            .getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(getWorldName()), false);
         HashSet<BlockVector2> chunks = new HashSet<>();
         for (CuboidRegion region : Plot.this.getRegions()) {
             for (int x = region.getMinimumPoint().getX() >> 4;
@@ -1695,7 +1694,7 @@ public class Plot {
                 for (int z = region.getMinimumPoint().getZ() >> 4;
                      z <= region.getMaximumPoint().getZ() >> 4; z++) {
                     if (chunks.add(BlockVector2.at(x, z))) {
-                        queue.refreshChunk(x, z);
+                        worldUtil.refreshChunk(x, z, getWorldName());
                     }
                 }
             }
@@ -1711,7 +1710,8 @@ public class Plot {
             return;
         }
         Location location = manager.getSignLoc(this);
-        QueueCoordinator queue = this.blockQueue.getNewQueue(getWorldName(), false);
+        QueueCoordinator queue =
+            this.blockQueue.getNewQueue(worldUtil.getWeWorld(getWorldName()), false);
         queue.setBlock(location.getX(), location.getY(), location.getZ(),
             BlockTypes.AIR.getDefaultState());
         queue.enqueue();

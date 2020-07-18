@@ -25,8 +25,11 @@
  */
 package com.plotsquared.bukkit.queue;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.schematic.StateWrapper;
 import com.plotsquared.bukkit.util.BukkitBlockUtil;
+import com.plotsquared.core.inject.factory.ChunkCoordinatorBuilderFactory;
+import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.queue.BasicQueueCoordinator;
 import com.plotsquared.core.queue.LocalChunk;
 import com.plotsquared.core.util.BlockUtil;
@@ -42,20 +45,25 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 public class BukkitQueueCoordinator extends BasicQueueCoordinator {
 
     private final World world;
     private final SideEffectSet sideEffectSet;
+    @Inject private ChunkCoordinatorBuilderFactory chunkCoordinatorBuilderFactory;
+    @Inject private ChunkCoordinatorFactory chunkCoordinatorFactory;
     private Runnable whenDone;
 
-    public BukkitQueueCoordinator(World world) {
+    @Inject public BukkitQueueCoordinator(World world) {
         super(world);
         this.world = world;
         sideEffectSet = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF)
@@ -73,19 +81,18 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     }
 
     @Override public boolean enqueue() {
-        BukkitChunkCoordinator.builder().inWorld(BukkitAdapter.adapt(world))
-            .withChunks(getBlockChunks().keySet()).withInitialBatchSize(3).withMaxIterationTime(40)
-            .withThrowableConsumer(Throwable::printStackTrace).withFinalAction(whenDone)
-            .withConsumer(chunk -> {
-                LocalChunk localChunk =
-                    getBlockChunks().get(BlockVector2.at(chunk.getX(), chunk.getZ()));
+        Consumer<BlockVector2> consumer = getChunkConsumer();
+        if (consumer == null) {
+            consumer = blockVector2 -> {
+                LocalChunk localChunk = getBlockChunks().get(blockVector2);
                 if (localChunk == null) {
                     throw new NullPointerException(
                         "LocalChunk cannot be null when accessed from ChunkCoordinator");
                 }
-                World worldObj = getWorld();
-                int sx = chunk.getX() << 4;
-                int sz = chunk.getX() << 4;
+                org.bukkit.World bukkitWorld = null;
+                Chunk chunk = null;
+                int sx = blockVector2.getX() << 4;
+                int sz = blockVector2.getZ() << 4;
                 for (int layer = 0; layer < localChunk.getBaseblocks().length; layer++) {
                     BaseBlock[] blocksLayer = localChunk.getBaseblocks()[layer];
                     if (blocksLayer == null) {
@@ -100,10 +107,18 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                         int y = MainUtil.y_loc[layer][j];
                         int z = sz + MainUtil.z_loc[layer][j];
                         try {
-                            worldObj.setBlock(BlockVector3.at(x, y, z), block, sideEffectSet);
+                            world.setBlock(BlockVector3.at(x, y, z), block, sideEffectSet);
                         } catch (WorldEditException ignored) {
                             // Fallback to not so nice method
                             BlockData blockData = BukkitAdapter.adapt(block);
+
+                            if (bukkitWorld == null) {
+                                bukkitWorld = Bukkit.getWorld(world.getName());
+                            }
+                            if (chunk == null) {
+                                chunk = bukkitWorld
+                                    .getChunkAt(blockVector2.getX(), blockVector2.getZ());
+                            }
 
                             Block existing = chunk.getBlock(x, y, z);
                             final BlockState existingBaseBlock =
@@ -123,7 +138,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                                 CompoundTag tag = block.getNbtData();
                                 StateWrapper sw = new StateWrapper(tag);
 
-                                sw.restoreTag(worldObj.getName(), existing.getX(), existing.getY(),
+                                sw.restoreTag(world.getName(), existing.getX(), existing.getY(),
                                     existing.getZ());
                             }
                         }
@@ -142,22 +157,27 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                         int x = sx + MainUtil.x_loc[layer][j];
                         int y = MainUtil.y_loc[layer][j];
                         int z = sz + MainUtil.z_loc[layer][j];
-                        worldObj.setBiome(BlockVector3.at(x, y, z), biome);
+                        world.setBiome(BlockVector3.at(x, y, z), biome);
                     }
                 }
                 if (localChunk.getTiles().size() > 0) {
                     localChunk.getTiles().forEach(((blockVector3, tag) -> {
                         try {
-                            BaseBlock block = worldObj.getBlock(blockVector3).toBaseBlock(tag);
-                            worldObj.setBlock(blockVector3, block, sideEffectSet);
+                            BaseBlock block = world.getBlock(blockVector3).toBaseBlock(tag);
+                            world.setBlock(blockVector3, block, sideEffectSet);
                         } catch (WorldEditException ignored) {
                             StateWrapper sw = new StateWrapper(tag);
-                            sw.restoreTag(worldObj.getName(), blockVector3.getX(),
-                                blockVector3.getY(), blockVector3.getZ());
+                            sw.restoreTag(world.getName(), blockVector3.getX(), blockVector3.getY(),
+                                blockVector3.getZ());
                         }
                     }));
                 }
-            });
+            };
+        }
+        chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(world)
+            .withChunks(getBlockChunks().keySet()).withInitialBatchSize(3).withMaxIterationTime(40)
+            .withThrowableConsumer(Throwable::printStackTrace).withFinalAction(whenDone)
+            .withConsumer(consumer);
         return super.enqueue();
     }
 

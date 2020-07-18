@@ -39,8 +39,6 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -60,11 +58,19 @@ public class GenChunk extends ScopedQueueCoordinator {
     public String world;
     public int chunkX;
     public int chunkZ;
-    @Getter @Setter private ChunkData chunkData = null;
+    private ChunkData chunkData = null;
 
     public GenChunk() {
         super(null, Location.at("", 0, 0, 0), Location.at("", 15, 255, 15));
         this.biomes = Biome.values();
+    }
+
+    public ChunkData getChunkData() {
+        return this.chunkData;
+    }
+
+    public void setChunkData(ChunkData chunkData) {
+        this.chunkData = chunkData;
     }
 
     public Chunk getChunk() {
