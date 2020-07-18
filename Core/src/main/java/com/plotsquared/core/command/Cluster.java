@@ -454,7 +454,7 @@ public class Cluster extends SubCommand {
                                         cluster.getName());
                                 }
                                 for (final Plot plot : PlotQuery.newQuery().inWorld(player2.getLocation()
-                                    .getWorldName()).ownedBy(uuid).asCollection()) {
+                                    .getWorldName()).ownedBy(uuid)) {
                                     PlotCluster current = plot.getCluster();
                                     if (current != null && current.equals(cluster)) {
                                         plot.unclaim();
@@ -513,7 +513,7 @@ public class Cluster extends SubCommand {
                 DBFunc.removeInvited(cluster, uuid);
                 MainUtil.sendMessage(player, Captions.CLUSTER_REMOVED, cluster.getName());
                 for (final Plot plot : PlotQuery.newQuery().inWorld(player.getLocation().getWorldName())
-                    .ownedBy(uuid).asCollection()) {
+                    .ownedBy(uuid)) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {
                         plot.unclaim();

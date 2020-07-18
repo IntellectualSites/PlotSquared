@@ -493,7 +493,7 @@ public class MainUtil {
 
         PlotArea area = null;
         String alias = null;
-        for (Plot plot : PlotQuery.newQuery().allPlots().asList()) {
+        for (Plot plot : PlotQuery.newQuery().allPlots()) {
             int count = 0;
             if (!uuids.isEmpty()) {
                 for (UUID uuid : uuids) {
