@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Iterator;
 
 /**
  * Plot (X,Y) tuples for plot locations
@@ -240,6 +241,55 @@ public class PlotId {
 
     @Override public int hashCode() {
         return this.hash;
+    }
+
+
+    public static final class PlotRangeIterator implements Iterator<PlotId>, Iterable<PlotId> {
+
+        private final PlotId start;
+        private final PlotId end;
+
+        private int x;
+        private int y;
+
+        private PlotRangeIterator(@Nonnull final PlotId start, @Nonnull final PlotId end) {
+            this.start = start;
+            this.end = end;
+            this.x = this.start.getX();
+            this.y = this.start.getY();
+        }
+
+        public static PlotRangeIterator range(@Nonnull final PlotId start, @Nonnull final PlotId end) {
+            return new PlotRangeIterator(start, end);
+        }
+
+        @Override public boolean hasNext() {
+            if (this.x < this.end.getX()) {
+                return true;
+            } else if (this.x == this.end.getX()) {
+                return this.y < this.end.getY();
+            } else {
+                return false;
+            }
+        }
+
+        @Override public PlotId next() {
+            if (!hasNext()) {
+               throw new IndexOutOfBoundsException("The iterator has no more entries");
+            }
+            if (this.y == this.end.getY()) {
+                this.x++;
+                this.y = 0;
+            } else {
+                this.y++;
+            }
+            return PlotId.of(this.start.getX() + this.x, this.start.getY() + this.y);
+        }
+
+        @Nonnull @Override public Iterator<PlotId> iterator() {
+            return this;
+        }
+
     }
 
 }

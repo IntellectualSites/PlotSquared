@@ -154,7 +154,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case "ITEM_FRAME":
                 this.x = Math.floor(this.getX());
                 this.y = Math.floor(this.getY());
-                this.z = Math.floor(this.z);
+                this.z = Math.floor(this.getZ());
                 ItemFrame itemFrame = (ItemFrame) entity;
                 this.dataByte = getOrdinal(Rotation.values(), itemFrame.getRotation());
                 this.stack = itemFrame.getItem().clone();
@@ -162,7 +162,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case "PAINTING":
                 this.x = Math.floor(this.getX());
                 this.y = Math.floor(this.getY());
-                this.z = Math.floor(this.z);
+                this.z = Math.floor(this.getZ());
                 Painting painting = (Painting) entity;
                 Art art = painting.getArt();
                 this.dataByte = getOrdinal(BlockFace.values(), painting.getFacing());
@@ -409,7 +409,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             Location location = lived.getLeashHolder().getLocation();
             this.lived.leashX = (short) (this.getX() - location.getBlockX());
             this.lived.leashY = (short) (this.getY() - location.getBlockY());
-            this.lived.leashZ = (short) (this.z - location.getBlockZ());
+            this.lived.leashZ = (short) (this.getZ() - location.getBlockZ());
         }
         EntityEquipment equipment = lived.getEquipment();
         this.lived.equipped = equipment != null;

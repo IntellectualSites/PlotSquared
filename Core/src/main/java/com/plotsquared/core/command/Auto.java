@@ -298,16 +298,15 @@ public class Auto extends SubCommand {
                 PlotId end = PlotId.of(start.getX() + size_x - 1, start.getY() + size_z - 1);
                 if (plotarea.canClaim(player, start, end)) {
                     plotarea.setMeta("lastPlot", start);
-                    for (int i = start.getX(); i <= end.getX(); i++) {
-                        for (int j = start.getY(); j <= end.getY(); j++) {
-                            Plot plot = plotarea.getPlotAbs(PlotId.of(i, j));
-                            boolean teleport = i == end.getX() && j == end.getY();
-                            if (plot == null) {
-                                return false;
-                            }
-                            plot.claim(player, teleport, null);
+
+                    for (final PlotId plotId : PlotId.PlotRangeIterator.range(start, end)) {
+                        final Plot plot = plotarea.getPlot(plotId);
+                        if (plot == null) {
+                            return false;
                         }
+                        plot.claim(player, plotId.equals(end), null);
                     }
+
                     ArrayList<PlotId> plotIds = MainUtil.getPlotSelectionIds(start, end);
                     final PlotId pos1 = plotIds.get(0);
                     final PlotAutoMergeEvent mergeEvent = this.eventDispatcher
