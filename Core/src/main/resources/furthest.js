@@ -34,20 +34,20 @@ if (PS.hasPlotArea("%s0")) {
     var maxplot;
     for (var i in plots) {
         var plot = plots[i];
-        if (plot.x > max) {
-            max = plot.x;
+        if (plot.getX() > max) {
+            max = plot.getX();
             maxplot = plot;
         }
-        if (plot.y > max) {
-            max = plot.y;
+        if (plot.getY() > max) {
+            max = plot.getY();
             maxplot = plot;
         }
-        if (-plot.x > max) {
-            max = -plot.x;
+        if (-plot.getX() > max) {
+            max = -plot.getX();
             maxplot = plot;
         }
-        if (-plot.y > max) {
-            max = -plot.y;
+        if (-plot.getY() > max) {
+            max = -plot.getY();
             maxplot = plot;
         }
     }

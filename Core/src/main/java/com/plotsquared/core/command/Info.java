@@ -118,7 +118,7 @@ public class Info extends SubCommand {
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             MainUtil.sendMessage(player, Captions.PLOT_INFO_UNCLAIMED,
-                plot.getId().x + ";" + plot.getId().y);
+                plot.getId().getX() + ";" + plot.getId().getY());
             return true;
         }
         String info = Captions.PLOT_INFO_FORMAT.getTranslated();

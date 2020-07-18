@@ -76,10 +76,6 @@ public class Auto extends SubCommand {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
-    
-    @Deprecated public static PlotId getNextPlotId(PlotId id, int step) {
-        return id.getNextId(step);
-    }
 
     public static boolean checkAllowedPlots(PlotPlayer player, PlotArea plotarea,
         @Nullable Integer allowedPlots, int sizeX, int sizeZ) {
@@ -298,14 +294,14 @@ public class Auto extends SubCommand {
                 return false;
             }
             while (true) {
-                PlotId start = plotarea.getMeta("lastPlot", new PlotId(0, 0)).getNextId(1);
-                PlotId end = new PlotId(start.x + size_x - 1, start.y + size_z - 1);
+                PlotId start = plotarea.getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
+                PlotId end = PlotId.of(start.getX() + size_x - 1, start.getY() + size_z - 1);
                 if (plotarea.canClaim(player, start, end)) {
                     plotarea.setMeta("lastPlot", start);
-                    for (int i = start.x; i <= end.x; i++) {
-                        for (int j = start.y; j <= end.y; j++) {
-                            Plot plot = plotarea.getPlotAbs(new PlotId(i, j));
-                            boolean teleport = i == end.x && j == end.y;
+                    for (int i = start.getX(); i <= end.getX(); i++) {
+                        for (int j = start.getY(); j <= end.getY(); j++) {
+                            Plot plot = plotarea.getPlotAbs(PlotId.of(i, j));
+                            boolean teleport = i == end.getX() && j == end.getY();
                             if (plot == null) {
                                 return false;
                             }

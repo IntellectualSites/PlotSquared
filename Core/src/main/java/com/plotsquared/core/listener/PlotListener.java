@@ -266,8 +266,8 @@ public class PlotListener {
                         Plot lastPlot = player.getMeta(PlotPlayer.META_LAST_PLOT);
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
                             Map<String, String> replacements = new HashMap<>();
-                            replacements.put("%x%", String.valueOf(lastPlot.getId().x));
-                            replacements.put("%z%", lastPlot.getId().y + "");
+                            replacements.put("%x%", String.valueOf(lastPlot.getId().getX()));
+                            replacements.put("%z%", lastPlot.getId().getY() + "");
                             replacements.put("%world%", plot.getArea().toString());
                             replacements.put("%greeting%", greeting);
                             replacements.put("%alias", plot.toString());

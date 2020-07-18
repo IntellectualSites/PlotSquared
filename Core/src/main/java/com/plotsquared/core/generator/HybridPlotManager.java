@@ -103,7 +103,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Override public boolean createRoadEast(Plot plot) {
         super.createRoadEast(plot);
         PlotId id = plot.getId();
-        PlotId id2 = new PlotId(id.x + 1, id.y);
+        PlotId id2 = PlotId.of(id.getX() + 1, id.getY());
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
         Location pos1 = Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
@@ -164,7 +164,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Override public boolean createRoadSouth(Plot plot) {
         super.createRoadSouth(plot);
         PlotId id = plot.getId();
-        PlotId id2 = new PlotId(id.x, id.y + 1);
+        PlotId id2 = PlotId.of(id.getX(), id.getY() + 1);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
         Location pos1 = Location.at(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
@@ -183,7 +183,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Override public boolean createRoadSouthEast(Plot plot) {
         super.createRoadSouthEast(plot);
         PlotId id = plot.getId();
-        PlotId id2 = new PlotId(id.x + 1, id.y + 1);
+        PlotId id2 = PlotId.of(id.getX() + 1, id.getY() + 1);
         Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1).withY(0);
         Location pos2 = getPlotBottomLocAbs(id2).withY(Math.min(getWorldHeight(), 255));
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);

@@ -832,7 +832,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                                             BukkitUtil.adapt(entity.getLocation());
                                         PlotArea area = pLoc.getPlotArea();
                                         if (area != null) {
-                                            PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
+                                            PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
                                             if (!originalPlotId.equals(currentPlotId) && (
                                                 currentPlotId == null || !area
                                                     .getPlot(originalPlotId)
@@ -851,7 +851,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                                         BukkitUtil.adapt(entity.getLocation());
                                     PlotArea area = pLoc.getPlotArea();
                                     if (area != null) {
-                                        PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
+                                        PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
                                         if (currentPlotId != null) {
                                             entity.setMetadata("shulkerPlot",
                                                 new FixedMetadataValue(

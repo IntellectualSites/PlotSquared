@@ -363,9 +363,9 @@ public class MainUtil {
      */
     public static ArrayList<PlotId> getPlotSelectionIds(PlotId pos1, PlotId pos2) {
         ArrayList<PlotId> myPlots = new ArrayList<>();
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                myPlots.add(new PlotId(x, y));
+        for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+            for (int y = pos1.getY(); y <= pos2.getY(); y++) {
+                myPlots.add(PlotId.of(x, y));
             }
         }
         return myPlots;

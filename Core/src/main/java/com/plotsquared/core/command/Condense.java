@@ -138,13 +138,13 @@ public class Condense extends SubCommand {
                 }
                 List<PlotId> toMove = new ArrayList<>(getPlots(allPlots, radius));
                 final List<PlotId> free = new ArrayList<>();
-                PlotId start = new PlotId(0, 0);
-                while (start.x <= minimumRadius && start.y <= minimumRadius) {
+                PlotId start = PlotId.of(0, 0);
+                while (start.getX() <= minimumRadius && start.getY() <= minimumRadius) {
                     Plot plot = area.getPlotAbs(start);
                     if (plot != null && !plot.hasOwner()) {
                         free.add(plot.getId());
                     }
-                    start = Auto.getNextPlotId(start, 1);
+                    start = start.getNextId();
                 }
                 if (free.isEmpty() || toMove.isEmpty()) {
                     MainUtil.sendMessage(player, "NO FREE PLOTS FOUND");
@@ -249,8 +249,8 @@ public class Condense extends SubCommand {
     public Set<PlotId> getPlots(Collection<Plot> plots, int radius) {
         HashSet<PlotId> outside = new HashSet<>();
         for (Plot plot : plots) {
-            if (plot.getId().x > radius || plot.getId().x < -radius || plot.getId().y > radius
-                || plot.getId().y < -radius) {
+            if (plot.getId().getX() > radius || plot.getId().getX() < -radius || plot.getId().getY() > radius
+                || plot.getId().getY() < -radius) {
                 outside.add(plot.getId());
             }
         }
