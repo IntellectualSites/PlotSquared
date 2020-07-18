@@ -106,7 +106,7 @@ public class HomeCommand extends Command {
             return CompletableFuture.completedFuture(false);
         }
         if (args.length > 2) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return CompletableFuture.completedFuture(false);
         }
         PlotQuery query = query(player);

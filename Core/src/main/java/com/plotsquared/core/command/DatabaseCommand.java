@@ -99,7 +99,7 @@ public class DatabaseCommand extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
-            MainUtil.sendMessage(player, getUsage());
+            sendUsage(player);
             return false;
         }
         List<Plot> plots;
@@ -111,7 +111,7 @@ public class DatabaseCommand extends SubCommand {
             plots = PlotSquared.get().sortPlotsByTemp(PlotQuery.newQuery().allPlots().asList());
         }
         if (args.length < 1) {
-            MainUtil.sendMessage(player, getUsage());
+            sendUsage(player);
             MainUtil.sendMessage(player, "[arg] indicates an optional argument");
             return false;
         }

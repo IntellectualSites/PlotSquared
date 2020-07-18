@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.TeleportCause;
@@ -109,7 +110,8 @@ public class Rate extends SubCommand {
                 case "purge": {
                     final Plot plot = player.getCurrentPlot();
                     if (plot == null) {
-                        return !sendMessage(player, Captions.NOT_IN_PLOT);
+                        player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+                        return false;
                     }
                     if (!Permissions
                         .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_RATE, true)) {
@@ -123,7 +125,8 @@ public class Rate extends SubCommand {
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
             sendMessage(player, Captions.RATING_NOT_OWNED);

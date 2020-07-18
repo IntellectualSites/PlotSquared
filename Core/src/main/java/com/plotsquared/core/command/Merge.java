@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
@@ -42,6 +43,7 @@ import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -95,7 +97,8 @@ public class Merge extends SubCommand {
         Location location = player.getLocationFull();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
             MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
@@ -141,7 +144,9 @@ public class Merge extends SubCommand {
         PlotMergeEvent event =
             this.eventDispatcher.callMerge(plot, direction, max, player);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Merge");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Merge"));
             return false;
         }
         boolean force = event.getEventResult() == Result.FORCE;

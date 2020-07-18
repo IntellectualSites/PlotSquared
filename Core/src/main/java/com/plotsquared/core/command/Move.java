@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -61,8 +62,8 @@ public class Move extends SubCommand {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
-            return CompletableFuture
-                .completedFuture(!MainUtil.sendMessage(player, Captions.NOT_IN_PLOT));
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return CompletableFuture.completedFuture(false);
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
@@ -75,7 +76,7 @@ public class Move extends SubCommand {
             override = true;
         }
         if (args.length != 1) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return CompletableFuture.completedFuture(false);
         }
         PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);

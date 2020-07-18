@@ -127,7 +127,7 @@ public class Trim extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return false;
         }
         final String world = args[0];

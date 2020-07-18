@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.player.PlotPlayer;
@@ -38,15 +39,13 @@ import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
-
-import static com.plotsquared.core.command.SubCommand.sendMessage;
 
 @CommandDeclaration(command = "clear",
     description = "Clear the plot you stand on",
@@ -72,11 +71,16 @@ public class Clear extends Command {
     public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
+        if (args.length != 0) {
+            sendUsage(player);
+            return CompletableFuture.completedFuture(false);
+        }
         final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
         Result eventResult = this.eventDispatcher.callClear(plot).getEventResult();
         if (eventResult == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Clear");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Clear"));
             return CompletableFuture.completedFuture(true);
         }
         boolean force = eventResult == Result.FORCE;
@@ -112,12 +116,14 @@ public class Clear extends Command {
                                 plot.removeFlag(event.getFlag());
                             }
                         }
-                        MainUtil.sendMessage(player, Captions.CLEARING_DONE,
-                            "" + (System.currentTimeMillis() - start));
+                        player.sendMessage(
+                                TranslatableCaption.of("working.clearing_done"),
+                                Template.of("amount", String.valueOf(System.currentTimeMillis() - start))
+                        );
                     });
                 });
                 if (!result) {
-                    MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+                    player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 } else {
                     plot.addRunning();
                 }

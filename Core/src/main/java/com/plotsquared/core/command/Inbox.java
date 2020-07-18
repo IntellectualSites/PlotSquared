@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.comment.CommentInbox;
@@ -89,7 +90,7 @@ public class Inbox extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
@@ -97,7 +98,7 @@ public class Inbox extends SubCommand {
             return false;
         }
         if (args.length == 0) {
-            sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
+            sendUsage(player);
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
@@ -185,7 +186,7 @@ public class Inbox extends SubCommand {
                             }
                         }
                     })) {
-                        sendMessage(player, Captions.NOT_IN_PLOT);
+                        player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
                         return false;
                     }
                     return true;
@@ -204,7 +205,7 @@ public class Inbox extends SubCommand {
                     try {
                         page = Integer.parseInt(args[1]);
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
+                        sendUsage(player);
                         return false;
                     }
             }

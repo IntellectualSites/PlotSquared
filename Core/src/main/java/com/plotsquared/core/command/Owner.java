@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotChangeOwnerEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
@@ -38,6 +39,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -77,7 +79,9 @@ public class Owner extends SetCommand {
             PlotChangeOwnerEvent event = this.eventDispatcher.callOwnerChange(player, plot, plot.hasOwner() ? plot.getOwnerAbs() : null, uuid,
                     plot.hasOwner()); 
             if (event.getEventResult() == Result.DENY) {
-                sendMessage(player, Captions.EVENT_DENIED, "Owner change");
+                player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Owner change"));
                 return;
             }
             uuid = event.getNewOwner();
@@ -90,7 +94,9 @@ public class Owner extends SetCommand {
                 }
                 PlotUnlinkEvent unlinkEvent = this.eventDispatcher.callUnlink(plot.getArea(), plot, false, false, PlotUnlinkEvent.REASON.NEW_OWNER);
                 if (unlinkEvent.getEventResult() == Result.DENY) {
-                    sendMessage(player, Captions.EVENT_DENIED, "Unlink on owner change");
+                    player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Unlink on owner change"));
                     return;
                 }
                 plot.unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());

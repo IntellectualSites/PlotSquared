@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -39,6 +40,7 @@ import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,14 +69,18 @@ public class Delete extends SubCommand {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
-            return !sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            return false;
         }
         Result eventResult = this.eventDispatcher.callDelete(plot).getEventResult();
         if (eventResult == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Delete");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Delete"));
             return true;
         }
         boolean force = eventResult == Result.FORCE;

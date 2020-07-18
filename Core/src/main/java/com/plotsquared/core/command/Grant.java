@@ -112,7 +112,7 @@ public class Grant extends Command {
                 });
                 return CompletableFuture.completedFuture(true);
         }
-        Captions.COMMAND_SYNTAX.send(player, getUsage());
+        sendUsage(player);
         return CompletableFuture.completedFuture(true);
     }
 }

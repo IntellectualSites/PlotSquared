@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -40,7 +41,8 @@ public abstract class SetCommand extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, CaptionUtility

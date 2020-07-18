@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -72,7 +73,8 @@ public class Deny extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
             MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);

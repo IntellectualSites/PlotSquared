@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -45,7 +46,8 @@ public class Copy extends SubCommand {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
-            return !MainUtil.sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
@@ -53,7 +55,7 @@ public class Copy extends SubCommand {
             return false;
         }
         if (args.length != 1) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return false;
         }
         Plot plot2 = MainUtil.getPlotFromString(player, args[0], true);
@@ -62,7 +64,7 @@ public class Copy extends SubCommand {
         }
         if (plot1.equals(plot2)) {
             MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return false;
         }
         if (!plot1.getArea().isCompatible(plot2.getArea())) {

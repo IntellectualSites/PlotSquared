@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
@@ -35,6 +36,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 
@@ -57,7 +59,9 @@ public class Desc extends SetCommand {
         if (desc.isEmpty()) {
             PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plot.getFlagContainer().getFlag(DescriptionFlag.class), plot);
             if (event.getEventResult() == Result.DENY) {
-                sendMessage(player, Captions.EVENT_DENIED, "Description removal");
+                player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Description removal"));
                 return false;
             }
             plot.removeFlag(event.getFlag());
@@ -66,7 +70,9 @@ public class Desc extends SetCommand {
         }
         PlotFlagAddEvent event = this.eventDispatcher.callFlagAdd(plot.getFlagContainer().getFlag(DescriptionFlag.class).createFlagInstance(desc), plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Description set");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Description set"));
             return false;
         }
         boolean result = plot.setFlag(event.getFlag());

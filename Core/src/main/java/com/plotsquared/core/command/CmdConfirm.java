@@ -25,11 +25,11 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
+import net.kyori.adventure.text.minimessage.Template;
 
 public class CmdConfirm {
 
@@ -45,7 +45,10 @@ public class CmdConfirm {
         final Runnable runnable) {
         removePending(player);
         if (commandStr != null) {
-            MainUtil.sendMessage(player, Captions.REQUIRES_CONFIRM, commandStr);
+            player.sendMessage(
+                    TranslatableCaption.of("confirm.requires_confirm"),
+                    Template.of("command", commandStr)
+            );
         }
         TaskManager.runTaskLater(() -> {
             CmdInstance cmd = new CmdInstance(runnable);

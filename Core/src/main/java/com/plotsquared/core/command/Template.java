@@ -173,7 +173,7 @@ public class Template extends SubCommand {
                     return true;
                 }
             }
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
+            sendUsage(player);
             return true;
         }
         final String world = args[1];
@@ -246,7 +246,7 @@ public class Template extends SubCommand {
                 });
                 return true;
             default:
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
         }
         return false;
     }

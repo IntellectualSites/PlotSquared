@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.player.PlotPlayer;
@@ -39,6 +40,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,7 +73,10 @@ public class Buy extends Command {
         check(this.econHandler, Captions.ECON_DISABLED);
         final Plot plot;
         if (args.length != 0) {
-            checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
+            if (args.length != 1) {
+                sendUsage(player);
+                return CompletableFuture.completedFuture(false);
+            }
             plot = check(MainUtil.getPlotFromString(player, args[0], true), null);
         } else {
             plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
@@ -90,13 +95,20 @@ public class Buy extends Command {
         // Failure
         // Success
         confirm.run(this, () -> {
-            Captions.REMOVED_BALANCE.send(player, price);
+            player.sendMessage(
+                    TranslatableCaption.of("economy.removed_balance"),
+                    Template.of("money", String.valueOf(price)));
 
             this.econHandler.depositMoney(PlotSquared.platform().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
 
             PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {
-                Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
+                owner.sendMessage(
+                        TranslatableCaption.of("economy.plot_sold"),
+                        Template.of("plot", plot.getId().toString()),
+                        Template.of("player", player.getName()),
+                        Template.of("price", String.valueOf(price))
+                );
             }
             PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(PriceFlag.class);
             PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plotFlag, plot);
@@ -104,7 +116,7 @@ public class Buy extends Command {
                 plot.removeFlag(event.getFlag());
             }
             plot.setOwner(player.getUUID());
-            Captions.CLAIMED.send(player);
+            player.sendMessage(TranslatableCaption.of("working.claimed"));
             whenDone.run(Buy.this, CommandResult.SUCCESS);
         }, () -> {
             player.deposit(price);

@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
@@ -39,6 +40,7 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.MusicFlag;
 import com.plotsquared.core.util.InventoryUtil;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -68,7 +70,8 @@ public class Music extends SubCommand {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.isAdded(player.getUUID())) {
             sendMessage(player, Captions.NO_PLOT_PERMS);
@@ -85,7 +88,9 @@ public class Music extends SubCommand {
                         .createFlagInstance(item.getType());
                     PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
-                        sendMessage(player, Captions.EVENT_DENIED, "Music removal");
+                        player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Music removal"));
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
@@ -95,7 +100,9 @@ public class Music extends SubCommand {
                         .createFlagInstance(item.getType());
                     PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
-                        sendMessage(player, Captions.EVENT_DENIED, "Music addition");
+                        player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Music addition"));
                         return true;
                     }
                     plot.setFlag(event.getFlag());

@@ -71,7 +71,7 @@ public class Purge extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return false;
         }
 
@@ -84,7 +84,7 @@ public class Purge extends SubCommand {
         for (String arg : args) {
             String[] split = arg.split(":");
             if (split.length != 2) {
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
                 return false;
             }
             switch (split[0].toLowerCase()) {
@@ -133,7 +133,7 @@ public class Purge extends SubCommand {
                     clear = Boolean.parseBoolean(split[1]);
                     break;
                 default:
-                    Captions.COMMAND_SYNTAX.send(player, getUsage());
+                    sendUsage(player);
                     return false;
             }
         }

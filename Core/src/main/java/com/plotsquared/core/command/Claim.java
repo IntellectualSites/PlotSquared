@@ -30,6 +30,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
@@ -44,8 +45,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,12 +75,15 @@ public class Claim extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         final PlayerClaimPlotEvent event = this.eventDispatcher.callClaim(player, plot, schematic);
         schematic = event.getSchematic();
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Claim");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Claim"));
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -154,7 +157,9 @@ public class Claim extends SubCommand {
                         PlotMergeEvent mergeEvent = Claim.this.eventDispatcher
                             .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                         if (mergeEvent.getEventResult() == Result.DENY) {
-                            sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
+                            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Auto merge on claim"));
                         } else {
                             plot.autoMerge(mergeEvent.getDir(), mergeEvent.getMax(), player.getUUID(), true);
                         }

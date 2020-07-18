@@ -30,6 +30,7 @@ import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -204,7 +205,7 @@ public class Set extends SubCommand {
         // Additional checks
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            MainUtil.sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
         // components

@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -70,7 +71,8 @@ public class Load extends SubCommand {
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
             MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);

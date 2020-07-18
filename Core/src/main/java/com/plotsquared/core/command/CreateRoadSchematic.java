@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.location.Location;
@@ -55,7 +56,8 @@ public class CreateRoadSchematic extends SubCommand {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!(location.getPlotArea() instanceof HybridPlotWorld)) {
             return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);

@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
@@ -36,6 +37,7 @@ import com.plotsquared.core.plot.flag.implementations.MiscCapFlag;
 import com.plotsquared.core.plot.flag.implementations.MobCapFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleCapFlag;
 import com.plotsquared.core.util.Permissions;
+import net.kyori.adventure.text.minimessage.Template;
 
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
@@ -53,13 +55,17 @@ public class Caps extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            return Captions.NOT_IN_PLOT.send(player);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.isAdded(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_CAPS_OTHER)) {
-            return Captions.NO_PERMISSION.send(player, Captions.PERMISSION_ADMIN_CAPS_OTHER);
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Captions.PERMISSION_ADMIN_CAPS_OTHER.getTranslated()));
+            return false;
         }
-        Captions.PLOT_CAPS_HEADER.send(player);
+        player.sendMessage(TranslatableCaption.of("info.plot_caps_header"));
         final int[] countedEntities = plot.countEntities();
         sendFormatted(plot, player, MobCapFlag.class, countedEntities, "mobs", CAP_MOB);
         sendFormatted(plot, player, HostileCapFlag.class, countedEntities, "hostile", CAP_MONSTER);
@@ -76,8 +82,10 @@ public class Caps extends SubCommand {
         final int current = countedEntities[type];
         final int max = plot.getFlag(capFlag);
         final String percentage = String.format("%.1f", 100 * ((float) current / max));
-        player.sendMessage(Captions.PLOT_CAPS_FORMAT.getTranslated().replace("%cap%", name)
-            .replace("%current%", Integer.toString(current))
-            .replace("%limit%", Integer.toString(max)).replace("%percentage%", percentage));
+        player.sendMessage(TranslatableCaption.of("info.plot_caps_format"),
+                Template.of("cap", name),
+                Template.of("current", String.valueOf(current)),
+                Template.of("limit", String.valueOf(max)),
+                Template.of("percentage", percentage));
     }
 }

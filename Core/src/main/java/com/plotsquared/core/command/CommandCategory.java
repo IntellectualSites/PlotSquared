@@ -25,12 +25,16 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
+
+import javax.annotation.Nonnull;
 
 /**
  * CommandCategory.
  */
-public enum CommandCategory {
+public enum CommandCategory implements Caption {
     /**
      * Claiming CommandConfig.
      * Such as: /plot claim
@@ -74,13 +78,20 @@ public enum CommandCategory {
     /**
      * The category name (Readable).
      */
-    private final Captions caption;
+    private final Caption caption;
 
-    CommandCategory(final Captions caption) {
+    CommandCategory(final Caption caption) {
         this.caption = caption;
     }
 
-    @Override public String toString() {
-        return this.caption.getTranslated();
+    // TODO this method shouldn't be invoked
+    @Deprecated @Override public String toString() {
+        return this.caption.getComponent(LocaleHolder.console());
+    }
+
+    @Nonnull
+    @Override
+    public String getComponent(@Nonnull LocaleHolder localeHolder) {
+        return this.caption.getComponent(localeHolder);
     }
 }

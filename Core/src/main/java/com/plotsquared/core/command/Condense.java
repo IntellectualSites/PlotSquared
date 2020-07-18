@@ -68,7 +68,7 @@ public class Condense extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {
-            MainUtil.sendMessage(player, getUsage());
+            sendUsage(player);
             return false;
         }
         PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);

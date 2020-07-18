@@ -60,7 +60,7 @@ public class Swap extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
         if (args.length != 1) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return CompletableFuture.completedFuture(false);
         }
         Plot plot2 = MainUtil.getPlotFromString(player, args[0], true);

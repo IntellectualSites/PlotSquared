@@ -32,6 +32,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotComponentSetEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
@@ -75,6 +76,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1828,7 +1830,9 @@ public class Plot {
                     PlotMergeEvent event = this.eventDispatcher
                         .callMerge(this, Direction.ALL, Integer.MAX_VALUE, player);
                     if (event.getEventResult() == Result.DENY) {
-                        sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
+                        player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Auto merge on claim"));
                         return;
                     }
                     Plot.this.autoMerge(event.getDir(), event.getMax(), uuid, true);
@@ -2978,7 +2982,9 @@ public class Plot {
             this.eventDispatcher.callTeleport(player, player.getLocation(), plot)
                 .getEventResult();
         if (result == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Teleport");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Teleport"));
             resultConsumer.accept(false);
             return;
         }

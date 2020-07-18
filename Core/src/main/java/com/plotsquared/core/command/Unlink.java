@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
@@ -37,6 +38,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 
@@ -59,7 +61,8 @@ public class Unlink extends SubCommand {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
             return !sendMessage(player, Captions.PLOT_UNOWNED);
@@ -70,7 +73,7 @@ public class Unlink extends SubCommand {
         final boolean createRoad;
         if (args.length != 0) {
             if (args.length != 1 || !StringMan.isEqualIgnoreCaseToAny(args[0], "true", "false")) {
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
                 return false;
             }
             createRoad = Boolean.parseBoolean(args[0]);
@@ -82,7 +85,9 @@ public class Unlink extends SubCommand {
             .callUnlink(plot.getArea(), plot, createRoad, createRoad,
                 PlotUnlinkEvent.REASON.PLAYER_COMMAND);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Unlink");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Unlink"));
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;

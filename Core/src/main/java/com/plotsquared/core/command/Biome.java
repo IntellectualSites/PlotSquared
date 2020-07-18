@@ -26,13 +26,14 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.command.util.SuggestionHelper;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -56,20 +57,22 @@ public class Biome extends SetCommand {
         if (biome == null) {
             String biomes = StringMan
                 .join(BiomeType.REGISTRY.values(), Captions.BLOCK_LIST_SEPARATOR.getTranslated());
-            Captions.NEED_BIOME.send(player);
-            MainUtil.sendMessage(player,
-                Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + biomes);
+            player.sendMessage(TranslatableCaption.of("biome.need_biome"));
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
+                    Template.of("values", biomes));
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
         plot.addRunning();
         plot.setBiome(biome, () -> {
             plot.removeRunning();
-            MainUtil
-                .sendMessage(player, Captions.BIOME_SET_TO.getTranslated() + value.toLowerCase());
+            player.sendMessage(
+                    TranslatableCaption.of("biome.biome_set_to"),
+                    Template.of("value", value.toLowerCase()));
         });
         return true;
     }

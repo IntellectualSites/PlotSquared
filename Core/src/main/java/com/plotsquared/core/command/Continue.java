@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.player.PlotPlayer;
@@ -37,6 +38,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 
@@ -56,7 +58,8 @@ public class Continue extends SubCommand {
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
@@ -82,7 +85,9 @@ public class Continue extends SubCommand {
         PlotFlagRemoveEvent event =
             this.eventDispatcher.callFlagRemove(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Done flag removal");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Done flag removal"));
             return true;
         }
         plot.removeFlag(event.getFlag());

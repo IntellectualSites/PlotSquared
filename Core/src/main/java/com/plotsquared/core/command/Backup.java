@@ -31,6 +31,7 @@ import com.plotsquared.core.backup.BackupProfile;
 import com.plotsquared.core.backup.NullBackupProfile;
 import com.plotsquared.core.backup.PlayerBackupProfile;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
@@ -128,7 +129,7 @@ public final class Backup extends Command {
         final RunnableVal2<Command, CommandResult> whenDone) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
         } else if (!plot.hasOwner()) {
             sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
                 Captions.GENERIC_UNOWNED.getTranslated());
@@ -167,7 +168,7 @@ public final class Backup extends Command {
         final RunnableVal2<Command, CommandResult> whenDone) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
         } else if (!plot.hasOwner()) {
             sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
                 Captions.GENERIC_UNOWNED.getTranslated());
@@ -218,7 +219,7 @@ public final class Backup extends Command {
         final RunnableVal2<Command, CommandResult> whenDone) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
         } else if (!plot.hasOwner()) {
             sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
                 Captions.GENERIC_UNOWNED.getTranslated());

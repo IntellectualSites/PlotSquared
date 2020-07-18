@@ -78,7 +78,7 @@ public class Help extends Command {
                 }
                 return CompletableFuture.completedFuture(false);
             default:
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
         }
         return CompletableFuture.completedFuture(true);
     }

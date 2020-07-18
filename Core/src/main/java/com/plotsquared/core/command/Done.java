@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotDoneEvent;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
@@ -43,6 +44,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 
@@ -67,11 +69,14 @@ public class Done extends SubCommand {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         PlotDoneEvent event = this.eventDispatcher.callDone(plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Done");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Done"));
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;

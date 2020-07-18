@@ -29,6 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
@@ -154,7 +155,7 @@ public final class FlagCommand extends Command {
         final Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            MainUtil.sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
         if (!plot.hasOwner()) {
@@ -299,7 +300,9 @@ public final class FlagCommand extends Command {
         Plot plot = player.getLocation().getPlotAbs();
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Flag set");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Flag set"));
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -344,7 +347,9 @@ public final class FlagCommand extends Command {
         Plot plot = player.getLocation().getPlotAbs();
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Flag add");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Flag add"));
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -401,7 +406,9 @@ public final class FlagCommand extends Command {
         final Plot plot = player.getLocation().getPlotAbs();
         PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag, plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Flag remove");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Flag remove"));
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
