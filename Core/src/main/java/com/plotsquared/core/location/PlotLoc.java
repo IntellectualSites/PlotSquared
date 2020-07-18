@@ -76,11 +76,11 @@ public final class PlotLoc {
     }
 
     public int getX() {
-        return this.x;
+        return this.getX();
     }
 
     public int getY() {
-        return this.y;
+        return this.getY();
     }
 
     public int getZ() {
@@ -90,14 +90,14 @@ public final class PlotLoc {
     @Override public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = (prime * result) + this.x;
-        result = (prime * result) + this.y;
-        result = (prime * result) + this.z;
+        result = (prime * result) + this.getX();
+        result = (prime * result) + this.getY();
+        result = (prime * result) + this.getZ();
         return result;
     }
 
     @Override public String toString() {
-        if (this.y == -1) {
+        if (this.getY() == -1) {
             return String.format("%d,%d", x, z);
         }
         return String.format("%d,%d,%d", x, y, z);
@@ -111,6 +111,7 @@ public final class PlotLoc {
             return false;
         }
         final PlotLoc other = (PlotLoc) obj;
-        return (this.x == other.x) && (this.y == other.y) && (this.z == other.z);
+        return (this.getX() == other.getX()) && (this.getY() ==
+            other.getY()) && (this.getZ() == other.getZ());
     }
 }

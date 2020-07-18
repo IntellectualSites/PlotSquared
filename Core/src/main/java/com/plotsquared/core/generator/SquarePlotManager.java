@@ -82,8 +82,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
     }
 
     @Override public Location getPlotTopLocAbs(PlotId plotId) {
-        int px = plotId.x;
-        int pz = plotId.y;
+        int px = plotId.getX();
+        int pz = plotId.getY();
         int x = (squarePlotWorld.ROAD_OFFSET_X + (px * (squarePlotWorld.ROAD_WIDTH
             + squarePlotWorld.PLOT_WIDTH))) - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
         int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
@@ -131,7 +131,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         if (z <= pathWidthLower || z > end || x <= pathWidthLower || x > end) {
             return null;
         } else {
-            return new PlotId(idx, idz);
+            return PlotId.of(idx, idz);
         }
     }
 
@@ -156,7 +156,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         } else {
             idz = (z / size) + 1;
         }
-        return new PlotId(idx, idz);
+        return PlotId.of(idx, idz);
     }
 
     @Override public PlotId getPlotId(int x, int y, int z) {
@@ -195,7 +195,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 dz = (z / size) + 1;
                 rz = z % size;
             }
-            PlotId id = new PlotId(dx, dz);
+            PlotId id = PlotId.of(dx, dz);
             boolean[] merged =
                 new boolean[] {rz <= pathWidthLower, rx > end, rz > end, rx <= pathWidthLower};
             int hash = MainUtil.hash(merged);
@@ -245,8 +245,8 @@ public abstract class SquarePlotManager extends GridPlotManager {
      * Get the bottom plot loc (some basic math).
      */
     @Override public Location getPlotBottomLocAbs(PlotId plotId) {
-        int px = plotId.x;
-        int pz = plotId.y;
+        int px = plotId.getX();
+        int pz = plotId.getY();
         int x = (squarePlotWorld.ROAD_OFFSET_X + (px * (squarePlotWorld.ROAD_WIDTH
             + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH - (int) Math
             .floor(squarePlotWorld.ROAD_WIDTH / 2);

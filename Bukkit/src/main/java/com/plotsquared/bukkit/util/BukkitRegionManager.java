@@ -182,7 +182,7 @@ public class BukkitRegionManager extends RegionManager {
                         if (X > bx && X < tx && Z > bz && Z < tz) {
                             count(count, entity);
                         } else {
-                            Plot other = area.getPlot(BukkitUtil.getLocation(location));
+                            Plot other = area.getPlot(BukkitUtil.adapt(location));
                             if (plot.equals(other)) {
                                 count(count, entity);
                             }
@@ -197,7 +197,7 @@ public class BukkitRegionManager extends RegionManager {
                 Entity[] entities1 = chunk.getEntities();
                 for (Entity entity : entities1) {
                     if (X == bx || X == tx || Z == bz || Z == tz) {
-                        Plot other = area.getPlot(BukkitUtil.getLocation(entity));
+                        Plot other = area.getPlot(BukkitUtil.adapt(entity.getLocation()));
                         if (plot.equals(other)) {
                             count(count, entity);
                         }
@@ -399,7 +399,15 @@ public class BukkitRegionManager extends RegionManager {
 
     @Override public void clearAllEntities(Location pos1, Location pos2) {
         String world = pos1.getWorldName();
-        List<Entity> entities = BukkitUtil.getEntities(world);
+
+        final World bukkitWorld = BukkitUtil.getWorld(world);
+        final List<Entity> entities;
+        if (bukkitWorld != null) {
+            entities = new ArrayList<>(bukkitWorld.getEntities());
+        } else {
+            entities = new ArrayList<>();
+        }
+
         int bx = pos1.getX();
         int bz = pos1.getZ();
         int tx = pos2.getX();

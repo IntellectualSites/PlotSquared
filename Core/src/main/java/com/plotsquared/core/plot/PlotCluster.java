@@ -32,6 +32,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -87,7 +88,8 @@ public class PlotCluster {
     }
 
     private void setRegion() {
-        this.region = RegionUtil.createRegion(this.pos1.x, this.pos2.x, this.pos1.y, this.pos2.y);
+        this.region = RegionUtil.createRegion(this.pos1.getX(), this.pos2.getX(),
+            this.pos1.getY(), this.pos2.getY());
     }
 
     public CuboidRegion getRegion() {
@@ -117,7 +119,7 @@ public class PlotCluster {
      * Get the area (in plots).
      */
     public int getArea() {
-        return (1 + this.pos2.x - this.pos1.x) * (1 + this.pos2.y - this.pos1.y);
+        return (1 + this.pos2.getX() - this.pos1.getX()) * (1 + this.pos2.getY() - this.pos1.getY());
     }
 
     public void setArea(PlotArea plotArea) {
@@ -148,8 +150,7 @@ public class PlotCluster {
     }
 
     @Override public String toString() {
-        return this.area + ";" + this.pos1.x + ";" + this.pos1.y + ";" + this.pos2.x + ";"
-            + this.pos2.y;
+        return this.area + ";" + this.pos1.toString() + ";" + this.pos2.toString();
     }
 
     public void getHome(@Nonnull final Consumer<Location> result) {
@@ -180,13 +181,13 @@ public class PlotCluster {
         }
     }
 
-    public PlotId getCenterPlotId() {
-        PlotId bot = getP1();
-        PlotId top = getP2();
-        return new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
+    @Nonnull public PlotId getCenterPlotId() {
+        final PlotId bot = getP1();
+        final PlotId top = getP2();
+        return PlotId.of((bot.getX() + top.getX()) / 2, (bot.getY() + top.getY()) / 2);
     }
 
-    public Plot getCenterPlot() {
+    @Nullable public Plot getCenterPlot() {
         return this.area.getPlotAbs(getCenterPlotId());
     }
 
@@ -201,12 +202,12 @@ public class PlotCluster {
     }
 
     public boolean intersects(PlotId pos1, PlotId pos2) {
-        return pos1.x <= this.pos2.x && pos2.x >= this.pos1.x && pos1.y <= this.pos2.y
-            && pos2.y >= this.pos1.y;
+        return pos1.getX() <= this.pos2.getX() && pos2.getX() >= this.pos1.getX() &&
+            pos1.getY() <= this.pos2.getY() && pos2.getY() >= this.pos1.getY();
     }
 
     public boolean contains(PlotId id) {
-        return this.pos1.x <= id.x && this.pos1.y <= id.y && this.pos2.x >= id.x
-            && this.pos2.y >= id.y;
+        return this.pos1.getX() <= id.getX() && this.pos1.getY() <= id.getY() &&
+            this.pos2.getX() >= id.getX() && this.pos2.getY() >= id.getY();
     }
 }

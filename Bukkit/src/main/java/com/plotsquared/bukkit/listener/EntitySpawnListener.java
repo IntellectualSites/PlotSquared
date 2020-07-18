@@ -126,7 +126,7 @@ public class EntitySpawnListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void creatureSpawnEvent(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
-        Location location = BukkitUtil.getLocation(entity.getLocation());
+        Location location = BukkitUtil.adapt(entity.getLocation());
         PlotArea area = location.getPlotArea();
         if (!location.isPlotArea()) {
             return;

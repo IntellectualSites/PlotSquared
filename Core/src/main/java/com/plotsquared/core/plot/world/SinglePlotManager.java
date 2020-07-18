@@ -48,11 +48,11 @@ public class SinglePlotManager extends PlotManager {
     }
 
     @Override public PlotId getPlotIdAbs(int x, int y, int z) {
-        return new PlotId(0, 0);
+        return PlotId.of(0, 0);
     }
 
     @Override public PlotId getPlotId(int x, int y, int z) {
-        return new PlotId(0, 0);
+        return PlotId.of(0, 0);
     }
 
     @Override public Location getPlotBottomLocAbs(@Nonnull final PlotId plotId) {

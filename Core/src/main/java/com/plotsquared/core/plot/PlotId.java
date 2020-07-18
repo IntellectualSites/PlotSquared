@@ -26,14 +26,21 @@
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.location.Direction;
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Iterator;
 
+/**
+ * Plot (X,Y) tuples for plot locations
+ * within a plot area
+ */
 public class PlotId {
 
-    @Deprecated public int x;
-    @Deprecated public int y;
-    private int hash;
+    private final int x;
+    private final int y;
+    private final int hash;
 
     /**
      * PlotId class (PlotId x,y values do not correspond to Block locations)
@@ -41,9 +48,20 @@ public class PlotId {
      * @param x The plot x coordinate
      * @param y The plot y coordinate
      */
-    public PlotId(int x, int y) {
+    private PlotId(int x, int y) {
         this.x = x;
         this.y = y;
+        this.hash = (this.getX() << 16) | (this.getY() & 0xFFFF);
+    }
+
+    /**
+     * Create a new plot ID instance
+     *
+     * @param x The plot x coordinate
+     * @param y The plot y coordinate
+     */
+    @Nonnull public static PlotId of(final int x, final int y) {
+        return PlotId.of(x, y);
     }
 
     /**
@@ -60,6 +78,12 @@ public class PlotId {
         return plot;
     }
 
+    /**
+     * Attempt to parse a plot ID from a string
+     *
+     * @param string ID string
+     * @return Plot ID, or {@code null} if none could be parsed
+     */
     @Nullable public static PlotId fromStringOrNull(@Nonnull String string) {
         String[] parts = string.split("[;,.]");
         if (parts.length < 2) {
@@ -73,101 +97,102 @@ public class PlotId {
         } catch (NumberFormatException ignored) {
             return null;
         }
-        return new PlotId(x, y);
-    }
-
-    public static PlotId of(@Nullable Plot plot) {
-        return plot != null ? plot.getId() : null;
+        return of(x, y);
     }
 
     /**
      * Gets the PlotId from the HashCode<br>
      * Note: Only accurate for small x,z values (short)
      *
-     * @param hash
-     * @return
+     * @param hash ID hash
+     * @return Plot ID
      */
-    public static PlotId unpair(int hash) {
-        return new PlotId(hash >> 16, hash & 0xFFFF);
+    @Nonnull public static PlotId unpair(final int hash) {
+        return PlotId.of(hash >> 16, hash & 0xFFFF);
     }
 
+    /**
+     * Get a copy of the plot ID
+     *
+     * @return Plot ID copy
+     */
+    @NotNull public PlotId copy() {
+        return of(this.getX(), this.getY());
+    }
+
+    /**
+     * Get the ID X component
+     *
+     * @return X component
+     */
     public int getX() {
-        return x;
+        return this.getX();
     }
 
+    /**
+     * Get the ID Y component
+     *
+     * @return Y component
+     */
     public int getY() {
-        return y;
+        return this.getY();
     }
 
-    public PlotId getNextId(int step) {
+    /**
+     * Get the next plot ID for claiming purposes
+     *
+     * @return Next plot ID
+     */
+    @Nonnull public PlotId getNextId() {
         int absX = Math.abs(x);
         int absY = Math.abs(y);
         if (absX > absY) {
             if (x > 0) {
-                return new PlotId(x, y + 1);
+                return PlotId.of(x, y + 1);
             } else {
-                return new PlotId(x, y - 1);
+                return PlotId.of(x, y - 1);
             }
         } else if (absY > absX) {
             if (y > 0) {
-                return new PlotId(x - 1, y);
+                return PlotId.of(x - 1, y);
             } else {
-                return new PlotId(x + 1, y);
+                return PlotId.of(x + 1, y);
             }
         } else {
             if (x == y && x > 0) {
-                return new PlotId(x, y + step);
+                return PlotId.of(x, y + 1);
             }
             if (x == absX) {
-                return new PlotId(x, y + 1);
+                return PlotId.of(x, y + 1);
             }
             if (y == absY) {
-                return new PlotId(x, y - 1);
+                return PlotId.of(x, y - 1);
             }
-            return new PlotId(x + 1, y);
+            return PlotId.of(x + 1, y);
         }
-    }
-
-    public PlotId getRelative(Direction direction) {
-        return getRelative(direction.getIndex());
     }
 
     /**
      * Get the PlotId in a relative direction
-     * 0 = north<br>
-     * 1 = east<br>
-     * 2 = south<br>
-     * 3 = west<br>
      *
-     * @param direction
-     * @return PlotId
+     * @param direction Direction
+     * @return Relative plot ID
      */
-    public PlotId getRelative(int direction) {
+    @Nonnull public PlotId getRelative(@Nonnull final Direction direction) {
         switch (direction) {
-            case 0:
-                return new PlotId(this.x, this.y - 1);
-            case 1:
-                return new PlotId(this.x + 1, this.y);
-            case 2:
-                return new PlotId(this.x, this.y + 1);
-            case 3:
-                return new PlotId(this.x - 1, this.y);
+            case NORTH:
+                return PlotId.of(this.getX(), this.getY() - 1);
+            case EAST:
+                return PlotId.of(this.getX() + 1, this.getY());
+            case SOUTH:
+                return PlotId.of(this.getX(), this.getY() + 1);
+            case WEST:
+                return PlotId.of(this.getX() - 1, this.getY());
         }
         return this;
     }
 
-    /**
-     * Get the PlotId in a relative location
-     *
-     * @param x
-     * @param y
-     * @return PlotId
-     */
-    public PlotId getRelative(int x, int y) {
-        return new PlotId(this.x + x, this.y + y);
-    }
-
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -180,42 +205,91 @@ public class PlotId {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        PlotId other = (PlotId) obj;
-        return this.x == other.x && this.y == other.y;
+        final PlotId other = (PlotId) obj;
+        return this.getX() == other.getX() && this.getY() == other.getY();
     }
 
     /**
-     * e.g.
-     * 5;-6
+     * Get a String representation of the plot ID where the
+     * components are separated by ";"
      *
-     * @return
+     * @return {@code x + ";" + y}
      */
-    @Override public String toString() {
-        return this.x + ";" + this.y;
-    }
-
-    public String toCommaSeparatedString() {
-        return this.x + "," + this.y;
-    }
-
-    public String toDashSeparatedString() {
-        return this.x + "-" + this.y;
+    @Override @Nonnull public String toString() {
+        return this.getX() + ";" + this.getY();
     }
 
     /**
-     * The PlotId object caches the hashcode for faster mapping/fetching/sorting<br>
-     * - Recalculation is required if the x/y values change
-     * TODO maybe make x/y values private and add this to the mutators
+     * Get a String representation of the plot ID where the
+     * components are separated by ","
+     *
+     * @return {@code x + "," + y}
      */
-    public void recalculateHash() {
-        this.hash = 0;
-        hashCode();
+    @Nonnull public String toCommaSeparatedString() {
+        return this.getX() + "," + this.getY();
+    }
+
+    /**
+     * Get a String representation of the plot ID where the
+     * components are separated by "-"
+     *
+     * @return {@code x + "-" + y}
+     */
+    @Nonnull public String toDashSeparatedString() {
+        return this.getX() + "-" + this.getY();
     }
 
     @Override public int hashCode() {
-        if (this.hash == 0) {
-            this.hash = (this.x << 16) | (this.y & 0xFFFF);
-        }
         return this.hash;
     }
+
+
+    public static final class PlotRangeIterator implements Iterator<PlotId>, Iterable<PlotId> {
+
+        private final PlotId start;
+        private final PlotId end;
+
+        private int x;
+        private int y;
+
+        private PlotRangeIterator(@Nonnull final PlotId start, @Nonnull final PlotId end) {
+            this.start = start;
+            this.end = end;
+            this.x = this.start.getX();
+            this.y = this.start.getY();
+        }
+
+        public static PlotRangeIterator range(@Nonnull final PlotId start, @Nonnull final PlotId end) {
+            return new PlotRangeIterator(start, end);
+        }
+
+        @Override public boolean hasNext() {
+            if (this.x < this.end.getX()) {
+                return true;
+            } else if (this.x == this.end.getX()) {
+                return this.y < this.end.getY();
+            } else {
+                return false;
+            }
+        }
+
+        @Override public PlotId next() {
+            if (!hasNext()) {
+               throw new IndexOutOfBoundsException("The iterator has no more entries");
+            }
+            if (this.y == this.end.getY()) {
+                this.x++;
+                this.y = 0;
+            } else {
+                this.y++;
+            }
+            return PlotId.of(this.start.getX() + this.x, this.start.getY() + this.y);
+        }
+
+        @Nonnull @Override public Iterator<PlotId> iterator() {
+            return this;
+        }
+
+    }
+
 }

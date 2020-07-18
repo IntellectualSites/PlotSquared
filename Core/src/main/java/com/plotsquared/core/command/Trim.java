@@ -173,7 +173,7 @@ public class Trim extends SubCommand {
                             int bz = cbz << 4;
                             CuboidRegion region =
                                 RegionUtil.createRegion(bx, bx + 511, bz, bz + 511);
-                            for (Plot plot : PlotQuery.newQuery().inWorld(world).asCollection()) {
+                            for (Plot plot : PlotQuery.newQuery().inWorld(world)) {
                                 Location bot = plot.getBottomAbs();
                                 Location top = plot.getExtendedTopAbs();
                                 CuboidRegion plotReg = RegionUtil

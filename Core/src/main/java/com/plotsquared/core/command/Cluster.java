@@ -137,9 +137,9 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
                     return false;
                 }
-                if (pos2.x < pos1.x || pos2.y < pos1.y) {
-                    PlotId tmp = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
-                    pos2 = new PlotId(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
+                if (pos2.getX() < pos1.getX() || pos2.getY() < pos1.getY()) {
+                    PlotId tmp = PlotId.of(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()));
+                    pos2 = PlotId.of(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()));
                     pos1 = tmp;
                 }
                 //check if overlap
@@ -265,9 +265,9 @@ public class Cluster extends SubCommand {
                     MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
                     return false;
                 }
-                if (pos2.x < pos1.x || pos2.y < pos1.y) {
-                    pos1 = new PlotId(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y));
-                    pos2 = new PlotId(Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
+                if (pos2.getX() < pos1.getX() || pos2.getY() < pos1.getY()) {
+                    pos1 = PlotId.of(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()));
+                    pos2 = PlotId.of(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()));
                 }
                 // check if in cluster
                 PlotArea area = player.getApplicablePlotArea();
@@ -326,7 +326,7 @@ public class Cluster extends SubCommand {
                 } else {
                     current = player.getPlayerClusterCount(player.getLocation().getWorldName());
                 }
-                current -= cluster.getArea() + (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
+                current -= cluster.getArea() + (1 + pos2.getX() - pos1.getX()) * (1 + pos2.getY() - pos1.getY());
                 int allowed = Permissions.hasPermissionRange(player, Captions.PERMISSION_CLUSTER,
                     Settings.Limit.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
@@ -454,7 +454,7 @@ public class Cluster extends SubCommand {
                                         cluster.getName());
                                 }
                                 for (final Plot plot : PlotQuery.newQuery().inWorld(player2.getLocation()
-                                    .getWorldName()).ownedBy(uuid).asCollection()) {
+                                    .getWorldName()).ownedBy(uuid)) {
                                     PlotCluster current = plot.getCluster();
                                     if (current != null && current.equals(cluster)) {
                                         plot.unclaim();
@@ -513,7 +513,7 @@ public class Cluster extends SubCommand {
                 DBFunc.removeInvited(cluster, uuid);
                 MainUtil.sendMessage(player, Captions.CLUSTER_REMOVED, cluster.getName());
                 for (final Plot plot : PlotQuery.newQuery().inWorld(player.getLocation().getWorldName())
-                    .ownedBy(uuid).asCollection()) {
+                    .ownedBy(uuid)) {
                     PlotCluster current = plot.getCluster();
                     if (current != null && current.equals(cluster)) {
                         plot.unclaim();
@@ -648,8 +648,8 @@ public class Cluster extends SubCommand {
                                 owner = username;
                             }
                             String name = cluster.getName();
-                            String size = (cluster.getP2().x - cluster.getP1().x + 1) + "x" + (
-                                cluster.getP2().y - cluster.getP1().y + 1);
+                            String size = (cluster.getP2().getX() - cluster.getP1().getX() + 1) + "x" + (
+                                cluster.getP2().getY() - cluster.getP1().getY() + 1);
                             String rights = cluster.isAdded(player.getUUID()) + "";
                             String message = Captions.CLUSTER_INFO.getTranslated();
                             message = message.replaceAll("%id%", id);

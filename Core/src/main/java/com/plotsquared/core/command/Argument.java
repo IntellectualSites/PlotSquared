@@ -64,7 +64,7 @@ public abstract class Argument<T> {
             }
         };
     public static final Argument<PlotId> PlotID =
-        new Argument<PlotId>("PlotID", new PlotId(-6, 3)) {
+        new Argument<PlotId>("PlotID", PlotId.of(-6, 3)) {
             @Override public PlotId parse(String in) {
                 return PlotId.fromString(in);
             }

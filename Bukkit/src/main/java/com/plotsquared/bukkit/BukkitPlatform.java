@@ -227,7 +227,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
 
         // Stuff that needs to be created before the PlotSquared instance
-        PlotPlayer.registerConverter(Player.class, BukkitUtil::getPlayer);
+        PlotPlayer.registerConverter(Player.class, BukkitUtil::adapt);
         TaskManager.setPlatformImplementation(new BukkitTaskManager(this, timeConverter));
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
@@ -789,7 +789,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "BOAT":
                             if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                                 com.plotsquared.core.location.Location location =
-                                    BukkitUtil.getLocation(entity.getLocation());
+                                    BukkitUtil.adapt(entity.getLocation());
                                 Plot plot = location.getPlot();
                                 if (plot == null) {
                                     if (location.isPlotArea()) {
@@ -820,7 +820,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "DRAGON_FIREBALL":
                         case "DROPPED_ITEM":
                             if (Settings.Enabled_Components.KILL_ROAD_ITEMS && plotArea
-                                .getOwnedPlotAbs(BukkitUtil.getLocation(entity.getLocation()))
+                                .getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation()))
                                 == null) {
                                 entity.remove();
                             }
@@ -846,10 +846,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     PlotId originalPlotId = (PlotId) meta.get(0).value();
                                     if (originalPlotId != null) {
                                         com.plotsquared.core.location.Location pLoc =
-                                            BukkitUtil.getLocation(entity.getLocation());
+                                            BukkitUtil.adapt(entity.getLocation());
                                         PlotArea area = pLoc.getPlotArea();
                                         if (area != null) {
-                                            PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
+                                            PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
                                             if (!originalPlotId.equals(currentPlotId) && (
                                                 currentPlotId == null || !area
                                                     .getPlot(originalPlotId)
@@ -865,10 +865,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                 } else {
                                     //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
                                     com.plotsquared.core.location.Location pLoc =
-                                        BukkitUtil.getLocation(entity.getLocation());
+                                        BukkitUtil.adapt(entity.getLocation());
                                     PlotArea area = pLoc.getPlotArea();
                                     if (area != null) {
-                                        PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
+                                        PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
                                         if (currentPlotId != null) {
                                             entity.setMetadata("shulkerPlot",
                                                 new FixedMetadataValue(
@@ -951,7 +951,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         default: {
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                 Location location = entity.getLocation();
-                                if (BukkitUtil.getLocation(location).isPlotRoad()) {
+                                if (BukkitUtil.adapt(location).isPlotRoad()) {
                                     if (entity instanceof LivingEntity) {
                                         LivingEntity livingEntity = (LivingEntity) entity;
                                         if (!livingEntity.isLeashed() || !entity
@@ -1057,8 +1057,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 "WorldEdit"));
     }
 
-    @Override public void unregister(@Nonnull final PlotPlayer player) {
-        BukkitUtil.removePlayer(player.getUUID());
+    @Override public void unregister(@Nonnull final PlotPlayer<?> player) {
+        PlotSquared.platform().getPlayerManager().removePlayer(player.getUUID());
     }
 
     @Override public void setGenerator(@Nonnull final String worldName) {
@@ -1116,10 +1116,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
      */
     @Override @Nullable public PlotPlayer<Player> wrapPlayer(final Object player) {
         if (player instanceof Player) {
-            return BukkitUtil.getPlayer((Player) player);
+            return BukkitUtil.adapt((Player) player);
         }
         if (player instanceof OfflinePlayer) {
-            return BukkitUtil.getPlayer((OfflinePlayer) player);
+            return BukkitUtil.adapt((OfflinePlayer) player);
         }
         if (player instanceof String) {
             return (PlotPlayer<Player>) PlotSquared.platform().getPlayerManager()

@@ -158,9 +158,7 @@ public class DatabaseCommand extends SubCommand {
                                                         newId.toCommaSeparatedString());
                                                 worldFile.renameTo(newFile);
                                             }
-                                            id.x = newId.x;
-                                            id.y = newId.y;
-                                            id.recalculateHash();
+                                            plot.setId(newId.copy());
                                             plot.setArea(pa);
                                             plots.add(plot);
                                             continue;

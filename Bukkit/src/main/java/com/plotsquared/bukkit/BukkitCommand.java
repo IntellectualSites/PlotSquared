@@ -49,7 +49,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel,
         String[] args) {
         if (commandSender instanceof Player) {
-            return MainCommand.onCommand(BukkitUtil.getPlayer((Player) commandSender), args);
+            return MainCommand.onCommand(BukkitUtil.adapt((Player) commandSender), args);
         }
         if (commandSender instanceof ConsoleCommandSender
             || commandSender instanceof ProxiedCommandSender
@@ -65,7 +65,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (!(commandSender instanceof Player)) {
             return null;
         }
-        PlotPlayer player = BukkitUtil.getPlayer((Player) commandSender);
+        PlotPlayer player = BukkitUtil.adapt((Player) commandSender);
         if (args.length == 0) {
             return Collections.singletonList("plots");
         }

@@ -84,8 +84,8 @@ public class PaperListener implements Listener {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
         }
-        Location toLoc = BukkitUtil.getLocation(event.getLoc());
-        Location fromLoc = BukkitUtil.getLocation(event.getEntity().getLocation());
+        Location toLoc = BukkitUtil.adapt(event.getLoc());
+        Location fromLoc = BukkitUtil.adapt(event.getEntity().getLocation());
         PlotArea tarea = toLoc.getPlotArea();
         if (tarea == null) {
             return;
@@ -124,8 +124,8 @@ public class PaperListener implements Listener {
             return;
         }
 
-        Location toLoc = BukkitUtil.getLocation(b.getLocation());
-        Location fromLoc = BukkitUtil.getLocation(event.getEntity().getLocation());
+        Location toLoc = BukkitUtil.adapt(b.getLocation());
+        Location fromLoc = BukkitUtil.adapt(event.getEntity().getLocation());
         PlotArea tarea = toLoc.getPlotArea();
         if (tarea == null) {
             return;
@@ -158,7 +158,7 @@ public class PaperListener implements Listener {
         if (!Settings.Paper_Components.CREATURE_SPAWN) {
             return;
         }
-        Location location = BukkitUtil.getLocation(event.getSpawnLocation());
+        Location location = BukkitUtil.adapt(event.getSpawnLocation());
         PlotArea area = location.getPlotArea();
         if (!location.isPlotArea()) {
             return;
@@ -253,7 +253,7 @@ public class PaperListener implements Listener {
     @EventHandler
     public void onPlayerNaturallySpawnCreaturesEvent(PlayerNaturallySpawnCreaturesEvent event) {
         if (Settings.Paper_Components.CANCEL_CHUNK_SPAWN) {
-            Location location = BukkitUtil.getLocation(event.getPlayer().getLocation());
+            Location location = BukkitUtil.adapt(event.getPlayer().getLocation());
             PlotArea area = location.getPlotArea();
             if (area != null && !area.isMobSpawning()) {
                 event.setCancelled(true);
@@ -263,7 +263,7 @@ public class PaperListener implements Listener {
 
     @EventHandler public void onPreSpawnerSpawnEvent(PreSpawnerSpawnEvent event) {
         if (Settings.Paper_Components.SPAWNER_SPAWN) {
-            Location location = BukkitUtil.getLocation(event.getSpawnerLocation());
+            Location location = BukkitUtil.adapt(event.getSpawnerLocation());
             PlotArea area = location.getPlotArea();
             if (area != null && !area.isMobSpawnerSpawning()) {
                 event.setCancelled(true);
@@ -279,14 +279,14 @@ public class PaperListener implements Listener {
         if (!(event.getBlock().getState(false) instanceof TileState)) {
             return;
         }
-        final Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+        final Location location = BukkitUtil.adapt(event.getBlock().getLocation());
         final PlotArea plotArea = location.getPlotArea();
         if (plotArea == null) {
             return;
         }
         final int tileEntityCount = event.getBlock().getChunk().getTileEntities(false).length;
         if (tileEntityCount >= Settings.Chunk_Processor.MAX_TILES) {
-            final PlotPlayer<?> plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
+            final PlotPlayer<?> plotPlayer = BukkitUtil.adapt(event.getPlayer());
             Captions.TILE_ENTITY_CAP_REACHED.send(plotPlayer, Settings.Chunk_Processor.MAX_TILES);
             event.setCancelled(true);
             event.setBuild(false);
@@ -311,11 +311,11 @@ public class PaperListener implements Listener {
         if (!(shooter instanceof Player)) {
             return;
         }
-        Location location = BukkitUtil.getLocation(entity);
+        Location location = BukkitUtil.adapt(entity.getLocation());
         if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
-        PlotPlayer<?> pp = BukkitUtil.getPlayer((Player) shooter);
+        PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
         if (plot != null && !plot.isAdded(pp.getUUID())) {
             entity.remove();
@@ -347,7 +347,7 @@ public class PaperListener implements Listener {
         final String[] args = new String[unprocessedArgs.length - 1];
         System.arraycopy(unprocessedArgs, 1, args, 0, args.length);
         try {
-            final PlotPlayer<?> player = BukkitUtil.getPlayer((Player) event.getSender());
+            final PlotPlayer<?> player = BukkitUtil.adapt((Player) event.getSender());
             final Collection<Command> objects = MainCommand.getInstance().tab(player, args, buffer.endsWith(" "));
             if (objects == null) {
                 return;

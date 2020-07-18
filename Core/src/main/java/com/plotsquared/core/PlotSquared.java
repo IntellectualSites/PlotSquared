@@ -503,7 +503,7 @@ public class PlotSquared {
                 } else {
                     extra.add(plot);
                 }
-            } else if (Math.abs(plot.getId().x) > 15446 || Math.abs(plot.getId().y) > 15446) {
+            } else if (Math.abs(plot.getId().getX()) > 15446 || Math.abs(plot.getId().getY()) > 15446) {
                 extra.add(plot);
             } else {
                 overflow.add(plot);
@@ -578,7 +578,7 @@ public class PlotSquared {
                 } else {
                     extra.add(plot);
                 }
-            } else if (Math.abs(plot.getId().x) > 15446 || Math.abs(plot.getId().y) > 15446) {
+            } else if (Math.abs(plot.getId().getX()) > 15446 || Math.abs(plot.getId().getY()) > 15446) {
                 extra.add(plot);
             } else {
                 overflow.add(plot);
@@ -718,8 +718,8 @@ public class PlotSquared {
         }
         if (plot.getArea().removePlot(plot.getId())) {
             PlotId last = (PlotId) plot.getArea().getMeta("lastPlot");
-            int last_max = Math.max(Math.abs(last.x), Math.abs(last.y));
-            int this_max = Math.max(Math.abs(plot.getId().x), Math.abs(plot.getId().y));
+            int last_max = Math.max(Math.abs(last.getX()), Math.abs(last.getY()));
+            int this_max = Math.max(Math.abs(plot.getId().getX()), Math.abs(plot.getId().getY()));
             if (this_max < last_max) {
                 plot.getArea().setMeta("lastPlot", plot.getId());
             }

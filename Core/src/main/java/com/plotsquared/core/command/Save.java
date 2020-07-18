@@ -94,7 +94,7 @@ public class Save extends SubCommand {
                     PlotId id = plot.getId();
                     String world1 = plot.getArea().toString().replaceAll(";", "-")
                         .replaceAll("[^A-Za-z0-9]", "");
-                    final String file = time + '_' + world1 + '_' + id.x + '_' + id.y + '_' + size;
+                    final String file = time + '_' + world1 + '_' + id.getX() + '_' + id.getY() + '_' + size;
                     UUID uuid = player.getUUID();
                     schematicHandler.upload(value, uuid, file, new RunnableVal<URL>() {
                         @Override public void run(URL url) {

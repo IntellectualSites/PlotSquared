@@ -138,11 +138,11 @@ public abstract class SchematicHandler {
                 final String name;
                 if (namingScheme == null) {
                     name =
-                        plot.getId().x + ";" + plot.getId().y + ',' + plot.getArea() + ',' + owner;
+                        plot.getId().getX() + ";" + plot.getId().getY() + ',' + plot.getArea() + ',' + owner;
                 } else {
                     name = namingScheme.replaceAll("%id%", plot.getId().toString())
-                        .replaceAll("%idx%", plot.getId().x + "")
-                        .replaceAll("%idy%", plot.getId().y + "")
+                        .replaceAll("%idx%", plot.getId().getX() + "")
+                        .replaceAll("%idy%", plot.getId().getY() + "")
                         .replaceAll("%world%", plot.getArea().toString());
                 }
 

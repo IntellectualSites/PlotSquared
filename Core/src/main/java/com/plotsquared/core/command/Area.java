@@ -169,7 +169,7 @@ public class Area extends SubCommand {
                     BlockVector3.at(playerSelectionMin.getX(), 0, playerSelectionMin.getZ()),
                     BlockVector3.at(playerSelectionMax.getX(), 255, playerSelectionMax.getZ()));
                 // There's only one plot in the area...
-                final PlotId plotId = new PlotId(1, 1);
+                final PlotId plotId = PlotId.of(1, 1);
                 final HybridPlotWorld hybridPlotWorld = this.hybridPlotWorldFactory.create(player.getLocation().getWorldName(), args[1],
                     Objects.requireNonNull(PlotSquared.platform()).getDefaultGenerator(), plotId, plotId);
                 // Plot size is the same as the region width
@@ -315,8 +315,8 @@ public class Area extends SubCommand {
                                 PlotAreaBuilder builder = PlotAreaBuilder.ofPlotArea(area)
                                         .plotManager(PlotSquared.platform().getPluginName())
                                         .generatorName(PlotSquared.platform().getPluginName())
-                                        .minimumId(new PlotId(1, 1))
-                                        .maximumId(new PlotId(numX, numZ));
+                                        .minimumId(PlotId.of(1, 1))
+                                        .maximumId(PlotId.of(numX, numZ));
                                 final String path =
                                     "worlds." + area.getWorldName() + ".areas." + area.getId() + '-'
                                         + builder.minimumId() + '-' + builder.maximumId();
@@ -542,7 +542,7 @@ public class Area extends SubCommand {
                     PlotId min = area.getMin();
                     PlotId max = area.getMax();
                     name = area.getWorldName() + ';' + area.getId() + ';' + min + ';' + max;
-                    int size = (max.x - min.x + 1) * (max.y - min.y + 1);
+                    int size = (max.getX() - min.getX() + 1) * (max.getY() - min.getY() + 1);
                     percent = claimed == 0 ? 0 : size / (double) claimed;
                     region = area.getRegion().toString();
                 } else {
@@ -595,7 +595,7 @@ public class Area extends SubCommand {
                                 PlotId max = area.getMax();
                                 name = area.getWorldName() + ';' + area.getId() + ';' + min + ';'
                                     + max;
-                                int size = (max.x - min.x + 1) * (max.y - min.y + 1);
+                                int size = (max.getX() - min.getX() + 1) * (max.getY() - min.getY() + 1);
                                 percent = claimed == 0 ? 0 : size / (double) claimed;
                                 region = area.getRegion().toString();
                             } else {

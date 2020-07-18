@@ -34,19 +34,20 @@ import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MathMan;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -57,7 +58,7 @@ import java.util.stream.Stream;
  * The queries can be reused as no results are stored
  * in the query itself
  */
-public final class PlotQuery {
+public final class PlotQuery implements Iterable<Plot> {
 
     private final Collection<PlotFilter> filters = new LinkedList<>();
     private final PlotAreaManager plotAreaManager;
@@ -382,16 +383,6 @@ public final class PlotQuery {
     }
 
     /**
-     * Perform an action on each plot returned by the query
-     *
-     * @param consumer Plot consumer
-     */
-    public void forEach(@Nonnull final Consumer<Plot> consumer) {
-        Preconditions.checkNotNull(consumer, "Consumer may not be null");
-        this.asCollection().forEach(consumer);
-    }
-
-    /**
      * Get the amount of plots contained in the query result
      *
      * @return Result count
@@ -429,5 +420,8 @@ public final class PlotQuery {
         return this;
     }
 
+    @NotNull @Override public Iterator<Plot> iterator() {
+        return this.asCollection().iterator();
+    }
 
 }

@@ -25,13 +25,13 @@
  */
 package com.plotsquared.core.location;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.SimpleMBR;
@@ -42,8 +42,7 @@ import javax.annotation.Nullable;
 /**
  * An unmodifiable 6-tuple (world,x,y,z,yaw,pitch)
  */
-@EqualsAndHashCode @SuppressWarnings("unused")
-public final class Location implements Comparable<Location> {
+public final class Location extends BlockLoc implements Comparable<Location> {
 
     @Getter private final float yaw;
     @Getter private final float pitch;
@@ -52,6 +51,7 @@ public final class Location implements Comparable<Location> {
 
     private Location(@Nonnull final World<?> world, @Nonnull final BlockVector3 blockVector3,
         final float yaw, final float pitch) {
+        super(blockVector3.getX(), blockVector3.getY(), blockVector3.getZ(), yaw, pitch);
         this.world = Preconditions.checkNotNull(world, "World may not be null");
         this.blockVector3 = Preconditions.checkNotNull(blockVector3, "Vector may not be null");
         this.yaw = yaw;
@@ -60,6 +60,7 @@ public final class Location implements Comparable<Location> {
 
     private Location(@Nonnull final String worldName, @Nonnull final BlockVector3 blockVector3,
         final float yaw, final float pitch) {
+        super(blockVector3.getX(), blockVector3.getY(), blockVector3.getZ(), yaw, pitch);
         Preconditions.checkNotNull(worldName, "World name may not be null");
         if (worldName.isEmpty()) {
             this.world = World.nullWorld();
@@ -444,6 +445,28 @@ public final class Location implements Comparable<Location> {
             return -1;
         }
         return 1;
+    }
+
+    @Override public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final Location location = (Location) o;
+        return Float.compare(location.getYaw(), getYaw()) == 0
+            && Float.compare(location.getPitch(), getPitch()) == 0 && Objects
+            .equal(getBlockVector3(), location.getBlockVector3()) && Objects
+            .equal(getWorld(), location.getWorld());
+    }
+
+    @Override public int hashCode() {
+        return Objects
+            .hashCode(super.hashCode(), getYaw(), getPitch(), getBlockVector3(), getWorld());
     }
 
     @Override public String toString() {
