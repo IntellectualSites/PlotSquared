@@ -36,13 +36,14 @@ import com.plotsquared.core.queue.LocalChunk;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.sk89q.jnbt.CompoundTag;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.SideEffect;
 import com.sk89q.worldedit.util.SideEffectSet;
 import com.sk89q.worldedit.world.World;
@@ -96,22 +97,22 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     }
 
     @Override public boolean enqueue() {
-        final EditSession editSession;
+        final Clipboard regenClipboard;
         if (isRegen()) {
-            editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1);
-            world.regenerate(new CuboidRegion(
-                    BlockVector3.at(getRegenStart()[0] << 4, 0, getRegenStart()[1] << 4),
-                    BlockVector3.at((getRegenEnd()[0] << 4) + 15, 255, (getRegenEnd()[1] << 4) + 15)),
-                editSession);
+            Region region = new CuboidRegion(
+                BlockVector3.at(getRegenStart()[0] << 4, 0, getRegenStart()[1] << 4),
+                BlockVector3.at((getRegenEnd()[0] << 4) + 15, 255, (getRegenEnd()[1] << 4) + 15));
+            regenClipboard = new BlockArrayClipboard(region);
+            world.regenerate(region, regenClipboard);
         } else {
-            editSession = null;
+            regenClipboard = null;
         }
         Consumer<BlockVector2> consumer = getChunkConsumer();
         if (consumer == null) {
             consumer = blockVector2 -> {
                 LocalChunk localChunk = getBlockChunks().get(blockVector2);
                 boolean isRegenChunk =
-                    editSession != null && blockVector2.getBlockX() > getRegenStart()[0]
+                    regenClipboard != null && blockVector2.getBlockX() > getRegenStart()[0]
                         && blockVector2.getBlockZ() > getRegenStart()[1]
                         && blockVector2.getBlockX() < getRegenEnd()[0]
                         && blockVector2.getBlockZ() < getRegenEnd()[1];
@@ -121,7 +122,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             for (int x = 0; x < 16; x++) {
                                 for (int z = 0; z < 16; z++) {
                                     BaseBlock block =
-                                        editSession.getFullBlock(BlockVector3.at(x, y, z));
+                                        regenClipboard.getFullBlock(BlockVector3.at(x, y, z));
                                     setWorldBlock(x, y, z, block, blockVector2);
                                 }
                             }
