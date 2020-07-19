@@ -293,7 +293,7 @@ public class BukkitRegionManager extends RegionManager {
                 int zzt = zzb + 15;
                 if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
                     AugmentedUtils.bypass(ignoreAugment,
-                        () -> queue.regenChunkSafe(chunk.getX(), chunk.getZ()));
+                        () -> queue.regenChunk(chunk.getX(), chunk.getZ()));
                     return;
                 }
                 boolean checkX1 = false;

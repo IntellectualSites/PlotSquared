@@ -108,6 +108,8 @@ public abstract class QueueCoordinator {
 
     public abstract boolean isSettingBiomes();
 
+    public abstract void regenChunk(int x, int z);
+
     public abstract World getWorld();
 
     public final void setModified() {
@@ -117,6 +119,10 @@ public abstract class QueueCoordinator {
     public boolean enqueue() {
         return blockQueue.enqueue(this);
     }
+
+    public abstract void start();
+
+    public abstract void cancel();
 
     public abstract void setCompleteTask(Runnable whenDone);
 

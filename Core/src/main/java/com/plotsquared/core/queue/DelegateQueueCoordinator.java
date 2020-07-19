@@ -65,43 +65,79 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
     }
 
     @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
-        return parent.setBlock(x, y, z, pattern);
+        if (parent != null) {
+            return parent.setBlock(x, y, z, pattern);
+        }
+        return false;
     }
 
     @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
-        return parent.setBlock(x, y, z, id);
+        if (parent != null) {
+            return parent.setBlock(x, y, z, id);
+        }
+        return false;
     }
 
     @Override public boolean setBlock(int x, int y, int z, BlockState id) {
-        return parent.setBlock(x, y, z, id);
+        if (parent != null) {
+            return parent.setBlock(x, y, z, id);
+        }
+        return false;
     }
 
     @Override public BlockState getBlock(int x, int y, int z) {
-        return parent.getBlock(x, y, z);
+        if (parent != null) {
+            return parent.getBlock(x, y, z);
+        }
+        return null;
     }
 
     @Override public boolean setBiome(int x, int z, BiomeType biome) {
-        return parent.setBiome(x, z, biome);
+        if (parent != null) {
+            return parent.setBiome(x, z, biome);
+        }
+        return false;
     }
 
     @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
-        return parent.setBiome(x, y, z, biome);
+        if (parent != null) {
+            return parent.setBiome(x, y, z, biome);
+        }
+        return false;
     }
 
     @Override public boolean isSettingBiomes() {
-        return parent.isSettingBiomes();
+        if (parent != null) {
+            return parent.isSettingBiomes();
+        }
+        return false;
+    }
+
+    @Override public void regenChunk(int x, int z) {
+        if (parent != null) {
+            parent.regenChunk(x, z);
+        }
     }
 
     @Override public World getWorld() {
-        return parent.getWorld();
+        if (parent != null) {
+            return parent.getWorld();
+        }
+        return null;
     }
 
     @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
-        return parent.setTile(x, y, z, tag);
+        if (parent != null) {
+            return parent.setTile(x, y, z, tag);
+        }
+        return false;
     }
 
     @Override public boolean isSettingTiles() {
-        return parent.isSettingTiles();
+        if (parent != null) {
+            return parent.isSettingTiles();
+        }
+        return false;
     }
 
     @Override public boolean enqueue() {
@@ -111,11 +147,27 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         return false;
     }
 
+    @Override public void start() {
+        if (parent != null) {
+            parent.start();
+        }
+    }
+
+    @Override public void cancel() {
+        if (parent != null) {
+            parent.cancel();
+        }
+    }
+
     @Override public void setCompleteTask(Runnable whenDone) {
-        parent.setCompleteTask(whenDone);
+        if (parent != null) {
+            parent.setCompleteTask(whenDone);
+        }
     }
 
     @Override public void setChunkConsumer(Consumer<BlockVector2> consumer) {
-        parent.setChunkConsumer(consumer);
+        if (parent != null) {
+            parent.setChunkConsumer(consumer);
+        }
     }
 }

@@ -49,6 +49,9 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private int lastZ = Integer.MIN_VALUE;
     private boolean settingBiomes = false;
     private boolean settingTiles = false;
+    private boolean regen = false;
+    private int[] regenStart;
+    private int[] regenEnd;
     private Consumer<BlockVector2> consumer = null;
 
     private GlobalBlockQueue globalBlockQueue;
@@ -127,6 +130,40 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     @Override public boolean isSettingTiles() {
         return this.settingTiles;
+    }
+
+    @Override public void regenChunk(int x, int z) {
+        regen = true;
+        // There will never only be one nullified coordinate pair
+        if (regenStart == null) {
+            regenStart = new int[]{x, z};
+            regenEnd = new int[]{x, z};
+            return;
+        }
+        if (x < regenStart[0]) {
+            regenStart[0] = x;
+        }
+        if (z < regenStart[1]) {
+            regenStart[1] = z;
+        }
+        if (x > regenEnd[0]) {
+            regenEnd[0] = x;
+        }
+        if (z > regenEnd[1]) {
+            regenEnd[1] = z;
+        }
+    }
+
+    public int[] getRegenStart() {
+        return regenStart;
+    }
+
+    public int[] getRegenEnd() {
+        return regenEnd;
+    }
+
+    public boolean isRegen() {
+        return regen;
     }
 
     public ConcurrentHashMap<BlockVector2, LocalChunk> getBlockChunks() {

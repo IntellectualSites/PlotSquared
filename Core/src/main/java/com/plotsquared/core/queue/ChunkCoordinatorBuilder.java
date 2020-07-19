@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.location.Location;
+import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,7 @@ import java.util.function.Consumer;
 public class ChunkCoordinatorBuilder {
 
     private final List<BlockVector2> requestedChunks = new LinkedList<>();
+    private final ChunkCoordinatorFactory chunkCoordinatorFactory;
     private Consumer<Throwable> throwableConsumer = Throwable::printStackTrace;
     private World world;
     private Consumer<BlockVector2> chunkConsumer;
@@ -25,9 +27,9 @@ public class ChunkCoordinatorBuilder {
     };
     private long maxIterationTime = 60; // A little over 1 tick;
     private int initialBatchSize = 4;
-    private final ChunkCoordinatorFactory chunkCoordinatorFactory;
 
-    @Inject public ChunkCoordinatorBuilder(@Nonnull ChunkCoordinatorFactory chunkCoordinatorFactory) {
+    @Inject
+    public ChunkCoordinatorBuilder(@Nonnull ChunkCoordinatorFactory chunkCoordinatorFactory) {
         this.chunkCoordinatorFactory = chunkCoordinatorFactory;
     }
 
@@ -105,9 +107,9 @@ public class ChunkCoordinatorBuilder {
         Preconditions.checkNotNull(this.chunkConsumer, "No chunk consumer was supplied");
         Preconditions.checkNotNull(this.whenDone, "No final action was supplied");
         Preconditions.checkNotNull(this.throwableConsumer, "No throwable consumer was supplied");
-        return chunkCoordinatorFactory.create(this.maxIterationTime, this.initialBatchSize,
-            this.chunkConsumer, this.world, this.requestedChunks, this.whenDone,
-            this.throwableConsumer);
+        return chunkCoordinatorFactory
+            .create(this.maxIterationTime, this.initialBatchSize, this.chunkConsumer, this.world,
+                this.requestedChunks, this.whenDone, this.throwableConsumer);
     }
 
 }

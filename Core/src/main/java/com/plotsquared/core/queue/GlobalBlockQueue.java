@@ -58,20 +58,23 @@ public class GlobalBlockQueue {
     }
 
     /**
-     * TODO Documentation needed.
+     * Place an instance of {@link QueueCoordinator} into a list incase access is needed
+     * and then start it.
      *
-     * @param queue todo
+     * @param queue {@link QueueCoordinator} instance to start.
      * @return true if added to queue, false otherwise
      */
     public boolean enqueue(QueueCoordinator queue) {
         boolean success = false;
         if (queue.size() > 0 && !activeQueues.contains(queue)) {
             success = activeQueues.add(queue);
+            queue.start();
         }
         return success;
     }
 
     public void dequeue(QueueCoordinator queue) {
+        queue.cancel();
         activeQueues.remove(queue);
     }
 

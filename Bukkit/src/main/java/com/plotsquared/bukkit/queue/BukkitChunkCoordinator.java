@@ -25,6 +25,8 @@
  */
 package com.plotsquared.bukkit.queue;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.util.task.TaskManager;
@@ -72,10 +74,13 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     private final AtomicInteger expectedSize;
     private int batchSize;
 
-    private BukkitChunkCoordinator(final long maxIterationTime, final int initialBatchSize,
-        @Nonnull final Consumer<BlockVector2> chunkConsumer, @Nonnull final World world,
-        @Nonnull final Collection<BlockVector2> requestedChunks, @Nonnull final Runnable whenDone,
-        @Nonnull final Consumer<Throwable> throwableConsumer) {
+    @Inject private BukkitChunkCoordinator(@Assisted final long maxIterationTime,
+        @Assisted final int initialBatchSize,
+        @Assisted @Nonnull final Consumer<BlockVector2> chunkConsumer,
+        @Assisted @Nonnull final World world,
+        @Assisted @Nonnull final Collection<BlockVector2> requestedChunks,
+        @Assisted @Nonnull final Runnable whenDone,
+        @Assisted @Nonnull final Consumer<Throwable> throwableConsumer) {
         this.requestedChunks = new LinkedBlockingQueue<>(requestedChunks);
         this.availableChunks = new LinkedBlockingQueue<>();
         this.totalSize = requestedChunks.size();

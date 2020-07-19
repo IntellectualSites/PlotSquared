@@ -27,6 +27,7 @@ package com.plotsquared.core.plot;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
