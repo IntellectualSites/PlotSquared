@@ -473,7 +473,7 @@ public class BukkitRegionManager extends RegionManager {
         queue.setChunkConsumer(blockVector2 -> {
             final int cx = blockVector2.getX() << 4;
             final int cz = blockVector2.getZ() << 4;
-            MainUtil
+            WorldUtil
                 .setBiome(world, Math.max(minX, cx), Math.max(minZ, cz), Math.min(maxX, cx + 15),
                     Math.min(maxZ, cz + 15), biome);
             worldUtil.refreshChunk(blockVector2.getBlockX(), blockVector2.getBlockZ(), world);

@@ -34,7 +34,7 @@ import com.plotsquared.core.queue.BasicQueueCoordinator;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.queue.LocalChunk;
 import com.plotsquared.core.util.BlockUtil;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.ChunkUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -145,9 +145,9 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             continue;
                         }
                         BaseBlock block = blocksLayer[j];
-                        int x = sx + MainUtil.x_loc[layer][j];
-                        int y = MainUtil.y_loc[layer][j];
-                        int z = sz + MainUtil.z_loc[layer][j];
+                        int x = sx + ChunkUtil.getX(j);
+                        int y = ChunkUtil.getY(layer, j);
+                        int z = sz + ChunkUtil.getZ(j);
                         setWorldBlock(x, y, z, block, blockVector2);
                     }
                 }
@@ -161,9 +161,9 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             continue;
                         }
                         BiomeType biome = biomesLayer[j];
-                        int x = sx + MainUtil.x_loc[layer][j];
-                        int y = MainUtil.y_loc[layer][j];
-                        int z = sz + MainUtil.z_loc[layer][j];
+                        int x = sx + ChunkUtil.getX(j);
+                        int y = ChunkUtil.getY(layer, j);
+                        int z = sz + ChunkUtil.getZ(j);
                         world.setBiome(BlockVector3.at(x, y, z), biome);
                     }
                 }
