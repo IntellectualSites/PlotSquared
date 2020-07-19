@@ -50,6 +50,7 @@ import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
@@ -327,7 +328,7 @@ public class DebugExec extends SubCommand {
                     return false;
                 case "addcmd":
                     try {
-                        final String cmd = StringMan.join(Files.readLines(MainUtil.getFile(new File(
+                        final String cmd = StringMan.join(Files.readLines(FileUtils.getFile(new File(
                                 PlotSquared.platform().getDirectory() + File.separator
                                     + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));
@@ -359,7 +360,7 @@ public class DebugExec extends SubCommand {
                     async = true;
                 case "run":
                     try {
-                        script = StringMan.join(Files.readLines(MainUtil.getFile(new File(
+                        script = StringMan.join(Files.readLines(FileUtils.getFile(new File(
                                 PlotSquared.platform().getDirectory() + File.separator
                                     + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
                             System.getProperty("line.separator"));

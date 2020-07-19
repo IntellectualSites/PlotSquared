@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -32,8 +33,45 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 
 import javax.annotation.Nonnull;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 
 public class RegionUtil {
+
+    @Nonnull public static Location[] getCorners(@Nonnull final String world,
+        @Nonnull final CuboidRegion region) {
+        final BlockVector3 min = region.getMinimumPoint();
+        final BlockVector3 max = region.getMaximumPoint();
+        return new Location[] {Location.at(world, min), Location.at(world, max)};
+    }
+
+    @Nonnull public static Location[] getCorners(String world, Collection<CuboidRegion> regions) {
+        Location min = null;
+        Location max = null;
+        for (CuboidRegion region : regions) {
+            Location[] corners = getCorners(world, region);
+            if (min == null) {
+                min = corners[0];
+                max = corners[1];
+                continue;
+            }
+            Location pos1 = corners[0];
+            Location pos2 = corners[1];
+            if (pos2.getX() > max.getX()) {
+                max = max.withX(pos2.getX());
+            }
+            if (pos1.getX() < min.getX()) {
+                min = min.withX(pos1.getX());
+            }
+            if (pos2.getZ() > max.getZ()) {
+                max = max.withZ(pos2.getZ());
+            }
+            if (pos1.getZ() < min.getZ()) {
+                min = min.withZ(pos1.getZ());
+            }
+        }
+        return new Location[] {min, max};
+    }
+
     public static CuboidRegion createRegion(int pos1x, int pos2x, int pos1z, int pos2z) {
         return createRegion(pos1x, pos2x, 0, Plot.MAX_HEIGHT - 1, pos1z, pos2z);
     }

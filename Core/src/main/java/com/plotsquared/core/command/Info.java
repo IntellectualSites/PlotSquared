@@ -32,7 +32,6 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
 import com.plotsquared.core.util.MainUtil;
-import com.plotsquared.core.util.task.RunnableVal;
 
 @CommandDeclaration(command = "info",
     aliases = "i",
@@ -60,10 +59,10 @@ public class Info extends SubCommand {
                 case "owner":
                 case "rating":
                 case "likes":
-                    plot = MainUtil.getPlotFromString(player, null, false);
+                    plot = Plot.getPlotFromString(player, null, false);
                     break;
                 default:
-                    plot = MainUtil.getPlotFromString(player, arg, false);
+                    plot = Plot.getPlotFromString(player, arg, false);
                     if (args.length == 2) {
                         arg = args[1];
                     } else {
@@ -118,7 +117,7 @@ public class Info extends SubCommand {
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             MainUtil.sendMessage(player, Captions.PLOT_INFO_UNCLAIMED,
-                plot.getId().x + ";" + plot.getId().y);
+                plot.getId().getX() + ";" + plot.getId().getY());
             return true;
         }
         String info = Captions.PLOT_INFO_FORMAT.getTranslated();
@@ -141,13 +140,9 @@ public class Info extends SubCommand {
         } else {
             full = false;
         }
-        MainUtil.format(info, plot, player, full, new RunnableVal<String>() {
-            @Override public void run(String value) {
-                MainUtil.sendMessage(player,
-                    Captions.PLOT_INFO_HEADER.getTranslated() + '\n' + value + '\n'
-                        + Captions.PLOT_INFO_FOOTER.getTranslated(), false);
-            }
-        });
+        plot.format(info, player, full).thenAcceptAsync(value ->
+            player.sendMessage(Captions.PLOT_INFO_HEADER.getTranslated() + '\n' + value + '\n'
+            + Captions.PLOT_INFO_FOOTER.getTranslated()));
         return true;
     }
 

@@ -40,7 +40,7 @@ public class FlagTest {
     }
 
 //    @Test public void flagTest() throws Exception {
-//        Plot plot = new Plot(null, new PlotId(0, 0));
+//        Plot plot = new Plot(null, PlotId.of(0, 0));
 //        plot.owner = UUID.fromString("84499644-ad72-454b-a19d-f28c28df382b");
 //        //plot.setFlag(use, use.parseValue("33,33:1,6:4")); //TODO fix this so FlagTest will run during compile
 //        Optional<? extends Collection> flag = plot.getFlag(use);

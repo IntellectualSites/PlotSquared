@@ -46,6 +46,7 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.HashUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -572,8 +573,8 @@ public class SQLManager implements AbstractDB {
         addPlotTask(plot, new UniqueStatement("setOwner") {
             @Override public void set(PreparedStatement statement) throws SQLException {
                 statement.setString(1, uuid.toString());
-                statement.setInt(2, plot.getId().x);
-                statement.setInt(3, plot.getId().y);
+                statement.setInt(2, plot.getId().getX());
+                statement.setInt(3, plot.getId().getY());
                 statement.setString(4, plot.getArea().toString());
             }
 
@@ -609,7 +610,7 @@ public class SQLManager implements AbstractDB {
                                 int id = result.getInt("id");
                                 int x = result.getInt("plot_id_x");
                                 int y = result.getInt("plot_id_z");
-                                PlotId plotId = new PlotId(x, y);
+                                PlotId plotId = PlotId.of(x, y);
                                 Plot plot = plotMap.get(plotId);
                                 idMap.put(plotId, id);
                                 if (plot != null) {
@@ -758,8 +759,8 @@ public class SQLManager implements AbstractDB {
 
             @Override public void setMySQL(PreparedStatement stmt, int i, Plot plot)
                 throws SQLException {
-                stmt.setInt(i * 5 + 1, plot.getId().x);
-                stmt.setInt(i * 5 + 2, plot.getId().y);
+                stmt.setInt(i * 5 + 1, plot.getId().getX());
+                stmt.setInt(i * 5 + 2, plot.getId().getY());
                 try {
                     stmt.setString(i * 5 + 3, plot.getOwnerAbs().toString());
                 } catch (SQLException ignored) {
@@ -772,8 +773,8 @@ public class SQLManager implements AbstractDB {
             @Override public void setSQLite(PreparedStatement stmt, int i, Plot plot)
                 throws SQLException {
                 stmt.setNull(i * 6 + 1, 4);
-                stmt.setInt(i * 6 + 2, plot.getId().x);
-                stmt.setInt(i * 6 + 3, plot.getId().y);
+                stmt.setInt(i * 6 + 2, plot.getId().getX());
+                stmt.setInt(i * 6 + 3, plot.getId().getY());
                 try {
                     stmt.setString(i * 6 + 4, plot.getOwnerAbs().toString());
                 } catch (SQLException ignored) {
@@ -784,8 +785,8 @@ public class SQLManager implements AbstractDB {
             }
 
             @Override public void setSQL(PreparedStatement stmt, Plot plot) throws SQLException {
-                stmt.setInt(1, plot.getId().x);
-                stmt.setInt(2, plot.getId().y);
+                stmt.setInt(1, plot.getId().getX());
+                stmt.setInt(2, plot.getId().getY());
                 stmt.setString(3, plot.getOwnerAbs().toString());
                 stmt.setString(4, plot.getArea().toString());
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
@@ -933,7 +934,7 @@ public class SQLManager implements AbstractDB {
                     preparedStatement.setString(7, legacySettings.settings.getAlias());
                 }
                 boolean[] merged = legacySettings.settings.getMerged();
-                int hash = MainUtil.hash(merged);
+                int hash = HashUtil.hash(merged);
                 preparedStatement.setInt(8, hash);
                 BlockLoc loc = legacySettings.settings.getPosition();
                 String position;
@@ -1015,14 +1016,14 @@ public class SQLManager implements AbstractDB {
     public void createPlotSafe(final Plot plot, final Runnable success, final Runnable failure) {
         addPlotTask(plot, new UniqueStatement("createPlotSafe_" + plot.hashCode()) {
             @Override public void set(PreparedStatement statement) throws SQLException {
-                statement.setInt(1, plot.getId().x);
-                statement.setInt(2, plot.getId().y);
+                statement.setInt(1, plot.getId().getX());
+                statement.setInt(2, plot.getId().getY());
                 statement.setString(3, plot.getOwnerAbs().toString());
                 statement.setString(4, plot.getArea().toString());
                 statement.setTimestamp(5, new Timestamp(plot.getTimestamp()));
                 statement.setString(6, plot.getArea().toString());
-                statement.setInt(7, plot.getId().x);
-                statement.setInt(8, plot.getId().y);
+                statement.setInt(7, plot.getId().getX());
+                statement.setInt(8, plot.getId().getY());
             }
 
             @Override public PreparedStatement get() throws SQLException {
@@ -1084,8 +1085,8 @@ public class SQLManager implements AbstractDB {
     @Override public void createPlotAndSettings(final Plot plot, Runnable whenDone) {
         addPlotTask(plot, new UniqueStatement("createPlotAndSettings_" + plot.hashCode()) {
             @Override public void set(PreparedStatement statement) throws SQLException {
-                statement.setInt(1, plot.getId().x);
-                statement.setInt(2, plot.getId().y);
+                statement.setInt(1, plot.getId().getX());
+                statement.setInt(2, plot.getId().getY());
                 statement.setString(3, plot.getOwnerAbs().toString());
                 statement.setString(4, plot.getArea().toString());
                 statement.setTimestamp(5, new Timestamp(plot.getTimestamp()));
@@ -1435,10 +1436,10 @@ public class SQLManager implements AbstractDB {
             try (PreparedStatement stmt = this.connection.prepareStatement(
                 "SELECT `id` FROM `" + this.prefix
                     + "cluster` WHERE `pos1_x` = ? AND `pos1_z` = ? AND `pos2_x` = ? AND `pos2_z` = ? AND `world` = ? ORDER BY `timestamp` ASC")) {
-                stmt.setInt(1, cluster.getP1().x);
-                stmt.setInt(2, cluster.getP1().y);
-                stmt.setInt(3, cluster.getP2().x);
-                stmt.setInt(4, cluster.getP2().y);
+                stmt.setInt(1, cluster.getP1().getX());
+                stmt.setInt(2, cluster.getP1().getY());
+                stmt.setInt(3, cluster.getP2().getX());
+                stmt.setInt(4, cluster.getP2().getY());
                 stmt.setString(5, cluster.area.toString());
                 try (ResultSet resultSet = stmt.executeQuery()) {
                     c_id = Integer.MAX_VALUE;
@@ -1474,8 +1475,8 @@ public class SQLManager implements AbstractDB {
             try (PreparedStatement statement = this.connection.prepareStatement(
                 "SELECT `id` FROM `" + this.prefix
                     + "plot` WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND world = ? ORDER BY `timestamp` ASC")) {
-                statement.setInt(1, plot.getId().x);
-                statement.setInt(2, plot.getId().y);
+                statement.setInt(1, plot.getId().getX());
+                statement.setInt(2, plot.getId().getY());
                 statement.setString(3, plot.getArea().toString());
                 try (ResultSet resultSet = statement.executeQuery()) {
                     id = Integer.MAX_VALUE;
@@ -1744,7 +1745,7 @@ public class SQLManager implements AbstractDB {
                         + this.prefix + "plot`")) {
                     ArrayList<Integer> toDelete = new ArrayList<>();
                     while (resultSet.next()) {
-                        PlotId plot_id = new PlotId(resultSet.getInt("plot_id_x"),
+                        PlotId plot_id = PlotId.of(resultSet.getInt("plot_id_x"),
                             resultSet.getInt("plot_id_z"));
                         id = resultSet.getInt("id");
                         String areaID = resultSet.getString("world");
@@ -2048,7 +2049,7 @@ public class SQLManager implements AbstractDB {
         plot.getSettings().setMerged(merged);
         addPlotTask(plot, new UniqueStatement("setMerged") {
             @Override public void set(PreparedStatement statement) throws SQLException {
-                int hash = MainUtil.hash(merged);
+                int hash = HashUtil.hash(merged);
                 statement.setInt(1, hash);
                 statement.setInt(2, getId(plot));
             }
@@ -2093,8 +2094,8 @@ public class SQLManager implements AbstractDB {
     @Override public void movePlot(final Plot original, final Plot newPlot) {
         addPlotTask(original, new UniqueStatement("movePlot") {
             @Override public void set(PreparedStatement statement) throws SQLException {
-                statement.setInt(1, newPlot.getId().x);
-                statement.setInt(2, newPlot.getId().y);
+                statement.setInt(1, newPlot.getId().getX());
+                statement.setInt(2, newPlot.getId().getY());
                 statement.setString(3, newPlot.getArea().toString());
                 statement.setInt(4, getId(original));
             }
@@ -2244,7 +2245,7 @@ public class SQLManager implements AbstractDB {
                 try (ResultSet r = stmt.executeQuery()) {
                     ids = new HashSet<>();
                     while (r.next()) {
-                        PlotId plot_id = new PlotId(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
+                        PlotId plot_id = PlotId.of(r.getInt("plot_id_x"), r.getInt("plot_id_z"));
                         if (plots.contains(plot_id)) {
                             ids.add(r.getInt("id"));
                         }
@@ -2258,7 +2259,7 @@ public class SQLManager implements AbstractDB {
             for (Iterator<PlotId> iterator = plots.iterator(); iterator.hasNext(); ) {
                 PlotId plotId = iterator.next();
                 iterator.remove();
-                PlotId id = new PlotId(plotId.x, plotId.y);
+                PlotId id = PlotId.of(plotId.getX(), plotId.getY());
                 area.removePlot(id);
             }
         });
@@ -2694,9 +2695,9 @@ public class SQLManager implements AbstractDB {
                 int id;
                 while (resultSet.next()) {
                     PlotId pos1 =
-                        new PlotId(resultSet.getInt("pos1_x"), resultSet.getInt("pos1_z"));
+                        PlotId.of(resultSet.getInt("pos1_x"), resultSet.getInt("pos1_z"));
                     PlotId pos2 =
-                        new PlotId(resultSet.getInt("pos2_x"), resultSet.getInt("pos2_z"));
+                        PlotId.of(resultSet.getInt("pos2_x"), resultSet.getInt("pos2_z"));
                     id = resultSet.getInt("id");
                     String areaid = resultSet.getString("world");
                     if (!areas.contains(areaid)) {
@@ -2853,10 +2854,10 @@ public class SQLManager implements AbstractDB {
     @Override public void createCluster(final PlotCluster cluster) {
         addClusterTask(cluster, new UniqueStatement("createCluster_" + cluster.hashCode()) {
             @Override public void set(PreparedStatement statement) throws SQLException {
-                statement.setInt(1, cluster.getP1().x);
-                statement.setInt(2, cluster.getP1().y);
-                statement.setInt(3, cluster.getP2().x);
-                statement.setInt(4, cluster.getP2().y);
+                statement.setInt(1, cluster.getP1().getX());
+                statement.setInt(2, cluster.getP1().getY());
+                statement.setInt(3, cluster.getP2().getX());
+                statement.setInt(4, cluster.getP2().getY());
                 statement.setString(5, cluster.owner.toString());
                 statement.setString(6, cluster.area.toString());
             }
@@ -2894,17 +2895,17 @@ public class SQLManager implements AbstractDB {
     }
 
     @Override public void resizeCluster(final PlotCluster current, PlotId min, PlotId max) {
-        final PlotId pos1 = new PlotId(current.getP1().x, current.getP1().y);
-        final PlotId pos2 = new PlotId(current.getP2().x, current.getP2().y);
+        final PlotId pos1 = PlotId.of(current.getP1().getX(), current.getP1().getY());
+        final PlotId pos2 = PlotId.of(current.getP2().getX(), current.getP2().getY());
         current.setP1(min);
         current.setP2(max);
 
         addClusterTask(current, new UniqueStatement("resizeCluster") {
             @Override public void set(PreparedStatement statement) throws SQLException {
-                statement.setInt(1, pos1.x);
-                statement.setInt(2, pos1.y);
-                statement.setInt(3, pos2.x);
-                statement.setInt(4, pos2.y);
+                statement.setInt(1, pos1.getX());
+                statement.setInt(2, pos1.getY());
+                statement.setInt(3, pos2.getX());
+                statement.setInt(4, pos2.getY());
                 statement.setInt(5, getClusterId(current));
             }
 
@@ -3140,10 +3141,10 @@ public class SQLManager implements AbstractDB {
                         + "plot` SET `world` = ? WHERE `world` = ? AND `plot_id_x` BETWEEN ? AND ? AND `plot_id_z` BETWEEN ? AND ?")) {
                     stmt.setString(1, newWorld);
                     stmt.setString(2, oldWorld);
-                    stmt.setInt(3, min.x);
-                    stmt.setInt(4, max.x);
-                    stmt.setInt(5, min.y);
-                    stmt.setInt(6, max.y);
+                    stmt.setInt(3, min.getX());
+                    stmt.setInt(4, max.getX());
+                    stmt.setInt(5, min.getY());
+                    stmt.setInt(6, max.getY());
                     stmt.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -3153,10 +3154,10 @@ public class SQLManager implements AbstractDB {
                         + "cluster` SET `world` = ? WHERE `world` = ? AND `pos1_x` <= ? AND `pos1_z` <= ? AND `pos2_x` >= ? AND `pos2_z` >= ?")) {
                     stmt.setString(1, newWorld);
                     stmt.setString(2, oldWorld);
-                    stmt.setInt(3, max.x);
-                    stmt.setInt(4, max.y);
-                    stmt.setInt(5, min.x);
-                    stmt.setInt(6, min.y);
+                    stmt.setInt(3, max.getX());
+                    stmt.setInt(4, max.getY());
+                    stmt.setInt(5, min.getX());
+                    stmt.setInt(6, min.getY());
                     stmt.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();

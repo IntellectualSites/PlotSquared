@@ -27,6 +27,9 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -44,6 +47,7 @@ import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.FileBytes;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
@@ -90,7 +94,7 @@ public class Template extends SubCommand {
     public static boolean extractAllFiles(String world, String template) {
         try {
             File folder =
-                MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
+                FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
             if (!folder.exists()) {
                 return false;
             }
@@ -144,8 +148,7 @@ public class Template extends SubCommand {
     }
 
     public static void zipAll(String world, Set<FileBytes> files) throws IOException {
-        File output =
-            MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
+        File output = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(
             output + File.separator + world + ".template");
@@ -194,7 +197,7 @@ public class Template extends SubCommand {
                         .sendMessage(player, "&cInvalid template file: " + args[2] + ".template");
                     return false;
                 }
-                File worldFile = MainUtil.getFile(PlotSquared.platform().getDirectory(),
+                File worldFile = FileUtils.getFile(PlotSquared.platform().getDirectory(),
                     Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml");
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
                 this.worldConfiguration.set("worlds." + world, worldConfig.get(""));
@@ -208,8 +211,8 @@ public class Template extends SubCommand {
                     worldConfig.getString("generator.plugin", PlotSquared.platform().getPluginName());
                 String generator = worldConfig.getString("generator.init", manager);
                 PlotAreaBuilder builder = PlotAreaBuilder.newBuilder()
-                        .plotAreaType(MainUtil.getType(worldConfig))
-                        .terrainType(MainUtil.getTerrain(worldConfig))
+                        .plotAreaType(ConfigurationUtil.getType(worldConfig))
+                        .terrainType(ConfigurationUtil.getTerrain(worldConfig))
                         .plotManager(manager)
                         .generatorName(generator)
                         .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))

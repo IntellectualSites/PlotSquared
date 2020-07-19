@@ -28,8 +28,8 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.TimeUtil;
 
 import javax.annotation.Nonnull;
 
@@ -61,7 +61,7 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
             case "false":
                 return flagOf(false);
             default:
-                return flagOf(MainUtil.timeToSec(input) * 1000 + System.currentTimeMillis());
+                return flagOf(TimeUtil.timeToSec(input) * 1000 + System.currentTimeMillis());
         }
     }
 

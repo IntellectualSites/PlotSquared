@@ -34,6 +34,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -74,7 +75,7 @@ public class Add extends Command {
         checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
 
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
-        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+        PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable != null) {
                 if (throwable instanceof TimeoutException) {
                     player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
@@ -95,19 +96,19 @@ public class Add extends Command {
                             Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
                                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
                             player.sendMessage(TranslatableCaption.of("errors.invalid_player"),
-                                    Template.of("value", MainUtil.getName(uuid)));
+                                    Template.of("value", PlayerManager.getName(uuid)));
                             iterator.remove();
                             continue;
                         }
                         if (plot.isOwner(uuid)) {
                             player.sendMessage(TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", MainUtil.getName(uuid)));
+                                    Template.of("player", PlayerManager.getName(uuid)));
                             iterator.remove();
                             continue;
                         }
                         if (plot.getMembers().contains(uuid)) {
                             player.sendMessage(TranslatableCaption.of("member.already_added"),
-                                    Template.of("player", MainUtil.getName(uuid)));
+                                    Template.of("player", PlayerManager.getName(uuid)));
                             iterator.remove();
                             continue;
                         }

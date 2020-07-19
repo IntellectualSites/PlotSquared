@@ -589,8 +589,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         if (plot != null && Settings.Enabled_Components.PERSISTENT_META && plot
             .getArea() instanceof SinglePlotArea) {
             PlotId id = plot.getId();
-            int x = id.x;
-            int z = id.y;
+            int x = id.getX();
+            int z = id.getY();
             ByteBuffer buffer = ByteBuffer.allocate(13);
             buffer.putShort((short) x);
             buffer.putShort((short) z);
@@ -690,7 +690,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                         ByteBuffer quitWorld = ByteBuffer.wrap(arr);
                         final int plotX = quitWorld.getShort();
                         final int plotZ = quitWorld.getShort();
-                        PlotId id = new PlotId(plotX, plotZ);
+                        PlotId id = PlotId.of(plotX, plotZ);
                         int x = quitWorld.getInt();
                         int y = quitWorld.get() & 0xFF;
                         int z = quitWorld.getInt();

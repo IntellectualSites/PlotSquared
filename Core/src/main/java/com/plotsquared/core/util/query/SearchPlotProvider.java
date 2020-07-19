@@ -25,11 +25,19 @@
  */
 package com.plotsquared.core.util.query;
 
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotId;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class SearchPlotProvider implements PlotProvider {
 
@@ -40,7 +48,76 @@ class SearchPlotProvider implements PlotProvider {
     }
 
     @Override public Collection<Plot> getPlots() {
-        return MainUtil.getPlotsBySearch(this.searchTerm);
+        return getPlotsBySearch(this.searchTerm);
+    }
+
+    /**
+     * Fuzzy plot search with spaces separating terms.
+     * - Terms: type, alias, world, owner, trusted, member
+     *
+     * @param search Search string
+     * @return Search results
+     */
+    @Nonnull private static List<Plot> getPlotsBySearch(@Nonnull final String search) {
+        String[] split = search.split(" ");
+        int size = split.length * 2;
+
+        List<UUID> uuids = new ArrayList<>();
+        PlotId id = null;
+
+        for (String term : split) {
+            try {
+                UUID uuid = PlotSquared.get().getImpromptuUUIDPipeline()
+                    .getSingle(term, Settings.UUID.BLOCKING_TIMEOUT);
+                if (uuid == null) {
+                    uuid = UUID.fromString(term);
+                }
+                uuids.add(uuid);
+            } catch (Exception ignored) {
+                id = PlotId.fromString(term);
+            }
+        }
+
+        ArrayList<ArrayList<Plot>> plotList =
+            IntStream.range(0, size).mapToObj(i -> new ArrayList<Plot>())
+                .collect(Collectors.toCollection(() -> new ArrayList<>(size)));
+
+        PlotArea area = null;
+        String alias = null;
+        for (Plot plot : PlotQuery.newQuery().allPlots()) {
+            int count = 0;
+            if (!uuids.isEmpty()) {
+                for (UUID uuid : uuids) {
+                    if (plot.isOwner(uuid)) {
+                        count += 2;
+                    } else if (plot.isAdded(uuid)) {
+                        count++;
+                    }
+                }
+            }
+            if (id != null) {
+                if (plot.getId().equals(id)) {
+                    count++;
+                }
+            }
+            if (area != null && plot.getArea().equals(area)) {
+                count++;
+            }
+            if (alias != null && alias.equals(plot.getAlias())) {
+                count += 2;
+            }
+            if (count != 0) {
+                plotList.get(count - 1).add(plot);
+            }
+        }
+
+        List<Plot> plots = new ArrayList<>();
+        for (int i = plotList.size() - 1; i >= 0; i--) {
+            if (!plotList.get(i).isEmpty()) {
+                plots.addAll(plotList.get(i));
+            }
+        }
+        return plots;
     }
 
 }

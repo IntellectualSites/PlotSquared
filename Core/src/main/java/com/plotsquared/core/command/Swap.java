@@ -63,7 +63,7 @@ public class Swap extends SubCommand {
             sendUsage(player);
             return CompletableFuture.completedFuture(false);
         }
-        Plot plot2 = MainUtil.getPlotFromString(player, args[0], true);
+        Plot plot2 = Plot.getPlotFromString(player, args[0], true);
         if (plot2 == null) {
             return CompletableFuture.completedFuture(false);
         }

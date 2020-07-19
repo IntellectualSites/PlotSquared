@@ -25,14 +25,15 @@
  */
 package com.plotsquared.core.plot;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -87,7 +88,8 @@ public class PlotCluster {
     }
 
     private void setRegion() {
-        this.region = RegionUtil.createRegion(this.pos1.x, this.pos2.x, this.pos1.y, this.pos2.y);
+        this.region = RegionUtil.createRegion(this.pos1.getX(), this.pos2.getX(),
+            this.pos1.getY(), this.pos2.getY());
     }
 
     public CuboidRegion getRegion() {
@@ -117,7 +119,7 @@ public class PlotCluster {
      * Get the area (in plots).
      */
     public int getArea() {
-        return (1 + this.pos2.x - this.pos1.x) * (1 + this.pos2.y - this.pos1.y);
+        return (1 + this.pos2.getX() - this.pos1.getX()) * (1 + this.pos2.getY() - this.pos1.getY());
     }
 
     public void setArea(PlotArea plotArea) {
@@ -148,20 +150,22 @@ public class PlotCluster {
     }
 
     @Override public String toString() {
-        return this.area + ";" + this.pos1.x + ";" + this.pos1.y + ";" + this.pos2.x + ";"
-            + this.pos2.y;
+        return this.area + ";" + this.pos1.toString() + ";" + this.pos2.toString();
     }
 
     public void getHome(@Nonnull final Consumer<Location> result) {
         final BlockLoc home = this.settings.getPosition();
         Consumer<Location> locationConsumer = toReturn ->
-            MainUtil.getHighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(),
-                max -> {
-                    if (max > toReturn.getY()) {
-                        result.accept(toReturn.withY(1 + max));
-                    } else {
-                        result.accept(toReturn);
-                    }
+            PlotSquared.platform().getWorldUtil().getHighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(),
+                highest -> {
+                if (highest == 0) {
+                    highest = 63;
+                }
+                if (highest > toReturn.getY()) {
+                    result.accept(toReturn.withY(1 + highest));
+                } else {
+                    result.accept(toReturn);
+                }
             });
         if (home.getY() == 0) {
             // default pos
@@ -180,13 +184,13 @@ public class PlotCluster {
         }
     }
 
-    public PlotId getCenterPlotId() {
-        PlotId bot = getP1();
-        PlotId top = getP2();
-        return new PlotId((bot.x + top.x) / 2, (bot.y + top.y) / 2);
+    @Nonnull public PlotId getCenterPlotId() {
+        final PlotId bot = getP1();
+        final PlotId top = getP2();
+        return PlotId.of((bot.getX() + top.getX()) / 2, (bot.getY() + top.getY()) / 2);
     }
 
-    public Plot getCenterPlot() {
+    @Nullable public Plot getCenterPlot() {
         return this.area.getPlotAbs(getCenterPlotId());
     }
 
@@ -201,12 +205,12 @@ public class PlotCluster {
     }
 
     public boolean intersects(PlotId pos1, PlotId pos2) {
-        return pos1.x <= this.pos2.x && pos2.x >= this.pos1.x && pos1.y <= this.pos2.y
-            && pos2.y >= this.pos1.y;
+        return pos1.getX() <= this.pos2.getX() && pos2.getX() >= this.pos1.getX() &&
+            pos1.getY() <= this.pos2.getY() && pos2.getY() >= this.pos1.getY();
     }
 
     public boolean contains(PlotId id) {
-        return this.pos1.x <= id.x && this.pos1.y <= id.y && this.pos2.x >= id.x
-            && this.pos2.y >= id.y;
+        return this.pos1.getX() <= id.getX() && this.pos1.getY() <= id.getY() &&
+            this.pos2.getX() >= id.getX() && this.pos2.getY() >= id.getY();
     }
 }

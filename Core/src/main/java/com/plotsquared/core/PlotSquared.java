@@ -61,8 +61,8 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.LegacyConverter;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -512,7 +512,7 @@ public class PlotSquared {
                 } else {
                     extra.add(plot);
                 }
-            } else if (Math.abs(plot.getId().x) > 15446 || Math.abs(plot.getId().y) > 15446) {
+            } else if (Math.abs(plot.getId().getX()) > 15446 || Math.abs(plot.getId().getY()) > 15446) {
                 extra.add(plot);
             } else {
                 overflow.add(plot);
@@ -587,7 +587,7 @@ public class PlotSquared {
                 } else {
                     extra.add(plot);
                 }
-            } else if (Math.abs(plot.getId().x) > 15446 || Math.abs(plot.getId().y) > 15446) {
+            } else if (Math.abs(plot.getId().getX()) > 15446 || Math.abs(plot.getId().getY()) > 15446) {
                 extra.add(plot);
             } else {
                 overflow.add(plot);
@@ -727,8 +727,8 @@ public class PlotSquared {
         }
         if (plot.getArea().removePlot(plot.getId())) {
             PlotId last = (PlotId) plot.getArea().getMeta("lastPlot");
-            int last_max = Math.max(Math.abs(last.x), Math.abs(last.y));
-            int this_max = Math.max(Math.abs(plot.getId().x), Math.abs(plot.getId().y));
+            int last_max = Math.max(Math.abs(last.getX()), Math.abs(last.getY()));
+            int this_max = Math.max(Math.abs(plot.getId().getX()), Math.abs(plot.getId().getY()));
             if (this_max < last_max) {
                 plot.getArea().setMeta("lastPlot", plot.getId());
             }
@@ -770,7 +770,7 @@ public class PlotSquared {
         ConfigurationSection worldSection = this.worldConfiguration.getConfigurationSection(path);
         PlotAreaType type;
         if (worldSection != null) {
-            type = MainUtil.getType(worldSection);
+            type = ConfigurationUtil.getType(worldSection);
         } else {
             type = PlotAreaType.NORMAL;
         }
@@ -1117,7 +1117,7 @@ public class PlotSquared {
             if (!output.exists()) {
                 output.mkdirs();
             }
-            File newFile = MainUtil.getFile(output, folder + File.separator + file);
+            File newFile = FileUtils.getFile(output, folder + File.separator + file);
             if (newFile.exists()) {
                 return;
             }
@@ -1234,7 +1234,7 @@ public class PlotSquared {
                 database = new MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
                     Storage.MySQL.USER, Storage.MySQL.PASSWORD);
             } else if (Storage.SQLite.USE) {
-                File file = MainUtil.getFile(platform.getDirectory(), Storage.SQLite.DB + ".db");
+                File file = FileUtils.getFile(platform.getDirectory(), Storage.SQLite.DB + ".db");
                 database = new SQLite(file);
             } else {
                 logger.error("[P2] No storage type is set. Disabling PlotSquared");

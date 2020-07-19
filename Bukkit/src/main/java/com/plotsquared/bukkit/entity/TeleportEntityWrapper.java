@@ -67,9 +67,9 @@ public class TeleportEntityWrapper extends EntityWrapper {
 
         // To account for offsets in the chunk manager
         this.oldLocation = oldLocation.clone();
-        this.oldLocation.setX(this.x);
-        this.oldLocation.setY(this.y);
-        this.oldLocation.setZ(this.z);
+        this.oldLocation.setX(this.getX());
+        this.oldLocation.setY(this.getY());
+        this.oldLocation.setZ(this.getZ());
 
         this.gravityOld = this.getEntity().hasGravity();
         this.getEntity().setGravity(false);

@@ -27,6 +27,7 @@ package com.plotsquared.core.plot;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -51,7 +52,6 @@ import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Expression;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.StringMan;
@@ -211,8 +211,8 @@ public abstract class PlotArea {
      *
      * @return the minimum value for a {@link PlotId}
      */
-    public PlotId getMin() {
-        return this.min == null ? new PlotId(Integer.MIN_VALUE, Integer.MIN_VALUE) : this.min;
+    @Nonnull public PlotId getMin() {
+        return this.min == null ? PlotId.of(Integer.MIN_VALUE, Integer.MIN_VALUE) : this.min;
     }
 
     /**
@@ -220,8 +220,8 @@ public abstract class PlotArea {
      *
      * @return the maximum value for a {@link PlotId}
      */
-    public PlotId getMax() {
-        return this.max == null ? new PlotId(Integer.MAX_VALUE, Integer.MAX_VALUE) : this.max;
+    @Nonnull public PlotId getMax() {
+        return this.max == null ? PlotId.of(Integer.MAX_VALUE, Integer.MAX_VALUE) : this.max;
     }
 
     @Override public boolean equals(Object obj) {
@@ -268,8 +268,8 @@ public abstract class PlotArea {
             throw new IllegalArgumentException("Must extend GridPlotWorld to provide");
         }
         if (config.contains("generator.terrain")) {
-            this.terrain = MainUtil.getTerrain(config);
-            this.type = MainUtil.getType(config);
+            this.terrain = ConfigurationUtil.getTerrain(config);
+            this.type = ConfigurationUtil.getType(config);
         }
         this.mobSpawning = config.getBoolean("natural_mob_spawning");
         this.miscSpawnUnowned = config.getBoolean("misc_spawn_unowned");
@@ -592,8 +592,8 @@ public abstract class PlotArea {
     }
 
     public boolean contains(@Nonnull final PlotId id) {
-        return this.min == null || (id.x >= this.min.x && id.x <= this.max.x && id.y >= this.min.y
-            && id.y <= this.max.y);
+        return this.min == null || (id.getX() >= this.min.getX() && id.getX() <= this.max.getX() &&
+            id.getY() >= this.min.getY() && id.getY() <= this.max.getY());
     }
 
     public boolean contains(@Nonnull final Location location) {
@@ -657,8 +657,8 @@ public abstract class PlotArea {
     @Nullable public Plot getPlotAbs(@Nonnull final PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
-            if (this.min != null && (id.x < this.min.x || id.x > this.max.x || id.y < this.min.y
-                || id.y > this.max.y)) {
+            if (this.min != null && (id.getX() < this.min.getX() || id.getX() > this.max.getX() || id.getY() < this.min.getY()
+                || id.getY() > this.max.getY())) {
                 return null;
             }
             return new Plot(this, id);
@@ -669,8 +669,8 @@ public abstract class PlotArea {
     @Nullable public Plot getPlot(@Nonnull final PlotId id) {
         final Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
-            if (this.min != null && (id.x < this.min.x || id.x > this.max.x || id.y < this.min.y
-                || id.y > this.max.y)) {
+            if (this.min != null && (id.getX() < this.min.getX() || id.getX() > this.max.getX() || id.getY() < this.min.getY()
+                || id.getY() > this.max.getY())) {
                 return null;
             }
             return new Plot(this, id);
@@ -692,7 +692,7 @@ public abstract class PlotArea {
         if (plot == null) {
             return null;
         }
-        return this.clusters != null ? this.clusters.get(plot.getId().x, plot.getId().y) : null;
+        return this.clusters != null ? this.clusters.get(plot.getId().getX(), plot.getId().getY()) : null;
     }
 
     @Nullable
@@ -710,7 +710,7 @@ public abstract class PlotArea {
     }
 
     @Nullable PlotCluster getCluster(@Nonnull final PlotId id) {
-        return this.clusters != null ? this.clusters.get(id.x, id.y) : null;
+        return this.clusters != null ? this.clusters.get(id.getX(), id.getY()) : null;
     }
 
     /**
@@ -796,22 +796,22 @@ public abstract class PlotArea {
         PlotId min = getMin();
         PlotId max = getMax();
         if (getType() == PlotAreaType.PARTIAL) {
-            center = new PlotId(MathMan.average(min.x, max.x), MathMan.average(min.y, max.y));
-            plots = Math.max(max.x - min.x + 1, max.y - min.y + 1) + 1;
+            center = PlotId.of(MathMan.average(min.getX(), max.getX()), MathMan.average(min.getY(), max.getY()));
+            plots = Math.max(max.getX() - min.getX() + 1, max.getY() - min.getY() + 1) + 1;
             if (start != null) {
-                start = new PlotId(start.x - center.x, start.y - center.y);
+                start = PlotId.of(start.getX() - center.getX(), start.getY() - center.getY());
             }
         } else {
-            center = new PlotId(0, 0);
+            center = PlotId.of(0, 0);
             plots = Integer.MAX_VALUE;
         }
         for (int i = 0; i < plots; i++) {
             if (start == null) {
-                start = getMeta("lastPlot", new PlotId(0, 0));
+                start = getMeta("lastPlot", PlotId.of(0, 0));
             } else {
-                start = start.getNextId(1);
+                start = start.getNextId();
             }
-            PlotId currentId = new PlotId(center.x + start.x, center.y + start.y);
+            PlotId currentId = PlotId.of(center.getX() + start.getX(), center.getY() + start.getY());
             Plot plot = getPlotAbs(currentId);
             if (plot != null && plot.canClaim(player)) {
                 setMeta("lastPlot", start);
@@ -884,7 +884,7 @@ public abstract class PlotArea {
 
     public boolean canClaim(@Nullable final PlotPlayer player, @Nonnull final PlotId pos1,
         @Nonnull final PlotId pos2) {
-        if (pos1.x == pos2.x && pos1.y == pos2.y) {
+        if (pos1.getX() == pos2.getX() && pos1.getY() == pos2.getY()) {
             if (getOwnedPlot(pos1) != null) {
                 return false;
             }
@@ -894,9 +894,9 @@ public abstract class PlotArea {
             }
             return plot.canClaim(player);
         }
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                final PlotId id = new PlotId(x, y);
+        for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+            for (int y = pos1.getY(); y <= pos2.getY(); y++) {
+                final PlotId id = PlotId.of(x, y);
                 final Plot plot = getPlotAbs(id);
                 if (plot == null) {
                     return false;
@@ -926,9 +926,9 @@ public abstract class PlotArea {
         final Set<UUID> trusted = new HashSet<>();
         final Set<UUID> members = new HashSet<>();
         final Set<UUID> denied = new HashSet<>();
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                PlotId id = new PlotId(x, y);
+        for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+            for (int y = pos1.getY(); y <= pos2.getY(); y++) {
+                PlotId id = PlotId.of(x, y);
                 Plot plot = getPlotAbs(id);
                 trusted.addAll(plot.getTrusted());
                 members.addAll(plot.getMembers());
@@ -941,11 +941,11 @@ public abstract class PlotArea {
         members.removeAll(trusted);
         denied.removeAll(trusted);
         denied.removeAll(members);
-        for (int x = pos1.x; x <= pos2.x; x++) {
-            for (int y = pos1.y; y <= pos2.y; y++) {
-                final boolean lx = x < pos2.x;
-                final boolean ly = y < pos2.y;
-                final PlotId id = new PlotId(x, y);
+        for (int x = pos1.getX(); x <= pos2.getX(); x++) {
+            for (int y = pos1.getY(); y <= pos2.getY(); y++) {
+                final boolean lx = x < pos2.getX();
+                final boolean ly = y < pos2.getY();
+                final PlotId id = PlotId.of(x, y);
                 final Plot plot = getPlotAbs(id);
 
                 plot.setTrusted(trusted);
@@ -987,22 +987,23 @@ public abstract class PlotArea {
      * @return the plots in the selection which are owned
      */
     public Set<Plot> getPlotSelectionOwned(@Nonnull final PlotId pos1, @Nonnull final PlotId pos2) {
-        final int size = (1 + pos2.x - pos1.x) * (1 + pos2.y - pos1.y);
+        final int size = (1 + pos2.getX() - pos1.getX()) * (1 + pos2.getY() - pos1.getY());
         final Set<Plot> result = new HashSet<>();
         if (size < 16 || size < getPlotCount()) {
-            for (final PlotId pid : MainUtil.getPlotSelectionIds(pos1, pos2)) {
+            for (final PlotId pid : Lists.newArrayList((Iterable<? extends PlotId>)
+                PlotId.PlotRangeIterator.range(pos1, pos2))) {
                 final Plot plot = getPlotAbs(pid);
                 if (plot.hasOwner()) {
-                    if (plot.getId().x > pos1.x || plot.getId().y > pos1.y
-                        || plot.getId().x < pos2.x || plot.getId().y < pos2.y) {
+                    if (plot.getId().getX() > pos1.getX() || plot.getId().getY() > pos1.getY()
+                        || plot.getId().getX() < pos2.getX() || plot.getId().getY() < pos2.getY()) {
                         result.add(plot);
                     }
                 }
             }
         } else {
             for (final Plot plot : getPlots()) {
-                if (plot.getId().x > pos1.x || plot.getId().y > pos1.y || plot.getId().x < pos2.x
-                    || plot.getId().y < pos2.y) {
+                if (plot.getId().getX() > pos1.getX() || plot.getId().getY() > pos1.getY() || plot.getId().getX() < pos2.getX()
+                    || plot.getId().getY() < pos2.getY()) {
                     result.add(plot);
                 }
             }
@@ -1022,8 +1023,8 @@ public abstract class PlotArea {
         if (this.clusters == null) {
             this.clusters = new QuadMap<PlotCluster>(Integer.MAX_VALUE, 0, 0, 62) {
                 @Override public CuboidRegion getRegion(PlotCluster value) {
-                    BlockVector2 pos1 = BlockVector2.at(value.getP1().x, value.getP1().y);
-                    BlockVector2 pos2 = BlockVector2.at(value.getP2().x, value.getP2().y);
+                    BlockVector2 pos1 = BlockVector2.at(value.getP1().getX(), value.getP1().getY());
+                    BlockVector2 pos2 = BlockVector2.at(value.getP2().getX(), value.getP2().getY());
                     return new CuboidRegion(pos1.toBlockVector3(),
                         pos2.toBlockVector3(Plot.MAX_HEIGHT - 1));
                 }

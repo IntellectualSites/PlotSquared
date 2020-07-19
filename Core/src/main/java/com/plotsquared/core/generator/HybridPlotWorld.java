@@ -39,7 +39,7 @@ import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
@@ -218,9 +218,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         // Try to determine root. This means that plot areas can have separate schematic
         // directories
-        if (!(root = MainUtil.getFile(PlotSquared.platform().getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" +
+        if (!(root = FileUtils.getFile(PlotSquared.platform().getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" +
             this.getWorldName() + "/" + this.getId())).exists()) {
-            root = MainUtil.getFile(PlotSquared.platform().getDirectory(),
+            root = FileUtils.getFile(PlotSquared.platform().getDirectory(),
                 "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName());
         }
 

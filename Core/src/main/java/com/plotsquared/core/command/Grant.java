@@ -33,13 +33,16 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 @CommandDeclaration(command = "grant",
     category = CommandCategory.CLAIMING,
@@ -70,44 +73,51 @@ public class Grant extends Command {
                 if (args.length > 2) {
                     break;
                 }
-                MainUtil.getUUIDsFromString(args[1], (uuids, throwable) -> {
+                PlayerManager.getUUIDsFromString(args[1], (uuids, throwable) -> {
                     if (throwable instanceof TimeoutException) {
                         MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
                     } else if (throwable != null || uuids.size() != 1) {
                         MainUtil.sendMessage(player, Captions.INVALID_PLAYER);
                     } else {
                         final UUID uuid = uuids.toArray(new UUID[0])[0];
-                        MainUtil.getPersistentMeta(uuid,
-                            "grantedPlots", new RunnableVal<byte[]>() {
-                            @Override public void run(byte[] array) {
-                                if (arg0.equals("check")) { // check
-                                    int granted;
-                                    if (array == null) {
-                                        granted = 0;
-                                    } else {
-                                        granted = Ints.fromByteArray(array);
-                                    }
-                                    Captions.GRANTED_PLOTS.send(player, granted);
-                                } else { // add
-                                    int amount;
-                                    if (array == null) {
-                                        amount = 1;
-                                    } else {
-                                        amount = 1 + Ints.fromByteArray(array);
-                                    }
-                                    boolean replace = array != null;
-                                    String key = "grantedPlots";
-                                    byte[] rawData = Ints.toByteArray(amount);
+                        final Consumer<byte[]> result = array -> {
+                            if (arg0.equals("check")) { // check
+                                int granted;
+                                if (array == null) {
+                                    granted = 0;
+                                } else {
+                                    granted = Ints.fromByteArray(array);
+                                }
+                                Captions.GRANTED_PLOTS.send(player, granted);
+                            } else { // add
+                                int amount;
+                                if (array == null) {
+                                    amount = 1;
+                                } else {
+                                    amount = 1 + Ints.fromByteArray(array);
+                                }
+                                boolean replace = array != null;
+                                String key = "grantedPlots";
+                                byte[] rawData = Ints.toByteArray(amount);
 
-                                    PlotPlayer online = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
-                                    if (online != null) {
-                                        online.setPersistentMeta(key, rawData);
-                                    } else {
-                                        DBFunc.addPersistentMeta(uuid, key, rawData, replace);
-                                    }
+                                PlotPlayer online = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+                                if (online != null) {
+                                    online.setPersistentMeta(key, rawData);
+                                } else {
+                                    DBFunc.addPersistentMeta(uuid, key, rawData, replace);
                                 }
                             }
-                        });
+                        };
+                        PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+                        if (pp != null) {
+                            result.accept(player.getPersistentMeta("grantedPlots"));
+                        } else {
+                            DBFunc.getPersistentMeta(uuid, new RunnableVal<Map<String, byte[]>>() {
+                                @Override public void run(Map<String, byte[]> value) {
+                                    result.accept(value.get("grantedPlots"));
+                                }
+                            });
+                        }
                     }
                 });
                 return CompletableFuture.completedFuture(true);

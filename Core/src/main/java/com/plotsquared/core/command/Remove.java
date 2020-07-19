@@ -35,6 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 
 import javax.annotation.Nonnull;
@@ -76,7 +77,7 @@ public class Remove extends SubCommand {
             return true;
         }
 
-        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+        PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             int count = 0;
             if (throwable instanceof TimeoutException) {
                 MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);

@@ -37,9 +37,10 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.FileBytes;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
@@ -52,6 +53,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class HybridPlotManager extends ClassicPlotManager {
 
@@ -76,7 +78,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 .getWorldName() + File.separator;
         try {
             File sideRoad =
-                MainUtil.getFile(PlotSquared.platform().getDirectory(), dir + "sideroad.schem");
+                FileUtils.getFile(PlotSquared.platform().getDirectory(), dir + "sideroad.schem");
             String newDir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
                 + "__TEMP_DIR__" + File.separator;
             if (sideRoad.exists()) {
@@ -84,12 +86,12 @@ public class HybridPlotManager extends ClassicPlotManager {
                     Files.readAllBytes(sideRoad.toPath())));
             }
             File intersection =
-                MainUtil.getFile(PlotSquared.platform().getDirectory(), dir + "intersection.schem");
+                FileUtils.getFile(PlotSquared.platform().getDirectory(), dir + "intersection.schem");
             if (intersection.exists()) {
                 files.add(new FileBytes(newDir + "intersection.schem",
                     Files.readAllBytes(intersection.toPath())));
             }
-            File plot = MainUtil.getFile(PlotSquared.platform().getDirectory(), dir + "plot.schem");
+            File plot = FileUtils.getFile(PlotSquared.platform().getDirectory(), dir + "plot.schem");
             if (plot.exists()) {
                 files.add(new FileBytes(newDir + "plot.schem", Files.readAllBytes(plot.toPath())));
             }
@@ -102,13 +104,13 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Override public boolean createRoadEast(Plot plot) {
         super.createRoadEast(plot);
         PlotId id = plot.getId();
-        PlotId id2 = new PlotId(id.x + 1, id.y);
+        PlotId id2 = PlotId.of(id.getX() + 1, id.getY());
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
         Location pos1 = Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1, 0, bot.getZ() - 1);
         Location pos2 = Location.at(hybridPlotWorld.getWorldName(), bot.getX(),
             Math.min(getWorldHeight(), 255), top.getZ() + 1);
-        MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
+        this.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
@@ -116,6 +118,17 @@ public class HybridPlotManager extends ClassicPlotManager {
         createSchemAbs(queue, pos1, pos2, true);
         queue.enqueue();
         return true;
+    }
+
+    private void resetBiome(@Nonnull final HybridPlotWorld hybridPlotWorld, @Nonnull final Location pos1,
+        @Nonnull final Location pos2) {
+        BiomeType biome = hybridPlotWorld.getPlotBiome();
+        if (!Objects.equals(PlotSquared.platform().getWorldUtil()
+            .getBiomeSynchronous(hybridPlotWorld.getWorldName(), (pos1.getX() + pos2.getX()) / 2,
+                (pos1.getZ() + pos2.getZ()) / 2), biome)) {
+            WorldUtil.setBiome(hybridPlotWorld.getWorldName(), pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(),
+                    biome);
+        }
     }
 
     private void createSchemAbs(LocalBlockQueue queue, Location pos1, Location pos2,
@@ -163,13 +176,13 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Override public boolean createRoadSouth(Plot plot) {
         super.createRoadSouth(plot);
         PlotId id = plot.getId();
-        PlotId id2 = new PlotId(id.x, id.y + 1);
+        PlotId id2 = PlotId.of(id.getX(), id.getY() + 1);
         Location bot = getPlotBottomLocAbs(id2);
         Location top = getPlotTopLocAbs(id);
         Location pos1 = Location.at(hybridPlotWorld.getWorldName(), bot.getX() - 1, 0, top.getZ() + 1);
         Location pos2 = Location.at(hybridPlotWorld.getWorldName(), top.getX() + 1,
             Math.min(getWorldHeight(), 255), bot.getZ());
-        MainUtil.resetBiome(hybridPlotWorld, pos1, pos2);
+        this.resetBiome(hybridPlotWorld, pos1, pos2);
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
@@ -182,7 +195,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     @Override public boolean createRoadSouthEast(Plot plot) {
         super.createRoadSouthEast(plot);
         PlotId id = plot.getId();
-        PlotId id2 = new PlotId(id.x + 1, id.y + 1);
+        PlotId id2 = PlotId.of(id.getX() + 1, id.getY() + 1);
         Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1).withY(0);
         Location pos2 = getPlotBottomLocAbs(id2).withY(Math.min(getWorldHeight(), 255));
         LocalBlockQueue queue = hybridPlotWorld.getQueue(false);
@@ -237,7 +250,7 @@ public class HybridPlotManager extends ClassicPlotManager {
                 }
                 /* Otherwise we need to set each component, as we don't want to regenerate the road or other plots that share the same chunk.*/
                 // Set the biome
-                MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
+                WorldUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
                 // These two locations are for each component (e.g. bedrock, main block, floor, air)
                 Location bot = Location.at(world, value[2], 0, value[3]);
                 Location top = Location.at(world, value[4], 1, value[5]);

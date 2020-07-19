@@ -38,6 +38,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
@@ -108,9 +109,9 @@ public class Owner extends SetCommand {
                 MainUtil.sendMessage(player, Captions.SET_OWNER);
                 return;
             }
-            final PlotPlayer other = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+            final PlotPlayer<?> other = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
             if (plot.isOwner(uuid)) {
-                Captions.ALREADY_OWNER.send(player, MainUtil.getName(uuid));
+                Captions.ALREADY_OWNER.send(player, PlayerManager.getName(uuid));
                 return;
             }
             if (!force && !Permissions

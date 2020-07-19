@@ -60,8 +60,8 @@ import com.plotsquared.core.plot.flag.types.TimedFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.world.gamemode.GameMode;
@@ -157,12 +157,8 @@ public class PlotListener {
 
             final String greeting = plot.getFlag(GreetingFlag.class);
             if (!greeting.isEmpty()) {
-                MainUtil.format(Captions.PREFIX_GREETING.getTranslated() + greeting, plot, player,
-                    false, new RunnableVal<String>() {
-                        @Override public void run(String value) {
-                            MainUtil.sendMessage(player, value);
-                        }
-                    });
+                plot.format(Captions.PREFIX_GREETING.getTranslated() + greeting, player, false)
+                    .thenAcceptAsync(player::sendMessage);
             }
 
             if (plot.getFlag(NotifyEnterFlag.class)) {
@@ -329,12 +325,8 @@ public class PlotListener {
 
             final String farewell = plot.getFlag(FarewellFlag.class);
             if (!farewell.isEmpty()) {
-                MainUtil.format(Captions.PREFIX_FAREWELL.getTranslated() + farewell, plot, player,
-                    false, new RunnableVal<String>() {
-                        @Override public void run(String value) {
-                            MainUtil.sendMessage(player, value);
-                        }
-                    });
+                plot.format(Captions.PREFIX_FAREWELL.getTranslated() + farewell, player, false)
+                    .thenAcceptAsync(player::sendMessage);
             }
 
             if (plot.getFlag(NotifyLeaveFlag.class)) {

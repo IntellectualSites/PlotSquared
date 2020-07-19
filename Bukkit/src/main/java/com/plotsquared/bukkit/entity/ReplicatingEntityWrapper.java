@@ -152,17 +152,17 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 this.stack = item.getItemStack();
                 return;
             case "ITEM_FRAME":
-                this.x = Math.floor(this.x);
-                this.y = Math.floor(this.y);
-                this.z = Math.floor(this.z);
+                this.x = Math.floor(this.getX());
+                this.y = Math.floor(this.getY());
+                this.z = Math.floor(this.getZ());
                 ItemFrame itemFrame = (ItemFrame) entity;
                 this.dataByte = getOrdinal(Rotation.values(), itemFrame.getRotation());
                 this.stack = itemFrame.getItem().clone();
                 return;
             case "PAINTING":
-                this.x = Math.floor(this.x);
-                this.y = Math.floor(this.y);
-                this.z = Math.floor(this.z);
+                this.x = Math.floor(this.getX());
+                this.y = Math.floor(this.getY());
+                this.z = Math.floor(this.getZ());
                 Painting painting = (Painting) entity;
                 Art art = painting.getArt();
                 this.dataByte = getOrdinal(BlockFace.values(), painting.getFacing());
@@ -407,9 +407,9 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         this.lived.leashed = lived.isLeashed();
         if (this.lived.leashed) {
             Location location = lived.getLeashHolder().getLocation();
-            this.lived.leashX = (short) (this.x - location.getBlockX());
-            this.lived.leashY = (short) (this.y - location.getBlockY());
-            this.lived.leashZ = (short) (this.z - location.getBlockZ());
+            this.lived.leashX = (short) (this.getX() - location.getBlockX());
+            this.lived.leashY = (short) (this.getY() - location.getBlockY());
+            this.lived.leashZ = (short) (this.getZ() - location.getBlockZ());
         }
         EntityEquipment equipment = lived.getEquipment();
         this.lived.equipped = equipment != null;
@@ -460,7 +460,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
     }
 
     @Override public Entity spawn(World world, int xOffset, int zOffset) {
-        Location location = new Location(world, this.x + xOffset, this.y, this.z + zOffset);
+        Location location = new Location(world, this.getX() + xOffset, this.getY(), this.z + zOffset);
         location.setYaw(this.yaw);
         location.setPitch(this.pitch);
         if (!this.getType().isSpawnable()) {

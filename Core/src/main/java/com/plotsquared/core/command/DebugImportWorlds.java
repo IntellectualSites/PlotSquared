@@ -70,7 +70,7 @@ public class DebugImportWorlds extends Command {
             return CompletableFuture.completedFuture(false);
         }
         SinglePlotArea area = ((SinglePlotAreaManager) this.plotAreaManager).getArea();
-        PlotId id = new PlotId(0, 0);
+        PlotId id = PlotId.of(0, 0);
         File container = PlotSquared.platform().getWorldContainer();
         if (container.equals(new File("."))) {
             player.sendMessage(
@@ -92,7 +92,7 @@ public class DebugImportWorlds extends Command {
                         UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(Charsets.UTF_8));
                 }
                 while (new File(container, id.toCommaSeparatedString()).exists()) {
-                    id = Auto.getNextPlotId(id, 1);
+                    id = id.getNextId();
                 }
                 File newDir = new File(container, id.toCommaSeparatedString());
                 if (folder.renameTo(newDir)) {

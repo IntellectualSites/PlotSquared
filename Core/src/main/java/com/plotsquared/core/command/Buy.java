@@ -37,7 +37,6 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
@@ -77,7 +76,7 @@ public class Buy extends Command {
                 sendUsage(player);
                 return CompletableFuture.completedFuture(false);
             }
-            plot = check(MainUtil.getPlotFromString(player, args[0], true), null);
+            plot = check(Plot.getPlotFromString(player, args[0], true), null);
         } else {
             plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
         }

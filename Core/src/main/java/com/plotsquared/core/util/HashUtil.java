@@ -23,35 +23,35 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/*
-* Script to find the furthest plot from origin in a world:
-*  - /plot debugexec runasync furthest.js <plotworld>
-*/
+package com.plotsquared.core.util;
 
-if (PS.hasPlotArea("%s0")) {
-    var plots = PS.getAllPlotsRaw().get("%s0").values().toArray();
-    var max = 0;
-    var maxplot;
-    for (var i in plots) {
-        var plot = plots[i];
-        if (plot.getX() > max) {
-            max = plot.getX();
-            maxplot = plot;
-        }
-        if (plot.getY() > max) {
-            max = plot.getY();
-            maxplot = plot;
-        }
-        if (-plot.getX() > max) {
-            max = -plot.getX();
-            maxplot = plot;
-        }
-        if (-plot.getY() > max) {
-            max = -plot.getY();
-            maxplot = plot;
-        }
+import javax.annotation.Nonnull;
+
+public final class HashUtil {
+
+    private HashUtil() {
     }
-    PS.class.static.log(plot);
-} else {
-    PlotPlayer.sendMessage("Usage: /plot debugexec runasync furthest.js <plotworld>");
+
+    /**
+     * Hashcode of a boolean array.<br>
+     * - Used for traversing mega plots quickly.
+     *
+     * @param array Booleans to hash
+     * @return hashcode
+     */
+    public static int hash(@Nonnull final boolean[] array) {
+        if (array.length == 4) {
+            if (!array[0] && !array[1] && !array[2] && !array[3]) {
+                return 0;
+            }
+            return ((array[0] ? 1 : 0) << 3) + ((array[1] ? 1 : 0) << 2) + ((array[2] ? 1 : 0) << 1)
+                + (array[3] ? 1 : 0);
+        }
+        int n = 0;
+        for (boolean anArray : array) {
+            n = (n << 1) + (anArray ? 1 : 0);
+        }
+        return n;
+    }
+
 }

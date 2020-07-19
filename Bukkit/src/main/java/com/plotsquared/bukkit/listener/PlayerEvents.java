@@ -1005,7 +1005,7 @@ import java.util.regex.Pattern;
             }
         }
         String partial = ChatColor.translateAlternateColorCodes('&',
-            format.replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender));
+            format.replace("%plot_id%", id.getX() + ";" + id.getY()).replace("%sender%", sender));
         if (plotPlayer.hasPermission("plots.chat.color")) {
             message = Captions.color(message);
         }
@@ -1015,7 +1015,7 @@ import java.util.regex.Pattern;
         }
         if (!spies.isEmpty()) {
             String spyMessage = Captions.PLOT_CHAT_SPY_FORMAT.getTranslated()
-                .replace("%plot_id%", id.x + ";" + id.y).replace("%sender%", sender)
+                .replace("%plot_id%", id.getX() + ";" + id.getY()).replace("%sender%", sender)
                 .replace("%msg%", message);
             for (Player player : spies) {
                 player.sendMessage(spyMessage);

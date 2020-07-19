@@ -39,6 +39,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
@@ -185,7 +186,7 @@ public class Visit extends Command {
 
                     final PlotArea finalSortByArea = sortByArea;
                     int finalPage1 = page;
-                    MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+                    PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
                         if (throwable instanceof TimeoutException) {
                             Captions.FETCHING_PLAYERS_TIMEOUT.send(player);
                         } else if (throwable != null || uuids.size() != 1) {
@@ -227,7 +228,7 @@ public class Visit extends Command {
                     });
                 } else {
                     // Try to parse a plot
-                    final Plot plot = MainUtil.getPlotFromString(player, finalArgs[0], true);
+                    final Plot plot = Plot.getPlotFromString(player, finalArgs[0], true);
                     if (plot != null) {
                         this.visit(player, PlotQuery.newQuery().withPlot(plot), null, confirm, whenDone, 1);
                     }

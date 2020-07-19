@@ -42,6 +42,8 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
+import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
+import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -216,7 +218,7 @@ public class ExpireManager {
             return new ArrayList<>();
         }
 
-        if (MainUtil.isServerOwned(plot)) {
+        if (plot.getFlag(ServerPlotFlag.class)) {
             return new ArrayList<>();
         }
 

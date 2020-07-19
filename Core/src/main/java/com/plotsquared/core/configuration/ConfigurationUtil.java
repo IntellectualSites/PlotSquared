@@ -26,12 +26,19 @@
 package com.plotsquared.core.configuration;
 
 import com.plotsquared.core.plot.BlockBucket;
+import com.plotsquared.core.plot.PlotAreaTerrainType;
+import com.plotsquared.core.plot.PlotAreaType;
+import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockState;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 /**
  * Main Configuration Utility
@@ -98,6 +105,29 @@ public class ConfigurationUtil {
                 }
             }
         };
+
+    private static <T> T getValueFromConfig(ConfigurationSection config, String path,
+        IntFunction<Optional<T>> intParser, Function<String, Optional<T>> textualParser,
+        Supplier<T> defaultValue) {
+        String value = config.getString(path);
+        if (value == null) {
+            return defaultValue.get();
+        }
+        if (MathMan.isInteger(value)) {
+            return intParser.apply(Integer.parseInt(value)).orElseGet(defaultValue);
+        }
+        return textualParser.apply(value).orElseGet(defaultValue);
+    }
+
+    public static PlotAreaType getType(ConfigurationSection config) {
+        return getValueFromConfig(config, "generator.type", PlotAreaType::fromLegacyInt,
+            PlotAreaType::fromString, () -> PlotAreaType.NORMAL);
+    }
+
+    public static PlotAreaTerrainType getTerrain(ConfigurationSection config) {
+        return getValueFromConfig(config, "generator.terrain", PlotAreaTerrainType::fromLegacyInt,
+            PlotAreaTerrainType::fromString, () -> PlotAreaTerrainType.NONE);
+    }
 
 
     public static final class UnknownBlockException extends IllegalArgumentException {

@@ -48,6 +48,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
+import com.plotsquared.bukkit.util.task.BukkitTaskManager;
 import com.plotsquared.bukkit.util.task.PaperTimeConverter;
 import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
 import com.plotsquared.bukkit.uuid.BungeePermsUUIDService;
@@ -66,6 +67,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.database.DBFunc;
@@ -87,6 +89,8 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.CommentManager;
+import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
+import com.plotsquared.core.plot.message.PlainChatManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
@@ -96,7 +100,7 @@ import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PremiumVerification;
@@ -402,8 +406,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService("user_cache.db");
 
         final SQLiteUUIDService legacyUUIDService;
-        if (Settings.UUID.LEGACY_DATABASE_SUPPORT && MainUtil
-            .getFile(PlotSquared.platform().getDirectory(), "usercache.db").exists()) {
+        if (Settings.UUID.LEGACY_DATABASE_SUPPORT &&
+            FileUtils.getFile(PlotSquared.platform().getDirectory(), "usercache.db").exists()) {
             legacyUUIDService = new SQLiteUUIDService("usercache.db");
         } else {
             legacyUUIDService = null;
@@ -563,7 +567,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 }
                 final Plot plot = area.getOwnedPlot(id);
                 if (plot != null) {
-                    if (!MainUtil.isServerOwned(plot) || PlotPlayer.wrap(plot.getOwner()) == null) {
+                    if (!plot.getFlag(ServerPlotFlag.class) || PlotPlayer.wrap(plot.getOwner()) == null) {
                         if (world.getKeepSpawnInMemory()) {
                             world.setKeepSpawnInMemory(false);
                             return;
@@ -826,7 +830,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                                             BukkitUtil.adapt(entity.getLocation());
                                         PlotArea area = pLoc.getPlotArea();
                                         if (area != null) {
-                                            PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
+                                            PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
                                             if (!originalPlotId.equals(currentPlotId) && (
                                                 currentPlotId == null || !area
                                                     .getPlot(originalPlotId)
@@ -845,7 +849,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                                         BukkitUtil.adapt(entity.getLocation());
                                     PlotArea area = pLoc.getPlotArea();
                                     if (area != null) {
-                                        PlotId currentPlotId = PlotId.of(area.getPlotAbs(pLoc));
+                                        PlotId currentPlotId = area.getPlotAbs(pLoc).getId();
                                         if (currentPlotId != null) {
                                             entity.setMetadata("shulkerPlot",
                                                 new FixedMetadataValue(
@@ -1043,8 +1047,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
             String manager = worldConfig.getString("generator.plugin", getPluginName());
             PlotAreaBuilder builder = PlotAreaBuilder.newBuilder().plotManager(manager)
                 .generatorName(worldConfig.getString("generator.init", manager))
-                .plotAreaType(MainUtil.getType(worldConfig))
-                .terrainType(MainUtil.getTerrain(worldConfig))
+                .plotAreaType(ConfigurationUtil.getType(worldConfig))
+                .terrainType(ConfigurationUtil.getTerrain(worldConfig))
                 .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                 .worldName(worldName);
             getInjector().getInstance(SetupUtils.class).setupWorld(builder);

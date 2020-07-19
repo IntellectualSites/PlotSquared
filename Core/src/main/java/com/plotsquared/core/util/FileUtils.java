@@ -23,25 +23,45 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot.schematic;
+package com.plotsquared.core.util;
 
-import com.sk89q.worldedit.world.item.ItemType;
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.nio.file.Paths;
 
-public class PlotItem {
+public final class FileUtils {
 
-    public final int x;
-    public final int y;
-    public final int z;
-    // public final short[] id;
-    // public final byte[] data;
-    public final ItemType[] types;
-    public final byte[] amount;
-
-    public PlotItem(short x, short y, short z, ItemType[] types, byte[] amount) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.types = types;
-        this.amount = amount;
+    private FileUtils() {
     }
+
+    /**
+     * Attempt to (recursively) delete a directory
+     *
+     * @param directory Directory to delete
+     * @throws RuntimeException If the deletion fails
+     */
+    public static void deleteDirectory(@Nonnull final File directory) {
+        if (directory.exists()) {
+            final File[] files = directory.listFiles();
+            if (null != files) {
+                for (final File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
+                    }
+                }
+            }
+        }
+        if (!directory.delete()) {
+            throw new RuntimeException(
+                String.format("Failed to delete directory %s", directory.getName()));
+        }
+    }
+
+    @Nonnull public static File getFile(@Nonnull final File base, @Nonnull final String path) {
+        if (Paths.get(path).isAbsolute()) {
+            return new File(path);
+        }
+        return new File(base, path);
+    }
+
 }

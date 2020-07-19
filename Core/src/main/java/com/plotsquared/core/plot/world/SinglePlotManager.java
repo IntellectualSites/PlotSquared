@@ -31,7 +31,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
@@ -46,11 +46,11 @@ public class SinglePlotManager extends PlotManager {
     }
 
     @Override public PlotId getPlotIdAbs(int x, int y, int z) {
-        return new PlotId(0, 0);
+        return PlotId.of(0, 0);
     }
 
     @Override public PlotId getPlotId(int x, int y, int z) {
-        return new PlotId(0, 0);
+        return PlotId.of(0, 0);
     }
 
     @Override public Location getPlotBottomLocAbs(@Nonnull final PlotId plotId) {
@@ -65,7 +65,7 @@ public class SinglePlotManager extends PlotManager {
         PlotSquared.platform().getSetupUtils().unload(plot.getWorldName(), false);
         final File worldFolder = new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
         TaskManager.getPlatformImplementation().taskAsync(() -> {
-            MainUtil.deleteDirectory(worldFolder);
+            FileUtils.deleteDirectory(worldFolder);
             if (whenDone != null) {
                 whenDone.run();
             }
