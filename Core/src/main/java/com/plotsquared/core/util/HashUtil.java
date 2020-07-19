@@ -25,20 +25,33 @@
  */
 package com.plotsquared.core.util;
 
-public abstract class LazyResult<T> {
+import javax.annotation.Nonnull;
 
-    private T result;
+public final class HashUtil {
 
-    public T get() {
-        return this.result;
+    private HashUtil() {
     }
 
-    public T getOrCreate() {
-        if (this.result == null) {
-            return this.result = create();
+    /**
+     * Hashcode of a boolean array.<br>
+     * - Used for traversing mega plots quickly.
+     *
+     * @param array Booleans to hash
+     * @return hashcode
+     */
+    public static int hash(@Nonnull final boolean[] array) {
+        if (array.length == 4) {
+            if (!array[0] && !array[1] && !array[2] && !array[3]) {
+                return 0;
+            }
+            return ((array[0] ? 1 : 0) << 3) + ((array[1] ? 1 : 0) << 2) + ((array[2] ? 1 : 0) << 1)
+                + (array[3] ? 1 : 0);
         }
-        return this.result;
+        int n = 0;
+        for (boolean anArray : array) {
+            n = (n << 1) + (anArray ? 1 : 0);
+        }
+        return n;
     }
 
-    public abstract T create();
 }

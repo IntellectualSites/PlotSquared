@@ -31,7 +31,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.HashUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.slf4j.Logger;
@@ -198,7 +198,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
             PlotId id = PlotId.of(dx, dz);
             boolean[] merged =
                 new boolean[] {rz <= pathWidthLower, rx > end, rz > end, rx <= pathWidthLower};
-            int hash = MainUtil.hash(merged);
+            int hash = HashUtil.hash(merged);
             // Not merged, and no need to check if it is
             if (hash == 0) {
                 return id;

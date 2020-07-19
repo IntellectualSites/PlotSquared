@@ -33,6 +33,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.util.net.AbstractDelegateOutputStream;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -65,6 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -75,10 +77,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,6 +95,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -105,6 +113,84 @@ public abstract class SchematicHandler {
 
     public SchematicHandler(@Nonnull final WorldUtil worldUtil) {
         this.worldUtil = worldUtil;
+    }
+
+    public static void upload(@Nullable UUID uuid, @Nullable final String file,
+        @Nonnull final String extension, @Nullable final RunnableVal<OutputStream> writeTask,
+        @Nonnull final RunnableVal<URL> whenDone) {
+        if (writeTask == null) {
+            TaskManager.runTask(whenDone);
+            return;
+        }
+        final String filename;
+        final String website;
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+            website = Settings.Web.URL + "upload.php?" + uuid;
+            filename = "plot." + extension;
+        } else {
+            website = Settings.Web.URL + "save.php?" + uuid;
+            filename = file + '.' + extension;
+        }
+        final URL url;
+        try {
+            url = new URL(Settings.Web.URL + "?key=" + uuid + "&type=" + extension);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            whenDone.run();
+            return;
+        }
+        TaskManager.runTaskAsync(() -> {
+            try {
+                String boundary = Long.toHexString(System.currentTimeMillis());
+                URLConnection con = new URL(website).openConnection();
+                con.setDoOutput(true);
+                con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+                try (OutputStream output = con.getOutputStream();
+                    PrintWriter writer = new PrintWriter(
+                        new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
+                    String CRLF = "\r\n";
+                    writer.append("--" + boundary).append(CRLF);
+                    writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
+                    writer.append(
+                        "Content-Type: text/plain; charset=" + StandardCharsets.UTF_8.displayName())
+                        .append(CRLF);
+                    String param = "value";
+                    writer.append(CRLF).append(param).append(CRLF).flush();
+                    writer.append("--" + boundary).append(CRLF);
+                    writer.append(
+                        "Content-Disposition: form-data; name=\"schematicFile\"; filename=\""
+                            + filename + '"').append(CRLF);
+                    writer
+                        .append("Content-Type: " + URLConnection.guessContentTypeFromName(filename))
+                        .append(CRLF);
+                    writer.append("Content-Transfer-Encoding: binary").append(CRLF);
+                    writer.append(CRLF).flush();
+                    writeTask.value = new AbstractDelegateOutputStream(output) {
+                        @Override public void close() {
+                        } // Don't close
+                    };
+                    writeTask.run();
+                    output.flush();
+                    writer.append(CRLF).flush();
+                    writer.append("--" + boundary + "--").append(CRLF).flush();
+                }
+                String content;
+                try (Scanner scanner = new Scanner(con.getInputStream()).useDelimiter("\\A")) {
+                    content = scanner.next().trim();
+                }
+                if (!content.startsWith("<")) {
+                }
+                int responseCode = ((HttpURLConnection) con).getResponseCode();
+                if (responseCode == 200) {
+                    whenDone.value = url;
+                }
+                TaskManager.runTask(whenDone);
+            } catch (IOException e) {
+                e.printStackTrace();
+                TaskManager.runTask(whenDone);
+            }
+        });
     }
 
     public boolean exportAll(Collection<Plot> collection, final File outputDir,
@@ -313,7 +399,7 @@ public abstract class SchematicHandler {
      */
     public Schematic getSchematic(String name) throws UnsupportedFormatException {
         File parent =
-            MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
+            FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
         if (!parent.exists()) {
             if (!parent.mkdir()) {
                 throw new RuntimeException("Could not create schematic parent directory");
@@ -322,10 +408,10 @@ public abstract class SchematicHandler {
         if (!name.endsWith(".schem") && !name.endsWith(".schematic")) {
             name = name + ".schem";
         }
-        File file = MainUtil.getFile(PlotSquared.platform().getDirectory(),
+        File file = FileUtils.getFile(PlotSquared.platform().getDirectory(),
             Settings.Paths.SCHEMATICS + File.separator + name);
         if (!file.exists()) {
-            file = MainUtil.getFile(PlotSquared.platform().getDirectory(),
+            file = FileUtils.getFile(PlotSquared.platform().getDirectory(),
                 Settings.Paths.SCHEMATICS + File.separator + name);
         }
         return getSchematic(file);
@@ -338,7 +424,7 @@ public abstract class SchematicHandler {
      */
     public Collection<String> getSchematicNames() {
         final File parent =
-            MainUtil.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
+            FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
         final List<String> names = new ArrayList<>();
         if (parent.exists()) {
             final String[] rawNames =
@@ -437,7 +523,7 @@ public abstract class SchematicHandler {
             TaskManager.runTask(whenDone);
             return;
         }
-        MainUtil.upload(uuid, file, "schem", new RunnableVal<OutputStream>() {
+        upload(uuid, file, "schem", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
                 try (NBTOutputStream nos = new NBTOutputStream(
                     new GZIPOutputStream(output, true))) {
@@ -461,7 +547,7 @@ public abstract class SchematicHandler {
             return false;
         }
         try {
-            File tmp = MainUtil.getFile(PlotSquared.platform().getDirectory(), path);
+            File tmp = FileUtils.getFile(PlotSquared.platform().getDirectory(), path);
             tmp.getParentFile().mkdirs();
             try (NBTOutputStream nbtStream = new NBTOutputStream(
                 new GZIPOutputStream(new FileOutputStream(tmp)))) {
@@ -481,7 +567,7 @@ public abstract class SchematicHandler {
         // async
         TaskManager.runTaskAsync(() -> {
             // Main positions
-            Location[] corners = MainUtil.getCorners(world, regions);
+            Location[] corners = RegionUtil.getCorners(world, regions);
             final Location bot = corners[0];
             final Location top = corners[1];
 

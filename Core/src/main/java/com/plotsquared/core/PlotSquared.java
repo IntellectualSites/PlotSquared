@@ -59,8 +59,8 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.LegacyConverter;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -187,7 +187,7 @@ public class PlotSquared {
                 return;
             }
 
-            this.translationFile = MainUtil.getFile(this.platform.getDirectory(),
+            this.translationFile = FileUtils.getFile(this.platform.getDirectory(),
                 Settings.Paths.TRANSLATIONS + File.separator + this.platform.getPluginName()
                     + ".use_THIS.yml");
             Captions.load(this.translationFile);
@@ -761,7 +761,7 @@ public class PlotSquared {
         ConfigurationSection worldSection = this.worldConfiguration.getConfigurationSection(path);
         PlotAreaType type;
         if (worldSection != null) {
-            type = MainUtil.getType(worldSection);
+            type = ConfigurationUtil.getType(worldSection);
         } else {
             type = PlotAreaType.NORMAL;
         }
@@ -1108,7 +1108,7 @@ public class PlotSquared {
             if (!output.exists()) {
                 output.mkdirs();
             }
-            File newFile = MainUtil.getFile(output, folder + File.separator + file);
+            File newFile = FileUtils.getFile(output, folder + File.separator + file);
             if (newFile.exists()) {
                 return;
             }
@@ -1225,7 +1225,7 @@ public class PlotSquared {
                 database = new MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
                     Storage.MySQL.USER, Storage.MySQL.PASSWORD);
             } else if (Storage.SQLite.USE) {
-                File file = MainUtil.getFile(platform.getDirectory(), Storage.SQLite.DB + ".db");
+                File file = FileUtils.getFile(platform.getDirectory(), Storage.SQLite.DB + ".db");
                 database = new SQLite(file);
             } else {
                 logger.error("[P2] No storage type is set. Disabling PlotSquared");
@@ -1361,7 +1361,7 @@ public class PlotSquared {
         }
         try {
             // TODO: REMOVE
-            File styleFile = MainUtil.getFile(platform.getDirectory(),
+            File styleFile = FileUtils.getFile(platform.getDirectory(),
                 Settings.Paths.TRANSLATIONS + File.separator + "style.yml");
             if (!styleFile.exists()) {
                 if (!styleFile.getParentFile().exists()) {

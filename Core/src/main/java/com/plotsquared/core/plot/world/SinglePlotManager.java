@@ -32,7 +32,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
@@ -69,7 +69,7 @@ public class SinglePlotManager extends PlotManager {
         final File worldFolder =
             new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
         TaskManager.getPlatformImplementation().taskAsync(() -> {
-            MainUtil.deleteDirectory(worldFolder);
+            FileUtils.deleteDirectory(worldFolder);
             if (whenDone != null) {
                 whenDone.run();
             }

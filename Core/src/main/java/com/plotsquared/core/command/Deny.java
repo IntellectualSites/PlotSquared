@@ -36,6 +36,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
@@ -84,7 +85,7 @@ public class Deny extends SubCommand {
             return true;
         }
 
-        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+        PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
                 MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
             } else if (throwable != null || uuids.isEmpty()) {
@@ -94,12 +95,12 @@ public class Deny extends SubCommand {
                     if (uuid == DBFunc.EVERYONE && !(
                         Permissions.hasPermission(player, Captions.PERMISSION_DENY_EVERYONE) || Permissions
                             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DENY))) {
-                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
+                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, PlayerManager.getName(uuid));
                     } else if (plot.isOwner(uuid)) {
-                        MainUtil.sendMessage(player, Captions.CANT_REMOVE_OWNER, MainUtil.getName(uuid));
+                        MainUtil.sendMessage(player, Captions.CANT_REMOVE_OWNER, PlayerManager.getName(uuid));
                         return;
                     } else if (plot.getDenied().contains(uuid)) {
-                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, PlayerManager.getName(uuid));
                         return;
                     } else {
                         if (uuid != DBFunc.EVERYONE) {

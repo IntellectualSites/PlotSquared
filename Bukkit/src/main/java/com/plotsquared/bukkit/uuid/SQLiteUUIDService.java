@@ -27,11 +27,11 @@ package com.plotsquared.bukkit.uuid;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.database.SQLite;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,7 +51,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
 
     public SQLiteUUIDService(final String fileName) {
         this.sqlite =
-            new SQLite(MainUtil.getFile(PlotSquared.platform().getDirectory(), fileName));
+            new SQLite(FileUtils.getFile(PlotSquared.platform().getDirectory(), fileName));
         try {
             this.sqlite.openConnection();
         } catch (ClassNotFoundException | SQLException e) {

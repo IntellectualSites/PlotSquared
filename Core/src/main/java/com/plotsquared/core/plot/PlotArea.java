@@ -28,6 +28,7 @@ package com.plotsquared.core.plot;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.plotsquared.core.PlotSquared;
+import com.google.common.collect.Lists;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -52,7 +53,6 @@ import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Expression;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.StringMan;
@@ -272,8 +272,8 @@ public abstract class PlotArea {
             throw new IllegalArgumentException("Must extend GridPlotWorld to provide");
         }
         if (config.contains("generator.terrain")) {
-            this.terrain = MainUtil.getTerrain(config);
-            this.type = MainUtil.getType(config);
+            this.terrain = ConfigurationUtil.getTerrain(config);
+            this.type = ConfigurationUtil.getType(config);
         }
         this.mobSpawning = config.getBoolean("natural_mob_spawning");
         this.miscSpawnUnowned = config.getBoolean("misc_spawn_unowned");
@@ -994,7 +994,8 @@ public abstract class PlotArea {
         final int size = (1 + pos2.getX() - pos1.getX()) * (1 + pos2.getY() - pos1.getY());
         final Set<Plot> result = new HashSet<>();
         if (size < 16 || size < getPlotCount()) {
-            for (final PlotId pid : MainUtil.getPlotSelectionIds(pos1, pos2)) {
+            for (final PlotId pid : Lists.newArrayList((Iterable<? extends PlotId>)
+                PlotId.PlotRangeIterator.range(pos1, pos2))) {
                 final Plot plot = getPlotAbs(pid);
                 if (plot.hasOwner()) {
                     if (plot.getId().getX() > pos1.getX() || plot.getId().getY() > pos1.getY()

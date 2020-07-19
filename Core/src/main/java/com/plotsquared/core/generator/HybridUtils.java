@@ -45,7 +45,6 @@ import com.plotsquared.core.queue.ChunkQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
@@ -141,7 +140,6 @@ public class HybridUtils {
             final int cbz = bz >> 4;
             final int ctx = tx >> 4;
             final int ctz = tz >> 4;
-            MainUtil.initCache();
             final int width = tx - bx + 1;
             final int length = tz - bz + 1;
 
@@ -251,7 +249,6 @@ public class HybridUtils {
                 whenDone.run();
             });
             System.gc();
-            MainUtil.initCache();
             Location botLoc = Location.at(world, bot.getX(), bot.getY(), bot.getZ());
             Location topLoc = Location.at(world, top.getX(), top.getY(), top.getZ());
             ChunkManager.chunkTask(botLoc, topLoc, new RunnableVal<int[]>() {

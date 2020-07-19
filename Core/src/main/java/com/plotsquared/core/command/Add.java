@@ -33,6 +33,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -72,7 +73,7 @@ public class Add extends Command {
         checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
 
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
-        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+        PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable != null) {
                 if (throwable instanceof TimeoutException) {
                     Captions.FETCHING_PLAYERS_TIMEOUT.send(player);
@@ -91,17 +92,17 @@ public class Add extends Command {
                         if (uuid == DBFunc.EVERYONE && !(
                             Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
                                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
-                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
+                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, PlayerManager.getName(uuid));
                             iterator.remove();
                             continue;
                         }
                         if (plot.isOwner(uuid)) {
-                            MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                            MainUtil.sendMessage(player, Captions.ALREADY_ADDED, PlayerManager.getName(uuid));
                             iterator.remove();
                             continue;
                         }
                         if (plot.getMembers().contains(uuid)) {
-                            MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                            MainUtil.sendMessage(player, Captions.ALREADY_ADDED, PlayerManager.getName(uuid));
                             iterator.remove();
                             continue;
                         }

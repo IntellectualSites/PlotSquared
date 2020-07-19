@@ -47,6 +47,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -186,7 +187,7 @@ public class Area extends SubCommand {
                 hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT = hybridPlotWorld.WALL_HEIGHT = playerSelectionMin.getBlockY();
                 // No sign plz
                 hybridPlotWorld.setAllowSigns(false);
-                final File parentFile = MainUtil.getFile(PlotSquared.platform().getDirectory(), "schematics" + File.separator +
+                final File parentFile = FileUtils.getFile(PlotSquared.platform().getDirectory(), "schematics" + File.separator +
                     "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld.getWorldName() + File.separator +
                     hybridPlotWorld.getId());
                 if (!parentFile.exists() && !parentFile.mkdirs()) {

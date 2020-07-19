@@ -25,13 +25,43 @@
  */
 package com.plotsquared.core.util;
 
-import com.sk89q.worldedit.world.block.BlockState;
+import javax.annotation.Nonnull;
+import java.io.File;
+import java.nio.file.Paths;
 
-public abstract class LazyBlock {
+public final class FileUtils {
 
-    public abstract BlockState getBlockState();
-
-    public String getId() {
-        return getBlockState().toString();
+    private FileUtils() {
     }
+
+    /**
+     * Attempt to (recursively) delete a directory
+     *
+     * @param directory Directory to delete
+     * @throws RuntimeException If the deletion fails
+     */
+    public static void deleteDirectory(@Nonnull final File directory) {
+        if (directory.exists()) {
+            final File[] files = directory.listFiles();
+            if (null != files) {
+                for (final File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
+                    }
+                }
+            }
+        }
+        if (!directory.delete()) {
+            throw new RuntimeException(
+                String.format("Failed to delete directory %s", directory.getName()));
+        }
+    }
+
+    @Nonnull public static File getFile(@Nonnull final File base, @Nonnull final String path) {
+        if (Paths.get(path).isAbsolute()) {
+            return new File(path);
+        }
+        return new File(base, path);
+    }
+
 }

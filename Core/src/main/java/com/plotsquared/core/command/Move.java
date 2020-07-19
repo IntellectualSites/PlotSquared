@@ -81,7 +81,7 @@ public class Move extends SubCommand {
         PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
         Plot plot2;
         if (area == null) {
-            plot2 = MainUtil.getPlotFromString(player, args[0], true);
+            plot2 = Plot.getPlotFromString(player, args[0], true);
             if (plot2 == null) {
                 return CompletableFuture.completedFuture(false);
             }

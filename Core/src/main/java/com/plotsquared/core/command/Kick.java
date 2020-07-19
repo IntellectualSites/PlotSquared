@@ -35,6 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import javax.annotation.Nonnull;
@@ -77,7 +78,7 @@ public class Kick extends SubCommand {
             return false;
         }
 
-        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+        PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
                 MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
             } else if (throwable != null || uuids.isEmpty()) {
