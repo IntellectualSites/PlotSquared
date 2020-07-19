@@ -25,6 +25,8 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.location.Location;
+import com.sk89q.worldedit.math.BlockVector2;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Range;
 
@@ -114,5 +116,23 @@ public class ChunkUtil {
      */
     public static int getZ(@Range(from = 0, to = 4095) int j) {
         return z_loc[j];
+    }
+
+    /**
+     * Returns true if the region pos1 -> pos2 contains the chunk
+     *
+     * @param pos1  Region minimum point
+     * @param pos2  Region maximum point
+     * @param chunk BlockVector2 of chunk coordinates
+     * @return true if the region pos1 -> pos2 contains the chunk
+     */
+    public static boolean isWholeChunk(Location pos1, Location pos2, BlockVector2 chunk) {
+        int x1 = pos1.getX();
+        int z1 = pos1.getZ();
+        int x2 = pos2.getX();
+        int z2 = pos2.getZ();
+        int cx = chunk.getX() << 4;
+        int cz = chunk.getZ() << 4;
+        return cx > x1 && cz > z1 && cx < x2 && cz < z2;
     }
 }

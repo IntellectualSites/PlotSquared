@@ -224,7 +224,8 @@ public abstract class SchematicHandler {
                 final String name;
                 if (namingScheme == null) {
                     name =
-                        plot.getId().getX() + ";" + plot.getId().getY() + ',' + plot.getArea() + ',' + owner;
+                        plot.getId().getX() + ";" + plot.getId().getY() + ',' + plot.getArea() + ','
+                            + owner;
                 } else {
                     name = namingScheme.replaceAll("%id%", plot.getId().toString())
                         .replaceAll("%idx%", plot.getId().getX() + "")
@@ -330,57 +331,53 @@ public abstract class SchematicHandler {
                 final int tcx = p2x >> 4;
                 final int tcz = p2z >> 4;
 
-                ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
-                    @Override public void run(int[] value) {
-                        BlockVector2 chunk = BlockVector2.at(value[0], value[1]);
-                        int x = chunk.getX();
-                        int z = chunk.getZ();
-                        int xxb = x << 4;
-                        int zzb = z << 4;
-                        int xxt = xxb + 15;
-                        int zzt = zzb + 15;
-                        if (x == bcx) {
-                            xxb = p1x;
-                        }
-                        if (x == tcx) {
-                            xxt = p2x;
-                        }
-                        if (z == bcz) {
-                            zzb = p1z;
-                        }
-                        if (z == tcz) {
-                            zzt = p2z;
-                        }
-                        // Paste schematic here
+                queue.setChunkConsumer(blockVector2 -> {
+                    int x = blockVector2.getX();
+                    int z = blockVector2.getZ();
+                    int xxb = x << 4;
+                    int zzb = z << 4;
+                    int xxt = xxb + 15;
+                    int zzt = zzb + 15;
+                    if (x == bcx) {
+                        xxb = p1x;
+                    }
+                    if (x == tcx) {
+                        xxt = p2x;
+                    }
+                    if (z == bcz) {
+                        zzb = p1z;
+                    }
+                    if (z == tcz) {
+                        zzt = p2z;
+                    }
+                    // Paste schematic here
 
-                        for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
-                            int yy = y_offset_actual + ry;
-                            if (yy > 255) {
-                                continue;
-                            }
-                            for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
-                                for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
-                                    int xx = p1x + xOffset + rx;
-                                    int zz = p1z + zOffset + rz;
-                                    BaseBlock id = blockArrayClipboard
-                                        .getFullBlock(BlockVector3.at(rx, ry, rz));
-                                    queue.setBlock(xx, yy, zz, id);
-                                    if (ry == 0) {
-                                        BiomeType biome =
-                                            blockArrayClipboard.getBiome(BlockVector2.at(rx, rz));
-                                        queue.setBiome(xx, zz, biome);
-                                    }
+                    for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
+                        int yy = y_offset_actual + ry;
+                        if (yy > 255) {
+                            continue;
+                        }
+                        for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
+                            for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
+                                int xx = p1x + xOffset + rx;
+                                int zz = p1z + zOffset + rz;
+                                BaseBlock id =
+                                    blockArrayClipboard.getFullBlock(BlockVector3.at(rx, ry, rz));
+                                queue.setBlock(xx, yy, zz, id);
+                                if (ry == 0) {
+                                    BiomeType biome =
+                                        blockArrayClipboard.getBiome(BlockVector2.at(rx, rz));
+                                    queue.setBiome(xx, zz, biome);
                                 }
                             }
                         }
-                        queue.enqueue();
                     }
-                }, () -> {
-                    if (whenDone != null) {
-                        whenDone.value = true;
-                        whenDone.run();
-                    }
-                }, 10);
+                });
+                if (whenDone != null) {
+                    whenDone.value = true;
+                }
+                queue.setCompleteTask(whenDone);
+                queue.enqueue();
             } catch (Exception e) {
                 e.printStackTrace();
                 TaskManager.runTask(whenDone);

@@ -29,7 +29,6 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.location.Location;
-import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 import org.jetbrains.annotations.NotNull;

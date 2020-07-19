@@ -64,8 +64,8 @@ import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -80,7 +80,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HybridUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + HybridUtils.class.getSimpleName());
+    private static final Logger logger =
+        LoggerFactory.getLogger("P2/" + HybridUtils.class.getSimpleName());
 
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
@@ -98,7 +99,8 @@ public class HybridUtils {
 
     @Inject public HybridUtils(@Nonnull final PlotAreaManager plotAreaManager,
         @Nonnull final ChunkManager chunkManager, @Nonnull final GlobalBlockQueue blockQueue,
-        @Nonnull final WorldUtil worldUtil, @Nonnull final RegionManager regionManager, @Nonnull final SchematicHandler schematicHandler) {
+        @Nonnull final WorldUtil worldUtil, @Nonnull final RegionManager regionManager,
+        @Nonnull final SchematicHandler schematicHandler) {
         this.plotAreaManager = plotAreaManager;
         this.chunkManager = chunkManager;
         this.blockQueue = blockQueue;
@@ -127,8 +129,6 @@ public class HybridUtils {
          *
          */
         TaskManager.runTaskAsync(() -> {
-            final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
-
             final BlockVector3 bot = region.getMinimumPoint();
             final BlockVector3 top = region.getMaximumPoint();
 
@@ -159,6 +159,55 @@ public class HybridUtils {
 
             System.gc();
             System.gc();
+
+            QueueCoordinator queue = area.getQueue();
+
+            queue.setChunkConsumer(blockVector2 -> {
+                int X = blockVector2.getX();
+                int Z = blockVector2.getZ();
+                int minX;
+                if (X == cbx) {
+                    minX = bx & 15;
+                } else {
+                    minX = 0;
+                }
+                int minZ;
+                if (Z == cbz) {
+                    minZ = bz & 15;
+                } else {
+                    minZ = 0;
+                }
+                int maxX;
+                if (X == ctx) {
+                    maxX = tx & 15;
+                } else {
+                    maxX = 16;
+                }
+                int maxZ;
+                if (Z == ctz) {
+                    maxZ = tz & 15;
+                } else {
+                    maxZ = 16;
+                }
+
+                int chunkBlockX = X << 4;
+                int chunkBlockZ = Z << 4;
+
+                int xb = chunkBlockX - bx;
+                int zb = chunkBlockZ - bz;
+                for (int x = minX; x <= maxX; x++) {
+                    int xx = chunkBlockX + x;
+                    for (int z = minZ; z <= maxZ; z++) {
+                        int zz = chunkBlockZ + z;
+                        for (int y = 0; y < 256; y++) {
+                            BlockState block = queue.getBlock(xx, y, zz);
+                            int xr = xb + x;
+                            int zr = zb + z;
+                            newBlocks[y][xr][zr] = block;
+                        }
+                    }
+                }
+            });
 
             final Runnable run = () -> TaskManager.runTaskAsync(() -> {
                 int size = width * length;
@@ -248,57 +297,8 @@ public class HybridUtils {
                 whenDone.value = analysis;
                 whenDone.run();
             });
-            System.gc();
-            Location botLoc = Location.at(world, bot.getX(), bot.getY(), bot.getZ());
-            Location topLoc = Location.at(world, top.getX(), top.getY(), top.getZ());
-            ChunkManager.chunkTask(botLoc, topLoc, new RunnableVal<int[]>() {
-                @Override public void run(int[] value) {
-                    int X = value[0];
-                    int Z = value[1];
-                    int minX;
-                    if (X == cbx) {
-                        minX = bx & 15;
-                    } else {
-                        minX = 0;
-                    }
-                    int minZ;
-                    if (Z == cbz) {
-                        minZ = bz & 15;
-                    } else {
-                        minZ = 0;
-                    }
-                    int maxX;
-                    if (X == ctx) {
-                        maxX = tx & 15;
-                    } else {
-                        maxX = 16;
-                    }
-                    int maxZ;
-                    if (Z == ctz) {
-                        maxZ = tz & 15;
-                    } else {
-                        maxZ = 16;
-                    }
-
-                    int cbx = X << 4;
-                    int cbz = Z << 4;
-
-                    int xb = cbx - bx;
-                    int zb = cbz - bz;
-                    for (int x = minX; x <= maxX; x++) {
-                        int xx = cbx + x;
-                        for (int z = minZ; z <= maxZ; z++) {
-                            int zz = cbz + z;
-                            for (int y = 0; y < 256; y++) {
-                                BlockState block = queue.getBlock(xx, y, zz);
-                                int xr = xb + x;
-                                int zr = zb + z;
-                                newBlocks[y][xr][zr] = block;
-                            }
-                        }
-                    }
-                }
-            }, () -> TaskManager.runTaskAsync(run), 5);
+            queue.setCompleteTask(run);
+            queue.enqueue();
         });
     }
 
@@ -466,9 +466,11 @@ public class HybridUtils {
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
                                     if (Settings.DEBUG) {
-                                        logger.info("[P2] Updating .mcr: {}, {} (approx 1024 chunks)",
-                                            loc.getX(), loc.getZ());
-                                        logger.info("[P2] - Remaining: {}", HybridUtils.regions.size());
+                                        logger
+                                            .info("[P2] Updating .mcr: {}, {} (approx 1024 chunks)",
+                                                loc.getX(), loc.getZ());
+                                        logger.info("[P2] - Remaining: {}",
+                                            HybridUtils.regions.size());
                                     }
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
@@ -482,8 +484,7 @@ public class HybridUtils {
                                         .isEmpty()) {
                                         final BlockVector2 chunk = iterator.next();
                                         iterator.remove();
-                                        boolean regenedRoads =
-                                            regenerateRoad(area, chunk, extend);
+                                        boolean regenedRoads = regenerateRoad(area, chunk, extend);
                                         if (!regenedRoads && Settings.DEBUG) {
                                             logger.info("[P2] Failed to regenerate road");
                                         }
@@ -496,13 +497,15 @@ public class HybridUtils {
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
-                            logger.error("[P2] Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
+                            logger.error(
+                                "[P2] Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
                                 area.getWorldHash(), loc.getX(), loc.getZ());
                             int sx = loc.getX() << 5;
                             int sz = loc.getZ() << 5;
                             for (int x = sx; x < sx + 32; x++) {
                                 for (int z = sz; z < sz + 32; z++) {
-                                    chunkManager.unloadChunk(area.getWorldName(), BlockVector2.at(x, z),
+                                    chunkManager
+                                        .unloadChunk(area.getWorldName(), BlockVector2.at(x, z),
                                             true);
                                 }
                             }
@@ -544,7 +547,8 @@ public class HybridUtils {
         this.schematicHandler.getCompoundTag(world, sideRoad, new RunnableVal<CompoundTag>() {
             @Override public void run(CompoundTag value) {
                 schematicHandler.save(value, dir + "sideroad.schem");
-                schematicHandler.getCompoundTag(world, intersection, new RunnableVal<CompoundTag>() {
+                schematicHandler
+                    .getCompoundTag(world, intersection, new RunnableVal<CompoundTag>() {
                         @Override public void run(CompoundTag value) {
                             schematicHandler.save(value, dir + "intersection.schem");
                             plotworld.ROAD_SCHEMATIC_ENABLED = true;
@@ -604,7 +608,8 @@ public class HybridUtils {
         z -= plotWorld.ROAD_OFFSET_Z;
         final int finalX = x;
         final int finalZ = z;
-        QueueCoordinator queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()));
+        QueueCoordinator queue =
+            this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()));
         if (id1 == null || id2 == null || id1 != id2) {
             this.chunkManager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
                 if (id1 != null) {
@@ -643,7 +648,8 @@ public class HybridUtils {
                         }
                         if (condition) {
                             BaseBlock[] blocks = plotWorld.G_SCH.get(MathMan.pair(absX, absZ));
-                            int minY = Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : 1;
+                            int minY =
+                                Settings.Schematics.PASTE_ROAD_ON_TOP ? plotWorld.SCHEM_Y : 1;
                             int maxY = Math.max(extend, blocks.length);
                             for (int y = 0; y < maxY; y++) {
                                 if (y > blocks.length - 1) {
