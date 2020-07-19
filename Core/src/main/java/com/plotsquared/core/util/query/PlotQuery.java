@@ -419,7 +419,7 @@ public final class PlotQuery implements Iterable<Plot> {
         return this;
     }
 
-    @NotNull @Override public Iterator<Plot> iterator() {
+    @Nonnull @Override public Iterator<Plot> iterator() {
         return this.asCollection().iterator();
     }
 

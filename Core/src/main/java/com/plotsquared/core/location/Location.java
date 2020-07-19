@@ -475,41 +475,6 @@ public final class Location extends BlockLoc implements Comparable<Location> {
             + this.world + "\"}";
     }
 
-    public boolean equals(final Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof Location))
-            return false;
-        final Location other = (Location) o;
-        if (Float.compare(this.yaw, other.yaw) != 0)
-            return false;
-        if (Float.compare(this.pitch, other.pitch) != 0)
-            return false;
-        final Object this$blockVector3 = this.blockVector3;
-        final Object other$blockVector3 = other.blockVector3;
-        if (this$blockVector3 == null ?
-            other$blockVector3 != null :
-            !this$blockVector3.equals(other$blockVector3))
-            return false;
-        final Object this$world = this.getWorld();
-        final Object other$world = other.getWorld();
-        if (this$world == null ? other$world != null : !this$world.equals(other$world))
-            return false;
-        return true;
-    }
-
-    public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        result = result * PRIME + Float.floatToIntBits(this.yaw);
-        result = result * PRIME + Float.floatToIntBits(this.pitch);
-        final Object $blockVector3 = this.blockVector3;
-        result = result * PRIME + ($blockVector3 == null ? 43 : $blockVector3.hashCode());
-        final Object $world = this.getWorld();
-        result = result * PRIME + ($world == null ? 43 : $world.hashCode());
-        return result;
-    }
-
     public float getYaw() {
         return this.yaw;
     }

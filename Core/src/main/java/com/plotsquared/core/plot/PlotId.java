@@ -115,7 +115,7 @@ public class PlotId {
      *
      * @return Plot ID copy
      */
-    @NotNull public PlotId copy() {
+    @Nonnull public PlotId copy() {
         return of(this.getX(), this.getY());
     }
 
