@@ -37,8 +37,9 @@ import javax.annotation.Nonnull;
 
 /**
  * plot functions
+ * @deprecated Do not use
  */
-public class MainUtil {
+@Deprecated public class MainUtil {
 
     private static final Logger logger =
         LoggerFactory.getLogger("P2/" + MainUtil.class.getSimpleName());
@@ -97,7 +98,7 @@ public class MainUtil {
      * @param message Message to send
      * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
-    public static boolean sendMessage(PlotPlayer<?> player, String message) {
+    @Deprecated public static boolean sendMessage(PlotPlayer<?> player, String message) {
         return sendMessage(player, message, true);
     }
 
@@ -107,7 +108,7 @@ public class MainUtil {
      * @param caption
      * @param args
      */
-    public static void sendConsoleMessage(Captions caption, String... args) {
+    @Deprecated public static void sendConsoleMessage(Captions caption, String... args) {
         sendMessage(null, caption, args);
     }
 
@@ -119,7 +120,7 @@ public class MainUtil {
      * @param prefix If the message should be prefixed with the configured prefix
      * @return
      */
-    public static boolean sendMessage(PlotPlayer<?> player, @Nonnull String msg, boolean prefix) {
+    @Deprecated public static boolean sendMessage(PlotPlayer<?> player, @Nonnull String msg, boolean prefix) {
         if (!msg.isEmpty()) {
             if (player == null) {
                 String message = CaptionUtility
@@ -140,7 +141,7 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(PlotPlayer<?> player, Caption caption, String... args) {
+    @Deprecated public static boolean sendMessage(PlotPlayer<?> player, Caption caption, String... args) {
         return sendMessage(player, caption, (Object[]) args);
     }
 
@@ -151,7 +152,7 @@ public class MainUtil {
      * @param caption the message to send
      * @return boolean success
      */
-    public static boolean sendMessage(final PlotPlayer<?> player, final Caption caption,
+    @Deprecated public static boolean sendMessage(final PlotPlayer<?> player, final Caption caption,
         final Object... args) {
         if (caption.getTranslated().isEmpty()) {
             return true;
