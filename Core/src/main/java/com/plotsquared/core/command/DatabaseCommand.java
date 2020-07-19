@@ -42,6 +42,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
@@ -125,7 +126,7 @@ public class DatabaseCommand extends SubCommand {
                             .sendMessage(player, "/plot database import <sqlite file> [prefix]");
                         return false;
                     }
-                    File file = MainUtil.getFile(PlotSquared.platform().getDirectory(),
+                    File file = FileUtils.getFile(PlotSquared.platform().getDirectory(),
                         args[1].endsWith(".db") ? args[1] : args[1] + ".db");
                     if (!file.exists()) {
                         MainUtil.sendMessage(player, "&6Database does not exist: " + file);
@@ -200,7 +201,7 @@ public class DatabaseCommand extends SubCommand {
                         return MainUtil.sendMessage(player, "/plot database sqlite [file]");
                     }
                     File sqliteFile =
-                        MainUtil.getFile(PlotSquared.platform().getDirectory(), args[1] + ".db");
+                        FileUtils.getFile(PlotSquared.platform().getDirectory(), args[1] + ".db");
                     implementation = new SQLite(sqliteFile);
                     break;
                 default:

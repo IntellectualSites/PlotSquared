@@ -56,7 +56,7 @@ public class Comment extends SubCommand {
         // Attempt to extract a plot out of the first argument
         Plot plot = null;
         if (!CommentManager.inboxes.containsKey(args[0].toLowerCase(Locale.ENGLISH))) {
-            plot = MainUtil.getPlotFromString(player, args[0], false);
+            plot = Plot.getPlotFromString(player, args[0], false);
         }
 
         int index;

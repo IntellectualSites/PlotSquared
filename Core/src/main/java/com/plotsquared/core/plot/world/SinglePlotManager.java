@@ -31,11 +31,11 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class SinglePlotManager extends PlotManager {
         PlotSquared.platform().getSetupUtils().unload(plot.getWorldName(), false);
         final File worldFolder = new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
         TaskManager.getPlatformImplementation().taskAsync(() -> {
-            MainUtil.deleteDirectory(worldFolder);
+            FileUtils.deleteDirectory(worldFolder);
             if (whenDone != null) {
                 whenDone.run();
             }

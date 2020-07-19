@@ -127,7 +127,7 @@ public class HomeCommand extends Command {
                     break;
                 }
                 // either plot id or alias
-                Plot fromId = MainUtil.getPlotFromString(player, identifier, false);
+                Plot fromId = Plot.getPlotFromString(player, identifier, false);
                 if (fromId != null && fromId.isOwner(player.getUUID())) {
                     // it was a valid plot id
                     basePlotOnly = false;

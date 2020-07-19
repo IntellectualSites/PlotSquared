@@ -30,7 +30,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.PlayerManager;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -122,7 +122,7 @@ public class Placeholders extends PlaceholderExpansion {
                 }
 
                 try {
-                    return MainUtil.getName(plotOwner, false);
+                    return PlayerManager.getName(plotOwner, false);
                 } catch (final Exception ignored) {}
 
                 final String name = Bukkit.getOfflinePlayer(plotOwner).getName();

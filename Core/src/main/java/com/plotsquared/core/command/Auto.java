@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
@@ -50,10 +51,10 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @CommandDeclaration(command = "auto",
@@ -307,7 +308,8 @@ public class Auto extends SubCommand {
                         plot.claim(player, plotId.equals(end), null);
                     }
 
-                    ArrayList<PlotId> plotIds = MainUtil.getPlotSelectionIds(start, end);
+                    final List<PlotId> plotIds = Lists.newArrayList((Iterable<? extends PlotId>)
+                        PlotId.PlotRangeIterator.range(start, end));
                     final PlotId pos1 = plotIds.get(0);
                     final PlotAutoMergeEvent mergeEvent = this.eventDispatcher
                         .callAutoMerge(plotarea.getPlotAbs(pos1), plotIds);

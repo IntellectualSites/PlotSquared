@@ -38,9 +38,9 @@ import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -484,7 +484,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
             @Override public void run(int[] value) {
                 BlockVector2 loc = BlockVector2.at(value[0], value[1]);
                 PlotSquared.platform().getChunkManager().loadChunk(world, loc, false).thenRun(() -> {
-                    MainUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
+                    WorldUtil.setBiome(world, value[2], value[3], value[4], value[5], biome);
                     queue.refreshChunk(value[0], value[1]);
                 });
             }

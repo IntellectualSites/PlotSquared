@@ -36,6 +36,7 @@ import com.sk89q.jnbt.NBTInputStream;
 import com.sk89q.jnbt.NBTOutputStream;
 import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -68,6 +69,23 @@ public abstract class WorldUtil {
 
     public WorldUtil(@Nonnull final RegionManager regionManager) {
         this.regionManager = regionManager;
+    }
+
+    /**
+     * Set the biome in a region
+     *
+     * @param world World name
+     * @param p1x Min X
+     * @param p1z Min Z
+     * @param p2x Max X
+     * @param p2z Max Z
+     * @param biome Biome
+     */
+    public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
+        BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
+        BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(Plot.MAX_HEIGHT - 1);
+        CuboidRegion region = new CuboidRegion(pos1, pos2);
+        PlotSquared.platform().getWorldUtil().setBiomes(world, region, biome);
     }
 
     /**
@@ -213,7 +231,7 @@ public abstract class WorldUtil {
 
     public void upload(@Nonnull final Plot plot, @Nullable final UUID uuid,
         @Nullable final String file, @Nonnull final RunnableVal<URL> whenDone) {
-        plot.getHome(home -> MainUtil.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
+        plot.getHome(home -> SchematicHandler.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
                     File dat = getDat(plot.getWorldName());

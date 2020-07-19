@@ -42,6 +42,7 @@ import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
@@ -378,11 +379,11 @@ public class ListCmd extends SubCommand {
                     }
                     PlotMessage trusted = new PlotMessage().text(Captions.color(
                         Captions.PLOT_INFO_TRUSTED.getTranslated()
-                            .replaceAll("%trusted%", MainUtil.getPlayerList(plot.getTrusted()))))
+                            .replaceAll("%trusted%", PlayerManager.getPlayerList(plot.getTrusted()))))
                         .color("$1");
                     PlotMessage members = new PlotMessage().text(Captions.color(
                         Captions.PLOT_INFO_MEMBERS.getTranslated()
-                            .replaceAll("%members%", MainUtil.getPlayerList(plot.getMembers()))))
+                            .replaceAll("%members%", PlayerManager.getPlayerList(plot.getMembers()))))
                         .color("$1");
                     message.text("[").color("$3").text(i + "")
                         .command("/plot visit " + plot.getArea() + ";" + plot.getId())

@@ -47,6 +47,7 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.HashUtil;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -934,7 +935,7 @@ public class SQLManager implements AbstractDB {
                     preparedStatement.setString(7, legacySettings.settings.getAlias());
                 }
                 boolean[] merged = legacySettings.settings.getMerged();
-                int hash = MainUtil.hash(merged);
+                int hash = HashUtil.hash(merged);
                 preparedStatement.setInt(8, hash);
                 BlockLoc loc = legacySettings.settings.getPosition();
                 String position;
@@ -2049,7 +2050,7 @@ public class SQLManager implements AbstractDB {
         plot.getSettings().setMerged(merged);
         addPlotTask(plot, new UniqueStatement("setMerged") {
             @Override public void set(PreparedStatement statement) throws SQLException {
-                int hash = MainUtil.hash(merged);
+                int hash = HashUtil.hash(merged);
                 statement.setInt(1, hash);
                 statement.setInt(2, getId(plot));
             }
