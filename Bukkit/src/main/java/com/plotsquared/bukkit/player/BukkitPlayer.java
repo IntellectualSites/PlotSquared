@@ -32,6 +32,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -83,19 +84,21 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      * @param player Bukkit player instance
      */
     public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher,
-        @Nonnull final Player player, @Nullable final EconHandler econHandler) {
-        this(plotAreaManager, eventDispatcher, player, false, econHandler);
+        @Nonnull final Player player, @Nullable final EconHandler econHandler, @Nonnull final PermissionHandler permissionHandler) {
+        this(plotAreaManager, eventDispatcher, player, false, econHandler, permissionHandler);
     }
 
     public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher,
-        @Nonnull final Player player, final boolean offline, @Nullable final EconHandler econHandler) {
-        this(plotAreaManager, eventDispatcher, player, offline, true, econHandler);
+        @Nonnull final Player player, final boolean offline, @Nullable final EconHandler econHandler,
+        @Nonnull final PermissionHandler permissionHandler) {
+        this(plotAreaManager, eventDispatcher, player, offline, true, econHandler, permissionHandler);
     }
 
     public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final
         EventDispatcher eventDispatcher, @Nonnull final Player player, final boolean offline,
-        final boolean realPlayer, @Nullable final EconHandler econHandler) {
-        super(plotAreaManager, eventDispatcher, econHandler);
+        final boolean realPlayer, @Nullable final EconHandler econHandler,
+        @Nonnull final PermissionHandler permissionHandler) {
+        super(plotAreaManager, eventDispatcher, econHandler, permissionHandler);
         this.player = player;
         this.offline = offline;
         this.econHandler = econHandler;
@@ -159,13 +162,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override public boolean hasPermission(final String permission) {
-        if (this.offline && this.econHandler != null) {
-            return this.econHandler.hasPermission(getName(), permission);
-        }
-        return this.player.hasPermission(permission);
     }
 
     @Override public int hasPermissionRange(final String stub, final int range) {

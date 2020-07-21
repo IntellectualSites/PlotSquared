@@ -27,6 +27,7 @@ package com.plotsquared.bukkit.player;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
@@ -46,13 +47,16 @@ import java.util.UUID;
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
+    private final PermissionHandler permissionHandler;
 
     @Inject public BukkitPlayerManager(@Nonnull final PlotAreaManager plotAreaManager,
                                        @Nonnull final EventDispatcher eventDispatcher,
-                                       @Nullable final EconHandler econHandler) {
+                                       @Nullable final EconHandler econHandler,
+                                       @Nonnull final PermissionHandler permissionHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
+        this.permissionHandler = permissionHandler;
     }
 
     @Nonnull @Override public BukkitPlayer getPlayer(@Nonnull final Player object) {
@@ -60,7 +64,7 @@ import java.util.UUID;
             return getPlayer(object.getUniqueId());
         } catch (final NoSuchPlayerException exception) {
             return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object,
-                object.isOnline(), false, this.econHandler);
+                object.isOnline(), false, this.econHandler, this.permissionHandler);
         }
     }
 
@@ -69,18 +73,18 @@ import java.util.UUID;
         if (player == null || !player.isOnline()) {
             throw new NoSuchPlayerException(uuid);
         }
-        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, this.econHandler);
+        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, this.econHandler, this.permissionHandler);
     }
 
     @Nullable @Override public BukkitOfflinePlayer getOfflinePlayer(@Nullable final UUID uuid) {
         if (uuid == null) {
             return null;
         }
-        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid));
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid), this.permissionHandler);
     }
 
     @Nonnull @Override public BukkitOfflinePlayer getOfflinePlayer(@Nonnull final String username) {
-        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(username));
+        return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(username), this.permissionHandler);
     }
 
 }

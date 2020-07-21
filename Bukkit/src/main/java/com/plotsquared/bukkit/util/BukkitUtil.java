@@ -131,7 +131,7 @@ import java.util.stream.Stream;
         final Player player = OfflinePlayerUtil.loadPlayer(op);
         player.loadData();
         return new BukkitPlayer(PlotSquared.get().getPlotAreaManager(),
-            PlotSquared.get().getEventDispatcher(), player, true, PlotSquared.platform().getEconHandler());
+            PlotSquared.get().getEventDispatcher(), player, true, PlotSquared.platform().getEconHandler(), PlotSquared.platform().getPermissionHandler());
     }
 
     /**

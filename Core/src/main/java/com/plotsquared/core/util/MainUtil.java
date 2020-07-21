@@ -45,6 +45,53 @@ import javax.annotation.Nonnull;
         LoggerFactory.getLogger("P2/" + MainUtil.class.getSimpleName());
 
     /**
+     * Cache of mapping x,y,z coordinates to the chunk array<br>
+     * - Used for efficient world generation<br>
+     */
+    public static short[][] x_loc;
+    public static short[][] y_loc;
+    public static short[][] z_loc;
+    public static short[][][] CACHE_I = null;
+    public static short[][][] CACHE_J = null;
+
+    /**
+     * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
+     */
+    public static void initCache() {
+        if (x_loc == null) {
+            x_loc = new short[16][4096];
+            y_loc = new short[16][4096];
+            z_loc = new short[16][4096];
+            for (int i = 0; i < 16; i++) {
+                int i4 = i << 4;
+                for (int j = 0; j < 4096; j++) {
+                    int y = i4 + (j >> 8);
+                    int a = j - ((y & 0xF) << 8);
+                    int z1 = a >> 4;
+                    int x1 = a - (z1 << 4);
+                    x_loc[i][j] = (short) x1;
+                    y_loc[i][j] = (short) y;
+                    z_loc[i][j] = (short) z1;
+                }
+            }
+        }
+        if (CACHE_I == null) {
+            CACHE_I = new short[256][16][16];
+            CACHE_J = new short[256][16][16];
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 256; y++) {
+                        short i = (short) (y >> 4);
+                        short j = (short) ((y & 0xF) << 8 | z << 4 | x);
+                        CACHE_I[y][x][z] = i;
+                        CACHE_J[y][x][z] = j;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Send a message to the player.
      *
      * @param player  Player to receive message
