@@ -133,7 +133,7 @@ public class BlockEventListener implements Listener {
         }
         Plot plot = location.getOwnedPlot();
         if (plot == null) {
-            if (area.isRoadFlags() && area.getRoadFlag(RedstoneFlag.class)) {
+            if (area.isRoadFlags() && !area.getRoadFlag(RedstoneFlag.class)) {
                 event.setNewCurrent(0);
             }
             return;
