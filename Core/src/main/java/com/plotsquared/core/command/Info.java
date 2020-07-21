@@ -31,7 +31,6 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
-import com.plotsquared.core.util.MainUtil;
 
 @CommandDeclaration(command = "info",
     aliases = "i",

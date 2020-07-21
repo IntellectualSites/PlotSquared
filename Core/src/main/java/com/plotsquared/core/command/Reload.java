@@ -36,7 +36,6 @@ import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.MainUtil;
 
 import javax.annotation.Nonnull;
 import java.io.File;

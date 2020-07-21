@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.queue;
 
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.task.TaskManager;

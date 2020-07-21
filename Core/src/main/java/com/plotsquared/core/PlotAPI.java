@@ -34,7 +34,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.query.PlotQuery;
 

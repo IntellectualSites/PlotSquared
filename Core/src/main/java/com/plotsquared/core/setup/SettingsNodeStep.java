@@ -30,7 +30,6 @@ import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.TabCompletions;
 
 import javax.annotation.Nonnull;
