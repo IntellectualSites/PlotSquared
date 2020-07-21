@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -42,9 +43,9 @@ public class DebugSaveTest extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
-        MainUtil.sendMessage(player, "&6Starting `DEBUGSAVETEST`");
+        player.sendMessage(TranslatableCaption.of("debugsavetest.starting"));
         DBFunc.createPlotsAndData(plots,
-            () -> MainUtil.sendMessage(player, "&6Database sync finished!"));
+            () -> player.sendMessage(TranslatableCaption.of("debugsavetest.done")));
         return true;
     }
 }

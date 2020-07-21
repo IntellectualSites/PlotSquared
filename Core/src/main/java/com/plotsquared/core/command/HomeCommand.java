@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -40,6 +41,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -69,11 +71,14 @@ public class HomeCommand extends Command {
                       final RunnableVal2<Command, CommandResult> whenDone) {
         List<Plot> plots = query.asList();
         if (plots.isEmpty()) {
-            Captions.FOUND_NO_PLOTS.send(player);
+            player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
             return;
         } else if (plots.size() < page) {
-            MainUtil.sendMessage(player,
-                    String.format(Captions.NUMBER_NOT_IN_RANGE.getTranslated(), "1", plots.size()));
+            player.sendMessage(
+                    TranslatableCaption.of("invalid.number_not_in_range"),
+                    Template.of("min", "1"),
+                    Template.of("max", String.valueOf(plots.size()))
+            );
             return;
         }
         Plot plot = plots.get(page - 1);
@@ -101,7 +106,10 @@ public class HomeCommand extends Command {
         // /plot home <area> <page>
         if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions
                 .hasPermission(player, Captions.PERMISSION_HOME)) {
-            Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OWNED);
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Captions.PERMISSION_VISIT_OWNED.getTranslated())
+            );
             return CompletableFuture.completedFuture(false);
         }
         if (args.length > 2) {
@@ -119,7 +127,10 @@ public class HomeCommand extends Command {
                     try {
                         page = Integer.parseInt(identifier);
                     } catch (NumberFormatException ignored) {
-                        Captions.NOT_A_NUMBER.send(player, identifier);
+                        player.sendMessage(
+                                TranslatableCaption.of("invalid.not_a_number"),
+                                Template.of("value", identifier)
+                        );
                         return CompletableFuture.completedFuture(false);
                     }
                     query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
@@ -151,7 +162,10 @@ public class HomeCommand extends Command {
                     try {
                         page = Integer.parseInt(identifier);
                     } catch (NumberFormatException ignored) {
-                        Captions.NOT_A_NUMBER.send(player, identifier);
+                        player.sendMessage(
+                                TranslatableCaption.of("invalid.not_a_number"),
+                                Template.of("value", identifier)
+                        );
                         return CompletableFuture.completedFuture(false);
                     }
                     query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);

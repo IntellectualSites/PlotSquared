@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -34,6 +35,7 @@ import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.List;
 
@@ -47,7 +49,7 @@ public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {
-            MainUtil.sendMessage(player, Captions.INBOX_EMPTY);
+            player.sendMessage(TranslatableCaption.of("comment.inbox_empty"));
             return;
         }
         PlotComment[] comments = oldComments.toArray(new PlotComment[0]);
@@ -83,7 +85,7 @@ public class Inbox extends SubCommand {
                 .append(comment.id).append("&8][&6").append(comment.senderName).append("&8]")
                 .append(color).append(comment.comment).append('\n');
         }
-        MainUtil.sendMessage(player, string.toString());
+        player.sendMessage(StaticCaption.of(string.toString()));
     }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -93,7 +95,7 @@ public class Inbox extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         if (args.length == 0) {
@@ -125,10 +127,16 @@ public class Inbox extends SubCommand {
                                     return;
                                 }
                             }
-                            sendMessage(player, Captions.INBOX_ITEM, inbox.toString());
+                            player.sendMessage(
+                                    TranslatableCaption.of("comment.inbox_item"),
+                                    Template.of("value", inbox.toString())
+                            );
                         }
                     })) {
-                        sendMessage(player, Captions.INBOX_ITEM, inbox.toString());
+                        player.sendMessage(
+                                TranslatableCaption.of("comment.inbox_item"),
+                                Template.of("value", inbox.toString())
+                        );
                     }
                 }
             }
@@ -146,41 +154,54 @@ public class Inbox extends SubCommand {
             switch (args[1].toLowerCase()) {
                 case "delete":
                     if (!inbox.canModify(plot, player)) {
-                        sendMessage(player, Captions.NO_PERM_INBOX_MODIFY);
+                        player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox_modify"));
                         return false;
                     }
                     if (args.length != 3) {
-                        sendMessage(player, Captions.COMMAND_SYNTAX,
-                            "/plot inbox " + inbox.toString() + " delete <index>");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", "/plot inbox " + inbox.toString() + " delete <index>")
+                        );
                     }
                     final int index;
                     try {
                         index = Integer.parseInt(args[2]);
                         if (index < 1) {
-                            sendMessage(player, Captions.NOT_VALID_INBOX_INDEX, index + "");
+                            player.sendMessage(
+                                    TranslatableCaption.of("comment.not_valid_inbox_index"),
+                                    Template.of("number", index + "")
+                            );
                             return false;
                         }
                     } catch (NumberFormatException ignored) {
-                        sendMessage(player, Captions.COMMAND_SYNTAX,
-                            "/plot inbox " + inbox.toString() + " delete <index>");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", "/plot inbox " + inbox.toString() + " delete <index>")
+                        );
                         return false;
                     }
 
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
                         @Override public void run(List<PlotComment> value) {
                             if (index > value.size()) {
-                                sendMessage(player, Captions.NOT_VALID_INBOX_INDEX, index + "");
+                                player.sendMessage(
+                                        TranslatableCaption.of("comment.not_valid_inbox_index"),
+                                        Template.of("number", index + "")
+                                );
                                 return;
                             }
                             PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
                             boolean success = plot.removeComment(comment);
                             if (success) {
-                                MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_SUCCESS,
-                                    comment.comment);
+                                player.sendMessage(
+                                        TranslatableCaption.of("comment.comment_removed_success"),
+                                        Template.of("value", comment.comment)
+                                );
                             } else {
-                                MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_FAILURE,
-                                    comment.comment);
+                                player.sendMessage(
+                                        TranslatableCaption.of("comment.comment_removed_failure"));
+
 
                             }
                         }
@@ -191,14 +212,17 @@ public class Inbox extends SubCommand {
                     return true;
                 case "clear":
                     if (!inbox.canModify(plot, player)) {
-                        sendMessage(player, Captions.NO_PERM_INBOX_MODIFY);
+                        player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox_modify"));
                     }
                     inbox.clearInbox(plot);
                     List<PlotComment> comments = plot.getComments(inbox.toString());
                     if (!comments.isEmpty()) {
                         plot.removeComments(comments);
                     }
-                    MainUtil.sendMessage(player, Captions.COMMENT_REMOVED_SUCCESS, "*");
+                    player.sendMessage(
+                            TranslatableCaption.of("comment.comment_removed_success"),
+                            Template.of("value", "*")
+                    );
                     return true;
                 default:
                     try {
@@ -212,7 +236,7 @@ public class Inbox extends SubCommand {
             page = 1;
         }
         if (!inbox.canRead(plot, player)) {
-            sendMessage(player, Captions.NO_PERM_INBOX);
+            player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox"));
             return false;
         }
         if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
@@ -220,7 +244,7 @@ public class Inbox extends SubCommand {
                 displayComments(player, value, page);
             }
         })) {
-            sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         return true;

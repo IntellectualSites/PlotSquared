@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -39,6 +40,7 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.jnbt.CompoundTag;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.net.URL;
@@ -75,27 +77,27 @@ public class Download extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!DoneFlag.isDone(plot))) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
-            MainUtil.sendMessage(player, Captions.DONE_NOT_DONE);
+            player.sendMessage(TranslatableCaption.of("done.done_not_done"));
             return false;
         }
         if ((!plot.isOwner(player.getUUID())) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
         if (args.length == 0 || (args.length == 1 && StringMan
             .isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
             if (plot.getVolume() > Integer.MAX_VALUE) {
-                Captions.SCHEMATIC_TOO_LARGE.send(player);
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
                 return false;
             }
             plot.addRunning();
@@ -105,10 +107,11 @@ public class Download extends SubCommand {
                     schematicHandler.upload(value, null, null, new RunnableVal<URL>() {
                         @Override public void run(URL url) {
                             if (url == null) {
-                                MainUtil.sendMessage(player, Captions.GENERATING_LINK_FAILED);
+                                player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
                                 return;
                             }
-                            MainUtil.sendMessage(player, url.toString());
+                            player.sendMessage(StaticCaption.of(url.toString())
+                            );
                         }
                     });
                 }
@@ -116,27 +119,30 @@ public class Download extends SubCommand {
         } else if (args.length == 1 && StringMan
             .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
             if (!Permissions.hasPermission(player, Captions.PERMISSION_DOWNLOAD_WORLD)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_DOWNLOAD_WORLD);
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", Captions.PERMISSION_DOWNLOAD_WORLD.getTranslated())
+                );
                 return false;
             }
-            MainUtil.sendMessage(player, Captions.MCA_FILE_SIZE);
+            player.sendMessage(TranslatableCaption.of("schematics.mca_file_size"));
             plot.addRunning();
             this.worldUtil.saveWorld(world);
             this.worldUtil.upload(plot, null, null, new RunnableVal<URL>() {
                 @Override public void run(URL url) {
                     plot.removeRunning();
                     if (url == null) {
-                        MainUtil.sendMessage(player, Captions.GENERATING_LINK_FAILED);
+                        player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
                         return;
                     }
-                    MainUtil.sendMessage(player, url.toString());
+                    player.sendMessage(StaticCaption.of(url.toString())
                 }
             });
         } else {
             sendUsage(player);
             return false;
         }
-        MainUtil.sendMessage(player, Captions.GENERATING_LINK);
+        player.sendMessage(TranslatableCaption.of("web.generating_link"));
         return true;
     }
 }

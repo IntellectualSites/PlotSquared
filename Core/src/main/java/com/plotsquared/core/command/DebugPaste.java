@@ -31,12 +31,15 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.annotations.ConfigFile;
 import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedReader;
@@ -54,7 +57,7 @@ import java.util.stream.Collectors;
 @CommandDeclaration(command = "debugpaste",
     aliases = "dp",
     usage = "/plot debugpaste",
-    description = "Upload settings.yml, worlds.yml, PlotSquared.use_THIS.yml your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste",
+    description = "Upload settings.yml, worlds.yml, your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste",
     permission = "plots.debugpaste",
     category = CommandCategory.DEBUG,
     confirmation = true,
@@ -147,28 +150,20 @@ public class DebugPaste extends SubCommand {
                     incendoPaster
                         .addFile(new IncendoPaster.PasteFile("latest.log", readFile(logFile)));
                 } catch (IOException ignored) {
-                    MainUtil
-                        .sendMessage(player, "&clatest.log is too big to be pasted, will ignore");
+                    player.sendMessage(StaticCaption.of("&clatest.log is too big to be pasted, please reboot your server and submit a new paste."));
                 }
 
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml",
                         readFile(this.configFile)));
                 } catch (final IllegalArgumentException ignored) {
-                    MainUtil.sendMessage(player, "&cSkipping settings.yml because it's empty");
+                    player.sendMessage(StaticCaption.of("&cSkipping settings.yml because it's empty."));
                 }
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml",
                         readFile(this.worldfile)));
                 } catch (final IllegalArgumentException ignored) {
-                    MainUtil.sendMessage(player, "&cSkipping worlds.yml because it's empty");
-                }
-                try {
-                    incendoPaster.addFile(new IncendoPaster.PasteFile("PlotSquared.use_THIS.yml",
-                        readFile(PlotSquared.get().translationFile)));
-                } catch (final IllegalArgumentException ignored) {
-                    MainUtil.sendMessage(player,
-                        "&cSkipping PlotSquared.use_THIS.yml because it's empty");
+                    player.sendMessage(StaticCaption.of("&cSkipping worlds.yml because it's empty."));
                 }
 
                 try {
@@ -177,8 +172,7 @@ public class DebugPaste extends SubCommand {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml",
                         readFile(MultiverseWorlds)));
                 } catch (final IOException ignored) {
-                    MainUtil.sendMessage(player,
-                        "&cSkipping Multiverse worlds.yml because the plugin is not in use");
+                    player.sendMessage(StaticCaption.of("&cSkipping Multiverse world's.yml because Multiverse is not in use."));
                 }
 
                 try {
@@ -191,16 +185,22 @@ public class DebugPaste extends SubCommand {
                         final String link =
                             String.format("https://athion.net/ISPaster/paste/view/%s", pasteId);
                         player.sendMessage(
-                            Captions.DEBUG_REPORT_CREATED.getTranslated().replace("%url%", link));
+                                TranslatableCaption.of("debugpaste.debug_report_created"),
+                                Template.of("url", link)
+                        );
                     } else {
                         final String responseMessage = jsonObject.get("response").getAsString();
-                        MainUtil.sendMessage(player, String
-                            .format("&cFailed to create the debug paste: %s", responseMessage));
+                        player.sendMessage(
+                                TranslatableCaption.of("debugpaste.creation_failed"),
+                                Template.of("value", responseMessage)
+                        );
                     }
                 } catch (final Throwable throwable) {
                     throwable.printStackTrace();
-                    MainUtil.sendMessage(player,
-                        "&cFailed to create the debug paste: " + throwable.getMessage());
+                    player.sendMessage(
+                            TranslatableCaption.of("debugpaste.creation_failed"),
+                            Template.of("value", throwable.getMessage())
+                    );
                 }
             } catch (IOException e) {
                 e.printStackTrace();

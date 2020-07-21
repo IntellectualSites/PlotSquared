@@ -64,7 +64,7 @@ public class Desc extends SetCommand {
                 return false;
             }
             plot.removeFlag(event.getFlag());
-            MainUtil.sendMessage(player, Captions.DESC_UNSET);
+            player.sendMessage(TranslatableCaption.of("desc.desc_unset"));
             return true;
         }
         PlotFlagAddEvent event = this.eventDispatcher.callFlagAdd(plot.getFlagContainer().getFlag(DescriptionFlag.class).createFlagInstance(desc), plot);
@@ -76,10 +76,10 @@ public class Desc extends SetCommand {
         }
         boolean result = plot.setFlag(event.getFlag());
         if (!result) {
-            MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
+            player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
             return false;
         }
-        MainUtil.sendMessage(player, Captions.DESC_SET);
+        player.sendMessage(TranslatableCaption.of("desc.desc_set"));
         return true;
     }
 }

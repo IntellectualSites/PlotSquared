@@ -29,6 +29,7 @@ import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -66,15 +67,14 @@ public class DebugImportWorlds extends Command {
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         // UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8))
         if (!(this.plotAreaManager instanceof SinglePlotAreaManager)) {
-            player.sendMessage("Must be a single plot area!");
+            player.sendMessage(TranslatableCaption.of("debugimportworlds.single_plot_area"));
             return CompletableFuture.completedFuture(false);
         }
         SinglePlotArea area = ((SinglePlotAreaManager) this.plotAreaManager).getArea();
         PlotId id = PlotId.of(0, 0);
         File container = PlotSquared.platform().getWorldContainer();
         if (container.equals(new File("."))) {
-            player.sendMessage(
-                "World container must be configured to be a separate directory to your base files!");
+            player.sendMessage(TranslatableCaption.of("debugimportworlds.world_container"));
             return CompletableFuture.completedFuture(false);
         }
         for (File folder : container.listFiles()) {
@@ -84,7 +84,7 @@ public class DebugImportWorlds extends Command {
                 if (name.length() > 16) {
                     uuid = UUID.fromString(name);
                 } else {
-                    Captions.FETCHING_PLAYER.send(player);
+                    player.sendMessage(TranslatableCaption.of("players.fetching_player"));
                     uuid = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(name, 60000L);
                 }
                 if (uuid == null) {
@@ -100,7 +100,7 @@ public class DebugImportWorlds extends Command {
                 }
             }
         }
-        player.sendMessage("Done!");
+        player.sendMessage(TranslatableCaption.of("players.done"));
         return CompletableFuture.completedFuture(true);
     }
 }

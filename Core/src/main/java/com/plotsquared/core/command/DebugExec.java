@@ -223,7 +223,7 @@ public class DebugExec extends SubCommand {
                     if (analysis != null) {
                         player.sendMessage(
                                 TranslatableCaption.of("debugexec.changes_column"),
-                                Template.of("value", analysis.changes / 1.0)
+                                Template.of("value", String.valueOf(analysis.changes / 1.0))
                         );
                         return true;
                     }
@@ -261,11 +261,13 @@ public class DebugExec extends SubCommand {
                     if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
                         player.sendMessage(TranslatableCaption.of("debugexec.task_halted"));
                     }
-                    return MainUtil.sendMessage(player, "Cancelled task.");
+                    player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
                 case "remove-flag":
                     if (args.length != 2) {
-                        MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                            "/plot debugexec remove-flag <flag>");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", "/plot debugexec remove-flag <flag>")
+                        );
                         return false;
                     }
                     String flag = args[1];
@@ -280,16 +282,24 @@ public class DebugExec extends SubCommand {
                             }
                         }
                     }
-                    return MainUtil.sendMessage(player, "Cleared flag: " + flag);
+                    player.sendMessage(
+                            TranslatableCaption.of("debugexec.cleared_flag"),
+                            Template.of("value", flag)
+                    );
                 case "start-rgar": {
                     if (args.length != 2) {
-                        MainUtil.sendMessage(player,
-                            "&cInvalid syntax: /plot debugexec start-rgar <world>");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", "Invalid syntax: /plot debugexec start-rgar <world>")
+                        );
                         return false;
                     }
                     PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (area == null) {
-                        MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD, args[1]);
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.not_valid_plot_world"),
+                                Template.of("value", args[1])
+                        );
                         return false;
                     }
                     boolean result;
@@ -299,36 +309,33 @@ public class DebugExec extends SubCommand {
                         result = this.hybridUtils.scheduleRoadUpdate(area, 0);
                     }
                     if (!result) {
-                        MainUtil.sendMessage(player,
-                            "&cCannot schedule mass schematic update! (Is one already in progress?)");
+                        player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));
                         return false;
                     }
                     return true;
                 }
                 case "stop-rgar":
                     if (!HybridUtils.UPDATE) {
-                        MainUtil.sendMessage(player, "&cTask not running!");
+                        player.sendMessage(TranslatableCaption.of("debugexec.task_not_running"));
                         return false;
                     }
                     HybridUtils.UPDATE = false;
-                    MainUtil.sendMessage(player, "&cCancelling task... (Please wait)");
+                    player.sendMessage(TranslatableCaption.of("debugexec.cancelling_task"));
                     return true;
                 case "start-expire":
                     if (ExpireManager.IMP == null) {
                         ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
                     }
                     if (ExpireManager.IMP.runAutomatedTask()) {
-                        return MainUtil.sendMessage(player, "Started plot expiry task");
+                        player.sendMessage(TranslatableCaption.of("debugexec.expiry_started"));
                     } else {
-                        return MainUtil.sendMessage(player, "Plot expiry task already started");
+                        player.sendMessage(TranslatableCaption.of("debugexec.expiry_already_started"));
                     }
                 case "h":
                 case "he":
                 case "?":
                 case "help":
-                    MainUtil.sendMessage(player,
-                        "Possible sub commands: /plot debugexec <" + StringMan
-                            .join(allowed_params, "|") + ">");
+                    player.sendMessage(StaticCaption.of("Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, "|") + ">"));
                     return false;
                 case "addcmd":
                     try {
@@ -348,7 +355,7 @@ public class DebugExec extends SubCommand {
                                     DebugExec.this.engine.eval(cmd, DebugExec.this.scope);
                                 } catch (ScriptException e) {
                                     e.printStackTrace();
-                                    MainUtil.sendMessage(player, Captions.COMMAND_WENT_WRONG);
+                                    player.sendMessage(TranslatableCaption.of("error.command_went_wrong"));
                                 }
                                 return CompletableFuture.completedFuture(true);
                             }
@@ -356,8 +363,10 @@ public class DebugExec extends SubCommand {
                         return true;
                     } catch (IOException e) {
                         e.printStackTrace();
-                        MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                            "/plot debugexec addcmd <file>");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", "/plot debugexec addcmd <file>")
+                        );
                         return false;
                     }
                 case "runasync":
@@ -397,8 +406,10 @@ public class DebugExec extends SubCommand {
                                 break;
                             }
                         default:
-                            Captions.COMMAND_SYNTAX
-                                .send(player, "/plot debugexec list-scripts [#]");
+                            player.sendMessage(
+                                    TranslatableCaption.of("commandconfig.command_syntax"),
+                                    Template.of("value", "/plot debugexec list-scripts [#]")
+                            );
                             return false;
                     }
 
@@ -415,8 +426,10 @@ public class DebugExec extends SubCommand {
                     return true;
                 case "allcmd":
                     if (args.length < 3) {
-                        Captions.COMMAND_SYNTAX
-                            .send(player, "/plot debugexec allcmd <condition> <command>");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", "/plot debugexec allcmd <condition> <command>")
+                        );
                         return false;
                     }
                     long start = System.currentTimeMillis();
@@ -440,7 +453,7 @@ public class DebugExec extends SubCommand {
                         } else {
                             player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
                         }
-                        player.sendMessage("&c> " + (System.currentTimeMillis() - start));
+                        player.sendMessage(StaticCaption.of("&c> " + (System.currentTimeMillis() - start)));
                         return true;
                     }
                     init();
@@ -455,8 +468,10 @@ public class DebugExec extends SubCommand {
                     break;
                 case "all":
                     if (args.length < 3) {
-                        Captions.COMMAND_SYNTAX
-                            .send(player, "/plot debugexec all <condition> <code>");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", "/plot debugexec all <condition> <code>")
+                        );
                         return false;
                     }
                     script =
@@ -469,7 +484,7 @@ public class DebugExec extends SubCommand {
                     script = StringMan.join(args, " ");
             }
             if (!(player instanceof ConsolePlayer)) {
-                MainUtil.sendMessage(player, Captions.NOT_CONSOLE);
+                player.sendMessage(TranslatableCaption.of("console.not_console"));
                 return false;
             }
             init();

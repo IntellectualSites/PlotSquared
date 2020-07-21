@@ -40,6 +40,7 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -50,7 +51,7 @@ import java.util.concurrent.TimeoutException;
 @CommandDeclaration(command = "deny",
     aliases = {"d", "ban"},
     description = "Deny a user from entering a plot",
-    usage = "/plot deny <player|*>",
+    usage = "/plot deny <player | *>",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
@@ -77,31 +78,40 @@ public class Deny extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DENY)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
 
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
-                MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
             } else if (throwable != null || uuids.isEmpty()) {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                player.sendMessage(
+                        TranslatableCaption.of("errors.invalid_player"),
+                        Template.of("value", args[0])
+                );
             } else {
                 for (UUID uuid : uuids) {
                     if (uuid == DBFunc.EVERYONE && !(
                         Permissions.hasPermission(player, Captions.PERMISSION_DENY_EVERYONE) || Permissions
                             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DENY))) {
-                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, PlayerManager.getName(uuid));
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Template.of("value", args[0])
+                        );
                     } else if (plot.isOwner(uuid)) {
-                        MainUtil.sendMessage(player, Captions.CANT_REMOVE_OWNER, PlayerManager.getName(uuid));
+                        player.sendMessage(TranslatableCaption.of("deny.cant_remove_owner"));
                         return;
                     } else if (plot.getDenied().contains(uuid)) {
-                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, PlayerManager.getName(uuid));
+                        player.sendMessage(
+                                TranslatableCaption.of("member.already_added"),
+                                Template.of("player", PlayerManager.getName(uuid))
+                        );
                         return;
                     } else {
                         if (uuid != DBFunc.EVERYONE) {
@@ -123,7 +133,7 @@ public class Deny extends SubCommand {
                         }
                     }
                 }
-                MainUtil.sendMessage(player, Captions.DENIED_ADDED);
+                player.sendMessage(TranslatableCaption.of("deny.denied_added"));
             }
         });
 
@@ -149,12 +159,12 @@ public class Deny extends SubCommand {
         }
         Location location = player.getLocation();
         Location spawn = this.worldUtil.getSpawn(location.getWorldName());
-        MainUtil.sendMessage(player, Captions.YOU_GOT_DENIED);
+        player.sendMessage(TranslatableCaption.of("deny.you_got_denied"));
         if (plot.equals(spawn.getPlot())) {
             Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
-                player.kick(Captions.YOU_GOT_DENIED.getTranslated());
+                player.sendMessage(TranslatableCaption.of("deny.you_got_denied"));
             } else {
                 player.teleport(newSpawn);
             }

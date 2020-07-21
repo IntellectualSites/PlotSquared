@@ -81,19 +81,19 @@ public class Done extends SubCommand {
         boolean force = event.getEventResult() == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DONE)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         if (DoneFlag.isDone(plot)) {
-            MainUtil.sendMessage(player, Captions.DONE_ALREADY_DONE);
+            player.sendMessage(TranslatableCaption.of("done.done_already_done"));
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
         plot.addRunning();
-        MainUtil.sendMessage(player, Captions.GENERATING_LINK);
+        player.sendMessage(TranslatableCaption.of("web.generating_lin"));
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
         if (ExpireManager.IMP == null || doneRequirements == null) {
             finish(plot, player, true);
@@ -111,9 +111,9 @@ public class Done extends SubCommand {
         return true;
     }
 
-    private void finish(Plot plot, PlotPlayer pp, boolean success) {
+    private void finish(Plot plot, PlotPlayer player, boolean success) {
         if (!success) {
-            MainUtil.sendMessage(pp, Captions.DONE_INSUFFICIENT_COMPLEXITY);
+            player.sendMessage(TranslatableCaption.of("done.done_insufficient_complexity"));
             return;
         }
         long flagValue = System.currentTimeMillis() / 1000;
@@ -121,10 +121,10 @@ public class Done extends SubCommand {
             .createFlagInstance(Long.toString(flagValue));
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(pp, Captions.EVENT_DENIED, "Done flag addition");
+            player.sendMessage(TranslatableCaption.of("events.event_denied"));
             return;
         }
         plot.setFlag(plotFlag);
-        MainUtil.sendMessage(pp, Captions.DONE_SUCCESS);
+        player.sendMessage(TranslatableCaption.of("done.done_success"));
     }
 }

@@ -94,7 +94,7 @@ public class Delete extends SubCommand {
             player.getPlotCount(location.getWorldName());
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
-                MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+                player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 return;
             }
             final long start = System.currentTimeMillis();
@@ -105,16 +105,21 @@ public class Delete extends SubCommand {
                     double value = plots.size() * valueExr.evaluate((double) currentPlots);
                     if (value > 0d) {
                         this.econHandler.depositMoney(player, value);
-                        sendMessage(player, Captions.ADDED_BALANCE, String.valueOf(value));
+                        player.sendMessage(
+                                TranslatableCaption.of("economy.added_balance"),
+                                Template.of("money", String.valueOf(value))
+                        );
                     }
                 }
-                MainUtil.sendMessage(player, Captions.DELETING_DONE,
-                    System.currentTimeMillis() - start);
+                player.sendMessage(
+                        TranslatableCaption.of("working.deleting_done"),
+                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start))
+                );
             });
             if (result) {
                 plot.addRunning();
             } else {
-                MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+                player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             }
         };
         if (hasConfirmation(player)) {

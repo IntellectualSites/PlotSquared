@@ -27,10 +27,12 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
+import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "info",
     aliases = "i",
@@ -77,7 +79,7 @@ public class Info extends SubCommand {
             plot = player.getCurrentPlot();
         }
         if (plot == null) {
-            MainUtil.sendMessage(player, Captions.NOT_IN_PLOT.getTranslated());
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
 
@@ -96,7 +98,10 @@ public class Info extends SubCommand {
                 if (argument.equalsIgnoreCase("-f")) {
                     if (!player
                         .hasPermission(Captions.PERMISSION_AREA_INFO_FORCE.getTranslated())) {
-                        Captions.NO_PERMISSION.send(player, Captions.PERMISSION_AREA_INFO_FORCE);
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", Captions.PERMISSION_AREA_INFO_FORCE.getTranslated())
+                        );
                         return true;
                     }
                     allowed = true;
@@ -104,7 +109,7 @@ public class Info extends SubCommand {
                 }
             }
             if (!allowed) {
-                Captions.PLOT_INFO_HIDDEN.send(player);
+                player.sendMessage(TranslatableCaption.of("info.plot_info_hidden"));
                 return true;
             }
         }
@@ -115,8 +120,10 @@ public class Info extends SubCommand {
         boolean trustedEveryone = plot.getMembers().contains(DBFunc.EVERYONE);
         // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
-            MainUtil.sendMessage(player, Captions.PLOT_INFO_UNCLAIMED,
-                plot.getId().getX() + ";" + plot.getId().getY());
+            player.sendMessage(
+                    TranslatableCaption.of("info.plot_info_unclaimed"),
+                    Template.of("plot", plot.getId().getX() + ";" + plot.getId().getY())
+            );
             return true;
         }
         String info = Captions.PLOT_INFO_FORMAT.getTranslated();

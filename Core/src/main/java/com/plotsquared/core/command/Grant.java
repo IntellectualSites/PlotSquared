@@ -29,6 +29,7 @@ import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.Permissions;
@@ -36,6 +37,7 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Map;
 import java.util.UUID;
@@ -74,9 +76,12 @@ public class Grant extends Command {
                 }
                 PlayerManager.getUUIDsFromString(args[1], (uuids, throwable) -> {
                     if (throwable instanceof TimeoutException) {
-                        MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                        player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                     } else if (throwable != null || uuids.size() != 1) {
-                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER);
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Template.of("value", String.valueOf(uuids))
+                        );
                     } else {
                         final UUID uuid = uuids.toArray(new UUID[0])[0];
                         final Consumer<byte[]> result = array -> {
@@ -87,7 +92,10 @@ public class Grant extends Command {
                                 } else {
                                     granted = Ints.fromByteArray(array);
                                 }
-                                Captions.GRANTED_PLOTS.send(player, granted);
+                                player.sendMessage(
+                                        TranslatableCaption.of("grants.granted_plots"),
+                                        Template.of("amount", String.valueOf(granted))
+                                );
                             } else { // add
                                 int amount;
                                 if (array == null) {
