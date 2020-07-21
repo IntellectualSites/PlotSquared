@@ -25,8 +25,15 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.task.TaskManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
 
 /**
  * plot functions
@@ -38,50 +45,80 @@ import org.slf4j.LoggerFactory;
         LoggerFactory.getLogger("P2/" + MainUtil.class.getSimpleName());
 
     /**
-     * Cache of mapping x,y,z coordinates to the chunk array<br>
-     * - Used for efficient world generation<br>
+     * Send a message to the player.
+     *
+     * @param player  Player to receive message
+     * @param message Message to send
+     * @return true Can be used in things such as commands (return PlayerFunctions.sendMessage(...))
      */
-    public static short[][] x_loc;
-    public static short[][] y_loc;
-    public static short[][] z_loc;
-    public static short[][][] CACHE_I = null;
-    public static short[][][] CACHE_J = null;
+    @Deprecated public static boolean sendMessage(PlotPlayer<?> player, String message) {
+        return sendMessage(player, message, true);
+    }
 
     /**
-     * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
+     * Send a message to console.
+     *
+     * @param caption
+     * @param args
      */
-    public static void initCache() {
-        if (x_loc == null) {
-            x_loc = new short[16][4096];
-            y_loc = new short[16][4096];
-            z_loc = new short[16][4096];
-            for (int i = 0; i < 16; i++) {
-                int i4 = i << 4;
-                for (int j = 0; j < 4096; j++) {
-                    int y = i4 + (j >> 8);
-                    int a = j - ((y & 0xF) << 8);
-                    int z1 = a >> 4;
-                    int x1 = a - (z1 << 4);
-                    x_loc[i][j] = (short) x1;
-                    y_loc[i][j] = (short) y;
-                    z_loc[i][j] = (short) z1;
-                }
+    @Deprecated public static void sendConsoleMessage(Captions caption, String... args) {
+        sendMessage(null, caption, args);
+    }
+
+    /**
+     * Send a message to a player.
+     *
+     * @param player Can be null to represent console, or use ConsolePlayer.getConsole()
+     * @param msg
+     * @param prefix If the message should be prefixed with the configured prefix
+     * @return
+     */
+    @Deprecated public static boolean sendMessage(PlotPlayer<?> player, @Nonnull String msg, boolean prefix) {
+        if (!msg.isEmpty()) {
+            if (player == null) {
+                String message = CaptionUtility
+                    .format(null, (prefix ? Captions.PREFIX.getTranslated() : "") + msg);
+                logger.info(message);
+            } else {
+                player.sendMessage(CaptionUtility.format(player,
+                    (prefix ? Captions.PREFIX.getTranslated() : "") + Captions.color(msg)));
             }
         }
-        if (CACHE_I == null) {
-            CACHE_I = new short[256][16][16];
-            CACHE_J = new short[256][16][16];
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    for (int y = 0; y < 256; y++) {
-                        short i = (short) (y >> 4);
-                        short j = (short) ((y & 0xF) << 8 | z << 4 | x);
-                        CACHE_I[y][x][z] = i;
-                        CACHE_J[y][x][z] = j;
-                    }
-                }
-            }
+        return true;
+    }
+
+    /**
+     * Send a message to the player.
+     *
+     * @param player  the recipient of the message
+     * @param caption the message to send
+     * @return boolean success
+     */
+    @Deprecated public static boolean sendMessage(PlotPlayer<?> player, Caption caption, String... args) {
+        return sendMessage(player, caption, (Object[]) args);
+    }
+
+    /**
+     * Send a message to the player
+     *
+     * @param player  the recipient of the message
+     * @param caption the message to send
+     * @return boolean success
+     */
+    @Deprecated public static boolean sendMessage(final PlotPlayer<?> player, final Caption caption,
+        final Object... args) {
+        if (caption.getTranslated().isEmpty()) {
+            return true;
         }
+        TaskManager.runTaskAsync(() -> {
+            String m = CaptionUtility.format(player, caption, args);
+            if (player == null) {
+                logger.info(m);
+            } else {
+                player.sendMessage(m);
+            }
+        });
+        return true;
     }
 
 }

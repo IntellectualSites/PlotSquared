@@ -36,7 +36,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
 import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.MainUtil;
 import com.sk89q.worldedit.math.BlockVector2;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
@@ -73,7 +72,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
         this.populators = new ArrayList<>();
         this.populators.add(new BlockStatePopulator(this.plotGenerator, this.plotAreaManager));
         this.full = true;
-        MainUtil.initCache();
     }
 
     public BukkitPlotGenerator(final String world, final ChunkGenerator cg, @Nonnull final PlotAreaManager plotAreaManager) {
@@ -86,7 +84,6 @@ public class BukkitPlotGenerator extends ChunkGenerator
         this.full = false;
         this.platformGenerator = cg;
         this.plotGenerator = new DelegatePlotGenerator(cg, world);
-        MainUtil.initCache();
     }
 
     @Override public void augment(PlotArea area) {
