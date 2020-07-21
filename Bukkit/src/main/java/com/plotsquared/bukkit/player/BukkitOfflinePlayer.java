@@ -25,6 +25,9 @@
  */
 package com.plotsquared.bukkit.player;
 
+import com.plotsquared.core.permissions.NullPermissionProfile;
+import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.permissions.PermissionProfile;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import org.bukkit.OfflinePlayer;
 import javax.annotation.Nonnull;
@@ -34,6 +37,7 @@ import java.util.UUID;
 public class BukkitOfflinePlayer implements OfflinePlotPlayer {
 
     public final OfflinePlayer player;
+    private final PermissionProfile permissionProfile;
 
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
@@ -41,8 +45,11 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
      *
      * @param player
      */
-    public BukkitOfflinePlayer(OfflinePlayer player) {
+    public BukkitOfflinePlayer(@Nonnull final OfflinePlayer player, @Nonnull final
+        PermissionHandler permissionHandler) {
         this.player = player;
+        this.permissionProfile = permissionHandler.getPermissionProfile(this)
+            .orElse(NullPermissionProfile.INSTANCE);
     }
 
     @Nonnull @Override public UUID getUUID() {
@@ -60,4 +67,9 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
     @Override public String getName() {
         return this.player.getName();
     }
+
+    @Override public boolean hasPermission(@Nonnull final String permission) {
+        return this.permissionProfile.hasPermission(permission);
+    }
+
 }

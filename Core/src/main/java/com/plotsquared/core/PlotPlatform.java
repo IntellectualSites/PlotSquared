@@ -33,6 +33,7 @@ import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.annotations.DefaultGenerator;
 import com.plotsquared.core.location.World;
+import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.ChatManager;
@@ -264,6 +265,15 @@ public interface PlotPlatform<P> extends ILogger {
      */
     @Nonnull default ChunkManager getChunkManager() {
         return getInjector().getInstance(ChunkManager.class);
+    }
+
+    /**
+     * Get the {@link PermissionHandler} implementation for the platform
+     *
+     * @return Permission handler
+     */
+    @Nonnull default PermissionHandler getPermissionHandler() {
+        return getInjector().getInstance(PermissionHandler.class);
     }
 
 }

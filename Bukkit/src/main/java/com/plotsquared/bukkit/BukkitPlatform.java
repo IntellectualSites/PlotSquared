@@ -34,6 +34,7 @@ import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.inject.BackupModule;
 import com.plotsquared.bukkit.inject.BukkitModule;
+import com.plotsquared.bukkit.inject.PermissionModule;
 import com.plotsquared.bukkit.inject.WorldManagerModule;
 import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
@@ -248,8 +249,11 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
         // We create the injector after PlotSquared has been initialized, so that we have access
         // to generated instances and settings
-        this.injector = Guice.createInjector(Stage.PRODUCTION, new WorldManagerModule(), new PlotSquaredModule(),
-            new BukkitModule(this), new BackupModule());
+        this.injector = Guice.createInjector(Stage.PRODUCTION, new PermissionModule(),
+            new WorldManagerModule(),
+            new PlotSquaredModule(),
+            new BukkitModule(this),
+            new BackupModule());
         this.injector.injectMembers(this);
 
         if (PremiumVerification.isPremium() && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {

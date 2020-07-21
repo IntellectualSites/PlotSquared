@@ -35,6 +35,9 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.NullPermissionProfile;
+import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.permissions.PermissionProfile;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
@@ -54,11 +57,11 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
@@ -95,11 +98,15 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
+    private final PermissionProfile permissionProfile;
 
-    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler) {
+    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler,
+        @Nonnull final PermissionHandler permissionHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
+        this.permissionProfile = permissionHandler.getPermissionProfile(this).orElse(
+            NullPermissionProfile.INSTANCE);
     }
 
     public static <T> PlotPlayer<T> from(@Nonnull final T object) {
@@ -145,6 +152,10 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     public static PlotPlayer<?> wrap(Object player) {
         return PlotSquared.platform().wrapPlayer(player);
+    }
+
+    @Override public final boolean hasPermission(@Nonnull final String permission) {
+        return this.permissionProfile.hasPermission(permission);
     }
 
     public abstract Actor toActor();
