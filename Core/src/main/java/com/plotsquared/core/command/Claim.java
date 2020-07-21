@@ -96,27 +96,33 @@ public class Claim extends SubCommand {
                 grants = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
                 if (grants <= 0) {
                     player.removePersistentMeta("grantedPlots");
-                    return sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
                 }
             } else {
-                return sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
             }
         }
         if (!plot.canClaim(player)) {
-            return sendMessage(player, Captions.PLOT_IS_CLAIMED);
+            player.sendMessage(TranslatableCaption.of("working.plot_is_claimed"));
         }
         final PlotArea area = plot.getArea();
         if (schematic != null && !schematic.isEmpty()) {
             if (area.isSchematicClaimSpecify()) {
                 if (!area.hasSchematic(schematic)) {
-                    return sendMessage(player, Captions.SCHEMATIC_INVALID,
-                        "non-existent: " + schematic);
+                    player.sendMessage(
+                            TranslatableCaption.of("schematics.schematic_invalid_named"),
+                            Template.of("schemname", schematic),
+                            Template.of("reason", "non-existant")
+                    );
                 }
                 if (!Permissions.hasPermission(player, CaptionUtility
                     .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                     && !Permissions
                     .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC) && !force) {
-                    return sendMessage(player, Captions.NO_SCHEMATIC_PERMISSION, schematic);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_schematic_permission"),
+                            Template.of("value", schematic)
+                    );
                 }
             }
         }
@@ -125,10 +131,16 @@ public class Claim extends SubCommand {
             double cost = costExr.evaluate((double) currentPlots);
             if (cost > 0d) {
                 if (this.econHandler.getMoney(player) < cost) {
-                    return sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
+                    player.sendMessage(
+                            TranslatableCaption.of("economy.cannot_afford_plot"),
+                            Template.of("money", String.valueOf(cost))
+                    );
                 }
                 this.econHandler.withdrawMoney(player, cost);
-                sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
+                player.sendMessage(
+                        TranslatableCaption.of("economy.removed_balance"),
+                        Template.of("money", String.valueOf(cost))
+                );
             }
         }
         if (grants > 0) {
@@ -137,7 +149,11 @@ public class Claim extends SubCommand {
             } else {
                 player.setPersistentMeta("grantedPlots", Ints.toByteArray(grants - 1));
             }
-            sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "1", (grants - 1));
+            player.sendMessage(
+                    TranslatableCaption.of("economy.removed_granted_plot"),
+                    Template.of("usedGrants", String.valueOf((grants -1))),
+                    Template.of("remainingGrants", String.valueOf(grants))
+            );
         }
         int border = area.getBorder();
         if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {
@@ -151,7 +167,7 @@ public class Claim extends SubCommand {
                     if (!plot.claim(player, true, finalSchematic, false)) {
                         logger.info(Captions.PREFIX.getTranslated() + String
                             .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
-                        sendMessage(player, Captions.PLOT_NOT_CLAIMED);
+                        player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                         plot.setOwnerAbs(null);
                     } else if (area.isAutoMerge()) {
                         PlotMergeEvent mergeEvent = Claim.this.eventDispatcher
@@ -173,7 +189,7 @@ public class Claim extends SubCommand {
             logger.info(Captions.PREFIX.getTranslated() + String
                 .format("Failed to add plot %s to the database",
                     plot.getId().toCommaSeparatedString()));
-            sendMessage(player, Captions.PLOT_NOT_CLAIMED);
+            player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             plot.setOwnerAbs(null);
         });
         return true;

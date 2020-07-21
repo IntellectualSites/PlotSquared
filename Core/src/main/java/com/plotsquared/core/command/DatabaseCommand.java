@@ -27,6 +27,8 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.database.Database;
@@ -45,6 +47,8 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
+import sun.net.TransferProtocolClient;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -84,14 +88,13 @@ public class DatabaseCommand extends SubCommand {
         TaskManager.runTaskAsync(() -> {
             try {
                 ArrayList<Plot> ps = new ArrayList<>(plots);
-                MainUtil.sendMessage(player, "&6Starting...");
+                player.sendMessage(TranslatableCaption.of("database.starting_conversion"));
                 manager.createPlotsAndData(ps, () -> {
-                    MainUtil.sendMessage(player, "&6Database conversion finished!");
+                    player.sendMessage(TranslatableCaption.of("database.conversion_done"));
                     manager.close();
                 });
             } catch (Exception e) {
-                MainUtil
-                    .sendMessage(player, "Failed to insert plot objects, see stacktrace for info");
+                player.sendMessage(TranslatableCaption.of("database.conversion_failed"));
                 e.printStackTrace();
             }
         });
@@ -99,7 +102,10 @@ public class DatabaseCommand extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
-            sendUsage(player);
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot database [area] <sqlite|mysql|import>")
+            );
             return false;
         }
         List<Plot> plots;
@@ -111,8 +117,11 @@ public class DatabaseCommand extends SubCommand {
             plots = PlotSquared.get().sortPlotsByTemp(PlotQuery.newQuery().allPlots().asList());
         }
         if (args.length < 1) {
-            sendUsage(player);
-            MainUtil.sendMessage(player, "[arg] indicates an optional argument");
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot database [area] <sqlite|mysql|import>")
+            );
+            player.sendMessage(TranslatableCaption.of("database.arg"));
             return false;
         }
         try {
@@ -121,17 +130,22 @@ public class DatabaseCommand extends SubCommand {
             switch (args[0].toLowerCase()) {
                 case "import":
                     if (args.length < 2) {
-                        MainUtil
-                            .sendMessage(player, "/plot database import <sqlite file> [prefix]");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", "/plot database import <sqlite file> [prefix]")
+                        );
                         return false;
                     }
                     File file = FileUtils.getFile(PlotSquared.platform().getDirectory(),
                         args[1].endsWith(".db") ? args[1] : args[1] + ".db");
                     if (!file.exists()) {
-                        MainUtil.sendMessage(player, "&6Database does not exist: " + file);
+                        player.sendMessage(
+                                TranslatableCaption.of("database.does_not_exist"),
+                                Template.of("value", String.valueOf(file))
+                        );
                         return false;
                     }
-                    MainUtil.sendMessage(player, "&6Starting...");
+                    player.sendMessage(TranslatableCaption.of("database.starting_conversion"));
                     implementation = new SQLite(file);
                     SQLManager manager = new SQLManager(implementation, args.length == 3 ? args[2] : "",
                         this.eventDispatcher, this.plotListener, this.worldConfiguration);
@@ -164,8 +178,7 @@ public class DatabaseCommand extends SubCommand {
                                             continue;
                                         }
                                     }
-                                    MainUtil.sendMessage(player,
-                                        "Skipping duplicate plot: " + plot + " | id=" + plot.temp);
+                                    player.sendMessage(StaticCaption.of("Skipping duplicate plot: " + plot + " | id=" + plot.temp));
                                     continue;
                                 }
                                 plot.setArea(pa);
@@ -178,12 +191,11 @@ public class DatabaseCommand extends SubCommand {
                         }
                     }
                     DBFunc.createPlotsAndData(plots,
-                        () -> MainUtil.sendMessage(player, "&6Database conversion finished!"));
+                        () -> player.sendMessage(TranslatableCaption.of("database.conversion_done")));
                     return true;
                 case "mysql":
                     if (args.length < 6) {
-                        return MainUtil.sendMessage(player,
-                            "/plot database mysql [host] [port] [username] [password] [database] {prefix}");
+                        player.sendMessage(StaticCaption.of("/plot database mysql [host] [port] [username] [password] [database] {prefix}"));
                     }
                     String host = args[1];
                     String port = args[2];
@@ -197,36 +209,33 @@ public class DatabaseCommand extends SubCommand {
                     break;
                 case "sqlite":
                     if (args.length < 2) {
-                        return MainUtil.sendMessage(player, "/plot database sqlite [file]");
+                        player.sendMessage(StaticCaption.of("/plot database sqlite [file]"));
                     }
                     File sqliteFile =
                         FileUtils.getFile(PlotSquared.platform().getDirectory(), args[1] + ".db");
                     implementation = new SQLite(sqliteFile);
                     break;
                 default:
-                    return MainUtil.sendMessage(player, "/plot database [sqlite/mysql]");
+                    player.sendMessage(StaticCaption.of("/plot database [sqlite/mysql]"));
             }
             try {
                 SQLManager manager = new SQLManager(implementation, prefix, this.eventDispatcher, this.plotListener, this.worldConfiguration);
                 DatabaseCommand.insertPlots(manager, plots, player);
                 return true;
             } catch (ClassNotFoundException | SQLException e) {
-                MainUtil.sendMessage(player, "$1Failed to save plots, read stacktrace for info");
-                MainUtil.sendMessage(player,
-                    "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
+                player.sendMessage(TranslatableCaption.of("database.failed_to_save_plots"));
+                player.sendMessage(StaticCaption.of(("=== Begin of stacktrace. ===")));
                 e.printStackTrace();
-                MainUtil.sendMessage(player, "&d==== End of stacktrace ====");
-                MainUtil
-                    .sendMessage(player, "$1Please make sure you are using the correct arguments!");
+                player.sendMessage(StaticCaption.of(("=== End of stacktrace. ===")));
+                player.sendMessage(TranslatableCaption.of("database.invalid_args"));
                 return false;
             }
         } catch (ClassNotFoundException | SQLException e) {
-            MainUtil.sendMessage(player, "$1Failed to open connection, read stacktrace for info");
-            MainUtil.sendMessage(player,
-                "&d==== Here is an ugly stacktrace, if you are interested in those things ===");
+            player.sendMessage(TranslatableCaption.of("database.failed_to_open"));
+            player.sendMessage(StaticCaption.of(("=== Begin of stacktrace. ===")));
             e.printStackTrace();
-            MainUtil.sendMessage(player, "&d==== End of stacktrace ====");
-            MainUtil.sendMessage(player, "$1Please make sure you are using the correct arguments!");
+            player.sendMessage(StaticCaption.of(("=== End of stacktrace. ===")));
+            player.sendMessage(TranslatableCaption.of("database.invalid_args"));
             return false;
         }
     }

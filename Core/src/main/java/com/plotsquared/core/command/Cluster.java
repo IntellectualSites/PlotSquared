@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.BlockLoc;
@@ -39,6 +40,8 @@ import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -58,7 +61,7 @@ public class Cluster extends SubCommand {
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
         if (args.length == 0) {
             // return arguments
-            MainUtil.sendMessage(player, Captions.CLUSTER_AVAILABLE_ARGS);
+            player.sendMessage(TranslatableCaption.of("cluster.cluster_available_args"));
             return false;
         }
         String sub = args[0].toLowerCase();
@@ -66,33 +69,52 @@ public class Cluster extends SubCommand {
             case "l":
             case "list": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_LIST)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_LIST);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_LIST.getTranslated())
+                    );
                     return false;
                 }
                 if (args.length != 1) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot cluster list");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster list")
+                    );
                     return false;
                 }
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                     return false;
                 }
                 Set<PlotCluster> clusters = area.getClusters();
-                MainUtil.sendMessage(player, Captions.CLUSTER_LIST_HEADING, clusters.size() + "");
+                player.sendMessage(
+                        TranslatableCaption.of("cluster.cluster_list_heading"),
+                        Template.of("amount", clusters.size() + "")
+                );
                 for (PlotCluster cluster : clusters) {
                     // Ignore unmanaged clusters
                     String name = "'" + cluster.getName() + "' : " + cluster.toString();
                     if (player.getUUID().equals(cluster.owner)) {
-                        MainUtil.sendMessage(player, Captions.CLUSTER_LIST_ELEMENT, "&a" + name);
+                        player.sendMessage(
+                                TranslatableCaption.of("cluster.cluster_list_element_owner"),
+                                Template.of("cluster", name)
+                        );
                     } else if (cluster.helpers.contains(player.getUUID())) {
-                        MainUtil.sendMessage(player, Captions.CLUSTER_LIST_ELEMENT, "&3" + name);
+                        player.sendMessage(
+                                TranslatableCaption.of("cluster.cluster_list_element_helpers"),
+                                Template.of("cluster", name)
+                        );
                     } else if (cluster.invited.contains(player.getUUID())) {
-                        MainUtil.sendMessage(player, Captions.CLUSTER_LIST_ELEMENT, "&9" + name);
+                        player.sendMessage(
+                                TranslatableCaption.of("cluster.cluster_list_element_invited"),
+                                Template.of("cluster", name)
+                        );
                     } else {
-                        MainUtil
-                            .sendMessage(player, Captions.CLUSTER_LIST_ELEMENT, cluster.toString());
+                        player.sendMessage(
+                                TranslatableCaption.of("cluster.cluster_list_element"),
+                                Template.of("cluster", cluster.toString())
+                        );
                     }
                 }
                 return true;
@@ -100,25 +122,29 @@ public class Cluster extends SubCommand {
             case "c":
             case "create": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_CREATE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_CREATE);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_CREATE.getTranslated())
+                    );
                     return false;
                 }
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                     return false;
                 }
                 if (args.length != 4) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot cluster create <name> <id-bot> <id-top>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster create <name> <id-bot> <id-top>")
+                    );
                     return false;
                 }
                 int currentClusters = Settings.Limit.GLOBAL ?
                     player.getClusterCount() :
                     player.getPlotCount(player.getLocation().getWorldName());
                 if (currentClusters >= player.getAllowedPlots()) {
-                    return sendMessage(player, Captions.CANT_CLAIM_MORE_CLUSTERS);
+                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_clusters"));
                 }
                 PlotId pos1;
                 PlotId pos2;
@@ -127,13 +153,13 @@ public class Cluster extends SubCommand {
                     pos1 = PlotId.fromString(args[2]);
                     pos2 = PlotId.fromString(args[3]);
                 } catch (IllegalArgumentException ignored) {
-                    MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
+                    player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
                     return false;
                 }
                 // check if name is taken
                 String name = args[1];
                 if (area.getCluster(name) != null) {
-                    MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
+                    player.sendMessage(TranslatableCaption.of("alias.alias_is_taken"));
                     return false;
                 }
                 if (pos2.getX() < pos1.getX() || pos2.getY() < pos1.getY()) {
@@ -144,12 +170,18 @@ public class Cluster extends SubCommand {
                 //check if overlap
                 PlotCluster cluster = area.getFirstIntersectingCluster(pos1, pos2);
                 if (cluster != null) {
-                    MainUtil.sendMessage(player, Captions.CLUSTER_INTERSECTION, cluster.getName());
+                    player.sendMessage(
+                            TranslatableCaption.of("cluster.cluster_intersection"),
+                            Template.of("cluster", cluster.getName())
+                    );
                     return false;
                 }
                 // Check if it occupies existing plots
                 if (!area.contains(pos1) || !area.contains(pos2)) {
-                    Captions.CLUSTER_OUTSIDE.send(player, area);
+                    player.sendMessage(
+                            TranslatableCaption.of("cluster.cluster_outside"),
+                            Template.of("area", area)
+                    );
                     return false;
                 }
                 Set<Plot> plots = area.getPlotSelectionOwned(pos1, pos2);
@@ -159,8 +191,10 @@ public class Cluster extends SubCommand {
                         UUID uuid = player.getUUID();
                         for (Plot plot : plots) {
                             if (!plot.isOwner(uuid)) {
-                                MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                                    Captions.PERMISSION_CLUSTER_CREATE_OTHER);
+                                player.sendMessage(
+                                        TranslatableCaption.of("permission.no_permission"),
+                                        Template.of("node", Captions.PERMISSION_CLUSTER_CREATE_OTHER.getTranslated())
+                                );
                                 return false;
                             }
                         }
@@ -178,8 +212,10 @@ public class Cluster extends SubCommand {
                     .hasPermissionRange(player, Captions.PERMISSION_CLUSTER_SIZE,
                         Settings.Limit.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_SIZE + "." + (current + cluster.getArea()));
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_SIZE.getTranslated() + "." + (current + cluster.getArea()))
+                    );
                     return false;
                 }
                 // create cluster
@@ -195,63 +231,74 @@ public class Cluster extends SubCommand {
                         }
                     }
                 }
-                MainUtil.sendMessage(player, Captions.CLUSTER_ADDED);
+                player.sendMessage(TranslatableCaption.of("cluster.cluster_added"));
                 return true;
             }
             case "disband":
             case "del":
             case "delete": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_DELETE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_DELETE);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_DELETE.getTranslated())
+                    );
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot cluster delete [name]");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster delete [name]")
+                    );
                     return false;
                 }
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                     return false;
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
                     cluster = area.getCluster(args[1]);
                     if (cluster == null) {
-                        MainUtil.sendMessage(player, Captions.INVALID_CLUSTER, args[1]);
+                        player.sendMessage(
+                                TranslatableCaption.of("cluster.invalid_cluster_name"),
+                                Template.of("cluster", args[1])
+                        );
                         return false;
                     }
                 } else {
                     cluster = area.getCluster(player.getLocation());
                     if (cluster == null) {
-                        MainUtil.sendMessage(player, Captions.NOT_IN_CLUSTER);
+                        player.sendMessage(TranslatableCaption.of("cluster.not_in_cluster"));
                         return false;
                     }
                 }
                 if (!cluster.owner.equals(player.getUUID())) {
                     if (!Permissions
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_DELETE_OTHER)) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_CLUSTER_DELETE_OTHER);
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", Captions.PERMISSION_CLUSTER_DELETE_OTHER.getTranslated()));
                         return false;
                     }
                 }
                 DBFunc.delete(cluster);
-                MainUtil.sendMessage(player, Captions.CLUSTER_DELETED);
+                player.sendMessage(TranslatableCaption.of("cluster.cluster_deleted"));
                 return true;
             }
             case "res":
             case "resize": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_RESIZE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_RESIZE);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_RESIZE.getTranslated()));
                     return false;
                 }
                 if (args.length != 3) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot cluster resize <pos1> <pos2>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster delete [name]")
+                    );
                     return false;
                 }
                 PlotId pos1;
@@ -261,7 +308,7 @@ public class Cluster extends SubCommand {
                     pos1 = PlotId.fromString(args[2]);
                     pos2 = PlotId.fromString(args[3]);
                 } catch (IllegalArgumentException ignored) {
-                    MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
+                    player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
                     return false;
                 }
                 if (pos2.getX() < pos1.getX() || pos2.getY() < pos1.getY()) {
@@ -271,27 +318,30 @@ public class Cluster extends SubCommand {
                 // check if in cluster
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                     return false;
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {
-                    MainUtil.sendMessage(player, Captions.NOT_IN_CLUSTER);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_pcluster"));
                     return false;
                 }
                 if (!cluster.hasHelperRights(player.getUUID())) {
                     if (!Permissions
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_RESIZE_OTHER)) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_CLUSTER_RESIZE_OTHER);
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission")
+                                Template.of("node", Captions.PERMISSION_CLUSTER_RESIZE_OTHER.getTranslated()));
                         return false;
                     }
                 }
                 //check if overlap
                 PlotCluster intersect = area.getFirstIntersectingCluster(pos1, pos2);
                 if (intersect != null) {
-                    MainUtil
-                        .sendMessage(player, Captions.CLUSTER_INTERSECTION, intersect.getName());
+                    player.sendMessage(
+                            TranslatableCaption.of("cluster.cluster_intersection"),
+                            Template.of("cluster", intersect.getName())
+                    );
                     return false;
                 }
                 Set<Plot> existing = area.getPlotSelectionOwned(cluster.getP1(), cluster.getP2());
@@ -304,8 +354,10 @@ public class Cluster extends SubCommand {
                 if (!removed.isEmpty()) {
                     if (!Permissions
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_RESIZE_SHRINK)) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_CLUSTER_RESIZE_SHRINK);
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", Captions.PERMISSION_CLUSTER_RESIZE_SHRINK.getTranslated())
+                        );
                         return false;
                     }
                 }
@@ -313,8 +365,10 @@ public class Cluster extends SubCommand {
                 if (!newPlots.isEmpty()) {
                     if (!Permissions
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_RESIZE_EXPAND)) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_CLUSTER_RESIZE_EXPAND);
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", Captions.PERMISSION_CLUSTER_RESIZE_EXPAND.getTranslated())
+                        );
                         return false;
                     }
                 }
@@ -329,44 +383,52 @@ public class Cluster extends SubCommand {
                 int allowed = Permissions.hasPermissionRange(player, Captions.PERMISSION_CLUSTER,
                     Settings.Limit.MAX_PLOTS);
                 if (current + cluster.getArea() > allowed) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER.getTranslated() + "." + (current + cluster
-                            .getArea()));
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER.getTranslated() + "." + (current + cluster
+                                    .getArea()))
+                    );
                     return false;
                 }
                 // resize cluster
                 DBFunc.resizeCluster(cluster, pos1, pos2);
-                MainUtil.sendMessage(player, Captions.CLUSTER_RESIZED);
+                player.sendMessage(TranslatableCaption.of("cluster.clister_resized"));
                 return true;
             }
             case "add":
             case "inv":
             case "invite": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_INVITE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_INVITE);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_INVITE.getTranslated())
+                    );
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot cluster invite <player>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster invite <player>")
+                    );
                     return false;
                 }
                 // check if in cluster
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {
-                    MainUtil.sendMessage(player, Captions.NOT_IN_CLUSTER);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_cluster"));
                     return false;
                 }
                 if (!cluster.hasHelperRights(player.getUUID())) {
                     if (!Permissions
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_INVITE_OTHER)) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_CLUSTER_INVITE_OTHER);
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", Captions.PERMISSION_CLUSTER_INVITE_OTHER.getTranslated())
+                        );
                         return false;
                     }
                 }
@@ -374,23 +436,27 @@ public class Cluster extends SubCommand {
                 PlotSquared.get().getImpromptuUUIDPipeline()
                     .getSingle(args[1], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
-                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                         } else if (throwable != null) {
-                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[1]);
+                            player.sendMessage(
+                                    TranslatableCaption.of("errors.invalid_player"),
+                                    Template.of("value", args[1])
+                            );
                         } else {
                             if (!cluster.isAdded(uuid)) {
                                 // add the user if not added
                                 cluster.invited.add(uuid);
                                 DBFunc.setInvited(cluster, uuid);
-
                                 final PlotPlayer otherPlayer =
                                     PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                                 if (otherPlayer != null) {
-                                    MainUtil.sendMessage(otherPlayer, Captions.CLUSTER_INVITED,
-                                        cluster.getName());
+                                    player.sendMessage(
+                                            TranslatableCaption.of("cluster.cluster_invited"),
+                                            Template.of("cluster", cluster.getName())
+                                    );
                                 }
                             }
-                            MainUtil.sendMessage(player, Captions.CLUSTER_ADDED_USER);
+                            player.sendMessage(TranslatableCaption.of("cluster.cluster_added_user"));
                         }
                     });
                 return true;
@@ -399,29 +465,35 @@ public class Cluster extends SubCommand {
             case "remove":
             case "kick": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_KICK)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_KICK);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_KICK.getTranslated())
+                    );
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot cluster kick <player>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster kick <player>")
+                    );
                     return false;
                 }
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {
-                    MainUtil.sendMessage(player, Captions.NOT_IN_CLUSTER);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_cluster"));
                     return false;
                 }
                 if (!cluster.hasHelperRights(player.getUUID())) {
                     if (!Permissions
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_KICK_OTHER)) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_CLUSTER_KICK_OTHER);
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", Captions.PERMISSION_CLUSTER_KICK_OTHER.getTranslated())
+                        );
                         return false;
                     }
                 }
@@ -429,15 +501,20 @@ public class Cluster extends SubCommand {
                 PlotSquared.get().getImpromptuUUIDPipeline()
                     .getSingle(args[1], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
-                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                         } else if (throwable != null) {
-                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[1]);
+                            player.sendMessage(
+                                    TranslatableCaption.of("errors.invalid_player"),
+                                    Template.of("value", args[1])
+                            );
                         } else {
                             // Can't kick if the player is yourself, the owner, or not added to the cluster
                             if (uuid.equals(player.getUUID()) || uuid.equals(cluster.owner)
                                 || !cluster.isAdded(uuid)) {
-                                MainUtil.sendMessage(player, Captions.CANNOT_KICK_PLAYER,
-                                    cluster.getName());
+                                player.sendMessage(
+                                        TranslatableCaption.of("cluster.cannot_kick_player"),
+                                        Template.of("value", cluster.getName())
+                                );
                             } else {
                                 if (cluster.helpers.contains(uuid)) {
                                     cluster.helpers.remove(uuid);
@@ -449,8 +526,10 @@ public class Cluster extends SubCommand {
                                 final PlotPlayer player2 =
                                     PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                                 if (player2 != null) {
-                                    MainUtil.sendMessage(player2, Captions.CLUSTER_REMOVED,
-                                        cluster.getName());
+                                    player.sendMessage(
+                                            TranslatableCaption.of("cluster.cluster_removed"),
+                                            Template.of("cluster", cluster.getName())
+                                    );
                                 }
                                 for (final Plot plot : PlotQuery.newQuery().inWorld(player2.getLocation()
                                     .getWorldName()).ownedBy(uuid)) {
@@ -459,7 +538,7 @@ public class Cluster extends SubCommand {
                                         plot.unclaim();
                                     }
                                 }
-                                MainUtil.sendMessage(player2, Captions.CLUSTER_KICKED_USER);
+                                player.sendMessage(TranslatableCaption.of("cluster.cluster_kicked_user"));
                             }
                         }
                     });
@@ -468,40 +547,47 @@ public class Cluster extends SubCommand {
             case "quit":
             case "leave": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_LEAVE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_LEAVE);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_LEAVE.getTranslated())
+                    );
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
-                    MainUtil
-                        .sendMessage(player, Captions.COMMAND_SYNTAX, "/plot cluster leave [name]");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster leave [name]")
+                    );
                     return false;
                 }
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
                     cluster = area.getCluster(args[1]);
                     if (cluster == null) {
-                        MainUtil.sendMessage(player, Captions.INVALID_CLUSTER, args[1]);
+                        player.sendMessage(
+                                TranslatableCaption.of("cluster.invalid_cluster_name"),
+                                Template.of("cluster", args[1])
+                        );
                         return false;
                     }
                 } else {
                     cluster = area.getCluster(player.getLocation());
                     if (cluster == null) {
-                        MainUtil.sendMessage(player, Captions.NOT_IN_CLUSTER);
+                        player.sendMessage(TranslatableCaption.of("errors.not_in_cluster"));
                         return false;
                     }
                 }
                 UUID uuid = player.getUUID();
                 if (!cluster.isAdded(uuid)) {
-                    MainUtil.sendMessage(player, Captions.CLUSTER_NOT_ADDED);
+                    player.sendMessage(TranslatableCaption.of("cluster.cluster_not_added"));
                     return false;
                 }
                 if (uuid.equals(cluster.owner)) {
-                    MainUtil.sendMessage(player, Captions.CLUSTER_CANNOT_LEAVE);
+                    player.sendMessage(TranslatableCaption.of("cluster.cluster_cannot_leave"));
                     return false;
                 }
                 if (cluster.helpers.contains(uuid)) {
@@ -510,7 +596,10 @@ public class Cluster extends SubCommand {
                 }
                 cluster.invited.remove(uuid);
                 DBFunc.removeInvited(cluster, uuid);
-                MainUtil.sendMessage(player, Captions.CLUSTER_REMOVED, cluster.getName());
+                player.sendMessage(
+                        TranslatableCaption.of("cluster.cluster_removed"),
+                        Template.of("cluster", cluster.getName())
+                );
                 for (final Plot plot : PlotQuery.newQuery().inWorld(player.getLocation().getWorldName())
                     .ownedBy(uuid)) {
                     PlotCluster current = plot.getCluster();
@@ -525,43 +614,52 @@ public class Cluster extends SubCommand {
             case "helper":
             case "helpers": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_HELPERS)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_HELPERS);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_HELPERS.getTranslated())
+                    );
                     return false;
                 }
                 if (args.length != 3) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot cluster helpers <add|remove> <player>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster helpers <add | remove> <player>")
+                    );
                     return false;
                 }
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {
-                    MainUtil.sendMessage(player, Captions.NOT_IN_CLUSTER);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_cluster"));
                     return false;
                 }
 
                 PlotSquared.get().getImpromptuUUIDPipeline()
                     .getSingle(args[2], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
-                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                         } else if (throwable != null) {
-                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[2]);
+                            player.sendMessage(
+                                    TranslatableCaption.of("errors.invalid_player"),
+                                    Template.of("value", args[2])
+                            );
                         } else {
                             if (args[1].equalsIgnoreCase("add")) {
                                 cluster.helpers.add(uuid);
                                 DBFunc.setHelper(cluster, uuid);
-                                MainUtil.sendMessage(player, Captions.CLUSTER_ADDED_HELPER);
+                                player.sendMessage(TranslatableCaption.of("cluster.cluster_added_helper"));
                             } else if (args[1].equalsIgnoreCase("remove")) {
                                 cluster.helpers.remove(uuid);
                                 DBFunc.removeHelper(cluster, uuid);
-                                MainUtil.sendMessage(player, Captions.CLUSTER_REMOVED_HELPER);
+                                player.sendMessage(TranslatableCaption.of("cluster.cluster_removed_helper"));
                             } else {
-                                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                                    "/plot cluster helpers <add|remove> <player>");
+                                player.sendMessage(
+                                        TranslatableCaption.of("commandconfig.command_syntax"),
+                                        Template.of("value", "/plot cluster helpers <add | remove> <player>")
+                                );
                             }
                         }
                     });
@@ -571,65 +669,77 @@ public class Cluster extends SubCommand {
             case "home":
             case "tp": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_TP)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_TP);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_TP.getTranslated())
+                    );
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil
-                        .sendMessage(player, Captions.COMMAND_SYNTAX, "/plot cluster tp <name>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster tp <name>")
+                    );
                     return false;
                 }
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                     return false;
                 }
                 PlotCluster cluster = area.getCluster(args[1]);
                 if (cluster == null) {
-                    MainUtil.sendMessage(player, Captions.INVALID_CLUSTER, args[1]);
+                    player.sendMessage(
+                            TranslatableCaption.of("cluster.invalid_cluster"),
+                            Template.of("cluster", args[1])
+                    );
                     return false;
                 }
                 UUID uuid = player.getUUID();
                 if (!cluster.isAdded(uuid)) {
                     if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_TP_OTHER)) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_CLUSTER_TP_OTHER);
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", Captions.PERMISSION_CLUSTER_TP_OTHER.getTranslated())
+                        );
                         return false;
                     }
                 }
                 cluster.getHome(home -> player.teleport(home, TeleportCause.COMMAND));
-                return MainUtil.sendMessage(player, Captions.CLUSTER_TELEPORTING);
+                player.sendMessage(TranslatableCaption.of("cluster.cluster_teleporting"));
             }
             case "i":
             case "info":
             case "show":
             case "information": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_INFO)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_INFO);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_TP.getTranslated())
+                    );
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
-                    MainUtil
-                        .sendMessage(player, Captions.COMMAND_SYNTAX, "/plot cluster info [name]");
-                    return false;
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster info [name]")
+                    );
                 }
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
                     cluster = area.getCluster(args[1]);
-                    if (cluster == null) {
-                        MainUtil.sendMessage(player, Captions.INVALID_CLUSTER, args[1]);
-                        return false;
-                    }
+                    player.sendMessage(
+                            TranslatableCaption.of("cluster.invalid_cluster"),
+                            Template.of("cluster", args[1])
+                    );
                 } else {
                     cluster = area.getCluster(player.getLocation());
                     if (cluster == null) {
-                        MainUtil.sendMessage(player, Captions.NOT_IN_CLUSTER);
+                        player.sendMessage(TranslatableCaption.of("errors.not_in_cluster"));
                         return false;
                     }
                 }
@@ -638,7 +748,7 @@ public class Cluster extends SubCommand {
                 PlotSquared.get().getImpromptuUUIDPipeline()
                     .getSingle(cluster.owner, (username, throwable) -> {
                         if (throwable instanceof TimeoutException) {
-                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                         } else {
                             final String owner;
                             if (username == null) {
@@ -665,28 +775,35 @@ public class Cluster extends SubCommand {
             case "setspawn":
             case "sethome":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_SETHOME)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_CLUSTER_SETHOME);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Captions.PERMISSION_CLUSTER_SETHOME.getTranslated())
+                    );
                     return false;
                 }
                 if (args.length != 1 && args.length != 2) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot cluster sethome");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot cluster sethome")
+                    );
                     return false;
                 }
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {
-                    MainUtil.sendMessage(player, Captions.NOT_IN_CLUSTER);
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_cluster"));
                     return false;
                 }
                 if (!cluster.hasHelperRights(player.getUUID())) {
                     if (!Permissions
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_SETHOME_OTHER)) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_CLUSTER_SETHOME_OTHER);
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", Captions.PERMISSION_CLUSTER_SETHOME_OTHER.getTranslated())
+                        );
                         return false;
                     }
                 }
@@ -696,9 +813,9 @@ public class Cluster extends SubCommand {
                 cluster.settings.setPosition(blockloc);
                 DBFunc.setPosition(cluster,
                     relative.getX() + "," + relative.getY() + "," + relative.getZ());
-                return MainUtil.sendMessage(player, Captions.POSITION_SET);
+                player.sendMessage(TranslatableCaption.of("position.position_set"));
         }
-        MainUtil.sendMessage(player, Captions.CLUSTER_AVAILABLE_ARGS);
+        player.sendMessage(TranslatableCaption.of("cluster.cluster_available_args"));
         return false;
     }
 }

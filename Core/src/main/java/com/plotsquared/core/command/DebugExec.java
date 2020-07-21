@@ -27,9 +27,11 @@ package com.plotsquared.core.command;
 
 import com.google.common.io.Files;
 import com.google.inject.Inject;
+import com.google.inject.internal.cglib.transform.$ClassTransformer;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -63,6 +65,8 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.world.block.BlockState;
+import javafx.collections.transformation.TransformationList;
+import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +95,6 @@ import java.util.concurrent.CompletableFuture;
 public class DebugExec extends SubCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + DebugExec.class.getSimpleName());
-
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
@@ -162,7 +165,6 @@ public class DebugExec extends SubCommand {
         this.scope = context.getBindings(ScriptContext.ENGINE_SCOPE);
 
         // stuff
-        this.scope.put("MainUtil", new MainUtil());
         this.scope.put("Settings", new Settings());
         this.scope.put("StringMan", new StringMan());
         this.scope.put("MathMan", new MathMan());
@@ -219,42 +221,45 @@ public class DebugExec extends SubCommand {
                     }
                     PlotAnalysis analysis = plot.getComplexity(null);
                     if (analysis != null) {
-                        MainUtil.sendMessage(player, "Changes/column: " + analysis.changes / 1.0);
+                        player.sendMessage(
+                                TranslatableCaption.of("debugexec.changes_column"),
+                                Template.of("value", analysis.changes / 1.0)
+                        );
                         return true;
                     }
-                    MainUtil.sendMessage(player, "$1Starting task...");
+                    player.sendMessage(TranslatableCaption.of("debugexec.starting_task"));
                     this.hybridUtils.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
                         @Override public void run(PlotAnalysis value) {
-                            MainUtil.sendMessage(player,
-                                "$1Done: $2Use $3/plot debugexec analyze$2 for more information");
+                            player.sendMessage(StaticCaption.of("&6Done: &7Use &6/plot debugexec analyze &7for more information."));
                         }
                     });
                     return true;
                 }
                 case "calibrate-analysis":
                     if (args.length != 2) {
-                        MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                            "/plot debugexec analyze <threshold>");
-                        MainUtil.sendMessage(player,
-                            "$1<threshold> $2= $1The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating "
-                                + "it)");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", "/plot debugexec analyze <threshold>")
+                        );
+                        player.sendMessage(TranslatableCaption.of("debugexec.threshold_default"));
                         return false;
                     }
                     double threshold;
                     try {
                         threshold = Integer.parseInt(args[1]) / 100d;
                     } catch (NumberFormatException ignored) {
-                        MainUtil.sendMessage(player, "$2Invalid threshold: " + args[1]);
-                        MainUtil.sendMessage(player,
-                            "$1<threshold> $2= $1The percentage of plots you want to clear as a number between 0 - 100");
+                        player.sendMessage(
+                                TranslatableCaption.of("debugexec.invalid_threshold"),
+                                Template.of("value", args[1])
+                        );
+                        player.sendMessage(TranslatableCaption.of("debugexec.threshold_default_double"));
                         return false;
                     }
-                    PlotAnalysis.calcOptimalModifiers(() -> MainUtil
-                        .sendMessage(player, "$1Thank you for calibrating plot expiry"), threshold);
+                    PlotAnalysis.calcOptimalModifiers(() -> player.sendMessage(TranslatableCaption.of("debugexec.calibration_done")), threshold);
                     return true;
                 case "stop-expire":
                     if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
-                        return MainUtil.sendMessage(player, "Task already halted");
+                        player.sendMessage(TranslatableCaption.of("debugexec.task_halted"));
                     }
                     return MainUtil.sendMessage(player, "Cancelled task.");
                 case "remove-flag":

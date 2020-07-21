@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 
 import java.util.ArrayList;
@@ -46,10 +47,10 @@ public class DebugAllowUnsafe extends SubCommand {
 
         if (unsafeAllowed.contains(player.getUUID())) {
             unsafeAllowed.remove(player.getUUID());
-            sendMessage(player, Captions.DEBUGALLOWUNSAFE_OFF);
+            player.sendMessage(TranslatableCaption.of("unsafe.debugallowunsafe_off"));
         } else {
             unsafeAllowed.add(player.getUUID());
-            sendMessage(player, Captions.DEBUGALLOWUNSAFE_ON);
+            player.sendMessage(TranslatableCaption.of("unsafe.debugallowunsafe_on"));
         }
         return true;
     }

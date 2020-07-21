@@ -62,22 +62,27 @@ public class Continue extends SubCommand {
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Captions.NO_PLOT_PERMS.getTranslated())
+            );
             return false;
         }
         if (!DoneFlag.isDone(plot)) {
-            MainUtil.sendMessage(player, Captions.DONE_NOT_DONE);
+            player.sendMessage(TranslatableCaption.of("done.done_not_done"));
             return false;
         }
         int size = plot.getConnectedPlots().size();
         if (Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots()
             < player.getPlotCount() + size)) {
-            MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                Captions.PERMISSION_ADMIN_COMMAND_CONTINUE);
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Captions.PERMISSION_ADMIN_COMMAND_CONTINUE.getTranslated())
+            );
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
         PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
@@ -90,7 +95,7 @@ public class Continue extends SubCommand {
             return true;
         }
         plot.removeFlag(event.getFlag());
-        MainUtil.sendMessage(player, Captions.DONE_REMOVED);
+        player.sendMessage(TranslatableCaption.of("done.done_removed"));
         return true;
     }
 }

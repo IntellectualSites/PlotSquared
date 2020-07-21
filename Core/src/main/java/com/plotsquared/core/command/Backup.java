@@ -37,6 +37,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Files;
@@ -131,26 +132,35 @@ public final class Backup extends Command {
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
         } else if (!plot.hasOwner()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
-                Captions.GENERIC_UNOWNED.getTranslated());
+            player.sendMessage(
+                    TranslatableCaption.of("backup_impossible"),
+                    Template.of("plot", "generic.generic_unowned")
+            );
         } else if (plot.isMerged()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
-                Captions.GENERIC_MERGED.getTranslated());
+            player.sendMessage(
+                    TranslatableCaption.of("backup_impossible"),
+                    Template.of("plot", "generic.generic_merged")
+            );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
-            sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Captions.PERMISSION_ADMIN_BACKUP_OTHER.getTranslated())
+            );
         } else {
             final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
             if (backupProfile instanceof NullBackupProfile) {
-                sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
-                    Captions.GENERIC_OTHER.getTranslated());
+                player.sendMessage(
+                        TranslatableCaption.of("backup_impossible"),
+                        Template.of("plot", "generic.generic_other")
+                );
             } else {
                 backupProfile.createBackup().whenComplete((backup, throwable) -> {
                     if (throwable != null) {
                         sendMessage(player, Captions.BACKUP_SAVE_FAILED, throwable.getMessage());
                         throwable.printStackTrace();
                     } else {
-                        sendMessage(player, Captions.BACKUP_SAVE_SUCCESS);
+                        player.sendMessage(TranslatableCaption.of("backups.backup_save_success"));
                     }
                 });
             }
@@ -170,34 +180,50 @@ public final class Backup extends Command {
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
         } else if (!plot.hasOwner()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
-                Captions.GENERIC_UNOWNED.getTranslated());
+            player.sendMessage(
+                    TranslatableCaption.of("backup_impossible"),
+                    Template.of("plot", "generic.generic_unowned")
+            );
         } else if (plot.isMerged()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
-                Captions.GENERIC_MERGED.getTranslated());
+            player.sendMessage(
+                    TranslatableCaption.of("backup_impossible"),
+                    Template.of("plot", "generic.generic_merged")
+            );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
-            sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Captions.PERMISSION_ADMIN_BACKUP_OTHER.getTranslated())
+            );
         } else {
             final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
             if (backupProfile instanceof NullBackupProfile) {
-                sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
-                    Captions.GENERIC_OTHER.getTranslated());
+                player.sendMessage(
+                        TranslatableCaption.of("backup_impossible"),
+                        Template.of("plot", "generic.generic_other")
+                );
             } else {
                 backupProfile.listBackups().whenComplete((backups, throwable) -> {
                     if (throwable != null) {
-                        sendMessage(player, Captions.BACKUP_LIST_FAILED, throwable.getMessage());
+                        player.sendMessage(
+                                TranslatableCaption.of("backups.backup_list_failed"),
+                                Template.of("reason", throwable.getMessage())
+                        );
                         throwable.printStackTrace();
                     } else {
-                        sendMessage(player, Captions.BACKUP_LIST_HEADER,
-                            plot.getId().toCommaSeparatedString());
+                        player.sendMessage(
+                                TranslatableCaption.of("backups.backup_list_header"),
+                                Template.of("plot", plot.getId().toCommaSeparatedString())
+                        );
                         try {
                             for (int i = 0; i < backups.size(); i++) {
-                                sendMessage(player, Captions.BACKUP_LIST_ENTRY,
-                                    Integer.toString(i + 1), DateTimeFormatter.RFC_1123_DATE_TIME
-                                        .format(ZonedDateTime.ofInstant(
-                                            Instant.ofEpochMilli(backups.get(i).getCreationTime()),
-                                            ZoneId.systemDefault())));
+                                player.sendMessage(
+                                        TranslatableCaption.of("backups.backup_list_entry"),
+                                        Template.of("number", Integer.toString(i + 1)),
+                                        Template.of("value", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(
+                                                Instant.ofEpochMilli(backups.get(i).getCreationTime()),
+                                                ZoneId.systemDefault())))
+                                );
                             }
                         } catch (final Exception e) {
                             e.printStackTrace();
@@ -221,54 +247,81 @@ public final class Backup extends Command {
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
         } else if (!plot.hasOwner()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
-                Captions.GENERIC_UNOWNED.getTranslated());
+            player.sendMessage(
+                    TranslatableCaption.of("backup_impossible"),
+                    Template.of("plot", "generic.generic_unowned")
+            );
         } else if (plot.isMerged()) {
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
-                Captions.GENERIC_MERGED.getTranslated());
-            sendMessage(player, Captions.BACKUP_IMPOSSIBLE, "merged");
+            player.sendMessage(
+                    TranslatableCaption.of("backup_impossible"),
+                    Template.of("plot", "generic.generic_merged")
+            );
+            player.sendMessage(
+                    TranslatableCaption.of("backup_impossible"),
+                    Template.of("plot", "generic.generic_merged")
+            );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
-            sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_ADMIN_BACKUP_OTHER);
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Captions.PERMISSION_ADMIN_BACKUP_OTHER.getTranslated())
+            );
         } else if (args.length == 0) {
-            sendMessage(player, Captions.BACKUP_LOAD_USAGE);
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "Usage: /plot backup save/list/load")
+            );
         } else {
             final int number;
             try {
                 number = Integer.parseInt(args[0]);
             } catch (final Exception e) {
-                sendMessage(player, Captions.NOT_A_NUMBER, args[0]);
+                player.sendMessage(
+                        TranslatableCaption.of("invalid.not_a_number"),
+                        Template.of("value", args[0])
+                );
                 return;
             }
             final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
             if (backupProfile instanceof NullBackupProfile) {
-                sendMessage(player, Captions.BACKUP_IMPOSSIBLE,
-                    Captions.GENERIC_OTHER.getTranslated());
+                player.sendMessage(
+                        TranslatableCaption.of("backup_impossible"),
+                        Template.of("plot", "generic.generic_other")
+                );
             } else {
                 backupProfile.listBackups().whenComplete((backups, throwable) -> {
                     if (throwable != null) {
-                        sendMessage(player, Captions.BACKUP_LOAD_FAILURE, throwable.getMessage());
+                        player.sendMessage(
+                                TranslatableCaption.of("backups.backup_load_failure"),
+                                Template.of("reason", throwable.getMessage())
+                        );
                         throwable.printStackTrace();
                     } else {
                         if (number < 1 || number > backups.size()) {
-                            sendMessage(player, Captions.BACKUP_LOAD_FAILURE,
-                                Captions.GENERIC_INVALID_CHOICE.getTranslated());
+                            player.sendMessage(
+                                    TranslatableCaption.of("backup_impossible"),
+                                    Template.of("plot", "generic.generic_invalid_choice")
+                            );
                         } else {
                             final com.plotsquared.core.backup.Backup backup =
                                 backups.get(number - 1);
                             if (backup == null || backup.getFile() == null || !Files
                                 .exists(backup.getFile())) {
-                                sendMessage(player, Captions.BACKUP_LOAD_FAILURE,
-                                    Captions.GENERIC_INVALID_CHOICE.getTranslated());
+                                player.sendMessage(
+                                        TranslatableCaption.of("backup_impossible"),
+                                        Template.of("plot", "generic.generic_invalid_choice")
+                                );
                             } else {
                                 CmdConfirm.addPending(player, "/plot backup load " + number,
                                     () -> backupProfile.restoreBackup(backup)
                                         .whenComplete((n, error) -> {
                                             if (error != null) {
-                                                sendMessage(player, Captions.BACKUP_LOAD_FAILURE,
-                                                    error.getMessage());
+                                                player.sendMessage(
+                                                        TranslatableCaption.of("backups.backup_load_failure"),
+                                                        Template.of("reason", error.getMessage())
+                                                );
                                             } else {
-                                                sendMessage(player, Captions.BACKUP_LOAD_SUCCESS);
+                                                player.sendMessage(TranslatableCaption.of("backup_load_success"));
                                             }
                                         }));
                             }

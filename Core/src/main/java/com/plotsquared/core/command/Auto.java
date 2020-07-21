@@ -29,6 +29,7 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -64,7 +65,7 @@ import java.util.Set;
     requiredType = RequiredType.NONE,
     description = "Claim the nearest plot",
     aliases = "a",
-    usage = "/plot auto [length,width]")
+    usage = "/plot auto [length, width]")
 public class Auto extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
@@ -213,11 +214,16 @@ public class Auto extends SubCommand {
                         size_z = Integer.parseInt(split[1]);
                         break;
                     default:
-                        MainUtil.sendMessage(player, "Correct use /plot auto [length,width]");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Template.of("value", getUsage())
+                        );
                         return true;
                 }
                 if (size_x < 1 || size_z < 1) {
-                    MainUtil.sendMessage(player, "Error: size<=0");
+                    player.sendMessage(
+                            TranslatableCaption.of("error.plot_size")
+                    );
                 }
                 if (args.length > 1) {
                     schematic = args[1];
@@ -261,16 +267,21 @@ public class Auto extends SubCommand {
 
         if (schematic != null && !schematic.isEmpty()) {
             if (!plotarea.hasSchematic(schematic)) {
-                sendMessage(player, Captions.SCHEMATIC_INVALID, "non-existent: " + schematic);
+                player.sendMessage(
+                        TranslatableCaption.of("schematics.schematic_invalid_named"),
+                        Template.of("schemname", schematic),
+                        Template.of("reason", "non-existant")
+                );
                 return true;
             }
             if (!force && !Permissions.hasPermission(player, CaptionUtility
                 .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                 && !Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(),
-                        schematic));
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated())
+                );
                 return true;
             }
         }
@@ -282,11 +293,17 @@ public class Auto extends SubCommand {
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 if (!force && this.econHandler.getMoney(player) < cost) {
-                    sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
+                    player.sendMessage(
+                            TranslatableCaption.of("economy.cannot_afford_plot"),
+                            Template.of("money", String.valueOf(cost))
+                    );
                     return true;
                 }
                 this.econHandler.withdrawMoney(player, cost);
-                sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
+                player.sendMessage(
+                        TranslatableCaption.of("economy.removed_balance"),
+                        Template.of("money", String.valueOf(cost))
+                );
             }
         }
         // TODO handle type 2 (partial) the same as normal worlds!

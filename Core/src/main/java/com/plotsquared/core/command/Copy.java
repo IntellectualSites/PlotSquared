@@ -31,6 +31,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
+import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "copy",
     permission = "plots.copy",
@@ -50,11 +51,14 @@ public class Copy extends SubCommand {
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         if (args.length != 1) {
-            sendUsage(player);
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot copy <X;Z>")
+            );
             return false;
         }
         Plot plot2 = Plot.getPlotFromString(player, args[0], true);
@@ -62,18 +66,21 @@ public class Copy extends SubCommand {
             return false;
         }
         if (plot1.equals(plot2)) {
-            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
-            sendUsage(player);
+            player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot copy <X;Z>")
+            );
             return false;
         }
         if (!plot1.getArea().isCompatible(plot2.getArea())) {
-            Captions.PLOTWORLD_INCOMPATIBLE.send(player);
+            player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
             return false;
         }
-        if (plot1.copy(plot2, () -> MainUtil.sendMessage(player, Captions.COPY_SUCCESS))) {
+        if (plot1.copy(plot2, () -> player.sendMessage(TranslatableCaption.of("move.copy_success")))) {
             return true;
         } else {
-            MainUtil.sendMessage(player, Captions.REQUIRES_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
             return false;
         }
     }

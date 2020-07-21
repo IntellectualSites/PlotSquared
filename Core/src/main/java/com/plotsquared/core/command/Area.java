@@ -72,6 +72,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
@@ -346,9 +347,10 @@ public class Area extends SubCommand {
                                                 }, null);
                                         }
                                     } else {
-                                        MainUtil.sendMessage(player,
-                                            "An error occurred while creating the world: " + area
-                                                .getWorldName());
+                                        player.sendMessage(
+                                                TranslatableCaption.of("errors.error_create"),
+                                                Template.of("world", area.getWorldName())
+                                        );
                                     }
                                 };
                                 if (hasConfirmation(player)) {
@@ -386,8 +388,11 @@ public class Area extends SubCommand {
                         for (int i = 2; i < args.length; i++) {
                             String[] pair = args[i].split("=");
                             if (pair.length != 2) {
-                                Captions.COMMAND_SYNTAX.send(player, getCommandString()
-                                    + " create [world[:id]] [<modifier>=<value>]...");
+                                player.sendMessage(
+                                        TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                                        Template.of("value1,", getCommandString()),
+                                        Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
+                                );
                                 return false;
                             }
                             switch (pair[0].toLowerCase()) {
@@ -441,8 +446,11 @@ public class Area extends SubCommand {
                                     builder.plotAreaType(pa.getType());
                                     break;
                                 default:
-                                    Captions.COMMAND_SYNTAX.send(player, getCommandString()
-                                        + " create [world[:id]] [<modifier>=<value>]...");
+                                    player.sendMessage(
+                                            TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                                            Template.of("value1", getCommandString()),
+                                            Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
+                                    );
                                     return false;
                             }
                         }
@@ -468,9 +476,10 @@ public class Area extends SubCommand {
                                     player.teleport(this.worldUtil.getSpawn(world),
                                         TeleportCause.COMMAND);
                                 } else {
-                                    MainUtil.sendMessage(player,
-                                        "An error occurred while creating the world: " + pa
-                                            .getWorldName());
+                                    player.sendMessage(
+                                            TranslatableCaption.of("errors.error_create"),
+                                            Template.of("world", pa.getWorldName())
+                                    );
                                 }
                                 try {
                                     this.worldConfiguration.save(this.worldFile);
@@ -487,8 +496,15 @@ public class Area extends SubCommand {
                             return true;
                         }
                         if (pa.getId() == null) {
-                            Captions.COMMAND_SYNTAX.send(player, getCommandString()
-                                + " create [world[:id]] [<modifier>=<value>]...");
+                            player.sendMessage(
+                                    TranslatableCaption.of("commandconfig.command_syntax"),
+                                    Template.of("value", getCommandString + )
+                            );
+                            player.sendMessage(
+                                    TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                                    Template.of("value1", getCommandString()),
+                                    Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
+                            );
                             return false;
                         }
                         if (this.worldUtil.isWorld(pa.getWorldName())) {
@@ -504,9 +520,10 @@ public class Area extends SubCommand {
                                 TeleportCause.COMMAND);
                         }
                         player.setMeta("area_create_area", pa);
-                        MainUtil.sendMessage(player,
-                            "$1Go to the first corner and use: $2 " + getCommandString()
-                                + " create pos1");
+                        player.sendMessage(
+                        TranslatableCaption.of("single.get_position"),
+                                Template.of("command", getCommandString())
+                                );
                         break;
                 }
                 return true;
@@ -526,7 +543,11 @@ public class Area extends SubCommand {
                         area = this.plotAreaManager.getPlotAreaByString(args[1]);
                         break;
                     default:
-                        Captions.COMMAND_SYNTAX.send(player, getCommandString() + " info [area]");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                                Template.of("value1", getCommandString()),
+                                Template.of("value2", " info [area]")
+                        );
                         return false;
                 }
                 if (area == null) {
@@ -584,7 +605,11 @@ public class Area extends SubCommand {
                             break;
                         }
                     default:
-                        Captions.COMMAND_SYNTAX.send(player, getCommandString() + " list [#]");
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                                Template.of("value1", getCommandString()),
+                                Template.of("value2", " list [#]")
+                        );
                         return false;
                 }
                 final List<PlotArea> areas = new ArrayList<>(Arrays.asList(this.plotAreaManager.getAllPlotAreas()));
@@ -640,12 +665,16 @@ public class Area extends SubCommand {
                 }
                 final PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    Captions.NOT_IN_PLOT_WORLD.send(player);
+                    player.sendMessage(
+                            TranslatableCaption.of("errors.not_in_plot_world")
+                    );
                     return false;
                 }
                 if (area.getType() != PlotAreaType.PARTIAL) {
-                    MainUtil.sendMessage(player,
-                        "$4Stop the server and delete: " + area.getWorldName() + "/region");
+                    player.sendMessage(
+                            TranslatableCaption.of("single.delete_world_region"),
+                            Template.of("world", area.getWorldName())
+                    );
                     return false;
                 }
                 this.regionManager.largeRegionTask(area.getWorldName(), area.getRegion(),
@@ -655,7 +684,9 @@ public class Area extends SubCommand {
                                 .generate(null, area.getWorldName(), value.getX(), value.getZ(),
                                     null);
                         }
-                    }, () -> player.sendMessage("Regen complete"));
+                    }, () -> player.sendMessage(
+                            TranslatableCaption.of("single.regeneration_complete"))
+                );
                 return true;
             }
             case "goto":
@@ -669,7 +700,10 @@ public class Area extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    Captions.COMMAND_SYNTAX.send(player, "/plot visit [area]");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "/plot visit [area]")
+                    );
                     return false;
                 }
                 PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
@@ -694,12 +728,9 @@ public class Area extends SubCommand {
                 return true;
             case "delete":
             case "remove":
-                MainUtil.sendMessage(player,
-                    "$1World creation settings may be stored in multiple locations:"
-                        + "\n$3 - $2Bukkit bukkit.yml" + "\n$3 - $2" + PlotSquared.platform()
-                        .getPluginName() + " settings.yml"
-                        + "\n$3 - $2Multiverse worlds.yml (or any world management plugin)"
-                        + "\n$1Stop the server and delete it from these locations.");
+                player.sendMessage(
+                        TranslatableCaption.of("single.worldcreation_location")
+                );
                 return true;
         }
         sendUsage(player);

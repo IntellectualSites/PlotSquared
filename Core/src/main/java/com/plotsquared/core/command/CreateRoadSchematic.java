@@ -59,10 +59,10 @@ public class CreateRoadSchematic extends SubCommand {
             return false;
         }
         if (!(location.getPlotArea() instanceof HybridPlotWorld)) {
-            return sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
         }
         this.hybridUtils.setupRoadSchematic(plot);
-        MainUtil.sendMessage(player, Captions.SCHEMATIC_ROAD_CREATED);
+        player.sendMessage(TranslatableCaption.of("schematics.schematic_road_created"));
         return true;
     }
 }
