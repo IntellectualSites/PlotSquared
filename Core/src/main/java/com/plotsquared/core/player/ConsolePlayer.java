@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
@@ -140,10 +141,13 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
 
     @Override public void sendMessage(@Nonnull final Caption caption,
                                      @Nonnull final Template... replacements) {
-        final String message = caption.getComponent(this);
+        String message = caption.getComponent(this);
         if (message.isEmpty()) {
             return;
         }
+        message = CaptionUtility.format(this, message).
+            /* Magic replacement characters */
+                replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&');
         // Create the template list, and add the prefix as a replacement
         final List<Template> templates = Arrays.asList(replacements);
         templates.add(Template.of("prefix", MINI_MESSAGE.parse(
