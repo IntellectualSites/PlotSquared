@@ -26,7 +26,7 @@
 package com.plotsquared.core.util;
 
 import com.google.common.eventbus.EventBus;
-import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;

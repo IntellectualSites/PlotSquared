@@ -25,12 +25,10 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import com.plotsquared.core.configuration.Caption;
-
 import javax.annotation.Nonnull;
 
 /**
- * A {@link com.plotsquared.core.configuration.Caption} that can be identified by a key
+ * A {@link Caption} that can be identified by a key
  */
 public interface KeyedCaption extends Caption {
 

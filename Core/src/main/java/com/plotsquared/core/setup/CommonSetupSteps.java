@@ -26,7 +26,7 @@
 package com.plotsquared.core.setup;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.GeneratorWrapper;

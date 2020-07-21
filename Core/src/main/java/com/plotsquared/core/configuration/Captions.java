@@ -26,6 +26,7 @@
 package com.plotsquared.core.configuration;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.StringMan;
 

@@ -23,10 +23,12 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.configuration;
+package com.plotsquared.core.configuration.caption;
 
 import com.plotsquared.core.player.PlotPlayer;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,43 +36,71 @@ import java.util.Collections;
 @FunctionalInterface
 public interface ChatFormatter {
 
-    Collection<ChatFormatter> formatters =
-        new ArrayList<>(Collections.singletonList(new PlotSquaredChatFormatter()));
+    Collection<ChatFormatter> formatters = new ArrayList<>(Collections.singletonList(new PlotSquaredChatFormatter()));
 
-    void format(ChatContext context);
+    /**
+     * Format a message using all registered formatters
+     *
+     * @param context Message to format
+     */
+    void format(@Nonnull ChatContext context);
 
     final class ChatContext {
 
         private final PlotPlayer<?> recipient;
         private String message;
-        private final Object[] args;
+        ;
         private final boolean rawOutput;
 
-        public ChatContext(final PlotPlayer<?> recipient, final String message, final Object[] args,
+        /**
+         * Create a new chat context
+         *
+         * @param recipient Message recipient
+         * @param message   Message
+         * @param rawOutput Whether or not formatting keys should be included in the
+         *                  final message
+         */
+        public ChatContext(@Nullable final PlotPlayer<?> recipient, @Nonnull final String message,
             final boolean rawOutput) {
             this.recipient = recipient;
             this.message = message;
-            this.args = args;
             this.rawOutput = rawOutput;
         }
 
-        public PlotPlayer<?> getRecipient() {
+        /**
+         * Get the message recipient
+         *
+         * @return Recipient
+         */
+        @Nullable public PlotPlayer<?> getRecipient() {
             return this.recipient;
         }
 
-        public String getMessage() {
+        /**
+         * Get the message stored in the context
+         *
+         * @return Stored message
+         */
+        @Nonnull public String getMessage() {
             return this.message;
         }
 
-        public Object[] getArgs() {
-            return this.args;
-        }
-
+        /**
+         * Whether or not the output should escape
+         * any formatting keys
+         *
+         * @return True if raw output is to be used
+         */
         public boolean isRawOutput() {
             return this.rawOutput;
         }
 
-        public void setMessage(String message) {
+        /**
+         * Set the new message
+         *
+         * @param message Message
+         */
+        public void setMessage(@Nonnull final String message) {
             this.message = message;
         }
     }

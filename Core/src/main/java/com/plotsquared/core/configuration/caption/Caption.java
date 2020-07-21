@@ -23,37 +23,23 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.configuration;
+package com.plotsquared.core.configuration.caption;
 
-import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 
-public class CaptionUtility {
+import javax.annotation.Nonnull;
 
-    public static String formatRaw(PlotPlayer recipient, String message, Object... args) {
-        final ChatFormatter.ChatContext chatContext =
-            new ChatFormatter.ChatContext(recipient, message, args, true);
-        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
-            chatFormatter.format(chatContext);
-        }
-        return chatContext.getMessage();
-    }
+/**
+ * Any message that can be sent to a player, the console, etc.
+ */
+public interface Caption {
 
-    public static String format(PlotPlayer recipient, String message, Object... args) {
-        final ChatFormatter.ChatContext chatContext =
-            new ChatFormatter.ChatContext(recipient, message, args, false);
-        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
-            chatFormatter.format(chatContext);
-        }
-        return chatContext.getMessage();
-    }
-
-    public static String format(PlotPlayer recipient, Caption caption, Object... args) {
-        if (caption.usePrefix() && caption.getTranslated().length() > 0) {
-            return Captions.PREFIX.getTranslated() + format(recipient, caption.getTranslated(),
-                args);
-        } else {
-            return format(recipient, caption.getTranslated(), args);
-        }
-    }
+    /**
+     * Get the message that should be sent to the recipient
+     *
+     * @param localeHolder Locale holder
+     * @return Message
+     */
+    @Nonnull String getComponent(@Nonnull LocaleHolder localeHolder);
 
 }

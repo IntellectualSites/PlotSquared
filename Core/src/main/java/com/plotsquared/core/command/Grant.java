@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.caption.Caption;
 
 import javax.annotation.Nonnull;
 

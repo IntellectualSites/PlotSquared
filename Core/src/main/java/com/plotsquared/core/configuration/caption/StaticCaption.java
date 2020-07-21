@@ -23,23 +23,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.configuration;
+package com.plotsquared.core.configuration.caption;
 
-import com.plotsquared.core.configuration.caption.LocaleHolder;
+import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 
-/**
- * Any message that can be sent to a player, the console, etc.
- */
-public interface Caption {
+public final class StaticCaption implements Caption {
+
+    private final String value;
+
+    private StaticCaption(final String value) {
+        this.value = value;
+    }
 
     /**
-     * Get the message that should be sent to the recipient
+     * Create a new static caption from the given text
      *
-     * @param localeHolder Locale holder
-     * @return Message
+     * @param text Text
+     * @return Created caption
      */
-    @Nonnull String getComponent(@Nonnull LocaleHolder localeHolder);
+    @Nonnull public static StaticCaption of(@Nonnull final String text) {
+        return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
+    }
 
+    @Override
+    public @Nonnull String getComponent(@Nonnull LocaleHolder localeHolder) {
+        return this.value; // can't be translated
+    }
 }

@@ -26,7 +26,7 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;

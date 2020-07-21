@@ -23,36 +23,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.configuration;
-
-import com.google.common.base.Preconditions;
-import com.plotsquared.core.configuration.caption.LocaleHolder;
+package com.plotsquared.core.configuration.caption;
 
 import javax.annotation.Nonnull;
 
-public final class StaticCaption implements Caption {
+public class PlotSquaredChatFormatter implements ChatFormatter {
 
-    private final String value;
-
-    /**
-     * @deprecated Use {@link #of(String)}
-     */
-    @Deprecated public StaticCaption(final String value) {
-        this.value = value;
+    @Override public void format(@Nonnull final ChatContext context) {
+        if (context.isRawOutput()) {
+            context.setMessage(
+                context.getMessage().replace('&', '\u2020').replace('\u00A7', '\u2030'));
+        }
     }
 
-    /**
-     * Create a new static caption from the given text
-     *
-     * @param text Text
-     * @return Created caption
-     */
-    @Nonnull public static StaticCaption of(@Nonnull final String text) {
-        return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
-    }
-
-    @Override
-    public @Nonnull String getComponent(@Nonnull LocaleHolder localeHolder) {
-        return this.value; // can't be translated
-    }
 }

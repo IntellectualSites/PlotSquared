@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.caption.Caption;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;

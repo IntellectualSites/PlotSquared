@@ -26,15 +26,17 @@
 package com.plotsquared.bukkit.placeholder;
 
 import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.core.configuration.ChatFormatter;
+import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.player.PlotPlayer;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
+
 public class PlaceholderFormatter implements ChatFormatter {
 
-    @Override public void format(final ChatContext context) {
-        final PlotPlayer recipient = context.getRecipient();
+    @Override public void format(@Nonnull final ChatContext context) {
+        final PlotPlayer<?> recipient = context.getRecipient();
         if (recipient instanceof BukkitPlayer) {
             if (context.isRawOutput()) {
                 context.setMessage(context.getMessage().replace('%', '\u2010'));

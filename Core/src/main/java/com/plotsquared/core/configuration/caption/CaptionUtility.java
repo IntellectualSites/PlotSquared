@@ -23,39 +23,46 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.configuration;
+package com.plotsquared.core.configuration.caption;
 
-import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.player.PlotPlayer;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-public class PlotSquaredChatFormatter implements ChatFormatter {
+public class CaptionUtility {
 
-    @Override public void format(final ChatContext context) {
-        if (context.isRawOutput()) {
-            context.setMessage(
-                context.getMessage().replace('&', '\u2020').replace('\u00A7', '\u2030'));
+    /**
+     * Format a chat message but keep the formatting keys
+     *
+     * @param recipient Message recipient
+     * @param message   Message
+     * @return Formatted message
+     */
+    public static String formatRaw(PlotPlayer<?> recipient, String message) {
+        final ChatFormatter.ChatContext chatContext =
+            new ChatFormatter.ChatContext(recipient, message, true);
+        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
+            chatFormatter.format(chatContext);
         }
-        if (context.getArgs().length == 0) {
-            return;
+        return chatContext.getMessage();
+    }
+
+    /**
+     * Format a chat message
+     *
+     * @param recipient Message recipient
+     * @param message   Message
+     * @return Formatted message
+     */
+    public static String format(@Nullable final PlotPlayer<?> recipient,
+        @Nonnull final String message) {
+        final ChatFormatter.ChatContext chatContext =
+            new ChatFormatter.ChatContext(recipient, message, false);
+        for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
+            chatFormatter.format(chatContext);
         }
-        final Map<String, String> map = new LinkedHashMap<>();
-        for (int i = context.getArgs().length - 1; i >= 0; i--) {
-            String arg = "" + context.getArgs()[i];
-            if (arg.isEmpty()) {
-                map.put("%s" + i, "");
-            } else {
-                if (!context.isRawOutput()) {
-                    arg = Captions.color(arg);
-                }
-                map.put("%s" + i, arg);
-            }
-            if (i == 0) {
-                map.put("%s", arg);
-            }
-        }
-        context.setMessage(StringMan.replaceFromMap(context.getMessage(), map));
+        return chatContext.getMessage();
     }
 
 }

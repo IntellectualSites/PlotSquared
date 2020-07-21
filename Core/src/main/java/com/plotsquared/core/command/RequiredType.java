@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.StaticCaption;
+import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 
 import javax.annotation.Nonnull;

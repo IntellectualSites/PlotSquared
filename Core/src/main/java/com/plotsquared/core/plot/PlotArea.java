@@ -29,7 +29,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.plotsquared.core.collection.QuadMap;
-import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;

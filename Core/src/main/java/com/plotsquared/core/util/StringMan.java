@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.caption.Caption;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Array;

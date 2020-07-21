@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.configuration.CaptionUtility;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;

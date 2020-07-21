@@ -30,10 +30,11 @@ import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
-import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionMap;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -799,6 +800,10 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         if (message.isEmpty()) {
             return;
         }
+        // Replace placeholders, etc
+        message = CaptionUtility.format(this, message).
+            /* Magic replacement characters */
+            replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&');
         // Create the template list, and add the prefix as a replacement
         final List<Template> templates = Arrays.asList(replacements);
         templates.add(Templates.of(this, "prefix", TranslatableCaption.of("core.prefix")));

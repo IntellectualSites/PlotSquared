@@ -31,7 +31,7 @@ import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Caption;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
