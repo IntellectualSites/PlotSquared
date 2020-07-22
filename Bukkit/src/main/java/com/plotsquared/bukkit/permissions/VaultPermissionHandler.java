@@ -26,13 +26,8 @@
 package com.plotsquared.bukkit.permissions;
 
 import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
-import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.core.permissions.ConsolePermissionProfile;
-import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.permissions.PermissionProfile;
-import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
-import com.plotsquared.core.player.PlotPlayer;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -43,7 +38,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class VaultPermissionHandler implements PermissionHandler {
+public class VaultPermissionHandler extends BukkitPermissionHandler {
 
     private Permission permissions;
 
@@ -56,17 +51,6 @@ public class VaultPermissionHandler implements PermissionHandler {
         if (permissionProvider != null) {
             this.permissions = permissionProvider.getProvider();
         }
-    }
-
-    @Nonnull @Override public Optional<PermissionProfile> getPermissionProfile(
-        @Nonnull PlotPlayer<?> playerPlotPlayer) {
-        if (playerPlotPlayer instanceof BukkitPlayer) {
-            final BukkitPlayer bukkitPlayer = (BukkitPlayer) playerPlotPlayer;
-            return Optional.of(new VaultPermissionProfile(bukkitPlayer.getPlatformPlayer()));
-        } else if (playerPlotPlayer instanceof ConsolePlayer) {
-            return Optional.of(ConsolePermissionProfile.INSTANCE);
-        }
-        return Optional.empty();
     }
 
     @Nonnull @Override public Optional<PermissionProfile> getPermissionProfile(
