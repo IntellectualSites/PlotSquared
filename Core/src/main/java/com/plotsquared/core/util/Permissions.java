@@ -29,6 +29,7 @@ import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.permissions.PermissionHolder;
 
 import java.util.HashMap;
 
@@ -39,7 +40,7 @@ import java.util.HashMap;
  */
 public class Permissions {
 
-    public static boolean hasPermission(PlotPlayer player, Captions caption, boolean notify) {
+    public static boolean hasPermission(PlotPlayer<?> player, Captions caption, boolean notify) {
         return hasPermission(player, caption.getTranslated(), notify);
     }
 
@@ -50,7 +51,7 @@ public class Permissions {
      * @param caption
      * @return
      */
-    public static boolean hasPermission(PlotPlayer player, Captions caption) {
+    public static boolean hasPermission(PlotPlayer<?> player, Captions caption) {
         return hasPermission(player, caption.getTranslated());
     }
 
@@ -63,7 +64,7 @@ public class Permissions {
      */
     public static boolean hasPermission(PlotPlayer<?> player, String permission) {
         if (!Settings.Enabled_Components.PERMISSION_CACHE) {
-            return hasPermission((CommandCaller) player, permission);
+            return hasPermission((PermissionHolder) player, permission);
         }
         HashMap<String, Boolean> map = player.getMeta("perm");
         if (map != null) {
@@ -75,7 +76,7 @@ public class Permissions {
             map = new HashMap<>();
             player.setMeta("perm", map);
         }
-        boolean result = hasPermission((CommandCaller) player, permission);
+        boolean result = hasPermission((PermissionHolder) player, permission);
         map.put(permission, result);
         return result;
     }
@@ -87,12 +88,12 @@ public class Permissions {
      * @param permission
      * @return
      */
-    public static boolean hasPermission(CommandCaller caller, String permission) {
+    public static boolean hasPermission(PermissionHolder caller, String permission) {
         if (caller.hasPermission(permission)) {
             return true;
-        } else if (caller.isPermissionSet(permission)) {
+        }/* TODO: DECIDE WHAT TO DO HERE; else if (caller.isPermissionSet(permission)) {
             return false;
-        }
+        }*/
         if (caller.hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
             return true;
         }
@@ -105,9 +106,9 @@ public class Permissions {
             if (!permission.equals(combined)) {
                 if (caller.hasPermission(combined)) {
                     return true;
-                } else if (caller.isPermissionSet(combined)) {
+                }/* TODO: DECIDE WHAT TO DO HERE; else if (caller.isPermissionSet(combined)) {
                     return false;
-                }
+                }*/
             }
         }
         return false;
@@ -121,7 +122,7 @@ public class Permissions {
      * @param notify
      * @return
      */
-    public static boolean hasPermission(PlotPlayer player, String permission, boolean notify) {
+    public static boolean hasPermission(PlotPlayer<?> player, String permission, boolean notify) {
         if (!hasPermission(player, permission)) {
             if (notify) {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION_EVENT, permission);
@@ -131,7 +132,7 @@ public class Permissions {
         return true;
     }
 
-    public static int hasPermissionRange(PlotPlayer player, Captions perm, int range) {
+    public static int hasPermissionRange(PlotPlayer<?> player, Captions perm, int range) {
         return hasPermissionRange(player, perm.getTranslated(), range);
     }
 
@@ -140,12 +141,12 @@ public class Permissions {
      * - Excessively high values will lag<br>
      * - The default range that is checked is {@link Settings.Limit#MAX_PLOTS}<br>
      *
-     * @param player
+     * @param player Player to check for
      * @param stub   The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
      * @param range  The range to check
      * @return The highest permission they have within that range
      */
-    public static int hasPermissionRange(PlotPlayer player, String stub, int range) {
+    public static int hasPermissionRange(PlotPlayer<?> player, String stub, int range) {
         return player.hasPermissionRange(stub, range);
     }
 }

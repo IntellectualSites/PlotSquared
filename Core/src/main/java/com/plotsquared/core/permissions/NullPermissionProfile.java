@@ -26,11 +26,13 @@
 package com.plotsquared.core.permissions;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public enum NullPermissionProfile implements PermissionProfile {
     INSTANCE;
 
-    @Override public boolean hasPermission(@Nonnull final String permission) {
+    @Override public boolean hasPermission(@Nullable final String world,
+                                           @Nonnull final String permission) {
         return false;
     }
 

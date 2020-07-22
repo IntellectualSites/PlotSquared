@@ -26,6 +26,7 @@
 package com.plotsquared.core.permissions;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * A permission profile that can be used to check for permissions
@@ -33,11 +34,22 @@ import javax.annotation.Nonnull;
 public interface PermissionProfile {
 
     /**
-     * Check if the owner of the profile has a given permission
+     * Check if the owner of the profile has a given (global) permission
      *
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    boolean hasPermission(@Nonnull String permission);
+    default boolean hasPermission(@Nonnull final String permission) {
+        return hasPermission(null ,permission);
+    }
+
+    /**
+     * Check if the owner of the profile has a given permission
+     *
+     * @param world      World name
+     * @param permission Permission
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    boolean hasPermission(@Nullable final String world, @Nonnull String permission);
 
 }

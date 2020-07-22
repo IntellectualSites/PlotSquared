@@ -37,6 +37,7 @@ import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -175,9 +176,11 @@ public class Auto extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
-            if (this.econHandler != null) {
-                for (PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-                    if (this.econHandler.hasPermission(area.getWorldName(), player.getName(), "plots.auto")) {
+            final PermissionHandler permissionHandler = PlotSquared.platform().getPermissionHandler();
+            if (permissionHandler.hasCapability(
+                PermissionHandler.PermissionHandlerCapability.PER_WORLD_PERMISSIONS)) {
+                for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
+                    if (player.hasPermission(area.getWorldName(), "plots.auto")) {
                         if (plotarea != null) {
                             plotarea = null;
                             break;

@@ -89,7 +89,11 @@ public interface PermissionHandler {
         /**
          * The ability to check for offline (player) permissions
          */
-        OFFLINE_PERMISSIONS
+        OFFLINE_PERMISSIONS,
+        /**
+         * Per world permissions
+         */
+        PER_WORLD_PERMISSIONS
     }
 
 }

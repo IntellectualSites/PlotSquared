@@ -31,17 +31,13 @@ import com.google.inject.Singleton;
 import com.plotsquared.bukkit.permissions.BukkitPermissionHandler;
 import com.plotsquared.bukkit.permissions.VaultPermissionHandler;
 import com.plotsquared.core.permissions.PermissionHandler;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class PermissionModule extends AbstractModule {
 
     @Provides @Singleton PermissionHandler providePermissionHandler() {
         try {
-            RegisteredServiceProvider<Permission> permissionProvider =
-                Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
-            if (permissionProvider != null) {
+            if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
                 return new VaultPermissionHandler();
             }
         } catch (final Exception ignored) {

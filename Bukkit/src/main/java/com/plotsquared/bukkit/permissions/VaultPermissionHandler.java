@@ -26,19 +26,25 @@
 package com.plotsquared.bukkit.permissions;
 
 import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
+import com.plotsquared.bukkit.player.BukkitPlayer;
+import com.plotsquared.core.permissions.ConsolePermissionProfile;
+import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.permissions.PermissionProfile;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class VaultPermissionHandler extends BukkitPermissionHandler {
+public class VaultPermissionHandler implements PermissionHandler {
 
     private Permission permissions;
 
@@ -54,6 +60,17 @@ public class VaultPermissionHandler extends BukkitPermissionHandler {
     }
 
     @Nonnull @Override public Optional<PermissionProfile> getPermissionProfile(
+        @Nonnull PlotPlayer<?> playerPlotPlayer) {
+        if (playerPlotPlayer instanceof BukkitPlayer) {
+            final BukkitPlayer bukkitPlayer = (BukkitPlayer) playerPlotPlayer;
+            return Optional.of(new VaultPermissionProfile(bukkitPlayer.getPlatformPlayer()));
+        } else if (playerPlotPlayer instanceof ConsolePlayer) {
+            return Optional.of(ConsolePermissionProfile.INSTANCE);
+        }
+        return Optional.empty();
+    }
+
+    @Nonnull @Override public Optional<PermissionProfile> getPermissionProfile(
         @Nonnull OfflinePlotPlayer offlinePlotPlayer) {
         if (offlinePlotPlayer instanceof BukkitOfflinePlayer) {
             return Optional.of(new VaultPermissionProfile(((BukkitOfflinePlayer) offlinePlotPlayer).player));
@@ -62,7 +79,9 @@ public class VaultPermissionHandler extends BukkitPermissionHandler {
     }
 
     @Nonnull @Override public Set<PermissionHandlerCapability> getCapabilities() {
-        return EnumSet.of(PermissionHandlerCapability.ONLINE_PERMISSIONS, PermissionHandlerCapability.OFFLINE_PERMISSIONS);
+        return EnumSet.of(PermissionHandlerCapability.PER_WORLD_PERMISSIONS,
+                          PermissionHandlerCapability.ONLINE_PERMISSIONS,
+                          PermissionHandlerCapability.OFFLINE_PERMISSIONS);
     }
 
 
@@ -74,11 +93,15 @@ public class VaultPermissionHandler extends BukkitPermissionHandler {
             this.offlinePlayer = offlinePlayer;
         }
 
-        @Override public boolean hasPermission(@Nonnull final String permission) {
+        @Override public boolean hasPermission(@Nullable final String world,
+                                               @Nonnull final String permission) {
             if (permissions == null) {
                 return false;
             }
-            return permissions.playerHas(null, offlinePlayer, permission);
+            if (world == null && offlinePlayer instanceof BukkitPlayer) {
+                return permissions.playerHas(((BukkitPlayer) offlinePlayer).getPlatformPlayer(), permission);
+            }
+            return permissions.playerHas(world, offlinePlayer, permission);
         }
 
     }
