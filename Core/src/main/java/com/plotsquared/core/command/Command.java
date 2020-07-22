@@ -240,7 +240,7 @@ public abstract class Command {
         // Send the header
         header = header.replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "")
             .replaceAll("%amount%", c.size() + "").replaceAll("%word%", "all");
-        MainUtil.sendMessage(player, header);
+        player.sendMessage(StaticCaption.of(header));
         // Send the page content
         List<T> subList = c.subList(page * size, max);
         int i = page * size;

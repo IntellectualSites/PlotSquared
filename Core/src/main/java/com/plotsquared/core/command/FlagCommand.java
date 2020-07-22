@@ -49,6 +49,7 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.helpmenu.HelpMenu;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,7 +68,7 @@ import java.util.stream.Stream;
 
 @CommandDeclaration(command = "flag",
     aliases = {"f", "flag"},
-    usage = "/plot flag <set|remove|add|list|info> <flag> <value>",
+    usage = "/plot flag <set | remove | add | list | info> <flag> <value>",
     description = "Manage plot flags",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.NONE,
@@ -80,7 +81,10 @@ public final class FlagCommand extends Command {
     }
 
     private static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
-        message.send(player, args);
+        player.sendMessage(
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                Template.of("value", "/plot flag <set | remove | add | list | info> <flag> <value>")
+        );
         return true;
     }
 
@@ -126,10 +130,12 @@ public final class FlagCommand extends Command {
                     }
                 }
             } catch (final FlagParseException e) {
-                MainUtil.sendMessage(player,
-                    Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", flag.getName())
-                        .replace("%flag_value%", e.getValue())
-                        .replace("%error%", e.getErrorMessage()));
+                player.sendMessage(
+                        TranslatableCaption.of("flag.flag_parse_error"),
+                        Template.of("flag_name", flag.getName()),
+                        Template.of("flag_value", e.getValue()),
+                        Template.of("error", e.getErrorMessage())
+                );
                 return false;
             } catch (final Exception e) {
                 return false;
@@ -163,8 +169,10 @@ public final class FlagCommand extends Command {
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_SET_FLAG_OTHER)) {
-            MainUtil
-                .sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_SET_FLAG_OTHER);
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", "plots.set.flag.other")
+            );
             return false;
         }
         return true;
@@ -190,12 +198,15 @@ public final class FlagCommand extends Command {
                             GlobalFlagContainer.getInstance().getFlagMap().values());
                     final String best = stringComparison.getBestMatch();
                     if (best != null) {
-                        MainUtil.sendMessage(player, Captions.NOT_VALID_FLAG_SUGGESTED, best);
+                        player.sendMessage(
+                                TranslatableCaption.of("flag.not_valid_flag_suggested"),
+                                Template.of("value", best)
+                        );
                         suggested = true;
                     }
                 } catch (final Exception ignored) { /* Happens sometimes because of mean code */ }
                 if (!suggested) {
-                    MainUtil.sendMessage(player, Captions.NOT_VALID_FLAG);
+                    player.sendMessage(TranslatableCaption.of("flag.not_valid_flag"));
                 }
                 return null;
             }
@@ -289,7 +300,10 @@ public final class FlagCommand extends Command {
             return;
         }
         if (args.length < 2) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag set <flag> <value>");
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot flag set <flag> <value>")
+            );
             return;
         }
         final PlotFlag<?, ?> plotFlag = getFlag(player, args[0]);
@@ -313,13 +327,19 @@ public final class FlagCommand extends Command {
         try {
             parsed = plotFlag.parse(value);
         } catch (final FlagParseException e) {
-            MainUtil.sendMessage(player,
-                Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", plotFlag.getName())
-                    .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
+            player.sendMessage(
+                    TranslatableCaption.of("")
+            );
+            player.sendMessage(
+                    TranslatableCaption.of("flag.flag_parse_error"),
+                    Template.of("flag_name", plotFlag.getName()),
+                    Template.of("flag_value", e.getValue()),
+                    Template.of("error", e.getErrorMessage())
+            );
             return;
         }
         plot.setFlag(parsed);
-        MainUtil.sendMessage(player, Captions.FLAG_ADDED);
+        player.sendMessage(TranslatableCaption.of("flag.flag_added"));
     }
 
     @CommandDeclaration(command = "add",
@@ -336,7 +356,10 @@ public final class FlagCommand extends Command {
             return;
         }
         if (args.length < 2) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag add <flag> <values>");
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot flag add <flag> <values>")
+            );
             return;
         }
         final PlotFlag<?, ?> plotFlag = getFlag(player, args[0]);
@@ -366,18 +389,21 @@ public final class FlagCommand extends Command {
         try {
             parsed = event.getFlag().parse(value);
         } catch (FlagParseException e) {
-            MainUtil.sendMessage(player,
-                Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", plotFlag.getName())
-                    .replace("%flag_value%", e.getValue()).replace("%error%", e.getErrorMessage()));
+            player.sendMessage(
+                    TranslatableCaption.of("flag.flag_parse_error"),
+                    Template.of("flag_name", plotFlag.getName()),
+                    Template.of("flag_value", e.getValue()),
+                    Template.of("error", e.getErrorMessage())
+            );
             return;
         }
         boolean result =
             player.getLocation().getPlotAbs().setFlag(localFlag.merge(parsed.getValue()));
         if (!result) {
-            MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
+            player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
             return;
         }
-        MainUtil.sendMessage(player, Captions.FLAG_ADDED);
+        player.sendMessage(TranslatableCaption.of("flag.flag_added"));
     }
 
     @CommandDeclaration(command = "remove",
@@ -394,8 +420,10 @@ public final class FlagCommand extends Command {
             return;
         }
         if (args.length != 1 && args.length != 2) {
-            MainUtil
-                .sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag remove <flag> [values]");
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot flag remove <flag> [values]")
+            );
             return;
         }
         PlotFlag<?, ?> flag = getFlag(player, args[0]);
@@ -431,23 +459,25 @@ public final class FlagCommand extends Command {
             try {
                 parsedFlag = listFlag.parse(value);
             } catch (final FlagParseException e) {
-                MainUtil.sendMessage(player,
-                    Captions.FLAG_PARSE_ERROR.getTranslated().replace("%flag_name%", flag.getName())
-                        .replace("%flag_value%", e.getValue())
-                        .replace("%error%", e.getErrorMessage()));
+                player.sendMessage(
+                        TranslatableCaption.of("flag.flag_parse_error"),
+                        Template.of("flag_name", flag.getName()),
+                        Template.of("flag_value", e.getValue()),
+                        Template.of("error", e.getErrorMessage())
+                );
                 return;
             }
             if (((List) parsedFlag.getValue()).isEmpty()) {
-                MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                player.sendMessage(TranslatableCaption.of("flag.flag_not_removed"));
                 return;
             }
             if (list.removeAll((List) parsedFlag.getValue())) {
                 if (list.isEmpty()) {
                     if (plot.removeFlag(flag)) {
-                        MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
+                        player.sendMessage(TranslatableCaption.of("flag.flag_removed"));
                         return;
                     } else {
-                        MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                        player.sendMessage(TranslatableCaption.of("flag.flag_not_removed"));
                         return;
                     }
                 } else {
@@ -455,30 +485,32 @@ public final class FlagCommand extends Command {
                     PlotFlag plotFlag = parsedFlag.createFlagInstance(list);
                     PlotFlagAddEvent addEvent = new PlotFlagAddEvent(plotFlag, plot);
                     if (addEvent.getEventResult() == Result.DENY) {
-                        sendMessage(player, Captions.EVENT_DENIED,
-                            "Re-addition of " + plotFlag.getName());
+                        player.sendMessage(
+                                TranslatableCaption.of("events.event_denied"),
+                                Template.of("value", "Re-addition of " + plotFlag.getName())
+                        );
                         return;
                     }
                     if (plot.setFlag(addEvent.getFlag())) {
-                        MainUtil.sendMessage(player, Captions.FLAG_PARTIALLY_REMOVED);
+                        player.sendMessage(TranslatableCaption.of("flag.flag_partially_removed"));
                         return;
                     } else {
-                        MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                        player.sendMessage(TranslatableCaption.of("flag.flag_not_removed"));
                         return;
                     }
                 }
             } else {
-                MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                player.sendMessage(TranslatableCaption.of("flag.flag_not_removed"));
                 return;
             }
         } else {
             boolean result = plot.removeFlag(flag);
             if (!result) {
-                MainUtil.sendMessage(player, Captions.FLAG_NOT_REMOVED);
+                player.sendMessage(TranslatableCaption.of("flag.flag_not_removed"));
                 return;
             }
         }
-        MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
+        player.sendMessage(TranslatableCaption.of("flag.flag_removed"));
     }
 
     @CommandDeclaration(command = "list",
@@ -540,12 +572,15 @@ public final class FlagCommand extends Command {
             return;
         }
         if (args.length < 1) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot flag info <flag>");
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot flag info <flag>")
+            );
             return;
         }
         final PlotFlag<?, ?> plotFlag = getFlag(player, args[0]);
         if (plotFlag != null) {
-            Captions.FLAG_INFO_HEADER.send(player);
+            player.sendMessage(TranslatableCaption.of("flag.flag_info_header"));
             // Flag name
             new PlotMessage(Captions.FLAG_INFO_NAME.getTranslated())
                 .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).text(plotFlag.getName())
@@ -574,7 +609,7 @@ public final class FlagCommand extends Command {
                 .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).text(defaultValue)
                 .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()).send(player);
             // Footer. Done this way to prevent the duplicate-message-thingy from catching it
-            MainUtil.sendMessage(player, "&r" + Captions.FLAG_INFO_FOOTER.getTranslated());
+            player.sendMessage(TranslatableCaption.of("flag.flag_info_footer"));
         }
     }
 

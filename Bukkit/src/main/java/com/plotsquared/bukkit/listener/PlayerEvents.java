@@ -34,6 +34,7 @@ import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.listener.PlotListener;
@@ -99,7 +100,6 @@ import com.plotsquared.core.plot.flag.implementations.VehicleUseFlag;
 import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
-import com.plotsquared.core.plot.message.PlotMessage;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EntityUtil;
 import com.plotsquared.core.util.EventDispatcher;
@@ -115,6 +115,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.FluidCollisionMode;
@@ -653,7 +654,7 @@ import java.util.regex.Pattern;
                         perm = "plots.admin.command.blocked-cmds.road";
                     }
                     if (!Permissions.hasPermission(plotPlayer, perm)) {
-                        MainUtil.sendMessage(plotPlayer, Captions.COMMAND_BLOCKED);
+                        plotPlayer.sendMessage(TranslatableCaption.of("blockedcmds.command_blocked"));
                         event.setCancelled(true);
                     }
                     return;
@@ -753,8 +754,10 @@ import java.util.regex.Pattern;
                 // this is acceptable, because otherwise it wouldn't make sense to have both flags set
                 if (!result && !(plot.getFlag(UntrustedVisitFlag.class) && plot.getHomeSynchronous()
                     .equals(BukkitUtil.adaptComplete(to)))) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_ENTRY_DENIED);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.entry.denied")
+                    );
                     event.setCancelled(true);
                 }
             }
@@ -842,7 +845,7 @@ import java.util.regex.Pattern;
             BukkitPlayer pp = BukkitUtil.adapt(player);
             // Cancel teleport
             if (TaskManager.removeFromTeleportQueue(pp.getName())) {
-                MainUtil.sendMessage(pp, Captions.TELEPORT_FAILED);
+                pp.sendMessage(TranslatableCaption.of("teleport.teleport_failed"));
             }
             // Set last location
             Location location = BukkitUtil.adapt(to);
@@ -857,8 +860,10 @@ import java.util.regex.Pattern;
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
                     .getMeta("kick", false)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_EXIT_DENIED);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.exit.denied")
+                    );
                     this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.adapt(from).getPlot())) {
                         player.teleport(from);
@@ -872,8 +877,10 @@ import java.util.regex.Pattern;
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_ENTRY_DENIED);
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.entry.denied")
+                );
                 this.tmpTeleport = false;
                 to.setX(from.getBlockX());
                 to.setY(from.getBlockY());
@@ -888,14 +895,14 @@ import java.util.regex.Pattern;
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
-                MainUtil.sendMessage(pp, Captions.BORDER);
+                pp.sendMessage(TranslatableCaption.of("border.border"));
             }
             if (x2 < -border && this.tmpTeleport) {
                 to.setX(-border + 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
-                MainUtil.sendMessage(pp, Captions.BORDER);
+                pp.sendMessage(TranslatableCaption.of("border.border"));
             }
         }
         int z2;
@@ -904,7 +911,7 @@ import java.util.regex.Pattern;
             BukkitPlayer pp = BukkitUtil.adapt(player);
             // Cancel teleport
             if (TaskManager.removeFromTeleportQueue(pp.getName())) {
-                MainUtil.sendMessage(pp, Captions.TELEPORT_FAILED);
+                pp.sendMessage(TranslatableCaption.of("teleport.teleport_failed"));
             }
             // Set last location
             Location location = BukkitUtil.adapt(to);
@@ -919,8 +926,10 @@ import java.util.regex.Pattern;
             if (now == null) {
                 if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
                     .getMeta("kick", false)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_EXIT_DENIED);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.exit.denied")
+                    );
                     this.tmpTeleport = false;
                     if (lastPlot.equals(BukkitUtil.adapt(from).getPlot())) {
                         player.teleport(from);
@@ -934,8 +943,10 @@ import java.util.regex.Pattern;
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_ENTRY_DENIED);
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.entry.denied")
+                );
                 this.tmpTeleport = false;
                 player.teleport(from);
                 to.setX(from.getBlockX());
@@ -951,13 +962,13 @@ import java.util.regex.Pattern;
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
-                MainUtil.sendMessage(pp, Captions.BORDER);
+                pp.sendMessage(TranslatableCaption.of("border.border"));
             } else if (z2 < -border && this.tmpTeleport) {
                 to.setZ(-border + 1);
                 this.tmpTeleport = false;
                 player.teleport(event.getTo());
                 this.tmpTeleport = true;
-                MainUtil.sendMessage(pp, Captions.BORDER);
+                pp.sendMessage(TranslatableCaption.of("border.border"));
             }
         }
     }
@@ -1037,8 +1048,10 @@ import java.util.regex.Pattern;
             if (event.getBlock().getY() == 0) {
                 if (!Permissions
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL);
+                    plotPlayer.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.destroy.groundlevel")
+                    );
                     event.setCancelled(true);
                     return;
                 }
@@ -1046,8 +1059,10 @@ import java.util.regex.Pattern;
                 .getMinBuildHeight()) && !Permissions
                 .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
-                MainUtil.sendMessage(plotPlayer, Captions.HEIGHT_LIMIT.getTranslated()
-                    .replace("{limit}", String.valueOf(area.getMaxBuildHeight())));
+                plotPlayer.sendMessage(
+                        TranslatableCaption.of("height.height_limit"),
+                        Template.of("limit", String.valueOf(area.getMaxBuildHeight()))
+                );
             }
             if (!plot.hasOwner()) {
                 if (!Permissions
@@ -1069,13 +1084,17 @@ import java.util.regex.Pattern;
                     .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
-                MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_DESTROY_OTHER);
+                plotPlayer.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.destroy.other")
+                );
                 event.setCancelled(true);
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                    plotPlayer.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.build.other")
+                    );
                     event.setCancelled(true);
                     return;
                 }
@@ -1092,8 +1111,10 @@ import java.util.regex.Pattern;
                 return;
             }
         }
-        MainUtil
-            .sendMessage(pp, Captions.NO_PERMISSION_EVENT, Captions.PERMISSION_ADMIN_DESTROY_ROAD);
+        pp.sendMessage(
+                TranslatableCaption.of("permission.no_permission_event"),
+                Template.of("node", "plots.admin.destroy.road")
+        );
         event.setCancelled(true);
     }
 
@@ -1839,21 +1860,28 @@ import java.util.regex.Pattern;
         boolean cancelled = false;
         if (plot == null) {
             if (!Permissions.hasPermission(pp, "plots.admin.interact.road")) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.interact.road")
+                );
                 cancelled = true;
             }
         } else if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                MainUtil
-                    .sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.unowned");
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.destroy.unowned")
+                );
                 cancelled = true;
             }
         } else {
             UUID uuid = pp.getUUID();
             if (!plot.isAdded(uuid)) {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.interact.other");
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.interact.other")
+                    );
                     cancelled = true;
                 }
             }
@@ -1900,22 +1928,29 @@ import java.util.regex.Pattern;
         if (plot == null) {
             if (!area.isRoadFlags() && !area.getRoadFlag(MiscInteractFlag.class) && !Permissions
                 .hasPermission(pp, "plots.admin.interact.road")) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT, "plots.admin.interact.road");
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.interact.road")
+                );
                 e.setCancelled(true);
             }
         } else {
             if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.build.other")
+                    );
                     e.setCancelled(true);
                     return;
                 }
             }
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.interact.unowned");
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.interact.unowned")
+                    );
                     e.setCancelled(true);
                 }
             } else {
@@ -1927,11 +1962,13 @@ import java.util.regex.Pattern;
                     return;
                 }
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.other")) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.interact.other");
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.interact.other")
+                    );
                     e.setCancelled(true);
                     plot.debug(pp.getName() + " could not interact with " + entity.getType()
-                        + " bcause misc-interact = false");
+                        + " because misc-interact = false");
                 }
             }
         }
@@ -2292,20 +2329,26 @@ import java.util.regex.Pattern;
             BukkitPlayer pp = BukkitUtil.adapt(player);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_BUILD_ROAD);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.build.road")
+                    );
                     event.setCancelled(true);
                 }
             } else if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_UNOWNED)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.build.unowned")
+                    );
                     event.setCancelled(true);
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.build.other")
+                    );
                     event.setCancelled(true);
                 }
             } else if (!plot.getFlag(BlockIgnitionFlag.class)) {
@@ -2372,15 +2415,19 @@ import java.util.regex.Pattern;
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
                 return;
             }
-            MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                Captions.PERMISSION_ADMIN_BUILD_ROAD);
+            pp.sendMessage(
+                    TranslatableCaption.of("permission.no_permission_event"),
+                    Template.of("node", "plots.admin.build.road")
+            );
             event.setCancelled(true);
         } else if (!plot.hasOwner()) {
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                 return;
             }
-            MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
+            pp.sendMessage(
+                    TranslatableCaption.of("permission.no_permission_event"),
+                    Template.of("node", "plots.admin.build.unowned")
+            );
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
             List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
@@ -2393,13 +2440,17 @@ import java.util.regex.Pattern;
             if (Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                 return;
             }
-            MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                Captions.PERMISSION_ADMIN_BUILD_OTHER);
+            pp.sendMessage(
+                    TranslatableCaption.of("permission.no_permission_event"),
+                    Template.of("node", "plots.admin.build.other")
+            );
             event.setCancelled(true);
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.build.other")
+                );
                 event.setCancelled(true);
             }
         }
@@ -2437,15 +2488,19 @@ import java.util.regex.Pattern;
             if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
                 return;
             }
-            MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                Captions.PERMISSION_ADMIN_BUILD_ROAD);
+            plotPlayer.sendMessage(
+                    TranslatableCaption.of("permission.no_permission_event"),
+                    Template.of("node", "plots.admin.build.road")
+            );
             event.setCancelled(true);
         } else if (!plot.hasOwner()) {
             if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                 return;
             }
-            MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
+            plotPlayer.sendMessage(
+                    TranslatableCaption.of("permission.no_permission_event"),
+                    Template.of("node", "plots.admin.build.unowned")
+            );
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
             List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
@@ -2459,13 +2514,17 @@ import java.util.regex.Pattern;
             if (Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
                 return;
             }
-            MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                Captions.PERMISSION_ADMIN_BUILD_OTHER);
+            plotPlayer.sendMessage(
+                    TranslatableCaption.of("permission.no_permission_event"),
+                    Template.of("node", "plots.admin.build.other")
+            );
             event.setCancelled(true);
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             if (!Permissions.hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                plotPlayer.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.build.other")
+                );
                 event.setCancelled(true);
             }
         }
@@ -2507,15 +2566,19 @@ import java.util.regex.Pattern;
         Plot plot = area.getPlot(location);
         if (plot == null) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_BUILD_ROAD);
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.build.road")
+                );
                 event.setCancelled(true);
             }
         } else {
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_UNOWNED)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.build.unwoned")
+                    );
                     event.setCancelled(true);
                 }
                 return;
@@ -2523,8 +2586,10 @@ import java.util.regex.Pattern;
             if (!plot.isAdded(pp.getUUID())) {
                 if (!plot.getFlag(HangingPlaceFlag.class)) {
                     if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                        MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                            Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                        pp.sendMessage(
+                                TranslatableCaption.of("permission.no_permission_event"),
+                                Template.of("node", "plots.admin.build.other")
+                        );
                         event.setCancelled(true);
                     }
                     return;
@@ -2551,14 +2616,18 @@ import java.util.regex.Pattern;
             Plot plot = area.getPlot(location);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_DESTROY_ROAD)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_DESTROY_ROAD);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.destroy.road")
+                    );
                     event.setCancelled(true);
                 }
             } else if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_DESTROY_UNOWNED);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.destroy.unowned")
+                    );
                     event.setCancelled(true);
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
@@ -2566,8 +2635,10 @@ import java.util.regex.Pattern;
                     return;
                 }
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_DESTROY_OTHER);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.destroy.other")
+                    );
                     event.setCancelled(true);
                     plot.debug(p.getName()
                         + " could not break hanging entity because hanging-break = false");
@@ -2588,16 +2659,20 @@ import java.util.regex.Pattern;
                     if (!plot.hasOwner()) {
                         if (!Permissions
                             .hasPermission(player, Captions.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
-                            MainUtil.sendMessage(player, Captions.NO_PERMISSION_EVENT,
-                                Captions.PERMISSION_ADMIN_DESTROY_UNOWNED);
+                            player.sendMessage(
+                                    TranslatableCaption.of("permission.no_permission_event"),
+                                    Template.of("node", "plots.admin.destroy.unowned")
+                            );
                             event.setCancelled(true);
                         }
                     } else if (!plot.isAdded(player.getUUID())) {
                         if (!plot.getFlag(HangingBreakFlag.class)) {
                             if (!Permissions
                                 .hasPermission(player, Captions.PERMISSION_ADMIN_DESTROY_OTHER)) {
-                                MainUtil.sendMessage(player, Captions.NO_PERMISSION_EVENT,
-                                    Captions.PERMISSION_ADMIN_DESTROY_OTHER);
+                                player.sendMessage(
+                                        TranslatableCaption.of("permission.no_permission_event"),
+                                        Template.of("node", "plots.admin.destroy.other")
+                                );
                                 event.setCancelled(true);
                                 plot.debug(player.getName()
                                     + " could not break hanging entity because hanging-break = false");
@@ -2623,14 +2698,18 @@ import java.util.regex.Pattern;
         Plot plot = area.getPlot(location);
         if (plot == null && !area.isRoadFlags()) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_ROAD)) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_INTERACT_ROAD);
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.interact.road")
+                );
                 event.setCancelled(true);
             }
         } else if (plot != null && !plot.hasOwner()) {
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_INTERACT_UNOWNED);
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.interact.unowned")
+                );
                 event.setCancelled(true);
             }
         } else if ((plot != null && !plot.isAdded(pp.getUUID())) || (plot == null && area
@@ -2685,8 +2764,10 @@ import java.util.regex.Pattern;
             }
 
             if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_INTERACT_OTHER)) {
-                MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                    Captions.PERMISSION_ADMIN_INTERACT_OTHER);
+                pp.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.interact.other")
+                );
                 event.setCancelled(true);
             }
         }
@@ -2706,15 +2787,19 @@ import java.util.regex.Pattern;
             Plot plot = area.getPlot(location);
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.road")) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.vehicle.break.road");
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.vehicle.break.road")
+                    );
                     event.setCancelled(true);
                 }
             } else {
                 if (!plot.hasOwner()) {
                     if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.unowned")) {
-                        MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                            "plots.admin.vehicle.break.unowned");
+                        pp.sendMessage(
+                                TranslatableCaption.of("permission.no_permission_event"),
+                                Template.of("node", "plots.admin.vehicle.break.unowned")
+                        );
                         event.setCancelled(true);
                         return;
                     }
@@ -2725,8 +2810,10 @@ import java.util.regex.Pattern;
                         return;
                     }
                     if (!Permissions.hasPermission(pp, "plots.admin.vehicle.break.other")) {
-                        MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                            "plots.admin.vehicle.break.other");
+                        pp.sendMessage(
+                                TranslatableCaption.of("permission.no_permission_event"),
+                                Template.of("node", "plots.admin.vehicle.break.other")
+                        );
                         event.setCancelled(true);
                         plot.debug(pp.getName()
                             + " could not break vehicle because vehicle-break = false");
@@ -2908,16 +2995,20 @@ import java.util.regex.Pattern;
                     if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                         if (!Permissions
                             .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                            MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                                Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                            plotPlayer.sendMessage(
+                                    TranslatableCaption.of("permission.no_permission_event"),
+                                    Template.of("node", "plots.admin.build.other")
+                            );
                             return false;
                         }
                     }
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.destroy." + stub)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.destroy." + stub);
+                    plotPlayer.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.destroy." + stub)
+                    );
                     return false;
                 }
             } else if (victim.getType() == EntityType.ARMOR_STAND) {
@@ -2926,8 +3017,10 @@ import java.util.regex.Pattern;
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.destroy." + stub)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.destroy." + stub);
+                    plotPlayer.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.destroy." + stub)
+                    );
                     if (plot != null) {
                         plot.debug(player.getName()
                             + " could not break armor stand because misc-break = false");
@@ -2945,8 +3038,10 @@ import java.util.regex.Pattern;
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.pve." + stub);
+                    plotPlayer.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.pve." + stub)
+                    );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
                             + " because pve = false OR hostile-attack = false");
@@ -2964,11 +3059,13 @@ import java.util.regex.Pattern;
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.pve." + stub);
+                    plotPlayer.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.pve." + stub)
+                    );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
-                            + " because pve = false OR tamned-attack = false");
+                            + " because pve = false OR tamed-attack = false");
                     }
                     return false;
                 }
@@ -2976,8 +3073,10 @@ import java.util.regex.Pattern;
                 if (isPlot) {
                     if (!plot.getFlag(PvpFlag.class) && !Permissions
                         .hasPermission(plotPlayer, "plots.admin.pvp." + stub)) {
-                        MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                            "plots.admin.pvp." + stub);
+                        plotPlayer.sendMessage(
+                                TranslatableCaption.of("permission.no_permission_event"),
+                                Template.of("node", "plots.admin.pvp." + stub)
+                        );
                         plot.debug(player.getName() + " could not attack " + entityType
                             + " because pve = false");
                         return false;
@@ -2988,8 +3087,10 @@ import java.util.regex.Pattern;
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pvp." + stub)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.pvp." + stub);
+                    plotPlayer.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.pvp." + stub)
+                    );
                     return false;
                 }
             } else if (EntityCategories.ANIMAL.contains(entityType)) { // victim is animal
@@ -3003,8 +3104,10 @@ import java.util.regex.Pattern;
                 } else if (roadFlags && (area.getRoadFlag(AnimalAttackFlag.class) || area
                     .getFlag(PveFlag.class))) {
                     if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
-                        MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                            "plots.admin.pve." + stub);
+                        plotPlayer.sendMessage(
+                                TranslatableCaption.of("permission.no_permission_event"),
+                                Template.of("node", "plots.admin.pve." + stub)
+                        );
                         return false;
                     }
                 }
@@ -3020,8 +3123,10 @@ import java.util.regex.Pattern;
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                        "plots.admin.pve." + stub);
+                    plotPlayer.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.pve." + stub)
+                    );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
                             + " because pve = false");
@@ -3060,20 +3165,26 @@ import java.util.regex.Pattern;
         Plot plot = area.getPlot(location);
         if (plot == null) {
             if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.road")) {
-                MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                    "plots.admin.projectile.road");
+                plotPlayer.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.projectile.road")
+                );
                 event.setHatching(false);
             }
         } else if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.unowned")) {
-                MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                    "plots.admin.projectile.unowned");
+                plotPlayer.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.projective.unowned")
+                );
                 event.setHatching(false);
             }
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
             if (!Permissions.hasPermission(plotPlayer, "plots.admin.projectile.other")) {
-                MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                    "plots.admin.projectile.other");
+                plotPlayer.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", "plots.admin.projectile.other")
+                );
                 event.setHatching(false);
             }
         }
@@ -3094,13 +3205,17 @@ import java.util.regex.Pattern;
                 .getMinBuildHeight()) && !Permissions
                 .hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
-                MainUtil.sendMessage(pp, Captions.HEIGHT_LIMIT.getTranslated()
-                    .replace("{limit}", String.valueOf(area.getMaxBuildHeight())));
+                pp.sendMessage(
+                        TranslatableCaption.of("height.height_limit"),
+                        Template.of("limit", String.valueOf(area.getMaxBuildHeight()))
+                );
             }
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_UNOWNED)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_BUILD_UNOWNED);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.build.other")
+                    );
                     event.setCancelled(true);
                     return;
                 }
@@ -3114,8 +3229,10 @@ import java.util.regex.Pattern;
                     }
                 }
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.build.other")
+                    );
                     event.setCancelled(true);
                     plot.debug(player.getName() + " could not place " + event.getBlock().getType()
                         + " because of the place flag");
@@ -3123,8 +3240,10 @@ import java.util.regex.Pattern;
                 }
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_OTHER)) {
-                    MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                        Captions.PERMISSION_ADMIN_BUILD_OTHER);
+                    pp.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", "plots.admin.build.other")
+                    );
                     event.setCancelled(true);
                     return;
                 }
@@ -3138,8 +3257,10 @@ import java.util.regex.Pattern;
                 }
             }
         } else if (!Permissions.hasPermission(pp, Captions.PERMISSION_ADMIN_BUILD_ROAD)) {
-            MainUtil.sendMessage(pp, Captions.NO_PERMISSION_EVENT,
-                Captions.PERMISSION_ADMIN_BUILD_ROAD);
+            pp.sendMessage(
+                    TranslatableCaption.of("permission.no_permission_event"),
+                    Template.of("node", "plots.admin.build.other")
+            );
             event.setCancelled(true);
         }
     }

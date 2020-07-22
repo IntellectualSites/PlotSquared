@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.command.MainCommand;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
 import com.plotsquared.core.generator.ClassicPlotManagerComponent;
@@ -193,7 +194,7 @@ public class ComponentPresetManager {
                     for (Plot current : plot.getConnectedPlots()) {
                         current.setComponent(componentPreset.getComponent().name(), pattern);
                     }
-                    MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
+                    player.sendMessage(TranslatableCaption.of("working.generating_component"));
                     PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(plot::removeRunning);
                 });
                 return false;

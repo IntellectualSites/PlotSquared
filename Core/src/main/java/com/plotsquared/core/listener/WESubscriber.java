@@ -28,6 +28,7 @@ package com.plotsquared.core.listener;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -90,7 +91,7 @@ public class WESubscriber {
                 mask = WEManager.getMask(plotPlayer);
                 if (mask.isEmpty()) {
                     if (Permissions.hasPermission(plotPlayer, "plots.worldedit.bypass")) {
-                        MainUtil.sendMessage(plotPlayer, Captions.WORLDEDIT_BYPASS);
+                        plotPlayer.sendMessage(TranslatableCaption.of("worldedit.worldedit_bypass"));
                     }
                     if (this.plotAreaManager.hasPlotArea(world)) {
                         event.setExtent(new NullExtent());

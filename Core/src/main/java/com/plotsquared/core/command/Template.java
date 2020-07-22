@@ -28,17 +28,15 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.InvalidConfigurationException;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.events.TeleportCause;
-import com.plotsquared.core.inject.annotations.WorldConfig;
-import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
@@ -48,7 +46,6 @@ import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.FileBytes;
 import com.plotsquared.core.util.FileUtils;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
@@ -66,7 +63,7 @@ import java.util.zip.ZipOutputStream;
 @CommandDeclaration(command = "template",
     permission = "plots.admin",
     description = "Create or use a world template",
-    usage = "/plot template [import|export] <world> <template>",
+    usage = "/plot template [import | export] <world> <template>",
     category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
 
@@ -167,12 +164,16 @@ public class Template extends SubCommand {
         if (args.length != 2 && args.length != 3) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot template export <world>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template export <world>")
+                    );
                     return true;
                 } else if (args[0].equalsIgnoreCase("import")) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot template import <world> <template>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template import <world> <template>")
+                    );
                     return true;
                 }
             }
@@ -183,18 +184,25 @@ public class Template extends SubCommand {
         switch (args[0].toLowerCase()) {
             case "import": {
                 if (args.length != 3) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot template import <world> <template>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template import <world> <template>")
+                    );
                     return false;
                 }
                 if (this.plotAreaManager.hasPlotArea(world)) {
-                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_TAKEN, world);
+                    player.sendMessage(
+                            TranslatableCaption.of("setup.setup_world_taken"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", world)
+                    );
                     return false;
                 }
                 boolean result = extractAllFiles(world, args[2]);
                 if (!result) {
-                    MainUtil
-                        .sendMessage(player, "&cInvalid template file: " + args[2] + ".template");
+                    player.sendMessage(
+                            TranslatableCaption.of("template.invalid_template"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", args[2])
+                    );
                     return false;
                 }
                 File worldFile = FileUtils.getFile(PlotSquared.platform().getDirectory(),
@@ -220,20 +228,22 @@ public class Template extends SubCommand {
 
                 this.setupUtils.setupWorld(builder);
                 this.globalBlockQueue.addEmptyTask(() -> {
-                    MainUtil.sendMessage(player, "Done!");
+                    player.sendMessage(TranslatableCaption.of("debugimportworlds.done"));
                     player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
                 });
                 return true;
             }
             case "export":
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot template export <world>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template export <world>")
+                    );
                     return false;
                 }
                 final PlotArea area = this.plotAreaManager.getPlotAreaByString(world);
                 if (area == null) {
-                    MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
+                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();
@@ -242,10 +252,13 @@ public class Template extends SubCommand {
                         manager.exportTemplate();
                     } catch (Exception e) { // Must recover from any exception thrown a third party template manager
                         e.printStackTrace();
-                        MainUtil.sendMessage(player, "Failed: " + e.getMessage());
+                        player.sendMessage(
+                                TranslatableCaption.of("template.template_failed"),
+                                net.kyori.adventure.text.minimessage.Template.of("value", e.getMessage())
+                        );
                         return;
                     }
-                    MainUtil.sendMessage(player, "Done!");
+                    player.sendMessage(TranslatableCaption.of("debugimportworlds.done"));
                 });
                 return true;
             default:

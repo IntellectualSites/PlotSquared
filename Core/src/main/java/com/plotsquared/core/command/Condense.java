@@ -266,7 +266,7 @@ public class Condense extends SubCommand {
         }
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value","/plot condense " + area.getWorldName() + " <start|stop|info> [radius]")
+                Template.of("value", "/plot condense " + area.getWorldName() + " <start | stop | info> [radius]")
         );
         return false;
     }

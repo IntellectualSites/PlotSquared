@@ -4,15 +4,20 @@
   "confirm.requires_confirm": "<prefix><gray>Are you sure you wish to execute: </gray><gold><command></orange><gray>?</gray>\n<red>This cannot be undone! If you are sure: </red><gray>/plot confirm</gray>",
   
   "move.move_success": "<prefix><dark_aqua>Successfully moved plot.</dark_aqua>",
-  "move.move_merged": "<prefix><gray>Merged plots may not be moved. Please unmerge the plot before performing the move.</gray>",
+  "move.move_merged": "<prefix><red>Merged plots may not be moved. Please unmerge the plot before performing the move.</red>",
   "move.copy_success": "<prefix><dark_aqua>Successfully copied plot.</dark_aqua>",
-  "move.requires_unowned": "<prefix><gray>The location specified is already occupied.</gray>",
+  "move.requires_unowned": "<prefix><red>The location specified is already occupied.</red>",
   
   "debug.requires_unmerged": "<prefix><red>The plot cannot be merged.</red>",
   "debug.debug_header": "<prefix> <gold>Debug Information</orange>\n",
   "debug.debug_section": "<gray>>></gray> <gold><bold>&l<val></bold></gold>",
   "debug.debug_line": "<gray>>></gray> <gold><var></gold><gray>:</gray><gold> <val></gold>\n",
   "debug.plot_debug": "<gray>[<gold>Plot </gold><gray>Debug] (</gray><gold><plot></gold><gray>): <message></gray>",
+  "debug.fetching_loaded_chunks": "<prefix><gold>Fetching loaded chunks...</gold>",
+  "debug.cached_uuids": "<prefix><gold>There are </gold><gray><value></gray> <gold>cached UUIDs.</gold>",
+  "debug.player_in_debugmode": "<prefix><gold>Player(s) in debug mode: </gold>",
+  "debug.player_in_debugmode_list": "<gold>- </gold><gray><value></gray>\n",
+  "debug.entity_categories": "<prefix><red>Entity categories:</red>",
   
   "set.set_attribute": "<prefix><dark_aqua>Successfully set <attribute> to <value>.</dark_aqua>",
 
@@ -58,9 +63,9 @@
   "worldedit.worldedit_bypass": "<prefix><gray><italic>To bypass your restrictions use </gray><dark_aqua>/plot wea</dark_aqua></italic>",
   "worldedit.worldedit_bypassed": "<prefix><gray>Currently bypassing WorldEdit restriction.</gray>",
   
-  "gamemode.gamemode_was_bypassed": "<prefix><gold>You bypassed the gamemode (</gold><gray>{gamemode}</gray><gold>) <gold>set for </gold><gray>{plot}</gray>",
+  "gamemode.gamemode_was_bypassed": "<prefix><gold>You bypassed the gamemode (</gold><gray><gamemode></gray><gold>) <gold>set for </gold><gray><plot>.</gray>",
   
-  "height.height_limit": "<prefix><gold>This plot area has a height limit of </gold><gray>{limit}.</gray>",
+  "height.height_limit": "<prefix><gold>This plot area has a height limit of </gold><gray><limit>.</gray>",
   
   "notification.notify_enter": "<prefix><gray><player> entered your plot (</gray><gold><plot></gold><gray>).</gray>",
   "notification.notify_leave": "<prefix><gray><player> left your plot (</gray><gold><plot></gold><gray>).</gray>",
@@ -121,13 +126,13 @@
   "economy.removed_balance": "<prefix><gold><money> </gold><gray>has been taken from your balance.</gray>",
   "economy.removed_granted_plot": "<prefix><gray>You used <usedGrants> plot grant(s), you've got </gray><gold><remainingGrants></gold> <gray>left.</gray>",
   
-  "setup.setup_not_started": "<prefix><gold>No setup started. Use </gold><gray>/plot setup</gray> <gold>to start a setup process.</gold>",
+  "setup.setup_not_started": "<prefix><gold>No setup started.</gold>",
   "setup.setup_init": "<prefix><gold>Usage: </gold><gray>/plot setup </gray><value>",
   "setup.setup_step": "<gold><dark_gray>[</dark_gray>Step <step><dark_gray>]</dark_gray> <description> <gray>-</gray> Expecting: <gray><type></gray> Default: <gray><value></gray></gold>",
   "setup.setup_invalid_arg": "<prefix><gray><value> is not a valid argument for step <step>. To cancel setup use: </gray><gold>/plot setup cancel.</gold>",
   "setup.setup_valid_arg": "<prefix><gray>Value </gray><gold><description></gold> <gray>set to <value>.</gray>",
   "setup.setup_finished": "<prefix><dark_aqua>You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or your chosen world management plugin.</dark_aqua>",
-  "setup.setup_world_taken": "<prefix><red><value> is already a world. Choose a different name.</red>",
+  "setup.setup_world_taken": "<prefix><gray><value> </gray><red>is already a world. Choose a different name.</red>",
   "setup.setup_cancelled": "<prefix><red>Cancelled setup.</red>",
   "setup.setup_world_name": "<prefix><gold>What do you want your world to be called?</gold>",
   "setup.setup_world_name_error": "<prefix><red>You need to choose a world name!</red>",
@@ -153,7 +158,6 @@
   "plotareatype.plot_area_type_partial": "<gray>Vanilla with clusters of plots</gray>",
   
   "schematics.schematic_too_large": "<prefix><red>The plot is too large for this action!</red>",
-  "schematics.schematic_missing_arg": "<prefix><gray>You need to specify an argument. Possible values: </gray><gold>save</gold><gray>, </gray><gold>paste </gold><gray>, </gray><gold>exportall</gold><gray>, </gray><gold>list</gold>",
   "schematics.schematic_invalid": "<prefix><red>That is not a valid schematic. Reason: </red><gray><reason>.</gray>",
   "schematics.schematic_invalid_named": "<prefix><red><schemname> is not a valid schematic. Reason: </red><gray><reason>.</gray>",
   "schematics.schematic_paste_merged": "<prefix><red>Schematics cannot be pasted onto merged plots. Please unmerge the plot before performing the paste.</red>",
@@ -162,10 +166,11 @@
   "schematics.schematic_list": "<prefix><dark_aqua>Saved Schematics: </dark_aqua><gold><list></gold>",
   "schematics.mca_file_size": "<prefix><gold>Note: The `.mca` files are 512x512.</gold>",
   "schematics.schematic_exportall_started": "<prefix><gold>Starting export...</gold>",
-  "schematics.schematic_exportall_world_args": "<prefix><gold>Need world argument. Use </gold><dark_gray>/plot sch exportall area</dark_gray>",
+  "schematics.schematic_exportall_world_args": "<prefix><gray>Need world argument<gray>",
   "schematics.schematic_exportall_finished": "<prefix><gold>Finished mass export.</gold>",
   "schematics.schematic_exportall_single_finished": "<prefix><gold>Finished export.</gold>",
-  "schematic.schematic_exportall_world": "<prefix><red>Invalid world. Use </red><dark_aqua>/plot sch exportall <area></dark_aqua><red>.</red>",
+  "schematic.schematic_exportall_world": "<prefix><red>Invalid world.</red>",
+  "schematics.plot_to_schem": "<dark_aqua>Plot</dark_aqua><dark_gray>-></dark_gray><dark_aqua>Schematic</dark_aqua><dark_gray>: </dark_gray><gray>Found </gray><red><amount></red><gray> plots...</gray>",
   
   "error.task_in_process": "<prefix><gold>Task is already running.</gold>",
   
@@ -190,8 +195,7 @@
   
   "position.position_set": "<prefix><gold>Home position set to your current location.</gold>",
   "position.position_unset": "<prefix><gold>Home position reset to the default location.</gold>",
-  "position.home_argument": "<prefix><gray>Use /plot set home [none]</gray>",
-  
+
   "permission.no_schematic_permission": "<prefix><red>You don't have the permission required to use schematic </red><gold><value></gold><red>.</red>",
   "permission.no_permission": "<prefix><red>You are lacking the permission node: <gold><node></gold>.</red>",
   "permission.no_permission_event": "<prefix><red>You are lacking the permission node: <gold><node></gold>.</red>",
@@ -259,6 +263,9 @@
   "database.invalid_args": "<prefix><red>Please make sure you are using the correct arguments.</red>",
   "database.failed_to_open": "<prefix><red>Failed to open connection, read stacktrace for info.</red>",
 
+  "template.invalid_template": "<prefix><red>Invalid template file: </red><gray><value>.template</gray>",
+  "template.template_failed": "<prefix><red>Failed: </red><gray><value></gray>",
+
   "debugexec.changes_column": "<prefix><gold>Changes/column: </gold><gray><value></gray>",
   "debugexec.starting_task": "<prefix><gold>Starting task...</gold>",
   "debugexec.threshold_default": "<prefix><gray>`threshold` = The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating it.</gray>",
@@ -284,8 +291,8 @@
   "debugroadregen.schematic": "<prefix><red>If no schematic is set, the following will not do anything.</red>\n<gray> - To set a schematic, stand in a plot and use </gray><red>/plot createroadschematic</red>",
   "debugroadregen.regenallroads": "<prefix><red>To regenerate all roads: /plot regenallroads</red>",
 
-  "errors.invalid_player": "<prefix><red>Player not found: <gray><value></gray>.</red>",
-  "errors.invalid_player_offline": "<prefix><red>The player must be online: <gray><player></gray>.</red>",
+  "errors.invalid_player": "<prefix><red>Player not found: </red><gray><value></gray><red>.</red>",
+  "errors.invalid_player_offline": "<prefix><gray><player></gray><red> must be online.</red>",
   "errors.invalid_command_flag": "<prefix><red>Invalid command flag: </red><value></gray>",
   "errors.error": "<prefix><red>An error occurred: </gray><value></gray></red>",
   "errors.error_create": "<prefix><red>An error occurred while creating the world: <gray><world></gray></red>",
@@ -317,7 +324,9 @@
   "players.fetching_players_timeout": "<prefix><red>The specified users did not exist in the cache and will be fetched in the background. Please wait a couple of minutes.</red>",
   
   "trim.trim_in_progress": "<prefix><red>A world trim task is already in progress!</red>",
-  
+  "trim.trim_done": "<prefix><gold>Trim done.</gold>",
+  "trim.trim_starting": "<prefix><gold>Collecting region data...</gold>",
+
   "blocklist.block_list_separator": "<gold>,</gold><gray> ",
   
   "biome.need_biome": "<prefix><red>You need to specify a valid biome.</red>",
@@ -363,7 +372,6 @@
   "info.plot_user_list": "<gray><user></gray>",
   "info.plot_flag_list": "<gray><flag>: <value></gray>",
   "info.plot_no_description": "<prefix><gray>No description set.</gray>",
-  "info.info_syntax_console": "<prefix><gray>/plot info X;Z</gray>",
   "info.plot_caps_header": "<dark_gray><strikethrough>--------- <reset><gold>CAPS </gold><dark_gray><strikethrough>---------<reset>",
   "info.plot_caps_format": "<prefix><gray>- Cap Type: </gray><gold><cap> </gold><gray>| Status: </gray><gold><current></gold><gray>/</gray><gold><limit> </gold><gray>(</gray><gold><percentage>%</gold><gray>)</gray>",
   
@@ -388,14 +396,14 @@
   "deny.you_got_denied": "<prefix><dark_aqua>You are denied from the plot you were previously on, and got teleported to spawn.</dark_aqua>.",
   "deny.cant_remove_owner": "<prefix><red>You can't remove the plot owner.</red>",
   
-  "kick.you_got_kicked": "<prefix><red>You got kicked from the plot!</red>",
+  "kick.you_got_kicked": "<prefix><dark_aqua>You got kicked from the plot!</dark_aqua>",
   
   "trusted.trusted_added": "<prefix><dark_aqua>You successfully trusted a user to the plot.</dark_aqua>",
   "trusted.plot_removed_user": "<prefix><red>Plot <plot> of which you were added to has been deleted due to owner inactivity.</red>",
   
   "member.removed_players": "<prefix><gray>Removed <amount> player(s) from this plot.</gray>",
   "member.plot_left": "<prefix><gray><player> left the plot.</gray>",
-  "member.already_owner": "<prefix><gray>That user is already the plot owner: <player></gray>",
+  "member.already_owner": "<prefix><gray><player></gray><gold> is already the plot owner.</gold>",
   "member.already_added": "<prefix><gray>That user is already added to that category: <player></gray>",
   "member.member_added": "<prefix><dark_aqua>That user can now build while the plot owner is online.</dark_aqua>",
   "members.plot_max_members": "<prefix><red>You are not allowed to add any more players to this plot.</red>",
@@ -403,8 +411,8 @@
   
   "owner.set_owner": "<prefix><dark_aqua>You successfully set the plot owner.</dark_aqua>",
   "owner.set_owner_cancelled": "<prefix><red>The set owner action was cancelled.</red>",
-  "owner.set_owner_missing_player": "<prefix><red>You need to specify a new owner. Correct usage is: </red><gray>/plot setowner <owner></gray>",
-  "owner.now_owner": "<prefix><dark_aqua>You are now the plot owner of <plot></dark_aqua>",
+  "owner.set_owner_missing_player": "<prefix><red>You need to specify a new owner.</red>",
+  "owner.now_owner": "<prefix><dark_aqua>You are now the plot owner of plot <plot>.</dark_aqua>",
   
   "signs.owner_sign_line_1": "<gold>ID: </gold><gray><id></gray>",
   "signs.owner_sign_line_2": "<gold>Owner:</gold>",
@@ -417,7 +425,7 @@
   "help.help_info_item": "<gold>/plot help <gray><category> </gray><dark_gray>- </dark_gray><gray><category_desc></gray>",
   "help.help_item": "<gold><usage> <gray>[</gray><gold><alias></gray>]</gray>\n <dark_gray>- </dark_gray><gray><desc></gray>\n",
   "help.help_display_all_commands": "<prefix><gray>Display all commands.</gray>",
-  "help.direction": "<prefix><gold>Current direction: <dir></gold>",
+  "help.direction": "<prefix><gold>Current direction: </gold><gray><dir></gray>",
  
   "category.command_category_claiming": "<gray>Claiming</gray>",
   "category.command_category_teleport": "<gray>Teleport</gray>",
@@ -483,9 +491,9 @@
   "flag.not_valid_value": "<prefix><red>Flag values must be alphanumerical.</red>",
   "flag.flag_not_removed": "<prefix><red>The flag could not be removed.</red>",
   "flag.flag_not_added": "<prefix><red>The flag could not be added.</red>",
-  "flag.flag_removed": "<prefix><dark_aqua>Successfully removed flag.</dark_aqua>",
+  "flag.flag_removed": "<prefix><dark_aqua>The flag has been removed successfully.</dark_aqua>",
   "flag.flag_partially_removed": "<prefix><dark_aqua>Successfully removed flag value(s).</dark_aqua>",
-  "flag.flag_added": "<prefix><dark_aqua>Successfully added flag.</dark_aqua>",
+  "flag.flag_added": "<prefix><dark_aqua>The flag has been added successfully.</dark_aqua>",
   "flag.flag_list_see_info": "<prefix><gray>Click to view information about the flag.</gray>",
   "flag.flag_parse_error": "<red>Failed to parse flag </red><gray><flag_name><red>, value </red><gray><flag_value></gray><red>: <error></red>",
   "flag.flag_info_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Flags </gold><dark_gray><strikethrough>---------<reset>",
@@ -648,5 +656,37 @@
   "commands.description.help": "<gray>Get this help menu.</gray>",
   "commands.description.home": "<gray>Teleport to your plot(s).</gray>",
   "commands.description.inbox": "<gray>Review the comments for a plot.</gray>",
-  "commands.description.info": "<gray>Display information about the plot.</gray>"
+  "commands.description.info": "<gray>Display information about the plot.</gray>",
+  "commands.description.kick": "<gray>Kick a player from your plot.</gray>",
+  "commands.description.leave": "<gray>Remove yourself from being trusted or added of a plot.</gray>",
+  "commands.description.like": "<gray>Like the plot you are standing on.</gray>",
+  "commands.description.list": "<gray>List plots.</gray>",
+  "commands.description.load": "<gray>Load your plot.</gray>",
+  "commands.description.merge": "<gray>Merge the plot you are standing on with another plot.</gray>",
+  "commands.description.middle": "<gray>Teleports you to the center of the plot.</gray>",
+  "commands.description.move": "<gray>Move a plot.</gray>",
+  "commands.description.music": "<gray>Play music in your plot.</gray>",
+  "commands.description.near": "<gray>Display nearby players.</gray>",
+  "commands.description.owner": "<gray>Set the plot owner.</gray>",
+  "commands.description.plugin": "<gray>Show plugin information.</gray>",
+  "commands.description.purge": "<gray>Purge all plots for a world.</gray>",
+  "commands.description.rate": "<gray>Rate a plot.</gray>",
+  "commands.description.regenallroads": "<gray>Regenerate all roads in the map using the set road schematic.</gray>",
+  "commands.description.relight": "<gray>Relight your plot.</gray>",
+  "commands.description.reload": "<gray>Reload translations and world settings.</gray>",
+  "commands.description.remove": "<gray>Remove a player from a plot.</gray>",
+  "commands.description.save": "<gray>Save your plot.</gray>",
+  "commands.description.schematic": "<gray>Manage schematics.</gray>",
+  "commands.description.set": "<gray>Set a plot value.</gray>",
+  "commands.description.sethome": "<gray>Set the plot home.</gray>",
+  "commands.description.setup": "<gray>Setup wizard for plot worlds.</gray>",
+  "commands.description.swap": "<gray>Swap two plots.</gray>",
+  "commands.description.target": "<gray>Target a plot with your compass.</gray>",
+  "commands.description.template": "<gray>Create or use a world template.</gray>",
+  "commands.description.toggle": "<gray>Toggle per user settings.</gray>",
+  "commands.description.trim": "<gray>Delete unmodified portions of your plotworld.</gray>",
+  "commands.description.trust": "<gray>Allow a user to build in a plot and use WorldEdit while the plot owner is offline.</gray>",
+  "commands.description.unlink": "<gray>Unlink a mega-plot.</gray>",
+  "commands.description.visit": "<gray>Visit someones plot.</gray>",
+  "commands.description.weanywhere": "<gray>Force bypass of WorldEdit restrictions.</gray>"
 }

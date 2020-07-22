@@ -26,7 +26,6 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -74,7 +73,7 @@ public class Music extends SubCommand {
             return false;
         }
         if (!plot.isAdded(player.getUUID())) {
-            sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
         PlotInventory inv = new PlotInventory(this.inventoryUtil, player, 2, "Plot Jukebox") {
@@ -94,7 +93,7 @@ public class Music extends SubCommand {
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
-                    Captions.FLAG_REMOVED.send(player);
+                    player.sendMessage(TranslatableCaption.of("flag.flag_removed"));
                 } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
                         .createFlagInstance(item.getType());
@@ -106,9 +105,9 @@ public class Music extends SubCommand {
                         return true;
                     }
                     plot.setFlag(event.getFlag());
-                    Captions.FLAG_ADDED.send(player);
+                    player.sendMessage(TranslatableCaption.of("flag.flag_added"));
                 } else {
-                    Captions.FLAG_NOT_ADDED.send(player);
+                    player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
                 }
                 return false;
             }

@@ -45,6 +45,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ import java.util.stream.Stream;
 @CommandDeclaration(command = "set",
     description = "Set a plot value",
     aliases = {"s"},
-    usage = "/plot set <biome|alias|home|flag> <value...>",
+    usage = "/plot set <biome | alias | home | flag> <value...>",
     permission = "plots.set",
     category = CommandCategory.APPEARANCE,
     requiredType = RequiredType.NONE)
@@ -127,7 +128,10 @@ public class Set extends SubCommand {
                             } else if (!blockType.contains(forbiddenType)) {
                                 continue;
                             }
-                            Captions.COMPONENT_ILLEGAL_BLOCK.send(player, forbiddenType);
+                            player.sendMessage(
+                                    TranslatableCaption.of("invalid.component_illegal_block"),
+                                    Template.of("value", forbiddenType)
+                            );
                             return true;
                         }
                     }
@@ -144,14 +148,14 @@ public class Set extends SubCommand {
                             return false;
                         }
                         if (args.length < 2) {
-                            MainUtil.sendMessage(player, Captions.NEED_BLOCK);
+                            player.sendMessage(TranslatableCaption.of("need.need_block"));
                             return true;
                         }
 
                         Pattern pattern = PatternUtil.parse(player, material, false);
 
                         if (plot.getRunning() > 0) {
-                            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+                            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                             return false;
                         }
 
@@ -160,7 +164,7 @@ public class Set extends SubCommand {
                             for (Plot current : plot.getConnectedPlots()) {
                                 current.setComponent(component, pattern);
                             }
-                            MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
+                            player.sendMessage(TranslatableCaption.of("working.generating_component"));
                             blockQueue.addEmptyTask(plot::removeRunning);
                         });
                         return true;

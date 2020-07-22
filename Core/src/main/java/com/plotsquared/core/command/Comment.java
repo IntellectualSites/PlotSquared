@@ -26,13 +26,15 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.comment.CommentInbox;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -47,8 +49,10 @@ public class Comment extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 2) {
-            sendMessage(player, Captions.COMMENT_SYNTAX,
-                StringMan.join(CommentManager.inboxes.keySet(), "|"));
+            player.sendMessage(
+                    TranslatableCaption.of("comment.comment_syntax"),
+                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+            );
             return false;
         }
 
@@ -64,8 +68,10 @@ public class Comment extends SubCommand {
             plot = player.getLocation().getPlotAbs();
         } else {
             if (args.length < 3) {
-                sendMessage(player, Captions.COMMENT_SYNTAX,
-                    StringMan.join(CommentManager.inboxes.keySet(), "|"));
+                player.sendMessage(
+                        TranslatableCaption.of("comment.comment_syntax"),
+                        Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+                );
                 return false;
             }
             index = 2;
@@ -73,13 +79,15 @@ public class Comment extends SubCommand {
 
         CommentInbox inbox = CommentManager.inboxes.get(args[index - 1].toLowerCase());
         if (inbox == null) {
-            sendMessage(player, Captions.COMMENT_SYNTAX,
-                StringMan.join(CommentManager.inboxes.keySet(), "|"));
+            player.sendMessage(
+                    TranslatableCaption.of("comment.comment_syntax"),
+                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+            );
             return false;
         }
 
         if (!inbox.canWrite(plot, player)) {
-            sendMessage(player, Captions.NO_PERM_INBOX, "");
+            player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox"));
             return false;
         }
 
@@ -89,19 +97,21 @@ public class Comment extends SubCommand {
                 player.getName(), inbox.toString(), System.currentTimeMillis());
         boolean result = inbox.addComment(plot, comment);
         if (!result) {
-            sendMessage(player, Captions.NO_PLOT_INBOX, "");
-            sendMessage(player, Captions.COMMENT_SYNTAX,
-                StringMan.join(CommentManager.inboxes.keySet(), "|"));
+            player.sendMessage(TranslatableCaption.of("comment.no_plot_inbox"));
+            player.sendMessage(
+                    TranslatableCaption.of("comment.comment_syntax"),
+                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), "|"))
+            );
             return false;
         }
 
         for (final PlotPlayer pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
             if (pp.getAttribute("chatspy")) {
-                MainUtil.sendMessage(pp, "/plot comment " + StringMan.join(args, " "));
+                pp.sendMessage(StaticCaption.of("/plot comment " + StringMan.join(args, " ")));
             }
         }
 
-        sendMessage(player, Captions.COMMENT_ADDED);
+        player.sendMessage(TranslatableCaption.of("comment.comment_added"));
         return true;
     }
 }

@@ -52,7 +52,7 @@ import java.util.concurrent.CompletableFuture;
 @CommandDeclaration(command = "home",
                     description = "Teleport to your plot(s)",
                     permission = "plots.home",
-                    usage = "/plot home [<page>|<alias>|<area;x;y>|<area> <x;y>|<area> <page>]",
+                    usage = "/plot home [<page> | <alias> | <area;x;y> | <area> <x;y> | <area> <page>]",
                     aliases = {"h"},
                     requiredType = RequiredType.PLAYER,
                     category = CommandCategory.TELEPORT)

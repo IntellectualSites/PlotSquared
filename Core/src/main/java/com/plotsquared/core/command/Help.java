@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
@@ -114,7 +115,7 @@ public class Help extends Command {
                     Captions.HELP_INFO_ITEM.getTranslated().replaceAll("%category%", "all")
                         .replaceAll("%category_desc%", "Display all commands"));
                 builder.append("\n").append(Captions.HELP_FOOTER.getTranslated());
-                MainUtil.sendMessage(player, builder.toString(), false);
+                player.sendMessage(StaticCaption.of(builder.toString()));
                 return true;
             }
             new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages()

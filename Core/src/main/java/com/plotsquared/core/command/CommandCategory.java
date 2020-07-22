@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 
 import javax.annotation.Nonnull;
 
@@ -39,42 +40,42 @@ public enum CommandCategory implements Caption {
      * Claiming CommandConfig.
      * Such as: /plot claim
      */
-    CLAIMING(Captions.COMMAND_CATEGORY_CLAIMING),
+    CLAIMING(TranslatableCaption.of("category.command_category_claiming")),
     /**
      * Teleportation CommandConfig.
      * Such as: /plot visit
      */
-    TELEPORT(Captions.COMMAND_CATEGORY_TELEPORT),
+    TELEPORT(TranslatableCaption.of("category.command_category_teleport")),
     /**
      * Protection.
      */
-    SETTINGS(Captions.COMMAND_CATEGORY_SETTINGS),
+    SETTINGS(TranslatableCaption.of("category.command_category_settings")),
     /**
      * Chat.
      */
-    CHAT(Captions.COMMAND_CATEGORY_CHAT),
+    CHAT(TranslatableCaption.of("category.command_category_chat")),
     /**
      * Web.
      */
-    SCHEMATIC(Captions.COMMAND_CATEGORY_SCHEMATIC),
+    SCHEMATIC(TranslatableCaption.of("category.command_category_schematic")),
     /**
      * Cosmetic.
      */
-    APPEARANCE(Captions.COMMAND_CATEGORY_APPEARANCE),
+    APPEARANCE(TranslatableCaption.of("category.command_category_appearance")),
     /**
      * Information CommandConfig.
      * Such as: /plot info
      */
-    INFO(Captions.COMMAND_CATEGORY_INFO),
+    INFO(TranslatableCaption.of("category.command_category_info")),
     /**
      * Debug CommandConfig.
      * Such as: /plot debug
      */
-    DEBUG(Captions.COMMAND_CATEGORY_DEBUG),
+    DEBUG(TranslatableCaption.of("category.command_category_debug")),
     /**
      * Administration commands.
      */
-    ADMINISTRATION(Captions.COMMAND_CATEGORY_ADMINISTRATION);
+    ADMINISTRATION(TranslatableCaption.of("category.command_category_administration"));
     /**
      * The category name (Readable).
      */

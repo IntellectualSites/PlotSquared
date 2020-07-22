@@ -29,8 +29,10 @@ import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.TabCompletions;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -73,9 +75,13 @@ public class SettingsNodeStep implements SetupStep {
     }
 
     @Override public void announce(PlotPlayer<?> plotPlayer) {
-        MainUtil.sendMessage(plotPlayer, Captions.SETUP_STEP, this.getId() + 1,
-                this.configurationNode.getDescription(), this.configurationNode.getType().getType(),
-                String.valueOf(this.configurationNode.getDefaultValue()));
+        plotPlayer.sendMessage(
+                TranslatableCaption.of("setup.setup_step"),
+                Template.of("step", String.valueOf(this.getId() + 1)),
+                Template.of("description", this.configurationNode.getDescription()),
+                Template.of("type", this.configurationNode.getType().getType()),
+                Template.of("value", String.valueOf(this.configurationNode.getDefaultValue()))
+        );
     }
 
     @Override public Collection<Command> createSuggestions(PlotPlayer<?> plotPlayer, String argument) {

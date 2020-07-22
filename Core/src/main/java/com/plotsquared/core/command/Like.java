@@ -40,6 +40,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ import java.util.UUID;
 @CommandDeclaration(command = "like",
     permission = "plots.like",
     description = "Like the plot",
-    usage = "/plot like [next|purge]",
+    usage = "/plot like [next | purge]",
     category = CommandCategory.INFO,
     requiredType = RequiredType.PLAYER)
 public class Like extends SubCommand {
@@ -82,11 +83,11 @@ public class Like extends SubCommand {
                             .isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
                             plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
                             });
-                            MainUtil.sendMessage(player, Captions.RATE_THIS);
+                            player.sendMessage(TranslatableCaption.of("tutorial.rate_this"));
                             return true;
                         }
                     }
-                    MainUtil.sendMessage(player, Captions.FOUND_NO_PLOTS);
+                    player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
                     return true;
                 }
                 case "purge": {
@@ -100,7 +101,7 @@ public class Like extends SubCommand {
                         return false;
                     }
                     plot.clearRatings();
-                    Captions.RATINGS_PURGED.send(player);
+                    player.sendMessage(TranslatableCaption.of("ratings.ratings_purged"));
                     return true;
                 }
             }
@@ -111,21 +112,24 @@ public class Like extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            sendMessage(player, Captions.RATING_NOT_OWNED);
+            player.sendMessage(TranslatableCaption.of("ratings.rating_not_owned"));
             return false;
         }
         if (plot.isOwner(player.getUUID())) {
-            sendMessage(player, Captions.RATING_NOT_YOUR_OWN);
+            player.sendMessage(TranslatableCaption.of("ratings.rating_not_your_own"));
             return false;
         }
         if (Settings.Done.REQUIRED_FOR_RATINGS && !DoneFlag.isDone(plot)) {
-            sendMessage(player, Captions.RATING_NOT_DONE);
+            player.sendMessage(TranslatableCaption.of("ratings.rating_not_done"));
             return false;
         }
         final Runnable run = () -> {
             final Boolean oldRating = plot.getLikes().get(uuid);
             if (oldRating != null) {
-                sendMessage(player, Captions.RATING_ALREADY_EXISTS, plot.getId().toString());
+                player.sendMessage(
+                        TranslatableCaption.of("ratings.rating_already_exists"),
+                        Template.of("value", plot.getId().toString())
+                );
                 return;
             }
             final int rating;
@@ -140,9 +144,15 @@ public class Like extends SubCommand {
             if (event.getRating() != null) {
                 plot.addRating(uuid, event.getRating());
                 if (like) {
-                    sendMessage(player, Captions.RATING_LIKED, plot.getId().toString());
+                    player.sendMessage(
+                            TranslatableCaption.of("ratings.rating_liked"),
+                            Template.of("plot", plot.getId().toString())
+                    );
                 } else {
-                    sendMessage(player, Captions.RATING_DISLIKED, plot.getId().toString());
+                    player.sendMessage(
+                            TranslatableCaption.of("ratings.rating_disliked"),
+                            Template.of("plot", plot.getId().toString())
+                    );
                 }
             }
         };

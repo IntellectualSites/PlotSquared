@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.queue.LocalBlockQueue;
@@ -52,7 +52,7 @@ public class Relight extends Command {
         RunnableVal2<Command, CommandResult> whenDone) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            Captions.NOT_IN_PLOT.send(player);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return CompletableFuture.completedFuture(false);
         }
         final LocalBlockQueue queue = plot.getArea().getQueue(false);
@@ -62,7 +62,7 @@ public class Relight extends Command {
             }
         }, () -> {
             plot.refreshChunks();
-            Captions.SET_BLOCK_ACTION_FINISHED.send(player);
+            player.sendMessage(TranslatableCaption.of("setblock.set_block_action_finished"));
         }, 5);
 
         return CompletableFuture.completedFuture(true);

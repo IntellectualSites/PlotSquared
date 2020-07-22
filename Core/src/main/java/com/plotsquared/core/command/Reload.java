@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.MemorySection;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
@@ -116,10 +117,10 @@ public class Reload extends SubCommand {
                 }
             });
             this.worldConfiguration.save(this.worldFile);
-            MainUtil.sendMessage(player, Captions.RELOADED_CONFIGS);
+            player.sendMessage(TranslatableCaption.of("reload.reloaded_configs"));
         } catch (IOException e) {
             e.printStackTrace();
-            MainUtil.sendMessage(player, Captions.RELOAD_FAILED);
+            player.sendMessage(TranslatableCaption.of("reload.reload_failed"));
         }
         return true;
     }

@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
@@ -100,7 +101,7 @@ public class Info extends SubCommand {
                         .hasPermission(Captions.PERMISSION_AREA_INFO_FORCE.getTranslated())) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Captions.PERMISSION_AREA_INFO_FORCE.getTranslated())
+                                Template.of("node", "plots.area.info.force")
                         );
                         return true;
                     }
@@ -132,13 +133,11 @@ public class Info extends SubCommand {
             info = getCaption(arg);
             if (info == null) {
                 if (Settings.Ratings.USE_LIKES) {
-                    MainUtil.sendMessage(player,
-                        "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                            + "&aowner&7, " + " &alikes");
+                    player.sendMessage(StaticCaption.of("&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
+                            + "&aowner&7, " + " &alikes"));
                 } else {
-                    MainUtil.sendMessage(player,
-                        "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                            + "&aowner&7, " + " &arating");
+                    player.sendMessage(StaticCaption.of("&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
+                            + "&aowner&7, " + " &arating"));
                 }
                 return false;
             }

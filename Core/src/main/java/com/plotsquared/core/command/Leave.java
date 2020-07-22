@@ -27,11 +27,13 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
@@ -72,9 +74,15 @@ public class Leave extends Command {
                 if (plot.removeMember(uuid)) {
                     this.eventDispatcher.callMember(player, plot, uuid, false);
                 }
-                MainUtil.sendMessage(player, Captions.PLOT_LEFT, player.getName());
+                player.sendMessage(
+                        TranslatableCaption.of("member.plot_left"),
+                        Template.of("player", player.getName())
+                );
             } else {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, 1);
+                player.sendMessage(
+                        TranslatableCaption.of("errors.invalid_player"),
+                        Template.of("value", String.valueOf(1))
+                );
             }
         }
         return CompletableFuture.completedFuture(true);

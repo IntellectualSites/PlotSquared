@@ -52,7 +52,13 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@CommandDeclaration(command = "claim", aliases = "c", description = "Claim the current plot you're standing on", category = CommandCategory.CLAIMING, requiredType = RequiredType.PLAYER, permission = "plots.claim", usage = "/plot claim")
+@CommandDeclaration(
+        command = "claim",
+        aliases = "c",
+        description = "Claim the current plot you're standing on",
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.PLAYER, permission = "plots.claim",
+        usage = "/plot claim")
 public class Claim extends SubCommand {
 
     private static final Logger logger =
@@ -118,7 +124,7 @@ public class Claim extends SubCommand {
                 if (!Permissions.hasPermission(player, CaptionUtility
                     .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                     && !Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC) && !force) {
+                    .hasPermission(player, "plots.admin.command.schematic") && !force) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_schematic_permission"),
                             Template.of("value", schematic)
@@ -174,8 +180,9 @@ public class Claim extends SubCommand {
                             .callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
                         if (mergeEvent.getEventResult() == Result.DENY) {
                             player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Auto merge on claim"));
+                                    TranslatableCaption.of("events.event_denied"),
+                                    Template.of("value", "Auto merge on claim")
+                            );
                         } else {
                             plot.autoMerge(mergeEvent.getDir(), mergeEvent.getMax(), player.getUUID(), true);
                         }

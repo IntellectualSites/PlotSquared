@@ -85,11 +85,11 @@ public class Clear extends Command {
         }
         boolean force = eventResult == Result.FORCE;
         checkTrue(force || plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CLEAR),
+                .hasPermission(player, "plots.admin.command.clear"),
             Captions.NO_PLOT_PERMS);
         checkTrue(plot.getRunning() == 0, Captions.WAIT_FOR_TIMER);
         checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
-            .hasPermission(player, Captions.PERMISSION_CONTINUE), Captions.DONE_ALREADY_DONE);
+            .hasPermission(player, "plots.continue"), Captions.DONE_ALREADY_DONE);
         confirm.run(this, () -> {
             BackupManager.backup(player, plot, () -> {
                 final long start = System.currentTimeMillis();

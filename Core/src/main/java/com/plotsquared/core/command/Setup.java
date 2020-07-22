@@ -28,11 +28,14 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.setup.SetupProcess;
 import com.plotsquared.core.setup.SetupStep;
 import com.plotsquared.core.util.SetupUtils;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -67,14 +70,18 @@ public class Setup extends SubCommand {
                 message.append("\n&8 - &7").append(entry.getKey()).append(" (Unknown structure)");
             }
         }
-        MainUtil.sendMessage(player, message.toString());
+        player.sendMessage(StaticCaption.of(message.toString()));
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         SetupProcess process = player.getMeta("setup");
         if (process == null) {
             if (args.length > 0) {
-                MainUtil.sendMessage(player, Captions.SETUP_NOT_STARTED);
+                player.sendMessage(TranslatableCaption.of("setup.setup_not_started"));
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", "Use /plot setup to start a setup process.")
+                );
                 return true;
             }
             process = new SetupProcess();
@@ -91,7 +98,7 @@ public class Setup extends SubCommand {
                 process.getCurrentStep().announce(player);
             } else if ("cancel".equalsIgnoreCase(args[0])) {
                 player.deleteMeta("setup");
-                MainUtil.sendMessage(player, Captions.SETUP_CANCELLED);
+                player.sendMessage(TranslatableCaption.of("setup.setup_cancelled"));
             } else {
                 process.handleInput(player, args[0]);
                 if (process.getCurrentStep() != null) {

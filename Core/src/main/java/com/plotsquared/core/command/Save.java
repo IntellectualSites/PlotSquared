@@ -71,16 +71,16 @@ public class Save extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SAVE)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
         plot.addRunning();
@@ -101,10 +101,10 @@ public class Save extends SubCommand {
                         @Override public void run(URL url) {
                             plot.removeRunning();
                             if (url == null) {
-                                MainUtil.sendMessage(player, Captions.SAVE_FAILED);
+                                player.sendMessage(TranslatableCaption.of("backups.backup_save_failed"));
                                 return;
                             }
-                            MainUtil.sendMessage(player, Captions.SAVE_SUCCESS);
+                            player.sendMessage(TranslatableCaption.of("web.save_success"));
                             List<String> schematics = player.getMeta("plot_schematics");
                             if (schematics != null) {
                                 schematics.add(file + ".schem");

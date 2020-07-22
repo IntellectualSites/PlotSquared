@@ -59,10 +59,10 @@ public class Caps extends SubCommand {
             return false;
         }
         if (!plot.isAdded(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_CAPS_OTHER)) {
+            .hasPermission(player, "plots.admin.caps.other")) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.PERMISSION_ADMIN_CAPS_OTHER.getTranslated()));
+                    Template.of("node", "plots.admin.caps.other"));
             return false;
         }
         player.sendMessage(TranslatableCaption.of("info.plot_caps_header"));
@@ -82,7 +82,8 @@ public class Caps extends SubCommand {
         final int current = countedEntities[type];
         final int max = plot.getFlag(capFlag);
         final String percentage = String.format("%.1f", 100 * ((float) current / max));
-        player.sendMessage(TranslatableCaption.of("info.plot_caps_format"),
+        player.sendMessage(
+                TranslatableCaption.of("info.plot_caps_format"),
                 Template.of("cap", name),
                 Template.of("current", String.valueOf(current)),
                 Template.of("limit", String.valueOf(max)),

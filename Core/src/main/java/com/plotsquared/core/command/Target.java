@@ -25,15 +25,16 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
+import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "target",
-    usage = "/plot target <<plot>|nearest>",
+    usage = "/plot target <<plot> | nearest>",
     description = "Target a plot with your compass",
     permission = "plots.target",
     requiredType = RequiredType.PLAYER,
@@ -47,11 +48,14 @@ public class Target extends SubCommand {
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         if (!location.isPlotArea()) {
-            MainUtil.sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
             return false;
         }
         if (args.length == 0) {
-            MainUtil.sendMessage(player, this.getUsage());
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot target <<plot> | nearest>")
+            );
             return false;
         }
         Plot target = null;
@@ -65,14 +69,14 @@ public class Target extends SubCommand {
                 }
             }
             if (target == null) {
-                MainUtil.sendMessage(player, Captions.FOUND_NO_PLOTS);
+                player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
                 return false;
             }
         } else if ((target = Plot.getPlotFromString(player, args[0], true)) == null) {
             return false;
         }
         target.getCenter(player::setCompassTarget);
-        MainUtil.sendMessage(player, Captions.COMPASS_TARGET);
+        player.sendMessage(TranslatableCaption.of("compass.compass_target"));
         return true;
     }
 }

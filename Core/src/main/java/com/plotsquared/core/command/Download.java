@@ -135,7 +135,7 @@ public class Download extends SubCommand {
                         player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
                         return;
                     }
-                    player.sendMessage(StaticCaption.of(url.toString())
+                    player.sendMessage(StaticCaption.of(url.toString()));
                 }
             });
         } else {

@@ -45,7 +45,7 @@ import java.util.concurrent.TimeoutException;
 @CommandDeclaration(command = "alias",
     permission = "plots.alias",
     description = "Set the plot name",
-    usage = "/plot alias <set|remove> <alias>",
+    usage = "/plot alias <set | remove> <alias>",
     aliases = {"setalias", "sa", "name", "rename", "setname", "seta", "nameplot"},
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.PLAYER)
@@ -96,7 +96,7 @@ public class Alias extends SubCommand {
                     return true;
                 } else {
                     player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Captions.PERMISSION_ALIAS_SET.getTranslated()));
+                            Template.of("node", "plots.alias.set"));
                 }
 
                 break;
@@ -111,7 +111,7 @@ public class Alias extends SubCommand {
                     result = removeAlias(player, plot);
                 } else {
                     player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Captions.PERMISSION_ALIAS_REMOVE.getTranslated()));
+                            Template.of("node", "plots.alias.remove"));
                 }
                 break;
             default:
@@ -168,7 +168,7 @@ public class Alias extends SubCommand {
     private boolean removeAlias(PlotPlayer<?> player, Plot plot) {
         plot.setAlias(null);
         player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                Template.of("node", Captions.PERMISSION_ALIAS_REMOVE.getTranslated()));
+                Template.of("node", "plots.alias.remove"));
         return true;
     }
 

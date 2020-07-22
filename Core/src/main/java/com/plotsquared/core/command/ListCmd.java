@@ -48,6 +48,7 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.uuid.UUIDMapping;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,7 +71,7 @@ import java.util.stream.Collectors;
     description = "List plots",
     permission = "plots.list",
     category = CommandCategory.INFO,
-    usage = "/plot list <forsale|mine|shared|world|top|all|unowned|player|world|done|fuzzy <search...>> [#]")
+    usage = "/plot list <forsale | mine | shared | world | top | all | unowned | player | world | done | fuzzy <search...>> [#]")
 public class ListCmd extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
@@ -158,9 +159,11 @@ public class ListCmd extends SubCommand {
 
         final Consumer<PlotQuery> plotConsumer = query -> {
             if (query == null) {
-                sendMessage(player, Captions.DID_YOU_MEAN,
-                    new StringComparison<>(args[0], new String[] {"mine", "shared", "world", "all"})
-                        .getBestMatch());
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.did_you_mean"),
+                        Template.of("value", new StringComparison<>(args[0], new String[] {"mine", "shared", "world", "all"})
+                                .getBestMatch())
+                );
                 return;
             }
 

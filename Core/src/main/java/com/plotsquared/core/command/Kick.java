@@ -38,6 +38,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -51,7 +52,7 @@ import java.util.concurrent.TimeoutException;
     aliases = "k",
     description = "Kick a player from your plot",
     permission = "plots.kick",
-    usage = "/plot kick <player|*>",
+    usage = "/plot kick <player | *>",
     category = CommandCategory.TELEPORT,
     requiredType = RequiredType.PLAYER)
 public class Kick extends SubCommand {
@@ -75,15 +76,18 @@ public class Kick extends SubCommand {
         }
         if ((!plot.hasOwner() || !plot.isOwner(player.getUUID())) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_KICK)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_permission"));
             return false;
         }
 
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
-                MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
             } else if (throwable != null || uuids.isEmpty()) {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                player.sendMessage(
+                        TranslatableCaption.of("errors.invalid_player"),
+                        Template.of("value", args[0])
+                );
             } else {
                 Set<PlotPlayer<?>> players = new HashSet<>();
                 for (UUID uuid : uuids) {
@@ -104,20 +108,29 @@ public class Kick extends SubCommand {
                 }
                 players.remove(player); // Don't ever kick the calling player
                 if (players.isEmpty()) {
-                    MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                    player.sendMessage(
+                            TranslatableCaption.of("errors.invalid_player"),
+                            Template.of("value", args[0])
+                    );
                     return;
                 }
                 for (PlotPlayer<?> player2 : players) {
                     if (!plot.equals(player2.getCurrentPlot())) {
-                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Template.of("value", args[0])
+                        );
                         return;
                     }
                     if (Permissions.hasPermission(player2, Captions.PERMISSION_ADMIN_ENTRY_DENIED)) {
-                        Captions.CANNOT_KICK_PLAYER.send(player, player2.getName());
+                        player.sendMessage(
+                                TranslatableCaption.of("cluster.cannot_kick_player"),
+                                Template.of("name", player2.getName())
+                        );
                         return;
                     }
                     Location spawn = this.worldUtil.getSpawn(location.getWorldName());
-                    Captions.YOU_GOT_KICKED.send(player2);
+                    player.sendMessage(TranslatableCaption.of("kick.you_got_kicked"));
                     if (plot.equals(spawn.getPlot())) {
                         Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
                         if (plot.equals(newSpawn.getPlot())) {

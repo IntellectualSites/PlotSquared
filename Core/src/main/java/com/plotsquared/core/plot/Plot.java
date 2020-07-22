@@ -35,6 +35,7 @@ import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotComponentSetEvent;
@@ -349,13 +350,13 @@ public class Plot {
                 }
             }
             if (message) {
-                MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
+                player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
             }
             return null;
         }
         if (area == null) {
             if (message) {
-                MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
+                player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
             }
             return null;
         }
@@ -1076,8 +1077,7 @@ public class Plot {
                         regionManager.regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false,
                                 this);
                     } catch (UnsupportedOperationException exception) {
-                        MainUtil.sendMessage(null,
-                            "Please ask md_5 to fix regenerateChunk() because it breaks plugins. We apologize for the inconvenience");
+                        logger.info("[P2] Please ask md_5 to fix regenerateChunk() because it breaks plugins. We apologize for the inconvenience.");
                         return;
                     }
                     return;
@@ -1856,7 +1856,7 @@ public class Plot {
             updateWorldBorder();
         }
         setSign(player.getName());
-        MainUtil.sendMessage(player, Captions.CLAIMED);
+        player.sendMessage(TranslatableCaption.of("working.claimed"));
         if (teleport && Settings.Teleport.ON_CLAIM) {
             teleportPlayer(player, TeleportCause.COMMAND, result -> {
             });
@@ -1881,9 +1881,9 @@ public class Plot {
                 new RunnableVal<Boolean>() {
                     @Override public void run(Boolean value) {
                         if (value) {
-                            MainUtil.sendMessage(player, Captions.SCHEMATIC_PASTE_SUCCESS);
+                            player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
                         } else {
-                            MainUtil.sendMessage(player, Captions.SCHEMATIC_PASTE_FAILED);
+                            player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
                         }
                     }
                 });
@@ -3005,7 +3005,7 @@ public class Plot {
                 Captions.PLOT_DEBUG.getTranslated().replace("%plot%", this.toString()).replace("%message%", message);
             for (final PlotPlayer<?> player : players) {
                 if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_DEBUG_OTHER)) {
-                    player.sendMessage(string);
+                    player.sendMessage(StaticCaption.of(string));
                 }
             }
         } catch (final Exception ignored) {}
@@ -3072,13 +3072,15 @@ public class Plot {
         final Consumer<Location> locationConsumer = location -> {
             if (Settings.Teleport.DELAY == 0 || Permissions
                 .hasPermission(player, "plots.teleport.delay.bypass")) {
-                MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
+                player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
                 player.teleport(location, cause);
                 resultConsumer.accept(true);
                 return;
             }
-            MainUtil
-                .sendMessage(player, Captions.TELEPORT_IN_SECONDS, Settings.Teleport.DELAY + "");
+            player.sendMessage(
+                    TranslatableCaption.of("teleport.teleport_in_seconds"),
+                    Template.of("amount", String.valueOf(Settings.Teleport.DELAY))
+            );
             final String name = player.getName();
             TaskManager.addToTeleportQueue(name);
             TaskManager.runTaskLater(() -> {
@@ -3086,7 +3088,7 @@ public class Plot {
                     return;
                 }
                 if (player.isOnline()) {
-                    MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
+                    player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
                     player.teleport(location, cause);
                 }
             }, TaskTime.seconds(Settings.Teleport.DELAY));

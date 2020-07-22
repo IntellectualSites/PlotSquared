@@ -37,6 +37,7 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -49,7 +50,7 @@ import java.util.concurrent.TimeoutException;
 @CommandDeclaration(command = "trust",
     aliases = {"t"},
     requiredType = RequiredType.PLAYER,
-    usage = "/plot trust <player|*>",
+    usage = "/plot trust <player | *>",
     description = "Allow a user to build in a plot and use WorldEdit while the plot owner is offline.",
     category = CommandCategory.SETTINGS)
 public class Trust extends Command {
@@ -79,9 +80,12 @@ public class Trust extends Command {
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable != null) {
                 if (throwable instanceof TimeoutException) {
-                    Captions.FETCHING_PLAYERS_TIMEOUT.send(player);
+                    player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                 } else {
-                    Captions.INVALID_PLAYER.send(player, args[0]);
+                    player.sendMessage(
+                            TranslatableCaption.of("errors.invalid_player"),
+                            Template.of("value", args[0])
+                    );
                 }
                 future.completeExceptionally(throwable);
                 return;
@@ -94,17 +98,26 @@ public class Trust extends Command {
                     if (uuid == DBFunc.EVERYONE && !(
                         Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
                             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
-                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, PlayerManager.getName(uuid));
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Template.of("value", PlayerManager.getName(uuid))
+                        );
                         iterator.remove();
                         continue;
                     }
                     if (currentPlot.isOwner(uuid)) {
-                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, PlayerManager.getName(uuid));
+                        player.sendMessage(
+                                TranslatableCaption.of("member.already_added"),
+                                Template.of("value", PlayerManager.getName(uuid))
+                        );
                         iterator.remove();
                         continue;
                     }
                     if (currentPlot.getTrusted().contains(uuid)) {
-                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, PlayerManager.getName(uuid));
+                        player.sendMessage(
+                                TranslatableCaption.of("member.already_added"),
+                                Template.of("value", PlayerManager.getName(uuid))
+                        );
                         iterator.remove();
                         continue;
                     }

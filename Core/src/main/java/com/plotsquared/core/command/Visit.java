@@ -44,6 +44,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ import java.util.concurrent.TimeoutException;
 @CommandDeclaration(command = "visit",
     permission = "plots.visit",
     description = "Visit someones plot",
-    usage = "/plot visit <player>|<alias>|<plot> [area]|[#] [#]",
+    usage = "/plot visit <player> | <alias> | <plot> [area]|[#] [#]",
     aliases = {"v", "tp", "teleport", "goto", "warp"},
     requiredType = RequiredType.PLAYER,
     category = CommandCategory.TELEPORT)
@@ -187,7 +188,7 @@ public class Visit extends Command {
                     int finalPage1 = page;
                     PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
                         if (throwable instanceof TimeoutException) {
-                            Captions.FETCHING_PLAYERS_TIMEOUT.send(player);
+                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                         } else if (throwable != null || uuids.size() != 1) {
                             player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
                                 Templates.of("value", getUsage()));
@@ -210,16 +211,19 @@ public class Visit extends Command {
                     PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
                             // The request timed out
-                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                         } else if (uuid != null && !PlotQuery.newQuery().ownedBy(uuid).anyMatch()) {
                             // It was a valid UUID but the player has no plots
-                            MainUtil.sendMessage(player, Captions.PLAYER_NO_PLOTS);
+                            player.sendMessage(TranslatableCaption.of("errors.player_no_plots"));
                         } else if (uuid == null) {
                             // player not found, so we assume it's an alias if no page was provided
                             if (finalPage == Integer.MIN_VALUE) {
                                 this.visit(player, PlotQuery.newQuery().withAlias(finalArgs[0]), player.getApplicablePlotArea(), confirm, whenDone, 1);
                             } else {
-                                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, finalArgs[0]);
+                                player.sendMessage(
+                                        TranslatableCaption.of("errors.invalid_player"),
+                                        Template.of("value", finalArgs[0])
+                                );
                             }
                         } else {
                             this.visit(player, PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(), null, confirm, whenDone, finalPage);

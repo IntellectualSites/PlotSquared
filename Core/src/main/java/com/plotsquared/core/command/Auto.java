@@ -29,7 +29,6 @@ import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
@@ -221,9 +220,7 @@ public class Auto extends SubCommand {
                         return true;
                 }
                 if (size_x < 1 || size_z < 1) {
-                    player.sendMessage(
-                            TranslatableCaption.of("error.plot_size")
-                    );
+                    player.sendMessage(TranslatableCaption.of("error.plot_size"));
                 }
                 if (args.length > 1) {
                     schematic = args[1];
@@ -250,9 +247,9 @@ public class Auto extends SubCommand {
         size_x = event.getSize_x();
         size_z = event.getSize_z();
         schematic = event.getSchematic();
-        if (!force && mega && !Permissions.hasPermission(player, Captions.PERMISSION_AUTO_MEGA)) {
+        if (!force && mega && !Permissions.hasPermission(player, "plots.auto.mega")) {
             player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.PERMISSION_AUTO_MEGA.getTranslated()));
+                    Template.of("node", "plots.auto.mega"));
         }
         if (!force && size_x * size_z > Settings.Claim.MAX_AUTO_AREA) {
             player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots_num"),
@@ -277,10 +274,10 @@ public class Auto extends SubCommand {
             if (!force && !Permissions.hasPermission(player, CaptionUtility
                 .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
                 && !Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)) {
+                .hasPermission(player, "plots.admin.command.schematic")) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated())
+                        Template.of("node", "plots.claim.%s0")
                 );
                 return true;
             }
@@ -336,8 +333,9 @@ public class Auto extends SubCommand {
                         .callAutoMerge(plotarea.getPlotAbs(pos1), plotIds);
                     if (!force && mergeEvent.getEventResult() == Result.DENY) {
                         player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Auto merge"));
+                                TranslatableCaption.of("events.event_denied"),
+                                Template.of("value", "Auto merge")
+                        );
                         return false;
                     }
                     if (!plotarea.mergePlots(mergeEvent.getPlots(), true)) {

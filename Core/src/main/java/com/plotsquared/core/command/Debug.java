@@ -28,6 +28,8 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.RegionManager;
@@ -38,6 +40,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
+import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,29 +71,33 @@ public class Debug extends SubCommand {
         if (args.length > 0) {
             if ("player".equalsIgnoreCase(args[0])) {
                 for (Map.Entry<String, Object> meta : player.getMeta().entrySet()) {
-                    MainUtil.sendMessage(player,
-                        "Key: " + meta.getKey() + " Value: " + meta.getValue().toString() + " , ");
+                    player.sendMessage(StaticCaption.of("Key: " + meta.getKey() + " Value: " + meta.getValue().toString() + " , "));
                 }
             }
         }
         if (args.length > 0 && "loadedchunks".equalsIgnoreCase(args[0])) {
             final long start = System.currentTimeMillis();
-            MainUtil.sendMessage(player, "Fetching loaded chunks...");
-            TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,
-                "Loaded chunks: " + this.regionManager.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (
-                    System.currentTimeMillis() - start) + "ms) using thread: " + Thread
-                    .currentThread().getName()));
+            player.sendMessage(TranslatableCaption.of("debug.fetching_loaded_chunks"));
+            TaskManager.runTaskAsync(() -> player.sendMessage(StaticCaption.of("Loaded chunks: " + this.regionManager.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (
+                            System.currentTimeMillis() - start) + "ms) using thread: " + Thread
+                            .currentThread().getName())));
             return true;
         }
         if (args.length > 0 && "uuids".equalsIgnoreCase(args[0])) {
             final Collection<UUIDMapping> mappings = PlotSquared.get().getImpromptuUUIDPipeline().getAllImmediately();
-            MainUtil.sendMessage(player, String.format("There are %d cached UUIDs", mappings.size()));
+            player.sendMessage(
+                    TranslatableCaption.of("debug.cached_uuids"),
+                    Template.of("value", String.valueOf(mappings.size()))
+            );
             return true;
         }
         if (args.length > 0 && "debug-players".equalsIgnoreCase(args[0])) {
-            MainUtil.sendMessage(player, "Player in debug mode: " );
+            player.sendMessage(TranslatableCaption.of("debug.player_in_debugmode"));
             for (final PlotPlayer<?> pp : PlotPlayer.getDebugModePlayers()) {
-                MainUtil.sendMessage(player, "- " + pp.getName());
+                player.sendMessage(
+                        TranslatableCaption.of("debug.player_in_debugmode_list"),
+                        Template.of("value", pp.getName())
+                );
             }
             return true;
         }
@@ -103,14 +110,14 @@ public class Debug extends SubCommand {
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {
             EntityCategories.init();
-            player.sendMessage(Captions.PREFIX.getTranslated() + "§cEntity Categories: ");
+            player.sendMessage(TranslatableCaption.of("debug.entity_categories"));
             EntityCategory.REGISTRY.forEach(category -> {
                 final StringBuilder builder =
                     new StringBuilder("§7- §6").append(category.getId()).append("§7: §6");
                 for (final EntityType entityType : category.getAll()) {
                     builder.append(entityType.getId()).append(" ");
                 }
-                player.sendMessage(Captions.PREFIX.getTranslated() + builder.toString());
+                player.sendMessage(StaticCaption.of("core.prefix" + builder.toString()));
             });
             EntityType.REGISTRY.values().stream().sorted(Comparator.comparing(EntityType::getId))
                 .forEach(entityType -> {
@@ -119,9 +126,8 @@ public class Debug extends SubCommand {
                     if (categoryCount > 0) {
                         return;
                     }
-                    player.sendMessage(
-                        Captions.PREFIX.getTranslated() + entityType.getName() + " is in "
-                            + categoryCount + " categories");
+                    player.sendMessage(StaticCaption.of("core.prefix" + entityType.getName() + " is in "
+                            + categoryCount + " categories"));
                 });
             return true;
         }
@@ -130,7 +136,7 @@ public class Debug extends SubCommand {
             for (Captions caption : Captions.values()) {
                 msg.append(caption.getTranslated()).append("\n");
             }
-            MainUtil.sendMessage(player, msg.toString());
+            player.sendMessage(StaticCaption.of(msg.toString()));
             return true;
         }
         StringBuilder information = new StringBuilder();
@@ -145,7 +151,7 @@ public class Debug extends SubCommand {
         information.append(getSection(section, "Messages"));
         information.append(getLine(line, "Total Messages", Captions.values().length));
         information.append(getLine(line, "View all captions", "/plot debug msg"));
-        MainUtil.sendMessage(player, information.toString());
+        player.sendMessage(StaticCaption.of(information.toString()));
         return true;
     }
 

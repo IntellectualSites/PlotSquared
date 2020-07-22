@@ -121,9 +121,10 @@ public class Inbox extends SubCommand {
                                     } else {
                                         color = "";
                                     }
-                                    sendMessage(player, Captions.INBOX_ITEM,
-                                        color + inbox.toString() + " (" + total + '/' + unread
-                                            + ')');
+                                    player.sendMessage(
+                                            TranslatableCaption.of("comment.inbox_item"),
+                                            Template.of("value", color + inbox.toString() + " (" + total + '/' + unread + ')')
+                                    );
                                     return;
                                 }
                             }
@@ -144,8 +145,10 @@ public class Inbox extends SubCommand {
         }
         final CommentInbox inbox = CommentManager.inboxes.get(args[0].toLowerCase());
         if (inbox == null) {
-            sendMessage(player, Captions.INVALID_INBOX,
-                StringMan.join(CommentManager.inboxes.keySet(), ", "));
+            player.sendMessage(
+                    TranslatableCaption.of("comment.invalid_inbox"),
+                    Template.of("list", StringMan.join(CommentManager.inboxes.keySet(), ", "))
+            );
             return false;
         }
         player.setMeta("inbox:" + inbox.toString(), System.currentTimeMillis());

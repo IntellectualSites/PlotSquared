@@ -67,7 +67,7 @@ public class Unlink extends SubCommand {
             return !sendMessage(player, Captions.PLOT_UNOWNED);
         }
         if (!plot.isMerged()) {
-            return sendMessage(player, Captions.UNLINK_IMPOSSIBLE);
+            player.sendMessage(TranslatableCaption.of("merge.unlink_impossible"));
         }
         final boolean createRoad;
         if (args.length != 0) {
@@ -92,14 +92,14 @@ public class Unlink extends SubCommand {
         boolean force = event.getEventResult() == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_UNLINK)) {
-            return sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
         }
         Runnable runnable = () -> {
             if (!plot.unlinkPlot(createRoad, createRoad)) {
-                MainUtil.sendMessage(player, Captions.UNMERGE_CANCELLED);
+                player.sendMessage(TranslatableCaption.of("merge.unmerge_cancelled"));
                 return;
             }
-            MainUtil.sendMessage(player, Captions.UNLINK_SUCCESS);
+            player.sendMessage(TranslatableCaption.of("merge.unlink_success"));
         };
         if (hasConfirmation(player)) {
             CmdConfirm.addPending(player, "/plot unlink " + plot.getId(), runnable);

@@ -29,6 +29,7 @@ import com.google.common.eventbus.EventBus;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlayerClaimPlotEvent;
 import com.plotsquared.core.events.PlayerEnterPlotEvent;
@@ -72,6 +73,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -240,7 +242,7 @@ public class EventDispatcher {
         }
         if (this.worldEdit != null) {
             if (player.getAttribute("worldedit")) {
-                MainUtil.sendMessage(player, Captions.WORLDEDIT_BYPASSED);
+                player.sendMessage(TranslatableCaption.of("worldedit.worldedit_bypassed"));
             }
         }
         final Plot plot = player.getCurrentPlot();
@@ -248,9 +250,7 @@ public class EventDispatcher {
             .getArea() instanceof SinglePlotArea)) {
             TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
             }));
-            MainUtil.sendMessage(player,
-                CaptionUtility.format(player, Captions.TELEPORTED_TO_ROAD.getTranslated())
-                    + " (on-login) " + "(" + plot.getId().getX() + ";" + plot.getId().getY() + ")");
+            player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }
     }
 
@@ -259,7 +259,7 @@ public class EventDispatcher {
         if (Settings.Teleport.ON_DEATH && plot != null) {
             TaskManager.runTask(() -> plot.teleportPlayer(player, result -> {
             }));
-            MainUtil.sendMessage(player, Captions.TELEPORTED_TO_ROAD);
+            player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }
     }
 
@@ -295,10 +295,10 @@ public class EventDispatcher {
                     }
                 }
                 return Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
-                        false) || !(!notifyPerms || MainUtil
-                    .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                        Captions.FLAG_USE.getTranslated()));
+                        .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
+                                false) || !(!notifyPerms || MainUtil
+                        .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
+                                Captions.FLAG_USE.getTranslated()));
             }
             case TRIGGER_PHYSICAL: {
                 if (plot == null) {

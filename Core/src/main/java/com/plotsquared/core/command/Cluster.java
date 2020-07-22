@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
@@ -40,7 +41,6 @@ import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
-import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.HashSet;
@@ -68,10 +68,10 @@ public class Cluster extends SubCommand {
         switch (sub) {
             case "l":
             case "list": {
-                if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_LIST)) {
+                if (!Permissions.hasPermission(player, "plots.cluster.list")) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Captions.PERMISSION_CLUSTER_LIST.getTranslated())
+                            Template.of("node", "plots.cluster.list")
                     );
                     return false;
                 }
@@ -121,10 +121,10 @@ public class Cluster extends SubCommand {
             }
             case "c":
             case "create": {
-                if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_CREATE)) {
+                if (!Permissions.hasPermission(player, "plots.cluster.create")) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Captions.PERMISSION_CLUSTER_CREATE.getTranslated())
+                            Template.of("node", "plots.cluster.create")
                     );
                     return false;
                 }
@@ -180,20 +180,20 @@ public class Cluster extends SubCommand {
                 if (!area.contains(pos1) || !area.contains(pos2)) {
                     player.sendMessage(
                             TranslatableCaption.of("cluster.cluster_outside"),
-                            Template.of("area", area)
+                            Template.of("area", String.valueOf(area))
                     );
                     return false;
                 }
                 Set<Plot> plots = area.getPlotSelectionOwned(pos1, pos2);
                 if (!plots.isEmpty()) {
                     if (!Permissions
-                        .hasPermission(player, Captions.PERMISSION_CLUSTER_CREATE_OTHER)) {
+                        .hasPermission(player, "plots.cluster.create.other")) {
                         UUID uuid = player.getUUID();
                         for (Plot plot : plots) {
                             if (!plot.isOwner(uuid)) {
                                 player.sendMessage(
                                         TranslatableCaption.of("permission.no_permission"),
-                                        Template.of("node", Captions.PERMISSION_CLUSTER_CREATE_OTHER.getTranslated())
+                                        Template.of("node", "plots.cluster.create.other")
                                 );
                                 return false;
                             }
@@ -214,7 +214,7 @@ public class Cluster extends SubCommand {
                 if (current + cluster.getArea() > allowed) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Captions.PERMISSION_CLUSTER_SIZE.getTranslated() + "." + (current + cluster.getArea()))
+                            Template.of("node", "plots.cluster.size" + "." + (current + cluster.getArea()))
                     );
                     return false;
                 }
@@ -240,7 +240,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_DELETE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Captions.PERMISSION_CLUSTER_DELETE.getTranslated())
+                            Template.of("node", "plots.cluster.delete")
                     );
                     return false;
                 }
@@ -278,7 +278,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_DELETE_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Captions.PERMISSION_CLUSTER_DELETE_OTHER.getTranslated()));
+                                Template.of("node", "plots.cluster.delete.other"));
                         return false;
                     }
                 }
@@ -291,7 +291,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_RESIZE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Captions.PERMISSION_CLUSTER_RESIZE.getTranslated()));
+                            Template.of("node", "plots.cluster.resize"));
                     return false;
                 }
                 if (args.length != 3) {
@@ -323,15 +323,15 @@ public class Cluster extends SubCommand {
                 }
                 PlotCluster cluster = area.getCluster(player.getLocation());
                 if (cluster == null) {
-                    player.sendMessage(TranslatableCaption.of("errors.not_in_pcluster"));
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_cluster"));
                     return false;
                 }
                 if (!cluster.hasHelperRights(player.getUUID())) {
                     if (!Permissions
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_RESIZE_OTHER)) {
                         player.sendMessage(
-                                TranslatableCaption.of("permission.no_permission")
-                                Template.of("node", Captions.PERMISSION_CLUSTER_RESIZE_OTHER.getTranslated()));
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", "plots.cluster.resize.other"));
                         return false;
                     }
                 }
@@ -356,7 +356,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_RESIZE_SHRINK)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Captions.PERMISSION_CLUSTER_RESIZE_SHRINK.getTranslated())
+                                Template.of("node", "plots.cluster.resize.shrink")
                         );
                         return false;
                     }
@@ -367,7 +367,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Captions.PERMISSION_CLUSTER_RESIZE_EXPAND)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Captions.PERMISSION_CLUSTER_RESIZE_EXPAND.getTranslated())
+                                Template.of("node", "plots.cluster.resize.expand")
                         );
                         return false;
                     }
@@ -385,23 +385,22 @@ public class Cluster extends SubCommand {
                 if (current + cluster.getArea() > allowed) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Captions.PERMISSION_CLUSTER.getTranslated() + "." + (current + cluster
-                                    .getArea()))
+                            Template.of("node", "plots.cluster" + "." + (current + cluster.getArea()))
                     );
                     return false;
                 }
                 // resize cluster
                 DBFunc.resizeCluster(cluster, pos1, pos2);
-                player.sendMessage(TranslatableCaption.of("cluster.clister_resized"));
+                player.sendMessage(TranslatableCaption.of("cluster.cluster_resized"));
                 return true;
             }
             case "add":
             case "inv":
             case "invite": {
-                if (!Permissions.hasPermission(player, Captions.PERMISSION_CLUSTER_INVITE)) {
+                if (!Permissions.hasPermission(player, "plots.cluster.invite")) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Captions.PERMISSION_CLUSTER_INVITE.getTranslated())
+                            Template.of("node", "plots.cluster.invite")
                     );
                     return false;
                 }
@@ -766,7 +765,7 @@ public class Cluster extends SubCommand {
                             message = message.replaceAll("%name%", name);
                             message = message.replaceAll("%size%", size);
                             message = message.replaceAll("%rights%", rights);
-                            MainUtil.sendMessage(player, message);
+                            player.sendMessage(StaticCaption.of(message));
                         }
                     });
                 return true;

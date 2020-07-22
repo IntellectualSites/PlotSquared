@@ -25,11 +25,12 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "sethome",
     permission = "plots.set.home",
@@ -48,7 +49,7 @@ public class SetHome extends SetCommand {
             case "none": {
                 Plot base = plot.getBasePlot(false);
                 base.setHome(null);
-                return MainUtil.sendMessage(player, Captions.POSITION_UNSET);
+                player.sendMessage(TranslatableCaption.of("position.position_unset"));
             }
             case "":
                 Plot base = plot.getBasePlot(false);
@@ -57,9 +58,12 @@ public class SetHome extends SetCommand {
                 BlockLoc rel = new BlockLoc(location.getX() - bottom.getX(), location.getY(),
                     location.getZ() - bottom.getZ(), location.getYaw(), location.getPitch());
                 base.setHome(rel);
-                return MainUtil.sendMessage(player, Captions.POSITION_SET);
+                player.sendMessage(TranslatableCaption.of("position.position_set"));
             default:
-                MainUtil.sendMessage(player, Captions.HOME_ARGUMENT);
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", "Use /plot set home [none]")
+                );
                 return false;
         }
     }

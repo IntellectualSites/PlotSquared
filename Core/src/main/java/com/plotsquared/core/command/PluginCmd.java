@@ -26,9 +26,11 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "plugin",
     permission = "plots.use",
@@ -40,15 +42,16 @@ public class PluginCmd extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.getPlatformImplementation().taskAsync(() -> {
-            MainUtil.sendMessage(player, String.format(
-                "$2>> $1&l" + PlotSquared.platform().getPluginName() + " $2($1Version$2: $1%s$2)",
-                PlotSquared.get().getVersion()));
-            MainUtil.sendMessage(player,
-                "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92 $2& $1MattBDev $2& $1dordsor21 $2& $1NotMyFault $2& $1SirYwell");
-            MainUtil.sendMessage(player,
-                "$2>> $1&lWiki$2: $1https://wiki.intellectualsites.com/plotsquared/home");
-            MainUtil
-                .sendMessage(player, "$2>> $1&lPremium$2: $1" + PremiumVerification.isPremium());
+            player.sendMessage(
+                    StaticCaption.of("<gray>>> </gray><gold><bold>" + PlotSquared.platform().getPluginName() + " <reset><gray>(<gold>Version</gold><gray>: </gray><gold><version></gold><gray>)</gray>"),
+                    Template.of("version", String.valueOf(PlotSquared.get().getVersion()))
+            );
+            player.sendMessage(StaticCaption.of("<gray> >> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray><gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray><gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));
+            player.sendMessage(StaticCaption.of("<gray> >> </gray><gold><bold>Wiki<reset><gray>: </gray><gold>https://wiki.intellectualsites.com/plotsquared/home</gold>"));
+            player.sendMessage(
+                    StaticCaption.of("<gray> >> </gray><gold><bold>Premium<reset><gray>: <gold><value></gold>"),
+                    Template.of("value", String.valueOf(PremiumVerification.isPremium()))
+            );
         });
         return true;
     }

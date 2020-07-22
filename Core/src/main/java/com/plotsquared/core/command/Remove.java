@@ -36,6 +36,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -46,7 +47,7 @@ import java.util.concurrent.TimeoutException;
 @CommandDeclaration(command = "remove",
     aliases = {"r", "untrust", "ut", "undeny", "unban", "ud"},
     description = "Remove a player from a plot",
-    usage = "/plot remove <player|*>",
+    usage = "/plot remove <player | *>",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.NONE,
     permission = "plots.remove")
@@ -67,22 +68,25 @@ public class Remove extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_REMOVE)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
 
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             int count = 0;
             if (throwable instanceof TimeoutException) {
-                MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                 return;
             } else if (throwable != null) {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                player.sendMessage(
+                        TranslatableCaption.of("errors.invalid_player"),
+                        Template.of("value", args[0])
+                );
                 return;
             } else if (!uuids.isEmpty()) {
                 for (UUID uuid : uuids) {
@@ -116,9 +120,15 @@ public class Remove extends SubCommand {
                 }
             }
             if (count == 0) {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                player.sendMessage(
+                        TranslatableCaption.of("errors.invalid_player"),
+                        Template.of("value", args[0])
+                );
             } else {
-                MainUtil.sendMessage(player, Captions.REMOVED_PLAYERS, count + "");
+                player.sendMessage(
+                        TranslatableCaption.of("member.removed_players"),
+                        Template.of("amount", count + "")
+                );
             }
         });
         return true;

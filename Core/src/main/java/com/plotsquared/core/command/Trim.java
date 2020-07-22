@@ -27,7 +27,8 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -92,16 +93,16 @@ public class Trim extends SubCommand {
         if (result == null) {
             return false;
         }
-        MainUtil.sendMessage(null, "Collecting region data...");
+        TranslatableCaption.of("trim.trim_starting");
         final List<Plot> plots = PlotQuery.newQuery().inWorld(world).asList();
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
         result.value1 = new HashSet<>(PlotSquared.platform().getRegionManager().getChunkChunks(world));
         result.value2 = new HashSet<>();
-        MainUtil.sendMessage(null, " - MCA #: " + result.value1.size());
-        MainUtil.sendMessage(null, " - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
-        MainUtil.sendMessage(null, " - TIME ESTIMATE: 12 Parsecs");
+        StaticCaption.of(" - MCA #: " + result.value1.size());
+        StaticCaption.of(" - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
+        StaticCaption.of(" - TIME ESTIMATE: 12 Parsecs");
         TaskManager.getPlatformImplementation().objectTask(plots, new RunnableVal<Plot>() {
             @Override public void run(Plot plot) {
                 Location pos1 = plot.getCorners()[0];
@@ -131,11 +132,11 @@ public class Trim extends SubCommand {
         }
         final String world = args[0];
         if (!this.worldUtil.isWorld(world) || !this.plotAreaManager.hasPlotArea(world)) {
-            MainUtil.sendMessage(player, Captions.NOT_VALID_WORLD);
+            player.sendMessage(TranslatableCaption.of("errors.not_valid_world"));
             return false;
         }
         if (Trim.TASK) {
-            Captions.TRIM_IN_PROGRESS.send(player);
+            player.sendMessage(TranslatableCaption.of("trim.trim_in_progress"));
             return false;
         }
         Trim.TASK = true;
@@ -151,7 +152,7 @@ public class Trim extends SubCommand {
                         @Override public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
-                                player.sendMessage("Trim done!");
+                                player.sendMessage(TranslatableCaption.of("trim.trim_done"));
                                 logger.info("[P2] Trim done!");
                                 return;
                             }
@@ -201,7 +202,8 @@ public class Trim extends SubCommand {
                 } else {
                     regenTask = () -> {
                         Trim.TASK = false;
-                        player.sendMessage("Trim done!");
+                        player.sendMessage(TranslatableCaption.of("trim.trim_done"));
+                        logger.info("[P2] Trim done!");
                     };
                 }
                 regionManager.deleteRegionFiles(world, viable, regenTask);

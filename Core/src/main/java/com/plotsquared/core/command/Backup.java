@@ -57,7 +57,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @CommandDeclaration(command = "backup",
-    usage = "/plot backup <save|list|load>",
+    usage = "/plot backup <save | list | load>",
     description = "Manage plot backups",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.PLAYER,
@@ -72,7 +72,10 @@ public final class Backup extends Command {
     }
 
     private static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
-        message.send(player, args);
+        player.sendMessage(
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                Template.of("value", "/plot backup <save | list | load>")
+        );
         return true;
     }
 
@@ -142,10 +145,10 @@ public final class Backup extends Command {
                     Template.of("plot", "generic.generic_merged")
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
+            .hasPermission(player, "plots.admin.backup.other")) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.PERMISSION_ADMIN_BACKUP_OTHER.getTranslated())
+                    Template.of("node", "plots.admin.backup.other")
             );
         } else {
             final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
@@ -157,7 +160,10 @@ public final class Backup extends Command {
             } else {
                 backupProfile.createBackup().whenComplete((backup, throwable) -> {
                     if (throwable != null) {
-                        sendMessage(player, Captions.BACKUP_SAVE_FAILED, throwable.getMessage());
+                        player.sendMessage(
+                                TranslatableCaption.of("backups.backup_save_failed"),
+                                Template.of("reason", throwable.getMessage())
+                        );
                         throwable.printStackTrace();
                     } else {
                         player.sendMessage(TranslatableCaption.of("backups.backup_save_success"));
@@ -190,10 +196,10 @@ public final class Backup extends Command {
                     Template.of("plot", "generic.generic_merged")
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
+            .hasPermission(player, "plots.admin.backup.other")) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.PERMISSION_ADMIN_BACKUP_OTHER.getTranslated())
+                    Template.of("node", "plots.admin.backup.other")
             );
         } else {
             final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
@@ -261,10 +267,10 @@ public final class Backup extends Command {
                     Template.of("plot", "generic.generic_merged")
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_BACKUP_OTHER)) {
+            .hasPermission(player, "plots.admin.backup.other")) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.PERMISSION_ADMIN_BACKUP_OTHER.getTranslated())
+                    Template.of("node", "plots.admin.backup.other")
             );
         } else if (args.length == 0) {
             player.sendMessage(

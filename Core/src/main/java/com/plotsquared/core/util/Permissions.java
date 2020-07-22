@@ -28,7 +28,9 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.HashMap;
 
@@ -124,7 +126,10 @@ public class Permissions {
     public static boolean hasPermission(PlotPlayer player, String permission, boolean notify) {
         if (!hasPermission(player, permission)) {
             if (notify) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION_EVENT, permission);
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", permission)
+                );
             }
             return false;
         }

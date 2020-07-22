@@ -29,6 +29,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
@@ -42,8 +43,10 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
+import javax.swing.plaf.basic.BasicSliderUI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +57,7 @@ import java.util.UUID;
     description = "Schematic command",
     aliases = {"sch", "schem"},
     category = CommandCategory.SCHEMATIC,
-    usage = "/plot schematic <save|saveall|paste>")
+    usage = "/plot schematic <save | saveall | paste>")
 public class SchematicCmd extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
@@ -69,19 +72,27 @@ public class SchematicCmd extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
-            sendMessage(player, Captions.SCHEMATIC_MISSING_ARG);
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "Possible values: save, paste , exportall, list")
+            );
             return true;
         }
         String arg = args[0].toLowerCase();
         switch (arg) {
             case "paste": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_SCHEMATIC_PASTE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_SCHEMATIC_PASTE);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", "plots.schematic.paste")
+                    );
                     return false;
                 }
                 if (args.length < 2) {
-                    sendMessage(player, Captions.SCHEMATIC_MISSING_ARG);
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "Possible values: save, paste , exportall, list")
+                    );
                     break;
                 }
                 Location loc = player.getLocation();
@@ -91,20 +102,20 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (!plot.hasOwner()) {
-                    MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+                    player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
                     return false;
                 }
                 if (!plot.isOwner(player.getUUID()) && !Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC_PASTE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                    .hasPermission(player, "plots.admin.command.schematic.paste")) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
                 if (this.running) {
-                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
+                    player.sendMessage(TranslatableCaption.of("error.task_in_process"));
                     return false;
                 }
                 if (plot.isMerged()) {
-                    MainUtil.sendMessage(player, Captions.SCHEMATIC_PASTE_MERGED);
+                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_merged"));
                     return false;
                 }
                 final String location = args[1];
@@ -119,8 +130,10 @@ public class SchematicCmd extends SubCommand {
                             schematic = this.schematicHandler.getSchematic(url);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            sendMessage(player, Captions.SCHEMATIC_INVALID,
-                                "non-existent url: " + location);
+                            player.sendMessage(
+                                    TranslatableCaption.of("schematics.schematic_invalid"),
+                                    Template.of("reason", "non-existent url: " + location)
+                            );
                             SchematicCmd.this.running = false;
                             return;
                         }
@@ -133,17 +146,19 @@ public class SchematicCmd extends SubCommand {
                     }
                     if (schematic == null) {
                         SchematicCmd.this.running = false;
-                        sendMessage(player, Captions.SCHEMATIC_INVALID,
-                            "non-existent or not in gzip format");
+                        player.sendMessage(
+                                TranslatableCaption.of("schematics.schematic_invalid"),
+                                Template.of("reason", "non-existent or not in gzip format")
+                        );
                         return;
                     }
                     this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
                             @Override public void run(Boolean value) {
                                 SchematicCmd.this.running = false;
                                 if (value) {
-                                    sendMessage(player, Captions.SCHEMATIC_PASTE_SUCCESS);
+                                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
                                 } else {
-                                    sendMessage(player, Captions.SCHEMATIC_PASTE_FAILED);
+                                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
                                 }
                             }
                         });
@@ -153,44 +168,59 @@ public class SchematicCmd extends SubCommand {
             case "saveall":
             case "exportall": {
                 if (!(player instanceof ConsolePlayer)) {
-                    MainUtil.sendMessage(player, Captions.NOT_CONSOLE);
+                    player.sendMessage(TranslatableCaption.of("console.not_console"));
                     return false;
                 }
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD_ARGS);
+                    player.sendMessage(TranslatableCaption.of("schematic_exportall_world_args"));
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "Use /plot sch exportall area")
+                    );
                     return false;
                 }
                 PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                 if (area == null) {
-                    Captions.NOT_VALID_PLOT_WORLD.send(player, args[1]);
+                    player.sendMessage(
+                            TranslatableCaption.of("errors.not_valid_plot_world"),
+                            Template.of("value", args[1])
+                    );
                     return false;
                 }
                 Collection<Plot> plots = area.getPlots();
                 if (plots.isEmpty()) {
-                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_WORLD);
+                    player.sendMessage(TranslatableCaption.of("schematic.schematic_exportall_world"));
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "Use /plot sch exportall <area>")
+                    );
                     return false;
                 }
                 boolean result = this.schematicHandler.exportAll(plots, null, null,
-                    () -> MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_FINISHED));
+                    () -> player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_finished")));
                 if (!result) {
-                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
+                    player.sendMessage(TranslatableCaption.of("error.task_in_process"));
                     return false;
                 } else {
-                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_STARTED);
-                    MainUtil.sendMessage(player,
-                        "&3Plot&8->&3Schematic&8: &7Found &c" + plots.size() + "&7 plots...");
+                    player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_started"));
+                    player.sendMessage(
+                            TranslatableCaption.of("schematics.plot_to_schem"),
+                            Template.of("amount", String.valueOf(plots.size()))
+                    );
                 }
                 break;
             }
             case "export":
             case "save":
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_SCHEMATIC_SAVE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_SCHEMATIC_SAVE);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", "plots.schematic.save")
+                    );
                     return false;
                 }
                 if (this.running) {
-                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
+                    player.sendMessage(TranslatableCaption.of("error.task_in_process"));
                     return false;
                 }
                 Location location = player.getLocation();
@@ -200,38 +230,46 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (!plot.hasOwner()) {
-                    MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+                    player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
                     return false;
                 }
                 if (!plot.isOwner(player.getUUID()) && !Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE)) {
-                    MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                    .hasPermission(player, "plots.admin.command.schematic.save")) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
                 ArrayList<Plot> plots = Lists.newArrayList(plot);
                 boolean result = this.schematicHandler.exportAll(plots, null, null, () -> {
-                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_SINGLE_FINISHED);
+                    player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_single_finished"));
                     SchematicCmd.this.running = false;
                 });
                 if (!result) {
-                    MainUtil.sendMessage(player, Captions.TASK_IN_PROCESS);
+                    player.sendMessage(TranslatableCaption.of("error.task_in_process"));
                     return false;
                 } else {
-                    MainUtil.sendMessage(player, Captions.SCHEMATIC_EXPORTALL_STARTED);
+                    player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_started"));
                 }
                 break;
             case "list": {
                 if (!Permissions.hasPermission(player, Captions.PERMISSION_SCHEMATIC_LIST)) {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                        Captions.PERMISSION_SCHEMATIC_LIST);
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", "plots.schematic.list")
+                    );
                     return false;
                 }
                 final String string = StringMan.join(this.schematicHandler.getSchematicNames(), "$2, $1");
-                Captions.SCHEMATIC_LIST.send(player, string);
+                player.sendMessage(
+                        TranslatableCaption.of("schematics.schematic_list"),
+                        Template.of("list", string)
+                );
             }
             break;
             default:
-                sendMessage(player, Captions.SCHEMATIC_MISSING_ARG);
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", "Possible values: save, paste , exportall, list")
+                );
                 break;
         }
         return true;

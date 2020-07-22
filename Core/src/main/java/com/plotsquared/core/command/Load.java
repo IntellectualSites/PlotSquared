@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -39,6 +40,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
@@ -74,16 +76,16 @@ public class Load extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_LOAD)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
 
@@ -92,7 +94,7 @@ public class Load extends SubCommand {
                 List<String> schematics = player.getMeta("plot_schematics");
                 if (schematics == null) {
                     // No schematics found:
-                    MainUtil.sendMessage(player, Captions.LOAD_NULL);
+                    player.sendMessage(TranslatableCaption.of("web.load_null"));
                     return false;
                 }
                 String schematic;
@@ -100,8 +102,10 @@ public class Load extends SubCommand {
                     schematic = schematics.get(Integer.parseInt(args[0]) - 1);
                 } catch (Exception ignored) {
                     // use /plot load <index>
-                    MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER,
-                        "(1, " + schematics.size() + ')');
+                    player.sendMessage(
+                            TranslatableCaption.of("invalid.not_valid_number"),
+                            Template.of("value", "(1, " + schematics.size() + ')')
+                    );
                     return false;
                 }
                 final URL url;
@@ -109,17 +113,19 @@ public class Load extends SubCommand {
                     url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
-                    MainUtil.sendMessage(player, Captions.LOAD_FAILED);
+                    player.sendMessage(TranslatableCaption.of("web.load_failed"));
                     return false;
                 }
                 plot.addRunning();
-                MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
+                player.sendMessage(TranslatableCaption.of("working.generating_component"));
                 TaskManager.runTaskAsync(() -> {
                     Schematic taskSchematic = this.schematicHandler.getSchematic(url);
                     if (taskSchematic == null) {
                         plot.removeRunning();
-                        sendMessage(player, Captions.SCHEMATIC_INVALID,
-                            "non-existent or not in gzip format");
+                        player.sendMessage(
+                                TranslatableCaption.of("schematics.schematic_invalid"),
+                                Template.of("reason", "non-existent or not in gzip format")
+                        );
                         return;
                     }
                     PlotArea area = plot.getArea();
@@ -128,9 +134,9 @@ public class Load extends SubCommand {
                                 @Override public void run(Boolean value) {
                                     plot.removeRunning();
                                     if (value) {
-                                        sendMessage(player, Captions.SCHEMATIC_PASTE_SUCCESS);
+                                        player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
                                     } else {
-                                        sendMessage(player, Captions.SCHEMATIC_PASTE_FAILED);
+                                        player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
                                     }
                                 }
                             });
@@ -138,7 +144,10 @@ public class Load extends SubCommand {
                 return true;
             }
             plot.removeRunning();
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot load <index>");
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot load <index>")
+            );
             return false;
         }
 
@@ -151,7 +160,7 @@ public class Load extends SubCommand {
                 List<String> schematics1 = this.schematicHandler.getSaves(player.getUUID());
                 plot.removeRunning();
                 if ((schematics1 == null) || schematics1.isEmpty()) {
-                    MainUtil.sendMessage(player, Captions.LOAD_FAILED);
+                    player.sendMessage(TranslatableCaption.of("web.load_failed"));
                     return;
                 }
                 player.setMeta("plot_schematics", schematics1);
@@ -177,15 +186,14 @@ public class Load extends SubCommand {
                 String world = split[1];
                 PlotId id = PlotId.fromString(split[2] + ';' + split[3]);
                 String size = split[4];
-                String color = "$4";
-                MainUtil.sendMessage(player,
-                    "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ';' + id
-                        + "$3 | " + color + size + 'x' + size);
+                String color = "<dark_aqua>";
+                player.sendMessage(StaticCaption.of("<dark_gray>[</dark_gray><gray>" + (i + 1) + "</gray><dark_aqua>] </dark_aqua>" + color + time + "<dark_gray> | </dark_gray>" + color + world + ';' + id
+                        + "<dark_gray> | </dark_gray>" + color + size + 'x' + size));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        MainUtil.sendMessage(player, Captions.LOAD_LIST);
+        player.sendMessage(TranslatableCaption.of("web.load_list"));
     }
 
     public String secToTime(long time) {

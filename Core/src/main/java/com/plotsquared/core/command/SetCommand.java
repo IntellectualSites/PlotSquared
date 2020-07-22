@@ -49,7 +49,7 @@ public abstract class SetCommand extends SubCommand {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
                     .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
                         getFullId()));
-                MainUtil.sendMessage(player, Captions.PLOT_NOT_CLAIMED);
+                player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                 return false;
             }
         }
@@ -59,7 +59,7 @@ public abstract class SetCommand extends SubCommand {
                 MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
                     .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
                         getFullId()));
-                MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;
             }
         }

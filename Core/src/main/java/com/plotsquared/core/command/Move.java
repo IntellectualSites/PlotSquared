@@ -36,6 +36,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
@@ -66,7 +67,7 @@ public class Move extends SubCommand {
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return CompletableFuture.completedFuture(false);
         }
         boolean override = false;
@@ -89,27 +90,30 @@ public class Move extends SubCommand {
             plot2 = area.getPlotAbs(plot1.getId());
         }
         if (plot1.equals(plot2)) {
-            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot copy <X;Z>");
+            player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot copy <X;Z>")
+            );
             return CompletableFuture.completedFuture(false);
         }
         if (!plot1.getArea().isCompatible(plot2.getArea()) && (!override || !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated()))) {
-            Captions.PLOTWORLD_INCOMPATIBLE.send(player);
+            player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
             return CompletableFuture.completedFuture(false);
         }
         if (plot1.isMerged() || plot2.isMerged()) {
-            Captions.MOVE_MERGED.send(player);
+            player.sendMessage(TranslatableCaption.of("move.move_merged"));
             return CompletableFuture.completedFuture(false);
         }
 
         return plot1.move(plot2, () -> {
         }, false).thenApply(result -> {
             if (result) {
-                MainUtil.sendMessage(player, Captions.MOVE_SUCCESS);
+                player.sendMessage(TranslatableCaption.of("move.move_success"));
                 return true;
             } else {
-                MainUtil.sendMessage(player, Captions.REQUIRES_UNOWNED);
+                player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
                 return false;
             }
         });

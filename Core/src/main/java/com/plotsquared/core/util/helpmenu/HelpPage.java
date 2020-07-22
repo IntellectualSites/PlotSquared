@@ -27,8 +27,11 @@ package com.plotsquared.core.util.helpmenu;
 
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +50,15 @@ public class HelpPage {
 
     public void render(PlotPlayer player) {
         if (this.helpObjects.size() < 1) {
-            MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER, "(0)");
+            player.sendMessage(
+                    TranslatableCaption.of("invalid.not_valid_number"),
+                    Template.of("value", "(0)")
+            );
         } else {
             String message =
                 Captions.HELP_HEADER.getTranslated() + "\n" + this.header + "\n" + StringMan
                     .join(this.helpObjects, "\n") + "\n" + Captions.HELP_FOOTER.getTranslated();
-            MainUtil.sendMessage(player, message, false);
+            player.sendMessage(StaticCaption.of(message));
         }
     }
 

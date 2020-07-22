@@ -72,7 +72,8 @@ public class Biome extends SetCommand {
             plot.removeRunning();
             player.sendMessage(
                     TranslatableCaption.of("biome.biome_set_to"),
-                    Template.of("value", value.toLowerCase()));
+                    Template.of("value", value.toLowerCase())
+            );
         });
         return true;
     }

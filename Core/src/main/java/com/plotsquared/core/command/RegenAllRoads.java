@@ -26,13 +26,14 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.HybridPlotManager;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 
@@ -60,38 +61,44 @@ public class RegenAllRoads extends SubCommand {
             try {
                 height = Integer.parseInt(args[1]);
             } catch (NumberFormatException ignored) {
-                MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER, "(0, 256)");
-                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                    "/plot regenallroads <world> [height]");
+                player.sendMessage(
+                        TranslatableCaption.of("invalid.not_valid_number"),
+                        Template.of("value", "(0, 256)")
+                );
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", "/plot regenallroads <world> [height]")
+                );
                 return false;
             }
         } else if (args.length != 1) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                "/plot regenallroads <world> [height]");
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot regenallroads <world> [height]")
+            );
             return false;
         }
         PlotArea area = this.plotAreaManager.getPlotAreaByString(args[0]);
         if (area == null) {
-            Captions.NOT_VALID_PLOT_WORLD.send(player, args[0]);
+            player.sendMessage(
+                    TranslatableCaption.of("errors.not_valid_plot_world"),
+                    Template.of("value", args[0])
+            );
             return false;
         }
         String name = args[0];
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
-            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
+            player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
             return false;
         }
         //Set<BlockVector2> chunks = ChunkManager.manager.getChunkChunks(name);
-        MainUtil
-            .sendMessage(player, "&cIf no schematic is set, the following will not do anything");
-        MainUtil.sendMessage(player,
-            "&7 - To set a schematic, stand in a plot and use &c/plot createroadschematic");
+        player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"));
         //MainUtil.sendMessage(player, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
         //MainUtil.sendMessage(player, "&6Estimated time: &7" + chunks.size() + " seconds");
         boolean result = this.hybridUtils.scheduleRoadUpdate(area, height);
         if (!result) {
-            MainUtil.sendMessage(player,
-                "&cCannot schedule mass schematic update! (Is one already in progress?)");
+            player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));
             return false;
         }
         return true;

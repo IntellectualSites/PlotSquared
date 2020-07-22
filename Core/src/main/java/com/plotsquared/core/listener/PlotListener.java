@@ -66,6 +66,7 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -164,9 +165,11 @@ public class PlotListener {
                     for (UUID uuid : plot.getOwners()) {
                         final PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID())) {
-                            MainUtil.sendMessage(owner, Captions.NOTIFY_ENTER.getTranslated()
-                                .replace("%player", player.getName())
-                                .replace("%plot", plot.getId().toString()));
+                            player.sendMessage(
+                                    TranslatableCaption.of("notification.notify_enter"),
+                                    Template.of("player", player.getName()),
+                                    Template.of("plot", plot.getId().toString())
+                            );
                         }
                     }
                 }
@@ -189,9 +192,11 @@ public class PlotListener {
                     if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
                         player.setGameMode(gameMode);
                     } else {
-                        MainUtil.sendMessage(player, StringMan
-                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(), "{plot}",
-                                plot.getId(), "{gamemode}", gameMode));
+                        player.sendMessage(
+                                TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
+                                Template.of("gamemode", String.valueOf(gameMode)),
+                                Template.of("plot", String.valueOf(plot.getId()))
+                        );
                     }
                 }
             }
@@ -202,9 +207,11 @@ public class PlotListener {
                     if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
                         player.setGameMode(guestGameMode);
                     } else {
-                        MainUtil.sendMessage(player, StringMan
-                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(), "{plot}",
-                                plot.getId(), "{gamemode}", guestGameMode));
+                        player.sendMessage(
+                                TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
+                                Template.of("gamemode", String.valueOf(guestGameMode)),
+                                Template.of("plot", String.valueOf(plot.getId()))
+                        );
                     }
                 }
             }
@@ -313,10 +320,11 @@ public class PlotListener {
                     if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
                         player.setGameMode(pw.getGameMode());
                     } else {
-                        MainUtil.sendMessage(player, StringMan
-                            .replaceAll(Captions.GAMEMODE_WAS_BYPASSED.getTranslated(), "{plot}",
-                                plot.toString(), "{gamemode}",
-                                pw.getGameMode().getName().toLowerCase()));
+                        player.sendMessage(
+                                TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
+                                Template.of("gamemode", pw.getGameMode().getName().toLowerCase()),
+                                Template.of("plot", plot.toString())
+                        );
                     }
                 }
             }
@@ -332,9 +340,11 @@ public class PlotListener {
                     for (UUID uuid : plot.getOwners()) {
                         final PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                         if ((owner != null) && !owner.getUUID().equals(player.getUUID())) {
-                            MainUtil.sendMessage(owner, Captions.NOTIFY_LEAVE.getTranslated()
-                                .replace("%player", player.getName())
-                                .replace("%plot", plot.getId().toString()));
+                            player.sendMessage(
+                                    TranslatableCaption.of("notification.notify_leave"),
+                                    Template.of("player", player.getName()),
+                                    Template.of("plot", plot.getId().toString())
+                            );
                         }
                     }
                 }

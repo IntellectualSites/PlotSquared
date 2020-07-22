@@ -26,14 +26,16 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "toggle",
     aliases = {"attribute"},
     permission = "plots.use",
-    usage = "/plot toggle <chat|chatspy|clear-confirmation|time|titles|worldedit>",
+    usage = "/plot toggle <chat | chatspy | clear-confirmation | time | titles | worldedit>",
     description = "Toggle per user settings",
     requiredType = RequiredType.NONE,
     category = CommandCategory.SETTINGS)
@@ -50,9 +52,15 @@ public class Toggle extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "chatspy")) {
-            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    Template.of("setting", command.toString())
+            );
         } else {
-            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    Template.of("setting", command.toString())
+            );
         }
     }
 
@@ -64,9 +72,15 @@ public class Toggle extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "worldedit")) {
-            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    Template.of("setting", command.toString())
+            );
         } else {
-            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    Template.of("setting", command.toString())
+            );
         }
     }
 
@@ -77,9 +91,15 @@ public class Toggle extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "chat")) {
-            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    Template.of("setting", command.toString())
+            );
         } else {
-            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    Template.of("setting", command.toString())
+            );
         }
     }
 
@@ -90,9 +110,15 @@ public class Toggle extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "ignoreExpireTask")) {
-            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    Template.of("setting", command.toString())
+            );
         } else {
-            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    Template.of("setting", command.toString())
+            );
         }
     }
 
@@ -103,9 +129,15 @@ public class Toggle extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "disabletitles")) {
-            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    Template.of("setting", command.toString())
+            );
         } else {
-            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    Template.of("setting", command.toString())
+            );
         }
     }
 
@@ -116,9 +148,15 @@ public class Toggle extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (toggle(player, "disabletime")) {
-            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    Template.of("setting", command.toString())
+            );
         } else {
-            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    Template.of("setting", command.toString())
+            );
         }
     }
 
@@ -129,9 +167,15 @@ public class Toggle extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
         if (!toggle(player, "debug")) {
-            MainUtil.sendMessage(player, Captions.TOGGLE_ENABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    Template.of("setting", command.toString())
+            );
         } else {
-            MainUtil.sendMessage(player, Captions.TOGGLE_DISABLED, command.toString());
+            player.sendMessage(
+                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    Template.of("setting", command.toString())
+            );
         }
         player.refreshDebug();
     }

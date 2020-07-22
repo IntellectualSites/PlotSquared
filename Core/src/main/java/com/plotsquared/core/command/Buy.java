@@ -96,7 +96,8 @@ public class Buy extends Command {
         confirm.run(this, () -> {
             player.sendMessage(
                     TranslatableCaption.of("economy.removed_balance"),
-                    Template.of("money", String.valueOf(price)));
+                    Template.of("money", String.valueOf(price))
+            );
 
             this.econHandler.depositMoney(PlotSquared.platform().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
 

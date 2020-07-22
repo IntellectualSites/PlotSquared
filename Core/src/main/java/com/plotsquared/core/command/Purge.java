@@ -27,8 +27,8 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.player.PlotPlayer;
@@ -38,6 +38,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,10 @@ public class Purge extends SubCommand {
                 case "a":
                     area = this.plotAreaManager.getPlotAreaByString(split[1]);
                     if (area == null) {
-                        Captions.NOT_VALID_PLOT_WORLD.send(player, split[1]);
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.not_valid_plot_world"),
+                                Template.of("value", split[1])
+                        );
                         return false;
                     }
                     break;
@@ -105,7 +109,10 @@ public class Purge extends SubCommand {
                     try {
                         id = PlotId.fromString(split[1]);
                     } catch (IllegalArgumentException ignored) {
-                        Captions.NOT_VALID_PLOT_ID.send(player, split[1]);
+                        player.sendMessage(
+                                TranslatableCaption.of("invalid.not_valid_plot_id"),
+                                Template.of("value", split[1])
+                        );
                         return false;
                     }
                     break;
@@ -113,7 +120,10 @@ public class Purge extends SubCommand {
                 case "o":
                     owner = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(split[1], Settings.UUID.BLOCKING_TIMEOUT);
                     if (owner == null) {
-                        Captions.INVALID_PLAYER.send(player, split[1]);
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Template.of("value", split[1])
+                        );
                         return false;
                     }
                     break;
@@ -121,7 +131,10 @@ public class Purge extends SubCommand {
                 case "s":
                     added = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(split[1], Settings.UUID.BLOCKING_TIMEOUT);
                     if (added == null) {
-                        Captions.INVALID_PLAYER.send(player, split[1]);
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Template.of("value", split[1])
+                        );
                         return false;
                     }
                     break;
@@ -179,7 +192,7 @@ public class Purge extends SubCommand {
             }
         }
         if (toDelete.isEmpty()) {
-            Captions.FOUND_NO_PLOTS.send(player);
+            player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
             return false;
         }
         String cmd =
@@ -225,7 +238,10 @@ public class Purge extends SubCommand {
                     } else {
                         TaskManager.runTask(() -> {
                             DBFunc.purgeIds(ids);
-                            Captions.PURGE_SUCCESS.send(player, ids.size() + "/" + toDelete.size());
+                            player.sendMessage(
+                                    TranslatableCaption.of("purge.purge_success"),
+                                    Template.of("amount", ids.size() + "/" + toDelete.size())
+                            );
                         });
                     }
                 }

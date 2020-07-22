@@ -52,7 +52,7 @@ import java.util.UUID;
     aliases = "m",
     description = "Merge the plot you are standing on with another plot",
     permission = "plots.merge",
-    usage = "/plot merge <all|n|e|s|w> [removeroads]",
+    usage = "/plot merge <all | n | e | s | w> [removeroads]",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.NONE,
     confirmation = true)
@@ -100,7 +100,7 @@ public class Merge extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         Direction direction = null;
@@ -132,10 +132,14 @@ public class Merge extends SubCommand {
             }
         }
         if (direction == null) {
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                "/plot merge <" + StringMan.join(values, "|") + "> [removeroads]");
-            MainUtil.sendMessage(player, Captions.DIRECTION.getTranslated()
-                .replaceAll("%dir%", direction(location.getYaw())));
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot merge <" + StringMan.join(values, " | ") + "> [removeroads]")
+            );
+            player.sendMessage(
+                    TranslatableCaption.of("help.direction"),
+                    Template.of("dir", direction(location.getYaw()))
+            );
             return false;
         }
         final int size = plot.getConnectedPlots().size();
@@ -153,7 +157,10 @@ public class Merge extends SubCommand {
         final int maxSize = event.getMax();
 
         if (!force && size - 1 > maxSize) {
-            MainUtil.sendMessage(player, Captions.NO_PERMISSION, "plots.merge." + (size + 1));
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", "plots.merge." + (size + 1))
+            );
             return false;
         }
         final PlotArea plotArea = plot.getArea();
@@ -168,24 +175,29 @@ public class Merge extends SubCommand {
             }
             if (!force && !terrain && !Permissions
                 .hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                    Captions.PERMISSION_MERGE_KEEP_ROAD.getTranslated());
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", "plots.merge.keeproad")
+                    );
                 return true;
             }
             if (plot.autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
                 if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
                     this.econHandler.withdrawMoney(player, price);
-                    sendMessage(player, Captions.REMOVED_BALANCE, String.valueOf(price));
+                    player.sendMessage(
+                            TranslatableCaption.of("economy.removed_balance"),
+                            Template.of("money", String.valueOf(price))
+                    );
                 }
-                MainUtil.sendMessage(player, Captions.SUCCESS_MERGE);
+                player.sendMessage(TranslatableCaption.of("merge.success_merge"));
                 return true;
             }
-            MainUtil.sendMessage(player, Captions.NO_AVAILABLE_AUTOMERGE);
+            player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
         }
         if (!force && !plot.isOwner(uuid)) {
             if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_MERGE)) {
-                MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;
             } else {
                 uuid = plot.getOwnerAbs();
@@ -193,7 +205,10 @@ public class Merge extends SubCommand {
         }
         if (!force && this.econHandler != null && plotArea.useEconomy() && price > 0d
             && this.econHandler.getMoney(player) < price) {
-            sendMessage(player, Captions.CANNOT_AFFORD_MERGE, String.valueOf(price));
+            player.sendMessage(
+                    TranslatableCaption.of("economy.cannot_afford_merge"),
+                    Template.of("money", String.valueOf(price))
+            );
             return false;
         }
         final boolean terrain;
@@ -204,26 +219,34 @@ public class Merge extends SubCommand {
         }
         if (!force && !terrain && !Permissions
             .hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
-            MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                Captions.PERMISSION_MERGE_KEEP_ROAD.getTranslated());
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", "plots.merge.keeproad")
+            );
             return true;
         }
         if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
             if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
                 this.econHandler.withdrawMoney(player, price);
-                sendMessage(player, Captions.REMOVED_BALANCE, String.valueOf(price));
+                player.sendMessage(
+                        TranslatableCaption.of("economy.removed_balance"),
+                        Template.of("money", String.valueOf(price))
+                );
             }
-            MainUtil.sendMessage(player, Captions.SUCCESS_MERGE);
+            player.sendMessage(TranslatableCaption.of("success_merge"));
             return true;
         }
         Plot adjacent = plot.getRelative(direction);
         if (adjacent == null || !adjacent.hasOwner() || adjacent
             .getMerged((direction.getIndex() + 2) % 4) || (!force && adjacent.isOwner(uuid))) {
-            MainUtil.sendMessage(player, Captions.NO_AVAILABLE_AUTOMERGE);
+            player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
         }
         if (!force && !Permissions.hasPermission(player, Captions.PERMISSION_MERGE_OTHER)) {
-            MainUtil.sendMessage(player, Captions.NO_PERMISSION, Captions.PERMISSION_MERGE_OTHER);
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", "plots.merge.other")
+            );
             return false;
         }
         java.util.Set<UUID> uuids = adjacent.getOwners();
@@ -236,22 +259,28 @@ public class Merge extends SubCommand {
             isOnline = true;
             final Direction dir = direction;
             Runnable run = () -> {
-                MainUtil.sendMessage(accepter, Captions.MERGE_ACCEPTED);
+                accepter.sendMessage(TranslatableCaption.of("merge.merge_accepted"));
                 plot.autoMerge(dir, maxSize - size, owner, terrain);
                 PlotPlayer plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(player.getUUID());
                 if (plotPlayer == null) {
-                    sendMessage(accepter, Captions.MERGE_NOT_VALID);
+                    accepter.sendMessage(TranslatableCaption.of("merge.merge_not_valid"));
                     return;
                 }
                 if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
                     if (!force && this.econHandler.getMoney(player) < price) {
-                        sendMessage(player, Captions.CANNOT_AFFORD_MERGE, String.valueOf(price));
+                        player.sendMessage(
+                                TranslatableCaption.of("economy.cannot_afford_merge"),
+                                Template.of("money", String.valueOf(price))
+                        );
                         return;
                     }
                     this.econHandler.withdrawMoney(player, price);
-                    sendMessage(player, Captions.REMOVED_BALANCE, String.valueOf(price));
+                    player.sendMessage(
+                            TranslatableCaption.of("economy.removed_balance"),
+                            Template.of("money", String.valueOf(price))
+                    );
                 }
-                MainUtil.sendMessage(player, Captions.SUCCESS_MERGE);
+                player.sendMessage(TranslatableCaption.of("merge.success_merge"));
             };
             if (!force && hasConfirmation(player)) {
                 CmdConfirm.addPending(accepter, Captions.MERGE_REQUEST_CONFIRM.getTranslated()
@@ -261,10 +290,10 @@ public class Merge extends SubCommand {
             }
         }
         if (!force && !isOnline) {
-            MainUtil.sendMessage(player, Captions.NO_AVAILABLE_AUTOMERGE);
+            player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
         }
-        MainUtil.sendMessage(player, Captions.MERGE_REQUESTED);
+        player.sendMessage(TranslatableCaption.of("merge.merge_requested"));
         return true;
     }
 }
