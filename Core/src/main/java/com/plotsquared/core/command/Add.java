@@ -71,8 +71,8 @@ public class Add extends Command {
         checkTrue(plot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
             Captions.NO_PLOT_PERMS);
-        checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
-
+        checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
+                Template.of("value", "/plot add <player | *>"));
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable != null) {
@@ -86,7 +86,8 @@ public class Add extends Command {
                 return;
             } else {
                 try {
-                    checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
+                    checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
+                            Template.of("value", args[0]));
                     Iterator<UUID> iterator = uuids.iterator();
                     int size = plot.getTrusted().size() + plot.getMembers().size();
                     while (iterator.hasNext()) {

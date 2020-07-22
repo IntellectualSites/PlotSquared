@@ -415,7 +415,7 @@
   "owner.now_owner": "<prefix><dark_aqua>You are now the plot owner of plot <plot>.</dark_aqua>",
   
   "signs.owner_sign_line_1": "<gold>ID: </gold><gray><id></gray>",
-  "signs.owner_sign_line_2": "<gold>Owner:</gold>",
+  "signs.owner_sign_line_2": "<gold>Owner: </gold><gray><owner></gray>",
   "signs.owner_sign_line_3": "<gray><plr></gray>",
   "signs.owner_sign_line_4": "<dark_gray>Claimed</dark_gray>",
   
