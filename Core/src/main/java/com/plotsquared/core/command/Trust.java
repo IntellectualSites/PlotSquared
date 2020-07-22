@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
@@ -74,7 +75,9 @@ public class Trust extends Command {
         checkTrue(currentPlot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
             Captions.NO_PLOT_PERMS);
-        checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
+
+        checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
+            Templates.of("value", getUsage()));
 
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
@@ -90,7 +93,9 @@ public class Trust extends Command {
                 future.completeExceptionally(throwable);
                 return;
             } else {
-                checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
+                checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
+                    Templates.of("value", args[0]));
+
                 Iterator<UUID> iterator = uuids.iterator();
                 int size = currentPlot.getTrusted().size() + currentPlot.getMembers().size();
                 while (iterator.hasNext()) {

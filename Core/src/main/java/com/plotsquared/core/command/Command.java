@@ -38,6 +38,7 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -223,7 +224,7 @@ public abstract class Command {
         return "plots." + getFullId();
     }
 
-    public <T> void paginate(PlotPlayer player, List<T> c, int size, int page,
+    public <T> void paginate(PlotPlayer<?> player, List<T> c, int size, int page,
                              RunnableVal3<Integer, T, Caption> add, String baseCommand, String header) {
         // Calculate pages & index
         if (page < 0) {
@@ -576,18 +577,19 @@ public abstract class Command {
         return this.getFullId().hashCode();
     }
 
-    public void checkTrue(boolean mustBeTrue, Captions message, Template... args) {
+    public void checkTrue(boolean mustBeTrue, Caption message, Template... args) {
         if (!mustBeTrue) {
             throw new CommandException(message, args);
         }
     }
 
-    public <T extends Object> T check(T object, Captions message, Template... args) {
+    public <T> T check(T object, Caption message, Template... args) {
         if (object == null) {
             throw new CommandException(message, args);
         }
         return object;
     }
+
 
     public enum CommandResult {
         FAILURE, SUCCESS
@@ -595,15 +597,16 @@ public abstract class Command {
 
 
     public static class CommandException extends RuntimeException {
+
         private final Template[] args;
         private final Caption message;
 
-        public CommandException(Caption message, Template... args) {
+        public CommandException(@Nullable final Caption message, final Template... args) {
             this.message = message;
             this.args = args;
         }
 
-        public void perform(PlotPlayer player) {
+        public void perform(@Nullable final PlotPlayer<?> player) {
             if (player != null && message != null) {
                 player.sendMessage(message, args);
             }

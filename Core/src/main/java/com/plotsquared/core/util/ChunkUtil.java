@@ -1,14 +1,9 @@
 package com.plotsquared.core.util;
 
-import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.Range;
-
 /**
  * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
  */
-@UtilityClass
 public class ChunkUtil {
-
 
     /**
      * Cache of mapping x,y,z coordinates to the chunk array<br>
@@ -46,6 +41,9 @@ public class ChunkUtil {
         }
     }
 
+    private ChunkUtil() {
+    }
+
     /**
      * Get the J value for Chunk block storage from the chunk xyz coordinates.
      * J is in the range 0 to 4095 where it represents a position in an array of 16x16x16 xyz (ChunkSection  Array[4096]).
@@ -55,8 +53,8 @@ public class ChunkUtil {
      * @param z Relative z coordinate
      * @return J value for xyz position in Array[4096].
      */
-    public static int getJ(@Range(from = 0, to = 15) int x, @Range(from = 0, to = 255) int y,
-        @Range(from = 0, to = 15) int z) {
+    public static int getJ(int x, int y,
+        int z) {
         return CACHE_J[y][x][z];
     }
 
@@ -66,7 +64,7 @@ public class ChunkUtil {
      * @param j Position in the xyz Array[4096].
      * @return x coordinate within the chunk
      */
-    public static int getX(@Range(from = 0, to = 4095) int j) {
+    public static int getX(int j) {
         return x_loc[j];
     }
 
@@ -77,7 +75,7 @@ public class ChunkUtil {
      * @param j Position in the xyz Array[4096].
      * @return x coordinate within the chunk
      */
-    public static int getY(@Range(from = 0, to = 15) int i, @Range(from = 0, to = 4095) int j) {
+    public static int getY(int i, int j) {
         return y_loc[i][j];
     }
 
@@ -87,7 +85,7 @@ public class ChunkUtil {
      * @param j Position in the xyz Array[4096].
      * @return z coordinate within the chunk
      */
-    public static int getZ(@Range(from = 0, to = 4095) int j) {
+    public static int getZ(int j) {
         return z_loc[j];
     }
 }
