@@ -328,9 +328,6 @@ public final class FlagCommand extends Command {
             parsed = plotFlag.parse(value);
         } catch (final FlagParseException e) {
             player.sendMessage(
-                    TranslatableCaption.of("")
-            );
-            player.sendMessage(
                     TranslatableCaption.of("flag.flag_parse_error"),
                     Template.of("flag_name", plotFlag.getName()),
                     Template.of("flag_value", e.getValue()),
