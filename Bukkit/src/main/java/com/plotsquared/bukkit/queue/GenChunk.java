@@ -31,7 +31,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.queue.ScopedLocalBlockQueue;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.ChunkUtil;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -151,12 +151,12 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     private void storeCache(final int x, final int y, final int z, final BlockState id) {
-        int i = MainUtil.CACHE_I[y][x][z];
+        int i = y >> 4;
         BlockState[] v = this.result[i];
         if (v == null) {
             this.result[i] = v = new BlockState[4096];
         }
-        int j = MainUtil.CACHE_J[y][x][z];
+        int j = ChunkUtil.getJ(x, y, z);
         v[j] = id;
     }
 
@@ -171,7 +171,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
     }
 
     @Override public BlockState getBlock(int x, int y, int z) {
-        int i = MainUtil.CACHE_I[y][x][z];
+        int i = y >> 4;
         if (result == null) {
             return BukkitBlockUtil.get(chunkData.getType(x, y, z));
         }
@@ -179,7 +179,7 @@ public class GenChunk extends ScopedLocalBlockQueue {
         if (array == null) {
             return BlockTypes.AIR.getDefaultState();
         }
-        int j = MainUtil.CACHE_J[y][x][z];
+        int j = ChunkUtil.getJ(x, y, z);
         return array[j];
     }
 
