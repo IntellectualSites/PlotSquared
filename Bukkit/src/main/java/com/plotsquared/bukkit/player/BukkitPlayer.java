@@ -54,6 +54,8 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
+
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -164,7 +166,8 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public int hasPermissionRange(final String stub, final int range) {
+    @Override @Nonnegative public int hasPermissionRange(@Nonnull final String stub,
+                                            @Nonnegative final int range) {
         if (hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
             return Integer.MAX_VALUE;
         }
@@ -222,10 +225,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             }
         }
         return max;
-    }
-
-    @Override public boolean isPermissionSet(final String permission) {
-        return this.player.isPermissionSet(permission);
     }
 
     @Override public void sendMessage(String message) {

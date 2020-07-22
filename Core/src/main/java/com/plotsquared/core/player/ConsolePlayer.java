@@ -123,10 +123,6 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return 0;
     }
 
-    @Override public boolean isPermissionSet(String permission) {
-        return true;
-    }
-
     @Override public void sendMessage(String message) {
         logger.info(message);
     }

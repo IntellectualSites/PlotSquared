@@ -35,6 +35,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.EnumSet;
 import java.util.Optional;
@@ -74,7 +75,8 @@ public class BukkitPermissionHandler implements PermissionHandler {
             this.playerReference = new WeakReference<>(player);
         }
 
-        @Override public boolean hasPermission(@Nonnull final String permission) {
+        @Override public boolean hasPermission(@Nullable final String world,
+                                               @Nonnull final String permission) {
             final Player player = this.playerReference.get();
             return player != null && player.hasPermission(permission);
         }

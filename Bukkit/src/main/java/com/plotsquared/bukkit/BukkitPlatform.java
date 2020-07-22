@@ -103,7 +103,6 @@ import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
-import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.ReflectionUtils;
@@ -181,7 +180,6 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
     private EconHandler econ;
-    private PermHandler perm;
 
     @Getter private Injector injector;
 
@@ -340,10 +338,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         // Economy
         if (Settings.Enabled_Components.ECONOMY) {
             TaskManager.runTask(() -> {
-                final PermHandler permHandler = getInjector().getInstance(PermHandler.class);
-                if (permHandler != null) {
-                    permHandler.init();
-                }
+                this.getPermissionHandler().initialize();
                 final EconHandler econHandler = getInjector().getInstance(EconHandler.class);
                 if (econHandler != null) {
                     econHandler.init();
