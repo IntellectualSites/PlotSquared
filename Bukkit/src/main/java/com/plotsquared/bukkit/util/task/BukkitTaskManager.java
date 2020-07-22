@@ -33,7 +33,6 @@ import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.Callable;
@@ -88,7 +87,7 @@ import java.util.concurrent.TimeUnit;
         return this.callMethodSync(function).get(timeout, TimeUnit.MILLISECONDS);
     }
 
-    @Override public <T> Future<T> callMethodSync(@NotNull final Callable<T> method) {
+    @Override public <T> Future<T> callMethodSync(@Nonnull final Callable<T> method) {
         return Bukkit.getScheduler().callSyncMethod(this.bukkitMain, method);
     }
 

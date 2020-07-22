@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.util.task;
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -237,7 +236,7 @@ public abstract class TaskManager {
      * @param <T>    Return type
      * @return Future completing with the result
      */
-    public abstract <T> Future<T> callMethodSync(@Nonnegative final Callable<T> method);
+    public abstract <T> Future<T> callMethodSync(@Nonnull final Callable<T> method);
 
     /**
      * Run a repeating synchronous task. If using a platform scheduler,

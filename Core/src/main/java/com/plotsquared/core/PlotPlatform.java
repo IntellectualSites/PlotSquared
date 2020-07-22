@@ -28,6 +28,7 @@ package com.plotsquared.core;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.plotsquared.core.backup.BackupManager;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
@@ -55,7 +56,7 @@ import java.util.Map;
  *
  * @param <P> Player type
  */
-public interface PlotPlatform<P> {
+public interface PlotPlatform<P> extends LocaleHolder {
 
     /**
      * Logs a message to console.

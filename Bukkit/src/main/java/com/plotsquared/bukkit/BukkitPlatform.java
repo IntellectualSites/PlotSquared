@@ -89,7 +89,6 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
-import com.plotsquared.core.plot.message.PlainChatManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
@@ -145,6 +144,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -192,6 +192,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
     @Inject @ImpromptuPipeline private UUIDPipeline impromptuPipeline;
     @Inject @BackgroundPipeline private UUIDPipeline backgroundPipeline;
     @Inject private PlatformWorldManager<World> worldManager;
+    private Locale serverLocale;
 
     @Override public int[] getServerVersion() {
         if (this.version == null) {
@@ -246,6 +247,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         this.injector = Guice.createInjector(Stage.PRODUCTION, new WorldManagerModule(), new PlotSquaredModule(),
             new BukkitModule(this), new BackupModule());
         this.injector.injectMembers(this);
+
+        this.serverLocale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
 
         if (PremiumVerification.isPremium() && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
             injector.getInstance(UpdateUtility.class).updateChecker();
@@ -1135,7 +1138,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return BukkitUtil.BUKKIT_AUDIENCES.audience(Bukkit.getConsoleSender());
     }
 
-    public String getPluginName() {
+    @Override public String getPluginName() {
         return this.pluginName;
     }
 
@@ -1143,7 +1146,16 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return this.singleWorldListener;
     }
 
-    public Injector getInjector() {
+    @Override public Injector getInjector() {
         return this.injector;
     }
+
+    @Nonnull @Override public Locale getLocale() {
+        return this.serverLocale;
+    }
+
+    @Override public void setLocale(@Nonnull final Locale locale) {
+        throw new UnsupportedOperationException("Cannot replace server locale");
+    }
+
 }

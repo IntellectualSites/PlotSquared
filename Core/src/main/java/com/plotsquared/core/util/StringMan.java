@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
 
 import javax.annotation.Nonnull;
@@ -78,7 +79,7 @@ public class StringMan {
             return (String) obj;
         }
         if (obj instanceof Caption) {
-            return ((Caption) obj).getTranslated();
+            return ((Caption) obj).getComponent(PlotSquared.platform());
         }
         if (obj.getClass().isArray()) {
             StringBuilder result = new StringBuilder();

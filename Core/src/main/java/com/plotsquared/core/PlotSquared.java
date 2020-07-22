@@ -63,6 +63,7 @@ import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.LegacyConverter;
+import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -165,6 +166,8 @@ public class PlotSquared {
         this.thread = Thread.currentThread();
         this.platform = iPlotMain;
         Settings.PLATFORM = platform;
+
+        MainUtil.initCache(); // TODO: REMOVE!!
 
         //
         // Register configuration serializable classes

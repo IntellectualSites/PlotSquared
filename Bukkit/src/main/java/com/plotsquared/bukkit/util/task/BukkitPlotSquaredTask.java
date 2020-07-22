@@ -26,7 +26,6 @@
 package com.plotsquared.bukkit.util.task;
 
 import com.plotsquared.core.util.task.PlotSquaredTask;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.annotation.Nonnull;
@@ -34,10 +33,13 @@ import javax.annotation.Nonnull;
 /**
  * Bukkit implementation of {@link PlotSquaredTask}
  */
-@RequiredArgsConstructor
 public final class BukkitPlotSquaredTask extends BukkitRunnable implements PlotSquaredTask {
 
     @Nonnull private final Runnable runnable;
+
+    public BukkitPlotSquaredTask(@Nonnull final Runnable runnable) {
+        this.runnable = runnable;
+    }
 
     @Override public void runTask() {
         this.runnable.run();

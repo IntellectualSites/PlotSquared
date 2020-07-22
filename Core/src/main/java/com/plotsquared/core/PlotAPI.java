@@ -26,8 +26,9 @@
 package com.plotsquared.core;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -36,7 +37,9 @@ import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.query.PlotQuery;
+import net.kyori.adventure.text.minimessage.Template;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -142,10 +145,11 @@ import java.util.UUID;
     /**
      * Send a message to the console. The message supports color codes.
      *
-     * @param message the message
-     * @see MainUtil#sendConsoleMessage(Captions, String...)
+     * @param message      the message
+     * @param replacements Variable replacements
      */
-    public void sendConsoleMessage(String message) {
+    public void sendConsoleMessage(@Nonnull final String message, final Template... replacements) {
+        ConsolePlayer.getConsole().sendMessage(StaticCaption.of(message), replacements);
         // TODO: Re-implement
         // PlotSquared.log(message);
     }
@@ -153,12 +157,11 @@ import java.util.UUID;
     /**
      * Sends a message to the console.
      *
-     * @param caption the message
-     * @see #sendConsoleMessage(String)
-     * @see Captions
+     * @param caption      the message
+     * @param replacements Variable replacements
      */
-    public void sendConsoleMessage(Caption caption) {
-        sendConsoleMessage(caption.getTranslated());
+    public void sendConsoleMessage(@Nonnull final Caption caption, final Template... replacements) {
+        ConsolePlayer.getConsole().sendMessage(caption, replacements);
     }
 
     /**
