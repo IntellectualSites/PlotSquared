@@ -30,6 +30,8 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -50,7 +52,10 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
     private final EventDispatcher eventDispatcher;
 
     @Override public Boolean call() {
-        player.deleteMeta(Auto.class.getName());
+        try (final MetaDataAccess<Boolean> autoAccess
+            = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
+            autoAccess.remove();
+        }
         if (plot == null) {
             sendMessage(player, Captions.NO_FREE_PLOTS);
             return false;

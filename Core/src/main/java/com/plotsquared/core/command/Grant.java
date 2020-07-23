@@ -84,7 +84,7 @@ public class Grant extends Command {
                         PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                         if (pp != null) {
                             try (final MetaDataAccess<Integer> access = pp.accessPersistentMetaData(
-                                PlayerMetaDataKeys.GRANTED_PLOTS)) {
+                                PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
                                 if (args[0].equalsIgnoreCase("check")) {
                                     Captions.GRANTED_PLOTS.send(player, access.get().orElse(0));
                                 } else {

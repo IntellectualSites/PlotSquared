@@ -81,9 +81,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotPlayer.class.getSimpleName());
 
-    public static final String META_LAST_PLOT = "lastplot";
-    public static final String META_LOCATION = "location";
-
     // Used to track debug mode
     private static final Set<PlotPlayer<?>> debugModeEnabled = Collections.synchronizedSet(new HashSet<>());
 
@@ -162,7 +159,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @param key
      * @param value
      */
-    public void setMeta(String key, Object value) {
+    void setMeta(String key, Object value) {
         if (value == null) {
             deleteMeta(key);
         } else {
@@ -180,14 +177,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @param <T> the object type to return
      * @return the value assigned to the key or null if it does not exist
      */
-    public <T> T getMeta(String key) {
+    <T> T getMeta(String key) {
         if (this.meta != null) {
             return (T) this.meta.get(key);
         }
         return null;
     }
 
-    public <T> T getMeta(String key, T defaultValue) {
+    <T> T getMeta(String key, T defaultValue) {
         T meta = getMeta(key);
         if (meta == null) {
             return defaultValue;
@@ -206,7 +203,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      *
      * @param key
      */
-    public Object deleteMeta(String key) {
+    Object deleteMeta(String key) {
         return this.meta == null ? null : this.meta.remove(key);
     }
 
@@ -225,11 +222,13 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
     public Plot getCurrentPlot() {
-        Plot value = getMeta(PlotPlayer.META_LAST_PLOT);
-        if (value == null && !Settings.Enabled_Components.EVENTS) {
-            return getLocation().getPlot();
+        try (final MetaDataAccess<Plot> lastPlotAccess =
+            this.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+            if (lastPlotAccess.get().orElse(null) == null && !Settings.Enabled_Components.EVENTS) {
+                return this.getLocation().getPlot();
+            }
+            return lastPlotAccess.get().orElse(null);
         }
-        return value;
     }
 
     /**
@@ -730,11 +729,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return this.metaMap.get(key);
     }
 
-    void removePersistentMeta(String key) {
-        this.metaMap.remove(key);
+    Object removePersistentMeta(String key) {
+        final Object old = this.metaMap.remove(key);
         if (Settings.Enabled_Components.PERSISTENT_META) {
             DBFunc.removePersistentMeta(getUUID(), key);
         }
+        return old;
     }
 
     /**
@@ -756,15 +756,34 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return new PersistentMetaDataAccess<>(this, key, this.lockRepository.lock(key.getLockKey()));
     }
 
+    /**
+     * Access keyed temporary meta data for this player. This returns a meta data
+     * access instance, that MUST be closed. It is meant to be used with try-with-resources,
+     * like such:
+     * <pre>{@code
+     * try (final MetaDataAccess<Integer> access = player.accessTemporaryMetaData(PlayerMetaKeys.GRANTS)) {
+     *     int grants = access.get();
+     *     access.set(grants + 1);
+     * }
+     * }</pre>
+     *
+     * @param key Meta data key
+     * @param <T> Meta data type
+     * @return Meta data access. MUST be closed after being used
+     */
+    @Nonnull public <T> MetaDataAccess<T> accessTemporaryMetaData(@Nonnull final MetaDataKey<T> key) {
+        return new TemporaryMetaDataAccess<>(this, key, this.lockRepository.lock(key.getLockKey()));
+    }
+
     <T> void setPersistentMeta(@Nonnull final MetaDataKey<T> key,
                                @Nonnull final T value) {
         final Object rawValue = value;
-        if (key.getType().equals(Integer.class)) {
+        if (key.getType().getRawType().equals(Integer.class)) {
             this.setPersistentMeta(key.toString(), Ints.toByteArray((int) rawValue));
-        } else if (key.getType().equals(Boolean.class)) {
+        } else if (key.getType().getRawType().equals(Boolean.class)) {
             this.setPersistentMeta(key.toString(), ByteArrayUtilities.booleanToBytes((boolean) rawValue));
         } else {
-            throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType().getSimpleName()));
+            throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType().toString()));
         }
     }
 
@@ -774,12 +793,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
             return null;
         }
         final Object returnValue;
-        if (key.getType().equals(Integer.class)) {
+        if (key.getType().getRawType().equals(Integer.class)) {
             returnValue = Ints.fromByteArray(value);
-        } else if (key.getType().equals(Boolean.class)) {
+        } else if (key.getType().getRawType().equals(Boolean.class)) {
             returnValue = ByteArrayUtilities.bytesToBoolean(value);
         } else {
-            throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType().getSimpleName()));
+            throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType().toString()));
         }
         return (T) returnValue;
     }

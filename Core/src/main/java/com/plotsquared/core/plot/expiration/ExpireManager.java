@@ -31,7 +31,9 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.OfflinePlotPlayer;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -137,44 +139,42 @@ public class ExpireManager {
         }
     }
 
-    public void confirmExpiry(final PlotPlayer pp) {
-        if (pp.getMeta("ignoreExpireTask") != null) {
-            return;
-        }
-        if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp
-            .hasPermission("plots.admin.command.autoclear")) {
-            final int num = plotsToDelete.size();
-            while (!plotsToDelete.isEmpty()) {
-                Iterator<Plot> iter = plotsToDelete.iterator();
-                final Plot current = iter.next();
-                if (!isExpired(new ArrayDeque<>(tasks), current).isEmpty()) {
-                    TaskManager.runTask(() -> {
-                        pp.setMeta("ignoreExpireTask", true);
-                        current.getCenter(pp::teleport);
-                        pp.deleteMeta("ignoreExpireTask");
-                        PlotMessage msg = new PlotMessage()
-                            .text(num + " " + (num > 1 ? "plots are" : "plot is") + " expired: ")
-                            .color("$1").text(current.toString()).color("$2")
-                            .command("/plot list expired").tooltip("/plot list expired")
-                            //.text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
-                            .text("\n - ").color("$3").text("Delete this (/plot delete)")
-                            .color("$2").command("/plot delete").tooltip("/plot delete")
-                            .text("\n - ").color("$3").text("Remind later (/plot flag set keep 1d)")
-                            .color("$2").command("/plot flag set keep 1d").tooltip("/plot flag set keep 1d")
-                            .text("\n - ").color("$3").text("Keep this (/plot flag set keep true)")
-                            .color("$2").command("/plot flag set keep true")
-                            .tooltip("/plot flag set keep true").text("\n - ").color("$3")
-                            .text("Don't show me this").color("$2")
-                            .command("/plot toggle clear-confirmation")
-                            .tooltip("/plot toggle clear-confirmation");
-                        msg.send(pp);
-                    });
-                    return;
-                } else {
-                    iter.remove();
-                }
+    public void confirmExpiry(final PlotPlayer<?> pp) {
+        try (final MetaDataAccess<Boolean> metaDataAccess = pp.accessTemporaryMetaData(
+            PlayerMetaDataKeys.TEMPORARY_IGNORE_EXPIRE_TASK)) {
+            if (metaDataAccess.has()) {
+                return;
             }
-            plotsToDelete.clear();
+            if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")) {
+                final int num = plotsToDelete.size();
+                while (!plotsToDelete.isEmpty()) {
+                    Iterator<Plot> iter = plotsToDelete.iterator();
+                    final Plot current = iter.next();
+                    if (!isExpired(new ArrayDeque<>(tasks), current).isEmpty()) {
+                        TaskManager.runTask(() -> {
+                            metaDataAccess.set(true);
+                            current.getCenter(pp::teleport);
+                            metaDataAccess.remove();
+                            PlotMessage msg = new PlotMessage().text(
+                                num + " " + (num > 1 ? "plots are" : "plot is") + " expired: ").color("$1").text(current.toString()).color("$2")
+                                .command("/plot list expired").tooltip("/plot list expired")
+                                //.text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
+                                .text("\n - ").color("$3").text("Delete this (/plot delete)").color("$2").command("/plot delete").tooltip("/plot delete")
+                                .text("\n - ").color("$3").text("Remind later (/plot flag set keep 1d)").color("$2")
+                                .command("/plot flag set keep 1d").tooltip("/plot flag set keep 1d")
+                                .text("\n - ").color("$3").text("Keep this (/plot flag set keep true)").color("$2")
+                                .command("/plot flag set keep true").tooltip("/plot flag set keep true").text("\n - ").color("$3")
+                                .text("Don't show me this").color("$2").command("/plot toggle clear-confirmation")
+                                .tooltip("/plot toggle clear-confirmation");
+                            msg.send(pp);
+                        });
+                        return;
+                    } else {
+                        iter.remove();
+                    }
+                }
+                plotsToDelete.clear();
+            }
         }
     }
 

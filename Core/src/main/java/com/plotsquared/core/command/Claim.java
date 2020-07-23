@@ -89,7 +89,7 @@ public class Claim extends SubCommand {
 
         final PlotArea area = plot.getArea();
 
-        try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.GRANTED_PLOTS)) {
+        try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
             int grants = 0;
             if (currentPlots >= player.getAllowedPlots() && !force) {
                 if (metaDataAccess.has()) {

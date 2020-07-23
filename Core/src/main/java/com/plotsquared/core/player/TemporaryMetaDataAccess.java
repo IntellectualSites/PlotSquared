@@ -31,20 +31,20 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
+final class TemporaryMetaDataAccess<T> extends MetaDataAccess<T> {
 
-    PersistentMetaDataAccess(@Nonnull final PlotPlayer<?> player,
-                             @Nonnull final MetaDataKey<T> metaDataKey,
-                             @Nonnull final LockRepository.LockAccess lockAccess) {
+    TemporaryMetaDataAccess(@Nonnull final PlotPlayer<?> player,
+                            @Nonnull final MetaDataKey<T> metaDataKey,
+                            @Nonnull final LockRepository.LockAccess lockAccess) {
         super(player, metaDataKey, lockAccess);
     }
 
     @Override public boolean has() {
-        return this.getPlayer().hasPersistentMeta(getMetaDataKey().toString());
+        return this.getPlayer().getMeta(this.getMetaDataKey().toString()) != null;
     }
 
     @Override @Nullable public T remove() {
-        final Object old = this.getPlayer().removePersistentMeta(this.getMetaDataKey().toString());
+        final Object old = getPlayer().deleteMeta(this.getMetaDataKey().toString());
         if (old == null) {
             return null;
         }
@@ -52,11 +52,11 @@ final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
     }
 
     @Override public void set(@Nonnull T value) {
-        this.getPlayer().setPersistentMeta(this.getMetaDataKey(), value);
+        this.getPlayer().setMeta(this.getMetaDataKey().toString(), null);
     }
 
     @Nonnull @Override public Optional<T> get() {
-        return Optional.ofNullable(this.getPlayer().getPersistentMeta(this.getMetaDataKey()));
+        return Optional.ofNullable(this.getPlayer().getMeta(this.getMetaDataKey().toString()));
     }
 
 }
