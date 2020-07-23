@@ -43,6 +43,7 @@ import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.Placeholders;
+import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -105,6 +106,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.SetupUtils;
@@ -1141,12 +1143,16 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return names;
     }
 
-    @Override public com.plotsquared.core.location.World<?> getPlatformWorld(@Nonnull final String worldName) {
+    @Override @Nonnull public com.plotsquared.core.location.World<?> getPlatformWorld(@Nonnull final String worldName) {
         return BukkitWorld.of(worldName);
     }
 
     @Override @Nonnull public PlatformWorldManager<?> getWorldManager() {
         return getInjector().getInstance(Key.get(new TypeLiteral<PlatformWorldManager<World>>() {}));
+    }
+
+    @Override @Nonnull public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
+        return getInjector().getInstance(Key.get(new TypeLiteral<PlayerManager<BukkitPlayer, Player>>() {}));
     }
 
 }
