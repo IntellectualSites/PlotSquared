@@ -1926,11 +1926,16 @@ public class Plot {
             DBFunc.createPlotAndSettings(this, () -> {
                 PlotArea plotworld = Plot.this.area;
                 if (notify && plotworld.isAutoMerge()) {
-                    PlotPlayer player = this.worldUtil.getPlayer(uuid);
+                    final PlotPlayer<?> player = PlotSquared.platform().getPlayerManager()
+                        .getPlayerIfExists(uuid);
+
                     PlotMergeEvent event = this.eventDispatcher
                         .callMerge(this, Direction.ALL, Integer.MAX_VALUE, player);
+
                     if (event.getEventResult() == Result.DENY) {
-                        sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
+                        if (player != null) {
+                            sendMessage(player, Captions.EVENT_DENIED, "Auto merge on claim");
+                        }
                         return;
                     }
                     Plot.this.autoMerge(event.getDir(), event.getMax(), uuid, true);
@@ -3083,10 +3088,10 @@ public class Plot {
                 if (!TaskManager.removeFromTeleportQueue(name)) {
                     return;
                 }
-                if (player.isOnline()) {
+                try {
                     MainUtil.sendMessage(player, Captions.TELEPORTED_TO_PLOT);
                     player.teleport(location, cause);
-                }
+                } catch (final Exception ignored) {}
             }, TaskTime.seconds(Settings.Teleport.DELAY));
             resultConsumer.accept(true);
         };

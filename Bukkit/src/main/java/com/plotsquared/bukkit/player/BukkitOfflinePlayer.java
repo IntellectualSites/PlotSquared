@@ -30,6 +30,8 @@ import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.permissions.PermissionProfile;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import org.bukkit.OfflinePlayer;
+
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -43,8 +45,6 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
      * as it caches player objects.
-     *
-     * @param player
      */
     public BukkitOfflinePlayer(@Nonnull final OfflinePlayer player, @Nonnull final
         PermissionHandler permissionHandler) {
@@ -57,12 +57,8 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
         return this.player.getUniqueId();
     }
 
-    @Override public long getLastPlayed() {
-        return this.player.getLastPlayed();
-    }
-
-    @Override public boolean isOnline() {
-        return this.player.isOnline();
+    @Override @Nonnegative public long getLastPlayed() {
+        return this.player.getLastSeen();
     }
 
     @Override public String getName() {

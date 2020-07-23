@@ -140,20 +140,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return players;
     }
 
-    /**
-     * Efficiently wrap a Player, or OfflinePlayer object to get a PlotPlayer (or fetch if it's already cached)<br>
-     * - Accepts sponge/bukkit Player (online)
-     * - Accepts player name (online)
-     * - Accepts UUID
-     * - Accepts bukkit OfflinePlayer (offline)
-     *
-     * @param player Player object to wrap
-     * @return Wrapped player
-     */
-    public static PlotPlayer<?> wrap(Object player) {
-        return PlotSquared.platform().wrapPlayer(player);
-    }
-
     @Override public final boolean hasPermission(@Nullable final String world,
                                                  @Nonnull final String permission) {
         return this.permissionProfile.hasPermission(world, permission);

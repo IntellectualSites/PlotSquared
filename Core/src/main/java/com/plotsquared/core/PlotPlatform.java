@@ -27,6 +27,7 @@ package com.plotsquared.core;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridUtils;
@@ -79,14 +80,6 @@ public interface PlotPlatform<P> extends ILogger {
      * @return the world folder
      */
     File getWorldContainer();
-
-    /**
-     * Wraps a player into a PlotPlayer object.
-     *
-     * @param player The player to convert to a PlotPlayer
-     * @return A PlotPlayer
-     */
-    @Nullable PlotPlayer<P> wrapPlayer(Object player);
 
     /**
      * Completely shuts down the plugin.
@@ -186,7 +179,7 @@ public interface PlotPlatform<P> extends ILogger {
      * @return Player manager
      */
     @Nonnull default PlayerManager<? extends PlotPlayer<P>, ? extends P> getPlayerManager() {
-        return getInjector().getInstance(PlayerManager.class);
+        return getInjector().getInstance(Key.get(new TypeLiteral<PlayerManager<? extends PlotPlayer<P>, ? extends P>>() {}));
     }
 
     /**

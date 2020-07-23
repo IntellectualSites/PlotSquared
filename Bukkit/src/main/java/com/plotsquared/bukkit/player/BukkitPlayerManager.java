@@ -60,11 +60,13 @@ import java.util.UUID;
     }
 
     @Nonnull @Override public BukkitPlayer getPlayer(@Nonnull final Player object) {
+        if (!object.isOnline()) {
+            throw new NoSuchPlayerException(object.getUniqueId());
+        }
         try {
             return getPlayer(object.getUniqueId());
         } catch (final NoSuchPlayerException exception) {
-            return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object,
-                object.isOnline(), false, this.econHandler, this.permissionHandler);
+            return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object, false, this.econHandler, this.permissionHandler);
         }
     }
 

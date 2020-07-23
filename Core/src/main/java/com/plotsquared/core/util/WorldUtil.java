@@ -329,14 +329,6 @@ public abstract class WorldUtil {
     public abstract boolean isBlockSame(@Nonnull BlockState block1, @Nonnull BlockState block2);
 
     /**
-     * Get a player object for the player with the given UUID
-     *
-     * @param uuid Player UUID
-     * @return Player object
-     */
-    @Nonnull public abstract PlotPlayer<?> getPlayer(@Nonnull UUID uuid);
-
-    /**
      * Get the player health
      *
      * @param player Player
