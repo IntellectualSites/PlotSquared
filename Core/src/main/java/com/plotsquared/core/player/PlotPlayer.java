@@ -758,10 +758,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
 
     <T> void setPersistentMeta(@Nonnull final MetaDataKey<T> key,
                                @Nonnull final T value) {
+        final Object rawValue = value;
         if (key.getType().equals(Integer.class)) {
-            this.setPersistentMeta(key.toString(), Ints.toByteArray((int) value));
+            this.setPersistentMeta(key.toString(), Ints.toByteArray((int) rawValue));
         } else if (key.getType().equals(Boolean.class)) {
-            this.setPersistentMeta(key.toString(), ByteArrayUtilities.booleanToBytes((boolean) value));
+            this.setPersistentMeta(key.toString(), ByteArrayUtilities.booleanToBytes((boolean) rawValue));
         } else {
             throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType().getSimpleName()));
         }
