@@ -42,6 +42,7 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.function.pattern.Pattern;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -247,6 +248,8 @@ public class HybridPlotManager extends ClassicPlotManager {
 
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
         final QueueCoordinator queue = hybridPlotWorld.getQueue();
+        queue.setReadRegion(new CuboidRegion(plot.getExtendedBottomAbs().getBlockVector3(),
+            plot.getExtendedTopAbs().getBlockVector3()));
         queue.setChunkConsumer(blockVector2 -> {
             // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
             if (canRegen && ChunkUtil.isWholeChunk(pos1, pos2, blockVector2)) {

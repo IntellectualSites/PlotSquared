@@ -30,8 +30,10 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -40,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class QueueCoordinator {
@@ -107,6 +110,22 @@ public abstract class QueueCoordinator {
     public abstract boolean setBiome(int x, int y, int z, BiomeType biome);
 
     public abstract boolean isSettingBiomes();
+
+    public void addEntities(List<? extends Entity> entities) {
+        for (Entity e : entities) {
+            this.setEntity(e);
+        }
+    }
+
+    public abstract boolean setEntity(Entity entity);
+
+    public abstract CuboidRegion getReadRegion();
+
+    public abstract void setReadRegion(CuboidRegion readRegion);
+
+    public abstract void setUnloadAfter(boolean unloadAfter);
+
+    public abstract boolean isUnloadAfter();
 
     public abstract void regenChunk(int x, int z);
 

@@ -69,6 +69,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     private final org.bukkit.World bukkitWorld;
     private final Runnable whenDone;
     private final Consumer<Throwable> throwableConsumer;
+    private final boolean unloadAfter;
     private final int totalSize;
 
     private final AtomicInteger expectedSize;
@@ -80,7 +81,8 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         @Assisted @Nonnull final World world,
         @Assisted @Nonnull final Collection<BlockVector2> requestedChunks,
         @Assisted @Nonnull final Runnable whenDone,
-        @Assisted @Nonnull final Consumer<Throwable> throwableConsumer) {
+        @Assisted @Nonnull final Consumer<Throwable> throwableConsumer,
+        @Assisted final boolean unloadAfter) {
         this.requestedChunks = new LinkedBlockingQueue<>(requestedChunks);
         this.availableChunks = new LinkedBlockingQueue<>();
         this.totalSize = requestedChunks.size();
@@ -90,6 +92,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         this.maxIterationTime = maxIterationTime;
         this.whenDone = whenDone;
         this.throwableConsumer = throwableConsumer;
+        this.unloadAfter = unloadAfter;
         this.plugin = JavaPlugin.getPlugin(BukkitPlatform.class);
         this.bukkitWorld = Bukkit.getWorld(world.getName());
     }
@@ -119,7 +122,9 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             } catch (final Throwable throwable) {
                 this.throwableConsumer.accept(throwable);
             }
-            this.freeChunk(chunk);
+            if (unloadAfter) {
+                this.freeChunk(chunk);
+            }
             processedChunks++;
             final long end = System.currentTimeMillis();
             // Update iteration time

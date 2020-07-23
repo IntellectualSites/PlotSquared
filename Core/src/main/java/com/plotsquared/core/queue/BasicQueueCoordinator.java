@@ -27,12 +27,16 @@ package com.plotsquared.core.queue;
 
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import com.sk89q.worldedit.world.entity.EntityTypes;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,18 +57,14 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private int[] regenStart;
     private int[] regenEnd;
     private Consumer<BlockVector2> consumer = null;
+    private boolean unloadAfter = true;
+    private CuboidRegion readRegion = null;
 
     private GlobalBlockQueue globalBlockQueue;
 
     public BasicQueueCoordinator(World world) {
         this.world = world;
         this.modified = System.currentTimeMillis();
-    }
-
-    public LocalChunk getLocalChunk(int x, int z) {
-        return new LocalChunk(this, x, z) {
-            // Allow implementation-specific custom stuff here
-        };
     }
 
     @Override public abstract BlockState getBlock(int x, int y, int z);
@@ -132,12 +132,30 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return this.settingTiles;
     }
 
+    @Override public boolean setEntity(Entity entity) {
+        if (entity.getState() == null || entity.getState().getType() == EntityTypes.PLAYER) {
+            return false;
+        }
+        Location location = entity.getBlockLocation();
+        LocalChunk chunk = getChunk(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+        chunk.setEntity(location, entity.getState());
+        return true;
+    }
+
+    @Override public CuboidRegion getReadRegion() {
+        return this.readRegion;
+    }
+
+    @Override public void setReadRegion(CuboidRegion readRegion) {
+        this.readRegion = readRegion;
+    }
+
     @Override public void regenChunk(int x, int z) {
         regen = true;
         // There will never only be one nullified coordinate pair
         if (regenStart == null) {
-            regenStart = new int[]{x, z};
-            regenEnd = new int[]{x, z};
+            regenStart = new int[] {x, z};
+            regenEnd = new int[] {x, z};
             return;
         }
         if (x < regenStart[0]) {
@@ -152,6 +170,14 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         if (z > regenEnd[1]) {
             regenEnd[1] = z;
         }
+    }
+
+    @Override public boolean isUnloadAfter() {
+        return this.unloadAfter;
+    }
+
+    @Override public void setUnloadAfter(boolean unloadAfter) {
+        this.unloadAfter = unloadAfter;
     }
 
     public int[] getRegenStart() {
@@ -189,7 +215,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
             BlockVector2 pair = BlockVector2.at(chunkX, chunkZ);
             lastWrappedChunk = this.blockChunks.get(pair);
             if (lastWrappedChunk == null) {
-                lastWrappedChunk = this.getLocalChunk(chunkX, chunkZ);
+                lastWrappedChunk = new LocalChunk(this, chunkX, chunkZ);
                 LocalChunk previous = this.blockChunks.put(pair, lastWrappedChunk);
                 if (previous == null) {
                     return lastWrappedChunk;
@@ -199,6 +225,4 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         }
         return lastWrappedChunk;
     }
-
-
 }

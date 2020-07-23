@@ -53,7 +53,6 @@ import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.ChunkCoordinator;
-import com.plotsquared.core.queue.ChunkCoordinatorBuilder;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueProvider;
 import com.plotsquared.core.util.ChunkManager;
@@ -94,8 +93,8 @@ public class BukkitModule extends AbstractModule {
         bind(InventoryUtil.class).to(BukkitInventoryUtil.class);
         bind(SetupUtils.class).to(BukkitSetupUtils.class);
         bind(WorldUtil.class).to(BukkitUtil.class);
-        bind(GlobalBlockQueue.class).toInstance(new GlobalBlockQueue(
-            QueueProvider.of(BukkitQueueCoordinator.class, BukkitQueueCoordinator.class)));
+        bind(GlobalBlockQueue.class)
+            .toInstance(new GlobalBlockQueue(QueueProvider.of(BukkitQueueCoordinator.class)));
         bind(ChunkManager.class).to(BukkitChunkManager.class);
         bind(RegionManager.class).to(BukkitRegionManager.class);
         bind(SchematicHandler.class).to(BukkitSchematicHandler.class);

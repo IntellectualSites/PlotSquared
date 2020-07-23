@@ -27,7 +27,6 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
-import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -97,22 +96,5 @@ public abstract class ChunkManager {
 
     @Deprecated
     public abstract CompletableFuture loadChunk(String world, BlockVector2 loc, boolean force);
-
-    @Deprecated public abstract void unloadChunk(String world, BlockVector2 loc, boolean save);
-
-    public Plot hasPlot(String world, BlockVector2 chunk) {
-        int x1 = chunk.getX() << 4;
-        int z1 = chunk.getZ() << 4;
-        int x2 = x1 + 15;
-        int z2 = z1 + 15;
-        Location bot = Location.at(world, x1, 0, z1);
-        Plot plot = bot.getOwnedPlotAbs();
-        if (plot != null) {
-            return plot;
-        }
-        Location top = Location.at(world, x2, 0, z2);
-        plot = top.getOwnedPlotAbs();
-        return plot;
-    }
 
 }

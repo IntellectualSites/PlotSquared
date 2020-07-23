@@ -330,7 +330,8 @@ public abstract class SchematicHandler {
                 final int bcz = p1z >> 4;
                 final int tcx = p2x >> 4;
                 final int tcz = p2z >> 4;
-
+                queue.setReadRegion(
+                    new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
                 queue.setChunkConsumer(blockVector2 -> {
                     int x = blockVector2.getX();
                     int z = blockVector2.getZ();

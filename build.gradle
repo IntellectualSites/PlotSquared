@@ -81,7 +81,7 @@ subprojects { subproject ->
     dependencies {
         compile group: 'org.json', name: 'json', version: '20200518'
 
-        implementation("com.sk89q.worldedit:worldedit-core:7.0.0") {
+        implementation("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") {
             exclude(module: "bukkit-classloader-check")
             exclude(module: "mockito-core")
             exclude(module: "dummypermscompat")

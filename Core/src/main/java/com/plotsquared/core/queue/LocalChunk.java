@@ -26,25 +26,27 @@
 package com.plotsquared.core.queue;
 
 import com.plotsquared.core.util.ChunkUtil;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.entity.BaseEntity;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
 import java.util.HashMap;
 
 public class LocalChunk {
-    private final BasicQueueCoordinator parent;
+    private final QueueCoordinator parent;
     private final int x;
     private final int z;
 
     private final BaseBlock[][] baseblocks;
     private final BiomeType[][] biomes;
     private final HashMap<BlockVector3, CompoundTag> tiles = new HashMap<>();
+    private final HashMap<Location, BaseEntity> entities = new HashMap<>();
 
-    public LocalChunk(BasicQueueCoordinator parent, int x, int z) {
+    public LocalChunk(QueueCoordinator parent, int x, int z) {
         this.parent = parent;
         this.x = x;
         this.z = z;
@@ -52,7 +54,7 @@ public class LocalChunk {
         biomes = new BiomeType[16][];
     }
 
-    public BasicQueueCoordinator getParent() {
+    public QueueCoordinator getParent() {
         return this.parent;
     }
 
@@ -102,5 +104,13 @@ public class LocalChunk {
 
     public void setTile(final int x, final int y, final int z, final CompoundTag tag) {
         tiles.put(BlockVector3.at(x, y, z), tag);
+    }
+
+    public void setEntity(Location location, BaseEntity entity) {
+        this.entities.put(location, entity);
+    }
+
+    public HashMap<Location, BaseEntity> getEntities() {
+        return this.entities;
     }
 }

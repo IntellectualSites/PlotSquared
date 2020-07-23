@@ -129,37 +129,4 @@ public class BukkitChunkManager extends ChunkManager {
             .getChunkAtAsync(BukkitUtil.getWorld(world), chunkLoc.getX(), chunkLoc.getZ(), force);
     }
 
-    @Override
-    public void unloadChunk(final String world, final BlockVector2 chunkLoc, final boolean save) {
-        if (!PlotSquared.get().isMainThread(Thread.currentThread())) {
-            TaskManager.runTask(() -> BukkitUtil.getWorld(world)
-                .unloadChunk(chunkLoc.getX(), chunkLoc.getZ(), save));
-        } else {
-            BukkitUtil.getWorld(world).unloadChunk(chunkLoc.getX(), chunkLoc.getZ(), save);
-        }
-    }
-
-    private void count(int[] count, Entity entity) {
-        final com.sk89q.worldedit.world.entity.EntityType entityType =
-            BukkitAdapter.adapt(entity.getType());
-
-        if (EntityCategories.PLAYER.contains(entityType)) {
-            return;
-        } else if (EntityCategories.PROJECTILE.contains(entityType) || EntityCategories.OTHER
-            .contains(entityType) || EntityCategories.HANGING.contains(entityType)) {
-            count[CAP_MISC]++;
-        } else if (EntityCategories.ANIMAL.contains(entityType) || EntityCategories.VILLAGER
-            .contains(entityType) || EntityCategories.TAMEABLE.contains(entityType)) {
-            count[CAP_MOB]++;
-            count[CAP_ANIMAL]++;
-        } else if (EntityCategories.VEHICLE.contains(entityType)) {
-            count[CAP_VEHICLE]++;
-        } else if (EntityCategories.HOSTILE.contains(entityType)) {
-            count[CAP_MOB]++;
-            count[CAP_MONSTER]++;
-        }
-        count[CAP_ENTITY]++;
-    }
-
-
 }

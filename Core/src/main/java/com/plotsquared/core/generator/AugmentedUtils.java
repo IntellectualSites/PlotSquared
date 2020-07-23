@@ -72,6 +72,7 @@ public class AugmentedUtils {
         if (areas.isEmpty()) {
             return false;
         }
+        boolean enqueue = false;
         boolean generationResult = false;
         for (final PlotArea area : areas) {
             // A normal plot world may not contain any clusters
@@ -81,14 +82,18 @@ public class AugmentedUtils {
             }
             // This means that full vanilla generation is used
             // so we do not interfere
-            if (area.getTerrain() == PlotAreaTerrainType.ALL) {
+            if (area.getTerrain() == PlotAreaTerrainType.ALL || !area.contains(blockX, blockZ)) {
                 continue;
             }
             IndependentPlotGenerator generator = area.getGenerator();
             // Mask
             if (queue == null) {
-                queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(world));
-                queue.setChunkObject(chunkObject);
+                enqueue = true;
+                queue = PlotSquared.platform().getGlobalBlockQueue()
+                    .getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(world));
+                if (chunkObject != null) {
+                    queue.setChunkObject(chunkObject);
+                }
             }
             QueueCoordinator primaryMask;
             // coordinates
@@ -109,7 +114,6 @@ public class AugmentedUtils {
                 relativeTopX = relativeTopZ = 15;
                 primaryMask = queue;
             }
-
             QueueCoordinator secondaryMask;
             BlockState air = BlockTypes.AIR.getDefaultState();
             if (area.getTerrain() == PlotAreaTerrainType.ROAD) {
@@ -147,10 +151,12 @@ public class AugmentedUtils {
                 }
                 generationResult = true;
             }
-            primaryMask.setChunkObject(chunkObject);
-            primaryMask.setForceSync(true);
-            secondaryMask.setChunkObject(chunkObject);
-            secondaryMask.setForceSync(true);
+            if (chunkObject != null) {
+                primaryMask.setChunkObject(chunkObject);
+            }
+            if (chunkObject != null) {
+                secondaryMask.setChunkObject(chunkObject);
+            }
 
             ScopedQueueCoordinator scoped =
                 new ScopedQueueCoordinator(secondaryMask, Location.at(world, blockX, 0, blockZ),
@@ -158,8 +164,7 @@ public class AugmentedUtils {
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
         }
-        if (queue != null) {
-            queue.setForceSync(true);
+        if (enqueue) {
             queue.enqueue();
         }
         return generationResult;

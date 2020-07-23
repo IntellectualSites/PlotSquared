@@ -26,8 +26,10 @@
 package com.plotsquared.core.queue;
 
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -113,6 +115,13 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         return false;
     }
 
+    @Override public boolean setEntity(Entity entity) {
+        if (parent != null) {
+            return parent.setEntity(entity);
+        }
+        return false;
+    }
+
     @Override public void regenChunk(int x, int z) {
         if (parent != null) {
             parent.regenChunk(x, z);
@@ -169,5 +178,32 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         if (parent != null) {
             parent.setChunkConsumer(consumer);
         }
+    }
+
+    @Override public CuboidRegion getReadRegion() {
+        if (parent != null) {
+            return parent.getReadRegion();
+        }
+        return null;
+    }
+
+    @Override public void setReadRegion(CuboidRegion readRegion) {
+        if (parent != null) {
+            parent.setReadRegion(readRegion);
+        }
+    }
+
+    @Override public boolean isUnloadAfter() {
+        if (parent != null) {
+            return parent.isUnloadAfter();
+        }
+        return false;
+    }
+
+    @Override public void setUnloadAfter(boolean setUnloadAfter) {
+        if (parent != null) {
+            parent.setUnloadAfter(setUnloadAfter);
+        }
+
     }
 }

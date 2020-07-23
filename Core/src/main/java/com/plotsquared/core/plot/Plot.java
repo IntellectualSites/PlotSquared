@@ -3312,9 +3312,7 @@ public class Plot {
                             Location pos2 = corners[1];
                             Location pos3 =
                                 pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
-                            Location pos4 =
-                                pos2.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
-                            regionManager.swap(pos1, pos2, pos3, pos4, this);
+                            regionManager.swap(pos1, pos2, pos3, this);
                         }
                     }
                 }.run();

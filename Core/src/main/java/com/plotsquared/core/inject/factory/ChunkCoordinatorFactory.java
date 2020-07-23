@@ -28,7 +28,6 @@ package com.plotsquared.core.inject.factory;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -37,8 +36,8 @@ import java.util.function.Consumer;
 public interface ChunkCoordinatorFactory {
 
     @Nonnull ChunkCoordinator create(final long maxIterationTime, final int initialBatchSize,
-        @NotNull final Consumer<BlockVector2> chunkConsumer, @NotNull final World world,
-        @NotNull final Collection<BlockVector2> requestedChunks, @NotNull final Runnable whenDone,
-        @NotNull final Consumer<Throwable> throwableConsumer);
+        @Nonnull final Consumer<BlockVector2> chunkConsumer, @Nonnull final World world,
+        @Nonnull final Collection<BlockVector2> requestedChunks, @Nonnull final Runnable whenDone,
+        @Nonnull final Consumer<Throwable> throwableConsumer, final boolean unloadAfter);
 
 }

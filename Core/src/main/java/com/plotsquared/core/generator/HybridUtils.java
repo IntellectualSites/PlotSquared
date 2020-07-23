@@ -161,7 +161,7 @@ public class HybridUtils {
             System.gc();
 
             QueueCoordinator queue = area.getQueue();
-
+            queue.setReadRegion(region);
             queue.setChunkConsumer(blockVector2 -> {
                 int X = blockVector2.getX();
                 int Z = blockVector2.getZ();
@@ -438,7 +438,6 @@ public class HybridUtils {
                         if (!regenedRoad && Settings.DEBUG) {
                             logger.info("[P2] Failed to regenerate roads");
                         }
-                        chunkManager.unloadChunk(area.getWorldName(), chunk, true);
                     }
                     if (Settings.DEBUG) {
                         logger.info("[P2] Cancelled road task");
@@ -500,15 +499,6 @@ public class HybridUtils {
                             logger.error(
                                 "[P2] Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
                                 area.getWorldHash(), loc.getX(), loc.getZ());
-                            int sx = loc.getX() << 5;
-                            int sz = loc.getZ() << 5;
-                            for (int x = sx; x < sx + 32; x++) {
-                                for (int z = sz; z < sz + 32; z++) {
-                                    chunkManager
-                                        .unloadChunk(area.getWorldName(), BlockVector2.at(x, z),
-                                            true);
-                                }
-                            }
                         }
                         TaskManager.runTaskLater(task, TaskTime.seconds(1L));
                     });
