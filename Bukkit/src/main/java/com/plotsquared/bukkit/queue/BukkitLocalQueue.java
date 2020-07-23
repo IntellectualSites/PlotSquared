@@ -29,7 +29,7 @@ import com.plotsquared.bukkit.schematic.StateWrapper;
 import com.plotsquared.bukkit.util.BukkitBlockUtil;
 import com.plotsquared.core.queue.BasicLocalBlockQueue;
 import com.plotsquared.core.util.BlockUtil;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.ChunkUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -48,8 +48,8 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
@@ -125,9 +125,9 @@ public class BukkitLocalQueue extends BasicLocalBlockQueue {
                     for (int j = 0; j < blocksLayer.length; j++) {
                         if (blocksLayer[j] != null) {
                             BaseBlock block = blocksLayer[j];
-                            int x = MainUtil.x_loc[layer][j];
-                            int y = MainUtil.y_loc[layer][j];
-                            int z = MainUtil.z_loc[layer][j];
+                            int x = ChunkUtil.getX(j);
+                            int y = ChunkUtil.getY(layer, j);
+                            int z = ChunkUtil.getZ(j);
 
                             BlockData blockData = BukkitAdapter.adapt(block);
 
