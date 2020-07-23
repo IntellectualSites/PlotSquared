@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.ChunkUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.task.TaskManager;
@@ -262,8 +262,8 @@ public abstract class BasicLocalBlockQueue extends LocalBlockQueue {
         }
 
         private void setInternal(final int x, final int y, final int z, final BaseBlock baseBlock) {
-            final int i = MainUtil.CACHE_I[y][x][z];
-            final int j = MainUtil.CACHE_J[y][x][z];
+            final int i = y >> 4;
+            final int j = ChunkUtil.getJ(x, y, z);
             BaseBlock[] array = baseblocks[i];
             if (array == null) {
                 array = (baseblocks[i] = new BaseBlock[4096]);
