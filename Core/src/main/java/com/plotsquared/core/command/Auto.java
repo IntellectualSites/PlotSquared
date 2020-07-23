@@ -26,7 +26,6 @@
 package com.plotsquared.core.command;
 
 import com.google.common.collect.Lists;
-import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.CaptionUtility;
@@ -37,6 +36,8 @@ import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -91,27 +92,29 @@ public class Auto extends SubCommand {
         }
         int diff = allowedPlots - currentPlots;
         if (diff - sizeX * sizeZ < 0) {
-            if (player.hasPersistentMeta("grantedPlots")) {
-                int grantedPlots = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
-                if (diff < 0 && grantedPlots < sizeX * sizeZ) {
-                    MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
-                    return false;
-                } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
-                    MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
-                    return false;
-                } else {
-                    int left = grantedPlots + diff < 0 ? 0 : diff - sizeX * sizeZ;
-                    if (left == 0) {
-                        player.removePersistentMeta("grantedPlots");
+            try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(
+                PlayerMetaDataKeys.GRANTED_PLOTS)) {
+                if (metaDataAccess.has()) {
+                    int grantedPlots = metaDataAccess.get().orElse(0);
+                    if (diff < 0 && grantedPlots < sizeX * sizeZ) {
+                        MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                        return false;
+                    } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
+                        MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                        return false;
                     } else {
-                        player.setPersistentMeta("grantedPlots", Ints.toByteArray(left));
+                        int left = grantedPlots + diff < 0 ? 0 : diff - sizeX * sizeZ;
+                        if (left == 0) {
+                            metaDataAccess.remove();
+                        } else {
+                            metaDataAccess.set(left);
+                        }
+                        MainUtil.sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "" + (grantedPlots - left), "" + left);
                     }
-                    MainUtil.sendMessage(player, Captions.REMOVED_GRANTED_PLOT,
-                        "" + (grantedPlots - left), "" + left);
+                } else {
+                    MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                    return false;
                 }
-            } else {
-                MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
-                return false;
             }
         }
         return true;
