@@ -570,7 +570,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 }
                 final Plot plot = area.getOwnedPlot(id);
                 if (plot != null) {
-                    if (!plot.getFlag(ServerPlotFlag.class) || PlotPlayer.wrap(plot.getOwner()) == null) {
+                    if (!plot.getFlag(ServerPlotFlag.class) || PlotSquared.platform().getPlayerManager()
+                        .getPlayerIfExists(plot.getOwner()) == null) {
                         if (world.getKeepSpawnInMemory()) {
                             world.setKeepSpawnInMemory(false);
                             return;
@@ -1076,39 +1077,6 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         } else if (this.worldConfiguration.contains("worlds." + worldName)) {
             PlotSquared.get().loadWorld(worldName, null);
         }
-    }
-
-    /**
-     * Attempt to retrieve a {@link PlotPlayer} from a player identifier.
-     * This method accepts:
-     * - {@link Player} objects,
-     * - {@link OfflinePlayer} objects,
-     * - {@link String} usernames for online players, and
-     * - {@link UUID} UUIDs for online players
-     * <p>
-     * In the case of offline players, a fake {@link Player} instance will be created.
-     * This is a rather expensive operation, and should be avoided if possible.
-     *
-     * @param player The player to convert to a PlotPlayer
-     * @return The plot player instance that corresponds to the identifier, or null
-     * if no such player object could be created
-     */
-    @Override @Nullable public PlotPlayer<Player> wrapPlayer(final Object player) {
-        if (player instanceof Player) {
-            return BukkitUtil.adapt((Player) player);
-        }
-        if (player instanceof OfflinePlayer) {
-            return BukkitUtil.adapt((OfflinePlayer) player);
-        }
-        if (player instanceof String) {
-            return (PlotPlayer<Player>) PlotSquared.platform().getPlayerManager()
-                .getPlayerIfExists((String) player);
-        }
-        if (player instanceof UUID) {
-            return (PlotPlayer<Player>) PlotSquared.platform().getPlayerManager()
-                .getPlayerIfExists((UUID) player);
-        }
-        return null;
     }
 
     @Override public String getNMSPackage() {

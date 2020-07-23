@@ -94,7 +94,7 @@ public class PlotListener {
                     ++value.count;
                     if (value.count == value.interval) {
                         value.count = 0;
-                        PlotPlayer<?> player = PlotPlayer.wrap(entry.getKey());
+                        final PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(entry.getKey());
                         if (player == null) {
                             iterator.remove();
                             continue;
@@ -114,7 +114,7 @@ public class PlotListener {
                     ++value.count;
                     if (value.count == value.interval) {
                         value.count = 0;
-                        PlotPlayer<?> player = PlotSquared.platform().getWorldUtil().getPlayer(entry.getKey());
+                        final PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(entry.getKey());
                         if (player == null) {
                             iterator.remove();
                             continue;

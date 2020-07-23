@@ -120,7 +120,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override public long getLastPlayed() {
-        return 0;
+        return System.currentTimeMillis();
     }
 
     @Override public void sendMessage(String message) {
@@ -130,10 +130,6 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     @Override public void teleport(Location location, TeleportCause cause) {
         setMeta(META_LAST_PLOT, location.getPlot());
         setMeta(META_LOCATION, location);
-    }
-
-    @Override public boolean isOnline() {
-        return true;
     }
 
     @Override public String getName() {

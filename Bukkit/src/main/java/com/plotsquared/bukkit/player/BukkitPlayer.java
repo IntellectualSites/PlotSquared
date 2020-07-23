@@ -75,9 +75,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     private final EconHandler econHandler;
     public final Player player;
-    private boolean offline;
     private String name;
-
 
     /**
      * <p>Please do not use this method. Instead use
@@ -90,19 +88,12 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         this(plotAreaManager, eventDispatcher, player, false, econHandler, permissionHandler);
     }
 
-    public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher,
-        @Nonnull final Player player, final boolean offline, @Nullable final EconHandler econHandler,
-        @Nonnull final PermissionHandler permissionHandler) {
-        this(plotAreaManager, eventDispatcher, player, offline, true, econHandler, permissionHandler);
-    }
-
     public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final
-        EventDispatcher eventDispatcher, @Nonnull final Player player, final boolean offline,
+        EventDispatcher eventDispatcher, @Nonnull final Player player,
         final boolean realPlayer, @Nullable final EconHandler econHandler,
         @Nonnull final PermissionHandler permissionHandler) {
         super(plotAreaManager, eventDispatcher, econHandler, permissionHandler);
         this.player = player;
-        this.offline = offline;
         this.econHandler = econHandler;
         if (realPlayer) {
             super.populatePersistentMetaMap();
@@ -130,8 +121,8 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return player.getUniqueId();
     }
 
-    @Override public long getLastPlayed() {
-        return this.player.getLastPlayed();
+    @Override @Nonnegative public long getLastPlayed() {
+        return this.player.getLastSeen();
     }
 
     @Override public boolean canTeleport(@Nonnull final Location location) {
@@ -253,10 +244,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             this.name = this.player.getName();
         }
         return this.name;
-    }
-
-    @Override public boolean isOnline() {
-        return !this.offline && this.player.isOnline();
     }
 
     @Override public void setCompassTarget(Location location) {
