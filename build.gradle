@@ -114,6 +114,7 @@ subprojects { subproject ->
     }
 
     repositories {
+        mavenLocal()
         mavenCentral()
         maven { url = "https://maven.enginehub.org/repo/" }
         maven { url = "https://repo.maven.apache.org/maven2" }

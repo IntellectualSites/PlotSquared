@@ -2,6 +2,7 @@ plugins {
     id "com.github.johnrengelman.shadow"
 }
 repositories {
+    mavenLocal()
     maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url = "https://jitpack.io" }
@@ -14,7 +15,6 @@ repositories {
     maven { url = "https://ci.ender.zone/plugin/repository/everything/" }
     maven { url = "https://mvn.intellectualsites.com/content/repositories/snapshots" }
     maven { url = "https://repo.wea-ondara.net/repository/public/" }
-    mavenLocal()
 }
 
 
