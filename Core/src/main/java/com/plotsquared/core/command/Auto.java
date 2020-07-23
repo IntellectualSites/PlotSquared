@@ -93,7 +93,7 @@ public class Auto extends SubCommand {
         int diff = allowedPlots - currentPlots;
         if (diff - sizeX * sizeZ < 0) {
             try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(
-                PlayerMetaDataKeys.GRANTED_PLOTS)) {
+                PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
                 if (metaDataAccess.has()) {
                     int grantedPlots = metaDataAccess.get().orElse(0);
                     if (diff < 0 && grantedPlots < sizeX * sizeZ) {
@@ -149,7 +149,10 @@ public class Auto extends SubCommand {
      */
     public static void autoClaimSafe(final PlotPlayer<?> player, final PlotArea area, PlotId start,
         final String schematic) {
-        player.setMeta(Auto.class.getName(), true);
+        try (final MetaDataAccess<Boolean> metaDataAccess =
+            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
+            metaDataAccess.set(true);
+        }
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
                 try {
@@ -253,9 +256,12 @@ public class Auto extends SubCommand {
             return false;
         }
         final int allowed_plots = player.getAllowedPlots();
-        if (!force && (player.getMeta(Auto.class.getName(), false) || !checkAllowedPlots(player,
-            plotarea, allowed_plots, size_x, size_z))) {
-            return false;
+        try (final MetaDataAccess<Boolean> metaDataAccess =
+            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
+            if (!force && (metaDataAccess.get().orElse(false) || !checkAllowedPlots(player,
+                plotarea, allowed_plots, size_x, size_z))) {
+                return false;
+            }
         }
 
         if (schematic != null && !schematic.isEmpty()) {

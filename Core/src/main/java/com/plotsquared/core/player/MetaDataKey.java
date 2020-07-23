@@ -27,6 +27,7 @@ package com.plotsquared.core.player;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.inject.TypeLiteral;
 import com.plotsquared.core.synchronization.LockKey;
 
 import javax.annotation.Nonnull;
@@ -44,10 +45,10 @@ public final class MetaDataKey<T> {
     private static final Object keyMetaData = new Object();
 
     private final String key;
-    private final Class<T> type;
+    private final TypeLiteral<T> type;
     private final LockKey lockKey;
 
-    private MetaDataKey(@Nonnull final String key, @Nonnull final Class<T> type) {
+    private MetaDataKey(@Nonnull final String key, @Nonnull final TypeLiteral<T> type) {
         this.key = Preconditions.checkNotNull(key, "Key may not be null");
         this.type = Preconditions.checkNotNull(type, "Type may not be null");
         this.lockKey = LockKey.of(this.key);
@@ -60,7 +61,7 @@ public final class MetaDataKey<T> {
      * @param <T> Type
      * @return MetaData key instance
      */
-    @Nonnull public static <T> MetaDataKey<T> of(@Nonnull final String key, @Nonnull final Class<T> type) {
+    @Nonnull public static <T> MetaDataKey<T> of(@Nonnull final String key, @Nonnull final TypeLiteral<T> type) {
         synchronized (keyMetaData) {
             return (MetaDataKey<T>)
                 keyMap.computeIfAbsent(key, missingKey -> new MetaDataKey<>(missingKey, type));
@@ -100,7 +101,7 @@ public final class MetaDataKey<T> {
      *
      * @return Meta data type
      */
-    @Nonnull public Class<T> getType() {
+    @Nonnull public TypeLiteral<T> getType() {
         return this.type;
     }
 

@@ -69,12 +69,12 @@ import static com.sk89q.worldedit.world.gamemode.GameModes.SURVIVAL;
 public class BukkitPlayer extends PlotPlayer<Player> {
 
     private static boolean CHECK_EFFECTIVE = true;
-
-    private final EconHandler econHandler;
     public final Player player;
+    private final EconHandler econHandler;
     private boolean offline;
     private String name;
-
+    private String lastMessage = "";
+    private long lastMessageTime = 0L;
 
     /**
      * <p>Please do not use this method. Instead use
@@ -234,10 +234,10 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     @Override public void sendMessage(String message) {
         message = message.replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&');
-        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
-            System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
-            setMeta("lastMessage", message);
-            setMeta("lastMessageTime", System.currentTimeMillis());
+        if (!StringMan.isEqual(this.lastMessage, message) || (
+            System.currentTimeMillis() - this.lastMessageTime > 5000)) {
+            this.lastMessage = message;
+            this.lastMessageTime = System.currentTimeMillis();
             this.player.sendMessage(message);
         }
     }

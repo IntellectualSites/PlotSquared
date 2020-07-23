@@ -28,6 +28,8 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -43,6 +45,7 @@ import javax.annotation.Nonnull;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 @CommandDeclaration(command = "load",
@@ -86,44 +89,46 @@ public class Load extends SubCommand {
             return false;
         }
 
-        if (args.length != 0) {
-            if (args.length == 1) {
-                List<String> schematics = player.getMeta("plot_schematics");
-                if (schematics == null) {
-                    // No schematics found:
-                    MainUtil.sendMessage(player, Captions.LOAD_NULL);
-                    return false;
-                }
-                String schematic;
-                try {
-                    schematic = schematics.get(Integer.parseInt(args[0]) - 1);
-                } catch (Exception ignored) {
-                    // use /plot load <index>
-                    MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER,
-                        "(1, " + schematics.size() + ')');
-                    return false;
-                }
-                final URL url;
-                try {
-                    url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic);
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    MainUtil.sendMessage(player, Captions.LOAD_FAILED);
-                    return false;
-                }
-                plot.addRunning();
-                MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
-                TaskManager.runTaskAsync(() -> {
-                    Schematic taskSchematic = this.schematicHandler.getSchematic(url);
-                    if (taskSchematic == null) {
-                        plot.removeRunning();
-                        sendMessage(player, Captions.SCHEMATIC_INVALID,
-                            "non-existent or not in gzip format");
-                        return;
+        try (final MetaDataAccess<List<String>> metaDataAccess =
+            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
+            if (args.length != 0) {
+                if (args.length == 1) {
+                    List<String> schematics = metaDataAccess.get().orElse(null);
+                    if (schematics == null) {
+                        // No schematics found:
+                        MainUtil.sendMessage(player, Captions.LOAD_NULL);
+                        return false;
                     }
-                    PlotArea area = plot.getArea();
-                    this.schematicHandler.paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false,
-                            new RunnableVal<Boolean>() {
+                    String schematic;
+                    try {
+                        schematic = schematics.get(Integer.parseInt(args[0]) - 1);
+                    } catch (Exception ignored) {
+                        // use /plot load <index>
+                        MainUtil.sendMessage(player, Captions.NOT_VALID_NUMBER,
+                            "(1, " + schematics.size() + ')');
+                        return false;
+                    }
+                    final URL url;
+                    try {
+                        url = new URL(Settings.Web.URL + "saves/" + player.getUUID() + '/' + schematic);
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                        MainUtil.sendMessage(player, Captions.LOAD_FAILED);
+                        return false;
+                    }
+                    plot.addRunning();
+                    MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
+                    TaskManager.runTaskAsync(() -> {
+                        Schematic taskSchematic = this.schematicHandler.getSchematic(url);
+                        if (taskSchematic == null) {
+                            plot.removeRunning();
+                            sendMessage(player, Captions.SCHEMATIC_INVALID,
+                                "non-existent or not in gzip format");
+                            return;
+                        }
+                        PlotArea area = plot.getArea();
+                        this.schematicHandler
+                            .paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false, new RunnableVal<Boolean>() {
                                 @Override public void run(Boolean value) {
                                     plot.removeRunning();
                                     if (value) {
@@ -133,58 +138,61 @@ public class Load extends SubCommand {
                                     }
                                 }
                             });
-                });
-                return true;
-            }
-            plot.removeRunning();
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot load <index>");
-            return false;
-        }
-
-        // list schematics
-
-        List<String> schematics = player.getMeta("plot_schematics");
-        if (schematics == null) {
-            plot.addRunning();
-            TaskManager.runTaskAsync(() -> {
-                List<String> schematics1 = this.schematicHandler.getSaves(player.getUUID());
-                plot.removeRunning();
-                if ((schematics1 == null) || schematics1.isEmpty()) {
-                    MainUtil.sendMessage(player, Captions.LOAD_FAILED);
-                    return;
+                    });
+                    return true;
                 }
-                player.setMeta("plot_schematics", schematics1);
+                plot.removeRunning();
+                MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot load <index>");
+                return false;
+            }
+
+            // list schematics
+
+            List<String> schematics = metaDataAccess.get().orElse(null);
+            if (schematics == null) {
+                plot.addRunning();
+                TaskManager.runTaskAsync(() -> {
+                    List<String> schematics1 = this.schematicHandler.getSaves(player.getUUID());
+                    plot.removeRunning();
+                    if ((schematics1 == null) || schematics1.isEmpty()) {
+                        MainUtil.sendMessage(player, Captions.LOAD_FAILED);
+                        return;
+                    }
+                    metaDataAccess.set(schematics1);
+                    displaySaves(player);
+                });
+            } else {
                 displaySaves(player);
-            });
-        } else {
-            displaySaves(player);
+            }
         }
         return true;
     }
 
     public void displaySaves(PlotPlayer<?> player) {
-        List<String> schematics = player.getMeta("plot_schematics");
-        for (int i = 0; i < Math.min(schematics.size(), 32); i++) {
-            try {
-                String schematic = schematics.get(i).split("\\.")[0];
-                String[] split = schematic.split("_");
-                if (split.length < 5) {
-                    continue;
+        try (final MetaDataAccess<List<String>> metaDataAccess =
+            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
+            List<String> schematics = metaDataAccess.get().orElse(Collections.emptyList());
+            for (int i = 0; i < Math.min(schematics.size(), 32); i++) {
+                try {
+                    String schematic = schematics.get(i).split("\\.")[0];
+                    String[] split = schematic.split("_");
+                    if (split.length < 5) {
+                        continue;
+                    }
+                    String time = secToTime((System.currentTimeMillis() / 1000) - Long.parseLong(split[0]));
+                    String world = split[1];
+                    PlotId id = PlotId.fromString(split[2] + ';' + split[3]);
+                    String size = split[4];
+                    String color = "$4";
+                    MainUtil.sendMessage(player,
+                        "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ';' + id
+                            + "$3 | " + color + size + 'x' + size);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                String time =
-                    secToTime((System.currentTimeMillis() / 1000) - Long.parseLong(split[0]));
-                String world = split[1];
-                PlotId id = PlotId.fromString(split[2] + ';' + split[3]);
-                String size = split[4];
-                String color = "$4";
-                MainUtil.sendMessage(player,
-                    "$3[$2" + (i + 1) + "$3] " + color + time + "$3 | " + color + world + ';' + id
-                        + "$3 | " + color + size + 'x' + size);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+            MainUtil.sendMessage(player, Captions.LOAD_LIST);
         }
-        MainUtil.sendMessage(player, Captions.LOAD_LIST);
     }
 
     public String secToTime(long time) {

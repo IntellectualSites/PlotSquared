@@ -28,6 +28,7 @@ package com.plotsquared.core.player;
 import com.plotsquared.core.synchronization.LockRepository;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -59,8 +60,10 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
 
     /**
      * Remove the stored value meta data
+     *
+     * @return Old value, or {@link null}
      */
-    public abstract void remove();
+    @Nullable public abstract T remove();
 
     /**
      * Set the meta data value

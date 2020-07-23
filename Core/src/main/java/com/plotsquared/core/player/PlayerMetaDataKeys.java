@@ -25,10 +25,36 @@
  */
 package com.plotsquared.core.player;
 
+import com.google.inject.TypeLiteral;
+import com.plotsquared.core.command.Auto;
+import com.plotsquared.core.command.CmdInstance;
+import com.plotsquared.core.location.Location;
+import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotInventory;
+import com.plotsquared.core.setup.SetupProcess;
+
+import java.util.List;
+import java.util.Map;
+
 public final class PlayerMetaDataKeys {
 
-    public static final MetaDataKey<Boolean> PERSISTENT_FLIGHT = MetaDataKey.of("flight", Boolean.class);
-    public static final MetaDataKey<Integer> GRANTED_PLOTS = MetaDataKey.of("grantedPlots", Integer.class);
+    //@formatter:off
+    public static final MetaDataKey<Boolean> PERSISTENT_FLIGHT = MetaDataKey.of("flight", new TypeLiteral<Boolean>() {});
+    public static final MetaDataKey<Integer> PERSISTENT_GRANTED_PLOTS = MetaDataKey.of("grantedPlots", new TypeLiteral<Integer>() {});
+
+    public static final MetaDataKey<Plot> TEMPORARY_LAST_PLOT = MetaDataKey.of("lastplot", new TypeLiteral<Plot>() {});
+    public static final MetaDataKey<Location> TEMPORARY_MUSIC = MetaDataKey.of("music", new TypeLiteral<Location>() {});
+    public static final MetaDataKey<Boolean> TEMPORARY_KICK = MetaDataKey.of("kick", new TypeLiteral<Boolean>() {});
+    public static final MetaDataKey<SetupProcess> TEMPORARY_SETUP = MetaDataKey.of("setup", new TypeLiteral<SetupProcess>() {});
+    public static final MetaDataKey<PlotInventory> TEMPORARY_INVENTORY = MetaDataKey.of("inventory", new TypeLiteral<PlotInventory>() {});
+    public static final MetaDataKey<Boolean> TEMPORARY_IGNORE_EXPIRE_TASK = MetaDataKey.of("ignoreExpireTask", new TypeLiteral<Boolean>() {});
+    public static final MetaDataKey<Plot> TEMPORARY_WORLD_EDIT_REGION_PLOT = MetaDataKey.of("WorldEditRegionPlot", new TypeLiteral<Plot>() {});
+    public static final MetaDataKey<Boolean> TEMPORARY_AUTO = MetaDataKey.of(Auto.class.getName(), new TypeLiteral<Boolean>() {});
+    public static final MetaDataKey<Map<String, Boolean>> TEMPORARY_PERMISSIONS = MetaDataKey.of("permissions", new TypeLiteral<Map<String, Boolean>>() {});
+    public static final MetaDataKey<List<String>> TEMPORARY_SCHEMATICS = MetaDataKey.of("plot_schematics", new TypeLiteral<List<String>>() {});
+    public static final MetaDataKey<Location> TEMPORARY_LOCATION = MetaDataKey.of("location", new TypeLiteral<Location>() {});
+    public static final MetaDataKey<CmdInstance> TEMPORARY_CONFIRM = MetaDataKey.of("cmdConfirm", new TypeLiteral<CmdInstance>() {});
+    //@formatter:on
 
     private PlayerMetaDataKeys() {
     }
