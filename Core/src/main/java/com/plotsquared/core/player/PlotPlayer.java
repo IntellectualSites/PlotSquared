@@ -836,6 +836,15 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         }
     }
 
+    /**
+     * Get this player's {@link LockRepository}
+     *
+     * @return Lock repository instance
+     */
+    @Nonnull public LockRepository getLockRepository() {
+        return this.lockRepository;
+    }
+
     @FunctionalInterface
     public interface PlotPlayerConverter<BaseObject> {
         PlotPlayer<?> convert(BaseObject object);
