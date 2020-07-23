@@ -136,7 +136,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         if (entity.getState() == null || entity.getState().getType() == EntityTypes.PLAYER) {
             return false;
         }
-        Location location = entity.getBlockLocation();
+        Location location = entity.getLocation();
         LocalChunk chunk = getChunk(location.getBlockX() >> 4, location.getBlockZ() >> 4);
         chunk.setEntity(location, entity.getState());
         return true;
