@@ -26,12 +26,13 @@
 package com.plotsquared.core.listener;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.collection.ByteArrayUtilities;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -71,6 +72,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class PlotListener {
@@ -177,8 +179,9 @@ public class PlotListener {
                 boolean flight = player.getFlight();
                 GameMode gamemode = player.getGameMode();
                 if (flight != (gamemode == GameModes.CREATIVE || gamemode == GameModes.SPECTATOR)) {
-                    player.setPersistentMeta("flight",
-                        ByteArrayUtilities.booleanToBytes(player.getFlight()));
+                    try (final MetaDataAccess<Boolean> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_FLIGHT)) {
+                        metaDataAccess.set(player.getFlight());
+                    }
                 }
                 player.setFlight(flyStatus == FlyFlag.FlyStatus.ENABLED);
             }
@@ -346,16 +349,18 @@ public class PlotListener {
 
             final FlyFlag.FlyStatus flyStatus = plot.getFlag(FlyFlag.class);
             if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
-                if (player.hasPersistentMeta("flight")) {
-                    player.setFlight(
-                        ByteArrayUtilities.bytesToBoolean(player.getPersistentMeta("flight")));
-                    player.removePersistentMeta("flight");
-                } else {
-                    GameMode gameMode = player.getGameMode();
-                    if (gameMode == GameModes.SURVIVAL || gameMode == GameModes.ADVENTURE) {
-                        player.setFlight(false);
-                    } else if (!player.getFlight()) {
-                        player.setFlight(true);
+                try (final MetaDataAccess<Boolean> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_FLIGHT)) {
+                    final Optional<Boolean> value = metaDataAccess.get();
+                    if (value.isPresent()) {
+                        player.setFlight(value.get());
+                        metaDataAccess.remove();
+                    } else {
+                        GameMode gameMode = player.getGameMode();
+                        if (gameMode == GameModes.SURVIVAL || gameMode == GameModes.ADVENTURE) {
+                            player.setFlight(false);
+                        } else if (!player.getFlight()) {
+                            player.setFlight(true);
+                        }
                     }
                 }
             }

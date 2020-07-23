@@ -26,7 +26,9 @@
 package com.plotsquared.core.player;
 
 import com.google.common.base.Preconditions;
+import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.collection.ByteArrayUtilities;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.CaptionUtility;
@@ -45,6 +47,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.synchronization.LockRepository;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
@@ -54,11 +57,11 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
@@ -91,6 +94,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     private ConcurrentHashMap<String, Object> meta;
     private int hash;
+
+    private final LockRepository lockRepository = new LockRepository();
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
@@ -721,18 +726,64 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         }
     }
 
-    public byte[] getPersistentMeta(String key) {
+    byte[] getPersistentMeta(String key) {
         return this.metaMap.get(key);
     }
 
-    public void removePersistentMeta(String key) {
+    void removePersistentMeta(String key) {
         this.metaMap.remove(key);
         if (Settings.Enabled_Components.PERSISTENT_META) {
             DBFunc.removePersistentMeta(getUUID(), key);
         }
     }
 
-    public void setPersistentMeta(String key, byte[] value) {
+    /**
+     * Access keyed persistent meta data for this player. This returns a meta data
+     * access instance, that MUST be closed. It is meant to be used with try-with-resources,
+     * like such:
+     * <pre>{@code
+     * try (final MetaDataAccess<Integer> access = player.accessPersistentMetaData(PlayerMetaKeys.GRANTS)) {
+     *     int grants = access.get();
+     *     access.set(grants + 1);
+     * }
+     * }</pre>
+     *
+     * @param key Meta data key
+     * @param <T> Meta data type
+     * @return Meta data access. MUST be closed after being used
+     */
+    @Nonnull public <T> MetaDataAccess<T> accessPersistentMetaData(@Nonnull final MetaDataKey<T> key) {
+        return new PersistentMetaDataAccess<>(this, key, this.lockRepository.lock(key.getLockKey()));
+    }
+
+    <T> void setPersistentMeta(@Nonnull final MetaDataKey<T> key,
+                               @Nonnull final T value) {
+        if (key.getType().equals(Integer.class)) {
+            this.setPersistentMeta(key.toString(), Ints.toByteArray((int) value));
+        } else if (key.getType().equals(Boolean.class)) {
+            this.setPersistentMeta(key.toString(), ByteArrayUtilities.booleanToBytes((boolean) value));
+        } else {
+            throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType().getSimpleName()));
+        }
+    }
+
+    @Nullable <T> T getPersistentMeta(@Nonnull final MetaDataKey<T> key) {
+        final byte[] value = this.getPersistentMeta(key.toString());
+        if (value == null) {
+            return null;
+        }
+        final Object returnValue;
+        if (key.getType().equals(Integer.class)) {
+            returnValue = Ints.fromByteArray(value);
+        } else if (key.getType().equals(Boolean.class)) {
+            returnValue = ByteArrayUtilities.bytesToBoolean(value);
+        } else {
+            throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType().getSimpleName()));
+        }
+        return (T) returnValue;
+    }
+
+    void setPersistentMeta(String key, byte[] value) {
         boolean delete = hasPersistentMeta(key);
         this.metaMap.put(key, value);
         if (Settings.Enabled_Components.PERSISTENT_META) {
@@ -740,7 +791,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         }
     }
 
-    public boolean hasPersistentMeta(String key) {
+    boolean hasPersistentMeta(String key) {
         return this.metaMap.containsKey(key);
     }
 
