@@ -36,7 +36,7 @@ import java.util.Iterator;
  * Plot (X,Y) tuples for plot locations
  * within a plot area
  */
-public class PlotId {
+public final class PlotId {
 
     private final int x;
     private final int y;
@@ -48,7 +48,7 @@ public class PlotId {
      * @param x The plot x coordinate
      * @param y The plot y coordinate
      */
-    private PlotId(int x, int y) {
+    private PlotId(final int x, final int y) {
         this.x = x;
         this.y = y;
         this.hash = (this.getX() << 16) | (this.getY() & 0xFFFF);
@@ -61,20 +61,21 @@ public class PlotId {
      * @param y The plot y coordinate
      */
     @Nonnull public static PlotId of(final int x, final int y) {
-        return PlotId.of(x, y);
+        return new PlotId(x, y);
     }
 
     /**
      * Get a Plot Id based on a string
      *
      * @param string to create id from
-     * @return the PlotId representation of the arguement
+     * @return the PlotId representation of the argument
      * @throws IllegalArgumentException if the string does not contain a valid PlotId
      */
-    @Nonnull public static PlotId fromString(@Nonnull String string) {
-        PlotId plot = fromStringOrNull(string);
-        if (plot == null)
+    @Nonnull public static PlotId fromString(@Nonnull final String string) {
+        final PlotId plot = fromStringOrNull(string);
+        if (plot == null) {
             throw new IllegalArgumentException("Cannot create PlotID. String invalid.");
+        }
         return plot;
     }
 
@@ -84,8 +85,8 @@ public class PlotId {
      * @param string ID string
      * @return Plot ID, or {@code null} if none could be parsed
      */
-    @Nullable public static PlotId fromStringOrNull(@Nonnull String string) {
-        String[] parts = string.split("[;,.]");
+    @Nullable public static PlotId fromStringOrNull(@Nonnull final String string) {
+        final String[] parts = string.split("[;,.]");
         if (parts.length < 2) {
             return null;
         }
@@ -94,7 +95,7 @@ public class PlotId {
         try {
             x = Integer.parseInt(parts[0]);
             y = Integer.parseInt(parts[1]);
-        } catch (NumberFormatException ignored) {
+        } catch (final NumberFormatException ignored) {
             return null;
         }
         return of(x, y);
@@ -126,7 +127,7 @@ public class PlotId {
      * @return X component
      */
     public int getX() {
-        return this.getX();
+        return this.x;
     }
 
     /**
@@ -135,7 +136,7 @@ public class PlotId {
      * @return Y component
      */
     public int getY() {
-        return this.getY();
+        return this.y;
     }
 
     /**
@@ -144,8 +145,8 @@ public class PlotId {
      * @return Next plot ID
      */
     @Nonnull public PlotId getNextId() {
-        int absX = Math.abs(x);
-        int absY = Math.abs(y);
+        final int absX = Math.abs(x);
+        final int absY = Math.abs(y);
         if (absX > absY) {
             if (x > 0) {
                 return PlotId.of(x, y + 1);
