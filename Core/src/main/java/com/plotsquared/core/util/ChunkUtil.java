@@ -119,12 +119,12 @@ public class ChunkUtil {
     }
 
     /**
-     * Returns true if the region pos1 -> pos2 contains the chunk
+     * Returns true if the region pos1-pos2 contains the chunk
      *
      * @param pos1  Region minimum point
      * @param pos2  Region maximum point
      * @param chunk BlockVector2 of chunk coordinates
-     * @return true if the region pos1 -> pos2 contains the chunk
+     * @return true if the region pos1-pos2 contains the chunk
      */
     public static boolean isWholeChunk(Location pos1, Location pos2, BlockVector2 chunk) {
         int x1 = pos1.getX();
