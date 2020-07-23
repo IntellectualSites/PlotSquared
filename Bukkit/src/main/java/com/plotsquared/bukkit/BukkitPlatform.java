@@ -30,6 +30,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Stage;
+import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.inject.BackupModule;
 import com.plotsquared.bukkit.inject.BukkitModule;
@@ -1142,6 +1143,10 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
     @Override public com.plotsquared.core.location.World<?> getPlatformWorld(@Nonnull final String worldName) {
         return BukkitWorld.of(worldName);
+    }
+
+    @Override @Nonnull public PlatformWorldManager<?> getWorldManager() {
+        return getInjector().getInstance(Key.get(new TypeLiteral<PlatformWorldManager<World>>() {}));
     }
 
 }
