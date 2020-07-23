@@ -124,7 +124,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
@@ -1118,8 +1117,9 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return getInjector().getInstance(Key.get(new TypeLiteral<PlatformWorldManager<World>>() {}));
     }
 
-    @Override @Nonnull public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
-        return getInjector().getInstance(Key.get(new TypeLiteral<PlayerManager<BukkitPlayer, Player>>() {}));
+    @Override @Nonnull @SuppressWarnings("ALL")
+    public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
+        return (PlayerManager<BukkitPlayer, Player>) getInjector().getInstance(PlayerManager.class);
     }
 
 }
