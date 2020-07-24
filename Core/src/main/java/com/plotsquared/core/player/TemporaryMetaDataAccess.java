@@ -53,9 +53,9 @@ final class TemporaryMetaDataAccess<T> extends MetaDataAccess<T> {
         return (T) old;
     }
 
-    @Override public void set(@Nonnull T value) {
+    @Override public void set(@Nonnull final T value) {
         this.checkClosed();
-        this.getPlayer().setMeta(this.getMetaDataKey().toString(), null);
+        this.getPlayer().setMeta(this.getMetaDataKey().toString(), value);
     }
 
     @Nonnull @Override public Optional<T> get() {
