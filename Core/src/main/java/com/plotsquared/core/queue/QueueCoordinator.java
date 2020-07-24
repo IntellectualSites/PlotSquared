@@ -38,7 +38,6 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -80,7 +79,7 @@ public abstract class QueueCoordinator {
         return chunkObject;
     }
 
-    public void setChunkObject(@NotNull Object chunkObject) {
+    public void setChunkObject(@Nonnull Object chunkObject) {
         this.chunkObject = chunkObject;
     }
 
@@ -92,51 +91,51 @@ public abstract class QueueCoordinator {
      * @param z  the z coordinate from 0 to 15 inclusive
      * @param id the id to set the block to
      */
-    public abstract boolean setBlock(final int x, final int y, final int z, final BlockState id);
+    public abstract boolean setBlock(final int x, final int y, final int z, @Nonnull final BlockState id);
 
-    public abstract boolean setBlock(final int x, final int y, final int z, final BaseBlock id);
+    public abstract boolean setBlock(final int x, final int y, final int z, @Nonnull final BaseBlock id);
 
     public boolean setBlock(final int x, final int y, final int z, @Nonnull final Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 
-    public abstract boolean setTile(int x, int y, int z, CompoundTag tag);
+    public abstract boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag);
 
     public abstract boolean isSettingTiles();
 
-    public abstract BlockState getBlock(int x, int y, int z);
+    @Nullable public abstract BlockState getBlock(int x, int y, int z);
 
-    @Deprecated public abstract boolean setBiome(int x, int z, BiomeType biome);
+    @Deprecated public abstract boolean setBiome(int x, int z, @Nonnull BiomeType biome);
 
-    public abstract boolean setBiome(int x, int y, int z, BiomeType biome);
+    public abstract boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome);
 
     public abstract boolean isSettingBiomes();
 
-    public void addEntities(List<? extends Entity> entities) {
+    public void addEntities(@Nonnull List<? extends Entity> entities) {
         for (Entity e : entities) {
             this.setEntity(e);
         }
     }
 
-    public abstract boolean setEntity(Entity entity);
+    public abstract boolean setEntity(@Nonnull Entity entity);
 
-    public abstract List<BlockVector2> getReadChunks();
+    @Nonnull public abstract List<BlockVector2> getReadChunks();
 
-    public abstract void addReadChunks(Set<BlockVector2> readChunks);
+    public abstract void addReadChunks(@Nonnull Set<BlockVector2> readChunks);
 
-    public abstract void addReadChunk(BlockVector2 chunk);
+    public abstract void addReadChunk(@Nonnull BlockVector2 chunk);
 
     public abstract boolean isUnloadAfter();
 
     public abstract void setUnloadAfter(boolean unloadAfter);
 
-    public abstract CuboidRegion getRegenRegion();
+    @Nullable public abstract CuboidRegion getRegenRegion();
 
-    public abstract void setRegenRegion(CuboidRegion regenRegion);
+    public abstract void setRegenRegion(@Nonnull CuboidRegion regenRegion);
 
     public abstract void regenChunk(int x, int z);
 
-    public abstract World getWorld();
+    @Nullable public abstract World getWorld();
 
     public final void setModified() {
         setModified(System.currentTimeMillis());
@@ -150,11 +149,11 @@ public abstract class QueueCoordinator {
 
     public abstract void cancel();
 
-    public abstract void setCompleteTask(Runnable whenDone);
+    public abstract void setCompleteTask(@Nullable Runnable whenDone);
 
-    public abstract void setChunkConsumer(Consumer<BlockVector2> consumer);
+    public abstract void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer);
 
-    public void setCuboid(Location pos1, Location pos2, BlockState block) {
+    public void setCuboid(@Nonnull Location pos1, @Nonnull Location pos2, @Nonnull BlockState block) {
         int yMin = Math.min(pos1.getY(), pos2.getY());
         int yMax = Math.min(255, Math.max(pos1.getY(), pos2.getY()));
         int xMin = Math.min(pos1.getX(), pos2.getX());
@@ -170,7 +169,7 @@ public abstract class QueueCoordinator {
         }
     }
 
-    public void setCuboid(Location pos1, Location pos2, Pattern blocks) {
+    public void setCuboid(@Nonnull Location pos1, @Nonnull Location pos2, @Nonnull Pattern blocks) {
         int yMin = Math.min(pos1.getY(), pos2.getY());
         int yMax = Math.min(255, Math.max(pos1.getY(), pos2.getY()));
         int xMin = Math.min(pos1.getX(), pos2.getX());
@@ -186,7 +185,7 @@ public abstract class QueueCoordinator {
         }
     }
 
-    public void setBiomeCuboid(Location pos1, Location pos2, BiomeType biome) {
+    public void setBiomeCuboid(@Nonnull Location pos1, @Nonnull Location pos2, @Nonnull BiomeType biome) {
         int yMin = Math.min(pos1.getY(), pos2.getY());
         int yMax = Math.min(255, Math.max(pos1.getY(), pos2.getY()));
         int xMin = Math.min(pos1.getX(), pos2.getX());

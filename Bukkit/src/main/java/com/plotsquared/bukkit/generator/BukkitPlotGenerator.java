@@ -63,7 +63,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
 
     @Getter private final String levelName;
 
-    public BukkitPlotGenerator(@Nonnull final  String name,
+    public BukkitPlotGenerator(@Nonnull final String name,
                                @Nonnull final IndependentPlotGenerator generator,
                                @Nonnull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;

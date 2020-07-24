@@ -48,8 +48,7 @@ import java.util.function.Consumer;
 public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     private final World world;
-    private final ConcurrentHashMap<BlockVector2, LocalChunk> blockChunks =
-        new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<BlockVector2, LocalChunk> blockChunks = new ConcurrentHashMap<>();
     private final List<BlockVector2> readRegion = new ArrayList<>();
     private long modified;
     private LocalChunk lastWrappedChunk;
@@ -63,16 +62,15 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private CuboidRegion regenRegion = null;
     private Consumer<BlockVector2> consumer = null;
     private boolean unloadAfter = true;
-    private GlobalBlockQueue globalBlockQueue;
 
-    public BasicQueueCoordinator(World world) {
+    public BasicQueueCoordinator(@Nonnull World world) {
         this.world = world;
         this.modified = System.currentTimeMillis();
     }
 
     @Override public abstract BlockState getBlock(int x, int y, int z);
 
-    @Override public final World getWorld() {
+    @Override public final @Nonnull World getWorld() {
         return world;
     }
 
@@ -88,7 +86,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
         if ((y > 255) || (y < 0)) {
             return false;
         }
@@ -97,14 +95,14 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return true;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
         // Trying to mix BlockState and BaseBlock leads to all kinds of issues.
         // Since BaseBlock has more features than BlockState, simply convert
         // all BlockStates to BaseBlocks
         return setBlock(x, y, z, id.toBaseBlock());
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biomeType) {
+    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biomeType) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         for (int y = 0; y < 256; y++) {
             chunk.setBiome(x & 15, y, z & 15, biomeType);
@@ -113,7 +111,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return true;
     }
 
-    @Override public final boolean setBiome(int x, int y, int z, BiomeType biomeType) {
+    @Override public final boolean setBiome(int x, int y, int z, @Nonnull BiomeType biomeType) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         chunk.setBiome(x & 15, y, z & 15, biomeType);
         settingBiomes = true;
@@ -124,7 +122,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return this.settingBiomes;
     }
 
-    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
+    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         chunk.setTile(x, y, z, tag);
         settingTiles = true;
@@ -135,7 +133,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return this.settingTiles;
     }
 
-    @Override public boolean setEntity(Entity entity) {
+    @Override public boolean setEntity(@Nonnull Entity entity) {
         if (entity.getState() == null || entity.getState().getType() == EntityTypes.PLAYER) {
             return false;
         }
@@ -145,15 +143,15 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return true;
     }
 
-    @Override public List<BlockVector2> getReadChunks() {
+    @Override public @Nonnull List<BlockVector2> getReadChunks() {
         return this.readRegion;
     }
 
-    @Override public void addReadChunk(BlockVector2 chunk) {
+    @Override public void addReadChunk(@Nonnull BlockVector2 chunk) {
         this.readRegion.add(chunk);
     }
 
-    @Override public void addReadChunks(Set<BlockVector2> readRegion) {
+    @Override public void addReadChunks(@Nonnull Set<BlockVector2> readRegion) {
         this.readRegion.addAll(readRegion);
     }
 
@@ -161,7 +159,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return this.regenRegion != null ? this.regenRegion.clone() : null;
     }
 
-    @Override public void setRegenRegion(CuboidRegion regenRegion) {
+    @Override public void setRegenRegion(@Nonnull CuboidRegion regenRegion) {
         this.regenRegion = regenRegion;
     }
 
@@ -219,7 +217,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return this.consumer;
     }
 
-    public final void setChunkConsumer(Consumer<BlockVector2> consumer) {
+    public final void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer) {
         this.consumer = consumer;
     }
 

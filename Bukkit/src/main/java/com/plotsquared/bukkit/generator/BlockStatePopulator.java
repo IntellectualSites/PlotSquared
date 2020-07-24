@@ -47,24 +47,20 @@ final class BlockStatePopulator extends BlockPopulator {
 
     private QueueCoordinator queue;
 
-    public BlockStatePopulator(@Nonnull final IndependentPlotGenerator plotGenerator,
-        @Nonnull final PlotAreaManager plotAreaManager) {
+    public BlockStatePopulator(@Nonnull final IndependentPlotGenerator plotGenerator, @Nonnull final PlotAreaManager plotAreaManager) {
         this.plotGenerator = plotGenerator;
         this.plotAreaManager = plotAreaManager;
     }
 
-    @Override public void populate(@Nonnull final World world, @Nonnull final Random random,
-        @Nonnull final Chunk source) {
+    @Override public void populate(@Nonnull final World world, @Nonnull final Random random, @Nonnull final Chunk source) {
         if (this.queue == null) {
-            this.queue =
-                PlotSquared.platform().getGlobalBlockQueue().getNewQueue(new BukkitWorld(world));
+            this.queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(new BukkitWorld(world));
         }
         final PlotArea area = this.plotAreaManager.getPlotArea(world.getName(), null);
         if (area == null) {
             return;
         }
-        final ChunkWrapper wrap =
-            new ChunkWrapper(area.getWorldName(), source.getX(), source.getZ());
+        final ChunkWrapper wrap = new ChunkWrapper(area.getWorldName(), source.getX(), source.getZ());
         final ScopedQueueCoordinator chunk = this.queue.getForChunk(wrap.x, wrap.z);
         if (this.plotGenerator.populateChunk(chunk, area)) {
             this.queue.enqueue();

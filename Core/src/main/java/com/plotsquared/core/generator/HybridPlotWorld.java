@@ -41,7 +41,6 @@ import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.CompoundTagBuilder;
@@ -124,11 +123,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 Direction direction = MCDirections.fromRotation(rot);
 
                 if (direction != null) {
-                    Vector3 vector = transform.apply(direction.toVector())
-                        .subtract(transform.apply(Vector3.ZERO)).normalize();
-                    Direction newDirection = Direction.findClosest(vector,
-                        Direction.Flag.CARDINAL | Direction.Flag.ORDINAL
-                            | Direction.Flag.SECONDARY_ORDINAL);
+                    Vector3 vector = transform.apply(direction.toVector()).subtract(transform.apply(Vector3.ZERO)).normalize();
+                    Direction newDirection =
+                        Direction.findClosest(vector, Direction.Flag.CARDINAL | Direction.Flag.ORDINAL | Direction.Flag.SECONDARY_ORDINAL);
 
                     if (newDirection != null) {
                         CompoundTagBuilder builder = tag.createBuilder();
@@ -215,21 +212,24 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         // Try to determine root. This means that plot areas can have separate schematic
         // directories
-        if (!(root = FileUtils.getFile(PlotSquared.platform().getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" +
-            this.getWorldName() + "/" + this.getId())).exists()) {
-            root = FileUtils.getFile(PlotSquared.platform().getDirectory(),
-                "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName());
+        if (!(root =
+            FileUtils.getFile(PlotSquared.platform().getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName() + "/" + this.getId()))
+            .exists()) {
+            root = FileUtils.getFile(PlotSquared.platform().getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName());
         }
 
         File schematic1File = new File(root, "sideroad.schem");
-        if (!schematic1File.exists())
+        if (!schematic1File.exists()) {
             schematic1File = new File(root, "sideroad.schematic");
+        }
         File schematic2File = new File(root, "intersection.schem");
-        if (!schematic2File.exists())
+        if (!schematic2File.exists()) {
             schematic2File = new File(root, "intersection.schematic");
+        }
         File schematic3File = new File(root, "plot.schem");
-        if (!schematic3File.exists())
+        if (!schematic3File.exists()) {
             schematic3File = new File(root, "plot.schematic");
+        }
         Schematic schematic1 = this.schematicHandler.getSchematic(schematic1File);
         Schematic schematic2 = this.schematicHandler.getSchematic(schematic2File);
         Schematic schematic3 = this.schematicHandler.getSchematic(schematic3File);
@@ -282,18 +282,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
-                        BaseBlock id = blockArrayClipboard3.getFullBlock(BlockVector3
-                            .at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                        BaseBlock id =
+                            blockArrayClipboard3.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                         if (!id.getBlockType().getMaterial().isAir()) {
-                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX),
-                                (short) (y + plotY), (short) (z + shift + oddshift + centerShiftZ),
-                                id, false, h3);
+                            addOverlayBlock((short) (x + shift + oddshift + centerShiftX), (short) (y + plotY),
+                                (short) (z + shift + oddshift + centerShiftZ), id, false, h3);
                         }
                     }
-                    BiomeType biome = blockArrayClipboard3
-                        .getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
-                    addOverlayBiome((short) (x + shift + oddshift + centerShiftX),
-                        (short) (z + shift + oddshift + centerShiftZ), biome);
+                    BiomeType biome = blockArrayClipboard3.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
+                    addOverlayBiome((short) (x + shift + oddshift + centerShiftX), (short) (z + shift + oddshift + centerShiftZ), biome);
                 }
             }
 
@@ -322,20 +319,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
                 for (short y = 0; y < h1; y++) {
-                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3
-                        .at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                     if (!id.getBlockType().getMaterial().isAir()) {
-                        addOverlayBlock((short) (x - shift), (short) (y + roadY),
-                            (short) (z + shift + oddshift), id, false, h1);
-                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + roadY),
-                            (short) (shift - x + (oddshift - 1)), id, true, h1);
+                        addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z + shift + oddshift), id, false, h1);
+                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + roadY), (short) (shift - x + (oddshift - 1)), id, true, h1);
                     }
                 }
-                BiomeType biome = blockArrayClipboard1
-                    .getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
+                BiomeType biome = blockArrayClipboard1.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
                 addOverlayBiome((short) (x - shift), (short) (z + shift + oddshift), biome);
-                addOverlayBiome((short) (z + shift + oddshift),
-                    (short) (shift - x + (oddshift - 1)), biome);
+                addOverlayBiome((short) (z + shift + oddshift), (short) (shift - x + (oddshift - 1)), biome);
             }
         }
 
@@ -348,22 +340,18 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
-                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3
-                        .at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
                     if (!id.getBlockType().getMaterial().isAir()) {
-                        addOverlayBlock((short) (x - shift), (short) (y + roadY),
-                            (short) (z - shift), id, false, h2);
+                        addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z - shift), id, false, h2);
                     }
                 }
-                BiomeType biome = blockArrayClipboard2
-                    .getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
+                BiomeType biome = blockArrayClipboard2.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
                 addOverlayBiome((short) (x - shift), (short) (z - shift), biome);
             }
         }
     }
 
-    public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate,
-        int height) {
+    public void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate, int height) {
         if (z < 0) {
             z += this.SIZE;
         } else if (z >= this.SIZE) {

@@ -54,15 +54,13 @@ import java.util.Set;
 
 public abstract class RegionManager {
 
-    private static final Logger logger =
-        LoggerFactory.getLogger("P2/" + RegionManager.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + RegionManager.class.getSimpleName());
 
     public static RegionManager manager = null;
     private final WorldUtil worldUtil;
     private final GlobalBlockQueue blockQueue;
 
-    @Inject
-    public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue) {
+    @Inject public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue) {
         this.worldUtil = worldUtil;
         this.blockQueue = blockQueue;
     }
@@ -83,13 +81,10 @@ public abstract class RegionManager {
      */
     public abstract int[] countEntities(Plot plot);
 
-    public void deleteRegionFiles(final String world, final Collection<BlockVector2> chunks,
-        final Runnable whenDone) {
+    public void deleteRegionFiles(final String world, final Collection<BlockVector2> chunks, final Runnable whenDone) {
         TaskManager.runTaskAsync(() -> {
             for (BlockVector2 loc : chunks) {
-                String directory =
-                    world + File.separator + "region" + File.separator + "r." + loc.getX() + "."
-                        + loc.getZ() + ".mca";
+                String directory = world + File.separator + "region" + File.separator + "r." + loc.getX() + "." + loc.getZ() + ".mca";
                 File file = new File(PlotSquared.platform().getWorldContainer(), directory);
                 logger.info("[P2] - Deleting file: {} (max 1024 chunks)", file.getName());
                 if (file.exists()) {
@@ -100,18 +95,20 @@ public abstract class RegionManager {
         });
     }
 
-    public boolean setCuboids(final PlotArea area, final Set<CuboidRegion> regions,
-        final Pattern blocks, int minY, int maxY, @Nullable QueueCoordinator queue) {
+    public boolean setCuboids(final PlotArea area,
+                              final Set<CuboidRegion> regions,
+                              final Pattern blocks,
+                              int minY,
+                              int maxY,
+                              @Nullable QueueCoordinator queue) {
         boolean enqueue = false;
         if (queue == null) {
             queue = area.getQueue();
             enqueue = true;
         }
         for (CuboidRegion region : regions) {
-            Location pos1 = Location.at(area.getWorldName(), region.getMinimumPoint().getX(), minY,
-                region.getMinimumPoint().getZ());
-            Location pos2 = Location.at(area.getWorldName(), region.getMaximumPoint().getX(), maxY,
-                region.getMaximumPoint().getZ());
+            Location pos1 = Location.at(area.getWorldName(), region.getMinimumPoint().getX(), minY, region.getMinimumPoint().getZ());
+            Location pos2 = Location.at(area.getWorldName(), region.getMaximumPoint().getX(), maxY, region.getMaximumPoint().getZ());
             queue.setCuboid(pos1, pos2, blocks);
         }
         return !enqueue || queue.enqueue();
@@ -136,20 +133,17 @@ public abstract class RegionManager {
     /**
      * Copy a region to a new location (in the same world)
      */
-    public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos,
-        final Runnable whenDone) {
+    public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
         final com.sk89q.worldedit.world.World oldWorld = worldUtil.getWeWorld(pos1.getWorldName());
-        final com.sk89q.worldedit.world.World newWorld =
-            worldUtil.getWeWorld(newPos.getWorldName());
+        final com.sk89q.worldedit.world.World newWorld = worldUtil.getWeWorld(newPos.getWorldName());
         final QueueCoordinator copyFrom = blockQueue.getNewQueue(oldWorld);
-        final BasicQueueCoordinator copyTo =
-            (BasicQueueCoordinator) blockQueue.getNewQueue(newWorld);
+        final BasicQueueCoordinator copyTo = (BasicQueueCoordinator) blockQueue.getNewQueue(newWorld);
         copyFromTo(pos1, pos2, relX, relZ, oldWorld, copyFrom, copyTo, false);
         copyFrom.setCompleteTask(copyTo::enqueue);
-        copyFrom.addReadChunks(new CuboidRegion(BlockVector3.at(pos1.getX(), 0, pos1.getZ()),
-            BlockVector3.at(pos2.getX(), 0, pos2.getZ())).getChunks());
+        copyFrom
+            .addReadChunks(new CuboidRegion(BlockVector3.at(pos1.getX(), 0, pos1.getZ()), BlockVector3.at(pos2.getX(), 0, pos2.getZ())).getChunks());
         copyTo.setCompleteTask(whenDone);
         copyFrom.enqueue();
         return true;
@@ -160,8 +154,7 @@ public abstract class RegionManager {
      * - pos1 and pos2 are in the same plot<br>
      * It can be harmful to the world if parameters outside this scope are provided
      */
-    public abstract boolean regenerateRegion(Location pos1, Location pos2, boolean ignoreAugment,
-        Runnable whenDone);
+    public abstract boolean regenerateRegion(Location pos1, Location pos2, boolean ignoreAugment, Runnable whenDone);
 
     public abstract void clearAllEntities(Location pos1, Location pos2);
 
@@ -176,11 +169,9 @@ public abstract class RegionManager {
         QueueCoordinator fromQueue2 = blockQueue.getNewQueue(world2);
         fromQueue1.setUnloadAfter(false);
         fromQueue2.setUnloadAfter(false);
-        fromQueue1.addReadChunks(
-            new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
-        fromQueue2.addReadChunks(new CuboidRegion(swapPos.getBlockVector3(), BlockVector3
-            .at(swapPos.getX() + pos2.getX() - pos1.getX(), 0,
-                swapPos.getZ() + pos2.getZ() - pos1.getZ())).getChunks());
+        fromQueue1.addReadChunks(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
+        fromQueue2.addReadChunks(new CuboidRegion(swapPos.getBlockVector3(),
+            BlockVector3.at(swapPos.getX() + pos2.getX() - pos1.getX(), 0, swapPos.getZ() + pos2.getZ() - pos1.getZ())).getChunks());
         QueueCoordinator toQueue1 = blockQueue.getNewQueue(world1);
         QueueCoordinator toQueue2 = blockQueue.getNewQueue(world2);
 
@@ -192,8 +183,14 @@ public abstract class RegionManager {
         toQueue2.setCompleteTask(whenDone);
     }
 
-    private void copyFromTo(Location pos1, Location pos2, int relX, int relZ, World world1,
-        QueueCoordinator fromQueue, QueueCoordinator toQueue, boolean removeEntities) {
+    private void copyFromTo(Location pos1,
+                            Location pos2,
+                            int relX,
+                            int relZ,
+                            World world1,
+                            QueueCoordinator fromQueue,
+                            QueueCoordinator toQueue,
+                            boolean removeEntities) {
         fromQueue.setChunkConsumer(chunk -> {
             int cx = chunk.getX();
             int cz = chunk.getZ();
@@ -214,8 +211,7 @@ public abstract class RegionManager {
                     }
                 }
             }
-            Region region = new CuboidRegion(BlockVector3.at(cbx + bx, 0, cbz + bz),
-                BlockVector3.at(cbx + tx, 255, cbz + tz));
+            Region region = new CuboidRegion(BlockVector3.at(cbx + bx, 0, cbz + bz), BlockVector3.at(cbx + tx, 255, cbz + tz));
             toQueue.addEntities(world1.getEntities(region));
             if (removeEntities) {
                 for (Entity entity : world1.getEntities(region)) {
@@ -225,12 +221,11 @@ public abstract class RegionManager {
         });
     }
 
-    public void setBiome(final CuboidRegion region, final int extendBiome, final BiomeType biome,
-        final String world, final Runnable whenDone) {
-        Location pos1 = Location.at(world, region.getMinimumPoint().getX() - extendBiome,
-            region.getMinimumPoint().getY(), region.getMinimumPoint().getZ() - extendBiome);
-        Location pos2 = Location.at(world, region.getMaximumPoint().getX() + extendBiome,
-            region.getMaximumPoint().getY(), region.getMaximumPoint().getZ() + extendBiome);
+    public void setBiome(final CuboidRegion region, final int extendBiome, final BiomeType biome, final String world, final Runnable whenDone) {
+        Location pos1 = Location
+            .at(world, region.getMinimumPoint().getX() - extendBiome, region.getMinimumPoint().getY(), region.getMinimumPoint().getZ() - extendBiome);
+        Location pos2 = Location
+            .at(world, region.getMaximumPoint().getX() + extendBiome, region.getMaximumPoint().getY(), region.getMaximumPoint().getZ() + extendBiome);
         final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
 
         final int minX = pos1.getX();
@@ -241,9 +236,7 @@ public abstract class RegionManager {
         queue.setChunkConsumer(blockVector2 -> {
             final int cx = blockVector2.getX() << 4;
             final int cz = blockVector2.getZ() << 4;
-            WorldUtil
-                .setBiome(world, Math.max(minX, cx), Math.max(minZ, cz), Math.min(maxX, cx + 15),
-                    Math.min(maxZ, cz + 15), biome);
+            WorldUtil.setBiome(world, Math.max(minX, cx), Math.max(minZ, cz), Math.min(maxX, cx + 15), Math.min(maxZ, cz + 15), biome);
             worldUtil.refreshChunk(blockVector2.getBlockX(), blockVector2.getBlockZ(), world);
         });
         queue.setCompleteTask(whenDone);

@@ -28,6 +28,7 @@ package com.plotsquared.core.queue;
 import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -37,12 +38,12 @@ public class GlobalBlockQueue {
     private final ConcurrentLinkedDeque<QueueCoordinator> activeQueues;
     private QueueProvider provider;
 
-    public GlobalBlockQueue(QueueProvider provider) {
+    public GlobalBlockQueue(@Nonnull QueueProvider provider) {
         this.provider = provider;
         this.activeQueues = new ConcurrentLinkedDeque<>();
     }
 
-    public QueueCoordinator getNewQueue(World world) {
+    @Nonnull public QueueCoordinator getNewQueue(@Nonnull World world) {
         QueueCoordinator queue = provider.getNewQueue(world);
         // Auto-inject into the queue
         PlotSquared.platform().getInjector().injectMembers(queue);
@@ -53,7 +54,7 @@ public class GlobalBlockQueue {
         return this.provider;
     }
 
-    public void setQueueProvider(QueueProvider provider) {
+    public void setQueueProvider(@Nonnull QueueProvider provider) {
         this.provider = provider;
     }
 
@@ -64,7 +65,7 @@ public class GlobalBlockQueue {
      * @param queue {@link QueueCoordinator} instance to start.
      * @return true if added to queue, false otherwise
      */
-    public boolean enqueue(QueueCoordinator queue) {
+    public boolean enqueue(@Nonnull QueueCoordinator queue) {
         boolean success = false;
         if (queue.size() > 0 && !activeQueues.contains(queue)) {
             success = activeQueues.add(queue);
@@ -73,12 +74,12 @@ public class GlobalBlockQueue {
         return success;
     }
 
-    public void dequeue(QueueCoordinator queue) {
+    public void dequeue(@Nonnull QueueCoordinator queue) {
         queue.cancel();
         activeQueues.remove(queue);
     }
 
-    public List<QueueCoordinator> getActiveQueues() {
+    @Nonnull public List<QueueCoordinator> getActiveQueues() {
         return new ArrayList<>(activeQueues);
     }
 

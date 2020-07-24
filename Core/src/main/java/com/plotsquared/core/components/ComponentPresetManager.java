@@ -62,20 +62,17 @@ import java.util.stream.Collectors;
 
 public class ComponentPresetManager {
 
-    private static final Logger logger =
-        LoggerFactory.getLogger("P2/" + ComponentPresetManager.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + ComponentPresetManager.class.getSimpleName());
 
     private final List<ComponentPreset> presets;
     private final String guiName;
     private final EconHandler econHandler;
     private final InventoryUtil inventoryUtil;
 
-    @Inject public ComponentPresetManager(@Nullable final EconHandler econHandler,
-        @Nonnull final InventoryUtil inventoryUtil) {
+    @Inject public ComponentPresetManager(@Nullable final EconHandler econHandler, @Nonnull final InventoryUtil inventoryUtil) {
         this.econHandler = econHandler;
         this.inventoryUtil = inventoryUtil;
-        final File file = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(),
-            "components.yml");
+        final File file = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "components.yml");
         if (!file.exists()) {
             boolean created = false;
             try {
@@ -106,16 +103,13 @@ public class ComponentPresetManager {
         this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
 
         if (yamlConfiguration.contains("presets")) {
-            this.presets =
-                yamlConfiguration.getMapList("presets").stream().map(o -> (Map<String, Object>) o)
-                    .map(ComponentPreset::deserialize).collect(Collectors.toList());
+            this.presets = yamlConfiguration.getMapList("presets").stream().map(o -> (Map<String, Object>) o).map(ComponentPreset::deserialize)
+                .collect(Collectors.toList());
         } else {
             final List<ComponentPreset> defaultPreset = Collections.singletonList(
-                new ComponentPreset(ClassicPlotManagerComponent.FLOOR, "##wool", 0, "",
-                    "&6D&ai&cs&ec&bo &2F&3l&do&9o&4r", Arrays.asList("&6Spice up your plot floor"),
-                    ItemTypes.YELLOW_WOOL));
-            yamlConfiguration.set("presets", defaultPreset.stream().map(ComponentPreset::serialize)
-                .collect(Collectors.toList()));
+                new ComponentPreset(ClassicPlotManagerComponent.FLOOR, "##wool", 0, "", "&6D&ai&cs&ec&bo &2F&3l&do&9o&4r",
+                    Arrays.asList("&6Spice up your plot floor"), ItemTypes.YELLOW_WOOL));
+            yamlConfiguration.set("presets", defaultPreset.stream().map(ComponentPreset::serialize).collect(Collectors.toList()));
             try {
                 yamlConfiguration.save(file);
             } catch (final IOException e) {
@@ -143,93 +137,84 @@ public class ComponentPresetManager {
         } else if (!plot.hasOwner()) {
             Captions.PLOT_UNOWNED.send(player);
             return null;
-        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted()
-            .contains(player.getUUID())) {
+        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID())) {
             Captions.NO_PLOT_PERMS.send(player);
             return null;
         }
 
         final List<ComponentPreset> allowedPresets = new ArrayList<>(this.presets.size());
         for (final ComponentPreset componentPreset : this.presets) {
-            if (!componentPreset.getPermission().isEmpty() && !Permissions
-                .hasPermission(player, componentPreset.getPermission())) {
+            if (!componentPreset.getPermission().isEmpty() && !Permissions.hasPermission(player, componentPreset.getPermission())) {
                 continue;
             }
             allowedPresets.add(componentPreset);
         }
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
-        final PlotInventory plotInventory =
-            new PlotInventory(this.inventoryUtil, player, size, this.guiName) {
-                @Override public boolean onClick(final int index) {
-                    if (!player.getCurrentPlot().equals(plot)) {
-                        return false;
-                    }
-
-                    if (index < 0 || index >= allowedPresets.size()) {
-                        return false;
-                    }
-
-                    final ComponentPreset componentPreset = allowedPresets.get(index);
-                    if (componentPreset == null) {
-                        return false;
-                    }
-
-                    if (plot.getRunning() > 0) {
-                        Captions.WAIT_FOR_TIMER.send(player);
-                        return false;
-                    }
-
-                    final Pattern pattern =
-                        PatternUtil.parse(null, componentPreset.getPattern(), false);
-                    if (pattern == null) {
-                        Captions.PRESET_INVALID.send(player);
-                        return false;
-                    }
-
-                    if (componentPreset.getCost() > 0.0D && econHandler != null && plot.getArea()
-                        .useEconomy()) {
-                        if (econHandler.getMoney(player) < componentPreset.getCost()) {
-                            Captions.PRESET_CANNOT_AFFORD.send(player);
-                            return false;
-                        } else {
-                            econHandler.withdrawMoney(player, componentPreset.getCost());
-                            Captions.REMOVED_BALANCE.send(player, componentPreset.getCost() + "");
-                        }
-                    }
-
-                    BackupManager.backup(player, plot, () -> {
-                        plot.addRunning();
-                        QueueCoordinator queue = plot.getArea().getQueue();
-                        for (Plot current : plot.getConnectedPlots()) {
-                            current.setComponent(componentPreset.getComponent().name(), pattern,
-                                queue);
-                        }
-                        queue.setCompleteTask(plot::removeRunning);
-                        queue.enqueue();
-                        MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
-                    });
+        final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size, this.guiName) {
+            @Override public boolean onClick(final int index) {
+                if (!player.getCurrentPlot().equals(plot)) {
                     return false;
                 }
-            };
+
+                if (index < 0 || index >= allowedPresets.size()) {
+                    return false;
+                }
+
+                final ComponentPreset componentPreset = allowedPresets.get(index);
+                if (componentPreset == null) {
+                    return false;
+                }
+
+                if (plot.getRunning() > 0) {
+                    Captions.WAIT_FOR_TIMER.send(player);
+                    return false;
+                }
+
+                final Pattern pattern = PatternUtil.parse(null, componentPreset.getPattern(), false);
+                if (pattern == null) {
+                    Captions.PRESET_INVALID.send(player);
+                    return false;
+                }
+
+                if (componentPreset.getCost() > 0.0D && econHandler != null && plot.getArea().useEconomy()) {
+                    if (econHandler.getMoney(player) < componentPreset.getCost()) {
+                        Captions.PRESET_CANNOT_AFFORD.send(player);
+                        return false;
+                    } else {
+                        econHandler.withdrawMoney(player, componentPreset.getCost());
+                        Captions.REMOVED_BALANCE.send(player, componentPreset.getCost() + "");
+                    }
+                }
+
+                BackupManager.backup(player, plot, () -> {
+                    plot.addRunning();
+                    QueueCoordinator queue = plot.getArea().getQueue();
+                    for (Plot current : plot.getConnectedPlots()) {
+                        current.setComponent(componentPreset.getComponent().name(), pattern, queue);
+                    }
+                    queue.setCompleteTask(plot::removeRunning);
+                    queue.enqueue();
+                    MainUtil.sendMessage(player, Captions.GENERATING_COMPONENT);
+                });
+                return false;
+            }
+        };
 
 
         for (int i = 0; i < allowedPresets.size(); i++) {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
             if (preset.getCost() > 0 && this.econHandler != null && plot.getArea().useEconomy()) {
-                lore.add(Captions.PRESET_LORE_COST.getTranslated()
-                    .replace("%cost%", String.format("%.2f", preset.getCost())));
+                lore.add(Captions.PRESET_LORE_COST.getTranslated().replace("%cost%", String.format("%.2f", preset.getCost())));
             }
-            lore.add(Captions.PRESET_LORE_COMPONENT.getTranslated()
-                .replace("%component%", preset.getComponent().name().toLowerCase()));
+            lore.add(Captions.PRESET_LORE_COMPONENT.getTranslated().replace("%component%", preset.getComponent().name().toLowerCase()));
             lore.removeIf(String::isEmpty);
             if (!lore.isEmpty()) {
                 lore.add("&6");
             }
             lore.addAll(preset.getDescription());
             plotInventory.setItem(i,
-                new PlotItemStack(preset.getIcon().getId().replace("minecraft:", ""), 1,
-                    preset.getDisplayName(), lore.toArray(new String[0])));
+                new PlotItemStack(preset.getIcon().getId().replace("minecraft:", ""), 1, preset.getDisplayName(), lore.toArray(new String[0])));
         }
 
         return plotInventory;

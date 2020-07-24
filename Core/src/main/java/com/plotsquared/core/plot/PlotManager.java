@@ -32,6 +32,7 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.FileBytes;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collections;
@@ -42,7 +43,7 @@ public abstract class PlotManager {
 
     private final PlotArea plotArea;
 
-    public PlotManager(PlotArea plotArea) {
+    public PlotManager(@Nonnull PlotArea plotArea) {
         this.plotArea = plotArea;
     }
 
@@ -55,35 +56,33 @@ public abstract class PlotManager {
     public abstract PlotId getPlotId(int x, int y, int z);
 
     // If you have a circular plot, just return the corner if it were a square
-    public abstract Location getPlotBottomLocAbs(PlotId plotId);
+    public abstract Location getPlotBottomLocAbs(@Nonnull PlotId plotId);
 
     // the same applies here
-    public abstract Location getPlotTopLocAbs(PlotId plotId);
+    public abstract Location getPlotTopLocAbs(@Nonnull PlotId plotId);
 
     /*
      * Plot clearing (return false if you do not support some method)
      */
-    public boolean clearPlot(Plot plot, Runnable whenDone) {
+    public boolean clearPlot(@Nonnull Plot plot, @Nullable Runnable whenDone) {
         return clearPlot(plot, whenDone, null);
     }
 
-    public boolean claimPlot(Plot plot) {
+    public boolean claimPlot(@Nonnull Plot plot) {
         return claimPlot(plot, null);
 
     }
 
-    public boolean unClaimPlot(Plot plot, Runnable whenDone) {
+    public boolean unClaimPlot(@Nonnull Plot plot, @Nullable Runnable whenDone) {
         return unClaimPlot(plot, whenDone, null);
 
     }
 
-    public abstract boolean clearPlot(Plot plot, Runnable whenDone,
-        @Nullable QueueCoordinator queue);
+    public abstract boolean clearPlot(@Nonnull Plot plot, @Nullable Runnable whenDone, @Nullable QueueCoordinator queue);
 
-    public abstract boolean claimPlot(Plot plot, @Nullable QueueCoordinator queue);
+    public abstract boolean claimPlot(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean unClaimPlot(Plot plot, Runnable whenDone,
-        @Nullable QueueCoordinator queue);
+    public abstract boolean unClaimPlot(@Nonnull Plot plot, @Nullable Runnable whenDone, @Nullable QueueCoordinator queue);
 
     /**
      * Retrieves the location of where a sign should be for a plot.
@@ -91,90 +90,90 @@ public abstract class PlotManager {
      * @param plot The plot
      * @return The location where a sign should be
      */
-    public abstract Location getSignLoc(Plot plot);
+    public abstract Location getSignLoc(@Nonnull Plot plot);
 
     /*
      * Plot set functions (return false if you do not support the specific set
      * method).
      */
-    public abstract String[] getPlotComponents(PlotId plotId);
+    public abstract String[] getPlotComponents(@Nonnull PlotId plotId);
 
-    public boolean setComponent(PlotId plotId, String component, Pattern blocks) {
+    public boolean setComponent(@Nonnull PlotId plotId, @Nonnull String component, @Nonnull Pattern blocks) {
         return setComponent(plotId, component, blocks, null);
     }
 
-    public abstract boolean setComponent(PlotId plotId, String component, Pattern blocks,
-        @Nullable QueueCoordinator queue);
+    public abstract boolean setComponent(@Nonnull PlotId plotId,
+                                         @Nonnull String component,
+                                         @Nonnull Pattern blocks,
+                                         @Nullable QueueCoordinator queue);
 
     /*
      * PLOT MERGING (return false if your generator does not support plot
      * merging).
      */
-    public boolean createRoadEast(Plot plot) {
+    public boolean createRoadEast(@Nonnull Plot plot) {
         return createRoadEast(plot, null);
     }
 
-    public boolean createRoadSouth(Plot plot) {
+    public boolean createRoadSouth(@Nonnull Plot plot) {
         return createRoadSouth(plot, null);
     }
 
-    public boolean createRoadSouthEast(Plot plot) {
+    public boolean createRoadSouthEast(@Nonnull Plot plot) {
         return createRoadSouthEast(plot, null);
     }
 
-    public boolean removeRoadEast(Plot plot) {
+    public boolean removeRoadEast(@Nonnull Plot plot) {
         return removeRoadEast(plot, null);
     }
 
-    public boolean removeRoadSouth(Plot plot) {
+    public boolean removeRoadSouth(@Nonnull Plot plot) {
         return removeRoadSouth(plot, null);
     }
 
-    public boolean removeRoadSouthEast(Plot plot) {
+    public boolean removeRoadSouthEast(@Nonnull Plot plot) {
         return removeRoadSouthEast(plot, null);
     }
 
-    public boolean startPlotMerge(List<PlotId> plotIds) {
+    public boolean startPlotMerge(@Nonnull List<PlotId> plotIds) {
         return startPlotMerge(plotIds, null);
     }
 
-    public boolean startPlotUnlink(List<PlotId> plotIds) {
+    public boolean startPlotUnlink(@Nonnull List<PlotId> plotIds) {
         return startPlotUnlink(plotIds, null);
     }
 
-    public boolean finishPlotMerge(List<PlotId> plotIds) {
+    public boolean finishPlotMerge(@Nonnull List<PlotId> plotIds) {
         return finishPlotMerge(plotIds, null);
     }
 
-    public boolean finishPlotUnlink(List<PlotId> plotIds) {
+    public boolean finishPlotUnlink(@Nonnull List<PlotId> plotIds) {
         return finishPlotUnlink(plotIds, null);
     }
 
-    public abstract boolean createRoadEast(Plot plot, @Nullable QueueCoordinator queue);
+    public abstract boolean createRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean createRoadSouth(Plot plot, @Nullable QueueCoordinator queue);
+    public abstract boolean createRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean createRoadSouthEast(Plot plot, @Nullable QueueCoordinator queue);
+    public abstract boolean createRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean removeRoadEast(Plot plot, @Nullable QueueCoordinator queue);
+    public abstract boolean removeRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean removeRoadSouth(Plot plot, @Nullable QueueCoordinator queue);
+    public abstract boolean removeRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean removeRoadSouthEast(Plot plot, @Nullable QueueCoordinator queue);
+    public abstract boolean removeRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean startPlotMerge(List<PlotId> plotIds, @Nullable QueueCoordinator queue);
+    public abstract boolean startPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
 
-    public abstract boolean startPlotUnlink(List<PlotId> plotIds, @Nullable QueueCoordinator queue);
+    public abstract boolean startPlotUnlink(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
 
-    public abstract boolean finishPlotMerge(List<PlotId> plotIds, @Nullable QueueCoordinator queue);
+    public abstract boolean finishPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
 
-    public abstract boolean finishPlotUnlink(List<PlotId> plotIds,
-        @Nullable QueueCoordinator queue);
+    public abstract boolean finishPlotUnlink(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
 
     public void exportTemplate() throws IOException {
-        HashSet<FileBytes> files = new HashSet<>(Collections.singletonList(
-            new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml",
-                Template.getBytes(plotArea))));
+        HashSet<FileBytes> files =
+            new HashSet<>(Collections.singletonList(new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea))));
         Template.zipAll(plotArea.getWorldName(), files);
     }
 

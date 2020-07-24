@@ -45,7 +45,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
     private final BlockVector3 bot;
     private final BlockVector3 top;
 
-    public ChunkQueueCoordinator(BlockVector3 bot, BlockVector3 top, boolean biomes) {
+    public ChunkQueueCoordinator(@Nonnull BlockVector3 bot, @Nonnull BlockVector3 top, boolean biomes) {
         super(null, Location.at("", 0, 0, 0), Location.at("", 15, 255, 15));
         this.width = top.getX() - bot.getX() + 1;
         this.length = top.getZ() - bot.getZ() + 1;
@@ -55,11 +55,11 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         this.top = top;
     }
 
-    public BlockState[][][] getBlocks() {
+    @Nonnull public BlockState[][][] getBlocks() {
         return result;
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biomeType) {
+    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biomeType) {
         if (this.biomeResult != null) {
             for (int y = 0; y < 256; y++) {
                 this.storeCacheBiome(x, y, z, biomeType);
@@ -69,7 +69,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         return false;
     }
 
-    @Override public boolean setBiome(int x, int y, int z, BiomeType biomeType) {
+    @Override public boolean setBiome(int x, int y, int z, @Nonnull BiomeType biomeType) {
         if (this.biomeResult != null) {
             this.storeCacheBiome(x, y, z, biomeType);
             return true;
@@ -77,17 +77,17 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
         this.storeCache(x, y, z, id);
         return true;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         this.storeCache(x, y, z, pattern.apply(BlockVector3.at(x, y, z)).toImmutableState());
         return true;
     }
 
-    private void storeCache(final int x, final int y, final int z, final BlockState id) {
+    private void storeCache(final int x, final int y, final int z, @Nonnull final BlockState id) {
         BlockState[][] resultY = result[y];
         if (resultY == null) {
             result[y] = resultY = new BlockState[length][];
@@ -99,7 +99,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         resultYZ[x] = id;
     }
 
-    private void storeCacheBiome(final int x, final int y, final int z, final BiomeType id) {
+    private void storeCacheBiome(final int x, final int y, final int z, @Nonnull final BiomeType id) {
         BiomeType[][] resultY = biomeResult[y];
         if (resultY == null) {
             biomeResult[y] = resultY = new BiomeType[length][];
@@ -111,7 +111,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         resultYZ[x] = id;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull final BaseBlock id) {
         this.storeCache(x, y, z, id.toImmutableState());
         return true;
     }
@@ -131,11 +131,11 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         return super.getWorld();
     }
 
-    @Override public Location getMax() {
+    @Override @Nonnull public Location getMax() {
         return Location.at(getWorld().getName(), top.getX(), top.getY(), top.getZ());
     }
 
-    @Override public Location getMin() {
+    @Override @Nonnull public Location getMin() {
         return Location.at(getWorld().getName(), bot.getX(), bot.getY(), bot.getZ());
     }
 }

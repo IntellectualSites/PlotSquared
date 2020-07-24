@@ -34,6 +34,7 @@ import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 
 public class LocalChunk {
@@ -46,7 +47,7 @@ public class LocalChunk {
     private final HashMap<BlockVector3, CompoundTag> tiles = new HashMap<>();
     private final HashMap<Location, BaseEntity> entities = new HashMap<>();
 
-    public LocalChunk(QueueCoordinator parent, int x, int z) {
+    public LocalChunk(@Nonnull QueueCoordinator parent, int x, int z) {
         this.parent = parent;
         this.x = x;
         this.z = z;
@@ -54,7 +55,7 @@ public class LocalChunk {
         biomes = new BiomeType[16][];
     }
 
-    public QueueCoordinator getParent() {
+    @Nonnull public QueueCoordinator getParent() {
         return this.parent;
     }
 
@@ -66,19 +67,19 @@ public class LocalChunk {
         return this.z;
     }
 
-    public BaseBlock[][] getBaseblocks() {
+    @Nonnull public BaseBlock[][] getBaseblocks() {
         return this.baseblocks;
     }
 
-    public BiomeType[][] getBiomes() {
+    @Nonnull public BiomeType[][] getBiomes() {
         return this.biomes;
     }
 
-    public HashMap<BlockVector3, CompoundTag> getTiles() {
+    @Nonnull public HashMap<BlockVector3, CompoundTag> getTiles() {
         return this.tiles;
     }
 
-    public void setBiome(final int x, final int y, final int z, final BiomeType biomeType) {
+    public void setBiome(final int x, final int y, final int z, @Nonnull final BiomeType biomeType) {
         final int i = y >> 4;
         final int j = ChunkUtil.getJ(x, y, z);
         BiomeType[] array = this.biomes[i];
@@ -92,7 +93,7 @@ public class LocalChunk {
         return MathMan.pair((short) x, (short) z);
     }
 
-    public void setBlock(final int x, final int y, final int z, final BaseBlock baseBlock) {
+    public void setBlock(final int x, final int y, final int z, @Nonnull final BaseBlock baseBlock) {
         final int i = y >> 4;
         final int j = ChunkUtil.getJ(x, y, z);
         BaseBlock[] array = baseblocks[i];
@@ -102,15 +103,15 @@ public class LocalChunk {
         array[j] = baseBlock;
     }
 
-    public void setTile(final int x, final int y, final int z, final CompoundTag tag) {
+    public void setTile(final int x, final int y, final int z, @Nonnull final CompoundTag tag) {
         tiles.put(BlockVector3.at(x, y, z), tag);
     }
 
-    public void setEntity(Location location, BaseEntity entity) {
+    public void setEntity(@Nonnull Location location, @Nonnull BaseEntity entity) {
         this.entities.put(location, entity);
     }
 
-    public HashMap<Location, BaseEntity> getEntities() {
+    @Nonnull public HashMap<Location, BaseEntity> getEntities() {
         return this.entities;
     }
 }

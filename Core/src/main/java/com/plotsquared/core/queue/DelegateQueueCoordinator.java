@@ -34,7 +34,11 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -68,42 +72,42 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         if (parent != null) {
             return parent.setBlock(x, y, z, pattern);
         }
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
         if (parent != null) {
             return parent.setBlock(x, y, z, id);
         }
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
         if (parent != null) {
             return parent.setBlock(x, y, z, id);
         }
         return false;
     }
 
-    @Override public BlockState getBlock(int x, int y, int z) {
+    @Override @Nullable public BlockState getBlock(int x, int y, int z) {
         if (parent != null) {
             return parent.getBlock(x, y, z);
         }
         return null;
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biome) {
+    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biome) {
         if (parent != null) {
             return parent.setBiome(x, z, biome);
         }
         return false;
     }
 
-    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
+    @Override public boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome) {
         if (parent != null) {
             return parent.setBiome(x, y, z, biome);
         }
@@ -117,7 +121,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         return false;
     }
 
-    @Override public boolean setEntity(Entity entity) {
+    @Override public boolean setEntity(@Nonnull Entity entity) {
         if (parent != null) {
             return parent.setEntity(entity);
         }
@@ -130,14 +134,14 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
     }
 
-    @Override public World getWorld() {
+    @Override @Nullable public World getWorld() {
         if (parent != null) {
             return parent.getWorld();
         }
         return null;
     }
 
-    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
+    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
         if (parent != null) {
             return parent.setTile(x, y, z, tag);
         }
@@ -176,26 +180,26 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
     }
 
-    @Override public void setChunkConsumer(Consumer<BlockVector2> consumer) {
+    @Override public void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer) {
         if (parent != null) {
             parent.setChunkConsumer(consumer);
         }
     }
 
-    @Override public List<BlockVector2> getReadChunks() {
+    @Override @Nonnull public List<BlockVector2> getReadChunks() {
         if (parent != null) {
             return parent.getReadChunks();
         }
-        return null;
+        return new ArrayList<>();
     }
 
-    @Override public void addReadChunks(Set<BlockVector2> readChunks) {
+    @Override public void addReadChunks(@Nonnull Set<BlockVector2> readChunks) {
         if (parent != null) {
             parent.addReadChunks(readChunks);
         }
     }
 
-    @Override public void addReadChunk(BlockVector2 chunk) {
+    @Override public void addReadChunk(@Nonnull BlockVector2 chunk) {
         if (parent != null) {
             parent.addReadChunk(chunk);
         }
@@ -214,14 +218,14 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
     }
 
-    @Override public CuboidRegion getRegenRegion() {
+    @Override @Nullable public CuboidRegion getRegenRegion() {
         if (parent != null) {
             return parent.getRegenRegion();
         }
         return null;
     }
 
-    @Override public void setRegenRegion(CuboidRegion regenRegion) {
+    @Override public void setRegenRegion(@Nonnull CuboidRegion regenRegion) {
         if (parent != null) {
             parent.setRegenRegion(regenRegion);
         }

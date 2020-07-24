@@ -34,7 +34,6 @@ import javax.annotation.Nonnull;
 
 public interface ChunkCoordinatorBuilderFactory {
 
-    @Inject @Nonnull ChunkCoordinatorBuilder create(
-        @Assisted @NotNull ChunkCoordinatorFactory chunkCoordinatorFactory);
+    @Inject @Nonnull ChunkCoordinatorBuilder create(@Assisted @NotNull ChunkCoordinatorFactory chunkCoordinatorFactory);
 
 }

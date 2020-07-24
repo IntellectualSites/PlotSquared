@@ -30,6 +30,8 @@ import com.sk89q.worldedit.math.BlockVector2;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Range;
 
+import javax.annotation.Nonnull;
+
 /**
  * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
  */
@@ -41,10 +43,10 @@ public class ChunkUtil {
      * Cache of mapping x,y,z coordinates to the chunk array<br>
      * - Used for efficient world generation<br>
      */
-    private static short[] x_loc;
-    private static short[][] y_loc;
-    private static short[] z_loc;
-    private static short[][][] CACHE_J = null;
+    private static final short[] x_loc;
+    private static final short[][] y_loc;
+    private static final short[] z_loc;
+    private static final short[][][] CACHE_J;
 
     static {
         x_loc = new short[4096];
@@ -126,7 +128,7 @@ public class ChunkUtil {
      * @param chunk BlockVector2 of chunk coordinates
      * @return true if the region pos1-pos2 contains the chunk
      */
-    public static boolean isWholeChunk(Location pos1, Location pos2, BlockVector2 chunk) {
+    public static boolean isWholeChunk(@Nonnull Location pos1, @Nonnull Location pos2, @Nonnull BlockVector2 chunk) {
         int x1 = pos1.getX();
         int z1 = pos1.getZ();
         int x2 = pos2.getX();

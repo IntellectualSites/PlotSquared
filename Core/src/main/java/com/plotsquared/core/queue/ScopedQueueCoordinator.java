@@ -32,6 +32,9 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
     private final int minX;
     private final int minY;
@@ -45,7 +48,7 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
     private final int dy;
     private final int dz;
 
-    public ScopedQueueCoordinator(QueueCoordinator parent, Location min, Location max) {
+    public ScopedQueueCoordinator(@Nullable QueueCoordinator parent, @Nonnull Location min, @Nonnull Location max) {
         super(parent);
         this.minX = min.getX();
         this.minY = min.getY();
@@ -60,13 +63,12 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
         this.dz = maxZ - minZ;
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biome) {
+    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biome) {
         return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBiome(x + minX, z + minZ, biome);
     }
 
-    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
-            .setBiome(x + minX, y + minY, z + minZ, biome);
+    @Override public boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBiome(x + minX, y + minY, z + minZ, biome);
     }
 
     public void fillBiome(BiomeType biome) {
@@ -79,31 +81,27 @@ public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
         }
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
-            .setBlock(x + minX, y + minY, z + minZ, id);
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, id);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
-            .setBlock(x + minX, y + minY, z + minZ, id);
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, id);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
-            .setBlock(x + minX, y + minY, z + minZ, pattern);
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, pattern);
     }
 
-    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
-            .setTile(x + minX, y + minY, z + minZ, tag);
+    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setTile(x + minX, y + minY, z + minZ, tag);
     }
 
-    public Location getMin() {
+    @Nonnull public Location getMin() {
         return Location.at(this.getWorld().getName(), this.minX, this.minY, this.minZ);
     }
 
-    public Location getMax() {
+    @Nonnull public Location getMax() {
         return Location.at(this.getWorld().getName(), this.maxX, this.maxY, this.maxZ);
     }
 

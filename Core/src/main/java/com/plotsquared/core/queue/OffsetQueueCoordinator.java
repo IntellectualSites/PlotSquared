@@ -30,35 +30,37 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 
+import javax.annotation.Nonnull;
+
 public class OffsetQueueCoordinator extends DelegateQueueCoordinator {
     private final int ox;
     private final int oy;
     private final int oz;
 
-    public OffsetQueueCoordinator(QueueCoordinator parent, int ox, int oy, int oz) {
+    public OffsetQueueCoordinator(@Nonnull QueueCoordinator parent, int ox, int oy, int oz) {
         super(parent);
         this.ox = ox;
         this.oy = oy;
         this.oz = oz;
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biome) {
+    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biome) {
         return super.setBiome(ox + x, oz + z, biome);
     }
 
-    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
+    @Override public boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome) {
         return super.setBiome(ox + x, oy + y, oz + z, biome);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
         return super.setBlock(ox + x, oy + y, oz + z, id);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         return super.setBlock(ox + x, oy + y, oz + z, pattern);
     }
 
-    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
+    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
         return super.setTile(ox + x, oy + y, oz + z, tag);
     }
 }

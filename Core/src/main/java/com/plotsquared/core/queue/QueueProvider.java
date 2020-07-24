@@ -27,11 +27,13 @@ package com.plotsquared.core.queue;
 
 import com.sk89q.worldedit.world.World;
 
+import javax.annotation.Nonnull;
+
 public abstract class QueueProvider {
-    public static QueueProvider of(final Class<? extends QueueCoordinator> primary) {
+    public static QueueProvider of(@Nonnull final Class<? extends QueueCoordinator> primary) {
         return new QueueProvider() {
 
-            @Override public QueueCoordinator getNewQueue(World world) {
+            @Override public QueueCoordinator getNewQueue(@Nonnull World world) {
                 try {
                     return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
                 } catch (Throwable e) {
@@ -42,5 +44,5 @@ public abstract class QueueProvider {
         };
     }
 
-    public abstract QueueCoordinator getNewQueue(World world);
+    public abstract QueueCoordinator getNewQueue(@Nonnull World world);
 }

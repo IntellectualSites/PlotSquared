@@ -53,8 +53,7 @@ public class ChunkCoordinatorBuilder {
     private int initialBatchSize = 4;
     private boolean unloadAfter = true;
 
-    @Inject
-    public ChunkCoordinatorBuilder(@Nonnull ChunkCoordinatorFactory chunkCoordinatorFactory) {
+    @Inject public ChunkCoordinatorBuilder(@Nonnull ChunkCoordinatorFactory chunkCoordinatorFactory) {
         this.chunkCoordinatorFactory = chunkCoordinatorFactory;
     }
 
@@ -64,18 +63,16 @@ public class ChunkCoordinatorBuilder {
     }
 
     @Nonnull public ChunkCoordinatorBuilder withChunk(@Nonnull final BlockVector2 chunkLocation) {
-        this.requestedChunks
-            .add(Preconditions.checkNotNull(chunkLocation, "Chunk location may not be null"));
+        this.requestedChunks.add(Preconditions.checkNotNull(chunkLocation, "Chunk location may not be null"));
         return this;
     }
 
-    @Nonnull public ChunkCoordinatorBuilder withChunks(
-        @Nonnull final Collection<BlockVector2> chunkLocations) {
+    @Nonnull public ChunkCoordinatorBuilder withChunks(@Nonnull final Collection<BlockVector2> chunkLocations) {
         chunkLocations.forEach(this::withChunk);
         return this;
     }
 
-    @Nonnull public ChunkCoordinatorBuilder withRegion(Location pos1, Location pos2) {
+    @Nonnull public ChunkCoordinatorBuilder withRegion(@Nonnull Location pos1, @Nonnull Location pos2) {
         final int p1x = pos1.getX();
         final int p1z = pos1.getZ();
         final int p2x = pos2.getX();
@@ -96,10 +93,8 @@ public class ChunkCoordinatorBuilder {
         return this;
     }
 
-    @Nonnull public ChunkCoordinatorBuilder withConsumer(
-        @Nonnull final Consumer<BlockVector2> chunkConsumer) {
-        this.chunkConsumer =
-            Preconditions.checkNotNull(chunkConsumer, "Chunk consumer may not be null");
+    @Nonnull public ChunkCoordinatorBuilder withConsumer(@Nonnull final Consumer<BlockVector2> chunkConsumer) {
+        this.chunkConsumer = Preconditions.checkNotNull(chunkConsumer, "Chunk consumer may not be null");
         return this;
     }
 
@@ -123,10 +118,8 @@ public class ChunkCoordinatorBuilder {
         return this;
     }
 
-    @Nonnull public ChunkCoordinatorBuilder withThrowableConsumer(
-        @Nonnull final Consumer<Throwable> throwableConsumer) {
-        this.throwableConsumer =
-            Preconditions.checkNotNull(throwableConsumer, "Throwable consumer may not be null");
+    @Nonnull public ChunkCoordinatorBuilder withThrowableConsumer(@Nonnull final Consumer<Throwable> throwableConsumer) {
+        this.throwableConsumer = Preconditions.checkNotNull(throwableConsumer, "Throwable consumer may not be null");
         return this;
     }
 
@@ -141,8 +134,8 @@ public class ChunkCoordinatorBuilder {
         Preconditions.checkNotNull(this.whenDone, "No final action was supplied");
         Preconditions.checkNotNull(this.throwableConsumer, "No throwable consumer was supplied");
         return chunkCoordinatorFactory
-            .create(this.maxIterationTime, this.initialBatchSize, this.chunkConsumer, this.world,
-                this.requestedChunks, this.whenDone, this.throwableConsumer, this.unloadAfter);
+            .create(this.maxIterationTime, this.initialBatchSize, this.chunkConsumer, this.world, this.requestedChunks, this.whenDone,
+                this.throwableConsumer, this.unloadAfter);
     }
 
 }

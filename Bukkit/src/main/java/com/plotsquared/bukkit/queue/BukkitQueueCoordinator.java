@@ -56,6 +56,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -69,10 +70,9 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     private Runnable whenDone;
     private ChunkCoordinator chunkCoordinator;
 
-    @Inject public BukkitQueueCoordinator(World world) {
+    @Inject public BukkitQueueCoordinator(@Nonnull World world) {
         super(world);
-        sideEffectSet = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF)
-            .with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
+        sideEffectSet = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF).with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
     }
 
     @Override public BlockState getBlock(int x, int y, int z) {
@@ -97,10 +97,8 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     @Override public boolean enqueue() {
         final Clipboard regenClipboard;
         if (isRegen()) {
-            BlockVector3 start =
-                BlockVector3.at(getRegenStart()[0] << 4, 0, getRegenStart()[1] << 4);
-            BlockVector3 end =
-                BlockVector3.at((getRegenEnd()[0] << 4) + 15, 255, (getRegenEnd()[1] << 4) + 15);
+            BlockVector3 start = BlockVector3.at(getRegenStart()[0] << 4, 0, getRegenStart()[1] << 4);
+            BlockVector3 end = BlockVector3.at((getRegenEnd()[0] << 4) + 15, 255, (getRegenEnd()[1] << 4) + 15);
             Region region = new CuboidRegion(start, end);
             regenClipboard = new BlockArrayClipboard(region);
             regenClipboard.setOrigin(start);
@@ -117,17 +115,14 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             consumer = blockVector2 -> {
                 LocalChunk localChunk = getBlockChunks().get(blockVector2);
                 boolean isRegenChunk =
-                    regenClipboard != null && blockVector2.getBlockX() > getRegenStart()[0]
-                        && blockVector2.getBlockZ() > getRegenStart()[1]
-                        && blockVector2.getBlockX() < getRegenEnd()[0]
-                        && blockVector2.getBlockZ() < getRegenEnd()[1];
+                    regenClipboard != null && blockVector2.getBlockX() > getRegenStart()[0] && blockVector2.getBlockZ() > getRegenStart()[1]
+                        && blockVector2.getBlockX() < getRegenEnd()[0] && blockVector2.getBlockZ() < getRegenEnd()[1];
                 if (isRegenChunk) {
                     for (int layer = 0; layer < 16; layer++) {
                         for (int y = layer << 4; y < 16; y++) {
                             for (int x = 0; x < 16; x++) {
                                 for (int z = 0; z < 16; z++) {
-                                    BaseBlock block =
-                                        regenClipboard.getFullBlock(BlockVector3.at(x, y, z));
+                                    BaseBlock block = regenClipboard.getFullBlock(BlockVector3.at(x, y, z));
                                     if (block != null) {
                                         setWorldBlock(x, y, z, block, blockVector2);
                                     }
@@ -186,8 +181,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             getWorld().setBlock(blockVector3, block, sideEffectSet);
                         } catch (WorldEditException ignored) {
                             StateWrapper sw = new StateWrapper(tag);
-                            sw.restoreTag(getWorld().getName(), blockVector3.getX(),
-                                blockVector3.getY(), blockVector3.getZ());
+                            sw.restoreTag(getWorld().getName(), blockVector3.getX(), blockVector3.getY(), blockVector3.getZ());
                         }
                     }));
                 }
@@ -203,15 +197,16 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             read.addAll(getReadChunks());
         }
         chunkCoordinator =
-            chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(getWorld())
-                .withChunks(getBlockChunks().keySet()).withChunks(read).withInitialBatchSize(3)
-                .withMaxIterationTime(40).withThrowableConsumer(Throwable::printStackTrace)
-                .withFinalAction(whenDone).withConsumer(consumer).unloadAfter(isUnloadAfter())
-                .build();
+            chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(getWorld()).withChunks(getBlockChunks().keySet()).withChunks(read)
+                .withInitialBatchSize(3).withMaxIterationTime(40).withThrowableConsumer(Throwable::printStackTrace).withFinalAction(whenDone)
+                .withConsumer(consumer).unloadAfter(isUnloadAfter()).build();
         return super.enqueue();
     }
 
-    private void setWorldBlock(int x, int y, int z, BaseBlock block, BlockVector2 blockVector2) {
+    /**
+     * Set a block to the world. First tries WNA but defaults to normal block setting methods if that fails
+     */
+    private void setWorldBlock(int x, int y, int z, @Nonnull BaseBlock block, @Nonnull BlockVector2 blockVector2) {
         try {
             getWorld().setBlock(BlockVector3.at(x, y, z), block, sideEffectSet);
         } catch (WorldEditException ignored) {
@@ -225,8 +220,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
 
             Block existing = chunk.getBlock(x, y, z);
             final BlockState existingBaseBlock = BukkitAdapter.adapt(existing.getBlockData());
-            if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing.getBlockData()
-                .matches(blockData)) {
+            if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing.getBlockData().matches(blockData)) {
                 return;
             }
 
@@ -240,8 +234,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 CompoundTag tag = block.getNbtData();
                 StateWrapper sw = new StateWrapper(tag);
 
-                sw.restoreTag(getWorld().getName(), existing.getX(), existing.getY(),
-                    existing.getZ());
+                sw.restoreTag(getWorld().getName(), existing.getX(), existing.getY(), existing.getZ());
             }
         }
     }

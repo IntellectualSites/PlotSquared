@@ -76,13 +76,13 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     private int batchSize;
 
     @Inject private BukkitChunkCoordinator(@Assisted final long maxIterationTime,
-        @Assisted final int initialBatchSize,
-        @Assisted @Nonnull final Consumer<BlockVector2> chunkConsumer,
-        @Assisted @Nonnull final World world,
-        @Assisted @Nonnull final Collection<BlockVector2> requestedChunks,
-        @Assisted @Nonnull final Runnable whenDone,
-        @Assisted @Nonnull final Consumer<Throwable> throwableConsumer,
-        @Assisted final boolean unloadAfter) {
+                                           @Assisted final int initialBatchSize,
+                                           @Assisted @Nonnull final Consumer<BlockVector2> chunkConsumer,
+                                           @Assisted @Nonnull final World world,
+                                           @Assisted @Nonnull final Collection<BlockVector2> requestedChunks,
+                                           @Assisted @Nonnull final Runnable whenDone,
+                                           @Assisted @Nonnull final Consumer<Throwable> throwableConsumer,
+                                           @Assisted final boolean unloadAfter) {
         this.requestedChunks = new LinkedBlockingQueue<>(requestedChunks);
         this.availableChunks = new LinkedBlockingQueue<>();
         this.totalSize = requestedChunks.size();
@@ -104,8 +104,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         // Request initial batch
         this.requestBatch();
         // Wait until next tick to give the chunks a chance to be loaded
-        TaskManager.runTaskLater(() -> TaskManager.runTaskRepeat(this, TaskTime.ticks(1)),
-            TaskTime.ticks(1));
+        TaskManager.runTaskLater(() -> TaskManager.runTaskRepeat(this, TaskTime.ticks(1)), TaskTime.ticks(1));
     }
 
     @Override public void runTask() {
@@ -129,8 +128,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             final long end = System.currentTimeMillis();
             // Update iteration time
             iterationTime = end - start;
-        } while (2 * iterationTime /* last chunk + next chunk */ < this.maxIterationTime
-            && (chunk = availableChunks.poll()) != null);
+        } while (2 * iterationTime /* last chunk + next chunk */ < this.maxIterationTime && (chunk = availableChunks.poll()) != null);
         if (processedChunks < this.batchSize) {
             // Adjust batch size based on the amount of processed chunks per tick
             this.batchSize = processedChunks;
@@ -157,36 +155,42 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         }
     }
 
+    /**
+     * Requests a batch of chunks to be loaded
+     */
     private void requestBatch() {
         BlockVector2 chunk;
         for (int i = 0; i < this.batchSize && (chunk = this.requestedChunks.poll()) != null; i++) {
             // This required PaperLib to be bumped to version 1.0.4 to mark the request as urgent
-            PaperLib.getChunkAtAsync(this.bukkitWorld, chunk.getX(), chunk.getZ(), true, true)
-                .whenComplete((chunkObject, throwable) -> {
-                    if (throwable != null) {
-                        throwable.printStackTrace();
-                        // We want one less because this couldn't be processed
-                        this.expectedSize.decrementAndGet();
-                    } else {
-                        this.processChunk(chunkObject);
-                    }
-                });
+            PaperLib.getChunkAtAsync(this.bukkitWorld, chunk.getX(), chunk.getZ(), true, true).whenComplete((chunkObject, throwable) -> {
+                if (throwable != null) {
+                    throwable.printStackTrace();
+                    // We want one less because this couldn't be processed
+                    this.expectedSize.decrementAndGet();
+                } else {
+                    this.processChunk(chunkObject);
+                }
+            });
         }
     }
 
+    /**
+     * Once a chunk has been loaded, process it (add a plugin ticket and add to available chunks list)
+     */
     private void processChunk(@Nonnull final Chunk chunk) {
         if (!chunk.isLoaded()) {
-            throw new IllegalArgumentException(
-                String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
+            throw new IllegalArgumentException(String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
         }
         chunk.addPluginChunkTicket(this.plugin);
         this.availableChunks.add(chunk);
     }
 
+    /**
+     * Once a chunk has been used, free it up for unload by removing the plugin ticket
+     */
     private void freeChunk(@Nonnull final Chunk chunk) {
         if (!chunk.isLoaded()) {
-            throw new IllegalArgumentException(
-                String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
+            throw new IllegalArgumentException(String.format("Chunk %d;%d is is not loaded", chunk.getX(), chunk.getZ()));
         }
         chunk.removePluginChunkTicket(this.plugin);
     }
@@ -214,8 +218,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
      *
      * @param subscriber Subscriber
      */
-    public void subscribeToProgress(
-        @Nonnull final BukkitChunkCoordinator.ProgressSubscriber subscriber) {
+    public void subscribeToProgress(@Nonnull final BukkitChunkCoordinator.ProgressSubscriber subscriber) {
         this.progressSubscribers.add(subscriber);
     }
 
@@ -228,8 +231,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
          * @param coordinator Coordinator instance that triggered the notification
          * @param progress    Progress in the range [0, 1]
          */
-        void notifyProgress(@Nonnull final BukkitChunkCoordinator coordinator,
-            final float progress);
+        void notifyProgress(@Nonnull final BukkitChunkCoordinator coordinator, final float progress);
 
     }
 

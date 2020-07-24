@@ -32,6 +32,7 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordinator {
@@ -40,22 +41,14 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
     private final int blockX;
     private final int blockZ;
 
-    public LocationOffsetDelegateQueueCoordinator(final boolean[][] canPlace, final int blockX,
-        final int blockZ, @Nullable QueueCoordinator parent) {
+    public LocationOffsetDelegateQueueCoordinator(final boolean[][] canPlace, final int blockX, final int blockZ, @Nullable QueueCoordinator parent) {
         super(parent);
         this.canPlace = canPlace;
         this.blockX = blockX;
         this.blockZ = blockZ;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
-        if (canPlace[x - blockX][z - blockZ]) {
-            return super.setBlock(x, y, z, id);
-        }
-        return false;
-    }
-
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
         try {
             if (canPlace[x - blockX][z - blockZ]) {
                 return super.setBlock(x, y, z, id);
@@ -66,20 +59,49 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
+        try {
+            if (canPlace[x - blockX][z - blockZ]) {
+                return super.setBlock(x, y, z, id);
+            }
+        } catch (final Exception e) {
+            throw e;
+        }
+        return false;
+    }
+
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         final BlockVector3 blockVector3 = BlockVector3.at(x + blockX, y, z + blockZ);
         return this.setBlock(x, y, z, pattern.apply(blockVector3));
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biome) {
-        return super.setBiome(x, z, biome);
+    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biome) {
+        boolean result = true;
+        for (int y = 0; y < 256; y++) {
+            result &= this.setBiome(x, z, biome);
+        }
+        return result;
     }
 
-    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
-        return super.setBiome(x, y, z, biome);
+    @Override public boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome) {
+        try {
+            if (canPlace[x - blockX][z - blockZ]) {
+                return super.setBiome(x, y, z, biome);
+            }
+        } catch (final Exception e) {
+            throw e;
+        }
+        return false;
     }
 
-    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
-        return super.setTile(x, y, z, tag);
+    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
+        try {
+            if (canPlace[x - blockX][z - blockZ]) {
+                return super.setTile(x, y, z, tag);
+            }
+        } catch (final Exception e) {
+            throw e;
+        }
+        return false;
     }
 }

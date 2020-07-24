@@ -35,9 +35,13 @@ import java.util.function.Consumer;
 
 public interface ChunkCoordinatorFactory {
 
-    @Nonnull ChunkCoordinator create(final long maxIterationTime, final int initialBatchSize,
-        @Nonnull final Consumer<BlockVector2> chunkConsumer, @Nonnull final World world,
-        @Nonnull final Collection<BlockVector2> requestedChunks, @Nonnull final Runnable whenDone,
-        @Nonnull final Consumer<Throwable> throwableConsumer, final boolean unloadAfter);
+    @Nonnull ChunkCoordinator create(final long maxIterationTime,
+                                     final int initialBatchSize,
+                                     @Nonnull final Consumer<BlockVector2> chunkConsumer,
+                                     @Nonnull final World world,
+                                     @Nonnull final Collection<BlockVector2> requestedChunks,
+                                     @Nonnull final Runnable whenDone,
+                                     @Nonnull final Consumer<Throwable> throwableConsumer,
+                                     final boolean unloadAfter);
 
 }

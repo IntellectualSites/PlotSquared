@@ -127,8 +127,7 @@ public abstract class WorldUtil {
      * @param name Block name
      * @return Comparison result containing the closets matching block
      */
-    @Nonnull public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(
-        @Nonnull String name);
+    @Nonnull public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(@Nonnull String name);
 
     /**
      * Get the biome in a given chunk, asynchronously
@@ -138,8 +137,7 @@ public abstract class WorldUtil {
      * @param z      Chunk Z coordinate
      * @param result Result consumer
      */
-    public abstract void getBiome(@Nonnull String world, int x, int z,
-        @Nonnull Consumer<BiomeType> result);
+    public abstract void getBiome(@Nonnull String world, int x, int z, @Nonnull Consumer<BiomeType> result);
 
     /**
      * Get the biome in a given chunk, asynchronously
@@ -150,8 +148,7 @@ public abstract class WorldUtil {
      * @return Biome
      * @deprecated Use {@link #getBiome(String, int, int, Consumer)}
      */
-    @Deprecated @Nonnull public abstract BiomeType getBiomeSynchronous(@Nonnull String world, int x,
-        int z);
+    @Deprecated @Nonnull public abstract BiomeType getBiomeSynchronous(@Nonnull String world, int x, int z);
 
     /**
      * Get the block at a given location (asynchronously)
@@ -178,8 +175,7 @@ public abstract class WorldUtil {
      * @param z      Z coordinate
      * @param result Result consumer
      */
-    public abstract void getHighestBlock(@Nonnull String world, int x, int z,
-        @Nonnull IntConsumer result);
+    public abstract void getHighestBlock(@Nonnull String world, int x, int z, @Nonnull IntConsumer result);
 
 
     /**
@@ -191,8 +187,7 @@ public abstract class WorldUtil {
      * @return Result
      * @deprecated Use {@link #getHighestBlock(String, int, int, IntConsumer)}
      */
-    @Deprecated @Nonnegative public abstract int getHighestBlockSynchronous(@Nonnull String world,
-        int x, int z);
+    @Deprecated @Nonnegative public abstract int getHighestBlockSynchronous(@Nonnull String world, int x, int z);
 
     /**
      * Set the text in a sign
@@ -203,8 +198,7 @@ public abstract class WorldUtil {
      * @param z     Z coordinate
      * @param lines Sign text
      */
-    public abstract void setSign(@Nonnull String world, int x, int y, int z,
-        @Nonnull String[] lines);
+    public abstract void setSign(@Nonnull String world, int x, int y, int z, @Nonnull String[] lines);
 
     /**
      * Set the biome in a region
@@ -213,8 +207,7 @@ public abstract class WorldUtil {
      * @param region Region
      * @param biome  New biome
      */
-    public abstract void setBiomes(@Nonnull String world, @Nonnull CuboidRegion region,
-        @Nonnull BiomeType biome);
+    public abstract void setBiomes(@Nonnull String world, @Nonnull CuboidRegion region, @Nonnull BiomeType biome);
 
     /**
      * Get the WorldEdit {@link com.sk89q.worldedit.world.World} corresponding to a world name
@@ -233,82 +226,72 @@ public abstract class WorldUtil {
      */
     public abstract void refreshChunk(int x, int z, String world);
 
-    public void upload(@Nonnull final Plot plot, @Nullable final UUID uuid,
-        @Nullable final String file, @Nonnull final RunnableVal<URL> whenDone) {
-        plot.getHome(
-            home -> SchematicHandler.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
-                @Override public void run(OutputStream output) {
-                    try (final ZipOutputStream zos = new ZipOutputStream(output)) {
-                        File dat = getDat(plot.getWorldName());
-                        Location spawn = getSpawn(plot.getWorldName());
-                        if (dat != null) {
-                            ZipEntry ze = new ZipEntry("world" + File.separator + dat.getName());
-                            zos.putNextEntry(ze);
-                            try (NBTInputStream nis = new NBTInputStream(
-                                new GZIPInputStream(new FileInputStream(dat)))) {
-                                CompoundTag tag = (CompoundTag) nis.readNamedTag().getTag();
-                                CompoundTag data = (CompoundTag) tag.getValue().get("Data");
-                                Map<String, Tag> map = ReflectionUtils.getMap(data.getValue());
-                                map.put("SpawnX", new IntTag(home.getX()));
-                                map.put("SpawnY", new IntTag(home.getY()));
-                                map.put("SpawnZ", new IntTag(home.getZ()));
-                                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                                    try (NBTOutputStream out = new NBTOutputStream(
-                                        new GZIPOutputStream(baos, true))) {
-                                        //TODO Find what this should be called
-                                        out.writeNamedTag("Schematic????", tag);
-                                    }
-                                    zos.write(baos.toByteArray());
+    public void upload(@Nonnull final Plot plot, @Nullable final UUID uuid, @Nullable final String file, @Nonnull final RunnableVal<URL> whenDone) {
+        plot.getHome(home -> SchematicHandler.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
+            @Override public void run(OutputStream output) {
+                try (final ZipOutputStream zos = new ZipOutputStream(output)) {
+                    File dat = getDat(plot.getWorldName());
+                    Location spawn = getSpawn(plot.getWorldName());
+                    if (dat != null) {
+                        ZipEntry ze = new ZipEntry("world" + File.separator + dat.getName());
+                        zos.putNextEntry(ze);
+                        try (NBTInputStream nis = new NBTInputStream(new GZIPInputStream(new FileInputStream(dat)))) {
+                            CompoundTag tag = (CompoundTag) nis.readNamedTag().getTag();
+                            CompoundTag data = (CompoundTag) tag.getValue().get("Data");
+                            Map<String, Tag> map = ReflectionUtils.getMap(data.getValue());
+                            map.put("SpawnX", new IntTag(home.getX()));
+                            map.put("SpawnY", new IntTag(home.getY()));
+                            map.put("SpawnZ", new IntTag(home.getZ()));
+                            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                                try (NBTOutputStream out = new NBTOutputStream(new GZIPOutputStream(baos, true))) {
+                                    //TODO Find what this should be called
+                                    out.writeNamedTag("Schematic????", tag);
                                 }
+                                zos.write(baos.toByteArray());
                             }
                         }
-                        setSpawn(spawn);
-                        byte[] buffer = new byte[1024];
-                        for (Plot current : plot.getConnectedPlots()) {
-                            Location bot = current.getBottomAbs();
-                            Location top = current.getTopAbs();
-                            int brx = bot.getX() >> 9;
-                            int brz = bot.getZ() >> 9;
-                            int trx = top.getX() >> 9;
-                            int trz = top.getZ() >> 9;
-                            Set<BlockVector2> files = getChunkChunks(bot.getWorldName());
-                            for (BlockVector2 mca : files) {
-                                if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz
-                                    && mca.getZ() <= trz) {
-                                    final File file =
-                                        getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
-                                    if (file != null) {
-                                        //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
-                                        String name = file.getName();
-                                        final ZipEntry ze = new ZipEntry(
-                                            "world" + File.separator + "region" + File.separator
-                                                + name);
-                                        zos.putNextEntry(ze);
-                                        try (FileInputStream in = new FileInputStream(file)) {
-                                            int len;
-                                            while ((len = in.read(buffer)) > 0) {
-                                                zos.write(buffer, 0, len);
-                                            }
-                                        }
-                                        zos.closeEntry();
-                                    }
-                                }
-                            }
-                        }
-                        zos.closeEntry();
-                        zos.flush();
-                        zos.finish();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
+                    setSpawn(spawn);
+                    byte[] buffer = new byte[1024];
+                    for (Plot current : plot.getConnectedPlots()) {
+                        Location bot = current.getBottomAbs();
+                        Location top = current.getTopAbs();
+                        int brx = bot.getX() >> 9;
+                        int brz = bot.getZ() >> 9;
+                        int trx = top.getX() >> 9;
+                        int trz = top.getZ() >> 9;
+                        Set<BlockVector2> files = getChunkChunks(bot.getWorldName());
+                        for (BlockVector2 mca : files) {
+                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz) {
+                                final File file = getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
+                                if (file != null) {
+                                    //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
+                                    String name = file.getName();
+                                    final ZipEntry ze = new ZipEntry("world" + File.separator + "region" + File.separator + name);
+                                    zos.putNextEntry(ze);
+                                    try (FileInputStream in = new FileInputStream(file)) {
+                                        int len;
+                                        while ((len = in.read(buffer)) > 0) {
+                                            zos.write(buffer, 0, len);
+                                        }
+                                    }
+                                    zos.closeEntry();
+                                }
+                            }
+                        }
+                    }
+                    zos.closeEntry();
+                    zos.flush();
+                    zos.finish();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }, whenDone));
+            }
+        }, whenDone));
     }
 
     @Nullable final File getDat(@Nonnull final String world) {
-        File file = new File(
-            PlotSquared.platform().getWorldContainer() + File.separator + world + File.separator
-                + "level.dat");
+        File file = new File(PlotSquared.platform().getWorldContainer() + File.separator + world + File.separator + "level.dat");
         if (file.exists()) {
             return file;
         }
@@ -316,8 +299,8 @@ public abstract class WorldUtil {
     }
 
     @Nullable private File getMcr(@Nonnull final String world, final int x, final int z) {
-        final File file = new File(PlotSquared.platform().getWorldContainer(),
-            world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
+        final File file =
+            new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
         if (file.exists()) {
             return file;
         }
@@ -326,12 +309,10 @@ public abstract class WorldUtil {
 
 
     public Set<BlockVector2> getChunkChunks(String world) {
-        File folder =
-            new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region");
+        File folder = new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region");
         File[] regionFiles = folder.listFiles();
         if (regionFiles == null) {
-            throw new RuntimeException(
-                "Could not find worlds folder: " + folder + " ? (no read access?)");
+            throw new RuntimeException("Could not find worlds folder: " + folder + " ? (no read access?)");
         }
         HashSet<BlockVector2> chunks = new HashSet<>();
         for (File file : regionFiles) {
@@ -413,7 +394,6 @@ public abstract class WorldUtil {
      * @param chunk Chunk coordinates
      * @return Tile entity count
      */
-    @Nonnegative public abstract int getTileEntityCount(@Nonnull String world,
-        @Nonnull BlockVector2 chunk);
+    @Nonnegative public abstract int getTileEntityCount(@Nonnull String world, @Nonnull BlockVector2 chunk);
 
 }

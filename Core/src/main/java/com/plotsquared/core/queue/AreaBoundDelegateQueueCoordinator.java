@@ -40,8 +40,7 @@ public class AreaBoundDelegateQueueCoordinator extends DelegateQueueCoordinator 
 
     private final PlotArea area;
 
-    public AreaBoundDelegateQueueCoordinator(@Nonnull final PlotArea area,
-        @Nullable final QueueCoordinator parent) {
+    public AreaBoundDelegateQueueCoordinator(@Nonnull final PlotArea area, @Nullable final QueueCoordinator parent) {
         super(parent);
         this.area = Objects.requireNonNull(area);
     }
@@ -50,42 +49,42 @@ public class AreaBoundDelegateQueueCoordinator extends DelegateQueueCoordinator 
         return this.area;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
         if (area.contains(x, z)) {
             return super.setBlock(x, y, z, id);
         }
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
         if (area.contains(x, z)) {
             return super.setBlock(x, y, z, id);
         }
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         if (area.contains(x, z)) {
             return super.setBlock(x, y, z, pattern);
         }
         return false;
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biome) {
+    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biome) {
         if (area.contains(x, z)) {
             return super.setBiome(x, z, biome);
         }
         return false;
     }
 
-    @Override public boolean setBiome(int x, int y, int z, BiomeType biome) {
+    @Override public boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome) {
         if (area.contains(x, z)) {
             return super.setBiome(x, y, z, biome);
         }
         return false;
     }
 
-    @Override public boolean setTile(int x, int y, int z, CompoundTag tag) {
+    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
         if (area.contains(x, z)) {
             return super.setTile(x, y, z, tag);
         }
