@@ -45,6 +45,7 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -161,6 +162,9 @@ public class PlotSquared {
         this.thread = Thread.currentThread();
         this.platform = iPlotMain;
         Settings.PLATFORM = platform;
+
+        // Initialize the class
+        PlayerMetaDataKeys.load();
 
         //
         // Register configuration serializable classes
