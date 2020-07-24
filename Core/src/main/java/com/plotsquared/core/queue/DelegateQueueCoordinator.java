@@ -29,6 +29,7 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -210,6 +211,19 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
     @Override public void setUnloadAfter(boolean setUnloadAfter) {
         if (parent != null) {
             parent.setUnloadAfter(setUnloadAfter);
+        }
+    }
+
+    @Override public CuboidRegion getRegenRegion() {
+        if (parent != null) {
+            return parent.getRegenRegion();
+        }
+        return null;
+    }
+
+    @Override public void setRegenRegion(CuboidRegion regenRegion) {
+        if (parent != null) {
+            parent.setRegenRegion(regenRegion);
         }
 
     }

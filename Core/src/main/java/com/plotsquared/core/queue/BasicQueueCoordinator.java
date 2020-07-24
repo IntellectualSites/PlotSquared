@@ -30,6 +30,7 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
@@ -59,6 +60,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private boolean regen = false;
     private int[] regenStart;
     private int[] regenEnd;
+    private CuboidRegion regenRegion = null;
     private Consumer<BlockVector2> consumer = null;
     private boolean unloadAfter = true;
     private GlobalBlockQueue globalBlockQueue;
@@ -153,6 +155,14 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     @Override public void addReadChunks(Set<BlockVector2> readRegion) {
         this.readRegion.addAll(readRegion);
+    }
+
+    @Override public CuboidRegion getRegenRegion() {
+        return this.regenRegion != null ? this.regenRegion.clone() : null;
+    }
+
+    @Override public void setRegenRegion(CuboidRegion regenRegion) {
+        this.regenRegion = regenRegion;
     }
 
     @Override public void regenChunk(int x, int z) {

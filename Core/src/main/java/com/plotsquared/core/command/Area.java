@@ -370,7 +370,7 @@ public class Area extends SubCommand {
                                                 blockQueue.getNewQueue(worldUtil.getWeWorld(world));
                                             queue.setChunkConsumer(chunk -> AugmentedUtils
                                                 .generate(null, world, chunk.getX(), chunk.getZ(),
-                                                    queue));
+                                                    null));
                                             queue.addReadChunks(region.getChunks());
                                             queue.enqueue();
                                         }
@@ -681,7 +681,7 @@ public class Area extends SubCommand {
                 QueueCoordinator queue =
                     blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
                 queue.setChunkConsumer(chunk -> AugmentedUtils
-                    .generate(null, area.getWorldName(), chunk.getX(), chunk.getZ(), queue));
+                    .generate(null, area.getWorldName(), chunk.getX(), chunk.getZ(), null));
                 queue.addReadChunks(area.getRegion().getChunks());
                 queue.setCompleteTask(() -> player.sendMessage("Regen complete"));
                 queue.enqueue();

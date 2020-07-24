@@ -76,7 +76,8 @@ public class BukkitRegionManager extends RegionManager {
         LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
     private final GlobalBlockQueue blockQueue;
 
-    @Inject public BukkitRegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue) {
+    @Inject
+    public BukkitRegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue) {
         super(worldUtil, blockQueue);
         this.blockQueue = blockQueue;
     }
@@ -174,7 +175,9 @@ public class BukkitRegionManager extends RegionManager {
         final int tcz = p2z >> 4;
 
         final QueueCoordinator queue = blockQueue.getNewQueue(world);
-        queue.addReadChunks(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
+        final QueueCoordinator regenQueue = blockQueue.getNewQueue(world);
+        queue.addReadChunks(
+            new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
         queue.setChunkConsumer(chunk -> {
 
             int x = chunk.getX();
@@ -185,7 +188,7 @@ public class BukkitRegionManager extends RegionManager {
             int zzt = zzb + 15;
             if (xxb >= p1x && xxt <= p2x && zzb >= p1z && zzt <= p2z) {
                 AugmentedUtils
-                    .bypass(ignoreAugment, () -> queue.regenChunk(chunk.getX(), chunk.getZ()));
+                    .bypass(ignoreAugment, () -> regenQueue.regenChunk(chunk.getX(), chunk.getZ()));
                 return;
             }
             boolean checkX1 = false;
@@ -285,7 +288,8 @@ public class BukkitRegionManager extends RegionManager {
             //map.restoreBlocks(worldObj, 0, 0);
             map.restoreEntities(Bukkit.getWorld(world.getName()), 0, 0);
         });
-        queue.setCompleteTask(whenDone);
+        regenQueue.setCompleteTask(whenDone);
+        queue.setCompleteTask(regenQueue::enqueue);
         queue.enqueue();
         return true;
     }

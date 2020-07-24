@@ -97,11 +97,18 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     @Override public boolean enqueue() {
         final Clipboard regenClipboard;
         if (isRegen()) {
-            Region region = new CuboidRegion(
-                BlockVector3.at(getRegenStart()[0] << 4, 0, getRegenStart()[1] << 4),
-                BlockVector3.at((getRegenEnd()[0] << 4) + 15, 255, (getRegenEnd()[1] << 4) + 15));
+            BlockVector3 start =
+                BlockVector3.at(getRegenStart()[0] << 4, 0, getRegenStart()[1] << 4);
+            BlockVector3 end =
+                BlockVector3.at((getRegenEnd()[0] << 4) + 15, 255, (getRegenEnd()[1] << 4) + 15);
+            Region region = new CuboidRegion(start, end);
             regenClipboard = new BlockArrayClipboard(region);
+            regenClipboard.setOrigin(start);
             getWorld().regenerate(region, regenClipboard);
+        } else if (getRegenRegion() != null) {
+            regenClipboard = new BlockArrayClipboard(getRegenRegion());
+            regenClipboard.setOrigin(getRegenRegion().getMinimumPoint());
+            getWorld().regenerate(getRegenRegion(), regenClipboard);
         } else {
             regenClipboard = null;
         }
@@ -121,15 +128,17 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                                 for (int z = 0; z < 16; z++) {
                                     BaseBlock block =
                                         regenClipboard.getFullBlock(BlockVector3.at(x, y, z));
-                                    setWorldBlock(x, y, z, block, blockVector2);
+                                    if (block != null) {
+                                        setWorldBlock(x, y, z, block, blockVector2);
+                                    }
                                 }
                             }
                         }
                     }
+                }
+                // Allow regen and then blocks to be placed (plot schematic etc)
+                if (localChunk == null) {
                     return;
-                } else if (localChunk == null) {
-                    throw new NullPointerException(
-                        "LocalChunk cannot be null when accessed from ChunkCoordinator");
                 }
                 int sx = blockVector2.getX() << 4;
                 int sz = blockVector2.getZ() << 4;
@@ -143,10 +152,13 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             continue;
                         }
                         BaseBlock block = blocksLayer[j];
-                        int x = sx + ChunkUtil.getX(j);
-                        int y = ChunkUtil.getY(layer, j);
-                        int z = sz + ChunkUtil.getZ(j);
-                        setWorldBlock(x, y, z, block, blockVector2);
+
+                        if (block != null) {
+                            int x = sx + ChunkUtil.getX(j);
+                            int y = ChunkUtil.getY(layer, j);
+                            int z = sz + ChunkUtil.getZ(j);
+                            setWorldBlock(x, y, z, block, blockVector2);
+                        }
                     }
                 }
                 for (int layer = 0; layer < localChunk.getBaseblocks().length; layer++) {
@@ -159,10 +171,12 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             continue;
                         }
                         BiomeType biome = biomesLayer[j];
-                        int x = sx + ChunkUtil.getX(j);
-                        int y = ChunkUtil.getY(layer, j);
-                        int z = sz + ChunkUtil.getZ(j);
-                        getWorld().setBiome(BlockVector3.at(x, y, z), biome);
+                        if (biome != null) {
+                            int x = sx + ChunkUtil.getX(j);
+                            int y = ChunkUtil.getY(layer, j);
+                            int z = sz + ChunkUtil.getZ(j);
+                            getWorld().setBiome(BlockVector3.at(x, y, z), biome);
+                        }
                     }
                 }
                 if (localChunk.getTiles().size() > 0) {
@@ -184,7 +198,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 }
             };
         }
-        CuboidRegion region;
         Collection<BlockVector2> read = new ArrayList<>();
         if (getReadChunks().size() > 0) {
             read.addAll(getReadChunks());

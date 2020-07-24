@@ -33,6 +33,7 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -129,6 +130,10 @@ public abstract class QueueCoordinator {
 
     public abstract void setUnloadAfter(boolean unloadAfter);
 
+    public abstract CuboidRegion getRegenRegion();
+
+    public abstract void setRegenRegion(CuboidRegion regenRegion);
+
     public abstract void regenChunk(int x, int z);
 
     public abstract World getWorld();
@@ -138,7 +143,6 @@ public abstract class QueueCoordinator {
     }
 
     public boolean enqueue() {
-        System.out.println("b");
         return blockQueue.enqueue(this);
     }
 
@@ -177,6 +181,22 @@ public abstract class QueueCoordinator {
             for (int x = xMin; x <= xMax; x++) {
                 for (int z = zMin; z <= zMax; z++) {
                     setBlock(x, y, z, blocks);
+                }
+            }
+        }
+    }
+
+    public void setBiomeCuboid(Location pos1, Location pos2, BiomeType biome) {
+        int yMin = Math.min(pos1.getY(), pos2.getY());
+        int yMax = Math.min(255, Math.max(pos1.getY(), pos2.getY()));
+        int xMin = Math.min(pos1.getX(), pos2.getX());
+        int xMax = Math.max(pos1.getX(), pos2.getX());
+        int zMin = Math.min(pos1.getZ(), pos2.getZ());
+        int zMax = Math.max(pos1.getZ(), pos2.getZ());
+        for (int y = yMin; y <= yMax; y++) {
+            for (int x = xMin; x <= xMax; x++) {
+                for (int z = zMin; z <= zMax; z++) {
+                    setBiome(x, y, z, biome);
                 }
             }
         }

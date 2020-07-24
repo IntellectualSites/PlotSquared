@@ -35,7 +35,6 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.ChunkUtil;
 import com.plotsquared.core.util.FileBytes;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
@@ -248,38 +247,19 @@ public class HybridPlotManager extends ClassicPlotManager {
 
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
         final QueueCoordinator queue = hybridPlotWorld.getQueue();
-        queue.addReadChunks(new CuboidRegion(plot.getExtendedBottomAbs().getBlockVector3(),
-            plot.getExtendedTopAbs().getBlockVector3()).getChunks());
-        queue.setChunkConsumer(blockVector2 -> {
-            // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
-            if (canRegen && ChunkUtil.isWholeChunk(pos1, pos2, blockVector2)) {
-                queue.regenChunk(blockVector2.getX(), blockVector2.getZ());
-                return;
-            }
-            /* Otherwise we need to set each component, as we don't want to regenerate the road or other plots that share the same chunk.*/
-            // Set the biome
-            int x1 = Math.max(pos1.getX(), blockVector2.getX() << 4);
-            int z1 = Math.max(pos1.getZ(), blockVector2.getZ() << 4);
-            int x2 = Math.min(pos2.getX(), blockVector2.getX() << 4);
-            int z2 = Math.min(pos2.getZ(), blockVector2.getZ() << 4);
-            WorldUtil.setBiome(world, x1, z1, x2, z2, biome);
-            // These two locations are for each component (e.g. bedrock, main block, floor, air)
-            Location bot = Location.at(world, x1, 0, z1);
-            Location top = Location.at(world, x2, 1, z2);
-            queue.setCuboid(bot, top, bedrock);
+        if (!canRegen) {
+            queue.setCuboid(pos1.withY(0), pos2.withY(0), bedrock);
             // Each component has a different layer
-            bot = bot.withY(1);
-            top = top.withY(hybridPlotWorld.PLOT_HEIGHT);
-            queue.setCuboid(bot, top, filling);
-            bot = bot.withY(hybridPlotWorld.PLOT_HEIGHT);
-            top = top.withY(hybridPlotWorld.PLOT_HEIGHT + 1);
-            queue.setCuboid(bot, top, plotfloor);
-            bot = bot.withY(hybridPlotWorld.PLOT_HEIGHT + 1);
-            top = top.withY(getWorldHeight());
-            queue.setCuboid(bot, top, air);
-            // And finally set the schematic, the y value is unimportant for this function
-            pastePlotSchematic(queue, bot, top);
-        });
+            queue.setCuboid(pos1.withY(1), pos2.withY(hybridPlotWorld.PLOT_HEIGHT - 1), filling);
+            queue.setCuboid(pos1.withY(hybridPlotWorld.PLOT_HEIGHT),
+                pos2.withY(hybridPlotWorld.PLOT_HEIGHT), plotfloor);
+            queue.setCuboid(pos1.withY(hybridPlotWorld.PLOT_HEIGHT + 1),
+                pos2.withY(getWorldHeight()), air);
+            queue.setBiomeCuboid(pos1, pos2, biome);
+        } else {
+            queue.setRegenRegion(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
+        }
+        pastePlotSchematic(queue, pos1, pos2);
         queue.setCompleteTask(whenDone);
         return queue.enqueue();
     }
