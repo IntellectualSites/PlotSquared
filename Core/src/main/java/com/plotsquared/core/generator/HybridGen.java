@@ -180,8 +180,10 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.WALL_FILLING.toPattern());
                         }
                         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z,
-                                hybridPlotWorld.WALL_BLOCK.toPattern());
+                            if (hybridPlotWorld.PLACE_TOP_BLOCK) {
+                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z,
+                                    hybridPlotWorld.WALL_BLOCK.toPattern());
+                            }
                         } else {
                             placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
                                 true);
@@ -205,8 +207,10 @@ public class HybridGen extends IndependentPlotGenerator {
                             result.setBlock(x, y, z, hybridPlotWorld.WALL_FILLING.toPattern());
                         }
                         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
-                            result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z,
-                                hybridPlotWorld.WALL_BLOCK.toPattern());
+                            if (hybridPlotWorld.PLACE_TOP_BLOCK) {
+                                result.setBlock(x, hybridPlotWorld.WALL_HEIGHT + 1, z,
+                                    hybridPlotWorld.WALL_BLOCK.toPattern());
+                            }
                         } else {
                             placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z,
                                 true);

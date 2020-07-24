@@ -27,7 +27,7 @@
     <dependency>
       <groupId>com.plotsquared</groupId>
       <artifactId>PlotSquared-Core</artifactId>
-      <version>5.12.5</version>
+      <version>5.13.1</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -82,6 +82,18 @@
       <groupId>com.sk89q</groupId>
       <artifactId>squirrelid</artifactId>
       <version>1.0.0-SNAPSHOT</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>be.maximvdw</groupId>
+      <artifactId>MVdWPlaceholderAPI</artifactId>
+      <version>3.1.1-SNAPSHOT</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>

@@ -56,6 +56,8 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.ExpiryTask;
+import com.plotsquared.core.plot.flag.GlobalFlagContainer;
+import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
@@ -64,6 +66,13 @@ import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.LegacyConverter;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
+import com.plotsquared.core.util.RegionManager;
+import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.SetupUtils;
+import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.logger.ILogger;
+import com.plotsquared.core.util.placeholders.PlaceholderRegistry;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
@@ -146,6 +155,7 @@ public class PlotSquared {
     private File storageFile;
     @Getter private EventDispatcher eventDispatcher;
     @Getter private PlotListener plotListener;
+    @Getter private PlaceholderRegistry placeholderRegistry;
 
     /**
      * Initialize PlotSquared with the desired Implementation class.
@@ -170,6 +180,9 @@ public class PlotSquared {
         // Register configuration serializable classes
         //
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
+
+        // Setup the global flag container
+        GlobalFlagContainer.setup();
 
         try {
             new ReflectionUtils(this.platform.getNMSPackage());
