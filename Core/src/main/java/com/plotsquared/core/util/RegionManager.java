@@ -78,31 +78,6 @@ public abstract class RegionManager {
      */
     public abstract int[] countEntities(Plot plot);
 
-    public Set<BlockVector2> getChunkChunks(String world) {
-        File folder =
-            new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region");
-        File[] regionFiles = folder.listFiles();
-        if (regionFiles == null) {
-            throw new RuntimeException(
-                "Could not find worlds folder: " + folder + " ? (no read access?)");
-        }
-        HashSet<BlockVector2> chunks = new HashSet<>();
-        for (File file : regionFiles) {
-            String name = file.getName();
-            if (name.endsWith("mca")) {
-                String[] split = name.split("\\.");
-                try {
-                    int x = Integer.parseInt(split[1]);
-                    int z = Integer.parseInt(split[2]);
-                    BlockVector2 loc = BlockVector2.at(x, z);
-                    chunks.add(loc);
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        }
-        return chunks;
-    }
-
     public void deleteRegionFiles(final String world, final Collection<BlockVector2> chunks,
         final Runnable whenDone) {
         TaskManager.runTaskAsync(() -> {

@@ -25,7 +25,6 @@
  */
 package com.plotsquared.bukkit.util;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
@@ -36,7 +35,6 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlayerManager;
-import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
@@ -102,6 +100,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import java.util.stream.Stream;
@@ -110,12 +109,9 @@ import java.util.stream.Stream;
 @Singleton
 public class BukkitUtil extends WorldUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
+    private static final Logger logger =
+        LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
     private final Collection<BlockType> tileEntityTypes = new HashSet<>();
-
-    @Inject public BukkitUtil(@Nonnull final RegionManager regionManager) {
-        super(regionManager);
-    }
 
     /**
      * Get a {@link PlotPlayer} from an {@link OfflinePlayer}. If the player is
@@ -156,7 +152,8 @@ public class BukkitUtil extends WorldUtil {
      */
     @Nonnull public static Location adapt(@Nonnull final org.bukkit.Location location) {
         return Location.at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
-            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()));
+            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()),
+            MathMan.roundInt(location.getZ()));
     }
 
     /**
@@ -168,8 +165,8 @@ public class BukkitUtil extends WorldUtil {
      */
     @Nonnull public static Location adaptComplete(@Nonnull final org.bukkit.Location location) {
         return Location.at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
-            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()), MathMan.roundInt(location.getZ()), location.getYaw(),
-            location.getPitch());
+            MathMan.roundInt(location.getX()), MathMan.roundInt(location.getY()),
+            MathMan.roundInt(location.getZ()), location.getYaw(), location.getPitch());
     }
 
     /**
@@ -180,8 +177,8 @@ public class BukkitUtil extends WorldUtil {
      * @return Bukkit location
      */
     @Nonnull public static org.bukkit.Location adapt(@Nonnull final Location location) {
-        return new org.bukkit.Location((World) location.getWorld().getPlatformWorld(), location.getX(),
-            location.getY(), location.getZ());
+        return new org.bukkit.Location((World) location.getWorld().getPlatformWorld(),
+            location.getX(), location.getY(), location.getZ());
     }
 
     /**
@@ -196,23 +193,23 @@ public class BukkitUtil extends WorldUtil {
 
     private static void ensureLoaded(@Nonnull final String world, final int x, final int z,
         @Nonnull final Consumer<Chunk> chunkConsumer) {
-        PaperLib.getChunkAtAsync(Objects.requireNonNull(getWorld(world)),
-            x >> 4, z >> 4, true)
+        PaperLib.getChunkAtAsync(Objects.requireNonNull(getWorld(world)), x >> 4, z >> 4, true)
             .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
-    private static void ensureLoaded(@Nonnull final Location location, @Nonnull final Consumer<Chunk> chunkConsumer) {
+    private static void ensureLoaded(@Nonnull final Location location,
+        @Nonnull final Consumer<Chunk> chunkConsumer) {
         PaperLib.getChunkAtAsync(adapt(location), true)
             .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
 
     private static <T> void ensureMainThread(@Nonnull final Consumer<T> consumer,
-                                             @Nonnull final T value) {
+        @Nonnull final T value) {
         if (Bukkit.isPrimaryThread()) {
             consumer.accept(value);
         } else {
-            Bukkit.getScheduler()
-                .runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> consumer.accept(value));
+            Bukkit.getScheduler().runTask(BukkitPlatform.getPlugin(BukkitPlatform.class),
+                () -> consumer.accept(value));
         }
     }
 
@@ -228,8 +225,8 @@ public class BukkitUtil extends WorldUtil {
         return PlotPlayer.wrap(Bukkit.getOfflinePlayer(uuid));
     }
 
-    @Override public boolean isBlockSame(@Nonnull final BlockState block1,
-                                         @Nonnull final BlockState block2) {
+    @Override
+    public boolean isBlockSame(@Nonnull final BlockState block1, @Nonnull final BlockState block2) {
         if (block1.equals(block2)) {
             return true;
         }
@@ -242,19 +239,18 @@ public class BukkitUtil extends WorldUtil {
         return getWorld(worldName) != null;
     }
 
-    @Override public void getBiome(@Nonnull final String world, final int x,
-        final int z, @Nonnull final Consumer<BiomeType> result) {
+    @Override public void getBiome(@Nonnull final String world, final int x, final int z,
+        @Nonnull final Consumer<BiomeType> result) {
         ensureLoaded(world, x, z,
             chunk -> result.accept(BukkitAdapter.adapt(getWorld(world).getBiome(x, z))));
     }
 
-    @Override @Nonnull public BiomeType getBiomeSynchronous(@Nonnull final String world,
-        final int x, final int z) {
+    @Override @Nonnull
+    public BiomeType getBiomeSynchronous(@Nonnull final String world, final int x, final int z) {
         return BukkitAdapter.adapt(Objects.requireNonNull(getWorld(world)).getBiome(x, z));
     }
 
-    @Override
-    public void getHighestBlock(@Nonnull final String world, final int x, final int z,
+    @Override public void getHighestBlock(@Nonnull final String world, final int x, final int z,
         @Nonnull final IntConsumer result) {
         ensureLoaded(world, x, z, chunk -> {
             final World bukkitWorld = Objects.requireNonNull(getWorld(world));
@@ -282,8 +278,7 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override @Nonnegative
-    public int getHighestBlockSynchronous(@Nonnull final String world,
-        final int x, final int z) {
+    public int getHighestBlockSynchronous(@Nonnull final String world, final int x, final int z) {
         final World bukkitWorld = Objects.requireNonNull(getWorld(world));
         // Skip top and bottom block
         int air = 1;
@@ -305,8 +300,7 @@ public class BukkitUtil extends WorldUtil {
         return bukkitWorld.getMaxHeight() - 1;
     }
 
-    @Override @Nonnull
-    public String[] getSignSynchronous(@Nonnull final Location location) {
+    @Override @Nonnull public String[] getSignSynchronous(@Nonnull final Location location) {
         Block block = Objects.requireNonNull(getWorld(location.getWorldName()))
             .getBlockAt(location.getX(), location.getY(), location.getZ());
         try {
@@ -323,8 +317,7 @@ public class BukkitUtil extends WorldUtil {
         return new String[0];
     }
 
-    @Override @Nonnull
-    public Location getSpawn(@Nonnull final String world) {
+    @Override @Nonnull public Location getSpawn(@Nonnull final String world) {
         final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
         return Location
             .at(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), temp.getYaw(),
@@ -392,9 +385,8 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override
-    public void setBiomes(@Nonnull final String worldName,
-                          @Nonnull final CuboidRegion region,
-                          @Nonnull final BiomeType biomeType) {
+    public void setBiomes(@Nonnull final String worldName, @Nonnull final CuboidRegion region,
+        @Nonnull final BiomeType biomeType) {
         final World world = getWorld(worldName);
         if (world == null) {
             logger.warn("[P2] An error occured while setting the biome because the world was null",
@@ -412,7 +404,8 @@ public class BukkitUtil extends WorldUtil {
         }
     }
 
-    @Override @Nonnull public com.sk89q.worldedit.world.World getWeWorld(@Nonnull final String world) {
+    @Override @Nonnull
+    public com.sk89q.worldedit.world.World getWeWorld(@Nonnull final String world) {
         return new BukkitWorld(Bukkit.getWorld(world));
     }
 
@@ -420,15 +413,14 @@ public class BukkitUtil extends WorldUtil {
         Bukkit.getWorld(world).refreshChunk(x, z);
     }
 
-    @Override
-    public void getBlock(@Nonnull final Location location,
-                         @Nonnull final Consumer<BlockState> result) {
+    @Override public void getBlock(@Nonnull final Location location,
+        @Nonnull final Consumer<BlockState> result) {
         ensureLoaded(location, chunk -> {
             final World world = getWorld(location.getWorldName());
             final Block block = Objects.requireNonNull(world)
                 .getBlockAt(location.getX(), location.getY(), location.getZ());
-            result.accept(Objects.requireNonNull(BukkitAdapter
-                .asBlockType(block.getType())).getDefaultState());
+            result.accept(Objects.requireNonNull(BukkitAdapter.asBlockType(block.getType()))
+                .getDefaultState());
         });
     }
 
@@ -436,33 +428,28 @@ public class BukkitUtil extends WorldUtil {
         final World world = getWorld(location.getWorldName());
         final Block block = Objects.requireNonNull(world)
             .getBlockAt(location.getX(), location.getY(), location.getZ());
-        return Objects.requireNonNull(BukkitAdapter
-            .asBlockType(block.getType())).getDefaultState();
+        return Objects.requireNonNull(BukkitAdapter.asBlockType(block.getType())).getDefaultState();
     }
 
     @Override @Nonnegative public double getHealth(@Nonnull final PlotPlayer player) {
-        return Objects.requireNonNull(Bukkit
-            .getPlayer(player.getUUID())).getHealth();
+        return Objects.requireNonNull(Bukkit.getPlayer(player.getUUID())).getHealth();
     }
 
     @Override @Nonnegative public int getFoodLevel(@Nonnull final PlotPlayer<?> player) {
-        return Objects.requireNonNull(Bukkit.getPlayer(player.getUUID()))
-            .getFoodLevel();
+        return Objects.requireNonNull(Bukkit.getPlayer(player.getUUID())).getFoodLevel();
     }
 
-    @Override public void setHealth(@Nonnull final PlotPlayer<?> player,
-                                    @Nonnegative final double health) {
-        Objects.requireNonNull(Bukkit.getPlayer(player.getUUID()))
-            .setHealth(health);
+    @Override
+    public void setHealth(@Nonnull final PlotPlayer<?> player, @Nonnegative final double health) {
+        Objects.requireNonNull(Bukkit.getPlayer(player.getUUID())).setHealth(health);
     }
 
     @Override public void setFoodLevel(@Nonnull final PlotPlayer<?> player,
-                                       @Nonnegative final int foodLevel) {
+        @Nonnegative final int foodLevel) {
         Bukkit.getPlayer(player.getUUID()).setFoodLevel(foodLevel);
     }
 
-    @Override @Nonnull
-    public Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(
+    @Override @Nonnull public Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(
         @Nonnull final String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
         switch (category) {
@@ -567,11 +554,38 @@ public class BukkitUtil extends WorldUtil {
     }
 
     @Override @Nonnegative
-    public int getTileEntityCount(@Nonnull final String world,
-                                  @Nonnull final BlockVector2 chunk) {
+    public int getTileEntityCount(@Nonnull final String world, @Nonnull final BlockVector2 chunk) {
         return Objects.requireNonNull(getWorld(world)).
-            getChunkAt(chunk.getBlockX(), chunk.getBlockZ())
-            .getTileEntities().length;
+            getChunkAt(chunk.getBlockX(), chunk.getBlockZ()).getTileEntities().length;
+    }
+
+    @Override public Set<BlockVector2> getChunkChunks(String world) {
+        Set<BlockVector2> chunks = super.getChunkChunks(world);
+        if (Bukkit.isPrimaryThread()) {
+            for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
+                BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
+                chunks.add(loc);
+            }
+        } else {
+            final Semaphore semaphore = new Semaphore(1);
+            try {
+                semaphore.acquire();
+                Bukkit.getScheduler()
+                    .runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> {
+                        for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))
+                            .getLoadedChunks()) {
+                            BlockVector2 loc =
+                                BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
+                            chunks.add(loc);
+                        }
+                        semaphore.release();
+                    });
+                semaphore.acquireUninterruptibly();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return chunks;
     }
 
 }

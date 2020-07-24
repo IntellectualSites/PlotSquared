@@ -406,7 +406,7 @@ public class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        Set<BlockVector2> regions = this.regionManager.getChunkChunks(area.getWorldName());
+        Set<BlockVector2> regions = this.worldUtil.getChunkChunks(area.getWorldName());
         return scheduleRoadUpdate(area, regions, extend, new HashSet<>());
     }
 

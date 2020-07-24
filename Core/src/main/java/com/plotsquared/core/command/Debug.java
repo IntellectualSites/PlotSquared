@@ -33,6 +33,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.entity.EntityCategory;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -57,12 +58,12 @@ public class Debug extends SubCommand {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + Debug.class.getSimpleName());
 
     private final PlotAreaManager plotAreaManager;
-    private final RegionManager regionManager;
+    private final WorldUtil worldUtil;
 
     @Inject public Debug(@Nonnull final PlotAreaManager plotAreaManager,
-                         @Nonnull final RegionManager regionManager) {
+                         @Nonnull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
-        this.regionManager = regionManager;
+        this.worldUtil = worldUtil;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -78,7 +79,7 @@ public class Debug extends SubCommand {
             final long start = System.currentTimeMillis();
             MainUtil.sendMessage(player, "Fetching loaded chunks...");
             TaskManager.runTaskAsync(() -> MainUtil.sendMessage(player,
-                "Loaded chunks: " + this.regionManager.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (
+                "Loaded chunks: " + this.worldUtil.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (
                     System.currentTimeMillis() - start) + "ms) using thread: " + Thread
                     .currentThread().getName()));
             return true;

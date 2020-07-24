@@ -98,7 +98,7 @@ public class Trim extends SubCommand {
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
-        result.value1 = new HashSet<>(PlotSquared.platform().getRegionManager().getChunkChunks(world));
+        result.value1 = new HashSet<>(PlotSquared.platform().getWorldUtil().getChunkChunks(world));
         result.value2 = new HashSet<>();
         MainUtil.sendMessage(null, " - MCA #: " + result.value1.size());
         MainUtil.sendMessage(null, " - CHUNKS: " + (result.value1.size() * 1024) + " (max)");

@@ -31,7 +31,7 @@ ext {
 }
 
 def ver = "6.0.0"
-def versuffix = "SUPER-SNAPSHOT"
+def versuffix = "-SUPER-SNAPSHOT"
 ext {
     if (project.hasProperty("versionsuffix")) {
         versuffix = "-$versionsuffix"
@@ -125,6 +125,8 @@ subprojects { subproject ->
         dependencies {
             include(dependency("org.json:json:20200518"))
             include(dependency("net.kyori:text-api:3.0.2"))
+            include(dependency("javax.inject:javax.inject:1"))
+            include(dependency("aopalliance:aopalliance:1.0"))
         }
         relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
         relocate("org.json", "com.plotsquared.json") {

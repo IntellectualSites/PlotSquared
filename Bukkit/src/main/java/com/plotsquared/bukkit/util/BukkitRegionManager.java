@@ -27,7 +27,6 @@ package com.plotsquared.bukkit.util;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
@@ -40,13 +39,10 @@ import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
-import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
@@ -62,9 +58,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
 
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
@@ -78,37 +72,7 @@ public class BukkitRegionManager extends RegionManager {
 
     private static final Logger logger =
         LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
-    @Inject private WorldUtil worldUtil;
     @Inject private GlobalBlockQueue blockQueue;
-
-    @Override public Set<BlockVector2> getChunkChunks(String world) {
-        Set<BlockVector2> chunks = super.getChunkChunks(world);
-        if (Bukkit.isPrimaryThread()) {
-            for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world)).getLoadedChunks()) {
-                BlockVector2 loc = BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
-                chunks.add(loc);
-            }
-        } else {
-            final Semaphore semaphore = new Semaphore(1);
-            try {
-                semaphore.acquire();
-                Bukkit.getScheduler()
-                    .runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> {
-                        for (Chunk chunk : Objects.requireNonNull(Bukkit.getWorld(world))
-                            .getLoadedChunks()) {
-                            BlockVector2 loc =
-                                BlockVector2.at(chunk.getX() >> 5, chunk.getZ() >> 5);
-                            chunks.add(loc);
-                        }
-                        semaphore.release();
-                    });
-                semaphore.acquireUninterruptibly();
-            } catch (final Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return chunks;
-    }
 
     @Override public boolean handleClear(Plot plot, Runnable whenDone, PlotManager manager) {
         return false;
@@ -189,7 +153,7 @@ public class BukkitRegionManager extends RegionManager {
         return count;
     }
 
-    @Override @Inject public boolean regenerateRegion(final Location pos1, final Location pos2,
+    @Override public boolean regenerateRegion(final Location pos1, final Location pos2,
         final boolean ignoreAugment, final Runnable whenDone) {
         final BukkitWorld world = new BukkitWorld((World) pos1.getWorld());
 
