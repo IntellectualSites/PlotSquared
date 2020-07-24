@@ -26,17 +26,29 @@
 package com.plotsquared.core.configuration.caption;
 
 import javax.annotation.Nonnull;
+import java.util.Locale;
 
 /**
- * A {@link Caption} that can be identified by a key
+ * {@link CaptionMap} implementation that throws exception on all getters
  */
-public interface KeyedCaption extends Caption {
+public class DummyCaptionMap implements CaptionMap {
 
-    /**
-     * Get the key that identifies this caption
-     *
-     * @return Caption key
-     */
-    @Nonnull String getKey();
+    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption)
+        throws NoSuchCaptionException {
+        throw new NoSuchCaptionException(caption);
+    }
+
+    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption,
+                                       @Nonnull final LocaleHolder localeHolder) throws NoSuchCaptionException {
+        throw new NoSuchCaptionException(caption);
+    }
+
+    @Override public boolean supportsLocale(@Nonnull Locale locale) {
+        return false;
+    }
+
+    @Override @Nonnull public Locale getLocale() {
+        throw new UnsupportedOperationException("Cannot get locale of DummyCaptionMap");
+    }
 
 }

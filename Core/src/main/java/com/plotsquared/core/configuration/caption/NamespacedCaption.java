@@ -26,34 +26,24 @@
 package com.plotsquared.core.configuration.caption;
 
 import javax.annotation.Nonnull;
-import java.util.Locale;
-import java.util.Map;
 
-public class LocalizedCaptionMap implements CaptionMap {
+/**
+ * A {@link Caption} that can be identified by a namespace-key pair
+ */
+public interface NamespacedCaption extends Caption {
 
-    private final Locale locale;
-    private final Map<TranslatableCaption, String> captions;
+    /**
+     * Get the key that identifies this caption
+     *
+     * @return Caption key
+     */
+    @Nonnull String getKey();
 
-    public LocalizedCaptionMap(Locale locale, Map<TranslatableCaption, String> captions) {
-        this.locale = locale;
-        this.captions = captions;
-    }
-
-    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption) {
-        return this.captions.get(caption);
-    }
-
-    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption,
-                                                @Nonnull final LocaleHolder localeHolder) {
-        return getMessage(caption); // use the translation of this locale
-    }
-
-    @Override public boolean supportsLocale(@Nonnull final Locale locale) {
-        return this.locale.equals(locale);
-    }
-
-    @Override @Nonnull public Locale getLocale() {
-        return this.locale;
-    }
+    /**
+     * Get the namespace that this caption belongs to
+     *
+     * @return Namespace
+     */
+    @Nonnull String getNamespace();
 
 }

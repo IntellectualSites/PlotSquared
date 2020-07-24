@@ -33,6 +33,9 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.CaptionLoader;
 import com.plotsquared.core.configuration.caption.CaptionMap;
+import com.plotsquared.core.configuration.caption.DummyCaptionMap;
+import com.plotsquared.core.configuration.caption.LocalizedCaptionMap;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
 import com.plotsquared.core.database.DBFunc;
@@ -142,7 +145,7 @@ public class PlotSquared {
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     private YamlConfiguration config;
     // Localization
-    private CaptionMap captionMap;
+    private Map<String, CaptionMap> captionMaps;
     // Platform / Version / Update URL
     private PlotVersion version;
     // Files and configuration
@@ -194,6 +197,8 @@ public class PlotSquared {
                 return;
             }
 
+            this.captionMaps = new HashMap<>();
+
             // Setup localization
             CaptionMap captionMap;
             if (Settings.Enabled_Components.PER_USER_LOCALE) {
@@ -202,8 +207,8 @@ public class PlotSquared {
                 String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
                 captionMap = CaptionLoader.loadSingle(Paths.get("lang", fileName));
             }
-            this.captionMap = captionMap;
 
+            this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
             this.worldedit = WorldEdit.getInstance();
 
             // Create Event utility class
@@ -1471,8 +1476,30 @@ public class PlotSquared {
         return this.worldConfiguration;
     }
 
-    public CaptionMap getCaptionMap() {
-        return this.captionMap;
+    /**
+     * Get the caption map belonging to a namespace. If none exists, a dummy
+     * caption map will be returned.
+     *
+     * @param namespace Namespace
+     * @return Map instance
+     * @see #registerCaptionMap(String, CaptionMap) To register a caption map
+     */
+    @Nonnull public CaptionMap getCaptionMap(@Nonnull final String namespace) {
+        return this.captionMaps.computeIfAbsent(namespace.toLowerCase(Locale.ENGLISH),
+            missingNamespace -> new DummyCaptionMap());
+    }
+
+    /**
+     * Register a caption map
+     *
+     * @param namespace Namespace
+     * @param captionMap Map instance
+     */
+    public void registerCaptionMap(@Nonnull final String namespace, @Nonnull final CaptionMap captionMap) {
+        if (namespace.equalsIgnoreCase(TranslatableCaption.DEFAULT_NAMESPACE)) {
+            throw new IllegalArgumentException("Cannot replace default caption map");
+        }
+        this.captionMaps.put(namespace.toLowerCase(Locale.ENGLISH), captionMap);
     }
 
     public File getJarFile() {

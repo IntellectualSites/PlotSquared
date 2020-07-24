@@ -51,7 +51,7 @@ public interface CaptionMap {
      * @return Component
      * @throws NoSuchCaptionException if no caption with the given key exists
      */
-    String getMessage(@Nonnull TranslatableCaption caption, @Nonnull LocaleHolder localeHolder) throws NoSuchCaptionException;
+    @Nonnull String getMessage(@Nonnull TranslatableCaption caption, @Nonnull LocaleHolder localeHolder) throws NoSuchCaptionException;
 
     /**
      * Check if the map supports a given locale
@@ -70,7 +70,7 @@ public interface CaptionMap {
 
     class NoSuchCaptionException extends IllegalArgumentException {
 
-        public NoSuchCaptionException(@Nonnull final KeyedCaption caption) {
+        public NoSuchCaptionException(@Nonnull final NamespacedCaption caption) {
             super(String.format("No caption with the key '%s' exists in the map", caption.getKey()));
         }
 
