@@ -27,7 +27,7 @@
     <dependency>
       <groupId>com.plotsquared</groupId>
       <artifactId>PlotSquared-Core</artifactId>
-      <version>5.13.1</version>
+      <version>6.0.0-SUPER-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
