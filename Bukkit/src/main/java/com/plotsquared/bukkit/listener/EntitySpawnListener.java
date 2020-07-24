@@ -54,8 +54,8 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class EntitySpawnListener implements Listener {
@@ -67,8 +67,7 @@ public class EntitySpawnListener implements Listener {
 
     public static void testNether(final Entity entity) {
         @Nonnull World world = entity.getWorld();
-        if (world.getEnvironment() != World.Environment.NETHER
-            && world.getEnvironment() != World.Environment.THE_END) {
+        if (world.getEnvironment() != World.Environment.NETHER && world.getEnvironment() != World.Environment.THE_END) {
             return;
         }
         test(entity);
@@ -92,8 +91,7 @@ public class EntitySpawnListener implements Listener {
         List<MetadataValue> meta = entity.getMetadata(KEY);
         if (meta.isEmpty()) {
             if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world.getName())) {
-                entity.setMetadata(KEY,
-                    new FixedMetadataValue((Plugin) PlotSquared.platform(), entity.getLocation()));
+                entity.setMetadata(KEY, new FixedMetadataValue((Plugin) PlotSquared.platform(), entity.getLocation()));
             }
         } else {
             org.bukkit.Location origin = (org.bukkit.Location) meta.get(0).value();
@@ -124,8 +122,7 @@ public class EntitySpawnListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void creatureSpawnEvent(EntitySpawnEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void creatureSpawnEvent(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
         Location location = BukkitUtil.adapt(entity.getLocation());
         PlotArea area = location.getPlotArea();
@@ -161,8 +158,7 @@ public class EntitySpawnListener implements Listener {
                 }
             case SHULKER:
                 if (!entity.hasMetadata("shulkerPlot")) {
-                    entity.setMetadata("shulkerPlot",
-                        new FixedMetadataValue((Plugin) PlotSquared.platform(), plot.getId()));
+                    entity.setMetadata("shulkerPlot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot.getId()));
                 }
         }
     }
@@ -193,8 +189,7 @@ public class EntitySpawnListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void vehicleMove(VehicleMoveEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void vehicleMove(VehicleMoveEvent event) {
         testNether(event.getVehicle());
     }
 

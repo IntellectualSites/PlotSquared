@@ -73,8 +73,8 @@ public class BukkitEntityUtil {
 
     public static boolean entityDamage(Entity damager, Entity victim,
         EntityDamageEvent.DamageCause cause) {
-        Location dloc = BukkitUtil.getLocation(damager);
-        Location vloc = BukkitUtil.getLocation(victim);
+        Location dloc = BukkitUtil.adapt(damager.getLocation());
+        Location vloc = BukkitUtil.adapt(victim.getLocation());
         PlotArea dArea = dloc.getPlotArea();
         PlotArea vArea;
         if (dArea != null && dArea.contains(vloc.getX(), vloc.getZ())) {
@@ -152,7 +152,7 @@ public class BukkitEntityUtil {
             } else { // shooter is not player
                 if (shooter instanceof BlockProjectileSource) {
                     Location sLoc = BukkitUtil
-                        .getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
+                        .adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
                     dplot = dArea.getPlot(sLoc);
                 }
                 player = null;
@@ -161,7 +161,7 @@ public class BukkitEntityUtil {
             player = null;
         }
         if (player != null) {
-            BukkitPlayer plotPlayer = BukkitUtil.getPlayer(player);
+            BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
 
             final com.sk89q.worldedit.world.entity.EntityType entityType;
 

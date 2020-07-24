@@ -45,8 +45,7 @@ public class MVdWPlaceholders {
     private final Plugin plugin;
     private final PlaceholderRegistry registry;
 
-    public MVdWPlaceholders(@NotNull final Plugin plugin,
-                            @NotNull final PlaceholderRegistry registry) {
+    public MVdWPlaceholders(@NotNull final Plugin plugin, @NotNull final PlaceholderRegistry registry) {
         this.plugin = plugin;
         this.registry = registry;
         for (final Placeholder placeholder : registry.getPlaceholders()) {
@@ -55,24 +54,19 @@ public class MVdWPlaceholders {
         PlotSquared.get().getEventDispatcher().registerListener(this);
     }
 
-    @Subscribe public void onNewPlaceholder(@NotNull final
-        PlaceholderRegistry.PlaceholderAddedEvent event) {
+    @Subscribe public void onNewPlaceholder(@NotNull final PlaceholderRegistry.PlaceholderAddedEvent event) {
         this.addPlaceholder(event.getPlaceholder());
     }
 
     private void addPlaceholder(@NotNull final Placeholder placeholder) {
-        PlaceholderAPI.registerPlaceholder(plugin, PREFIX + String.format("%s", placeholder.getKey()),
-            placeholderReplaceEvent -> {
-                if (!placeholderReplaceEvent.isOnline() || placeholderReplaceEvent.getPlayer() == null) {
-                    return "";
-                }
-                final PlotPlayer<Player> player = BukkitUtil.getPlayer(placeholderReplaceEvent.getPlayer());
-                if (player == null) {
-                    return "";
-                }
-                String key = placeholderReplaceEvent.getPlaceholder().substring(PREFIX.length());
-                return registry.getPlaceholderValue(key, player);
-            });
+        PlaceholderAPI.registerPlaceholder(plugin, PREFIX + String.format("%s", placeholder.getKey()), placeholderReplaceEvent -> {
+            if (!placeholderReplaceEvent.isOnline() || placeholderReplaceEvent.getPlayer() == null) {
+                return "";
+            }
+            final PlotPlayer<Player> player = BukkitUtil.adapt(placeholderReplaceEvent.getPlayer());
+            String key = placeholderReplaceEvent.getPlaceholder().substring(PREFIX.length());
+            return registry.getPlaceholderValue(key, player);
+        });
     }
 
 }

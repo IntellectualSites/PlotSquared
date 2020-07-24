@@ -34,6 +34,7 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.PlayerManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +71,7 @@ public final class PlaceholderRegistry {
             this.registerPlaceholder(new PlotFlagPlaceholder(flag, true));
             this.registerPlaceholder(new PlotFlagPlaceholder(flag, false));
         });
-        this.createPlaceholder("currentplot_world", player -> player.getLocation().getWorld());
+        this.createPlaceholder("currentplot_world", player -> player.getLocation().getWorldName());
         this.createPlaceholder("has_plot", player -> player.getPlotCount() > 0 ? "true" : "false");
         this.createPlaceholder("allowed_plot_count", player -> Integer.toString(player.getAllowedPlots()));
         this.createPlaceholder("plot_count", player -> Integer.toString(player.getPlotCount()));
@@ -82,7 +83,7 @@ public final class PlaceholderRegistry {
             }
 
             try {
-                return MainUtil.getName(plotOwner, false);
+                return PlayerManager.getName(plotOwner, false);
             } catch (final Exception ignored) {}
 
             return "unknown";

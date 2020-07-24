@@ -2351,7 +2351,7 @@ public class Plot {
      *
      * @return The plot alias
      */
-    @NotNull public String getAlias() {
+    @Nonnull public String getAlias() {
         if (this.settings == null) {
             return "";
         }
