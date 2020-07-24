@@ -39,11 +39,13 @@ final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
         super(player, metaDataKey, lockAccess);
     }
 
-    @Override public boolean has() {
+    @Override public boolean isPresent() {
+        this.checkClosed();
         return this.getPlayer().hasPersistentMeta(getMetaDataKey().toString());
     }
 
     @Override @Nullable public T remove() {
+        this.checkClosed();
         final Object old = this.getPlayer().removePersistentMeta(this.getMetaDataKey().toString());
         if (old == null) {
             return null;
@@ -52,10 +54,12 @@ final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
     }
 
     @Override public void set(@Nonnull T value) {
+        this.checkClosed();
         this.getPlayer().setPersistentMeta(this.getMetaDataKey(), value);
     }
 
     @Nonnull @Override public Optional<T> get() {
+        this.checkClosed();
         return Optional.ofNullable(this.getPlayer().getPersistentMeta(this.getMetaDataKey()));
     }
 

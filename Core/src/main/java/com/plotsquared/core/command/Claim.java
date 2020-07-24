@@ -92,7 +92,7 @@ public class Claim extends SubCommand {
         try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
             int grants = 0;
             if (currentPlots >= player.getAllowedPlots() && !force) {
-                if (metaDataAccess.has()) {
+                if (metaDataAccess.isPresent()) {
                     grants = metaDataAccess.get().orElse(0);
                     if (grants <= 0) {
                         metaDataAccess.remove();
