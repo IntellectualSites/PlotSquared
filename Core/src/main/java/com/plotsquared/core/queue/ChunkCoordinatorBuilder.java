@@ -40,6 +40,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Builds a {@link ChunkCoordinator} instance
+ */
 public class ChunkCoordinatorBuilder {
 
     private final List<BlockVector2> requestedChunks = new LinkedList<>();
@@ -57,21 +60,33 @@ public class ChunkCoordinatorBuilder {
         this.chunkCoordinatorFactory = chunkCoordinatorFactory;
     }
 
+    /**
+     * Set the world
+     */
     @Nonnull public ChunkCoordinatorBuilder inWorld(@Nonnull final World world) {
         this.world = Preconditions.checkNotNull(world, "World may not be null");
         return this;
     }
 
+    /**
+     * Add a chunk to be accessed
+     */
     @Nonnull public ChunkCoordinatorBuilder withChunk(@Nonnull final BlockVector2 chunkLocation) {
         this.requestedChunks.add(Preconditions.checkNotNull(chunkLocation, "Chunk location may not be null"));
         return this;
     }
 
+    /**
+     * Add a Collection of chunks to be accessed
+     */
     @Nonnull public ChunkCoordinatorBuilder withChunks(@Nonnull final Collection<BlockVector2> chunkLocations) {
         chunkLocations.forEach(this::withChunk);
         return this;
     }
 
+    /**
+     * Add chunks within a region to be accessed
+     */
     @Nonnull public ChunkCoordinatorBuilder withRegion(@Nonnull Location pos1, @Nonnull Location pos2) {
         final int p1x = pos1.getX();
         final int p1z = pos1.getZ();
@@ -93,11 +108,17 @@ public class ChunkCoordinatorBuilder {
         return this;
     }
 
+    /**
+     * Set the consumer to be used when a chunk is loaded
+     */
     @Nonnull public ChunkCoordinatorBuilder withConsumer(@Nonnull final Consumer<BlockVector2> chunkConsumer) {
         this.chunkConsumer = Preconditions.checkNotNull(chunkConsumer, "Chunk consumer may not be null");
         return this;
     }
 
+    /**
+     * Set the Runnable to run when all chunks have been accessed
+     */
     @Nonnull public ChunkCoordinatorBuilder withFinalAction(@Nullable final Runnable whenDone) {
         if (whenDone == null) {
             return this;
@@ -106,28 +127,44 @@ public class ChunkCoordinatorBuilder {
         return this;
     }
 
+    /**
+     * Set the max time taken while iterating over and accessing loaded chunks
+     */
     @Nonnull public ChunkCoordinatorBuilder withMaxIterationTime(final long maxIterationTime) {
         Preconditions.checkArgument(maxIterationTime > 0, "Max iteration time must be positive");
         this.maxIterationTime = maxIterationTime;
         return this;
     }
 
+    /**
+     * Set the initial batch size to be used for loading chunks
+     */
     @Nonnull public ChunkCoordinatorBuilder withInitialBatchSize(final int initialBatchSize) {
         Preconditions.checkArgument(initialBatchSize > 0, "Initial batch size must be positive");
         this.initialBatchSize = initialBatchSize;
         return this;
     }
 
+    /**
+     * Set the consumer to be used to handle {@link Throwable}s
+     */
     @Nonnull public ChunkCoordinatorBuilder withThrowableConsumer(@Nonnull final Consumer<Throwable> throwableConsumer) {
         this.throwableConsumer = Preconditions.checkNotNull(throwableConsumer, "Throwable consumer may not be null");
         return this;
     }
 
+    /**
+     * Set whether the chunks should be allow to unload after being accessed. This should only be used where the chunks are read from
+     *  and then written to from a separate queue where they're consequently unloaded.
+     */
     @Nonnull public ChunkCoordinatorBuilder unloadAfter(final boolean unloadAfter) {
         this.unloadAfter = unloadAfter;
         return this;
     }
 
+    /**
+     * Create a new {@link ChunkCoordinator} instance based on the values in the Builder instance.
+     */
     @Nonnull public ChunkCoordinator build() {
         Preconditions.checkNotNull(this.world, "No world was supplied");
         Preconditions.checkNotNull(this.chunkConsumer, "No chunk consumer was supplied");

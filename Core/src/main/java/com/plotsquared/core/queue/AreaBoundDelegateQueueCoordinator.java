@@ -36,6 +36,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
+/**
+ * Queue Coordinator that only sets blocks with the specified PlotArea
+ */
 public class AreaBoundDelegateQueueCoordinator extends DelegateQueueCoordinator {
 
     private final PlotArea area;
@@ -45,6 +48,9 @@ public class AreaBoundDelegateQueueCoordinator extends DelegateQueueCoordinator 
         this.area = Objects.requireNonNull(area);
     }
 
+    /**
+     * Gets the plot area block settings is limited to
+     */
     public PlotArea getArea() {
         return this.area;
     }

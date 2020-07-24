@@ -35,6 +35,9 @@ import com.sk89q.worldedit.world.block.BlockState;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Queue that only sets blocks with a designated area
+ */
 public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
     private final int minX;
     private final int minY;

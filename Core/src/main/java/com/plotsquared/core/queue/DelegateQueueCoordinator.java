@@ -34,7 +34,6 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,6 +42,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+/**
+ * Queue that delegates to a parent queue.
+ */
 public class DelegateQueueCoordinator extends QueueCoordinator {
 
     private final QueueCoordinator parent;
@@ -178,6 +180,13 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         if (parent != null) {
             parent.setCompleteTask(whenDone);
         }
+    }
+
+    @Nullable @Override public Consumer<BlockVector2> getChunkConsumer() {
+        if (parent != null) {
+            return parent.getChunkConsumer();
+        }
+        return null;
     }
 
     @Override public void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer) {

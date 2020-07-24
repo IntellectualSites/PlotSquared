@@ -162,6 +162,8 @@ public class AugmentedUtils {
                 new ScopedQueueCoordinator(secondaryMask, Location.at(world, blockX, 0, blockZ), Location.at(world, blockX + 15, 255, blockZ + 15));
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
+            scoped.setForceSync(true);
+            scoped.enqueue();
         }
         if (enqueue) {
             queue.enqueue();

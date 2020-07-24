@@ -67,7 +67,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     private org.bukkit.World bukkitWorld;
     @Inject private ChunkCoordinatorBuilderFactory chunkCoordinatorBuilderFactory;
     @Inject private ChunkCoordinatorFactory chunkCoordinatorFactory;
-    private Runnable whenDone;
     private ChunkCoordinator chunkCoordinator;
 
     @Inject public BukkitQueueCoordinator(@Nonnull World world) {
@@ -198,7 +197,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         }
         chunkCoordinator =
             chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(getWorld()).withChunks(getBlockChunks().keySet()).withChunks(read)
-                .withInitialBatchSize(3).withMaxIterationTime(40).withThrowableConsumer(Throwable::printStackTrace).withFinalAction(whenDone)
+                .withInitialBatchSize(3).withMaxIterationTime(40).withThrowableConsumer(Throwable::printStackTrace).withFinalAction(getCompleteTask())
                 .withConsumer(consumer).unloadAfter(isUnloadAfter()).build();
         return super.enqueue();
     }
@@ -237,10 +236,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 sw.restoreTag(getWorld().getName(), existing.getX(), existing.getY(), existing.getZ());
             }
         }
-    }
-
-    @Override public void setCompleteTask(Runnable whenDone) {
-        this.whenDone = whenDone;
     }
 
 }

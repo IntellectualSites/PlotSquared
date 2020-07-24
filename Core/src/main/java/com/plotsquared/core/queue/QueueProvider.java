@@ -44,5 +44,8 @@ public abstract class QueueProvider {
         };
     }
 
+    /**
+     * Get a queue for the given world
+     */
     public abstract QueueCoordinator getNewQueue(@Nonnull World world);
 }

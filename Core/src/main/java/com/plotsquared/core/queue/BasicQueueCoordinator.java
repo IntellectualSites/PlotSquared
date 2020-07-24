@@ -39,12 +39,16 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.entity.EntityTypes;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+/**
+ * Standard block setting queue that allows block setting across numerous chunks, without limits.
+ */
 public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     private final World world;
@@ -62,6 +66,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private CuboidRegion regenRegion = null;
     private Consumer<BlockVector2> consumer = null;
     private boolean unloadAfter = true;
+    private Runnable whenDone;
 
     public BasicQueueCoordinator(@Nonnull World world) {
         this.world = world;
@@ -193,35 +198,61 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         this.unloadAfter = unloadAfter;
     }
 
+    /**
+     * Gets the int[x,z] chunk coordinates where regeneration should start from
+     */
     public int[] getRegenStart() {
         return regenStart;
     }
 
+    /**
+     * Gets the int[x,z] chunk coordinates where regeneration should finish
+     */
     public int[] getRegenEnd() {
         return regenEnd;
     }
 
+    /**
+     * Whether the queue has a start/end to chunk regeneration
+     */
     public boolean isRegen() {
         return regen;
     }
 
-    public ConcurrentHashMap<BlockVector2, LocalChunk> getBlockChunks() {
+    /**
+     * Gets the map of ChunkCoordinates in {@link BlockVector2} form against the {@link LocalChunk} of cached chunks to be written
+     */
+    @Nonnull public ConcurrentHashMap<BlockVector2, LocalChunk> getBlockChunks() {
         return this.blockChunks;
     }
 
-    public final void setChunk(LocalChunk chunk) {
+    /**
+     * Forces an {@link LocalChunk} into the list of chunks to be written. Overwrites existing chunks in the map
+     */
+    public final void setChunk(@Nonnull LocalChunk chunk) {
         this.blockChunks.put(BlockVector2.at(chunk.getX(), chunk.getZ()), chunk);
     }
 
-    public final Consumer<BlockVector2> getChunkConsumer() {
+    @Override @Nullable public final Consumer<BlockVector2> getChunkConsumer() {
         return this.consumer;
     }
 
-    public final void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer) {
+    @Override public final void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer) {
         this.consumer = consumer;
     }
 
-    private LocalChunk getChunk(final int chunkX, final int chunkZ) {
+    @Override public Runnable getCompleteTask() {
+        return this.whenDone;
+    }
+
+    @Override public void setCompleteTask(Runnable whenDone) {
+        this.whenDone = whenDone;
+    }
+
+    /**
+     * Get the {@link LocalChunk} from the queue at the given chunk coordinates. Returns a new instance if one doesn't exist
+     */
+    @Nonnull private LocalChunk getChunk(final int chunkX, final int chunkZ) {
         if (chunkX != lastX || chunkZ != lastZ) {
             lastX = chunkX;
             lastZ = chunkZ;

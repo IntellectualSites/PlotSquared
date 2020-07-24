@@ -71,6 +71,9 @@ public class GenChunk extends ScopedQueueCoordinator {
         return this.chunkData;
     }
 
+    /**
+     * Set the internal Bukkit chunk data
+     */
     public void setChunkData(@Nonnull ChunkData chunkData) {
         this.chunkData = chunkData;
     }
@@ -85,10 +88,17 @@ public class GenChunk extends ScopedQueueCoordinator {
         return chunk;
     }
 
+    /**
+     * Set the chunk being represented
+     */
     public void setChunk(@Nonnull Chunk chunk) {
         this.chunk = chunk;
     }
 
+
+    /**
+     * Set the world and XZ of the chunk being represented via {@link ChunkWrapper}
+     */
     public void setChunk(@Nonnull ChunkWrapper wrap) {
         chunk = null;
         world = wrap.world;
@@ -101,9 +111,11 @@ public class GenChunk extends ScopedQueueCoordinator {
             return;
         }
         Biome biome = BukkitAdapter.adapt(biomeType);
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                this.biomeGrid.setBiome(x, z, biome);
+        for (int y = 0; y < 256; y++) {
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    this.biomeGrid.setBiome(x, y, z, biome);
+                }
             }
         }
     }
@@ -134,9 +146,22 @@ public class GenChunk extends ScopedQueueCoordinator {
         return setBiome(x, z, BukkitAdapter.adapt(biomeType));
     }
 
+    /**
+     * Set the in the whole column of XZ
+     */
     public boolean setBiome(int x, int z, @Nonnull Biome biome) {
         if (this.biomeGrid != null) {
-            this.biomeGrid.setBiome(x, z, biome);
+            for (int y = 0; y < 256; y++) {
+                this.setBiome(x, y, z, biome);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean setBiome(int x, int y, int z, @Nonnull Biome biome) {
+        if (this.biomeGrid != null) {
+            this.biomeGrid.setBiome(x, y, z, biome);
             return true;
         }
         return false;

@@ -43,6 +43,9 @@ public class GlobalBlockQueue {
         this.activeQueues = new ConcurrentLinkedDeque<>();
     }
 
+    /**
+     * Get a new {@link QueueCoordinator} for the given world.
+     */
     @Nonnull public QueueCoordinator getNewQueue(@Nonnull World world) {
         QueueCoordinator queue = provider.getNewQueue(world);
         // Auto-inject into the queue

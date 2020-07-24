@@ -36,6 +36,9 @@ import com.sk89q.worldedit.world.block.BlockState;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Queue that is limited to a single chunk
+ */
 public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
 
     public final BiomeType[][][] biomeResult;
@@ -127,7 +130,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
         return null;
     }
 
-    @Override @Nonnull public World getWorld() {
+    @Override @Nullable public World getWorld() {
         return super.getWorld();
     }
 

@@ -35,6 +35,9 @@ import com.sk89q.worldedit.world.block.BlockState;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Offsets input coordinates and delegates to a parent queue
+ */
 public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordinator {
 
     private final boolean[][] canPlace;
