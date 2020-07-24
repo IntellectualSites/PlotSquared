@@ -31,7 +31,7 @@ ext {
 }
 
 def ver = "6.0.0"
-def versuffix = "SUPER-SNAPSHOT"
+def versuffix = "-SUPER-SNAPSHOT"
 ext {
     if (project.hasProperty("versionsuffix")) {
         versuffix = "-$versionsuffix"
