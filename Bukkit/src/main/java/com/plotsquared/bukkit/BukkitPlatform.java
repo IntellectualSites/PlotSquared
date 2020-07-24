@@ -36,15 +36,19 @@ import com.plotsquared.bukkit.inject.BackupModule;
 import com.plotsquared.bukkit.inject.BukkitModule;
 import com.plotsquared.bukkit.inject.PermissionModule;
 import com.plotsquared.bukkit.inject.WorldManagerModule;
+import com.plotsquared.bukkit.listener.BlockEventListener;
 import com.plotsquared.bukkit.listener.ChunkListener;
+import com.plotsquared.bukkit.listener.EntityEventListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
 import com.plotsquared.bukkit.listener.PaperListener;
-import com.plotsquared.bukkit.listener.PlayerEvents;
+import com.plotsquared.bukkit.listener.PlayerEventListener;
+import com.plotsquared.bukkit.listener.ProjectileEventListener;
+import com.plotsquared.bukkit.listener.ServerListener;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
-import com.plotsquared.bukkit.placeholder.Placeholders;
 import com.plotsquared.bukkit.player.BukkitPlayer;
+import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.util.BukkitChatManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -309,7 +313,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
 
         if (Settings.Enabled_Components.EVENTS) {
-            getServer().getPluginManager().registerEvents(getInjector().getInstance(PlayerEvents.class), this);
+            getServer().getPluginManager().registerEvents(getInjector().getInstance(PlayerEventListener.class), this);
+            getServer().getPluginManager().registerEvents(getInjector().getInstance(BlockEventListener.class), this);
+            getServer().getPluginManager().registerEvents(getInjector().getInstance(EntityEventListener.class), this);
+            getServer().getPluginManager().registerEvents(getInjector().getInstance(ProjectileEventListener.class), this);
+            getServer().getPluginManager().registerEvents(getInjector().getInstance(ServerListener.class), this);
             getServer().getPluginManager().registerEvents(getInjector().getInstance(EntitySpawnListener.class), this);
             if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
                 getServer().getPluginManager().registerEvents(getInjector().getInstance(PaperListener.class), this);
@@ -488,7 +496,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            injector.getInstance(Placeholders.class).register();
+            injector.getInstance(PAPIPlaceholders.class).register();
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
                 ChatFormatter.formatters.add(getInjector().getInstance(PlaceholderFormatter.class));
             }

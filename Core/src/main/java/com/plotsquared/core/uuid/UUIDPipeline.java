@@ -31,11 +31,11 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -168,8 +168,10 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            logger.warn("[P2] (UUID) Request for {} timed out", username);
             // This is completely valid, we just don't care anymore
+            if (Settings.DEBUG) {
+                logger.warn("[P2] (UUID) Request for {} timed out", username);
+            }
         }
         return null;
     }
@@ -191,8 +193,10 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            logger.warn("[P2] (UUID) Request for {} timed out", uuid);
             // This is completely valid, we just don't care anymore
+            if (Settings.DEBUG) {
+                logger.warn("[P2] (UUID) Request for {} timed out", uuid);
+            }
         }
         return null;
     }
@@ -203,20 +207,19 @@ public class UUIDPipeline {
      * @param username Username
      * @param uuid     UUID consumer
      */
-    public void getSingle(@Nonnull final String username,
-        @Nonnull final BiConsumer<UUID, Throwable> uuid) {
+    public void getSingle(@Nonnull final String username, @Nonnull final BiConsumer<UUID, Throwable> uuid) {
         this.getUUIDs(Collections.singletonList(username)).applyToEither(timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT), Function.identity())
             .whenComplete((uuids, throwable) -> {
-            if (throwable != null) {
-                uuid.accept(null, throwable);
-            } else {
-                if (!uuids.isEmpty()) {
-                    uuid.accept(uuids.get(0).getUuid(), null);
+                if (throwable != null) {
+                    uuid.accept(null, throwable);
                 } else {
-                    uuid.accept(null, null);
+                    if (!uuids.isEmpty()) {
+                        uuid.accept(uuids.get(0).getUuid(), null);
+                    } else {
+                        uuid.accept(null, null);
+                    }
                 }
-            }
-        });
+            });
     }
 
     /**
@@ -225,20 +228,19 @@ public class UUIDPipeline {
      * @param uuid     UUID
      * @param username Username consumer
      */
-    public void getSingle(@Nonnull final UUID uuid,
-        @Nonnull final BiConsumer<String, Throwable> username) {
+    public void getSingle(@Nonnull final UUID uuid, @Nonnull final BiConsumer<String, Throwable> username) {
         this.getNames(Collections.singletonList(uuid)).applyToEither(timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT), Function.identity())
             .whenComplete((uuids, throwable) -> {
-            if (throwable != null) {
-                username.accept(null, throwable);
-            } else {
-                if (!uuids.isEmpty()) {
-                    username.accept(uuids.get(0).getUsername(), null);
+                if (throwable != null) {
+                    username.accept(null, throwable);
                 } else {
-                    username.accept(null, null);
+                    if (!uuids.isEmpty()) {
+                        username.accept(uuids.get(0).getUsername(), null);
+                    } else {
+                        username.accept(null, null);
+                    }
                 }
-            }
-        });
+            });
     }
 
     /**
@@ -251,8 +253,7 @@ public class UUIDPipeline {
      * @param timeout  Timeout in milliseconds
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getNames(@Nonnull final Collection<UUID> requests,
-        final long timeout) {
+    public CompletableFuture<List<UUIDMapping>> getNames(@Nonnull final Collection<UUID> requests, final long timeout) {
         return this.getNames(requests).applyToEither(timeoutAfter(timeout), Function.identity());
     }
 
@@ -266,8 +267,7 @@ public class UUIDPipeline {
      * @param timeout  Timeout in milliseconds
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getUUIDs(@Nonnull final Collection<String> requests,
-        final long timeout) {
+    public CompletableFuture<List<UUIDMapping>> getUUIDs(@Nonnull final Collection<String> requests, final long timeout) {
         return this.getUUIDs(requests).applyToEither(timeoutAfter(timeout), Function.identity());
     }
 
@@ -345,8 +345,7 @@ public class UUIDPipeline {
      * @param requests Names
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getUUIDs(
-        @Nonnull final Collection<String> requests) {
+    public CompletableFuture<List<UUIDMapping>> getUUIDs(@Nonnull final Collection<String> requests) {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }

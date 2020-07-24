@@ -40,7 +40,6 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,7 +61,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     }
 
     @Override
-    public boolean setComponent(@NotNull PlotId plotId, @NotNull String component, @NotNull Pattern blocks, @Nullable QueueCoordinator queue) {
+    public boolean setComponent(@Nonnull PlotId plotId, @Nonnull String component, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         final Optional<ClassicPlotManagerComponent> componentOptional = ClassicPlotManagerComponent.fromString(component);
         if (componentOptional.isPresent()) {
             switch (componentOptional.get()) {
@@ -87,9 +86,10 @@ public class ClassicPlotManager extends SquarePlotManager {
         return false;
     }
 
-    @Override public boolean unClaimPlot(@NotNull Plot plot, @Nullable Runnable whenDone, @Nullable QueueCoordinator queue) {
+    @Override public boolean unClaimPlot(@Nonnull Plot plot, @Nullable Runnable whenDone, @Nullable QueueCoordinator queue) {
         setWallFilling(plot.getId(), classicPlotWorld.WALL_FILLING.toPattern(), queue);
-        if (!classicPlotWorld.WALL_BLOCK.isAir() || !classicPlotWorld.WALL_BLOCK.equals(classicPlotWorld.CLAIMED_WALL_BLOCK)) {
+        if (classicPlotWorld.PLACE_TOP_BLOCK && (!classicPlotWorld.WALL_BLOCK.isAir() || !classicPlotWorld.WALL_BLOCK
+            .equals(classicPlotWorld.CLAIMED_WALL_BLOCK))) {
             setWall(plot.getId(), classicPlotWorld.WALL_BLOCK.toPattern(), queue);
         }
         TaskManager.runTask(whenDone);
@@ -328,7 +328,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * PLOT MERGING.
      */
-    @Override public boolean createRoadEast(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean createRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         Location pos1 = getPlotBottomLocAbs(plot.getId());
         Location pos2 = getPlotTopLocAbs(plot.getId());
         int sx = pos2.getX() + 1;
@@ -350,18 +350,23 @@ public class ClassicPlotManager extends SquarePlotManager {
             BlockUtil.get((short) 7, (byte) 0));
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx, 1, sz + 1),
             Location.at(classicPlotWorld.getWorldName(), sx, classicPlotWorld.WALL_HEIGHT, ez - 1), classicPlotWorld.WALL_FILLING.toPattern());
-        queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx, classicPlotWorld.WALL_HEIGHT + 1, sz + 1),
-            Location.at(classicPlotWorld.getWorldName(), sx, classicPlotWorld.WALL_HEIGHT + 1, ez - 1), classicPlotWorld.WALL_BLOCK.toPattern());
+
+        if (classicPlotWorld.PLACE_TOP_BLOCK) {
+            queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx, classicPlotWorld.WALL_HEIGHT + 1, sz + 1),
+                Location.at(classicPlotWorld.getWorldName(), sx, classicPlotWorld.WALL_HEIGHT + 1, ez - 1), classicPlotWorld.WALL_BLOCK.toPattern());
+        }
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), ex, 1, sz + 1),
             Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.WALL_HEIGHT, ez - 1), classicPlotWorld.WALL_FILLING.toPattern());
-        queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.WALL_HEIGHT + 1, sz + 1),
-            Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.WALL_HEIGHT + 1, ez - 1), classicPlotWorld.WALL_BLOCK.toPattern());
+        if (classicPlotWorld.PLACE_TOP_BLOCK) {
+            queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.WALL_HEIGHT + 1, sz + 1),
+                Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.WALL_HEIGHT + 1, ez - 1), classicPlotWorld.WALL_BLOCK.toPattern());
+        }
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, 1, sz + 1),
             Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.ROAD_HEIGHT, ez - 1), classicPlotWorld.ROAD_BLOCK.toPattern());
-        return !enqueue || queue.enqueue();
+        return queue.enqueue();
     }
 
-    @Override public boolean createRoadSouth(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean createRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         Location pos1 = getPlotBottomLocAbs(plot.getId());
         Location pos2 = getPlotTopLocAbs(plot.getId());
         int sz = pos2.getZ() + 1;
@@ -383,18 +388,23 @@ public class ClassicPlotManager extends SquarePlotManager {
             BlockUtil.get((short) 7, (byte) 0));
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, 1, sz),
             Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.WALL_HEIGHT, sz), classicPlotWorld.WALL_FILLING.toPattern());
-        queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, classicPlotWorld.WALL_HEIGHT + 1, sz),
-            Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.WALL_HEIGHT + 1, sz), classicPlotWorld.WALL_BLOCK.toPattern());
+
+        if (classicPlotWorld.PLACE_TOP_BLOCK) {
+            queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, classicPlotWorld.WALL_HEIGHT + 1, sz),
+                Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.WALL_HEIGHT + 1, sz), classicPlotWorld.WALL_BLOCK.toPattern());
+        }
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, 1, ez),
             Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.WALL_HEIGHT, ez), classicPlotWorld.WALL_FILLING.toPattern());
-        queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, classicPlotWorld.WALL_HEIGHT + 1, ez),
-            Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.WALL_HEIGHT + 1, ez), classicPlotWorld.WALL_BLOCK.toPattern());
+        if (classicPlotWorld.PLACE_TOP_BLOCK) {
+            queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, classicPlotWorld.WALL_HEIGHT + 1, ez),
+                Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.WALL_HEIGHT + 1, ez), classicPlotWorld.WALL_BLOCK.toPattern());
+        }
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, 1, sz + 1),
             Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.ROAD_HEIGHT, ez - 1), classicPlotWorld.ROAD_BLOCK.toPattern());
-        return !enqueue || queue.enqueue();
+        return queue.enqueue();
     }
 
-    @Override public boolean createRoadSouthEast(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean createRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         Location pos2 = getPlotTopLocAbs(plot.getId());
         int sx = pos2.getX() + 1;
         int ex = sx + classicPlotWorld.ROAD_WIDTH - 1;
@@ -417,7 +427,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         return !enqueue || queue.enqueue();
     }
 
-    @Override public boolean removeRoadEast(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean removeRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         Location pos1 = getPlotBottomLocAbs(plot.getId());
         Location pos2 = getPlotTopLocAbs(plot.getId());
         int sx = pos2.getX() + 1;
@@ -439,10 +449,11 @@ public class ClassicPlotManager extends SquarePlotManager {
             Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.PLOT_HEIGHT - 1, ez - 1), classicPlotWorld.MAIN_BLOCK.toPattern());
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx, classicPlotWorld.PLOT_HEIGHT, sz + 1),
             Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.PLOT_HEIGHT, ez - 1), classicPlotWorld.TOP_BLOCK.toPattern());
+
         return !enqueue || queue.enqueue();
     }
 
-    @Override public boolean removeRoadSouth(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean removeRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         Location pos1 = getPlotBottomLocAbs(plot.getId());
         Location pos2 = getPlotTopLocAbs(plot.getId());
         int sz = pos2.getZ() + 1;
@@ -464,10 +475,11 @@ public class ClassicPlotManager extends SquarePlotManager {
             Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.PLOT_HEIGHT - 1, ez), classicPlotWorld.MAIN_BLOCK.toPattern());
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, classicPlotWorld.PLOT_HEIGHT, sz),
             Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.PLOT_HEIGHT, ez), classicPlotWorld.TOP_BLOCK.toPattern());
+
         return !enqueue || queue.enqueue();
     }
 
-    @Override public boolean removeRoadSouthEast(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean removeRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         Location location = getPlotTopLocAbs(plot.getId());
         int sx = location.getX() + 1;
         int ex = sx + classicPlotWorld.ROAD_WIDTH - 1;
@@ -488,6 +500,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.PLOT_HEIGHT - 1, ez), classicPlotWorld.MAIN_BLOCK.toPattern());
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx, classicPlotWorld.PLOT_HEIGHT, sz),
             Location.at(classicPlotWorld.getWorldName(), ex, classicPlotWorld.PLOT_HEIGHT, ez), classicPlotWorld.TOP_BLOCK.toPattern());
+
         return !enqueue || queue.enqueue();
     }
 
@@ -496,9 +509,9 @@ public class ClassicPlotManager extends SquarePlotManager {
      *
      * @return false if part of the merge failed, otherwise true if successful.
      */
-    @Override public boolean finishPlotMerge(@NotNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
+    @Override public boolean finishPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        if (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK)) {
+        if (classicPlotWorld.PLACE_TOP_BLOCK && (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK))) {
             for (PlotId plotId : plotIds) {
                 setWall(plotId, claim.toPattern(), queue);
             }
@@ -512,9 +525,9 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
 
-    @Override public boolean finishPlotUnlink(@NotNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
+    @Override public boolean finishPlotUnlink(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        if (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK)) {
+        if (classicPlotWorld.PLACE_TOP_BLOCK && (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK))) {
             for (PlotId id : plotIds) {
                 setWall(id, claim.toPattern(), queue);
             }
@@ -522,23 +535,23 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true; // return false if unlink has been denied
     }
 
-    @Override public boolean startPlotMerge(@NotNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
+    @Override public boolean startPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return true;
     }
 
-    @Override public boolean startPlotUnlink(@NotNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
+    @Override public boolean startPlotUnlink(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return true;
     }
 
-    @Override public boolean claimPlot(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean claimPlot(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
-        if (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK)) {
+        if (classicPlotWorld.PLACE_TOP_BLOCK && (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK))) {
             return setWall(plot.getId(), claim.toPattern(), queue);
         }
         return true;
     }
 
-    @Override public String[] getPlotComponents(@NotNull PlotId plotId) {
+    @Override public String[] getPlotComponents(@Nonnull PlotId plotId) {
         return ClassicPlotManagerComponent.stringValues();
     }
 
@@ -548,7 +561,7 @@ public class ClassicPlotManager extends SquarePlotManager {
      * @param plot The plot
      * @return The location where a sign should be
      */
-    @Override public Location getSignLoc(@NotNull Plot plot) {
+    @Override public Location getSignLoc(@Nonnull Plot plot) {
         plot = plot.getBasePlot(false);
         final Location bot = plot.getBottomAbs();
         return Location.at(classicPlotWorld.getWorldName(), bot.getX() - 1, classicPlotWorld.ROAD_HEIGHT + 1, bot.getZ() - 2);

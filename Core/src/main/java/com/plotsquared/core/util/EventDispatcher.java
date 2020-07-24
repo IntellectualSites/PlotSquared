@@ -104,6 +104,9 @@ public class EventDispatcher {
             eventBus.unregister(listener);
         }
     }
+    public void callGenericEvent(@Nonnull final Object event) {
+        eventBus.post(event);
+    }
 
     public void callEvent(@Nonnull final PlotEvent event) {
         eventBus.post(event);
