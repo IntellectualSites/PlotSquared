@@ -89,6 +89,6 @@ public interface PermissionHolder {
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    boolean hasPermission(@Nullable final String world, @Nonnull String permission);
+    boolean hasPermission(@Nullable String world, @Nonnull String permission);
 
 }

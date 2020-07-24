@@ -25,16 +25,13 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.command.CommandCaller;
+import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.player.MetaDataAccess;
-import com.plotsquared.core.player.PlayerMetaDataKeys;
-import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.permissions.PermissionHolder;
+import com.plotsquared.core.player.PlotPlayer;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.annotation.Nonnull;
 
 /**
  * The Permissions class handles checking user permissions.<br>
@@ -48,75 +45,23 @@ public class Permissions {
     }
 
     /**
-     * Check if a player has a permission (Captions class helps keep track of permissions).
+     * Check if the owner of the profile has a given (global) permission
      *
-     * @param player
-     * @param caption
-     * @return
+     * @param permission Permission
+     * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    public static boolean hasPermission(PlotPlayer<?> player, Captions caption) {
-        return hasPermission(player, caption.getTranslated());
+    public static boolean hasPermission(@Nonnull final PermissionHolder caller, @Nonnull final Caption permission) {
+        return caller.hasPermission(permission.getTranslated());
     }
 
     /**
-     * Check if a {@link PlotPlayer} has a permission.
+     * Check if the owner of the profile has a given (global) permission
      *
-     * @param player
-     * @param permission
-     * @return
+     * @param permission Permission
+     * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    public static boolean hasPermission(PlotPlayer<?> player, String permission) {
-        if (!Settings.Enabled_Components.PERMISSION_CACHE) {
-            return hasPermission((PermissionHolder) player, permission);
-        }
-        try (final MetaDataAccess<Map<String, Boolean>> mapAccess =
-            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_PERMISSIONS)) {
-            Map<String, Boolean> map = mapAccess.get().orElse(null);
-            if (map != null) {
-                final Boolean result = map.get(permission);
-                if (result != null) {
-                    return result;
-                }
-            } else {
-                mapAccess.set((map = new HashMap<>()));
-            }
-            boolean result = hasPermission((PermissionHolder) player, permission);
-            map.put(permission, result);
-            return result;
-        }
-    }
-
-    /**
-     * Check if a {@code CommandCaller} has a permission.
-     *
-     * @param caller
-     * @param permission
-     * @return
-     */
-    public static boolean hasPermission(PermissionHolder caller, String permission) {
-        if (caller.hasPermission(permission)) {
-            return true;
-        }/* TODO: DECIDE WHAT TO DO HERE; else if (caller.isPermissionSet(permission)) {
-            return false;
-        }*/
-        if (caller.hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
-            return true;
-        }
-        permission = permission.toLowerCase().replaceAll("^[^a-z|0-9|\\.|_|-]", "");
-        String[] nodes = permission.split("\\.");
-        StringBuilder n = new StringBuilder();
-        for (int i = 0; i <= (nodes.length - 1); i++) {
-            n.append(nodes[i] + ".");
-            String combined = n + Captions.PERMISSION_STAR.getTranslated();
-            if (!permission.equals(combined)) {
-                if (caller.hasPermission(combined)) {
-                    return true;
-                }/* TODO: DECIDE WHAT TO DO HERE; else if (caller.isPermissionSet(combined)) {
-                    return false;
-                }*/
-            }
-        }
-        return false;
+    public static boolean hasPermission(@Nonnull final PermissionHolder caller, @Nonnull final String permission) {
+        return caller.hasPermission(permission);
     }
 
     /**
