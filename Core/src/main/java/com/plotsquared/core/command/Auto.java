@@ -26,7 +26,6 @@
 package com.plotsquared.core.command;
 
 import com.google.common.collect.Lists;
-import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
@@ -38,6 +37,9 @@ import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
+import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -92,28 +94,31 @@ public class Auto extends SubCommand {
         }
         int diff = allowedPlots - currentPlots;
         if (diff - sizeX * sizeZ < 0) {
-            if (player.hasPersistentMeta("grantedPlots")) {
-                int grantedPlots = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
-                if (diff < 0 && grantedPlots < sizeX * sizeZ) {
-                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
-                    return false;
-                } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
-                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
-                    return false;
-                } else {
-                    int left = grantedPlots + diff < 0 ? 0 : diff - sizeX * sizeZ;
-                    if (left == 0) {
-                        player.removePersistentMeta("grantedPlots");
+            try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(
+                PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                if (metaDataAccess.isPresent()) {
+                    int grantedPlots = metaDataAccess.get().orElse(0);
+                    if (diff < 0 && grantedPlots < sizeX * sizeZ) {
+                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
+                        return false;
+                    } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
+                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
+                        return false;
                     } else {
-                        player.setPersistentMeta("grantedPlots", Ints.toByteArray(left));
-                    }
-                    player.sendMessage(TranslatableCaption.of("economy.removed_granted_plot"),
+                        int left = grantedPlots + diff < 0 ? 0 : diff - sizeX * sizeZ;
+                        if (left == 0) {
+                            metaDataAccess.remove();
+                        } else {
+                            metaDataAccess.set(left);
+                        }
+                        player.sendMessage(TranslatableCaption.of("economy.removed_granted_plot"),
                             Template.of("usedGrants", String.valueOf(grantedPlots - left)),
                             Template.of("remainingGrants", String.valueOf(left)));
+                    }
+                } else {
+                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
+                    return false;
                 }
-            } else {
-                player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
-                return false;
             }
         }
         return true;
@@ -148,7 +153,10 @@ public class Auto extends SubCommand {
      */
     public static void autoClaimSafe(final PlotPlayer<?> player, final PlotArea area, PlotId start,
         final String schematic) {
-        player.setMeta(Auto.class.getName(), true);
+        try (final MetaDataAccess<Boolean> metaDataAccess =
+            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
+            metaDataAccess.set(true);
+        }
         autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
             @Override public void run(final Plot plot) {
                 try {
@@ -177,9 +185,11 @@ public class Auto extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
-            if (this.econHandler != null) {
-                for (PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
-                    if (this.econHandler.hasPermission(area.getWorldName(), player.getName(), "plots.auto")) {
+            final PermissionHandler permissionHandler = PlotSquared.platform().getPermissionHandler();
+            if (permissionHandler.hasCapability(
+                PermissionHandler.PermissionHandlerCapability.PER_WORLD_PERMISSIONS)) {
+                for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
+                    if (player.hasPermission(area.getWorldName(), "plots.auto")) {
                         if (plotarea != null) {
                             plotarea = null;
                             break;
@@ -257,9 +267,12 @@ public class Auto extends SubCommand {
             return false;
         }
         final int allowed_plots = player.getAllowedPlots();
-        if (!force && (player.getMeta(Auto.class.getName(), false) || !checkAllowedPlots(player,
-            plotarea, allowed_plots, size_x, size_z))) {
-            return false;
+        try (final MetaDataAccess<Boolean> metaDataAccess =
+            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
+            if (!force && (metaDataAccess.get().orElse(false) || !checkAllowedPlots(player,
+                plotarea, allowed_plots, size_x, size_z))) {
+                return false;
+            }
         }
 
         if (schematic != null && !schematic.isEmpty()) {

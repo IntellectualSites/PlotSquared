@@ -25,7 +25,9 @@
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.TypeLiteral;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -35,6 +37,7 @@ import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.player.MetaDataKey;
 import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.List;
@@ -151,7 +154,10 @@ public class Inbox extends SubCommand {
             );
             return false;
         }
-        player.setMeta("inbox:" + inbox.toString(), System.currentTimeMillis());
+        final MetaDataKey<Long> metaDataKey = MetaDataKey.of(String.format("inbox:%s", inbox.toString()), new TypeLiteral<Long>() {});
+        try (final MetaDataAccess<Long> metaDataAccess = player.accessTemporaryMetaData(metaDataKey)) {
+            metaDataAccess.set(System.currentTimeMillis());
+        }
         final int page;
         if (args.length > 1) {
             switch (args[1].toLowerCase()) {

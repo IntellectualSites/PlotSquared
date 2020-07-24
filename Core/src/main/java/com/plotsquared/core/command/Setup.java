@@ -31,6 +31,8 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.GeneratorWrapper;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.setup.SetupProcess;
 import com.plotsquared.core.setup.SetupStep;
@@ -74,10 +76,12 @@ public class Setup extends SubCommand {
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        SetupProcess process = player.getMeta("setup");
-        if (process == null) {
-            if (args.length > 0) {
-                player.sendMessage(TranslatableCaption.of("setup.setup_not_started"));
+        try (final MetaDataAccess<SetupProcess> metaDataAccess =
+            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SETUP)) {
+            SetupProcess process = metaDataAccess.get().orElse(null);
+            if (process == null) {
+                if (args.length > 0) {
+                    player.sendMessage(TranslatableCaption.of("setup.setup_not_started"));
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
                         Template.of("value", "Use /plot setup to start a setup process.")
@@ -85,35 +89,39 @@ public class Setup extends SubCommand {
                 return true;
             }
             process = new SetupProcess();
-            player.setMeta("setup", process);
-            this.setupUtils.updateGenerators();
-            SetupStep step = process.getCurrentStep();
-            step.announce(player);
-            displayGenerators(player);
+            metaDataAccess.set(process);
+                this.setupUtils.updateGenerators();
+                SetupStep step = process.getCurrentStep();
+                step.announce(player);
+                displayGenerators(player);
+                return true;
+            }
+            if (args.length == 1) {
+                if ("back".equalsIgnoreCase(args[0])) {
+                    process.back();
+                    process.getCurrentStep().announce(player);
+                } else if ("cancel".equalsIgnoreCase(args[0])) {
+                    metaDataAccess.remove();
+                    player.sendMessage(TranslatableCaption.of("setup.setup_cancelled"));
+                } else {
+                    process.handleInput(player, args[0]);
+                    if (process.getCurrentStep() != null) {
+                        process.getCurrentStep().announce(player);
+                    }
+                }
+            } else {
+                process.getCurrentStep().announce(player);
+            }
             return true;
         }
-        if (args.length == 1) {
-            if ("back".equalsIgnoreCase(args[0])) {
-                process.back();
-                process.getCurrentStep().announce(player);
-            } else if ("cancel".equalsIgnoreCase(args[0])) {
-                player.deleteMeta("setup");
-                player.sendMessage(TranslatableCaption.of("setup.setup_cancelled"));
-            } else {
-                process.handleInput(player, args[0]);
-                if (process.getCurrentStep() != null) {
-                    process.getCurrentStep().announce(player);
-                }
-            }
-        } else {
-            process.getCurrentStep().announce(player);
-        }
-        return true;
-
     }
 
     @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
-        SetupProcess process = (SetupProcess) player.getMeta("setup"); // TODO use generics -> auto cast
+        SetupProcess process;
+        try (final MetaDataAccess<SetupProcess> metaDataAccess =
+            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SETUP)) {
+            process = metaDataAccess.get().orElse(null);
+        }
         if (process == null) {
             return Collections.emptyList();
         }

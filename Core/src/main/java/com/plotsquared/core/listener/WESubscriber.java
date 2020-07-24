@@ -26,6 +26,7 @@
 package com.plotsquared.core.listener;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -72,7 +73,7 @@ public class WESubscriber {
         Actor actor = event.getActor();
         if (actor != null && actor.isPlayer()) {
             String name = actor.getName();
-            PlotPlayer plotPlayer = PlotPlayer.wrap(name);
+            final PlotPlayer<?> plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(name);
             Set<CuboidRegion> mask;
             if (plotPlayer == null) {
                 Player player = (Player) actor;

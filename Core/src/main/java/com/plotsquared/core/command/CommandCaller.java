@@ -65,6 +65,6 @@ public interface CommandCaller {
      *
      * @return Caller type
      */
-    @Nonnull RequiredType getSuperCaller();
+    RequiredType getSuperCaller();
 
 }

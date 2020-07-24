@@ -25,6 +25,8 @@
  */
 package com.plotsquared.core.plot;
 
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.InventoryUtil;
 import org.slf4j.Logger;
@@ -36,7 +38,6 @@ public class PlotInventory {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotInventory.class.getSimpleName());
 
-    private static final String META_KEY = "inventory";
     public final PlotPlayer<?> player;
     public final int size;
     private final PlotItemStack[] items;
@@ -58,16 +59,25 @@ public class PlotInventory {
     }
 
     public static PlotInventory getOpenPlotInventory(@Nonnull final PlotPlayer<?> plotPlayer) {
-        return plotPlayer.getMeta(META_KEY, null);
+        try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
+            PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
+            return inventoryAccess.get().orElse(null);
+        }
     }
 
     public static void setPlotInventoryOpen(@Nonnull final PlotPlayer<?> plotPlayer,
         @Nonnull final PlotInventory plotInventory) {
-        plotPlayer.setMeta(META_KEY, plotInventory);
+        try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
+            PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
+            inventoryAccess.set(plotInventory);
+        }
     }
 
     public static void removePlotInventoryOpen(@Nonnull final PlotPlayer<?>plotPlayer) {
-        plotPlayer.deleteMeta(META_KEY);
+        try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
+            PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
+            inventoryAccess.remove();
+        }
     }
 
     public boolean onClick(int index) {

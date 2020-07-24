@@ -42,6 +42,8 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.FlagParseException;
@@ -784,8 +786,11 @@ public abstract class PlotArea {
     }
 
     public boolean addPlot(@Nonnull final Plot plot) {
-        for (PlotPlayer pp : plot.getPlayersInPlot()) {
-            pp.setMeta(PlotPlayer.META_LAST_PLOT, plot);
+        for (final PlotPlayer<?> pp : plot.getPlayersInPlot()) {
+            try (final MetaDataAccess<Plot> metaDataAccess = pp.accessTemporaryMetaData(
+                PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                metaDataAccess.set(plot);
+            }
         }
         return this.plots.put(plot.getId(), plot) == null;
     }
@@ -823,8 +828,11 @@ public abstract class PlotArea {
 
     public boolean addPlotIfAbsent(@Nonnull final Plot plot) {
         if (this.plots.putIfAbsent(plot.getId(), plot) == null) {
-            for (PlotPlayer pp : plot.getPlayersInPlot()) {
-                pp.setMeta(PlotPlayer.META_LAST_PLOT, plot);
+            for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
+                try (final MetaDataAccess<Plot> metaDataAccess = pp.accessTemporaryMetaData(
+                    PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                    metaDataAccess.set(plot);
+                }
             }
             return true;
         }

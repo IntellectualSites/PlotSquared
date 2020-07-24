@@ -40,6 +40,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -182,10 +183,9 @@ import java.util.UUID;
      *
      * @param uuid the uuid of the player to wrap
      * @return a {@code PlotPlayer}
-     * @see PlotPlayer#wrap(Object)
      */
-    public PlotPlayer wrapPlayer(UUID uuid) {
-        return PlotPlayer.wrap(uuid);
+    @Nullable public PlotPlayer<?> wrapPlayer(@Nonnull final UUID uuid) {
+        return PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
     }
 
     /**
@@ -193,10 +193,9 @@ import java.util.UUID;
      *
      * @param player the player to wrap
      * @return a {@code PlotPlayer}
-     * @see PlotPlayer#wrap(Object)
      */
-    public PlotPlayer wrapPlayer(String player) {
-        return PlotPlayer.wrap(player);
+    @Nullable public PlotPlayer<?> wrapPlayer(@Nonnull final String player) {
+        return PlotSquared.platform().getPlayerManager().getPlayerIfExists(player);
     }
 
     /**

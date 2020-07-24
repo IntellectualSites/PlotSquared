@@ -25,39 +25,49 @@
  */
 package com.plotsquared.bukkit.player;
 
+import com.plotsquared.core.permissions.NullPermissionProfile;
+import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.permissions.PermissionProfile;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import org.bukkit.OfflinePlayer;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import java.util.UUID;
 
 public class BukkitOfflinePlayer implements OfflinePlotPlayer {
 
     public final OfflinePlayer player;
+    private final PermissionProfile permissionProfile;
 
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
      * as it caches player objects.
-     *
-     * @param player
      */
-    public BukkitOfflinePlayer(OfflinePlayer player) {
+    public BukkitOfflinePlayer(@Nonnull final OfflinePlayer player, @Nonnull final
+        PermissionHandler permissionHandler) {
         this.player = player;
+        this.permissionProfile = permissionHandler.getPermissionProfile(this)
+            .orElse(NullPermissionProfile.INSTANCE);
     }
 
     @Nonnull @Override public UUID getUUID() {
         return this.player.getUniqueId();
     }
 
-    @Override public long getLastPlayed() {
-        return this.player.getLastPlayed();
-    }
-
-    @Override public boolean isOnline() {
-        return this.player.isOnline();
+    @Override @Nonnegative public long getLastPlayed() {
+        return this.player.getLastSeen();
     }
 
     @Override public String getName() {
         return this.player.getName();
     }
+
+    @Override public boolean hasPermission(@Nullable final String world,
+                                           @Nonnull final String permission) {
+        return this.permissionProfile.hasPermission(world, permission);
+    }
+
 }

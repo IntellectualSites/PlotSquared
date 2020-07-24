@@ -35,6 +35,8 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.inject.annotations.ConsoleActor;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -68,9 +70,11 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     @Inject private ConsolePlayer(@Nonnull final PlotAreaManager plotAreaManager,
                                   @Nonnull final EventDispatcher eventDispatcher,
                                   @ConsoleActor @Nonnull final Actor actor,
-                                  @Nullable final EconHandler econHandler) {
-        super(plotAreaManager, eventDispatcher, econHandler);
+                                  @Nullable final EconHandler econHandler,
+                                  @Nonnull final PermissionHandler permissionHandler) {
+        super(plotAreaManager, eventDispatcher, econHandler, permissionHandler);
         this.actor = actor;
+        this.setupPermissionProfile();
         final PlotArea[] areas = plotAreaManager.getAllPlotAreas();
         final PlotArea area;
         if (areas.length > 0) {
@@ -128,7 +132,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override public long getLastPlayed() {
-        return 0;
+        return System.currentTimeMillis();
     }
 
     @Override public boolean hasPermission(@Nonnull String permission) {
@@ -157,12 +161,16 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override public void teleport(Location location, TeleportCause cause) {
-        setMeta(META_LAST_PLOT, location.getPlot());
-        setMeta(META_LOCATION, location);
-    }
-
-    @Override public boolean isOnline() {
-        return true;
+        try (final MetaDataAccess<Plot> lastPlot = accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+            if (location.getPlot() == null) {
+                lastPlot.remove();
+            } else {
+                lastPlot.set(location.getPlot());
+            }
+        }
+        try (final MetaDataAccess<Location> locationMetaDataAccess = accessPersistentMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+            locationMetaDataAccess.set(location);
+        }
     }
 
     @Override public String getName() {

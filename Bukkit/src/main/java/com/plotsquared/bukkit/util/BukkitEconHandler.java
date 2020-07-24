@@ -25,14 +25,12 @@
  */
 package com.plotsquared.bukkit.util;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.PermHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -43,14 +41,7 @@ import javax.annotation.Nullable;
 
     private Economy econ;
 
-    private final PermHandler permHandler;
-
-    @Inject public BukkitEconHandler(@Nullable final PermHandler permHandler) {
-        this.permHandler = permHandler;
-    }
-
-    @Override
-    public boolean init() {
+    @Override public boolean init() {
         if (this.econ == null) {
             setupEconomy();
         }
@@ -86,17 +77,6 @@ import javax.annotation.Nullable;
 
     @Override public void depositMoney(OfflinePlotPlayer player, double amount) {
         this.econ.depositPlayer(((BukkitOfflinePlayer) player).player, amount);
-    }
-
-    /**
-     * @deprecated Use {@link PermHandler#hasPermission(String, String, String)} instead
-     */
-    @Deprecated @Override public boolean hasPermission(String world, String player, String perm) {
-        if (this.permHandler != null) {
-            return this.permHandler.hasPermission(world, player, perm);
-        } else {
-            return false;
-        }
     }
 
     @Override public double getBalance(PlotPlayer<?> player) {

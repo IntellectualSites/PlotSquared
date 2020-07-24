@@ -23,34 +23,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.player;
+package com.plotsquared.bukkit.inject;
 
-import com.plotsquared.core.permissions.PermissionHolder;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.plotsquared.bukkit.permissions.BukkitPermissionHandler;
+import com.plotsquared.bukkit.permissions.VaultPermissionHandler;
+import com.plotsquared.core.permissions.PermissionHandler;
+import org.bukkit.Bukkit;
 
-import javax.annotation.Nonnegative;
-import java.util.UUID;
+public class PermissionModule extends AbstractModule {
 
-public interface OfflinePlotPlayer extends PermissionHolder {
-
-    /**
-     * Gets the {@code UUID} of this player
-     *
-     * @return the player {@link UUID}
-     */
-    UUID getUUID();
-
-    /**
-     * Gets the time in milliseconds when the player was last seen online.
-     *
-     * @return the time in milliseconds when last online
-     */
-    @Nonnegative long getLastPlayed();
-
-    /**
-     * Gets the name of this player.
-     *
-     * @return the player name
-     */
-    String getName();
+    @Provides @Singleton PermissionHandler providePermissionHandler() {
+        try {
+            if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+                return new VaultPermissionHandler();
+            }
+        } catch (final Exception ignored) {
+        }
+        return new BukkitPermissionHandler();
+    }
 
 }

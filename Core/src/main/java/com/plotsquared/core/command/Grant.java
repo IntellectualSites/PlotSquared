@@ -31,6 +31,8 @@ import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
@@ -43,7 +45,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 
 @CommandDeclaration(command = "grant",
     category = CommandCategory.CLAIMING,
@@ -84,44 +85,43 @@ public class Grant extends Command {
                         );
                     } else {
                         final UUID uuid = uuids.toArray(new UUID[0])[0];
-                        final Consumer<byte[]> result = array -> {
-                            if (arg0.equals("check")) { // check
-                                int granted;
-                                if (array == null) {
-                                    granted = 0;
-                                } else {
-                                    granted = Ints.fromByteArray(array);
-                                }
-                                player.sendMessage(
-                                        TranslatableCaption.of("grants.granted_plots"),
-                                        Template.of("amount", String.valueOf(granted))
-                                );
-                            } else { // add
-                                int amount;
-                                if (array == null) {
-                                    amount = 1;
-                                } else {
-                                    amount = 1 + Ints.fromByteArray(array);
-                                }
-                                boolean replace = array != null;
-                                String key = "grantedPlots";
-                                byte[] rawData = Ints.toByteArray(amount);
-
-                                PlotPlayer online = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
-                                if (online != null) {
-                                    online.setPersistentMeta(key, rawData);
-                                } else {
-                                    DBFunc.addPersistentMeta(uuid, key, rawData, replace);
-                                }
-                            }
-                        };
                         PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
                         if (pp != null) {
-                            result.accept(player.getPersistentMeta("grantedPlots"));
+                            try (final MetaDataAccess<Integer> access = pp.accessPersistentMetaData(
+                                PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                                if (args[0].equalsIgnoreCase("check")) {
+                                    Captions.GRANTED_PLOTS.send(player, access.get().orElse(0));
+                                } else {
+                                    access.set(access.get().orElse(0) + 1);
+                                }
+                            }
                         } else {
                             DBFunc.getPersistentMeta(uuid, new RunnableVal<Map<String, byte[]>>() {
                                 @Override public void run(Map<String, byte[]> value) {
-                                    result.accept(value.get("grantedPlots"));
+                                    final byte[] array = value.get("grantedPlots");
+                                    if (arg0.equals("check")) { // check
+                                        int granted;
+                                        if (array == null) {
+                                            granted = 0;
+                                        } else {
+                                            granted = Ints.fromByteArray(array);
+                                        }
+                                        player.sendMessage(
+                                        TranslatableCaption.of("grants.granted_plots"),
+                                        Template.of("amount", String.valueOf(granted))
+                                );
+                                    } else { // add
+                                        int amount;
+                                        if (array == null) {
+                                            amount = 1;
+                                        } else {
+                                            amount = 1 + Ints.fromByteArray(array);
+                                        }
+                                        boolean replace = array != null;
+                                        String key = "grantedPlots";
+                                        byte[] rawData = Ints.toByteArray(amount);
+                                        DBFunc.addPersistentMeta(uuid, key, rawData, replace);
+                                    }
                                 }
                             });
                         }

@@ -30,9 +30,11 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Stage;
+import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.inject.BackupModule;
 import com.plotsquared.bukkit.inject.BukkitModule;
+import com.plotsquared.bukkit.inject.PermissionModule;
 import com.plotsquared.bukkit.inject.WorldManagerModule;
 import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
@@ -42,6 +44,7 @@ import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
 import com.plotsquared.bukkit.placeholder.Placeholders;
+import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.util.task.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -99,8 +102,8 @@ import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
-import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlatformWorldManager;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.SetupUtils;
@@ -118,7 +121,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
@@ -178,7 +180,6 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
     private EconHandler econ;
-    private PermHandler perm;
 
     private Injector injector;
 
@@ -244,8 +245,11 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
         // We create the injector after PlotSquared has been initialized, so that we have access
         // to generated instances and settings
-        this.injector = Guice.createInjector(Stage.PRODUCTION, new WorldManagerModule(), new PlotSquaredModule(),
-            new BukkitModule(this), new BackupModule());
+        this.injector = Guice.createInjector(Stage.PRODUCTION, new PermissionModule(),
+            new WorldManagerModule(),
+            new PlotSquaredModule(),
+            new BukkitModule(this),
+            new BackupModule());
         this.injector.injectMembers(this);
 
         this.serverLocale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
@@ -334,10 +338,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         // Economy
         if (Settings.Enabled_Components.ECONOMY) {
             TaskManager.runTask(() -> {
-                final PermHandler permHandler = getInjector().getInstance(PermHandler.class);
-                if (permHandler != null) {
-                    permHandler.init();
-                }
+                this.getPermissionHandler().initialize();
                 final EconHandler econHandler = getInjector().getInstance(EconHandler.class);
                 if (econHandler != null) {
                     econHandler.init();
@@ -569,7 +570,8 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
                 }
                 final Plot plot = area.getOwnedPlot(id);
                 if (plot != null) {
-                    if (!plot.getFlag(ServerPlotFlag.class) || PlotPlayer.wrap(plot.getOwner()) == null) {
+                    if (!plot.getFlag(ServerPlotFlag.class) || PlotSquared.platform().getPlayerManager()
+                        .getPlayerIfExists(plot.getOwner()) == null) {
                         if (world.getKeepSpawnInMemory()) {
                             world.setKeepSpawnInMemory(false);
                             return;
@@ -1077,39 +1079,6 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         }
     }
 
-    /**
-     * Attempt to retrieve a {@link PlotPlayer} from a player identifier.
-     * This method accepts:
-     * - {@link Player} objects,
-     * - {@link OfflinePlayer} objects,
-     * - {@link String} usernames for online players, and
-     * - {@link UUID} UUIDs for online players
-     * <p>
-     * In the case of offline players, a fake {@link Player} instance will be created.
-     * This is a rather expensive operation, and should be avoided if possible.
-     *
-     * @param player The player to convert to a PlotPlayer
-     * @return The plot player instance that corresponds to the identifier, or null
-     * if no such player object could be created
-     */
-    @Override @Nullable public PlotPlayer<Player> wrapPlayer(final Object player) {
-        if (player instanceof Player) {
-            return BukkitUtil.adapt((Player) player);
-        }
-        if (player instanceof OfflinePlayer) {
-            return BukkitUtil.adapt((OfflinePlayer) player);
-        }
-        if (player instanceof String) {
-            return (PlotPlayer<Player>) PlotSquared.platform().getPlayerManager()
-                .getPlayerIfExists((String) player);
-        }
-        if (player instanceof UUID) {
-            return (PlotPlayer<Player>) PlotSquared.platform().getPlayerManager()
-                .getPlayerIfExists((UUID) player);
-        }
-        return null;
-    }
-
     @Override public String getNMSPackage() {
         final String name = Bukkit.getServer().getClass().getPackage().getName();
         return name.substring(name.lastIndexOf('.') + 1);
@@ -1130,7 +1099,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         return names;
     }
 
-    @Override public com.plotsquared.core.location.World<?> getPlatformWorld(@Nonnull final String worldName) {
+    @Override @Nonnull public com.plotsquared.core.location.World<?> getPlatformWorld(@Nonnull final String worldName) {
         return BukkitWorld.of(worldName);
     }
 
@@ -1156,6 +1125,15 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
     @Override public void setLocale(@Nonnull final Locale locale) {
         throw new UnsupportedOperationException("Cannot replace server locale");
+    }
+
+    @Override @Nonnull public PlatformWorldManager<?> getWorldManager() {
+        return getInjector().getInstance(Key.get(new TypeLiteral<PlatformWorldManager<World>>() {}));
+    }
+
+    @Override @Nonnull @SuppressWarnings("ALL")
+    public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
+        return (PlayerManager<BukkitPlayer, Player>) getInjector().getInstance(PlayerManager.class);
     }
 
 }

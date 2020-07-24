@@ -36,12 +36,19 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldedit.world.block.FuzzyBlockState;
 import com.sk89q.worldedit.world.registry.LegacyMapper;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import java.util.Map;
 
+/**
+ * {@link BlockState} related utility methods
+ */
 public final class BlockUtil {
-    private static ParserContext PARSER_CONTEXT = new ParserContext();
-    private static InputParser<BaseBlock> PARSER;
+
+    private static final ParserContext PARSER_CONTEXT = new ParserContext();
+    private static final InputParser<BaseBlock> PARSER;
 
     static {
         PARSER_CONTEXT.setRestricted(false);
@@ -53,15 +60,35 @@ public final class BlockUtil {
     private BlockUtil() {
     }
 
-    public static BlockState get(int id) {
+    /**
+     * Get a {@link BlockState} from a legacy id
+     *
+     * @param id Legacy ID
+     * @return Block state, or {@code null}
+     */
+    @Nullable public static BlockState get(@Nonnegative final int id) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id);
     }
 
-    public static BlockState get(int id, int data) {
+    /**
+     * Get a {@link BlockState} from a legacy id-data pair
+     *
+     * @param id Legacy ID
+     * @param data Legacy data
+     * @return Block state, or {@code null}
+     */
+    @Nullable public static BlockState get(@Nonnegative final int id, final int data) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id, data);
     }
 
-    public static BlockState get(String id) {
+    /**
+     * Get a {@link BlockState} from its ID
+     *
+     * @param id String or integer ID
+     * @return Parsed block state, or {@code null} if none
+     *         could be parsed
+     */
+   @Nullable public static BlockState get(@Nonnull String id) {
         if (id.length() == 1 && id.charAt(0) == '*') {
             return FuzzyBlockState.builder().type(BlockTypes.AIR).build();
         }
@@ -90,16 +117,29 @@ public final class BlockUtil {
         }
     }
 
-    public static BlockState[] parse(String commaDelimited) {
-        String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
-        BlockState[] result = new BlockState[split.length];
+    /**
+     * Parse a comma delimited list of block states
+     *
+     * @param commaDelimited List of block states
+     * @return Parsed block states
+     */
+    @Nonnull public static BlockState[] parse(@Nonnull final String commaDelimited) {
+        final String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
+        final BlockState[] result = new BlockState[split.length];
         for (int i = 0; i < split.length; i++) {
             result[i] = get(split[i]);
         }
         return result;
     }
 
-    public static BlockState deserialize(@Nonnull final Map<String, Object> map) {
+    /**
+     * Deserialize a serialized {@link BlockState}
+     *
+     * @param map Serialized block state
+     * @return Deserialized block state, or {@code null} if the map is
+     *         not a properly serialized block state
+     */
+    @Nullable public static BlockState deserialize(@Nonnull final Map<String, Object> map) {
         if (map.containsKey("material")) {
             final Object object = map.get("material");
             return get(object.toString());

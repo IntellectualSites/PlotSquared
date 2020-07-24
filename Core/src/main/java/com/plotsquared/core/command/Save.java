@@ -29,6 +29,8 @@ import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
@@ -105,9 +107,9 @@ public class Save extends SubCommand {
                                 return;
                             }
                             player.sendMessage(TranslatableCaption.of("web.save_success"));
-                            List<String> schematics = player.getMeta("plot_schematics");
-                            if (schematics != null) {
-                                schematics.add(file + ".schem");
+                            try (final MetaDataAccess<List<String>> schematicAccess =
+                                player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
+                                schematicAccess.get().ifPresent(schematics -> schematics.add(file + ".schem"));
                             }
                         }
                     });

@@ -79,9 +79,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @CommandDeclaration(command = "area",
     permission = "plots.area",
@@ -100,6 +103,8 @@ public class Area extends SubCommand {
     private final SetupUtils setupUtils;
     private final WorldUtil worldUtil;
     private final RegionManager regionManager;
+
+    private final Map<UUID, Map<String, Object>> metaData = new HashMap<>();
 
     @Inject public Area(@Nonnull final PlotAreaManager plotAreaManager,
                         @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
@@ -267,14 +272,16 @@ public class Area extends SubCommand {
                     case 2:
                         switch (args[1].toLowerCase()) {
                             case "pos1": { // Set position 1
-                                HybridPlotWorld area = player.getMeta("area_create_area");
+                                HybridPlotWorld area = (HybridPlotWorld) metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>())
+                                    .get("area_create_area");
                                 if (area == null) {
                                     player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
                                         Templates.of("value", "/plot area create [world[:id]] [<modifier>=<value>]..."));
                                     return false;
                                 }
                                 Location location = player.getLocation();
-                                player.setMeta("area_pos1", location);
+                                metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>())
+                                    .put("area_pos1", location);
                                 player.sendMessage(TranslatableCaption.of("set.set_attribute"),
                                         Template.of("attribute", "area_pos1"),
                                         Template.of("value", location.getX() + "," + location.getZ()));
@@ -282,14 +289,15 @@ public class Area extends SubCommand {
                                 return true;
                             }
                             case "pos2":  // Set position 2 and finish creation for type=2 (partial)
-                                final HybridPlotWorld area = player.getMeta("area_create_area");
+                                final HybridPlotWorld area = (HybridPlotWorld) metaData
+                                    .computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).get("area_create_area");
                                 if (area == null) {
                                     player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
                                         Templates.of("value", "/plot area create [world[:id]] [<modifier>=<value>]..."));
                                     return false;
                                 }
                                 Location pos1 = player.getLocation();
-                                Location pos2 = player.getMeta("area_pos1");
+                                Location pos2 = (Location) metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).get("area_pos1");
                                 int dx = Math.abs(pos1.getX() - pos2.getX());
                                 int dz = Math.abs(pos1.getZ() - pos2.getZ());
                                 int numX = Math.max(1,
@@ -518,7 +526,7 @@ public class Area extends SubCommand {
                             player.teleport(this.worldUtil.getSpawn(pa.getWorldName()),
                                 TeleportCause.COMMAND);
                         }
-                        player.setMeta("area_create_area", pa);
+                        metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).put("area_create_area", pa);
                         player.sendMessage(
                         TranslatableCaption.of("single.get_position"),
                                 Template.of("command", getCommandString())

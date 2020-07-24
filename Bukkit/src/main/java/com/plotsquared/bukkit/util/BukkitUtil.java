@@ -59,7 +59,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -107,7 +106,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import java.util.stream.Stream;
@@ -125,24 +123,6 @@ import java.util.stream.Stream;
 
     @Inject public BukkitUtil(@Nonnull final RegionManager regionManager) {
         super(regionManager);
-    }
-
-    /**
-     * Get a {@link PlotPlayer} from an {@link OfflinePlayer}. If the player is
-     * online, it returns a complete player. If the player is offline, it creates
-     * a fake player
-     *
-     * @param op Offline player
-     * @return Plot player instance
-     */
-    @Nonnull public static PlotPlayer<Player> adapt(@Nonnull final OfflinePlayer op) {
-        if (op.isOnline()) {
-            return adapt(Objects.requireNonNull(op.getPlayer()));
-        }
-        final Player player = OfflinePlayerUtil.loadPlayer(op);
-        player.loadData();
-        return new BukkitPlayer(PlotSquared.get().getPlotAreaManager(),
-            PlotSquared.get().getEventDispatcher(), player, true, PlotSquared.platform().getEconHandler());
     }
 
     /**
@@ -223,18 +203,6 @@ import java.util.stream.Stream;
             Bukkit.getScheduler()
                 .runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> consumer.accept(value));
         }
-    }
-
-    /**
-     * Gets the PlotPlayer for a UUID. The PlotPlayer is usually cached and
-     * will provide useful functions relating to players.
-     *
-     * @param uuid the uuid to wrap
-     * @return a {@code PlotPlayer}
-     * @see PlotPlayer#wrap(Object)
-     */
-    @Override @Nonnull public PlotPlayer<?> getPlayer(@Nonnull final UUID uuid) {
-        return PlotPlayer.wrap(Bukkit.getOfflinePlayer(uuid));
     }
 
     @Override public boolean isBlockSame(@Nonnull final BlockState block1,

@@ -23,15 +23,44 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util;
+package com.plotsquared.core.player;
 
-public abstract class PermHandler {
+import com.plotsquared.core.synchronization.LockRepository;
 
-    public abstract boolean init();
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Optional;
 
-    public abstract boolean hasPermission(String world, String player, String perm);
+final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
 
-    public boolean hasPermission(String player, String perm) {
-        return hasPermission(null, player, perm);
+    PersistentMetaDataAccess(@Nonnull final PlotPlayer<?> player,
+                             @Nonnull final MetaDataKey<T> metaDataKey,
+                             @Nonnull final LockRepository.LockAccess lockAccess) {
+        super(player, metaDataKey, lockAccess);
     }
+
+    @Override public boolean isPresent() {
+        this.checkClosed();
+        return this.getPlayer().hasPersistentMeta(getMetaDataKey().toString());
+    }
+
+    @Override @Nullable public T remove() {
+        this.checkClosed();
+        final Object old = this.getPlayer().removePersistentMeta(this.getMetaDataKey().toString());
+        if (old == null) {
+            return null;
+        }
+        return (T) old;
+    }
+
+    @Override public void set(@Nonnull T value) {
+        this.checkClosed();
+        this.getPlayer().setPersistentMeta(this.getMetaDataKey(), value);
+    }
+
+    @Nonnull @Override public Optional<T> get() {
+        this.checkClosed();
+        return Optional.ofNullable(this.getPlayer().getPersistentMeta(this.getMetaDataKey()));
+    }
+
 }

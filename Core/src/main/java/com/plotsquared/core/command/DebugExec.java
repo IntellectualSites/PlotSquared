@@ -423,48 +423,6 @@ public class DebugExec extends SubCommand {
                             }
                         }, "/plot debugexec list-scripts", "List of scripts");
                     return true;
-                case "allcmd":
-                    if (args.length < 3) {
-                        player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot debugexec allcmd <condition> <command>")
-                        );
-                        return false;
-                    }
-                    long start = System.currentTimeMillis();
-                    Command cmd = MainCommand.getInstance().getCommand(args[3]);
-                    String[] params = Arrays.copyOfRange(args, 4, args.length);
-                    if ("true".equals(args[1])) {
-                        Location location = player.getMeta(PlotPlayer.META_LOCATION);
-                        Plot plot = player.getMeta(PlotPlayer.META_LAST_PLOT);
-                        for (Plot current : PlotSquared.get().getBasePlots()) {
-                            player.setMeta(PlotPlayer.META_LOCATION, current.getBottomAbs());
-                            player.setMeta(PlotPlayer.META_LAST_PLOT, current);
-                            cmd.execute(player, params, null, null);
-                        }
-                        if (location == null) {
-                            player.deleteMeta(PlotPlayer.META_LOCATION);
-                        } else {
-                            player.setMeta(PlotPlayer.META_LOCATION, location);
-                        }
-                        if (plot == null) {
-                            player.deleteMeta(PlotPlayer.META_LAST_PLOT);
-                        } else {
-                            player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
-                        }
-                        player.sendMessage(StaticCaption.of("&c> " + (System.currentTimeMillis() - start)));
-                        return true;
-                    }
-                    init();
-                    this.scope.put("_2", params);
-                    this.scope.put("_3", cmd);
-                    script =
-                        "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if("
-                            + args[1]
-                            + "){PlotPlayer.setMeta(\"location\",plot.getBottomAbs());PlotPlayer.setMeta(\"lastplot\",plot);_3.onCommand"
-                            + "(PlotPlayer,_2)}}";
-
-                    break;
                 case "all":
                     if (args.length < 3) {
                         player.sendMessage(

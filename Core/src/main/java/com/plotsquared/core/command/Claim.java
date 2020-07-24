@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -37,6 +36,8 @@ import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -96,36 +97,40 @@ public class Claim extends SubCommand {
         int currentPlots = Settings.Limit.GLOBAL ?
             player.getPlotCount() :
             player.getPlotCount(location.getWorldName());
-        int grants = 0;
-        if (currentPlots >= player.getAllowedPlots() && !force) {
-            if (player.hasPersistentMeta("grantedPlots")) {
-                grants = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
-                if (grants <= 0) {
-                    player.removePersistentMeta("grantedPlots");
+
+        final PlotArea area = plot.getArea();
+
+        try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+            int grants = 0;
+            if (currentPlots >= player.getAllowedPlots() && !force) {
+                if (metaDataAccess.isPresent()) {
+                    grants = metaDataAccess.get().orElse(0);
+                    if (grants <= 0) {
+                        metaDataAccess.remove();
+                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
+                    }
+                } else {
                     player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
                 }
-            } else {
-                player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
             }
-        }
-        if (!plot.canClaim(player)) {
-            player.sendMessage(TranslatableCaption.of("working.plot_is_claimed"));
-        }
-        final PlotArea area = plot.getArea();
-        if (schematic != null && !schematic.isEmpty()) {
-            if (area.isSchematicClaimSpecify()) {
-                if (!area.hasSchematic(schematic)) {
-                    player.sendMessage(
+
+            if (!plot.canClaim(player)) {
+                player.sendMessage(TranslatableCaption.of("working.plot_is_claimed"));
+            }
+            if (schematic != null && !schematic.isEmpty()) {
+                if (area.isSchematicClaimSpecify()) {
+                    if (!area.hasSchematic(schematic)) {
+                        player.sendMessage(
                             TranslatableCaption.of("schematics.schematic_invalid_named"),
                             Template.of("schemname", schematic),
                             Template.of("reason", "non-existant")
                     );
                 }
                 if (!Permissions.hasPermission(player, CaptionUtility
-                    .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
-                    && !Permissions
-                    .hasPermission(player, "plots.admin.command.schematic") && !force) {
-                    player.sendMessage(
+                    .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(),
+                        schematic)) && !Permissions.hasPermission(player, "plots.admin.command.schematic")
+                        && !force) {
+                        player.sendMessage(
                             TranslatableCaption.of("permission.no_schematic_permission"),
                             Template.of("value", schematic)
                     );
@@ -141,7 +146,7 @@ public class Claim extends SubCommand {
                             TranslatableCaption.of("economy.cannot_afford_plot"),
                             Template.of("money", String.valueOf(cost))
                     );
-                }
+                    }
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
@@ -151,15 +156,16 @@ public class Claim extends SubCommand {
         }
         if (grants > 0) {
             if (grants == 1) {
-                player.removePersistentMeta("grantedPlots");
-            } else {
-                player.setPersistentMeta("grantedPlots", Ints.toByteArray(grants - 1));
-            }
-            player.sendMessage(
+                metaDataAccess.remove();
+                } else {
+                    metaDataAccess.set(grants - 1);
+                }
+                player.sendMessage(
                     TranslatableCaption.of("economy.removed_granted_plot"),
                     Template.of("usedGrants", String.valueOf((grants -1))),
                     Template.of("remainingGrants", String.valueOf(grants))
             );
+            }
         }
         int border = area.getBorder();
         if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {

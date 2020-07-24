@@ -36,6 +36,7 @@ import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.permissions.PermissionHolder;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nullable;
@@ -159,7 +160,7 @@ public abstract class Command {
         return this.allCommands;
     }
 
-    public boolean hasConfirmation(CommandCaller player) {
+    public boolean hasConfirmation(PermissionHolder player) {
         return this.confirmation && !player.hasPermission(getPermission() + ".confirm.bypass");
     }
 

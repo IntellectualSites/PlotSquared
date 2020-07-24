@@ -39,6 +39,8 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -731,34 +733,38 @@ import java.util.regex.Pattern;
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
         BukkitPlayer pp = BukkitUtil.adapt(player);
-        Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
-        org.bukkit.Location to = event.getTo();
-        //noinspection ConstantConditions
-        if (to != null) {
-            Location location = BukkitUtil.adapt(to);
-            PlotArea area = location.getPlotArea();
-            if (area == null) {
-                if (lastPlot != null) {
-                    plotExit(pp, lastPlot);
-                    pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
+        try (final MetaDataAccess<Plot> lastPlotAccess =
+            pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+            Plot lastPlot = lastPlotAccess.get().orElse(null);
+            org.bukkit.Location to = event.getTo();
+            //noinspection ConstantConditions
+            if (to != null) {
+                Location location = BukkitUtil.adapt(to);
+                PlotArea area = location.getPlotArea();
+                if (area == null) {
+                    if (lastPlot != null) {
+                        plotExit(pp, lastPlot);
+                        lastPlotAccess.remove();
+                    }
+                    try (final MetaDataAccess<Location> lastLocationAccess =
+                        pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+                        lastLocationAccess.remove();
+                    }
+                    return;
                 }
-                pp.deleteMeta(PlotPlayer.META_LOCATION);
-                return;
-            }
-            Plot plot = area.getPlot(location);
-            if (plot != null) {
-                final boolean result = DenyTeleportFlag.allowsTeleport(pp, plot);
-                // there is one possibility to still allow teleportation:
-                // to is identical to the plot's home location, and untrusted-visit is true
-                // i.e. untrusted-visit can override deny-teleport
-                // this is acceptable, because otherwise it wouldn't make sense to have both flags set
-                if (!result && !(plot.getFlag(UntrustedVisitFlag.class) && plot.getHomeSynchronous()
-                    .equals(BukkitUtil.adaptComplete(to)))) {
-                    pp.sendMessage(
+                Plot plot = area.getPlot(location);
+                if (plot != null) {
+                    final boolean result = DenyTeleportFlag.allowsTeleport(pp, plot);
+                    // there is one possibility to still allow teleportation:
+                    // to is identical to the plot's home location, and untrusted-visit is true
+                    // i.e. untrusted-visit can override deny-teleport
+                    // this is acceptable, because otherwise it wouldn't make sense to have both flags set
+                    if (!result && !(plot.getFlag(UntrustedVisitFlag.class) && plot.getHomeSynchronous().equals(BukkitUtil.adaptComplete(to)))) {
+                        pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             Template.of("node", "plots.admin.entry.denied")
                     );
-                    event.setCancelled(true);
+                    event.setCancelled(true);}
                 }
             }
         }
@@ -849,18 +855,29 @@ import java.util.regex.Pattern;
             }
             // Set last location
             Location location = BukkitUtil.adapt(to);
-            pp.setMeta(PlotPlayer.META_LOCATION, location);
+            try (final MetaDataAccess<Location> lastLocationAccess =
+                pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+                lastLocationAccess.remove();
+            }
             PlotArea area = location.getPlotArea();
             if (area == null) {
-                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
+                try (final MetaDataAccess<Plot> lastPlotAccess =
+                    pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                    lastPlotAccess.remove();
+                }
                 return;
             }
             Plot now = area.getPlot(location);
-            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
+            Plot lastPlot;
+            try (final MetaDataAccess<Plot> lastPlotAccess =
+                pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                lastPlot = lastPlotAccess.get().orElse(null);
+            }
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
-                    .getMeta("kick", false)) {
-                    pp.sendMessage(
+                try (final MetaDataAccess<Boolean> kickAccess =
+                    pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
+                    if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                        pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             Template.of("node", "plots.admin.exit.denied")
                     );
@@ -872,7 +889,7 @@ import java.util.regex.Pattern;
                     }
                     this.tmpTeleport = true;
                     event.setCancelled(true);
-                    return;
+                    return;}
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
@@ -915,18 +932,29 @@ import java.util.regex.Pattern;
             }
             // Set last location
             Location location = BukkitUtil.adapt(to);
-            pp.setMeta(PlotPlayer.META_LOCATION, location);
+            try (final MetaDataAccess<Location> lastLocationAccess =
+                pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+                lastLocationAccess.set(location);
+            }
             PlotArea area = location.getPlotArea();
             if (area == null) {
-                pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
+                try (final MetaDataAccess<Plot> lastPlotAccess =
+                    pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                    lastPlotAccess.remove();
+                }
                 return;
             }
             Plot now = area.getPlot(location);
-            Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
+            Plot lastPlot;
+            try (final MetaDataAccess<Plot> lastPlotAccess =
+                pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                lastPlot = lastPlotAccess.get().orElse(null);
+            }
             if (now == null) {
-                if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !pp
-                    .getMeta("kick", false)) {
-                    pp.sendMessage(
+                try (final MetaDataAccess<Boolean> kickAccess =
+                    pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
+                    if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
+                        pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
                             Template.of("node", "plots.admin.exit.denied")
                     );
@@ -938,7 +966,7 @@ import java.util.regex.Pattern;
                     }
                     this.tmpTeleport = true;
                     event.setCancelled(true);
-                    return;
+                    return;}
                 }
             } else if (now.equals(lastPlot)) {
                 ForceFieldListener.handleForcefield(player, pp, now);
@@ -1175,8 +1203,15 @@ import java.util.regex.Pattern;
         Player player = event.getPlayer();
         BukkitPlayer pp = BukkitUtil.adapt(player);
         // Delete last location
-        Plot plot = (Plot) pp.deleteMeta(PlotPlayer.META_LAST_PLOT);
-        pp.deleteMeta(PlotPlayer.META_LOCATION);
+        Plot plot;
+        try (final MetaDataAccess<Plot> lastPlotAccess =
+            pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+            plot = lastPlotAccess.remove();
+        }
+        try (final MetaDataAccess<Location> lastLocationAccess =
+            pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+            lastLocationAccess.remove();
+        }
         if (plot != null) {
             plotExit(pp, plot);
         }
@@ -1186,9 +1221,6 @@ import java.util.regex.Pattern;
                     pp.removeAttribute("worldedit");
                 }
             }
-        }
-        if (Settings.Enabled_Components.PERMISSION_CACHE) {
-            pp.deleteMeta("perm");
         }
         Location location = pp.getLocation();
         PlotArea area = location.getPlotArea();
