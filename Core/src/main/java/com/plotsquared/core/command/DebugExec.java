@@ -59,6 +59,7 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WEManager;
 import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -273,7 +274,7 @@ public class DebugExec extends SubCommand {
                     final PlotFlag<?, ?> flagInstance =
                         GlobalFlagContainer.getInstance().getFlagFromString(flag);
                     if (flagInstance != null) {
-                        for (Plot plot : PlotSquared.get().getBasePlots()) {
+                        for (Plot plot : PlotQuery.newQuery().whereBasePlot()) {
                             PlotFlagRemoveEvent event = this.eventDispatcher
                                 .callFlagRemove(flagInstance, plot);
                             if (event.getEventResult() != Result.DENY) {

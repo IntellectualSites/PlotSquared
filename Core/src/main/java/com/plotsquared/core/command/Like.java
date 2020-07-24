@@ -26,7 +26,6 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -39,11 +38,11 @@ import com.plotsquared.core.plot.Rating;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +68,7 @@ public class Like extends SubCommand {
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
                 case "next": {
-                    final List<Plot> plots = new ArrayList<>(PlotSquared.get().getBasePlots());
+                    final List<Plot> plots = PlotQuery.newQuery().whereBasePlot().asList();
                     plots.sort((p1, p2) -> {
                         double v1 = getLikesPercentage(p1);
                         double v2 = getLikesPercentage(p2);

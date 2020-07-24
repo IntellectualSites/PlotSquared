@@ -26,7 +26,6 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -43,12 +42,13 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -74,7 +74,7 @@ public class Rate extends SubCommand {
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
                 case "next": {
-                    ArrayList<Plot> plots = new ArrayList<>(PlotSquared.get().getBasePlots());
+                    final List<Plot> plots = PlotQuery.newQuery().whereBasePlot().asList();
                     plots.sort((p1, p2) -> {
                         double v1 = 0;
                         if (!p1.getRatings().isEmpty()) {

@@ -37,6 +37,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
@@ -151,7 +152,7 @@ public class Purge extends SubCommand {
             }
         }
         final HashSet<Plot> toDelete = new HashSet<>();
-        for (Plot plot : PlotSquared.get().getBasePlots()) {
+        for (Plot plot : PlotQuery.newQuery().whereBasePlot()) {
             if (world != null && !plot.getWorldName().equalsIgnoreCase(world)) {
                 continue;
             }

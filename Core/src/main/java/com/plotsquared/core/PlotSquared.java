@@ -122,7 +122,6 @@ import java.util.zip.ZipInputStream;
 public class PlotSquared {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotSquared.class.getSimpleName());
-    private static final Set<Plot> EMPTY_SET = Collections.unmodifiableSet(Collections.emptySet());
     private static PlotSquared instance;
 
     // Implementation
@@ -138,8 +137,6 @@ public class PlotSquared {
     private WorldEdit worldedit;
     private File configFile;
     private File worldsFile;
-    public File translationFile; // TODO: REMOVE
-    public YamlConfiguration style; // TODO: REMOVE
     private YamlConfiguration worldConfiguration;
     // Temporary hold the plots/clusters before the worlds load
     private HashMap<String, Set<PlotCluster>> clustersTmp;
@@ -446,16 +443,6 @@ public class PlotSquared {
         }
         return Collections.unmodifiableSet(set);
 
-    }
-
-    /**
-     * Gets all the base plots in a single set (for merged plots it just returns
-     * the bottom plot).
-     *
-     * @return Set of base Plots
-     */
-    public Set<Plot> getBasePlots() {
-        return PlotQuery.newQuery().whereBasePlot().asSet();
     }
 
     public List<Plot> sortPlotsByTemp(Collection<Plot> plots) {
