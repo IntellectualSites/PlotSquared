@@ -100,13 +100,19 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
-    private final PermissionProfile permissionProfile;
+    private final PermissionHandler permissionHandler;
+    // Delayed initialisation
+    private PermissionProfile permissionProfile;
 
     public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler,
         @Nonnull final PermissionHandler permissionHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
+        this.permissionHandler = permissionHandler;
+    }
+
+    protected void setupPermissionProfile() {
         this.permissionProfile = permissionHandler.getPermissionProfile(this).orElse(
             NullPermissionProfile.INSTANCE);
     }

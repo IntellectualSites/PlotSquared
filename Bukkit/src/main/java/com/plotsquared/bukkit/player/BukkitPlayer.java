@@ -95,6 +95,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         super(plotAreaManager, eventDispatcher, econHandler, permissionHandler);
         this.player = player;
         this.econHandler = econHandler;
+        this.setupPermissionProfile();
         if (realPlayer) {
             super.populatePersistentMetaMap();
         }
