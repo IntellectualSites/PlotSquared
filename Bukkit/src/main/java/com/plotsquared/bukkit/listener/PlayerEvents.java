@@ -225,7 +225,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -1201,12 +1200,6 @@ import java.util.regex.Pattern;
                 if (pp.getAttribute("worldedit")) {
                     pp.removeAttribute("worldedit");
                 }
-            }
-        }
-        if (Settings.Enabled_Components.PERMISSION_CACHE) {
-            try (final MetaDataAccess<Map<String, Boolean>> metaDataAccess =
-                pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_PERMISSIONS)) {
-                metaDataAccess.remove();
             }
         }
         Location location = pp.getLocation();

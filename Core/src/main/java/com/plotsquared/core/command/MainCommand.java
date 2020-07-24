@@ -45,7 +45,6 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -233,12 +232,6 @@ public class MainCommand extends Command {
     public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
-        // Clear perm caching //
-        try (final MetaDataAccess<Map<String, Boolean>> permAccess = player.accessTemporaryMetaData(
-            PlayerMetaDataKeys.TEMPORARY_PERMISSIONS)) {
-            permAccess.remove();
-        }
-
         // Optional command scope //
         Location location = null;
         Plot plot = null;

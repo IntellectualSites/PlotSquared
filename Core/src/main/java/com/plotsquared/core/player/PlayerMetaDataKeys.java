@@ -34,7 +34,6 @@ import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.setup.SetupProcess;
 
 import java.util.List;
-import java.util.Map;
 
 public final class PlayerMetaDataKeys {
 
@@ -50,7 +49,6 @@ public final class PlayerMetaDataKeys {
     public static final MetaDataKey<Boolean> TEMPORARY_IGNORE_EXPIRE_TASK = MetaDataKey.of("ignoreExpireTask", new TypeLiteral<Boolean>() {});
     public static final MetaDataKey<Plot> TEMPORARY_WORLD_EDIT_REGION_PLOT = MetaDataKey.of("WorldEditRegionPlot", new TypeLiteral<Plot>() {});
     public static final MetaDataKey<Boolean> TEMPORARY_AUTO = MetaDataKey.of(Auto.class.getName(), new TypeLiteral<Boolean>() {});
-    public static final MetaDataKey<Map<String, Boolean>> TEMPORARY_PERMISSIONS = MetaDataKey.of("permissions", new TypeLiteral<Map<String, Boolean>>() {});
     public static final MetaDataKey<List<String>> TEMPORARY_SCHEMATICS = MetaDataKey.of("plot_schematics", new TypeLiteral<List<String>>() {});
     public static final MetaDataKey<Location> TEMPORARY_LOCATION = MetaDataKey.of("location", new TypeLiteral<Location>() {});
     public static final MetaDataKey<CmdInstance> TEMPORARY_CONFIRM = MetaDataKey.of("cmdConfirm", new TypeLiteral<CmdInstance>() {});
