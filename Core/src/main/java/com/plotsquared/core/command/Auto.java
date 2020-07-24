@@ -94,7 +94,7 @@ public class Auto extends SubCommand {
         if (diff - sizeX * sizeZ < 0) {
             try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(
                 PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
-                if (metaDataAccess.has()) {
+                if (metaDataAccess.isPresent()) {
                     int grantedPlots = metaDataAccess.get().orElse(0);
                     if (diff < 0 && grantedPlots < sizeX * sizeZ) {
                         MainUtil.sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);

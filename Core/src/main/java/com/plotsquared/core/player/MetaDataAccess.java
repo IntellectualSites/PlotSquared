@@ -34,7 +34,6 @@ import java.util.Optional;
 /**
  * Access to player meta data
  *
- * @param <P> Player type
  * @param <T> Meta data type
  */
 public abstract class MetaDataAccess<T> implements AutoCloseable {
@@ -42,6 +41,7 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
     private final PlotPlayer<?> player;
     private final MetaDataKey<T> metaDataKey;
     private final LockRepository.LockAccess lockAccess;
+    private boolean closed = false;
 
     MetaDataAccess(@Nonnull final PlotPlayer<?> player, @Nonnull final MetaDataKey<T> metaDataKey,
         @Nonnull final LockRepository.LockAccess lockAccess) {
@@ -56,12 +56,12 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
      * @return {@code true} if player has meta data with this key, or
      * {@code false}
      */
-    public abstract boolean has();
+    public abstract boolean isPresent();
 
     /**
      * Remove the stored value meta data
      *
-     * @return Old value, or {@link null}
+     * @return Old value, or {@code null}
      */
     @Nullable public abstract T remove();
 
@@ -81,6 +81,7 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
 
     @Override public final void close() {
         this.lockAccess.close();
+        this.closed = true;
     }
 
     /**
@@ -100,5 +101,29 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
     @Nonnull public MetaDataKey<T> getMetaDataKey() {
         return this.metaDataKey;
     }
+
+    /**
+     * Check whether or not the meta data access has been closed.
+     * After being closed, all attempts to access the meta data
+     * through the instance, will lead to {@link IllegalAccessException}
+     * being thrown
+     *
+     * @return {@code true} if the access has been closed
+     */
+    public boolean isClosed() {
+        return this.closed;
+    }
+
+    protected void checkClosed() {
+        if (this.closed) {
+            sneakyThrow(new IllegalAccessException("The meta data access instance has been closed"));
+        }
+    }
+
+    @SuppressWarnings("ALL")
+    private static <E extends Throwable> void sneakyThrow(final Throwable e) throws E {
+        throw (E) e;
+    }
+
 
 }

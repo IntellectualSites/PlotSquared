@@ -39,11 +39,13 @@ final class TemporaryMetaDataAccess<T> extends MetaDataAccess<T> {
         super(player, metaDataKey, lockAccess);
     }
 
-    @Override public boolean has() {
+    @Override public boolean isPresent() {
+        this.checkClosed();
         return this.getPlayer().getMeta(this.getMetaDataKey().toString()) != null;
     }
 
     @Override @Nullable public T remove() {
+        this.checkClosed();
         final Object old = getPlayer().deleteMeta(this.getMetaDataKey().toString());
         if (old == null) {
             return null;
@@ -52,10 +54,12 @@ final class TemporaryMetaDataAccess<T> extends MetaDataAccess<T> {
     }
 
     @Override public void set(@Nonnull T value) {
+        this.checkClosed();
         this.getPlayer().setMeta(this.getMetaDataKey().toString(), null);
     }
 
     @Nonnull @Override public Optional<T> get() {
+        this.checkClosed();
         return Optional.ofNullable(this.getPlayer().getMeta(this.getMetaDataKey().toString()));
     }
 

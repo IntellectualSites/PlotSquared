@@ -142,7 +142,7 @@ public class ExpireManager {
     public void confirmExpiry(final PlotPlayer<?> pp) {
         try (final MetaDataAccess<Boolean> metaDataAccess = pp.accessTemporaryMetaData(
             PlayerMetaDataKeys.TEMPORARY_IGNORE_EXPIRE_TASK)) {
-            if (metaDataAccess.has()) {
+            if (metaDataAccess.isPresent()) {
                 return;
             }
             if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp.hasPermission("plots.admin.command.autoclear")) {
