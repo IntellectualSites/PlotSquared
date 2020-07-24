@@ -44,8 +44,6 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +65,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
                                   @Nonnull final PermissionHandler permissionHandler) {
         super(plotAreaManager, eventDispatcher, econHandler, permissionHandler);
         this.actor = actor;
+        this.setupPermissionProfile();
         final PlotArea[] areas = plotAreaManager.getAllPlotAreas();
         final PlotArea area;
         if (areas.length > 0) {
