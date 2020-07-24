@@ -23,26 +23,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util;
+package com.plotsquared.core.permissions;
 
-import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.permissions.PermissionHolder;
-import com.plotsquared.core.player.PlotPlayer;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * The Permissions class handles checking user permissions.<br>
- * - This will respect * nodes and plots.admin and can be used to check permission ranges (e.g. plots.plot.5)<br>
- * - Checking the PlotPlayer class directly will not take the above into account<br>
+ * Any object which can hold permissions
  */
-public class Permissions {
-
-    public static boolean hasPermission(PlotPlayer<?> player, Captions caption, boolean notify) {
-        return hasPermission(player, caption.getTranslated(), notify);
-    }
+public interface PermissionHolder {
 
     /**
      * Check if the owner of the profile has a given (global) permission
@@ -50,40 +43,8 @@ public class Permissions {
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    public static boolean hasPermission(@Nonnull final PermissionHolder caller, @Nonnull final Caption permission) {
-        return caller.hasPermission(permission.getTranslated());
-    }
-
-    /**
-     * Check if the owner of the profile has a given (global) permission
-     *
-     * @param permission Permission
-     * @return {@code true} if the owner has the given permission, else {@code false}
-     */
-    public static boolean hasPermission(@Nonnull final PermissionHolder caller, @Nonnull final String permission) {
-        return caller.hasPermission(permission);
-    }
-
-    /**
-     * Checks if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
-     *
-     * @param player
-     * @param permission
-     * @param notify
-     * @return
-     */
-    public static boolean hasPermission(PlotPlayer<?> player, String permission, boolean notify) {
-        if (!hasPermission(player, permission)) {
-            if (notify) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION_EVENT, permission);
-            }
-            return false;
-        }
-        return true;
-    }
-
-    public static int hasPermissionRange(PlotPlayer<?> player, Captions perm, int range) {
-        return hasPermissionRange(player, perm.getTranslated(), range);
+    default boolean hasPermission(@Nonnull final String permission) {
+        return hasPermission(null ,permission);
     }
 
     /**
@@ -91,12 +52,43 @@ public class Permissions {
      * - Excessively high values will lag<br>
      * - The default range that is checked is {@link Settings.Limit#MAX_PLOTS}<br>
      *
-     * @param player Player to check for
      * @param stub   The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
      * @param range  The range to check
      * @return The highest permission they have within that range
      */
-    public static int hasPermissionRange(PlotPlayer<?> player, String stub, int range) {
-        return player.hasPermissionRange(stub, range);
+    @Nonnegative default int hasPermissionRange(@Nonnull final String stub,
+                                                @Nonnegative final int range) {
+        if (hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
+            return Integer.MAX_VALUE;
+        }
+        String[] nodes = stub.split("\\.");
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < (nodes.length - 1); i++) {
+            builder.append(nodes[i]).append(".");
+            if (!stub.equals(builder + Captions.PERMISSION_STAR.getTranslated())) {
+                if (hasPermission(builder + Captions.PERMISSION_STAR.getTranslated())) {
+                    return Integer.MAX_VALUE;
+                }
+            }
+        }
+        if (hasPermission(stub + ".*")) {
+            return Integer.MAX_VALUE;
+        }
+        for (int i = range; i > 0; i--) {
+            if (hasPermission(stub + "." + i)) {
+                return i;
+            }
+        }
+        return 0;
     }
+
+    /**
+     * Check if the owner of the profile has a given permission
+     *
+     * @param world      World name
+     * @param permission Permission
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    boolean hasPermission(@Nullable String world, @Nonnull String permission);
+
 }

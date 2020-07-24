@@ -23,38 +23,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util;
+package com.plotsquared.core.permissions;
 
-import com.google.inject.Singleton;
-import com.plotsquared.core.util.PermHandler;
-import net.milkbowl.vault.permission.Permission;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-@Singleton public class BukkitPermHandler extends PermHandler {
+/**
+ * A permission profile that can be used to check for permissions
+ */
+public interface PermissionProfile {
 
-    private Permission perms;
-
-    @Override
-    public boolean init() {
-        if (this.perms == null) {
-            setupPermissions();
-        }
-        return this.perms != null;
+    /**
+     * Check if the owner of the profile has a given (global) permission
+     *
+     * @param permission Permission
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    default boolean hasPermission(@Nonnull final String permission) {
+        return hasPermission(null ,permission);
     }
 
-    private void setupPermissions() {
-        if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
-            return;
-        }
-        RegisteredServiceProvider<Permission> permissionProvider =
-            Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
-        if (permissionProvider != null) {
-            this.perms = permissionProvider.getProvider();
-        }
-    }
+    /**
+     * Check if the owner of the profile has a given permission
+     *
+     * @param world      World name
+     * @param permission Permission
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    boolean hasPermission(@Nullable final String world, @Nonnull String permission);
 
-    @Override public boolean hasPermission(String world, String player, String perm) {
-        return this.perms.playerHas(world, Bukkit.getOfflinePlayer(player), perm);
-    }
 }

@@ -37,6 +37,9 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.NullPermissionProfile;
+import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.permissions.PermissionProfile;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
@@ -97,11 +100,15 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
+    private final PermissionProfile permissionProfile;
 
-    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler) {
+    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler,
+        @Nonnull final PermissionHandler permissionHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
+        this.permissionProfile = permissionHandler.getPermissionProfile(this).orElse(
+            NullPermissionProfile.INSTANCE);
     }
 
     public static <T> PlotPlayer<T> from(@Nonnull final T object) {
@@ -135,18 +142,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return players;
     }
 
-    /**
-     * Efficiently wrap a Player, or OfflinePlayer object to get a PlotPlayer (or fetch if it's already cached)<br>
-     * - Accepts sponge/bukkit Player (online)
-     * - Accepts player name (online)
-     * - Accepts UUID
-     * - Accepts bukkit OfflinePlayer (offline)
-     *
-     * @param player Player object to wrap
-     * @return Wrapped player
-     */
-    public static PlotPlayer<?> wrap(Object player) {
-        return PlotSquared.platform().wrapPlayer(player);
+    @Override public final boolean hasPermission(@Nullable final String world,
+                                                 @Nonnull final String permission) {
+        return this.permissionProfile.hasPermission(world, permission);
     }
 
     public abstract Actor toActor();
@@ -248,31 +246,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     public int getAllowedClusters() {
         return Permissions.hasPermissionRange(this, "plots.cluster", Settings.Limit.MAX_PLOTS);
-    }
-
-    public int hasPermissionRange(String stub, int range) {
-        if (hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
-            return Integer.MAX_VALUE;
-        }
-        String[] nodes = stub.split("\\.");
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < (nodes.length - 1); i++) {
-            builder.append(nodes[i]).append(".");
-            if (!stub.equals(builder + Captions.PERMISSION_STAR.getTranslated())) {
-                if (hasPermission(builder + Captions.PERMISSION_STAR.getTranslated())) {
-                    return Integer.MAX_VALUE;
-                }
-            }
-        }
-        if (hasPermission(stub + ".*")) {
-            return Integer.MAX_VALUE;
-        }
-        for (int i = range; i > 0; i--) {
-            if (hasPermission(stub + "." + i)) {
-                return i;
-            }
-        }
-        return 0;
     }
 
     /**

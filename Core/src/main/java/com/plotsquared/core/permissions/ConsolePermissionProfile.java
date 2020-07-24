@@ -23,15 +23,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.util;
+package com.plotsquared.core.permissions;
 
-public abstract class PermHandler {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public abstract boolean init();
+public enum ConsolePermissionProfile implements PermissionProfile {
+    INSTANCE;
 
-    public abstract boolean hasPermission(String world, String player, String perm);
-
-    public boolean hasPermission(String player, String perm) {
-        return hasPermission(null, player, perm);
+    @Override public boolean hasPermission(@Nullable final String world,
+                                           @Nonnull final String permission) {
+        return true;
     }
+
 }

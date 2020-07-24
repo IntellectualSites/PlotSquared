@@ -418,13 +418,13 @@ public class ExpireManager {
             }
         }
         for (UUID helper : plot.getTrusted()) {
-            PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
         }
         for (UUID helper : plot.getMembers()) {
-            PlotPlayer player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
             if (player != null) {
                 MainUtil.sendMessage(player, Captions.PLOT_REMOVED_USER, plot.toString());
             }
