@@ -39,6 +39,7 @@ import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -55,6 +56,7 @@ import org.bukkit.entity.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -72,7 +74,12 @@ public class BukkitRegionManager extends RegionManager {
 
     private static final Logger logger =
         LoggerFactory.getLogger("P2/" + BukkitRegionManager.class.getSimpleName());
-    @Inject private GlobalBlockQueue blockQueue;
+    private final GlobalBlockQueue blockQueue;
+
+    @Inject public BukkitRegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue) {
+        super(worldUtil, blockQueue);
+        this.blockQueue = blockQueue;
+    }
 
     @Override public boolean handleClear(Plot plot, Runnable whenDone, PlotManager manager) {
         return false;
@@ -167,7 +174,7 @@ public class BukkitRegionManager extends RegionManager {
         final int tcz = p2z >> 4;
 
         final QueueCoordinator queue = blockQueue.getNewQueue(world);
-        queue.setReadRegion(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
+        queue.addReadChunks(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
         queue.setChunkConsumer(chunk -> {
 
             int x = chunk.getX();

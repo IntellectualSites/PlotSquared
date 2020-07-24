@@ -29,12 +29,13 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class DelegateQueueCoordinator extends QueueCoordinator {
@@ -180,16 +181,22 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
     }
 
-    @Override public CuboidRegion getReadRegion() {
+    @Override public List<BlockVector2> getReadChunks() {
         if (parent != null) {
-            return parent.getReadRegion();
+            return parent.getReadChunks();
         }
         return null;
     }
 
-    @Override public void setReadRegion(CuboidRegion readRegion) {
+    @Override public void addReadChunks(Set<BlockVector2> readChunks) {
         if (parent != null) {
-            parent.setReadRegion(readRegion);
+            parent.addReadChunks(readChunks);
+        }
+    }
+
+    @Override public void addReadChunk(BlockVector2 chunk) {
+        if (parent != null) {
+            parent.addReadChunk(chunk);
         }
     }
 

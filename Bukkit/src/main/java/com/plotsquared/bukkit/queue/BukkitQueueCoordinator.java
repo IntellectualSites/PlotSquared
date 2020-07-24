@@ -186,8 +186,8 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         }
         CuboidRegion region;
         Collection<BlockVector2> read = new ArrayList<>();
-        if ((region = getReadRegion()) != null) {
-            read = region.getChunks();
+        if (getReadChunks().size() > 0) {
+            read.addAll(getReadChunks());
         }
         chunkCoordinator =
             chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(getWorld())

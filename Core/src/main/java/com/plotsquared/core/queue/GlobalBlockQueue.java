@@ -68,6 +68,7 @@ public class GlobalBlockQueue {
         boolean success = false;
         if (queue.size() > 0 && !activeQueues.contains(queue)) {
             success = activeQueues.add(queue);
+            System.out.println("c");
             queue.start();
         }
         return success;

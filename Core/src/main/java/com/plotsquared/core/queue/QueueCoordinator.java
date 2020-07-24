@@ -33,7 +33,6 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -43,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public abstract class QueueCoordinator {
@@ -119,13 +119,15 @@ public abstract class QueueCoordinator {
 
     public abstract boolean setEntity(Entity entity);
 
-    public abstract CuboidRegion getReadRegion();
+    public abstract List<BlockVector2> getReadChunks();
 
-    public abstract void setReadRegion(CuboidRegion readRegion);
+    public abstract void addReadChunks(Set<BlockVector2> readChunks);
 
-    public abstract void setUnloadAfter(boolean unloadAfter);
+    public abstract void addReadChunk(BlockVector2 chunk);
 
     public abstract boolean isUnloadAfter();
+
+    public abstract void setUnloadAfter(boolean unloadAfter);
 
     public abstract void regenChunk(int x, int z);
 
@@ -136,6 +138,7 @@ public abstract class QueueCoordinator {
     }
 
     public boolean enqueue() {
+        System.out.println("b");
         return blockQueue.enqueue(this);
     }
 

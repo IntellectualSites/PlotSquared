@@ -30,7 +30,6 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
@@ -39,6 +38,9 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.entity.EntityTypes;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -47,6 +49,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private final World world;
     private final ConcurrentHashMap<BlockVector2, LocalChunk> blockChunks =
         new ConcurrentHashMap<>();
+    private final List<BlockVector2> readRegion = new ArrayList<>();
     private long modified;
     private LocalChunk lastWrappedChunk;
     private int lastX = Integer.MIN_VALUE;
@@ -58,8 +61,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private int[] regenEnd;
     private Consumer<BlockVector2> consumer = null;
     private boolean unloadAfter = true;
-    private CuboidRegion readRegion = null;
-
     private GlobalBlockQueue globalBlockQueue;
 
     public BasicQueueCoordinator(World world) {
@@ -74,7 +75,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     }
 
     @Override public final int size() {
-        return blockChunks.size();
+        return blockChunks.size() + readRegion.size();
     }
 
     @Override public final void setModified(long modified) {
@@ -142,12 +143,16 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return true;
     }
 
-    @Override public CuboidRegion getReadRegion() {
+    @Override public List<BlockVector2> getReadChunks() {
         return this.readRegion;
     }
 
-    @Override public void setReadRegion(CuboidRegion readRegion) {
-        this.readRegion = readRegion;
+    @Override public void addReadChunk(BlockVector2 chunk) {
+        this.readRegion.add(chunk);
+    }
+
+    @Override public void addReadChunks(Set<BlockVector2> readRegion) {
+        this.readRegion.addAll(readRegion);
     }
 
     @Override public void regenChunk(int x, int z) {

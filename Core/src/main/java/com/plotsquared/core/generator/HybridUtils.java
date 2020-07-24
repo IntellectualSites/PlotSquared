@@ -161,7 +161,7 @@ public class HybridUtils {
             System.gc();
 
             QueueCoordinator queue = area.getQueue();
-            queue.setReadRegion(region);
+            queue.addReadChunks(region.getChunks());
             queue.setChunkConsumer(blockVector2 -> {
                 int X = blockVector2.getX();
                 int Z = blockVector2.getZ();

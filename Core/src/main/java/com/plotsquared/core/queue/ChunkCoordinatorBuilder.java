@@ -30,11 +30,10 @@ import com.google.inject.Inject;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.location.Location;
 import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.World;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -53,7 +52,6 @@ public class ChunkCoordinatorBuilder {
     private long maxIterationTime = 60; // A little over 1 tick;
     private int initialBatchSize = 4;
     private boolean unloadAfter = true;
-    private CuboidRegion readRegion = null;
 
     @Inject
     public ChunkCoordinatorBuilder(@Nonnull ChunkCoordinatorFactory chunkCoordinatorFactory) {
@@ -105,8 +103,11 @@ public class ChunkCoordinatorBuilder {
         return this;
     }
 
-    @Nonnull public ChunkCoordinatorBuilder withFinalAction(@Nonnull final Runnable whenDone) {
-        this.whenDone = Preconditions.checkNotNull(whenDone, "Final action may not be null");
+    @Nonnull public ChunkCoordinatorBuilder withFinalAction(@Nullable final Runnable whenDone) {
+        if (whenDone == null) {
+            return this;
+        }
+        this.whenDone = whenDone;
         return this;
     }
 

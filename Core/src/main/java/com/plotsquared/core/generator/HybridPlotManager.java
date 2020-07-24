@@ -248,8 +248,8 @@ public class HybridPlotManager extends ClassicPlotManager {
 
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
         final QueueCoordinator queue = hybridPlotWorld.getQueue();
-        queue.setReadRegion(new CuboidRegion(plot.getExtendedBottomAbs().getBlockVector3(),
-            plot.getExtendedTopAbs().getBlockVector3()));
+        queue.addReadChunks(new CuboidRegion(plot.getExtendedBottomAbs().getBlockVector3(),
+            plot.getExtendedTopAbs().getBlockVector3()).getChunks());
         queue.setChunkConsumer(blockVector2 -> {
             // If the chunk isn't near the edge and it isn't an augmented world we can just regen the whole chunk
             if (canRegen && ChunkUtil.isWholeChunk(pos1, pos2, blockVector2)) {

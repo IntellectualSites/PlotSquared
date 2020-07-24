@@ -82,8 +82,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private Location SIGN_LOCATION;
     @Getter private File root = null;
 
-    private final RegionManager regionManager;
-    private final SchematicHandler schematicHandler;
+    @Inject private SchematicHandler schematicHandler;
 
     @Inject public HybridPlotWorld(@Assisted("world") final String worldName,
                                    @Nullable @Assisted("id") final String id,
@@ -91,13 +90,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                                    @Nullable @Assisted("min") final PlotId min,
                                    @Nullable @Assisted("max") final PlotId max,
                                    @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                                   @Nonnull final RegionManager regionManager,
-                                   @Nonnull final SchematicHandler schematicHandler,
                                    @Nonnull final GlobalBlockQueue blockQueue,
                                    @Nullable final EconHandler econHandler) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
-        this.regionManager = regionManager;
-        this.schematicHandler = schematicHandler;
+        PlotSquared.platform().getInjector().injectMembers(this);
     }
 
     public static byte wrap(byte data, int start) {
@@ -148,7 +144,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     @Nonnull @Override protected PlotManager createManager() {
-        return new HybridPlotManager(this, this.regionManager);
+        return new HybridPlotManager(this, PlotSquared.platform().getRegionManager());
     }
 
     public Location getSignLocation(@Nonnull Plot plot) {

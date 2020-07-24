@@ -46,10 +46,10 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 public abstract class RegionManager {
@@ -58,9 +58,14 @@ public abstract class RegionManager {
         LoggerFactory.getLogger("P2/" + RegionManager.class.getSimpleName());
 
     public static RegionManager manager = null;
-    @Inject private WorldUtil worldUtil;
-    @Inject private ChunkManager chunkManager;
-    @Inject private GlobalBlockQueue blockQueue;
+    private final WorldUtil worldUtil;
+    private final GlobalBlockQueue blockQueue;
+
+    @Inject
+    public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue) {
+        this.worldUtil = worldUtil;
+        this.blockQueue = blockQueue;
+    }
 
     public static BlockVector2 getRegion(Location location) {
         int x = location.getX() >> 9;
@@ -143,8 +148,8 @@ public abstract class RegionManager {
             (BasicQueueCoordinator) blockQueue.getNewQueue(newWorld);
         copyFromTo(pos1, pos2, relX, relZ, oldWorld, copyFrom, copyTo, false);
         copyFrom.setCompleteTask(copyTo::enqueue);
-        copyFrom.setReadRegion(new CuboidRegion(BlockVector3.at(pos1.getX(), 0, pos1.getZ()),
-            BlockVector3.at(pos2.getX(), 0, pos2.getZ())));
+        copyFrom.addReadChunks(new CuboidRegion(BlockVector3.at(pos1.getX(), 0, pos1.getZ()),
+            BlockVector3.at(pos2.getX(), 0, pos2.getZ())).getChunks());
         copyTo.setCompleteTask(whenDone);
         copyFrom.enqueue();
         return true;
@@ -171,10 +176,11 @@ public abstract class RegionManager {
         QueueCoordinator fromQueue2 = blockQueue.getNewQueue(world2);
         fromQueue1.setUnloadAfter(false);
         fromQueue2.setUnloadAfter(false);
-        fromQueue1.setReadRegion(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
-        fromQueue2.setReadRegion(new CuboidRegion(swapPos.getBlockVector3(), BlockVector3
+        fromQueue1.addReadChunks(
+            new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
+        fromQueue2.addReadChunks(new CuboidRegion(swapPos.getBlockVector3(), BlockVector3
             .at(swapPos.getX() + pos2.getX() - pos1.getX(), 0,
-                swapPos.getZ() + pos2.getZ() - pos1.getZ())));
+                swapPos.getZ() + pos2.getZ() - pos1.getZ())).getChunks());
         QueueCoordinator toQueue1 = blockQueue.getNewQueue(world1);
         QueueCoordinator toQueue2 = blockQueue.getNewQueue(world2);
 
@@ -231,7 +237,7 @@ public abstract class RegionManager {
         final int minZ = pos1.getZ();
         final int maxX = pos2.getX();
         final int maxZ = pos2.getZ();
-        queue.setReadRegion(region);
+        queue.addReadChunks(region.getChunks());
         queue.setChunkConsumer(blockVector2 -> {
             final int cx = blockVector2.getX() << 4;
             final int cz = blockVector2.getZ() << 4;
