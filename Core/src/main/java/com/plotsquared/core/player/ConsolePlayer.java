@@ -33,6 +33,7 @@ import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.inject.annotations.ConsoleActor;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -43,6 +44,8 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,8 +131,16 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override public void teleport(Location location, TeleportCause cause) {
-        setMeta(META_LAST_PLOT, location.getPlot());
-        setMeta(META_LOCATION, location);
+        try (final MetaDataAccess<Plot> lastPlot = accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+            if (location.getPlot() == null) {
+                lastPlot.remove();
+            } else {
+                lastPlot.set(location.getPlot());
+            }
+        }
+        try (final MetaDataAccess<Location> locationMetaDataAccess = accessPersistentMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+            locationMetaDataAccess.set(location);
+        }
     }
 
     @Override public String getName() {

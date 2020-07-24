@@ -28,10 +28,13 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.permissions.PermissionHolder;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Permissions class handles checking user permissions.<br>
@@ -66,19 +69,21 @@ public class Permissions {
         if (!Settings.Enabled_Components.PERMISSION_CACHE) {
             return hasPermission((PermissionHolder) player, permission);
         }
-        HashMap<String, Boolean> map = player.getMeta("perm");
-        if (map != null) {
-            Boolean result = map.get(permission);
-            if (result != null) {
-                return result;
+        try (final MetaDataAccess<Map<String, Boolean>> mapAccess =
+            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_PERMISSIONS)) {
+            Map<String, Boolean> map = mapAccess.get().orElse(null);
+            if (map != null) {
+                final Boolean result = map.get(permission);
+                if (result != null) {
+                    return result;
+                }
+            } else {
+                mapAccess.set((map = new HashMap<>()));
             }
-        } else {
-            map = new HashMap<>();
-            player.setMeta("perm", map);
+            boolean result = hasPermission((PermissionHolder) player, permission);
+            map.put(permission, result);
+            return result;
         }
-        boolean result = hasPermission((PermissionHolder) player, permission);
-        map.put(permission, result);
-        return result;
     }
 
     /**

@@ -30,6 +30,8 @@ import com.plotsquared.core.configuration.Caption;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.GeneratorWrapper;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
@@ -221,7 +223,10 @@ public enum CommonSetupSteps implements SetupStep {
                 MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_APPLY_PLOTSQUARED);
             }
             builder.worldName(argument);
-            plotPlayer.deleteMeta("setup");
+            try (final MetaDataAccess<SetupProcess> setupAccess = plotPlayer.accessTemporaryMetaData(
+                PlayerMetaDataKeys.TEMPORARY_SETUP)) {
+                setupAccess.remove();
+            }
             String world;
             if (builder.setupManager() == null) {
                 world = PlotSquared.platform().getInjector().getInstance(SetupUtils.class).setupWorld(builder);
