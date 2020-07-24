@@ -176,6 +176,13 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
     }
 
+    @Override public Runnable getCompleteTask() {
+        if (parent != null) {
+            return parent.getCompleteTask();
+        }
+        return null;
+    }
+
     @Override public void setCompleteTask(Runnable whenDone) {
         if (parent != null) {
             parent.setCompleteTask(whenDone);
