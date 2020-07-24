@@ -93,7 +93,7 @@ public class Buy extends Command {
 
             this.econHandler.depositMoney(PlotSquared.platform().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
 
-            PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
+            PlotPlayer<?> owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {
                 Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
             }

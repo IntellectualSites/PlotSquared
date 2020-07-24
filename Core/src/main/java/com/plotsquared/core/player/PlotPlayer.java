@@ -26,7 +26,9 @@
 package com.plotsquared.core.player;
 
 import com.google.common.base.Preconditions;
+import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.collection.ByteArrayUtilities;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.CaptionUtility;
@@ -35,6 +37,9 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.NullPermissionProfile;
+import com.plotsquared.core.permissions.PermissionHandler;
+import com.plotsquared.core.permissions.PermissionProfile;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
@@ -45,6 +50,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.synchronization.LockRepository;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
@@ -54,11 +60,11 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
@@ -78,9 +84,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotPlayer.class.getSimpleName());
 
-    public static final String META_LAST_PLOT = "lastplot";
-    public static final String META_LOCATION = "location";
-
     // Used to track debug mode
     private static final Set<PlotPlayer<?>> debugModeEnabled = Collections.synchronizedSet(new HashSet<>());
 
@@ -92,14 +95,20 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
     private ConcurrentHashMap<String, Object> meta;
     private int hash;
 
+    private final LockRepository lockRepository = new LockRepository();
+
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
+    private final PermissionProfile permissionProfile;
 
-    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler) {
+    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler,
+        @Nonnull final PermissionHandler permissionHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
+        this.permissionProfile = permissionHandler.getPermissionProfile(this).orElse(
+            NullPermissionProfile.INSTANCE);
     }
 
     public static <T> PlotPlayer<T> from(@Nonnull final T object) {
@@ -133,18 +142,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         return players;
     }
 
-    /**
-     * Efficiently wrap a Player, or OfflinePlayer object to get a PlotPlayer (or fetch if it's already cached)<br>
-     * - Accepts sponge/bukkit Player (online)
-     * - Accepts player name (online)
-     * - Accepts UUID
-     * - Accepts bukkit OfflinePlayer (offline)
-     *
-     * @param player Player object to wrap
-     * @return Wrapped player
-     */
-    public static PlotPlayer<?> wrap(Object player) {
-        return PlotSquared.platform().wrapPlayer(player);
+    @Override public final boolean hasPermission(@Nullable final String world,
+                                                 @Nonnull final String permission) {
+        return this.permissionProfile.hasPermission(world, permission);
     }
 
     public abstract Actor toActor();
@@ -157,7 +157,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @param key
      * @param value
      */
-    public void setMeta(String key, Object value) {
+    void setMeta(String key, Object value) {
         if (value == null) {
             deleteMeta(key);
         } else {
@@ -175,14 +175,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @param <T> the object type to return
      * @return the value assigned to the key or null if it does not exist
      */
-    public <T> T getMeta(String key) {
+    <T> T getMeta(String key) {
         if (this.meta != null) {
             return (T) this.meta.get(key);
         }
         return null;
     }
 
-    public <T> T getMeta(String key, T defaultValue) {
+    <T> T getMeta(String key, T defaultValue) {
         T meta = getMeta(key);
         if (meta == null) {
             return defaultValue;
@@ -201,7 +201,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      *
      * @param key
      */
-    public Object deleteMeta(String key) {
+    Object deleteMeta(String key) {
         return this.meta == null ? null : this.meta.remove(key);
     }
 
@@ -220,11 +220,13 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      * @return the plot the player is standing on or null if standing on a road or not in a {@link PlotArea}
      */
     public Plot getCurrentPlot() {
-        Plot value = getMeta(PlotPlayer.META_LAST_PLOT);
-        if (value == null && !Settings.Enabled_Components.EVENTS) {
-            return getLocation().getPlot();
+        try (final MetaDataAccess<Plot> lastPlotAccess =
+            this.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+            if (lastPlotAccess.get().orElse(null) == null && !Settings.Enabled_Components.EVENTS) {
+                return this.getLocation().getPlot();
+            }
+            return lastPlotAccess.get().orElse(null);
         }
-        return value;
     }
 
     /**
@@ -244,31 +246,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
      */
     public int getAllowedClusters() {
         return Permissions.hasPermissionRange(this, "plots.cluster", Settings.Limit.MAX_PLOTS);
-    }
-
-    public int hasPermissionRange(String stub, int range) {
-        if (hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
-            return Integer.MAX_VALUE;
-        }
-        String[] nodes = stub.split("\\.");
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < (nodes.length - 1); i++) {
-            builder.append(nodes[i]).append(".");
-            if (!stub.equals(builder + Captions.PERMISSION_STAR.getTranslated())) {
-                if (hasPermission(builder + Captions.PERMISSION_STAR.getTranslated())) {
-                    return Integer.MAX_VALUE;
-                }
-            }
-        }
-        if (hasPermission(stub + ".*")) {
-            return Integer.MAX_VALUE;
-        }
-        for (int i = range; i > 0; i--) {
-            if (hasPermission(stub + "." + i)) {
-                return i;
-            }
-        }
-        return 0;
     }
 
     /**
@@ -721,18 +698,85 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         }
     }
 
-    public byte[] getPersistentMeta(String key) {
+    byte[] getPersistentMeta(String key) {
         return this.metaMap.get(key);
     }
 
-    public void removePersistentMeta(String key) {
-        this.metaMap.remove(key);
+    Object removePersistentMeta(String key) {
+        final Object old = this.metaMap.remove(key);
         if (Settings.Enabled_Components.PERSISTENT_META) {
             DBFunc.removePersistentMeta(getUUID(), key);
         }
+        return old;
     }
 
-    public void setPersistentMeta(String key, byte[] value) {
+    /**
+     * Access keyed persistent meta data for this player. This returns a meta data
+     * access instance, that MUST be closed. It is meant to be used with try-with-resources,
+     * like such:
+     * <pre>{@code
+     * try (final MetaDataAccess<Integer> access = player.accessPersistentMetaData(PlayerMetaKeys.GRANTS)) {
+     *     int grants = access.get();
+     *     access.set(grants + 1);
+     * }
+     * }</pre>
+     *
+     * @param key Meta data key
+     * @param <T> Meta data type
+     * @return Meta data access. MUST be closed after being used
+     */
+    @Nonnull public <T> MetaDataAccess<T> accessPersistentMetaData(@Nonnull final MetaDataKey<T> key) {
+        return new PersistentMetaDataAccess<>(this, key, this.lockRepository.lock(key.getLockKey()));
+    }
+
+    /**
+     * Access keyed temporary meta data for this player. This returns a meta data
+     * access instance, that MUST be closed. It is meant to be used with try-with-resources,
+     * like such:
+     * <pre>{@code
+     * try (final MetaDataAccess<Integer> access = player.accessTemporaryMetaData(PlayerMetaKeys.GRANTS)) {
+     *     int grants = access.get();
+     *     access.set(grants + 1);
+     * }
+     * }</pre>
+     *
+     * @param key Meta data key
+     * @param <T> Meta data type
+     * @return Meta data access. MUST be closed after being used
+     */
+    @Nonnull public <T> MetaDataAccess<T> accessTemporaryMetaData(@Nonnull final MetaDataKey<T> key) {
+        return new TemporaryMetaDataAccess<>(this, key, this.lockRepository.lock(key.getLockKey()));
+    }
+
+    <T> void setPersistentMeta(@Nonnull final MetaDataKey<T> key,
+                               @Nonnull final T value) {
+        final Object rawValue = value;
+        if (key.getType().getRawType().equals(Integer.class)) {
+            this.setPersistentMeta(key.toString(), Ints.toByteArray((int) rawValue));
+        } else if (key.getType().getRawType().equals(Boolean.class)) {
+            this.setPersistentMeta(key.toString(), ByteArrayUtilities.booleanToBytes((boolean) rawValue));
+        } else {
+            throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType().toString()));
+        }
+    }
+
+    @Nullable <T> T getPersistentMeta(@Nonnull final MetaDataKey<T> key) {
+        final byte[] value = this.getPersistentMeta(key.toString());
+        if (value == null) {
+            return null;
+        }
+        final Object returnValue;
+        if (key.getType().getRawType().equals(Integer.class)) {
+            returnValue = Ints.fromByteArray(value);
+        } else if (key.getType().getRawType().equals(Boolean.class)) {
+            returnValue = ByteArrayUtilities.bytesToBoolean(value);
+        } else {
+            throw new IllegalArgumentException(String.format("Unknown meta data type '%s'", key.getType().toString()));
+        }
+        return (T) returnValue;
+    }
+
+    void setPersistentMeta(String key, byte[] value) {
         boolean delete = hasPersistentMeta(key);
         this.metaMap.put(key, value);
         if (Settings.Enabled_Components.PERSISTENT_META) {
@@ -740,7 +784,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         }
     }
 
-    public boolean hasPersistentMeta(String key) {
+    boolean hasPersistentMeta(String key) {
         return this.metaMap.containsKey(key);
     }
 
@@ -782,6 +826,15 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         if (this.econHandler != null) {
             this.econHandler.depositMoney(this, amount);
         }
+    }
+
+    /**
+     * Get this player's {@link LockRepository}
+     *
+     * @return Lock repository instance
+     */
+    @Nonnull public LockRepository getLockRepository() {
+        return this.lockRepository;
     }
 
     @FunctionalInterface

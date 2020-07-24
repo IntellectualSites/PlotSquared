@@ -26,8 +26,9 @@
 package com.plotsquared.bukkit.inject;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.google.inject.util.Providers;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitChunkCoordinator;
@@ -36,7 +37,6 @@ import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
 import com.plotsquared.bukkit.util.BukkitEconHandler;
 import com.plotsquared.bukkit.util.BukkitInventoryUtil;
-import com.plotsquared.bukkit.util.BukkitPermHandler;
 import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -58,7 +58,6 @@ import com.plotsquared.core.queue.QueueProvider;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
-import com.plotsquared.core.util.PermHandler;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.SchematicHandler;
@@ -72,6 +71,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @RequiredArgsConstructor
 public class BukkitModule extends AbstractModule {
@@ -98,7 +98,6 @@ public class BukkitModule extends AbstractModule {
         bind(ChunkManager.class).to(BukkitChunkManager.class);
         bind(RegionManager.class).to(BukkitRegionManager.class);
         bind(SchematicHandler.class).to(BukkitSchematicHandler.class);
-        this.setupVault();
         if (Settings.Enabled_Components.WORLDS) {
             bind(PlotAreaManager.class).to(SinglePlotAreaManager.class);
         } else {
@@ -111,26 +110,14 @@ public class BukkitModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(ChunkCoordinatorBuilderFactory.class));
     }
 
-    private void setupVault() {
+    @Provides @Singleton @Nullable EconHandler provideEconHandler() {
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
-            BukkitPermHandler bukkitPermHandler = null;
             try {
-                bukkitPermHandler = new BukkitPermHandler();
-                bind(PermHandler.class).toInstance(bukkitPermHandler);
+                return new BukkitEconHandler();
             } catch (final Exception ignored) {
-                bind(PermHandler.class).toProvider(Providers.of(null));
             }
-            try {
-                final BukkitEconHandler bukkitEconHandler =
-                    new BukkitEconHandler(bukkitPermHandler);
-                bind(EconHandler.class).toInstance(bukkitEconHandler);
-            } catch (final Exception ignored) {
-                bind(EconHandler.class).toProvider(Providers.of(null));
-            }
-        } else {
-            bind(PermHandler.class).toProvider(Providers.of(null));
-            bind(EconHandler.class).toProvider(Providers.of(null));
         }
+        return null;
     }
 
 }

@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
@@ -36,6 +35,8 @@ import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -85,54 +86,57 @@ public class Claim extends SubCommand {
         int currentPlots = Settings.Limit.GLOBAL ?
             player.getPlotCount() :
             player.getPlotCount(location.getWorldName());
-        int grants = 0;
-        if (currentPlots >= player.getAllowedPlots() && !force) {
-            if (player.hasPersistentMeta("grantedPlots")) {
-                grants = Ints.fromByteArray(player.getPersistentMeta("grantedPlots"));
-                if (grants <= 0) {
-                    player.removePersistentMeta("grantedPlots");
+
+        final PlotArea area = plot.getArea();
+
+        try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+            int grants = 0;
+            if (currentPlots >= player.getAllowedPlots() && !force) {
+                if (metaDataAccess.isPresent()) {
+                    grants = metaDataAccess.get().orElse(0);
+                    if (grants <= 0) {
+                        metaDataAccess.remove();
+                        return sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
+                    }
+                } else {
                     return sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
                 }
-            } else {
-                return sendMessage(player, Captions.CANT_CLAIM_MORE_PLOTS);
             }
-        }
-        if (!plot.canClaim(player)) {
-            return sendMessage(player, Captions.PLOT_IS_CLAIMED);
-        }
-        final PlotArea area = plot.getArea();
-        if (schematic != null && !schematic.isEmpty()) {
-            if (area.isSchematicClaimSpecify()) {
-                if (!area.hasSchematic(schematic)) {
-                    return sendMessage(player, Captions.SCHEMATIC_INVALID,
-                        "non-existent: " + schematic);
-                }
-                if (!Permissions.hasPermission(player, CaptionUtility
-                    .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
-                    && !Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC) && !force) {
-                    return sendMessage(player, Captions.NO_SCHEMATIC_PERMISSION, schematic);
+
+            if (!plot.canClaim(player)) {
+                return sendMessage(player, Captions.PLOT_IS_CLAIMED);
+            }
+            if (schematic != null && !schematic.isEmpty()) {
+                if (area.isSchematicClaimSpecify()) {
+                    if (!area.hasSchematic(schematic)) {
+                        return sendMessage(player, Captions.SCHEMATIC_INVALID, "non-existent: " + schematic);
+                    }
+                    if (!Permissions.hasPermission(player, CaptionUtility.format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(),
+                        schematic)) && !Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SCHEMATIC)
+                        && !force) {
+                        return sendMessage(player, Captions.NO_SCHEMATIC_PERMISSION, schematic);
+                    }
                 }
             }
-        }
-        if ((this.econHandler != null) && area.useEconomy() && !force) {
-            Expression<Double> costExr = area.getPrices().get("claim");
-            double cost = costExr.evaluate((double) currentPlots);
-            if (cost > 0d) {
-                if (this.econHandler.getMoney(player) < cost) {
-                    return sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
+            if ((this.econHandler != null) && area.useEconomy() && !force) {
+                Expression<Double> costExr = area.getPrices().get("claim");
+                double cost = costExr.evaluate((double) currentPlots);
+                if (cost > 0d) {
+                    if (this.econHandler.getMoney(player) < cost) {
+                        return sendMessage(player, Captions.CANNOT_AFFORD_PLOT, "" + cost);
+                    }
+                    this.econHandler.withdrawMoney(player, cost);
+                    sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
                 }
-                this.econHandler.withdrawMoney(player, cost);
-                sendMessage(player, Captions.REMOVED_BALANCE, cost + "");
             }
-        }
-        if (grants > 0) {
-            if (grants == 1) {
-                player.removePersistentMeta("grantedPlots");
-            } else {
-                player.setPersistentMeta("grantedPlots", Ints.toByteArray(grants - 1));
+            if (grants > 0) {
+                if (grants == 1) {
+                    metaDataAccess.remove();
+                } else {
+                    metaDataAccess.set(grants - 1);
+                }
+                sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "1", (grants - 1));
             }
-            sendMessage(player, Captions.REMOVED_GRANTED_PLOT, "1", (grants - 1));
         }
         int border = area.getBorder();
         if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {

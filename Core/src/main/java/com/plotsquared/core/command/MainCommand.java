@@ -31,6 +31,8 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -230,8 +232,6 @@ public class MainCommand extends Command {
     public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
-        // Clear perm caching //
-        player.deleteMeta("perm");
         // Optional command scope //
         Location location = null;
         Plot plot = null;
@@ -246,12 +246,17 @@ public class MainCommand extends Command {
                 Location newLoc = newPlot.getCenterSynchronous();
                 if (player.canTeleport(newLoc)) {
                     // Save meta
-                    location = player.getMeta(PlotPlayer.META_LOCATION);
-                    plot = player.getMeta(PlotPlayer.META_LAST_PLOT);
+                    try (final MetaDataAccess<Location> locationMetaDataAccess
+                        = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+                        location = locationMetaDataAccess.get().orElse(null);
+                        locationMetaDataAccess.set(newLoc);
+                    }
+                    try (final MetaDataAccess<Plot> plotMetaDataAccess
+                        = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                        plot = plotMetaDataAccess.get().orElse(null);
+                        plotMetaDataAccess.set(newPlot);
+                    }
                     tp = true;
-                    // Set loc
-                    player.setMeta(PlotPlayer.META_LOCATION, newLoc);
-                    player.setMeta(PlotPlayer.META_LAST_PLOT, newPlot);
                 } else {
                     Captions.BORDER.send(player);
                 }
@@ -304,15 +309,21 @@ public class MainCommand extends Command {
         }
         // Reset command scope //
         if (tp && !(player instanceof ConsolePlayer)) {
-            if (location == null) {
-                player.deleteMeta(PlotPlayer.META_LOCATION);
-            } else {
-                player.setMeta(PlotPlayer.META_LOCATION, location);
+            try (final MetaDataAccess<Location> locationMetaDataAccess
+                = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+                if (location == null) {
+                    locationMetaDataAccess.remove();
+                } else {
+                    locationMetaDataAccess.set(location);
+                }
             }
-            if (plot == null) {
-                player.deleteMeta(PlotPlayer.META_LAST_PLOT);
-            } else {
-                player.setMeta(PlotPlayer.META_LAST_PLOT, plot);
+            try (final MetaDataAccess<Plot> plotMetaDataAccess
+                = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                if (plot == null) {
+                    plotMetaDataAccess.remove();
+                } else {
+                    plotMetaDataAccess.set(plot);
+                }
             }
         }
         return CompletableFuture.completedFuture(true);

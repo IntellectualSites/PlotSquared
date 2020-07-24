@@ -32,6 +32,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -53,6 +54,8 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
+
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -69,13 +72,11 @@ import static com.sk89q.worldedit.world.gamemode.GameModes.SURVIVAL;
 public class BukkitPlayer extends PlotPlayer<Player> {
 
     private static boolean CHECK_EFFECTIVE = true;
-
-    private final EconHandler econHandler;
     public final Player player;
-    private boolean offline;
+    private final EconHandler econHandler;
     private String name;
-
-
+    private String lastMessage = "";
+    private long lastMessageTime = 0L;
     /**
      * <p>Please do not use this method. Instead use
      * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
@@ -83,21 +84,16 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      * @param player Bukkit player instance
      */
     public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher,
-        @Nonnull final Player player, @Nullable final EconHandler econHandler) {
-        this(plotAreaManager, eventDispatcher, player, false, econHandler);
-    }
-
-    public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher,
-        @Nonnull final Player player, final boolean offline, @Nullable final EconHandler econHandler) {
-        this(plotAreaManager, eventDispatcher, player, offline, true, econHandler);
+        @Nonnull final Player player, @Nullable final EconHandler econHandler, @Nonnull final PermissionHandler permissionHandler) {
+        this(plotAreaManager, eventDispatcher, player, false, econHandler, permissionHandler);
     }
 
     public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final
-        EventDispatcher eventDispatcher, @Nonnull final Player player, final boolean offline,
-        final boolean realPlayer, @Nullable final EconHandler econHandler) {
-        super(plotAreaManager, eventDispatcher, econHandler);
+        EventDispatcher eventDispatcher, @Nonnull final Player player,
+        final boolean realPlayer, @Nullable final EconHandler econHandler,
+        @Nonnull final PermissionHandler permissionHandler) {
+        super(plotAreaManager, eventDispatcher, econHandler, permissionHandler);
         this.player = player;
-        this.offline = offline;
         this.econHandler = econHandler;
         if (realPlayer) {
             super.populatePersistentMetaMap();
@@ -125,8 +121,8 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return player.getUniqueId();
     }
 
-    @Override public long getLastPlayed() {
-        return this.player.getLastPlayed();
+    @Override @Nonnegative public long getLastPlayed() {
+        return this.player.getLastSeen();
     }
 
     @Override public boolean canTeleport(@Nonnull final Location location) {
@@ -161,14 +157,8 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public boolean hasPermission(final String permission) {
-        if (this.offline && this.econHandler != null) {
-            return this.econHandler.hasPermission(getName(), permission);
-        }
-        return this.player.hasPermission(permission);
-    }
-
-    @Override public int hasPermissionRange(final String stub, final int range) {
+    @Override @Nonnegative public int hasPermissionRange(@Nonnull final String stub,
+                                            @Nonnegative final int range) {
         if (hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
             return Integer.MAX_VALUE;
         }
@@ -228,16 +218,12 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return max;
     }
 
-    @Override public boolean isPermissionSet(final String permission) {
-        return this.player.isPermissionSet(permission);
-    }
-
     @Override public void sendMessage(String message) {
         message = message.replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&');
-        if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
-            System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
-            setMeta("lastMessage", message);
-            setMeta("lastMessageTime", System.currentTimeMillis());
+        if (!StringMan.isEqual(this.lastMessage, message) || (
+            System.currentTimeMillis() - this.lastMessageTime > 5000)) {
+            this.lastMessage = message;
+            this.lastMessageTime = System.currentTimeMillis();
             this.player.sendMessage(message);
         }
     }
@@ -258,10 +244,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             this.name = this.player.getName();
         }
         return this.name;
-    }
-
-    @Override public boolean isOnline() {
-        return !this.offline && this.player.isOnline();
     }
 
     @Override public void setCompassTarget(Location location) {

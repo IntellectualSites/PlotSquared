@@ -106,6 +106,8 @@ shadowJar {
         include(dependency("javax.annotation:javax-annotation-api"))
         include(dependency('org.apache.logging.log4j:log4j-slf4j-impl'))
         include(dependency('org.slf4j:slf4j-api'))
+        include(dependency('javax.inject:javax.inject:1'))
+        include(dependency('aopalliance:aopalliance:1.0'))
     }
 
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')

@@ -23,34 +23,33 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.player;
+package com.plotsquared.core.permissions;
 
-import com.plotsquared.core.permissions.PermissionHolder;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import javax.annotation.Nonnegative;
-import java.util.UUID;
-
-public interface OfflinePlotPlayer extends PermissionHolder {
-
-    /**
-     * Gets the {@code UUID} of this player
-     *
-     * @return the player {@link UUID}
-     */
-    UUID getUUID();
+/**
+ * A permission profile that can be used to check for permissions
+ */
+public interface PermissionProfile {
 
     /**
-     * Gets the time in milliseconds when the player was last seen online.
+     * Check if the owner of the profile has a given (global) permission
      *
-     * @return the time in milliseconds when last online
+     * @param permission Permission
+     * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    @Nonnegative long getLastPlayed();
+    default boolean hasPermission(@Nonnull final String permission) {
+        return hasPermission(null ,permission);
+    }
 
     /**
-     * Gets the name of this player.
+     * Check if the owner of the profile has a given permission
      *
-     * @return the player name
+     * @param world      World name
+     * @param permission Permission
+     * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    String getName();
+    boolean hasPermission(@Nullable final String world, @Nonnull String permission);
 
 }

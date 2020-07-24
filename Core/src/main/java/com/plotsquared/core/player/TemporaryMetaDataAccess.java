@@ -23,38 +23,44 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.util;
+package com.plotsquared.core.player;
 
-import com.google.inject.Singleton;
-import com.plotsquared.core.util.PermHandler;
-import net.milkbowl.vault.permission.Permission;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
+import com.plotsquared.core.synchronization.LockRepository;
 
-@Singleton public class BukkitPermHandler extends PermHandler {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Optional;
 
-    private Permission perms;
+final class TemporaryMetaDataAccess<T> extends MetaDataAccess<T> {
 
-    @Override
-    public boolean init() {
-        if (this.perms == null) {
-            setupPermissions();
-        }
-        return this.perms != null;
+    TemporaryMetaDataAccess(@Nonnull final PlotPlayer<?> player,
+                            @Nonnull final MetaDataKey<T> metaDataKey,
+                            @Nonnull final LockRepository.LockAccess lockAccess) {
+        super(player, metaDataKey, lockAccess);
     }
 
-    private void setupPermissions() {
-        if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
-            return;
-        }
-        RegisteredServiceProvider<Permission> permissionProvider =
-            Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
-        if (permissionProvider != null) {
-            this.perms = permissionProvider.getProvider();
-        }
+    @Override public boolean isPresent() {
+        this.checkClosed();
+        return this.getPlayer().getMeta(this.getMetaDataKey().toString()) != null;
     }
 
-    @Override public boolean hasPermission(String world, String player, String perm) {
-        return this.perms.playerHas(world, Bukkit.getOfflinePlayer(player), perm);
+    @Override @Nullable public T remove() {
+        this.checkClosed();
+        final Object old = getPlayer().deleteMeta(this.getMetaDataKey().toString());
+        if (old == null) {
+            return null;
+        }
+        return (T) old;
     }
+
+    @Override public void set(@Nonnull T value) {
+        this.checkClosed();
+        this.getPlayer().setMeta(this.getMetaDataKey().toString(), null);
+    }
+
+    @Nonnull @Override public Optional<T> get() {
+        this.checkClosed();
+        return Optional.ofNullable(this.getPlayer().getMeta(this.getMetaDataKey().toString()));
+    }
+
 }

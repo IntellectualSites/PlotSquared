@@ -239,7 +239,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
 
     /**
      * Get a plot player from a platform player object. This method requires
-     * that the caller actually knows that the player exists.
+     * that the caller actually knows that the player exists and is online.
      * <p>
      * The method will throw an exception if there is no such
      * player online.

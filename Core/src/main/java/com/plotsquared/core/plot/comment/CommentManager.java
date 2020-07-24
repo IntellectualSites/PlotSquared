@@ -26,8 +26,11 @@
 package com.plotsquared.core.plot.comment;
 
 import com.google.common.annotations.Beta;
+import com.google.inject.TypeLiteral;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.MetaDataKey;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
@@ -77,7 +80,10 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
     public static long getTimestamp(PlotPlayer<?> player, String inbox) {
-        return player.getMeta("inbox:" + inbox, player.getLastPlayed());
+        final MetaDataKey<Long> inboxKey = MetaDataKey.of(String.format("inbox:%s", inbox), new TypeLiteral<Long>() {});
+        try (final MetaDataAccess<Long> inboxAccess = player.accessTemporaryMetaData(inboxKey)) {
+            return inboxAccess.get().orElse(player.getLastPlayed());
+        }
     }
 
     public static void addInbox(CommentInbox inbox) {

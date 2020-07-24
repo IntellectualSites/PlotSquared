@@ -26,19 +26,29 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 
+import javax.annotation.Nullable;
+
 public class CmdConfirm {
 
-    public static CmdInstance getPending(PlotPlayer<?> player) {
-        return player.getMeta("cmdConfirm");
+    @Nullable public static CmdInstance getPending(PlotPlayer<?> player) {
+        try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
+            PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
+            return metaDataAccess.get().orElse(null);
+        }
     }
 
     public static void removePending(PlotPlayer<?> player) {
-        player.deleteMeta("cmdConfirm");
+        try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
+            PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
+            metaDataAccess.remove();
+        }
     }
 
     public static void addPending(final PlotPlayer<?> player, String commandStr,
@@ -49,7 +59,10 @@ public class CmdConfirm {
         }
         TaskManager.runTaskLater(() -> {
             CmdInstance cmd = new CmdInstance(runnable);
-            player.setMeta("cmdConfirm", cmd);
+            try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
+                PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
+                metaDataAccess.set(cmd);
+            }
         }, TaskTime.ticks(1L));
     }
 }

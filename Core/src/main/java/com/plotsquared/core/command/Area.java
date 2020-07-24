@@ -79,9 +79,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @CommandDeclaration(command = "area",
     permission = "plots.area",
@@ -101,6 +104,8 @@ public class Area extends SubCommand {
     private final WorldUtil worldUtil;
     private final RegionManager regionManager;
     private final GlobalBlockQueue blockQueue;
+
+    private final Map<UUID, Map<String, Object>> metaData = new HashMap<>();
 
     @Inject public Area(@Nonnull final PlotAreaManager plotAreaManager,
         @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
@@ -282,14 +287,16 @@ public class Area extends SubCommand {
                     case 2:
                         switch (args[1].toLowerCase()) {
                             case "pos1": { // Set position 1
-                                HybridPlotWorld area = player.getMeta("area_create_area");
+                                HybridPlotWorld area = (HybridPlotWorld) metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>())
+                                    .get("area_create_area");
                                 if (area == null) {
                                     Captions.COMMAND_SYNTAX.send(player,
                                         "/plot area create [world[:id]] [<modifier>=<value>]...");
                                     return false;
                                 }
                                 Location location = player.getLocation();
-                                player.setMeta("area_pos1", location);
+                                metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>())
+                                    .put("area_pos1", location);
                                 Captions.SET_ATTRIBUTE.send(player, "area_pos1",
                                     location.getX() + "," + location.getZ());
                                 MainUtil.sendMessage(player,
@@ -298,14 +305,15 @@ public class Area extends SubCommand {
                                 return true;
                             }
                             case "pos2":  // Set position 2 and finish creation for type=2 (partial)
-                                final HybridPlotWorld area = player.getMeta("area_create_area");
+                                final HybridPlotWorld area = (HybridPlotWorld) metaData
+                                    .computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).get("area_create_area");
                                 if (area == null) {
                                     Captions.COMMAND_SYNTAX.send(player,
                                         "/plot area create [world[:id]] [<modifier>=<value>]...");
                                     return false;
                                 }
                                 Location pos1 = player.getLocation();
-                                Location pos2 = player.getMeta("area_pos1");
+                                Location pos2 = (Location) metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).get("area_pos1");
                                 int dx = Math.abs(pos1.getX() - pos2.getX());
                                 int dz = Math.abs(pos1.getZ() - pos2.getZ());
                                 int numX = Math.max(1,
@@ -521,7 +529,7 @@ public class Area extends SubCommand {
                             player.teleport(this.worldUtil.getSpawn(pa.getWorldName()),
                                 TeleportCause.COMMAND);
                         }
-                        player.setMeta("area_create_area", pa);
+                        metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).put("area_create_area", pa);
                         MainUtil.sendMessage(player,
                             "$1Go to the first corner and use: $2 " + getCommandString()
                                 + " create pos1");
