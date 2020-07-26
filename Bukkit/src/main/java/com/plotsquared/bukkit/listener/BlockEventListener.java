@@ -425,26 +425,28 @@ public class BlockEventListener implements Listener {
         if (plot == null) {
             return;
         }
-        switch (event.getSource().getType()) {
-            case GRASS_BLOCK:
+        switch (event.getSource().getType().toString()) {
+            case "GRASS_BLOCK":
                 if (!plot.getFlag(GrassGrowFlag.class)) {
                     plot.debug("Grass could not grow because grass-grow = false");
                     event.setCancelled(true);
                 }
                 break;
-            case MYCELIUM:
+            case "MYCELIUM":
                 if (!plot.getFlag(MycelGrowFlag.class)) {
                     plot.debug("Mycelium could not grow because mycel-grow = false");
                     event.setCancelled(true);
                 }
                 break;
-            case VINE:
+            case "WEEPING_VINES":
+            case "TWISTING_VINES":
+            case "VINE":
                 if (!plot.getFlag(VineGrowFlag.class)) {
                     plot.debug("Vine could not grow because vine-grow = false");
                     event.setCancelled(true);
                 }
                 break;
-            case KELP:
+            case "KELP":
                 if (!plot.getFlag(KelpGrowFlag.class)) {
                     plot.debug("Kelp could not grow because kelp-grow = false");
                     event.setCancelled(true);
