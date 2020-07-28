@@ -95,6 +95,13 @@ public abstract class RegionManager {
         });
     }
 
+    /**
+     * Set a number of cuboids to a certain block between two y values.
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     * @return true if not enqueued, otherwise whether the created queue enqueued.
+     */
     public boolean setCuboids(final PlotArea area,
                               final Set<CuboidRegion> regions,
                               final Pattern blocks,

@@ -1061,12 +1061,16 @@ public class Plot {
                         }
                         TaskManager.runTask(whenDone);
                     };
+                    QueueCoordinator queue = getArea().getQueue();
                     for (Plot current : plots) {
                         if (isDelete || !current.hasOwner()) {
-                            manager.unClaimPlot(current, null);
+                            manager.unClaimPlot(current, null, queue);
                         } else {
-                            manager.claimPlot(current);
+                            manager.claimPlot(current, queue);
                         }
+                    }
+                    if (queue.size() > 0) {
+                        queue.enqueue();
                     }
                     TaskManager.runTask(run);
                     return;
@@ -1082,7 +1086,7 @@ public class Plot {
                     }
                     return;
                 }
-                manager.clearPlot(current, this);
+                manager.clearPlot(current, this, null);
             }
         };
         run.run();
@@ -1861,7 +1865,7 @@ public class Plot {
                 }
             });
         }
-        plotworld.getPlotManager().claimPlot(this);
+        plotworld.getPlotManager().claimPlot(this, null);
         return true;
     }
 
@@ -2074,8 +2078,11 @@ public class Plot {
     /**
      * Remove the east road section of a plot<br>
      * - Used when a plot is merged<br>
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
      */
-    public void removeRoadEast() {
+    public void removeRoadEast(@Nullable QueueCoordinator queue) {
         if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(Direction.EAST);
             Location bot = other.getBottomAbs();
@@ -2084,7 +2091,7 @@ public class Plot {
             Location pos2 = Location.at(this.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
             this.regionManager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
-            this.area.getPlotManager().removeRoadEast(this);
+            this.area.getPlotManager().removeRoadEast(this, queue);
         }
     }
 
@@ -2440,8 +2447,11 @@ public class Plot {
     /**
      * Remove the south road section of a plot<br>
      * - Used when a plot is merged<br>
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
      */
-    public void removeRoadSouth() {
+    public void removeRoadSouth(@Nullable QueueCoordinator queue) {
         if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(Direction.SOUTH);
             Location bot = other.getBottomAbs();
@@ -2450,7 +2460,7 @@ public class Plot {
             Location pos2 = Location.at(this.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
             this.regionManager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
-            this.getManager().removeRoadSouth(this);
+            this.getManager().removeRoadSouth(this, queue);
         }
     }
 
@@ -2474,6 +2484,7 @@ public class Plot {
         Plot current;
         boolean toReturn = false;
         HashSet<Plot> visited = new HashSet<>();
+        QueueCoordinator queue = getArea().getQueue();
         while ((current = frontier.poll()) != null && max >= 0) {
             if (visited.contains(current)) {
                 continue;
@@ -2484,7 +2495,7 @@ public class Plot {
                 Plot other = current.getRelative(Direction.NORTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                     || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
-                    current.mergePlot(other, removeRoads);
+                    current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
@@ -2493,7 +2504,7 @@ public class Plot {
                         ArrayList<PlotId> ids = new ArrayList<>();
                         ids.add(current.getId());
                         ids.add(other.getId());
-                        this.getManager().finishPlotMerge(ids);
+                        this.getManager().finishPlotMerge(ids, queue);
                     }
                 }
             }
@@ -2501,7 +2512,7 @@ public class Plot {
                 Plot other = current.getRelative(Direction.EAST);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                     || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
-                    current.mergePlot(other, removeRoads);
+                    current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
@@ -2510,7 +2521,7 @@ public class Plot {
                         ArrayList<PlotId> ids = new ArrayList<>();
                         ids.add(current.getId());
                         ids.add(other.getId());
-                        this.getManager().finishPlotMerge(ids);
+                        this.getManager().finishPlotMerge(ids, queue);
                     }
                 }
             }
@@ -2518,7 +2529,7 @@ public class Plot {
                 Plot other = current.getRelative(Direction.SOUTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                     || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
-                    current.mergePlot(other, removeRoads);
+                    current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
@@ -2527,7 +2538,7 @@ public class Plot {
                         ArrayList<PlotId> ids = new ArrayList<>();
                         ids.add(current.getId());
                         ids.add(other.getId());
-                        this.getManager().finishPlotMerge(ids);
+                        this.getManager().finishPlotMerge(ids, queue);
                     }
                 }
             }
@@ -2535,7 +2546,7 @@ public class Plot {
                 Plot other = current.getRelative(Direction.WEST);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                     || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
-                    current.mergePlot(other, removeRoads);
+                    current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
@@ -2544,9 +2555,12 @@ public class Plot {
                         ArrayList<PlotId> ids = new ArrayList<>();
                         ids.add(current.getId());
                         ids.add(other.getId());
-                        this.getManager().finishPlotMerge(ids);
+                        this.getManager().finishPlotMerge(ids, queue);
                     }
                 }
+            }
+            if (queue.size() > 0) {
+                queue.enqueue();
             }
         }
         return toReturn;
@@ -2603,15 +2617,18 @@ public class Plot {
 
     /**
      * Remove the SE road (only effects terrain)
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
      */
-    public void removeRoadSouthEast() {
+    public void removeRoadSouthEast(@Nullable QueueCoordinator queue) {
         if (this.area.getType() != PlotAreaType.NORMAL && this.area.getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.getRelative(1, 1);
             Location pos1 = this.getTopAbs().add(1, 0, 1).withY(0);
             Location pos2 = other.getBottomAbs().subtract(1, 0, 1).withY(MAX_HEIGHT);
             this.regionManager.regenerateRegion(pos1, pos2, true, null);
         } else if (this.area.getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
-            this.area.getPlotManager().removeRoadSouthEast(this);
+            this.area.getPlotManager().removeRoadSouthEast(this, queue);
         }
     }
 
@@ -3088,10 +3105,10 @@ public class Plot {
     /**
      * Merges two plots. <br>- Assumes plots are directly next to each other <br> - saves to DB
      *
-     * @param lesserPlot
-     * @param removeRoads
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
      */
-    public void mergePlot(Plot lesserPlot, boolean removeRoads) {
+    public void mergePlot(Plot lesserPlot, boolean removeRoads, @Nullable QueueCoordinator queue) {
         Plot greaterPlot = this;
         lesserPlot.removeSign();
         if (lesserPlot.getId().getX() == greaterPlot.getId().getX()) {
@@ -3108,14 +3125,14 @@ public class Plot {
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
                     //lesserPlot.removeSign();
-                    lesserPlot.removeRoadSouth();
+                    lesserPlot.removeRoadSouth(queue);
                     Plot diagonal = greaterPlot.getRelative(Direction.EAST);
                     if (diagonal.getMerged(Direction.NORTHWEST)) {
-                        lesserPlot.removeRoadSouthEast();
+                        lesserPlot.removeRoadSouthEast(queue);
                     }
                     Plot below = greaterPlot.getRelative(Direction.WEST);
                     if (below.getMerged(Direction.NORTHEAST)) {
-                        below.getRelative(Direction.NORTH).removeRoadSouthEast();
+                        below.getRelative(Direction.NORTH).removeRoadSouthEast(queue);
                     }
                 }
             }
@@ -3135,17 +3152,16 @@ public class Plot {
                     //lesserPlot.removeSign();
                     Plot diagonal = greaterPlot.getRelative(Direction.SOUTH);
                     if (diagonal.getMerged(Direction.NORTHWEST)) {
-                        lesserPlot.removeRoadSouthEast();
+                        lesserPlot.removeRoadSouthEast(queue);
                     }
-                    lesserPlot.removeRoadEast();
+                    lesserPlot.removeRoadEast(queue);
                 }
                 Plot below = greaterPlot.getRelative(Direction.NORTH);
                 if (below.getMerged(Direction.SOUTHWEST)) {
-                    below.getRelative(Direction.WEST).removeRoadSouthEast();
+                    below.getRelative(Direction.WEST).removeRoadSouthEast(queue);
                 }
             }
         }
-
     }
 
     /**
@@ -3235,8 +3251,12 @@ public class Plot {
                             Plot plot = destination.getRelative(0, 0);
                             Plot originPlot = originArea.getPlotAbs(PlotId.of(plot.id.getX() - offset.getX(), plot.id.getY() - offset.getY()));
                             final Runnable clearDone = () -> {
+                                QueueCoordinator queue = getArea().getQueue();
                                 for (final Plot current : plot.getConnectedPlots()) {
-                                    getManager().claimPlot(current);
+                                    getManager().claimPlot(current, queue);
+                                }
+                                if (queue.size() > 0) {
+                                    queue.enqueue();
                                 }
                                 plot.setSign();
                                 TaskManager.runTask(whenDone);
@@ -3334,8 +3354,12 @@ public class Plot {
         Runnable run = new Runnable() {
             @Override public void run() {
                 if (regions.isEmpty()) {
+                    QueueCoordinator queue = getArea().getQueue();
                     for (Plot current : getConnectedPlots()) {
-                        destination.getManager().claimPlot(current);
+                        destination.getManager().claimPlot(current, queue);
+                    }
+                    if (queue.size() > 0) {
+                        queue.enqueue();
                     }
                     destination.setSign();
                     TaskManager.runTask(whenDone);

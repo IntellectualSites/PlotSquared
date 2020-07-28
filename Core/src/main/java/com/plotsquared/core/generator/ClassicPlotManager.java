@@ -60,8 +60,10 @@ public class ClassicPlotManager extends SquarePlotManager {
         this.regionManager = regionManager;
     }
 
-    @Override
-    public boolean setComponent(@Nonnull PlotId plotId, @Nonnull String component, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
+    @Override public boolean setComponent(@Nonnull PlotId plotId,
+                                          @Nonnull String component,
+                                          @Nonnull Pattern blocks,
+                                          @Nullable QueueCoordinator queue) {
         final Optional<ClassicPlotManagerComponent> componentOptional = ClassicPlotManagerComponent.fromString(component);
         if (componentOptional.isPresent()) {
             switch (componentOptional.get()) {
@@ -96,6 +98,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         return true;
     }
 
+    /**
+     * Set the plot floor
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
     public boolean setFloor(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot != null && plot.isBasePlot()) {
@@ -105,6 +113,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         return false;
     }
 
+    /**
+     * Sets the plot main, floor and air areas.
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
     public boolean setAll(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot != null && plot.isBasePlot()) {
@@ -113,6 +127,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         return false;
     }
 
+    /**
+     * Sets the plot air region.
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
     public boolean setAir(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot != null && plot.isBasePlot()) {
@@ -122,6 +142,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         return false;
     }
 
+    /**
+     * Sets the plot main blocks.
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
     public boolean setMain(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot == null || plot.isBasePlot()) {
@@ -130,6 +156,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         return false;
     }
 
+    /**
+     * Set the middle plot block to a Pattern
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
     public boolean setMiddle(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot == null || !plot.isBasePlot()) {
@@ -149,6 +181,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         return !enqueue || queue.enqueue();
     }
 
+    /**
+     * Set a plot's outline
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
     public boolean setOutline(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
             return false;
@@ -216,6 +254,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         return !enqueue || queue.enqueue();
     }
 
+    /**
+     * Set the wall filling for a plot
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
     public boolean setWallFilling(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
             return false;
@@ -274,6 +318,12 @@ public class ClassicPlotManager extends SquarePlotManager {
         return !enqueue || queue.enqueue();
     }
 
+    /**
+     * Set a plot's wall top block only
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
     public boolean setWall(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
             return false;
@@ -325,9 +375,6 @@ public class ClassicPlotManager extends SquarePlotManager {
         return !enqueue || queue.enqueue();
     }
 
-    /**
-     * PLOT MERGING.
-     */
     @Override public boolean createRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         Location pos1 = getPlotBottomLocAbs(plot.getId());
         Location pos2 = getPlotTopLocAbs(plot.getId());
@@ -363,7 +410,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, 1, sz + 1),
             Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.ROAD_HEIGHT, ez - 1), classicPlotWorld.ROAD_BLOCK.toPattern());
-        return queue.enqueue();
+        return !enqueue || queue.enqueue();
     }
 
     @Override public boolean createRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
@@ -401,8 +448,9 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
         queue.setCuboid(Location.at(classicPlotWorld.getWorldName(), sx + 1, 1, sz + 1),
             Location.at(classicPlotWorld.getWorldName(), ex - 1, classicPlotWorld.ROAD_HEIGHT, ez - 1), classicPlotWorld.ROAD_BLOCK.toPattern());
-        return queue.enqueue();
+        return !enqueue || queue.enqueue();
     }
+
 
     @Override public boolean createRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         Location pos2 = getPlotTopLocAbs(plot.getId());
@@ -504,11 +552,6 @@ public class ClassicPlotManager extends SquarePlotManager {
         return !enqueue || queue.enqueue();
     }
 
-    /**
-     * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED).
-     *
-     * @return false if part of the merge failed, otherwise true if successful.
-     */
     @Override public boolean finishPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
         if (classicPlotWorld.PLACE_TOP_BLOCK && (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK))) {

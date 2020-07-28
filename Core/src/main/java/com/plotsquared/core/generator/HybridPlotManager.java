@@ -93,8 +93,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         Template.zipAll(hybridPlotWorld.getWorldName(), files);
     }
 
-    @Override public boolean createRoadEast(@Nonnull final Plot plot) {
-        super.createRoadEast(plot);
+    @Override public boolean createRoadEast(@Nonnull final Plot plot, @Nullable QueueCoordinator queue) {
+        super.createRoadEast(plot, queue);
         PlotId id = plot.getId();
         PlotId id2 = PlotId.of(id.getX() + 1, id.getY());
         Location bot = getPlotBottomLocAbs(id2);
@@ -105,10 +105,13 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        QueueCoordinator queue = hybridPlotWorld.getQueue();
+        boolean enqueue = false;
+        if (queue == null) {
+            queue = hybridPlotWorld.getQueue();
+            enqueue = true;
+        }
         createSchemAbs(queue, pos1, pos2, true);
-        queue.enqueue();
-        return true;
+        return !enqueue || queue.enqueue();
     }
 
     private void resetBiome(@Nonnull final HybridPlotWorld hybridPlotWorld, @Nonnull final Location pos1, @Nonnull final Location pos2) {
@@ -159,8 +162,8 @@ public class HybridPlotManager extends ClassicPlotManager {
         }
     }
 
-    @Override public boolean createRoadSouth(@Nonnull final Plot plot) {
-        super.createRoadSouth(plot);
+    @Override public boolean createRoadSouth(@Nonnull final Plot plot, @Nullable QueueCoordinator queue) {
+        super.createRoadSouth(plot, queue);
         PlotId id = plot.getId();
         PlotId id2 = PlotId.of(id.getX(), id.getY() + 1);
         Location bot = getPlotBottomLocAbs(id2);
@@ -171,24 +174,31 @@ public class HybridPlotManager extends ClassicPlotManager {
         if (!hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             return true;
         }
-        QueueCoordinator queue = hybridPlotWorld.getQueue();
+        boolean enqueue = false;
+        if (queue == null) {
+            enqueue = true;
+            queue = hybridPlotWorld.getQueue();
+        }
         createSchemAbs(queue, pos1, pos2, true);
-        queue.enqueue();
-        return true;
+        return !enqueue || queue.enqueue();
     }
 
-    @Override public boolean createRoadSouthEast(@Nonnull final Plot plot) {
-        super.createRoadSouthEast(plot);
+    @Override public boolean createRoadSouthEast(@Nonnull final Plot plot, @Nullable QueueCoordinator queue) {
+        super.createRoadSouthEast(plot, queue);
         PlotId id = plot.getId();
         PlotId id2 = PlotId.of(id.getX() + 1, id.getY() + 1);
         Location pos1 = getPlotTopLocAbs(id).add(1, 0, 1).withY(0);
         Location pos2 = getPlotBottomLocAbs(id2).withY(Math.min(getWorldHeight(), 255));
-        QueueCoordinator queue = hybridPlotWorld.getQueue();
+        boolean enqueue = false;
+        if (queue == null) {
+            enqueue = true;
+            queue = hybridPlotWorld.getQueue();
+        }
         createSchemAbs(queue, pos1, pos2, true);
         if (hybridPlotWorld.ROAD_SCHEMATIC_ENABLED) {
             createSchemAbs(queue, pos1, pos2, true);
         }
-        return queue.enqueue();
+        return !enqueue || queue.enqueue();
     }
 
     /**
@@ -198,7 +208,7 @@ public class HybridPlotManager extends ClassicPlotManager {
      * don't need to do something quite as complex unless you happen to have 512x512 sized plots.
      * </p>
      */
-    @Override public boolean clearPlot(@Nonnull final Plot plot, @Nullable final Runnable whenDone) {
+    @Override public boolean clearPlot(@Nonnull final Plot plot, @Nullable final Runnable whenDone, @Nullable QueueCoordinator queue) {
         if (this.regionManager.notifyClear(this)) {
             //If this returns false, the clear didn't work
             if (this.regionManager.handleClear(plot, whenDone, this)) {
@@ -224,7 +234,11 @@ public class HybridPlotManager extends ClassicPlotManager {
         }
 
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
-        final QueueCoordinator queue = hybridPlotWorld.getQueue();
+        boolean enqueue = false;
+        if (queue == null) {
+            enqueue = true;
+            queue = hybridPlotWorld.getQueue();
+        }
         if (!canRegen) {
             queue.setCuboid(pos1.withY(0), pos2.withY(0), bedrock);
             // Each component has a different layer
@@ -236,8 +250,10 @@ public class HybridPlotManager extends ClassicPlotManager {
             queue.setRegenRegion(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
         }
         pastePlotSchematic(queue, pos1, pos2);
-        queue.setCompleteTask(whenDone);
-        return queue.enqueue();
+        if (whenDone != null) {
+            queue.setCompleteTask(whenDone);
+        }
+        return !enqueue || queue.enqueue();
     }
 
     public void pastePlotSchematic(@Nonnull final QueueCoordinator queue, @Nonnull final Location bottom, @Nonnull final Location top) {
