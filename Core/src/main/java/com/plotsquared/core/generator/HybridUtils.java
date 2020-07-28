@@ -109,7 +109,7 @@ public class HybridUtils {
 
     public void regeneratePlotWalls(final PlotArea area) {
         PlotManager plotManager = area.getPlotManager();
-        plotManager.regenerateAllPlotWalls();
+        plotManager.regenerateAllPlotWalls(null);
     }
 
     public void analyzeRegion(final String world, final CuboidRegion region, final RunnableVal<PlotAnalysis> whenDone) {

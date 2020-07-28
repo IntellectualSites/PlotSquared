@@ -934,7 +934,8 @@ public abstract class PlotArea {
         final PlotId pos2 = plotIds.get(plotIds.size() - 1);
         final PlotManager manager = getPlotManager();
 
-        manager.startPlotMerge(plotIds);
+        QueueCoordinator queue = getQueue();
+        manager.startPlotMerge(plotIds, queue);
         final Set<UUID> trusted = new HashSet<>();
         final Set<UUID> members = new HashSet<>();
         final Set<UUID> denied = new HashSet<>();
@@ -969,24 +970,25 @@ public abstract class PlotArea {
                     if (ly) {
                         if (!plot.getMerged(Direction.EAST) || !plot.getMerged(Direction.SOUTH)) {
                             if (removeRoads) {
-                                plot.removeRoadSouthEast();
+                                plot.removeRoadSouthEast(queue);
                             }
                         }
                     }
                     if (!plot.getMerged(Direction.EAST)) {
                         plot2 = plot.getRelative(1, 0);
-                        plot.mergePlot(plot2, removeRoads);
+                        plot.mergePlot(plot2, removeRoads, queue);
                     }
                 }
                 if (ly) {
                     if (!plot.getMerged(Direction.SOUTH)) {
                         plot2 = plot.getRelative(0, 1);
-                        plot.mergePlot(plot2, removeRoads);
+                        plot.mergePlot(plot2, removeRoads, queue);
                     }
                 }
             }
         }
-        manager.finishPlotMerge(plotIds);
+        manager.finishPlotMerge(plotIds, queue);
+        queue.enqueue();
         return true;
     }
 

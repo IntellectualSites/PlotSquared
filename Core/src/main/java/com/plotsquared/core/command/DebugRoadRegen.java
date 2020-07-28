@@ -34,9 +34,10 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.MainUtil;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 @CommandDeclaration(command = "debugroadregen",
@@ -85,12 +86,15 @@ public class DebugRoadRegen extends SubCommand {
             Captions.REQUIRES_UNMERGED.send(player);
         } else {
             PlotManager manager = area.getPlotManager();
-            manager.createRoadEast(plot);
-            manager.createRoadSouth(plot);
-            manager.createRoadSouthEast(plot);
-            MainUtil.sendMessage(player, "&6Regenerating plot south/east roads: " + plot.getId()
-                + "\n&6 - Result: &aSuccess");
-            MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
+            QueueCoordinator queue = area.getQueue();
+            manager.createRoadEast(plot, queue);
+            manager.createRoadSouth(plot, queue);
+            manager.createRoadSouthEast(plot, queue);
+            queue.setCompleteTask(() -> {
+                MainUtil.sendMessage(player, "&6Regenerating plot south/east roads: " + plot.getId() + "\n&6 - Result: &aSuccess");
+                MainUtil.sendMessage(player, "&cTo regenerate all roads: /plot regenallroads");
+            });
+            queue.enqueue();
         }
         return true;
     }
