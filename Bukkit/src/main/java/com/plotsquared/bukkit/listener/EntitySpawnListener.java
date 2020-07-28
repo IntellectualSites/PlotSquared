@@ -58,12 +58,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class EntitySpawnListener implements Listener {
 
     private final static String KEY = "P2";
     private static boolean ignoreTP = false;
-    private static boolean hasPlotArea = false;
-    private static String areaName = null;
 
     public static void testNether(final Entity entity) {
         @NotNull World world = entity.getWorld();
@@ -76,12 +75,7 @@ public class EntitySpawnListener implements Listener {
 
     public static void testCreate(final Entity entity) {
         @NotNull World world = entity.getWorld();
-        if (areaName == world.getName()) {
-        } else {
-            areaName = world.getName();
-            hasPlotArea = PlotSquared.get().hasPlotArea(areaName);
-        }
-        if (!hasPlotArea) {
+        if (!PlotSquared.get().hasPlotArea(entity.getWorld().getName())) {
             return;
         }
         test(entity);
@@ -134,20 +128,23 @@ public class EntitySpawnListener implements Listener {
         }
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
+            EntityType type = entity.getType();
             if (!area.isMobSpawning()) {
-                EntityType type = entity.getType();
                 switch (type) {
                     case DROPPED_ITEM:
                         if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                             event.setCancelled(true);
-                            break;
+                            return;
                         }
                     case PLAYER:
                         return;
                 }
-                if (type.isAlive() || !area.isMiscSpawnUnowned()) {
+                if (type.isAlive()) {
                     event.setCancelled(true);
                 }
+            }
+            if (!area.isMiscSpawnUnowned() && !type.isAlive()) {
+                event.setCancelled(true);
             }
             return;
         }
