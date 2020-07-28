@@ -43,10 +43,10 @@ public abstract class QueueProvider {
                 try {
                     return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
                 } catch (Throwable e) {
-                    logger.info("Error creating Queue: " + primary.getName() + " - Does it have the correct constructor(s)?");
+                    logger.error("Error creating Queue: {} - Does it have the correct constructor(s)?", primary.getName());
                     if (!primary.getName().contains("com.plotsquared")) {
-                        logger.info("It looks like " + primary.getSimpleName()
-                            + " is a custom queue. Please look for a plugin in its classpath and report to themm");
+                        logger.error("It looks like {} is a custom queue. Please look for a plugin in its classpath and report to them.",
+                            primary.getSimpleName());
                     }
                     e.printStackTrace();
                 }
