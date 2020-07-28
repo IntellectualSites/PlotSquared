@@ -28,7 +28,6 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.location.Location;
 import com.sk89q.worldedit.math.BlockVector2;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.Range;
 
 import javax.annotation.Nonnull;
 
@@ -84,8 +83,7 @@ public class ChunkUtil {
      * @param z Relative z coordinate
      * @return J value for xyz position in Array[4096].
      */
-    public static int getJ(@Range(from = 0, to = 15) int x, @Range(from = 0, to = 255) int y,
-        @Range(from = 0, to = 15) int z) {
+    public static int getJ(int x, int y, int z) {
         return CACHE_J[y][x][z];
     }
 
@@ -95,7 +93,7 @@ public class ChunkUtil {
      * @param j Position in the xyz Array[4096].
      * @return x coordinate within the chunk
      */
-    public static int getX(@Range(from = 0, to = 4095) int j) {
+    public static int getX(int j) {
         return x_loc[j];
     }
 
@@ -106,7 +104,7 @@ public class ChunkUtil {
      * @param j Position in the xyz Array[4096].
      * @return x coordinate within the chunk
      */
-    public static int getY(@Range(from = 0, to = 15) int i, @Range(from = 0, to = 4095) int j) {
+    public static int getY(int i, int j) {
         return y_loc[i][j];
     }
 
@@ -116,7 +114,7 @@ public class ChunkUtil {
      * @param j Position in the xyz Array[4096].
      * @return z coordinate within the chunk
      */
-    public static int getZ(@Range(from = 0, to = 4095) int j) {
+    public static int getZ(int j) {
         return z_loc[j];
     }
 

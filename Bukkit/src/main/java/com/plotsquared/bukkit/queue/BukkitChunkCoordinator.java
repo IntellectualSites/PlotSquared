@@ -97,9 +97,6 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         this.bukkitWorld = Bukkit.getWorld(world.getName());
     }
 
-    /**
-     * Start the coordinator instance
-     */
     @Override public void start() {
         // Request initial batch
         this.requestBatch();
@@ -195,20 +192,10 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         chunk.removePluginChunkTicket(this.plugin);
     }
 
-    /**
-     * Get the amount of remaining chunks (at the time of the method call)
-     *
-     * @return Snapshot view of remaining chunk count
-     */
     @Override public int getRemainingChunks() {
         return this.expectedSize.get();
     }
 
-    /**
-     * Get the amount of requested chunks
-     *
-     * @return Requested chunk count
-     */
     @Override public int getTotalChunks() {
         return this.totalSize;
     }

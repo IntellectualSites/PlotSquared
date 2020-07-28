@@ -39,9 +39,24 @@ public abstract class ChunkCoordinator implements PlotSquaredTask {
         // Do nothing
     }
 
+    /**
+     * Starts the chunk coordinator. This will usually (implementation-specific-permitting) mark chunks to be loaded in batches,
+     * then add them to a queue and apply tickets once loaded to prevent unloading. A repeating task will then iterate over loaded
+     * chunks, access them with a Consumer(BlockVector2) and remove the ticket once work has been completed on it.
+     */
     public abstract void start();
 
+    /**
+     * Get the amount of remaining chunks (at the time of the method call)
+     *
+     * @return Snapshot view of remaining chunk count
+     */
     public abstract int getRemainingChunks();
 
+    /**
+     * Get the amount of requested chunks
+     *
+     * @return Requested chunk count
+     */
     public abstract int getTotalChunks();
 }

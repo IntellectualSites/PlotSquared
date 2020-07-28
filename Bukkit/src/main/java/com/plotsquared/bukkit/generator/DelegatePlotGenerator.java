@@ -38,7 +38,6 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
-import org.jetbrains.annotations.Range;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -72,8 +71,7 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
         Random random = new Random(MathMan.pair((short) chunkX, (short) chunkZ));
         try {
             ChunkGenerator.BiomeGrid grid = new ChunkGenerator.BiomeGrid() {
-                @Override public void setBiome(@Range(from = 0, to = 15) int x,
-                    @Range(from = 0, to = 15) int z, @Nonnull Biome biome) {
+                @Override public void setBiome(int x, int z, @Nonnull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
                 }
 
