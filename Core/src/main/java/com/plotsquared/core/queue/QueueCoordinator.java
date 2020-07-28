@@ -52,7 +52,10 @@ public abstract class QueueCoordinator {
 
     @Inject private GlobalBlockQueue blockQueue;
 
-    public QueueCoordinator() {
+    /**
+     * Default constructor requires world to indicate any extents given to {@link QueueCoordinator} also need this constructor.
+     */
+    public QueueCoordinator(@Nullable World world) {
         PlotSquared.platform().getInjector().injectMembers(this);
     }
 

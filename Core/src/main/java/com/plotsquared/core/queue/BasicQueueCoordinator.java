@@ -69,6 +69,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private Runnable whenDone;
 
     public BasicQueueCoordinator(@Nonnull World world) {
+        super(world);
         this.world = world;
         this.modified = System.currentTimeMillis();
     }

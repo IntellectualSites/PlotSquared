@@ -25,11 +25,17 @@
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
 public abstract class QueueProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotSquared.class.getSimpleName());
+
     public static QueueProvider of(@Nonnull final Class<? extends QueueCoordinator> primary) {
         return new QueueProvider() {
 
@@ -37,6 +43,11 @@ public abstract class QueueProvider {
                 try {
                     return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
                 } catch (Throwable e) {
+                    logger.info("Error creating Queue: " + primary.getName() + " - Does it have the correct constructor(s)?");
+                    if (!primary.getName().contains("com.plotsquared")) {
+                        logger.info("It looks like " + primary.getSimpleName()
+                            + " is a custom queue. Please look for a plugin in its classpath and report to themm");
+                    }
                     e.printStackTrace();
                 }
                 return null;

@@ -50,6 +50,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
     private final QueueCoordinator parent;
 
     public DelegateQueueCoordinator(QueueCoordinator parent) {
+        super(parent == null ? null : parent.getWorld());
         this.parent = parent;
 
         if (parent != null) {
