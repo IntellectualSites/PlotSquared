@@ -51,7 +51,7 @@ public class Near extends Command {
     public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         player.sendMessage(
                 TranslatableCaption.of("near.plot_near"),
                 Template.of("list", StringMan.join(plot.getPlayersInPlot(), ", "))

@@ -66,7 +66,7 @@ public class Move extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
+            .hasPermission(player, Captions.PERMISSION_ADMIN)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return CompletableFuture.completedFuture(false);
         }
@@ -98,7 +98,7 @@ public class Move extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
         if (!plot1.getArea().isCompatible(plot2.getArea()) && (!override || !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated()))) {
+            .hasPermission(player, Captions.PERMISSION_ADMIN))) {
             player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
             return CompletableFuture.completedFuture(false);
         }

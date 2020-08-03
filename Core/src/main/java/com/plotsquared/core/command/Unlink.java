@@ -64,7 +64,8 @@ public class Unlink extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            return !sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            return false;
         }
         if (!plot.isMerged()) {
             player.sendMessage(TranslatableCaption.of("merge.unlink_impossible"));

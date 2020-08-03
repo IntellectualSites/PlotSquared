@@ -69,12 +69,12 @@ public class Trust extends Command {
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot currentPlot = player.getCurrentPlot();
         if (currentPlot == null) {
-            throw new CommandException(Captions.NOT_IN_PLOT);
+            throw new CommandException(TranslatableCaption.of("errors.not_in_plot"));
         }
-        checkTrue(currentPlot.hasOwner(), Captions.PLOT_UNOWNED);
+        checkTrue(currentPlot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(currentPlot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
-            Captions.NO_PLOT_PERMS);
+                TranslatableCaption.of("permission.no_plot_perms"));
 
         checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
             Templates.of("value", getUsage()));
@@ -131,7 +131,7 @@ public class Trust extends Command {
                 checkTrue(!uuids.isEmpty(), null);
                 checkTrue(size <= currentPlot.getArea().getMaxPlotMembers() || Permissions
                         .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
-                    Captions.PLOT_MAX_MEMBERS);
+                        TranslatableCaption.of("member.plot_max_members"));
                 // Success
                 confirm.run(this, () -> {
                     for (UUID uuid : uuids) {

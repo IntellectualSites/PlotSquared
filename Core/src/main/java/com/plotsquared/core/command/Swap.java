@@ -52,11 +52,11 @@ public class Swap extends SubCommand {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
-            return CompletableFuture
-                .completedFuture(!MainUtil.sendMessage(player, Captions.NOT_IN_PLOT));
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return CompletableFuture.completedFuture(false);
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
+            .hasPermission(player, Captions.PERMISSION_ADMIN)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return CompletableFuture.completedFuture(false);
         }

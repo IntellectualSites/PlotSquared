@@ -65,7 +65,8 @@ public class Save extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final String world = player.getLocation().getWorldName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            return false;
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {

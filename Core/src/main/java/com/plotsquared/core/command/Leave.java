@@ -58,12 +58,15 @@ public class Leave extends Command {
     public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
-        checkTrue(plot.hasOwner(), Captions.PLOT_UNOWNED);
-        checkTrue(plot.isAdded(player.getUUID()), Captions.NOT_ADDED_TRUSTED);
-        checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
+        checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
+        checkTrue(plot.isAdded(player.getUUID()), TranslatableCaption.of("member.not_added_trusted"));
+        if (args.length == 0) {
+            sendUsage(player);
+            return CompletableFuture.completedFuture(false);
+        }
         if (plot.isOwner(player.getUUID())) {
-            checkTrue(plot.hasOwner(), Captions.ALREADY_OWNER);
+            checkTrue(plot.hasOwner(), TranslatableCaption.of("member.already_owner"));
             // TODO setowner, other
         } else {
             UUID uuid = player.getUUID();

@@ -95,7 +95,7 @@ public class Owner extends SetCommand {
             boolean force = event.getEventResult() == Result.FORCE;
             if (uuid == null) {
                 if (!force && !Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER.getTranslated(),
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER,
                         true)) {
                     return;
                 }
