@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -98,7 +99,7 @@ public class Info extends SubCommand {
             for (final String argument : args) {
                 if (argument.equalsIgnoreCase("-f")) {
                     if (!player
-                        .hasPermission(Captions.PERMISSION_AREA_INFO_FORCE.getTranslated())) {
+                        .hasPermission(Captions.PERMISSION_AREA_INFO_FORCE.toString())) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
                                 Template.of("node", "plots.area.info.force")
@@ -127,7 +128,7 @@ public class Info extends SubCommand {
             );
             return true;
         }
-        String info = Captions.PLOT_INFO_FORMAT.getTranslated();
+        Caption info = TranslatableCaption.of("info.plot_info_format");
         boolean full;
         if (arg != null) {
             info = getCaption(arg);
@@ -145,38 +146,36 @@ public class Info extends SubCommand {
         } else {
             full = false;
         }
-        plot.format(info, player, full).thenAcceptAsync(value ->
-            player.sendMessage(Captions.PLOT_INFO_HEADER.getTranslated() + '\n' + value + '\n'
-            + Captions.PLOT_INFO_FOOTER.getTranslated()));
+        plot.format(info, player, full).thenAcceptAsync(player::sendMessage);
         return true;
     }
 
-    private String getCaption(String string) {
+    private Caption getCaption(String string) {
         switch (string) {
             case "trusted":
-                return Captions.PLOT_INFO_TRUSTED.getTranslated();
+                return TranslatableCaption.of("info.plot_info_trusted");
             case "alias":
-                return Captions.PLOT_INFO_ALIAS.getTranslated();
+                return TranslatableCaption.of("info.plot_info_alias");
             case "biome":
-                return Captions.PLOT_INFO_BIOME.getTranslated();
+                return TranslatableCaption.of("info.plot_info_biome");
             case "denied":
-                return Captions.PLOT_INFO_DENIED.getTranslated();
+                return TranslatableCaption.of("info.plot_info_denied");
             case "flags":
-                return Captions.PLOT_INFO_FLAGS.getTranslated();
+                return TranslatableCaption.of("info.plot_info_flags");
             case "id":
-                return Captions.PLOT_INFO_ID.getTranslated();
+                return TranslatableCaption.of("info.plot_info_id");
             case "size":
-                return Captions.PLOT_INFO_SIZE.getTranslated();
+                return TranslatableCaption.of("info.plot_info_size");
             case "members":
-                return Captions.PLOT_INFO_MEMBERS.getTranslated();
+                return TranslatableCaption.of("info.plot_info_members");
             case "owner":
-                return Captions.PLOT_INFO_OWNER.getTranslated();
+                return TranslatableCaption.of("info.plot_info_owner");
             case "rating":
-                return Captions.PLOT_INFO_RATING.getTranslated();
+                return TranslatableCaption.of("info.plot_info_rating");
             case "likes":
-                return Captions.PLOT_INFO_LIKES.getTranslated();
+                return TranslatableCaption.of("info.plot_info_likes");
             case "seen":
-                return Captions.PLOT_INFO_SEEN.getTranslated();
+                return TranslatableCaption.of("info.plot_info_seen");
             default:
                 return null;
         }

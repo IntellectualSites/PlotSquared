@@ -31,10 +31,11 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Like;
-import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -87,6 +88,8 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,6 +142,8 @@ public class Plot {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + Plot.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
+
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     static {
         FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
@@ -1189,16 +1194,12 @@ public class Plot {
         if (this.area.allowSigns()) {
             Location location = manager.getSignLoc(this);
             String id = this.id.toString();
-            String[] lines =
-                new String[] {Captions.OWNER_SIGN_LINE_1.formatted().replaceAll("%id%", id),
-                    Captions.OWNER_SIGN_LINE_2.formatted().replaceAll("%id%", id).replaceAll(
-                        "%plr%", name),
-                    Captions.OWNER_SIGN_LINE_3.formatted().replaceAll("%id%", id).replaceAll(
-                        "%plr%", name),
-                    Captions.OWNER_SIGN_LINE_4.formatted().replaceAll("%id%", id).replaceAll(
-                        "%plr%", name)};
-            this.worldUtil.setSign(this.getWorldName(), location.getX(), location.getY(), location.getZ(),
-                    lines);
+            Caption[] lines =
+                new Caption[] {TranslatableCaption.of("signs.owner_sign_line_1"),
+                    TranslatableCaption.of("signs.owner_sign_line_2"),
+                    TranslatableCaption.of("signs.owner_sign_line_3"),
+                    TranslatableCaption.of("signs.owner_sign_line_4")};
+            this.worldUtil.setSign(location, lines, Template.of("id", id), Template.of("owner", name));
         }
     }
 
@@ -3005,11 +3006,12 @@ public class Plot {
             if (players.isEmpty()) {
                 return;
             }
-            final String string =
-                Captions.PLOT_DEBUG.getTranslated().replace("%plot%", this.toString()).replace("%message%", message);
+            Caption caption = TranslatableCaption.of("debug.plot_debug");
+            Template plotTemplate = Template.of("plot", this.toString());
+            Template messageTemplate = Template.of("message", message);
             for (final PlotPlayer<?> player : players) {
                 if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_DEBUG_OTHER)) {
-                    player.sendMessage(StaticCaption.of(string));
+                    player.sendMessage(caption, plotTemplate, messageTemplate);
                 }
             }
         } catch (final Exception ignored) {}
@@ -3489,117 +3491,120 @@ public class Plot {
         return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
     }
 
-    public CompletableFuture<String> format(final String iInfo, PlotPlayer<?> player, final boolean full) {
-        final CompletableFuture<String> future = new CompletableFuture<>();
+    public CompletableFuture<Caption> format(final Caption iInfo, PlotPlayer<?> player, final boolean full) {
+        final CompletableFuture<Caption> future = new CompletableFuture<>();
         int num = this.getConnectedPlots().size();
-        String alias = !this.getAlias().isEmpty() ? this.getAlias() : Captions.NONE.getTranslated();
+        String alias = !this.getAlias().isEmpty() ? this.getAlias() : TranslatableCaption.of("info.none").getComponent(player);
         Location bot = this.getCorners()[0];
-        PlotSquared.platform().getWorldUtil()
-            .getBiome(this.getWorldName(), bot.getX(), bot.getZ(), biome -> {
-                String info = iInfo;
-                String trusted = PlayerManager.getPlayerList(this.getTrusted());
-                String members = PlayerManager.getPlayerList(this.getMembers());
-                String denied = PlayerManager.getPlayerList(this.getDenied());
-                String seen;
-                if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
-                    if (this.isOnline()) {
-                        seen = Captions.NOW.getTranslated();
+        PlotSquared.platform().getWorldUtil().getBiome(this.getWorldName(), bot.getX(), bot.getZ(), biome -> {
+            String trusted = PlayerManager.getPlayerList(this.getTrusted());
+            String members = PlayerManager.getPlayerList(this.getMembers());
+            String denied = PlayerManager.getPlayerList(this.getDenied());
+            String seen;
+            if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
+                if (this.isOnline()) {
+                    seen = TranslatableCaption.of("info.now").getComponent(player);
+                } else {
+                    int time = (int) (ExpireManager.IMP.getAge(this) / 1000);
+                    if (time != 0) {
+                        seen = TimeUtil.secToTime(time);
                     } else {
-                        int time = (int) (ExpireManager.IMP.getAge(this) / 1000);
-                        if (time != 0) {
-                            seen = TimeUtil.secToTime(time);
-                        } else {
-                            seen = Captions.UNKNOWN.getTranslated();
-                        }
-                    }
-                } else {
-                    seen = Captions.NEVER.getTranslated();
-                }
-
-                String description = this.getFlag(DescriptionFlag.class);
-                if (description.isEmpty()) {
-                    description = Captions.PLOT_NO_DESCRIPTION.getTranslated();
-                }
-
-                StringBuilder flags = new StringBuilder();
-                Collection<PlotFlag<?, ?>> flagCollection = this.getApplicableFlags(true);
-                if (flagCollection.isEmpty()) {
-                    flags.append(Captions.NONE.getTranslated());
-                } else {
-                    String prefix = " ";
-                    for (final PlotFlag<?, ?> flag : flagCollection) {
-                        Object value;
-                        if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
-                            value = FLAG_DECIMAL_FORMAT.format(flag.getValue());
-                        } else {
-                            value = flag.toString();
-                        }
-                        flags.append(prefix).append(CaptionUtility
-                            .format(player, Captions.PLOT_FLAG_LIST.getTranslated(), flag.getName(),
-                                CaptionUtility.formatRaw(player, value.toString(), "")));
-                        prefix = ", ";
+                        seen = TranslatableCaption.of("info.known").getComponent(player);
                     }
                 }
-                boolean build = this.isAdded(player.getUUID());
-                String owner = this.getOwners().isEmpty() ? "unowned" : PlayerManager.getPlayerList(this.getOwners());
-                if (this.getArea() != null) {
-                    info = info.replace("%area%",
-                        this.getArea().getWorldName() + (this.getArea().getId() == null ?
-                            "" :
-                            "(" + this.getArea().getId() + ")"));
-                } else {
-                    info = info.replace("%area%", Captions.NONE.getTranslated());
+            } else {
+                seen = TranslatableCaption.of("info.never").getComponent(player);
+            }
+
+            String description = this.getFlag(DescriptionFlag.class);
+            if (description.isEmpty()) {
+                description = TranslatableCaption.of("info.plot_no_description").getComponent(player);
+            }
+
+            Component flags = null;
+            Collection<PlotFlag<?, ?>> flagCollection = this.getApplicableFlags(true);
+            if (flagCollection.isEmpty()) {
+                flags = MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(player));
+            } else {
+                String prefix = " ";
+                for (final PlotFlag<?, ?> flag : flagCollection) {
+                    Object value;
+                    if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
+                        value = FLAG_DECIMAL_FORMAT.format(flag.getValue());
+                    } else {
+                        value = flag.toString();
+                    }
+                    Component snip = MINI_MESSAGE
+                        .parse(prefix + CaptionUtility.format(player, TranslatableCaption.of("info.plot_flag_list").getComponent(player)),
+                            Template.of("flag", flag.getName()), Template.of("value", CaptionUtility.formatRaw(player, value.toString())));
+                    if (flags != null) {
+                        flags.append(snip);
+                    } else {
+                        flags = snip;
+                    }
+                    prefix = ", ";
                 }
-                info = info.replace("%id%", this.getId().toString());
-                info = info.replace("%alias%", alias);
-                info = info.replace("%num%", String.valueOf(num));
-                info = info.replace("%desc%", description);
-                info = info.replace("%biome%", biome.toString().toLowerCase());
-                info = info.replace("%owner%", owner);
-                info = info.replace("%members%", members);
-                info = info.replace("%player%", player.getName());
-                info = info.replace("%trusted%", trusted);
-                info = info.replace("%helpers%", members);
-                info = info.replace("%denied%", denied);
-                info = info.replace("%seen%", seen);
-                info = info.replace("%flags%", flags);
-                info = info.replace("%build%", String.valueOf(build));
-                if (info.contains("%rating%")) {
-                    final String newInfo = info;
-                    TaskManager.runTaskAsync(() -> {
-                        String info1;
-                        if (Settings.Ratings.USE_LIKES) {
-                            info1 = newInfo.replaceAll("%rating%",
-                                String.format("%.0f%%", Like.getLikesPercentage(this) * 100D));
-                        } else {
-                            int max = 10;
-                            if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES
-                                .isEmpty()) {
-                                max = 8;
-                            }
-                            if (full && Settings.Ratings.CATEGORIES != null
-                                && Settings.Ratings.CATEGORIES.size() > 1) {
-                                double[] ratings = this.getAverageRatings();
-                                String rating = "";
-                                String prefix = "";
-                                for (int i = 0; i < ratings.length; i++) {
-                                    rating +=
-                                        prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String
-                                            .format("%.1f", ratings[i]);
-                                    prefix = ",";
-                                }
-                                info1 = newInfo.replaceAll("%rating%", rating);
-                            } else {
-                                info1 = newInfo.replaceAll("%rating%",
-                                    String.format("%.1f", this.getAverageRating()) + '/' + max);
-                            }
+            }
+            boolean build = this.isAdded(player.getUUID());
+            String owner = this.getOwners().isEmpty() ? "unowned" : PlayerManager.getPlayerList(this.getOwners());
+            Template headerTemplate = Template.of("header", TranslatableCaption.of("info.plot_info_header").getComponent(player));
+            Template footerTemplate = Template.of("footer", TranslatableCaption.of("info.plot_info_footer").getComponent(player));
+            Template areaTemplate;
+            if (this.getArea() != null) {
+                areaTemplate =
+                    Template.of("area", this.getArea().getWorldName() + (this.getArea().getId() == null ? "" : "(" + this.getArea().getId() + ")"));
+            } else {
+                areaTemplate = Template.of("area", TranslatableCaption.of("info.none").getComponent(player));
+            }
+            Template idTemplate = Template.of("id", this.getId().toString());
+            Template aliasTemplate = Template.of("alias", alias);
+            Template numTemplate = Template.of("num", String.valueOf(num));
+            Template descTemplate = Template.of("desc", description);
+            Template biomeTemplate = Template.of("biome", biome.toString().toLowerCase());
+            Template ownerTemplate = Template.of("owner", owner);
+            Template membersTemplate = Template.of("members", members);
+            Template playerTemplate = Template.of("player", player.getName());
+            Template trustedTemplate = Template.of("trusted", trusted);
+            Template helpersTemplate = Template.of("helpers", members);
+            Template deniedTemplate = Template.of("denied", denied);
+            Template seenTemplate = Template.of("seen", seen);
+            Template flagsTemplate = Template.of("flags", flags);
+            Template buildTemplate = Template.of("build", String.valueOf(build));
+            if (iInfo.getComponent(player).contains("<rating>")) {
+                TaskManager.runTaskAsync(() -> {
+                    Template ratingTemplate;
+                    if (Settings.Ratings.USE_LIKES) {
+                        ratingTemplate = Template.of("rating", String.format("%.0f%%", Like.getLikesPercentage(this) * 100D));
+                    } else {
+                        int max = 10;
+                        if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
+                            max = 8;
                         }
-                        future.complete(info1);
-                    });
-                    return;
-                }
-                future.complete(info);
-            });
+                        if (full && Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
+                            double[] ratings = this.getAverageRatings();
+                            String rating = "";
+                            String prefix = "";
+                            for (int i = 0; i < ratings.length; i++) {
+                                rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String.format("%.1f", ratings[i]);
+                                prefix = ",";
+                            }
+                            ratingTemplate = Template.of("rating", rating);
+                        } else {
+                            ratingTemplate = Template.of("rating", String.format("%.1f", this.getAverageRating()) + '/' + max);
+                        }
+                    }
+                    future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
+                        .parse(iInfo.getComponent(player), headerTemplate, areaTemplate, idTemplate, aliasTemplate, numTemplate, descTemplate,
+                            biomeTemplate, ownerTemplate, membersTemplate, playerTemplate, trustedTemplate, helpersTemplate, deniedTemplate,
+                            seenTemplate, flagsTemplate, buildTemplate, ratingTemplate, footerTemplate))));
+                });
+                return;
+            }
+            future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
+                .parse(iInfo.getComponent(player), headerTemplate, areaTemplate, idTemplate, aliasTemplate, numTemplate, descTemplate, biomeTemplate,
+                    ownerTemplate, membersTemplate, playerTemplate, trustedTemplate, helpersTemplate, deniedTemplate, seenTemplate, flagsTemplate,
+                    buildTemplate, footerTemplate))));
+        });
         return future;
     }
 

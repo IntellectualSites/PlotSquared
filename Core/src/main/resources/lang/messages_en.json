@@ -348,6 +348,7 @@
   
   "info.none": "<gray>None</gray>",
   "info.now": "<gray>Now</gray>",
+  "info.never": "<gray>Never</gray>",
   "info.unknown": "<gray>Unknown</gray>",
   "info.server": "<gray>Server</gray>",
   "info.everyone": "<gray>Everyone</gray>",
@@ -355,7 +356,7 @@
   "info.plot_info_unclaimed": "<prefix><gray>Plot <gold><plot></gold> is not yet claimed.</gray>",
   "info.plot_info_header": "<dark_gray><strikethrough>--------- <reset><gold>INFO </gold><dark_gray><strikethrough>---------</dark_gray>",
   "info.plot_info_hidden": "<prefix><red>You cannot view the information about this plot.</red>",
-  "info.plot_info_format": "<gold>ID: <gray><id></gray>\nArea: <gray><area></gray>\nAlias:<gray><alias></gray>\nOwner:<gray><owner></gray>\nBiome: <gray><biome></gray>\nCan Build: <gray><build></gray>\nRating: <gray><rating></gray>\nSeen: <gray><seen></gray>\nTrusted:<gray><trusted></gray>\nMembers:<gray><members></gray>\nDenied:<gray><denied></gray>\nFlags:<gray><flags></gray>\nDescription: <gray><desc></gray></gold>",
+  "info.plot_info_format": "<header>\n<gold>ID: <gray><id></gray>\nArea: <gray><area></gray>\nAlias:<gray><alias></gray>\nOwner:<gray><owner></gray>\nBiome: <gray><biome></gray>\nCan Build: <gray><build></gray>\nRating: <gray><rating></gray>\nSeen: <gray><seen></gray>\nTrusted:<gray><trusted></gray>\nMembers:<gray><members></gray>\nDenied:<gray><denied></gray>\nFlags:<gray><flags></gray>\nDescription: <gray><desc></gray></gold>\n<footer>",
   "info.plot_info_footer": "<dark_gray><strikethrough>--------- <reset><gold>INFO </gold><dark_gray><strikethrough>---------<reset>",
   "info.plot_info_trusted": "<gold>Trusted:</gold><gray><trusted></gray>",
   "info.plot_info_members": "<gold>Members:</gold><gray><members></gray>",
@@ -415,8 +416,8 @@
   "owner.now_owner": "<prefix><dark_aqua>You are now the plot owner of plot <plot>.</dark_aqua>",
   
   "signs.owner_sign_line_1": "<gold>ID: </gold><gray><id></gray>",
-  "signs.owner_sign_line_2": "<gold>Owner: </gold><gray><owner></gray>",
-  "signs.owner_sign_line_3": "<gray><plr></gray>",
+  "signs.owner_sign_line_2": "<gold>Owner:",
+  "signs.owner_sign_line_3": "<gray><owner></gray>",
   "signs.owner_sign_line_4": "<dark_gray>Claimed</dark_gray>",
   
   "help.help_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",

@@ -116,7 +116,7 @@ import java.util.stream.Stream;
     private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
 
     public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitPlatform.getPlugin(BukkitPlatform.class));
-    public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacy();
+    public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final Collection<BlockType> tileEntityTypes = new HashSet<>();
@@ -322,13 +322,11 @@ import java.util.stream.Stream;
     }
 
     @Override @SuppressWarnings("deprecation")
-    public void setSign(@Nonull final Location location, @Nonnull final Caption[] lines,
+    public void setSign(@Nonnull final Location location, @Nonnull final Caption[] lines,
         @Nonnull final Template ... replacements) {
-        ensureLoaded(location.getWorld(), location.getX(), location.getZ(), chunk -> {
-            final World world = getWorld(location.getWorld());
+        ensureLoaded(location.getWorldName(), location.getX(), location.getZ(), chunk -> {
+            final World world = getWorld(location.getWorldName());
             final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
-            final World world = getWorld(worldName);
-            final Block block = world.getBlockAt(x, y, z);
             //        block.setType(Material.AIR);
             final Material type = block.getType();
             if (type != Material.LEGACY_SIGN && type != Material.LEGACY_WALL_SIGN) {
