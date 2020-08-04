@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.flag.types;
 
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ public abstract class IntegerFlag<F extends NumberFlag<Integer, F>> extends Numb
 
     protected IntegerFlag(final int value, int minimum, int maximum,
         @Nonnull Caption flagDescription) {
-        super(value, minimum, maximum, Captions.FLAG_CATEGORY_INTEGERS, flagDescription);
+        super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_integers"), flagDescription);
     }
 
     protected IntegerFlag(@Nonnull Caption flagDescription) {
@@ -58,7 +59,7 @@ public abstract class IntegerFlag<F extends NumberFlag<Integer, F>> extends Numb
         try {
             return Integer.parseInt(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_INTEGER);
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_integer"));
         }
     }
 }

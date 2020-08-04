@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.ItemUtil;
@@ -44,7 +44,7 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
      * @param value Flag value
      */
     protected MusicFlag(ItemType value) {
-        super(value, Captions.FLAG_CATEGORY_MUSIC, Captions.FLAG_DESCRIPTION_MUSIC);
+        super(value, TranslatableCaption.of("flags.flag_category_music"), TranslatableCaption.of("flags.flag_description_music"));
     }
 
     @Override public MusicFlag parse(@Nonnull String input) throws FlagParseException {
@@ -56,7 +56,7 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
             .getId().contains("music_disc_"))) {
             return new MusicFlag(ItemUtil.get(input));
         } else {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_MUSIC);
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_music"));
         }
     }
 

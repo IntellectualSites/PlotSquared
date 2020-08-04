@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class KelpGrowFlag extends BooleanFlag<KelpGrowFlag> {
     public static final KelpGrowFlag KELP_GROW_FALSE = new KelpGrowFlag(false);
 
     private KelpGrowFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_KELP_GROW);
+        super(value, TranslatableCaption.of("flags.flag_description_kelp_grow"));
     }
 
     @Override protected KelpGrowFlag flagOf(@Nonnull Boolean value) {

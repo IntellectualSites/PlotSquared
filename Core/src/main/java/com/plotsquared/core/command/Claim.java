@@ -169,7 +169,8 @@ public class Claim extends SubCommand {
         }
         int border = area.getBorder();
         if (border != Integer.MAX_VALUE && plot.getDistanceFromOrigin() > border && !force) {
-            return !sendMessage(player, Captions.BORDER);
+            player.sendMessage(TranslatableCaption.of("border.border"));
+            return false;
         }
         plot.setOwnerAbs(player.getUUID());
         final String finalSchematic = schematic;
@@ -177,7 +178,7 @@ public class Claim extends SubCommand {
             try {
                 TaskManager.getPlatformImplementation().sync(() -> {
                     if (!plot.claim(player, true, finalSchematic, false)) {
-                        logger.info(Captions.PREFIX.getTranslated() + String
+                        logger.info(TranslatableCaption.of("core.prefix") + String
                             .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
                         player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                         plot.setOwnerAbs(null);
@@ -199,7 +200,7 @@ public class Claim extends SubCommand {
                 e.printStackTrace();
             }
         }, () -> {
-            logger.info(Captions.PREFIX.getTranslated() + String
+            logger.info(TranslatableCaption.of("core.prefix") + String
                 .format("Failed to add plot %s to the database",
                     plot.getId().toCommaSeparatedString()));
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));

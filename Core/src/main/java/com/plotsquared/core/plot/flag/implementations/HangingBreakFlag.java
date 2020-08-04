@@ -26,6 +26,7 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +37,7 @@ public class HangingBreakFlag extends BooleanFlag<HangingBreakFlag> {
     public static final HangingBreakFlag HANGING_BREAK_FALSE = new HangingBreakFlag(false);
 
     private HangingBreakFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_HANGING_BREAK);
+        super(value, TranslatableCaption.of("flags.flag_description_hanging_break"));
     }
 
     @Override protected HangingBreakFlag flagOf(@Nonnull Boolean value) {

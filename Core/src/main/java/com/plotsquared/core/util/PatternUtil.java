@@ -27,7 +27,7 @@ package com.plotsquared.core.util;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.command.Command;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.entity.Player;
@@ -41,6 +41,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public class PatternUtil {
         try {
             return WorldEdit.getInstance().getPatternFactory().parseFromInput(input, context);
         } catch (InputParseException e) {
-            throw new Command.CommandException(Captions.NOT_VALID_BLOCK, e.getMessage());
+            throw new Command.CommandException(TranslatableCaption.of("invalid.not_valid_block"), Template.of("value", e.getMessage()));
         }
     }
 

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class MiscInteractFlag extends BooleanFlag<MiscInteractFlag> {
     public static final MiscInteractFlag MISC_INTERACT_FALSE = new MiscInteractFlag(false);
 
     private MiscInteractFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_MISC_INTERACT);
+        super(value, TranslatableCaption.of("flags.flag_description_misc_interact"));
     }
 
     @Override protected MiscInteractFlag flagOf(@Nonnull Boolean value) {

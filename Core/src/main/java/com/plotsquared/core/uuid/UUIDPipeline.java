@@ -29,6 +29,7 @@ import com.google.common.collect.Lists;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import org.slf4j.Logger;
@@ -330,7 +331,7 @@ public class UUIDPipeline {
 
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
                 for (final UUID uuid : remainingRequests) {
-                    mappings.add(new UUIDMapping(uuid, Captions.UNKNOWN.getTranslated()));
+                    mappings.add(new UUIDMapping(uuid, TranslatableCaption.of("info.unknown")));
                 }
                 return mappings;
             } else {

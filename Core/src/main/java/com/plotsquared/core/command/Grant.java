@@ -48,7 +48,7 @@ import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "grant",
     category = CommandCategory.CLAIMING,
-    usage = "/plot grant <check|add> [player]",
+    usage = "/plot grant <check | add> [player]",
     permission = "plots.grant",
     requiredType = RequiredType.NONE)
 public class Grant extends Command {
@@ -61,7 +61,7 @@ public class Grant extends Command {
     public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        checkTrue(args.length >= 1 && args.length <= 2, Captions.COMMAND_SYNTAX, getUsage());
+        checkTrue(args.length >= 1 && args.length <= 2, TranslatableCaption.of("commandconfig.command_syntax"), Template.of("value", "/plot grant <check | add> [player]"));
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
             case "add":
@@ -90,7 +90,8 @@ public class Grant extends Command {
                             try (final MetaDataAccess<Integer> access = pp.accessPersistentMetaData(
                                 PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
                                 if (args[0].equalsIgnoreCase("check")) {
-                                    Captions.GRANTED_PLOTS.send(player, access.get().orElse(0));
+                                    player.sendMessage(TranslatableCaption.of("grants.granted_plots"),
+                                    Template.of("grants", String.valueOf(access.get().orElse(0))));
                                 } else {
                                     access.set(access.get().orElse(0) + 1);
                                 }

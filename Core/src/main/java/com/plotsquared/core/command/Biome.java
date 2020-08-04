@@ -56,7 +56,7 @@ public class Biome extends SetCommand {
         }
         if (biome == null) {
             String biomes = StringMan
-                .join(BiomeType.REGISTRY.values(), Captions.BLOCK_LIST_SEPARATOR.getTranslated());
+                .join(BiomeType.REGISTRY.values(), Captions.BLOCK_LIST_SEPARATOR.toString());
             player.sendMessage(TranslatableCaption.of("biome.need_biome"));
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.subcommand_set_options_header"),

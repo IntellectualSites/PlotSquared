@@ -281,11 +281,11 @@ public class EventDispatcher {
             case INTERACT_BLOCK: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), notifyPerms);
+                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), notifyPerms);
+                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
                 }
                 final List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : use) {
@@ -295,7 +295,7 @@ public class EventDispatcher {
                     }
                 }
                 return Permissions
-                        .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
+                        .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
                                 false) || !(!notifyPerms || MainUtil
                         .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
                                 Captions.FLAG_USE.getTranslated()));
@@ -303,11 +303,11 @@ public class EventDispatcher {
             case TRIGGER_PHYSICAL: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), false);
+                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), false);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), false);
+                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), false);
                 }
                 if (plot.getFlag(DeviceInteractFlag.class)) {
                     return true;
@@ -320,17 +320,17 @@ public class EventDispatcher {
                     }
                 }
                 return Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
                         false);
             }
             case SPAWN_MOB: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), notifyPerms);
+                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), notifyPerms);
+                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
                 }
                 if (plot.getFlag(MobPlaceFlag.class)) {
                     return true;
@@ -343,7 +343,7 @@ public class EventDispatcher {
                     }
                 }
                 if (Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
                         false)) {
                     return true;
                 }
@@ -354,11 +354,11 @@ public class EventDispatcher {
             case PLACE_MISC: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), notifyPerms);
+                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), notifyPerms);
+                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
                 }
                 if (plot.getFlag(MiscPlaceFlag.class)) {
                     return true;
@@ -371,7 +371,7 @@ public class EventDispatcher {
                     }
                 }
                 if (Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.getTranslated(),
+                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
                         false)) {
                     return true;
                 }
@@ -382,11 +382,11 @@ public class EventDispatcher {
             case PLACE_VEHICLE:
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.getTranslated(), notifyPerms);
+                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.getTranslated(), notifyPerms);
+                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
                 }
                 return plot.getFlag(VehiclePlaceFlag.class);
             default:

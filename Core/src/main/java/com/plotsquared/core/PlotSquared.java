@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core;
 
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.MemorySection;
@@ -34,7 +33,6 @@ import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.CaptionLoader;
 import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.DummyCaptionMap;
-import com.plotsquared.core.configuration.caption.LocalizedCaptionMap;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
@@ -67,10 +65,8 @@ import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.LegacyConverter;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
-import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
@@ -1330,20 +1326,20 @@ public class PlotSquared {
                         .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION) && !this.worldConfiguration
                         .getString("configuration_version").equalsIgnoreCase("v5"))) {
                     // Conversion needed
-                    logger.info(Captions.LEGACY_CONFIG_FOUND.getTranslated());
+                    logger.info("[P2] &aA legacy configuration file was detected. Conversion will be attempted.");
                     try {
                         com.google.common.io.Files
                             .copy(this.worldsFile, new File(folder, "worlds.yml.old"));
-                        logger.info(Captions.LEGACY_CONFIG_BACKUP.getTranslated());
+                        logger.info("[P2] &6A copy of worlds.yml has been saved in the file worlds.yml.old");
                         final ConfigurationSection worlds =
                             this.worldConfiguration.getConfigurationSection("worlds");
                         final LegacyConverter converter = new LegacyConverter(worlds);
                         converter.convert();
                         this.worldConfiguration.set("worlds", worlds);
                         this.setConfigurationVersion(LegacyConverter.CONFIGURATION_VERSION);
-                        logger.info(Captions.LEGACY_CONFIG_DONE.getTranslated());
+                        logger.info("[P2] &aThe conversion has finished. PlotSquared will now be disabled and the new configuration file will be used at next startup. Please review the new worlds.yml file. Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. You need to re-generate the schematics.");
                     } catch (final Exception e) {
-                        logger.error(Captions.LEGACY_CONFIG_CONVERSION_FAILED.getTranslated(), e);
+                        logger.error("[P2] &cFailed to convert the legacy configuration file. See stack trace for information.", e);
                     }
                     // Disable plugin
                     this.platform.shutdown();

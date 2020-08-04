@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ public class GreetingFlag extends PlotFlag<String, GreetingFlag> {
     public static final GreetingFlag GREETING_FLAG_EMPTY = new GreetingFlag("");
 
     protected GreetingFlag(@Nonnull String value) {
-        super(value, Captions.FLAG_CATEGORY_STRING, Captions.FLAG_DESCRIPTION_GREETING);
+        super(value, TranslatableCaption.of("flags.flag_category_string"), TranslatableCaption.of("flags.flag_description_greeting"));
     }
 
     @Override public GreetingFlag parse(@Nonnull String input) {

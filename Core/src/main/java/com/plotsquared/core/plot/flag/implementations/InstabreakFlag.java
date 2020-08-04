@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class InstabreakFlag extends BooleanFlag<InstabreakFlag> {
     public static final InstabreakFlag INSTABREAK_FALSE = new InstabreakFlag(false);
 
     private InstabreakFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_INSTABREAK);
+        super(value, TranslatableCaption.of("flags.flag_description_instabreak"));
     }
 
     @Override protected InstabreakFlag flagOf(@Nonnull Boolean value) {

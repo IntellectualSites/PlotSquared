@@ -26,9 +26,10 @@
 package com.plotsquared.core.plot.flag.types;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 
@@ -37,7 +38,7 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
     private final T defaultValue;
 
     protected TimedFlag(@Nonnull Timed<T> value, T defaultValue, @Nonnull Caption flagDescription) {
-        super(value, Captions.FLAG_CATEGORY_INTERVALS, flagDescription);
+        super(value, TranslatableCaption.of("flags.flag_category_intervals"), flagDescription);
         this.defaultValue = defaultValue;
     }
 
@@ -47,10 +48,10 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
         try {
             interval = Integer.parseInt(split[0]);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, Captions.NOT_A_NUMBER, split[0]);
+            throw new FlagParseException(this, input, TranslatableCaption.of("invalid.not_a_number"), Template.of("value", split[0]));
         }
         if (interval < 1) {
-            throw new FlagParseException(this, input, Captions.NUMBER_NOT_POSITIVE, split[0]);
+            throw new FlagParseException(this, input, TranslatableCaption.of("invalid.number_not_positive"), Template.of("value", split[0]));
         }
         if (split.length == 1) {
             return flagOf(new Timed<>(interval, defaultValue));

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class KeepInventoryFlag extends BooleanFlag<KeepInventoryFlag> {
     public static final KeepInventoryFlag KEEP_INVENTORY_FALSE = new KeepInventoryFlag(false);
 
     private KeepInventoryFlag(final boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_KEEP_INVENTORY);
+        super(value, TranslatableCaption.of("flags.flag_description_keep_inventory"));
     }
 
     @Override protected KeepInventoryFlag flagOf(@Nonnull final Boolean value) {

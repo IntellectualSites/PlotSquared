@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 
@@ -38,7 +38,7 @@ public class PlaceFlag extends BlockTypeListFlag<PlaceFlag> {
     public static final PlaceFlag PLACE_NONE = new PlaceFlag(Collections.emptyList());
 
     protected PlaceFlag(List<BlockTypeWrapper> blockTypeList) {
-        super(blockTypeList, Captions.FLAG_DESCRIPTION_PLACE);
+        super(blockTypeList, TranslatableCaption.of("flags.flag_description_place"));
     }
 
     @Override protected PlaceFlag flagOf(@Nonnull List<BlockTypeWrapper> value) {

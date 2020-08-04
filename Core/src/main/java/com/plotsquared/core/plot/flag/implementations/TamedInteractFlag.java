@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class TamedInteractFlag extends BooleanFlag<TamedInteractFlag> {
     public static final TamedInteractFlag TAMED_INTERACT_FALSE = new TamedInteractFlag(false);
 
     private TamedInteractFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_TAMED_INTERACT);
+        super(value, TranslatableCaption.of("flags.flag_description_tamed_interact"));
     }
 
     @Override protected TamedInteractFlag flagOf(@Nonnull Boolean value) {

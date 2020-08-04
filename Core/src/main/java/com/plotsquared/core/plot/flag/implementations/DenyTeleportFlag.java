@@ -25,11 +25,12 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,7 +48,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
      * @param value Flag value
      */
     protected DenyTeleportFlag(@Nonnull DeniedGroup value) {
-        super(value, Captions.FLAG_CATEGORY_ENUM, Captions.FLAG_DESCRIPTION_DENY_TELEPORT);
+        super(value, TranslatableCaption.of("flags.flag_category_enum"), TranslatableCaption.of("flags.flag_description_deny_teleport"));
     }
 
     public static boolean allowsTeleport(PlotPlayer player, Plot plot) {
@@ -82,8 +83,8 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
     @Override public DenyTeleportFlag parse(@Nonnull String input) throws FlagParseException {
         final DeniedGroup group = DeniedGroup.fromString(input);
         if (group == null) {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_ENUM,
-                "members, nonmembers, trusted, nontrusted, nonowners");
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_enum"),
+                    Template.of("list", "members, nonmembers, trusted, nontrusted, nonowners"));
         }
         return flagOf(group);
     }

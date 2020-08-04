@@ -135,7 +135,7 @@ public class Kick extends SubCommand {
                         Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
                         if (plot.equals(newSpawn.getPlot())) {
                             // Kick from server if you can't be teleported to spawn
-                            player2.kick(Captions.YOU_GOT_KICKED.getTranslated());
+                            player2.sendMessage(TranslatableCaption.of("kick.you_got_kicked"));
                         } else {
                             player2.plotkick(newSpawn);
                         }

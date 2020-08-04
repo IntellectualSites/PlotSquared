@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -38,7 +38,7 @@ public class PreventCreativeCopyFlag extends BooleanFlag<PreventCreativeCopyFlag
         new PreventCreativeCopyFlag(false);
 
     private PreventCreativeCopyFlag(@Nonnull final Boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_PREVENT_CREATIVE_COPY);
+        super(value, TranslatableCaption.of("flags.flag_description_prevent_creative_copy"));
     }
 
     @Override protected PreventCreativeCopyFlag flagOf(@Nonnull final Boolean value) {

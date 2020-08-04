@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.ListFlag;
 
@@ -40,8 +40,8 @@ public class BlockedCmdsFlag extends ListFlag<String, BlockedCmdsFlag> {
         new BlockedCmdsFlag(Collections.emptyList());
 
     protected BlockedCmdsFlag(List<String> valueList) {
-        super(valueList, Captions.FLAG_CATEGORY_STRING_LIST,
-            Captions.FLAG_DESCRIPTION_BLOCKED_CMDS);
+        super(valueList, TranslatableCaption.of("flags.flag_category_string_list"),
+                TranslatableCaption.of("flags.flag_description_blocked_cmds"));
     }
 
     @Override public BlockedCmdsFlag parse(@Nonnull String input) throws FlagParseException {

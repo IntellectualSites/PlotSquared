@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -38,7 +38,7 @@ public class VillagerInteractFlag extends BooleanFlag<VillagerInteractFlag> {
         new VillagerInteractFlag(false);
 
     private VillagerInteractFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_VILLAGER_INTERACT);
+        super(value, TranslatableCaption.of("flags.flag_description_villager_interact"));
     }
 
     @Override protected VillagerInteractFlag flagOf(@Nonnull Boolean value) {

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class PveFlag extends BooleanFlag<PveFlag> {
     public static final PveFlag PVE_FALSE = new PveFlag(false);
 
     private PveFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_PVE);
+        super(value, TranslatableCaption.of("flags.flag_description_pve"));
     }
 
     @Override protected PveFlag flagOf(@Nonnull Boolean value) {

@@ -26,6 +26,7 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.PlotFlag;
@@ -40,7 +41,7 @@ public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag
      * @param value Flag value
      */
     public DoneFlag(@Nonnull String value) {
-        super(value, Captions.NONE, Captions.NONE);
+        super(value, TranslatableCaption.of("info.none"), TranslatableCaption.of("info.none"));
     }
 
     public static boolean isDone(final Plot plot) {

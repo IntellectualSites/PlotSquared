@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.MathMan;
@@ -43,14 +43,14 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
      * @param value Flag value
      */
     protected KeepFlag(@Nonnull Object value) {
-        super(value, Captions.FLAG_CATEGORY_MIXED, Captions.FLAG_DESCRIPTION_KEEP);
+        super(value, TranslatableCaption.of("flags.flag_category_mixed"), TranslatableCaption.of("flags.flag_description_keep"));
     }
 
     @Override public KeepFlag parse(@Nonnull String input) throws FlagParseException {
         if (MathMan.isInteger(input)) {
             final long value = Long.parseLong(input);
             if (value < 0) {
-                throw new FlagParseException(this, input, Captions.FLAG_ERROR_KEEP);
+                throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_keep"));
             } else {
                 return flagOf(value);
             }

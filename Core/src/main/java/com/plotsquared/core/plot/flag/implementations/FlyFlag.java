@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
     public static final FlyFlag FLIGHT_FLAG_DEFAULT = new FlyFlag(FlyStatus.DEFAULT);
 
     protected FlyFlag(final FlyStatus value) {
-        super(value, Captions.FLAG_CATEGORY_BOOLEAN, Captions.FLAG_DESCRIPTION_FLIGHT);
+        super(value, TranslatableCaption.of("flags.flag_category_boolean"), TranslatableCaption.of("flags.flag_description_flight"));
     }
 
     @Override public FlyFlag parse(@Nonnull final String input) {

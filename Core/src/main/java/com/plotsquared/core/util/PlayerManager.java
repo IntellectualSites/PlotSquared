@@ -28,6 +28,7 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -108,7 +109,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      */
     @Nonnull public static String getPlayerList(@Nonnull final Collection<UUID> uuids) {
         if (uuids.size() < 1) {
-            return Captions.NONE.getTranslated();
+            TranslatableCaption.of("info.none");
         }
 
         final List<UUID> players = new LinkedList<>();
@@ -165,13 +166,13 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      */
     @Nonnull public static String getName(@Nullable final UUID owner, final boolean blocking) {
         if (owner == null) {
-            return Captions.NONE.getTranslated();
+            TranslatableCaption.of("info.none");
         }
         if (owner.equals(DBFunc.EVERYONE)) {
-            return Captions.EVERYONE.getTranslated();
+            TranslatableCaption.of("info.everyone");
         }
         if (owner.equals(DBFunc.SERVER)) {
-            return Captions.SERVER.getTranslated();
+            TranslatableCaption.of("info.server");
         }
         final String name;
         if (blocking) {
@@ -187,7 +188,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             }
         }
         if (name == null) {
-            return Captions.UNKNOWN.getTranslated();
+            TranslatableCaption.of("info.unknown");
         }
         return name;
     }

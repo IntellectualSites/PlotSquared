@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class HostileInteractFlag extends BooleanFlag<HostileInteractFlag> {
     public static final HostileInteractFlag HOSTILE_INTERACT_FALSE = new HostileInteractFlag(false);
 
     private HostileInteractFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_HOSTILE_INTERACT);
+        super(value, TranslatableCaption.of("flags.flag_description_hostile_interact"));
     }
 
     @Override protected HostileInteractFlag flagOf(@Nonnull Boolean value) {

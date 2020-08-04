@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class HangingPlaceFlag extends BooleanFlag<HangingPlaceFlag> {
     public static final HangingPlaceFlag HANGING_PLACE_FALSE = new HangingPlaceFlag(false);
 
     private HangingPlaceFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_HANGING_PLACE);
+        super(value, TranslatableCaption.of("flags.flag_description_hanging_place"));
     }
 
     @Override protected HangingPlaceFlag flagOf(@Nonnull Boolean value) {

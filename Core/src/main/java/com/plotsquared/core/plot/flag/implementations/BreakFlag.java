@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 
@@ -38,7 +38,7 @@ public class BreakFlag extends BlockTypeListFlag<BreakFlag> {
     public static final BreakFlag BREAK_NONE = new BreakFlag(Collections.emptyList());
 
     protected BreakFlag(List<BlockTypeWrapper> blockTypeList) {
-        super(blockTypeList, Captions.FLAG_DESCRIPTION_BREAK);
+        super(blockTypeList, TranslatableCaption.of("flags.flag_description_break"));
     }
 
     @Override protected BreakFlag flagOf(@Nonnull List<BlockTypeWrapper> value) {

@@ -34,7 +34,6 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.MetaDataAccess;
-import com.plotsquared.core.player.MetaDataKey;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -61,7 +60,6 @@ import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.world.gamemode.GameMode;
@@ -161,8 +159,7 @@ public class PlotListener {
 
             final String greeting = plot.getFlag(GreetingFlag.class);
             if (!greeting.isEmpty()) {
-                plot.format(Captions.PREFIX_GREETING.getTranslated() + greeting, player, false)
-                    .thenAcceptAsync(player::sendMessage);
+                plot.format(greeting, player, false).thenAcceptAsync(player::sendMessage);
             }
 
             if (plot.getFlag(NotifyEnterFlag.class)) {
@@ -349,8 +346,7 @@ public class PlotListener {
 
                 final String farewell = plot.getFlag(FarewellFlag.class);
                 if (!farewell.isEmpty()) {
-                    plot.format(Captions.PREFIX_FAREWELL.getTranslated() + farewell, player, false)
-                        .thenAcceptAsync(player::sendMessage);
+                    plot.format(farewell, player, false).thenAcceptAsync(player::sendMessage);
                 }
 
                 if (plot.getFlag(NotifyLeaveFlag.class)) {

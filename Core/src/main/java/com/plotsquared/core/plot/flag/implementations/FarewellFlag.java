@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ public class FarewellFlag extends PlotFlag<String, FarewellFlag> {
     public static final FarewellFlag FAREWELL_FLAG_EMPTY = new FarewellFlag("");
 
     protected FarewellFlag(@Nonnull String value) {
-        super(value, Captions.FLAG_CATEGORY_STRING, Captions.FLAG_DESCRIPTION_FAREWELL);
+        super(value, TranslatableCaption.of("flags.flag_category_string"), TranslatableCaption.of("flags.flag_description_farewell"));
     }
 
     @Override public FarewellFlag parse(@Nonnull String input) {

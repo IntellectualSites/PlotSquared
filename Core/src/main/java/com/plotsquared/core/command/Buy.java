@@ -69,7 +69,7 @@ public class Buy extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
 
-        check(this.econHandler, Captions.ECON_DISABLED);
+        check(this.econHandler, TranslatableCaption.of("economy.econ_disabled"));
         final Plot plot;
         if (args.length != 0) {
             if (args.length != 1) {
@@ -78,18 +78,18 @@ public class Buy extends Command {
             }
             plot = check(Plot.getPlotFromString(player, args[0], true), null);
         } else {
-            plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
+            plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         }
-        checkTrue(plot.hasOwner(), Captions.PLOT_UNOWNED);
-        checkTrue(!plot.isOwner(player.getUUID()), Captions.CANNOT_BUY_OWN);
+        checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
+        checkTrue(!plot.isOwner(player.getUUID()), TranslatableCaption.of("economy.cannot_buy_own"));
         Set<Plot> plots = plot.getConnectedPlots();
         checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
-            Captions.CANT_CLAIM_MORE_PLOTS);
+            TranslatableCaption.of("permission.cant_claim_more_plots"));
         double price = plot.getFlag(PriceFlag.class);
         if (price <= 0) {
-            throw new CommandException(Captions.NOT_FOR_SALE);
+            throw new CommandException(TranslatableCaption.of("economy.not_for_sale"));
         }
-        checkTrue(player.getMoney() >= price, Captions.CANNOT_AFFORD_PLOT);
+        checkTrue(player.getMoney() >= price, TranslatableCaption.of("economy.cannot_afford_plot"));
         player.withdraw(price);
         // Failure
         // Success

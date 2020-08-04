@@ -26,7 +26,7 @@
 package com.plotsquared.core.plot.flag.types;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends Number
 
     protected DoubleFlag(@Nonnull Double value, Double minimum, Double maximum,
         @Nonnull Caption flagDescription) {
-        super(value, minimum, maximum, Captions.FLAG_CATEGORY_DOUBLES, flagDescription);
+        super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_doubles"), flagDescription);
     }
 
     protected DoubleFlag(@Nonnull Double value, @Nonnull Caption flagDescription) {
@@ -58,7 +58,7 @@ public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends Number
         try {
             return Double.parseDouble(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_DOUBLE);
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_double"));
         }
     }
 }

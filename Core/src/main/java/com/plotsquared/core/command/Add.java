@@ -66,11 +66,11 @@ public class Add extends Command {
     public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
-        checkTrue(plot.hasOwner(), Captions.PLOT_UNOWNED);
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
+        checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(plot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
-            Captions.NO_PLOT_PERMS);
+            TranslatableCaption.of("permission.no_plot_perms"));
         checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
                 Template.of("value", "/plot add <player | *>"));
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
@@ -116,7 +116,7 @@ public class Add extends Command {
                     }
                     checkTrue(!uuids.isEmpty(), null);
                     checkTrue(size <= plot.getArea().getMaxPlotMembers() || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
-                        Captions.PLOT_MAX_MEMBERS);
+                        TranslatableCaption.of("members.plot_max_members"));
                     // Success
                     confirm.run(this, () -> {
                         for (UUID uuid : uuids) {

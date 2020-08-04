@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.NonNegativeIntegerFlag;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ public class HostileCapFlag extends NonNegativeIntegerFlag<HostileCapFlag> {
         new HostileCapFlag(Integer.MAX_VALUE);
 
     protected HostileCapFlag(int value) {
-        super(value, Captions.FLAG_DESCRIPTION_HOSTILE_CAP);
+        super(value, TranslatableCaption.of("flags.flag_description_hostile_cap"));
     }
 
     @Override protected HostileCapFlag flagOf(@Nonnull Integer value) {

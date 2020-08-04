@@ -156,7 +156,7 @@
   "plotareatype.plot_area_type_normal": "<gray>Standard plot generation</gray>",
   "plotareatype.plot_area_type_augmented": "<gray>Plot generation with vanilla terrain</gray>",
   "plotareatype.plot_area_type_partial": "<gray>Vanilla with clusters of plots</gray>",
-  
+
   "schematics.schematic_too_large": "<prefix><red>The plot is too large for this action!</red>",
   "schematics.schematic_invalid": "<prefix><red>That is not a valid schematic. Reason: </red><gray><reason>.</gray>",
   "schematics.schematic_invalid_named": "<prefix><red><schemname> is not a valid schematic. Reason: </red><gray><reason>.</gray>",
@@ -223,7 +223,7 @@
   "commandconfig.flag_tutorial_usage": "<prefix><gold>Have an admin set the flag: </gold><gray><flag></gray>",
   
   "invalid.component_illegal_block": "<prefix><red>You are not allowed to generate a component containing the block <gray><value></gray></red>",
-  "invalid.not_valid_block": "<prefix><red>That's not a valid block: <gray><value></gray></red>",
+  "invalid.not_valid_block": "<prefix><red>That's not a valid block: </red><gray><value></gray>",
   "invalid.not_allowed_block": "<prefix><red>That block is not allowed: <gray><value></gray></red>",
   "invalid.not_valid_number": "<prefix><red>That's not a valid number within the range: </red><gray><value></gray>",
   "invalid.not_valid_plot_id": "<prefix><red>That's not a valid plot ID.</red>",
@@ -481,7 +481,7 @@
  
   "legacyconfig.legacy_config_found": "<prefix><green>A legacy configuration file was detected. Conversion will be attempted.</green>",
   "legacyconfig.legacy_config_backup": "<prefix><gold>A copy of worlds.yml has been saved in the file worlds.yml.old</gold>.",
-  "legacyconfig.legacy_config_replaced": "<prefix><gray>> %s has been replaced with %s</gray>",
+  "legacyconfig.legacy_config_replaced": "<prefix><gray>> <value1> has been replaced with <value2></gray>",
   "legacyconfig.legacy_config_done": "<prefix><green>The conversion has finished. PlotSquared will now be disabled and the new configuration file will be used at next startup. Please review the new worlds.yml file. Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. You need to re-generate the schematics.</green>",
   "legacyconfig.legacy_config_conversion_failed": "<prefix><red>Failed to convert the legacy configuration file. See stack trace for information.</red>",
  

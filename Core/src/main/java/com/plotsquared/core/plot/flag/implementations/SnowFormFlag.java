@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class SnowFormFlag extends BooleanFlag<SnowFormFlag> {
     public static final SnowFormFlag SNOW_FORM_FALSE = new SnowFormFlag(false);
 
     private SnowFormFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_SNOW_FORM);
+        super(value, TranslatableCaption.of("flags.flag_description_snow_for"));
     }
 
     @Override protected SnowFormFlag flagOf(@Nonnull Boolean value) {

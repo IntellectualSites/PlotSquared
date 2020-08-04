@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class SoilDryFlag extends BooleanFlag<SoilDryFlag> {
     public static final SoilDryFlag SOIL_DRY_FALSE = new SoilDryFlag(false);
 
     private SoilDryFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_SOIL_DRY);
+        super(value, TranslatableCaption.of("flags.flag_description_soil_dry"));
     }
 
     @Override protected SoilDryFlag flagOf(@Nonnull Boolean value) {

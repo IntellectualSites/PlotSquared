@@ -26,8 +26,9 @@
 package com.plotsquared.core.plot.flag.types;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 
@@ -35,7 +36,7 @@ public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag
 
     protected LongFlag(@Nonnull Long value, Long minimum, Long maximum,
         @Nonnull Caption flagDescription) {
-        super(value, minimum, maximum, Captions.FLAG_CATEGORY_INTEGERS, flagDescription);
+        super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_integers"), flagDescription);
     }
 
     protected LongFlag(@Nonnull Long value, @Nonnull Caption flagDescription) {
@@ -58,7 +59,7 @@ public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag
         try {
             return Long.parseLong(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, Captions.NOT_A_NUMBER, input);
+            throw new FlagParseException(this, input, TranslatableCaption.of("invalid.not_a_number"), Template.of("value", input));
         }
     }
 }

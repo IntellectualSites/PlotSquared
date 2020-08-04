@@ -44,6 +44,7 @@ import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,13 +135,13 @@ public class ComponentPresetManager {
         final Plot plot = player.getCurrentPlot();
 
         if (plot == null) {
-            Captions.NOT_IN_PLOT.send(player);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return null;
         } else if (!plot.hasOwner()) {
-            Captions.PLOT_UNOWNED.send(player);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return null;
         } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID())) {
-            Captions.NO_PLOT_PERMS.send(player);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return null;
         }
 
@@ -169,23 +170,24 @@ public class ComponentPresetManager {
                 }
 
                 if (plot.getRunning() > 0) {
-                    Captions.WAIT_FOR_TIMER.send(player);
+                    player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                     return false;
                 }
 
                 final Pattern pattern = PatternUtil.parse(null, componentPreset.getPattern(), false);
                 if (pattern == null) {
-                    Captions.PRESET_INVALID.send(player);
+                    player.sendMessage(TranslatableCaption.of("preset.preset_invalid"));
                     return false;
                 }
 
                 if (componentPreset.getCost() > 0.0D && econHandler != null && plot.getArea().useEconomy()) {
                     if (econHandler.getMoney(player) < componentPreset.getCost()) {
-                        Captions.PRESET_CANNOT_AFFORD.send(player);
+                        player.sendMessage(TranslatableCaption.of("preset.preset_cannot_afford"));
                         return false;
                     } else {
                         econHandler.withdrawMoney(player, componentPreset.getCost());
-                        Captions.REMOVED_BALANCE.send(player, componentPreset.getCost() + "");
+                        player.sendMessage(TranslatableCaption.of("economy.removed_balance"),
+                                Template.of("money", componentPreset.getCost() + ""));
                     }
                 }
 

@@ -25,9 +25,10 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,14 +43,13 @@ public class TitlesFlag extends PlotFlag<TitlesFlag.TitlesFlagValue, TitlesFlag>
     public static final TitlesFlag TITLES_FALSE = new TitlesFlag(TitlesFlagValue.FALSE);
 
     private TitlesFlag(final TitlesFlagValue value) {
-        super(value, Captions.FLAG_CATEGORY_ENUM, Captions.FLAG_DESCRIPTION_TITLES);
+        super(value, TranslatableCaption.of("flags.flag_category_enum"), TranslatableCaption.of("flags.flag_description_titles"));
     }
 
     @Override public TitlesFlag parse(@Nonnull final String input) throws FlagParseException {
         final TitlesFlagValue titlesFlagValue = TitlesFlagValue.fromString(input);
         if (titlesFlagValue == null) {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_ENUM,
-                Arrays.asList("none", "true", "false"));
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_enum"), Template.of("list", "none, true, false"));
         }
         return flagOf(titlesFlagValue);
     }

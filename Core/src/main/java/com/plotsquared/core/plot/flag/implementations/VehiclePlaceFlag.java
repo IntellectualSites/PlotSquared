@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class VehiclePlaceFlag extends BooleanFlag<VehiclePlaceFlag> {
     public static final VehiclePlaceFlag VEHICLE_PLACE_FALSE = new VehiclePlaceFlag(false);
 
     private VehiclePlaceFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_VEHICLE_PLACE);
+        super(value, TranslatableCaption.of("flags.flag_description_vehicle_place"));
     }
 
     @Override protected VehiclePlaceFlag flagOf(@Nonnull Boolean value) {

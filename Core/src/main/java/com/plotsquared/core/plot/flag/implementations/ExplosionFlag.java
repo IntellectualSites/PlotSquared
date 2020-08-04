@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class ExplosionFlag extends BooleanFlag<ExplosionFlag> {
     public static final ExplosionFlag EXPLOSION_FALSE = new ExplosionFlag(false);
 
     private ExplosionFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_EXPLOSION);
+        super(value, TranslatableCaption.of("flags.flag_description_explosion"));
     }
 
     @Override protected ExplosionFlag flagOf(@Nonnull Boolean value) {

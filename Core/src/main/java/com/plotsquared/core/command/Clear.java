@@ -75,7 +75,7 @@ public class Clear extends Command {
             sendUsage(player);
             return CompletableFuture.completedFuture(false);
         }
-        final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         Result eventResult = this.eventDispatcher.callClear(plot).getEventResult();
         if (eventResult == Result.DENY) {
             player.sendMessage(
@@ -86,10 +86,10 @@ public class Clear extends Command {
         boolean force = eventResult == Result.FORCE;
         checkTrue(force || plot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, "plots.admin.command.clear"),
-            Captions.NO_PLOT_PERMS);
-        checkTrue(plot.getRunning() == 0, Captions.WAIT_FOR_TIMER);
+            TranslatableCaption.of("permission.no_plot_perms"));
+        checkTrue(plot.getRunning() == 0, TranslatableCaption.of("errors.wait_for_timer"));
         checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
-            .hasPermission(player, "plots.continue"), Captions.DONE_ALREADY_DONE);
+            .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
         confirm.run(this, () -> {
             BackupManager.backup(player, plot, () -> {
                 final long start = System.currentTimeMillis();

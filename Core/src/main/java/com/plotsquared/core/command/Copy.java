@@ -50,7 +50,7 @@ public class Copy extends SubCommand {
             return false;
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
+            .hasPermission(player, Captions.PERMISSION_ADMIN.toString())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }

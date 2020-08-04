@@ -26,6 +26,7 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.flag.PlotFlag;
 
@@ -45,7 +46,7 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
      * @param value Flag value
      */
     protected WeatherFlag(@Nonnull PlotWeather value) {
-        super(value, Captions.FLAG_CATEGORY_WEATHER, Captions.FLAG_DESCRIPTION_WEATHER);
+        super(value, TranslatableCaption.of("flags.flag_category_weather"), TranslatableCaption.of("flags.flag_description_weather"));
     }
 
     @Override public WeatherFlag parse(@Nonnull String input) {

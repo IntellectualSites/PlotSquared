@@ -27,6 +27,7 @@ package com.plotsquared.core.plot;
 
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -36,9 +37,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum PlotAreaType {
-    NORMAL(Captions.PLOT_AREA_TYPE_NORMAL),
-    AUGMENTED(Captions.PLOT_AREA_TYPE_AUGMENTED),
-    PARTIAL(Captions.PLOT_AREA_TYPE_PARTIAL);
+    NORMAL(TranslatableCaption.of("plotareatype.plot_area_type_normal")),
+    AUGMENTED(TranslatableCaption.of("plotareatype.plot_area_type_augmented")),
+    PARTIAL(TranslatableCaption.of("plotareatype.plot_area_type_partial"));
 
     private final Caption description;
 

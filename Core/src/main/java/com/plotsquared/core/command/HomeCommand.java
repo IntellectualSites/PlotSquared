@@ -108,7 +108,7 @@ public class HomeCommand extends Command {
                 .hasPermission(player, Captions.PERMISSION_HOME)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.PERMISSION_VISIT_OWNED.getTranslated())
+                    Template.of("node", Captions.PERMISSION_VISIT_OWNED.toString())
             );
             return CompletableFuture.completedFuture(false);
         }

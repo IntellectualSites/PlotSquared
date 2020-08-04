@@ -69,7 +69,8 @@ public class Download extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String world = player.getLocation().getWorldName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            return false;
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
@@ -86,7 +87,7 @@ public class Download extends SubCommand {
             return false;
         }
         if ((!plot.isOwner(player.getUUID())) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
+            .hasPermission(player, Captions.PERMISSION_ADMIN.toString())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
@@ -121,7 +122,7 @@ public class Download extends SubCommand {
             if (!Permissions.hasPermission(player, Captions.PERMISSION_DOWNLOAD_WORLD)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Captions.PERMISSION_DOWNLOAD_WORLD.getTranslated())
+                        Template.of("node", Captions.PERMISSION_DOWNLOAD_WORLD.toString())
                 );
                 return false;
             }

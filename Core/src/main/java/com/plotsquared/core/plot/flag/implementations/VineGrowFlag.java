@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class VineGrowFlag extends BooleanFlag<VineGrowFlag> {
     public static final VineGrowFlag VINE_GROW_FALSE = new VineGrowFlag(false);
 
     private VineGrowFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_VINE_GROW);
+        super(value, TranslatableCaption.of("flags.flag_description_vine_grow"));
     }
 
     @Override protected VineGrowFlag flagOf(@Nonnull Boolean value) {

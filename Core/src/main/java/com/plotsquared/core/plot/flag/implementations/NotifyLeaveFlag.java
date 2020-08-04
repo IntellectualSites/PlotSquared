@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class NotifyLeaveFlag extends BooleanFlag<NotifyLeaveFlag> {
     public static final NotifyLeaveFlag NOTIFY_LEAVE_FALSE = new NotifyLeaveFlag(false);
 
     private NotifyLeaveFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_NOTIFY_LEAVE);
+        super(value, TranslatableCaption.of("flags.flag_description_notify_leave"));
     }
 
     @Override protected NotifyLeaveFlag flagOf(@Nonnull Boolean value) {

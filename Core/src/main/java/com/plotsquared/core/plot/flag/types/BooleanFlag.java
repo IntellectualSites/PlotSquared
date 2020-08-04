@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.flag.types;
 
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 
@@ -49,7 +50,7 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
      * @param description Flag description
      */
     protected BooleanFlag(final boolean value, final Caption description) {
-        super(value, Captions.FLAG_CATEGORY_BOOLEAN, description);
+        super(value, TranslatableCaption.of("flags.flag_category_boolean"), description);
     }
 
     /**
@@ -68,7 +69,7 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
         } else if (negativeValues.contains(input.toLowerCase(Locale.ENGLISH))) {
             return this.flagOf(false);
         } else {
-            throw new FlagParseException(this, input, Captions.FLAG_ERROR_BOOLEAN);
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_boolean"));
         }
     }
 

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class RedstoneFlag extends BooleanFlag<RedstoneFlag> {
     public static final RedstoneFlag REDSTONE_FALSE = new RedstoneFlag(false);
 
     private RedstoneFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_REDSTONE);
+        super(value, TranslatableCaption.of("flags.flag_description_redstone"));
     }
 
     @Override protected RedstoneFlag flagOf(@Nonnull Boolean value) {

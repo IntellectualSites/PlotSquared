@@ -33,7 +33,6 @@ import com.plotsquared.core.collection.ByteArrayUtilities;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.CaptionUtility;

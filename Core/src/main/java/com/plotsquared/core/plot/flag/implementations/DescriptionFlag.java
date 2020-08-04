@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ public class DescriptionFlag extends PlotFlag<String, DescriptionFlag> {
     public static final DescriptionFlag DESCRIPTION_FLAG_EMPTY = new DescriptionFlag("");
 
     protected DescriptionFlag(@Nonnull String value) {
-        super(value, Captions.FLAG_CATEGORY_STRING, Captions.FLAG_DESCRIPTION_DESCRIPTION);
+        super(value, TranslatableCaption.of("flags.flag_category_string"), TranslatableCaption.of("flags.flag_description_description"));
     }
 
     @Override public DescriptionFlag parse(@Nonnull String input) {

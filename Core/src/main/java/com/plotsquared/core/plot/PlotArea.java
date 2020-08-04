@@ -35,6 +35,7 @@ import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
@@ -371,7 +372,7 @@ public abstract class PlotArea {
         StringBuilder flagBuilder = new StringBuilder();
         Collection<PlotFlag<?, ?>> flagCollection = this.getFlagContainer().getFlagMap().values();
         if (flagCollection.isEmpty()) {
-            flagBuilder.append(Captions.NONE.getTranslated());
+            flagBuilder.append(TranslatableCaption.of("info.none"));
         } else {
             String prefix = " ";
             for (final PlotFlag<?, ?> flag : flagCollection) {
@@ -406,7 +407,7 @@ public abstract class PlotArea {
         StringBuilder roadFlagBuilder = new StringBuilder();
         Collection<PlotFlag<?, ?>> roadFlagCollection = this.getFlagContainer().getFlagMap().values();
         if (roadFlagCollection.isEmpty()) {
-            roadFlagBuilder.append(Captions.NONE.getTranslated());
+            roadFlagBuilder.append(TranslatableCaption.of("info.none"));
         } else {
             roadFlags = true;
             String prefix = " ";

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.world.gamemode.GameMode;
@@ -52,7 +52,7 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
      * @param value Flag value
      */
     protected GuestGamemodeFlag(@Nonnull GameMode value) {
-        super(value, Captions.FLAG_CATEGORY_GAMEMODE, Captions.FLAG_DESCRIPTION_GUEST_GAMEMODE);
+        super(value, TranslatableCaption.of("flags.flag_category_gamemode"), TranslatableCaption.of("flags.flag_description_guest_gamemode"));
     }
 
     @Override public GuestGamemodeFlag parse(@Nonnull String input) throws FlagParseException {

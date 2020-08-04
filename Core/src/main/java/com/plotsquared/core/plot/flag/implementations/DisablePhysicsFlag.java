@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class DisablePhysicsFlag extends BooleanFlag<DisablePhysicsFlag> {
     public static final DisablePhysicsFlag DISABLE_PHYSICS_FALSE = new DisablePhysicsFlag(false);
 
     private DisablePhysicsFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_DISABLE_PHYSICS);
+        super(value, TranslatableCaption.of("flags.flag_description_disable_physics"));
     }
 
     @Override protected DisablePhysicsFlag flagOf(@Nonnull Boolean value) {

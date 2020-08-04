@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 
@@ -38,7 +38,7 @@ public class UseFlag extends BlockTypeListFlag<UseFlag> {
     public static final UseFlag USE_NONE = new UseFlag(Collections.emptyList());
 
     protected UseFlag(List<BlockTypeWrapper> blockTypeList) {
-        super(blockTypeList, Captions.FLAG_DESCRIPTION_USE);
+        super(blockTypeList, TranslatableCaption.of("flags.flag_description_use"));
     }
 
     @Override protected UseFlag flagOf(@Nonnull List<BlockTypeWrapper> value) {

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class NoWorldeditFlag extends BooleanFlag<NoWorldeditFlag> {
     public static final NoWorldeditFlag NO_WORLDEDIT_FALSE = new NoWorldeditFlag(false);
 
     private NoWorldeditFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_NO_WORLDEDIT);
+        super(value, TranslatableCaption.of("flags.flag_description_no_worldedit"));
     }
 
     @Override protected NoWorldeditFlag flagOf(@Nonnull Boolean value) {

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 
 import javax.annotation.Nonnull;
@@ -40,7 +40,7 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
     public static final LiquidFlowFlag LIQUID_FLOW_DEFAULT = new LiquidFlowFlag(FlowStatus.DEFAULT);
 
     private LiquidFlowFlag(FlowStatus value) {
-        super(value, Captions.FLAG_CATEGORY_BOOLEAN, Captions.FLAG_DESCRIPTION_LIQUID_FLOW);
+        super(value, TranslatableCaption.of("flags.flag_category_boolean"), TranslatableCaption.of("flags.flag_description_liquid_flow"));
     }
 
     @Override public LiquidFlowFlag parse(@Nonnull final String input) {

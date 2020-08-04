@@ -26,8 +26,10 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 
@@ -35,7 +37,7 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
     public static final HealFlag HEAL_NOTHING = new HealFlag(new Timed<>(0, 0));
 
     protected HealFlag(@Nonnull Timed<Integer> value) {
-        super(value, 1, Captions.FLAG_DESCRIPTION_HEAL);
+        super(value, 1, TranslatableCaption.of("flags.flag_description_heal"));
     }
 
     @Override protected Integer parseValue(String input) throws FlagParseException {
@@ -43,10 +45,10 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
         try {
             parsed = Integer.parseInt(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, Captions.NOT_A_NUMBER, input);
+            throw new FlagParseException(this, input, TranslatableCaption.of("invalid.not_a_number"), Template.of("value", input));
         }
         if (parsed < 1) {
-            throw new FlagParseException(this, input, Captions.NUMBER_NOT_POSITIVE, parsed);
+            throw new FlagParseException(this, input, TranslatableCaption.of("invalid.number_not_positive"), Template.of("value", String.valueOf(parsed)));
         }
         return parsed;
     }

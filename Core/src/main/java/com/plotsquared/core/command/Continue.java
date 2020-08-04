@@ -64,7 +64,7 @@ public class Continue extends SubCommand {
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.NO_PLOT_PERMS.getTranslated())
+                    Template.of("node", Captions.NO_PLOT_PERMS.toString())
             );
             return false;
         }
@@ -77,7 +77,7 @@ public class Continue extends SubCommand {
             < player.getPlotCount() + size)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.PERMISSION_ADMIN_COMMAND_CONTINUE.getTranslated())
+                    Template.of("node", Captions.PERMISSION_ADMIN_COMMAND_CONTINUE.toString())
             );
             return false;
         }

@@ -85,7 +85,8 @@ public class Delete extends SubCommand {
         boolean force = eventResult == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DELETE)) {
-            return !sendMessage(player, Captions.NO_PLOT_PERMS);
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            return false;
         }
         final PlotArea plotArea = plot.getArea();
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
