@@ -142,12 +142,11 @@ public class Plot {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + Plot.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
-
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
-
     static {
         FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
     }
+
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private static Set<Plot> connected_cache;
     private static Set<CuboidRegion> regions_cache;
@@ -1892,6 +1891,7 @@ public class Plot {
         plotworld.getPlotManager().claimPlot(this);
         return true;
     }
+
 
     /**
      * Register a plot and create it in the database<br>

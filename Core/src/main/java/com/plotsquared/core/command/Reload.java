@@ -68,7 +68,7 @@ public class Reload extends SubCommand {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
             PlotSquared.get().setupConfigs();
-            Captions.load(PlotSquared.get().translationFile);
+            PlotSquared.get().loadCaptionMap();
             this.plotAreaManager.forEachPlotArea(area -> {
                 ConfigurationSection worldSection = this.worldConfiguration
                     .getConfigurationSection("worlds." + area.getWorldName());

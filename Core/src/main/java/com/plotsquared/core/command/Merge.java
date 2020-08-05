@@ -42,6 +42,7 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
@@ -60,6 +61,7 @@ public class Merge extends SubCommand {
 
     public static final String[] values = new String[] {"north", "east", "south", "west"};
     public static final String[] aliases = new String[] {"n", "e", "s", "w"};
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
@@ -283,8 +285,9 @@ public class Merge extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("merge.success_merge"));
             };
             if (!force && hasConfirmation(player)) {
-                CmdConfirm.addPending(accepter, Captions.MERGE_REQUEST_CONFIRM.getTranslated()
-                    .replaceAll("%s", player.getName()), run);
+                CmdConfirm.addPending(accepter, MINI_MESSAGE.serialize(MINI_MESSAGE
+                        .parse(TranslatableCaption.of("merge.merge_request_confirm").getComponent(player), Template.of("player", player.getName()))),
+                    run);
             } else {
                 run.run();
             }

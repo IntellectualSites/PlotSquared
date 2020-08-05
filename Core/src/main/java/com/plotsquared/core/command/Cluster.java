@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -759,13 +760,13 @@ public class Cluster extends SubCommand {
                             String size = (cluster.getP2().getX() - cluster.getP1().getX() + 1) + "x" + (
                                 cluster.getP2().getY() - cluster.getP1().getY() + 1);
                             String rights = cluster.isAdded(player.getUUID()) + "";
-                            String message = Captions.CLUSTER_INFO.getTranslated();
-                            message = message.replaceAll("%id%", id);
-                            message = message.replaceAll("%owner%", owner);
-                            message = message.replaceAll("%name%", name);
-                            message = message.replaceAll("%size%", size);
-                            message = message.replaceAll("%rights%", rights);
-                            player.sendMessage(StaticCaption.of(message));
+                            Caption message = TranslatableCaption.of("cluster.cluster_info");
+                            Template idTemplate = Template.of("id", id);
+                            Template ownerTemplate = Template.of("owner", owner);
+                            Template nameTemplate = Template.of("name", name);
+                            Template sizeTemplate = Template.of("size", size);
+                            Template rightsTemplate = Template.of("rights", rights);
+                            player.sendMessage(message, idTemplate, ownerTemplate, nameTemplate, sizeTemplate, rightsTemplate);
                         }
                     });
                 return true;

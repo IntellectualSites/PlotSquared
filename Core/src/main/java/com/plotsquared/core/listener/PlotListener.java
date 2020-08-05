@@ -28,11 +28,13 @@ package com.plotsquared.core.listener;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -159,7 +161,7 @@ public class PlotListener {
 
             final String greeting = plot.getFlag(GreetingFlag.class);
             if (!greeting.isEmpty()) {
-                plot.format(greeting, player, false).thenAcceptAsync(player::sendMessage);
+                plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendMessage);
             }
 
             if (plot.getFlag(NotifyEnterFlag.class)) {
@@ -270,8 +272,8 @@ public class PlotListener {
             CommentManager.sendTitle(player, plot);
 
             if (titles && !player.getAttribute("disabletitles")) {
-                if (!Captions.TITLE_ENTERED_PLOT.getTranslated().isEmpty()
-                    || !Captions.TITLE_ENTERED_PLOT_SUB.getTranslated().isEmpty()) {
+                if (!TranslatableCaption.of("titles.title_entered_plot").getComponent(ConsolePlayer.getConsole()).isEmpty()
+                    || !TranslatableCaption.of("titles.title_entered_plot_sub").getComponent(ConsolePlayer.getConsole()).isEmpty()) {
                     TaskManager.runTaskLaterAsync(() -> {
                         Plot lastPlot = null;
                         try (final MetaDataAccess<Plot> lastPlotAccess =
@@ -346,7 +348,7 @@ public class PlotListener {
 
                 final String farewell = plot.getFlag(FarewellFlag.class);
                 if (!farewell.isEmpty()) {
-                    plot.format(farewell, player, false).thenAcceptAsync(player::sendMessage);
+                    plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendMessage);
                 }
 
                 if (plot.getFlag(NotifyLeaveFlag.class)) {

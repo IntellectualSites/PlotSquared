@@ -26,6 +26,7 @@
 package com.plotsquared.core.configuration.caption;
 
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.util.PlayerManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
@@ -67,7 +68,7 @@ public final class Templates {
      * @return Generated template
      */
     @Nonnull public static Template of(@Nonnull final String key, @Nonnull final UUID uuid) {
-        final String username = MainUtil.getName(uuid);
+        final String username = PlayerManager.getName(uuid);
         return Template.of(key, username);
     }
 

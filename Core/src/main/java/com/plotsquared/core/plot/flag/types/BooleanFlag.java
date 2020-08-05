@@ -59,7 +59,7 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
      *
      * @param description Flag description
      */
-    protected BooleanFlag(final Captions description) {
+    protected BooleanFlag(final Caption description) {
         this(false, description);
     }
 

@@ -37,7 +37,7 @@ import java.util.List;
 
 public abstract class ListFlag<V, F extends PlotFlag<List<V>, F>> extends PlotFlag<List<V>, F> {
 
-    public ListFlag(final List<V> valueList, final Captions category, final Caption description) {
+    public ListFlag(final List<V> valueList, final Caption category, final Caption description) {
         super(Collections.unmodifiableList(valueList), category, description);
     }
 

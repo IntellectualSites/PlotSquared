@@ -194,16 +194,6 @@ public class PlotSquared {
 
             this.captionMaps = new HashMap<>();
 
-            // Setup localization
-            CaptionMap captionMap;
-            if (Settings.Enabled_Components.PER_USER_LOCALE) {
-                captionMap = CaptionLoader.loadAll(Paths.get("lang"));
-            } else {
-                String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
-                captionMap = CaptionLoader.loadSingle(Paths.get("lang", fileName));
-            }
-
-            this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
             this.worldedit = WorldEdit.getInstance();
 
             // Create Event utility class
@@ -234,6 +224,18 @@ public class PlotSquared {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    public void loadCaptionMap() throws IOException {
+        // Setup localization
+        CaptionMap captionMap;
+        if (Settings.Enabled_Components.PER_USER_LOCALE) {
+            captionMap = CaptionLoader.loadAll(Paths.get("lang"));
+        } else {
+            String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
+            captionMap = CaptionLoader.loadSingle(Paths.get("lang", fileName));
+        }
+        this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
     }
 
     /**

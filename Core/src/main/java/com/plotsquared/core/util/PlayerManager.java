@@ -30,9 +30,13 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.uuid.UUIDMapping;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,6 +57,8 @@ import java.util.function.BiConsumer;
  * Manages player instances
  */
 public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
+
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final Map<UUID, P> playerMap = new HashMap<>();
     private final Object playerLock = new Object();
@@ -116,11 +122,11 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         final List<String> users = new LinkedList<>();
         for (final UUID uuid : uuids) {
             if (uuid == null) {
-                users.add(Captions.NONE.getTranslated());
+                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.none").getComponent(ConsolePlayer.getConsole())));
             } else if (DBFunc.EVERYONE.equals(uuid)) {
-                users.add(Captions.EVERYONE.getTranslated());
+                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.everyone").getComponent(ConsolePlayer.getConsole())));
             } else if (DBFunc.SERVER.equals(uuid)) {
-                users.add(Captions.SERVER.getTranslated());
+                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.console").getComponent(ConsolePlayer.getConsole())));
             } else {
                 players.add(uuid);
             }
@@ -135,13 +141,13 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             e.printStackTrace();
         }
 
-        String c = Captions.PLOT_USER_LIST.getTranslated();
-        StringBuilder list = new StringBuilder();
+        String c = TranslatableCaption.of("info.plot_user_list").getComponent(ConsolePlayer.getConsole());
+        Component list = MINI_MESSAGE.deserialize("");
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == uuids.size()) {
-                list.append(c.replace("%user%", users.get(x)).replace(",", ""));
+                list.append(MINI_MESSAGE.parse(c, Template.of("user", users.get(x))));
             } else {
-                list.append(c.replace("%user%", users.get(x)));
+                list.append(MINI_MESSAGE.parse(c + ", ", Template.of("user", users.get(x))));
             }
         }
         return list.toString();

@@ -27,11 +27,12 @@ package com.plotsquared.core.uuid;
 
 import com.google.common.collect.Lists;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,7 @@ import java.util.function.Function;
 public class UUIDPipeline {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + UUIDPipeline.class.getSimpleName());
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final Executor executor;
     private final List<UUIDService> serviceList;
@@ -331,7 +333,8 @@ public class UUIDPipeline {
 
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
                 for (final UUID uuid : remainingRequests) {
-                    mappings.add(new UUIDMapping(uuid, TranslatableCaption.of("info.unknown")));
+                    mappings.add(new UUIDMapping(uuid,
+                        MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.unknown").getComponent(ConsolePlayer.getConsole()))));
                 }
                 return mappings;
             } else {

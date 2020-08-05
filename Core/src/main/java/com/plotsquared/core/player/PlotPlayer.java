@@ -70,6 +70,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.title.Title;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -866,6 +867,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         }
     }
 
+    // Redefine from PermissionHolder as it's required from CommandCaller
+    @Override public boolean hasPermission(@NotNull String permission) {
+        return hasPermission(null, permission);
+    }
+
     boolean hasPersistentMeta(String key) {
         return this.metaMap.containsKey(key);
     }
@@ -884,7 +890,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     @Override public void setLocale(@Nonnull final Locale locale) {
-        if (!PlotSquared.get().getCaptionMap().supportsLocale(locale)) {
+        if (!PlotSquared.get().getCaptionMap(TranslatableCaption.DEFAULT_NAMESPACE).supportsLocale(locale)) {
             this.locale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
         } else {
             this.locale = locale;

@@ -29,12 +29,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.plotsquared.core.collection.QuadMap;
-import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
@@ -43,6 +44,7 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -51,6 +53,7 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
+import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.LocalBlockQueue;
 import com.plotsquared.core.util.EconHandler;
@@ -65,11 +68,15 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -89,6 +96,11 @@ import java.util.function.Consumer;
 public abstract class PlotArea {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotArea.class.getSimpleName());
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
+    static {
+        FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
+    }
 
     protected final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
     @Nonnull private final String worldName;
@@ -369,20 +381,10 @@ public abstract class PlotArea {
         }
         this.getFlagContainer().addAll(parseFlags(flags));
 
-        StringBuilder flagBuilder = new StringBuilder();
+        Component flagsComponent = null;
         Collection<PlotFlag<?, ?>> flagCollection = this.getFlagContainer().getFlagMap().values();
-        if (flagCollection.isEmpty()) {
-            flagBuilder.append(TranslatableCaption.of("info.none"));
-        } else {
-            String prefix = " ";
-            for (final PlotFlag<?, ?> flag : flagCollection) {
-                Object value = flag.toString();
-                flagBuilder.append(prefix).append(CaptionUtility
-                    .format(null, Captions.PLOT_FLAG_LIST.getTranslated(), flag.getName(),
-                        CaptionUtility.formatRaw(null, value.toString(), "")));
-                prefix = ", ";
-            }
-        }
+        flagsComponent = getFlagsComponent(flagsComponent, flagCollection);
+        ConsolePlayer.getConsole().sendMessage(StaticCaption.of("[P2] - area flags: <flags>"), Template.of("flags", flagsComponent));
 
         this.spawnEggs = config.getBoolean("event.spawn.egg");
         this.spawnCustom = config.getBoolean("event.spawn.custom");
@@ -404,25 +406,39 @@ public abstract class PlotArea {
         }
         this.getRoadFlagContainer().addAll(parseFlags(roadflags));
 
-        StringBuilder roadFlagBuilder = new StringBuilder();
-        Collection<PlotFlag<?, ?>> roadFlagCollection = this.getFlagContainer().getFlagMap().values();
-        if (roadFlagCollection.isEmpty()) {
-            roadFlagBuilder.append(TranslatableCaption.of("info.none"));
+        Component roadFlagsComponent = null;
+        Collection<PlotFlag<?, ?>> roadFlagCollection = this.getRoadFlagContainer().getFlagMap().values();
+        roadFlagsComponent = getFlagsComponent(roadFlagsComponent, roadFlagCollection);
+        ConsolePlayer.getConsole().sendMessage(StaticCaption.of("[P2] - road flags: <flags>"), Template.of("flags", roadFlagsComponent));
+
+        loadConfiguration(config);
+    }
+
+    private Component getFlagsComponent(Component flagsComponent, Collection<PlotFlag<?, ?>> flagCollection) {
+        if (flagCollection.isEmpty()) {
+            flagsComponent = MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(LocaleHolder.console()));
         } else {
-            roadFlags = true;
             String prefix = " ";
-            for (final PlotFlag<?, ?> flag : roadFlagCollection) {
-                Object value = flag.toString();
-                roadFlagBuilder.append(prefix).append(CaptionUtility
-                    .format(null, Captions.PLOT_FLAG_LIST.getTranslated(), flag.getName(),
-                        CaptionUtility.formatRaw(null, value.toString(), "")));
+            for (final PlotFlag<?, ?> flag : flagCollection) {
+                Object value;
+                if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
+                    value = FLAG_DECIMAL_FORMAT.format(flag.getValue());
+                } else {
+                    value = flag.toString();
+                }
+                Component snip = MINI_MESSAGE.parse(prefix + CaptionUtility
+                        .format(ConsolePlayer.getConsole(), TranslatableCaption.of("info.plot_flag_list").getComponent(LocaleHolder.console())),
+                    Template.of("flag", flag.getName()),
+                    Template.of("value", CaptionUtility.formatRaw(ConsolePlayer.getConsole(), value.toString())));
+                if (flagsComponent != null) {
+                    flagsComponent.append(snip);
+                } else {
+                    flagsComponent = snip;
+                }
                 prefix = ", ";
             }
         }
-
-        logger.info("[P2] - road flags: {}", roadFlagBuilder.toString());
-
-        loadConfiguration(config);
+        return flagsComponent;
     }
 
     public abstract void loadConfiguration(ConfigurationSection config);

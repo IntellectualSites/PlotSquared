@@ -26,11 +26,11 @@
 package com.plotsquared.core.util.helpmenu;
 
 import com.plotsquared.core.command.CommandCategory;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.ArrayList;
@@ -38,27 +38,29 @@ import java.util.List;
 
 public class HelpPage {
 
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private final List<HelpObject> helpObjects;
-    private final String header;
+    private final Template catTemplate;
+    private final Template curTemplate;
+    private final Template maxTemplate;
 
     public HelpPage(CommandCategory category, int currentPage, int maxPages) {
         this.helpObjects = new ArrayList<>();
-        this.header = Captions.HELP_PAGE_HEADER.getTranslated()
-            .replace("%category%", category == null ? "ALL" : category.toString())
-            .replace("%current%", (currentPage + 1) + "").replace("%max%", (maxPages + 1) + "");
+        this.catTemplate = Template.of("category", category == null ? "ALL" : category.name());
+        this.curTemplate = Template.of("current", String.valueOf(currentPage + 1));
+        this.maxTemplate = Template.of("max", String.valueOf(maxPages + 1));
     }
 
     public void render(PlotPlayer player) {
         if (this.helpObjects.size() < 1) {
-            player.sendMessage(
-                    TranslatableCaption.of("invalid.not_valid_number"),
-                    Template.of("value", "(0)")
-            );
+            player.sendMessage(TranslatableCaption.of("invalid.not_valid_number"), Template.of("value", "(0)"));
         } else {
-            String message =
-                Captions.HELP_HEADER.getTranslated() + "\n" + this.header + "\n" + StringMan
-                    .join(this.helpObjects, "\n") + "\n" + Captions.HELP_FOOTER.getTranslated();
-            player.sendMessage(StaticCaption.of(message));
+            Template header = Template.of("header", TranslatableCaption.of("help.help_header").getComponent(player));
+            Template page_header = Template.of("page_header",
+                MINI_MESSAGE.parse(TranslatableCaption.of("help.help_page_header").getComponent(player), catTemplate, curTemplate, maxTemplate));
+            Template help_objects = Template.of("help_objects", StringMan.join(this.helpObjects, "\n"));
+            Template footer = Template.of("footer", TranslatableCaption.of("help.help_footer").getComponent(player));
+            player.sendMessage(StaticCaption.of("<header>\n<page_header>\n<help_objects>\n<footer>"), header, page_header, help_objects, footer);
         }
     }
 

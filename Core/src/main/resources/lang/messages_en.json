@@ -375,6 +375,7 @@
   "info.plot_no_description": "<prefix><gray>No description set.</gray>",
   "info.plot_caps_header": "<dark_gray><strikethrough>--------- <reset><gold>CAPS </gold><dark_gray><strikethrough>---------<reset>",
   "info.plot_caps_format": "<prefix><gray>- Cap Type: </gray><gold><cap> </gold><gray>| Status: </gray><gold><current></gold><gray>/</gray><gold><limit> </gold><gray>(</gray><gold><percentage>%</gold><gray>)</gray>",
+  "info.area_format": "<header>\n<reset><gold>NAME: </gold><grey><name></grey>\n<gold>Type: </gold><grey><type></grey>\n<gold>Terrain: </gold><grey><terrain></grey>\n<gold>Usage: </gold><grey><usage>%</grey>\n<gold>Claimed: </gold><grey><claimed></grey>\n<gold>Clusters: </gold><grey><clusters></grey>\n<gold>Region: </gold><grey><region></grey>\n<gold>Generator: </gold><grey><generator></grey>\n<footer>",
   
   "working.generating_component": "<prefix><gold>Started generating component from your settings.</gold>",
   "working.clearing_done": "<prefix><dark_aqua>Clear completed! Took <amount>ms.</dark_aqua>",

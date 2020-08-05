@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
@@ -58,6 +59,7 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
+import com.plotsquared.core.util.task.RunnableVal3;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.WorldEdit;
@@ -584,14 +586,18 @@ public class Area extends SubCommand {
                     percent = claimed == 0 ? 0 : 100d * claimed / Integer.MAX_VALUE;
                     region = "N/A";
                 }
-                String value =
-                    "&r$1NAME: " + name + "\n$1Type: $2" + area.getType() + "\n$1Terrain: $2" + area
-                        .getTerrain() + "\n$1Usage: $2" + String.format("%.2f", percent) + '%'
-                        + "\n$1Claimed: $2" + claimed + "\n$1Clusters: $2" + clusters
-                        + "\n$1Region: $2" + region + "\n$1Generator: $2" + generator;
-                MainUtil.sendMessage(player,
-                    Captions.PLOT_INFO_HEADER.getTranslated() + '\n' + value + '\n'
-                        + Captions.PLOT_INFO_FOOTER.getTranslated(), false);
+                Template headerTemplate = Template.of("header", TranslatableCaption.of("info.plot_info_header").getComponent(player));
+                Template nameTemplate = Template.of("name", name);
+                Template typeTemplate = Template.of("type", area.getType().name());
+                Template terrainTemplate = Template.of("terrain", area.getTerrain().name());
+                Template usageTemplate = Template.of("usage", String.format("%.2f", percent));
+                Template claimedTemplate = Template.of("name", String.valueOf(claimed));
+                Template clustersTemplate = Template.of("name", String.valueOf(clusters));
+                Template regionTemplate = Template.of("name", region);
+                Template generatorTemplate = Template.of("name", generator);
+                Template footerTemplate = Template.of("name", TranslatableCaption.of("info.plot_info_footer").getComponent(player));
+                player.sendMessage(TranslatableCaption.of("info.area_format"), headerTemplate, nameTemplate, typeTemplate, terrainTemplate,
+                    usageTemplate, claimedTemplate, clustersTemplate, regionTemplate, generatorTemplate, footerTemplate);
                 return true;
             }
             case "l":
@@ -621,8 +627,8 @@ public class Area extends SubCommand {
                 }
                 final List<PlotArea> areas = new ArrayList<>(Arrays.asList(this.plotAreaManager.getAllPlotAreas()));
                 paginate(player, areas, 8, page,
-                    new RunnableVal3<Integer, PlotArea, PlotMessage>() {
-                        @Override public void run(Integer i, PlotArea area, PlotMessage message) {
+                    new RunnableVal3<Integer, PlotArea, Caption>() {
+                        @Override public void run(Integer i, PlotArea area, Caption message) {
                             String name;
                             double percent;
                             int claimed = area.getPlotCount();

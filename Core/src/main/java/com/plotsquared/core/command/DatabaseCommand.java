@@ -217,6 +217,7 @@ public class DatabaseCommand extends SubCommand {
                     break;
                 default:
                     player.sendMessage(StaticCaption.of("/plot database [sqlite/mysql]"));
+                    return false;
             }
             try {
                 SQLManager manager = new SQLManager(implementation, prefix, this.eventDispatcher, this.plotListener, this.worldConfiguration);
