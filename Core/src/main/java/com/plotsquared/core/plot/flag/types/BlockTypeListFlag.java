@@ -46,7 +46,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
     public static boolean skipCategoryVerification = false;
 
     protected BlockTypeListFlag(List<BlockTypeWrapper> blockTypeList, Caption description) {
-        super(blockTypeList, Captions.FLAG_CATEGORY_BLOCK_LIST, description);
+        super(blockTypeList, TranslatableCaption.of("flags.flag_category_block_list"), description);
     }
 
     @Override public F parse(@Nonnull String input) throws FlagParseException {

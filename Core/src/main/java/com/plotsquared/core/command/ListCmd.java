@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -47,6 +48,7 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
+import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.minimessage.Template;
 
@@ -356,12 +358,12 @@ public class ListCmd extends SubCommand {
         return true;
     }
 
-    public void displayPlots(final PlotPlayer player, List<Plot> plots, int pageSize, int page, String[] args) {
+    public void displayPlots(final PlotPlayer<?> player, List<Plot> plots, int pageSize, int page, String[] args) {
         // Header
         plots.removeIf(plot -> !plot.isBasePlot());
         this.paginate(player, plots, pageSize, page,
-            new RunnableVal3<Integer, Plot, PlotMessage>() {
-                @Override public void run(Integer i, Plot plot, PlotMessage message) {
+            new RunnableVal3<Integer, Plot, CaptionHolder>() {
+                @Override public void run(Integer i, Plot plot, CaptionHolder caption) {
                     String color;
                     if (plot.getOwner() == null) {
                         color = "$3";
@@ -420,10 +422,10 @@ public class ListCmd extends SubCommand {
                         player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                     }
                 }
-            }, "/plot list " + args[0], Captions.PLOT_LIST_HEADER_PAGED.getTranslated());
+            }, "/plot list " + args[0], TranslatableCaption.of("list.plot_list_header_paged"));
     }
 
-    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    @Override public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<String> completions = new LinkedList<>();
         if (this.econHandler != null && Permissions
             .hasPermission(player, Captions.PERMISSION_LIST_FOR_SALE)) {
@@ -454,11 +456,9 @@ public class ListCmd extends SubCommand {
             completions.add("expired");
         }
 
-        final List<Command> commands = new LinkedList<>();
-        commands.addAll(completions.stream()
-            .filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
-            .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.TELEPORT) {})
-            .collect(Collectors.toList()));
+        final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+            .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.TELEPORT) {
+            }).collect(Collectors.toCollection(LinkedList::new));
 
         if (Permissions.hasPermission(player, Captions.PERMISSION_LIST_PLAYER) && args[0].length() > 0) {
             commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));

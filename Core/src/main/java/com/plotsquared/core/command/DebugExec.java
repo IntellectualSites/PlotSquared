@@ -27,10 +27,10 @@ package com.plotsquared.core.command;
 
 import com.google.common.io.Files;
 import com.google.inject.Inject;
-import com.google.inject.internal.cglib.transform.$ClassTransformer;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -414,15 +414,15 @@ public class DebugExec extends SubCommand {
                     }
 
                     List<File> allFiles = Arrays.asList(filesArray);
-                    paginate(player, allFiles, 8, page,
-                        new RunnableVal3<Integer, File, PlotMessage>() {
-
-                            @Override public void run(Integer i, File file, PlotMessage message) {
-                                String name = file.getName();
-                                message.text("[").color("$3").text(String.valueOf(i)).color("$1")
-                                    .text("]").color("$3").text(' ' + name).color("$1");
-                            }
-                        }, "/plot debugexec list-scripts", "List of scripts");
+                    paginate(player, allFiles, 8, page, new RunnableVal3<Integer, File, CaptionHolder>() {
+                        @Override public void run(Integer i, File file, CaptionHolder message) {
+                            String name = file.getName();
+                            Template numTemplate = Template.of("number", String.valueOf(i));
+                            Template nameTemplate = Template.of("name", name);
+                            message.set(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
+                                .parse(TranslatableCaption.of("debugexec.script_list_item").getComponent(player), numTemplate, nameTemplate))));
+                        }
+                    }, "/plot debugexec list-scripts", StaticCaption.of("List of scripts"));
                     return true;
                 case "all":
                     if (args.length < 3) {

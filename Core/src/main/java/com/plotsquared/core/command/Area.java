@@ -31,6 +31,8 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.CaptionHolder;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
@@ -73,6 +75,7 @@ import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
@@ -596,7 +599,7 @@ public class Area extends SubCommand {
                 Template regionTemplate = Template.of("name", region);
                 Template generatorTemplate = Template.of("name", generator);
                 Template footerTemplate = Template.of("name", TranslatableCaption.of("info.plot_info_footer").getComponent(player));
-                player.sendMessage(TranslatableCaption.of("info.area_format"), headerTemplate, nameTemplate, typeTemplate, terrainTemplate,
+                player.sendMessage(TranslatableCaption.of("info.area_info_format"), headerTemplate, nameTemplate, typeTemplate, terrainTemplate,
                     usageTemplate, claimedTemplate, clustersTemplate, regionTemplate, generatorTemplate, footerTemplate);
                 return true;
             }
@@ -627,8 +630,8 @@ public class Area extends SubCommand {
                 }
                 final List<PlotArea> areas = new ArrayList<>(Arrays.asList(this.plotAreaManager.getAllPlotAreas()));
                 paginate(player, areas, 8, page,
-                    new RunnableVal3<Integer, PlotArea, Caption>() {
-                        @Override public void run(Integer i, PlotArea area, Caption message) {
+                    new RunnableVal3<Integer, PlotArea, CaptionHolder>() {
+                        @Override public void run(Integer i, PlotArea area, CaptionHolder caption) {
                             String name;
                             double percent;
                             int claimed = area.getPlotCount();
@@ -645,27 +648,29 @@ public class Area extends SubCommand {
                                 region = area.getRegion().toString();
                             } else {
                                 name = area.getWorldName();
-                                percent = claimed == 0 ?
-                                    0 :
-                                    Short.MAX_VALUE * Short.MAX_VALUE / (double) claimed;
+                                percent = claimed == 0 ? 0 : Short.MAX_VALUE * Short.MAX_VALUE / (double) claimed;
                                 region = "N/A";
                             }
-                            PlotMessage tooltip = new PlotMessage().text("Claimed=").color("$1")
-                                .text(String.valueOf(claimed)).color("$2").text("\nUsage=")
-                                .color("$1").text(String.format("%.2f", percent) + '%').color("$2")
-                                .text("\nClusters=").color("$1").text(String.valueOf(clusters))
-                                .color("$2").text("\nRegion=").color("$1").text(region).color("$2")
-                                .text("\nGenerator=").color("$1").text(generator).color("$2");
-
-                            // type / terrain
-                            String visit = "/plot area tp " + area.toString();
-                            message.text("[").color("$3").text(String.valueOf(i)).command(visit)
-                                .tooltip(visit).color("$1").text("]").color("$3").text(' ' + name)
-                                .tooltip(tooltip).command(getCommandString() + " info " + area)
-                                .color("$1").text(" - ").color("$2")
-                                .text(area.getType() + ":" + area.getTerrain()).color("$3");
+                            Template claimedTemplate = Template.of("claimed", String.valueOf(claimed));
+                            Template usageTemplate = Template.of("usage", String.format("%.2f", percent) + "%");
+                            Template clustersTemplate = Template.of("clusters", String.valueOf(clusters));
+                            Template regionTemplate = Template.of("region", region);
+                            Template generatorTemplate = Template.of("generator", generator);
+                            String tooltip = MINI_MESSAGE.serialize(MINI_MESSAGE
+                                .parse(TranslatableCaption.of("info.area_list_tooltip").getComponent(player), claimedTemplate, usageTemplate,
+                                    clustersTemplate, regionTemplate, generatorTemplate));
+                            Template tooltipTemplate = Template.of("hover_info", tooltip);
+                            Template visitcmdTemplate = Template.of("command_tp", "/plot area tp " + area.toString());
+                            Template numberTemplate = Template.of("number", String.valueOf(i));
+                            Template nameTemplate = Template.of("area_name", name);
+                            Template typeTemplate = Template.of("area_type", area.getType().name());
+                            Template terrainTemplate = Template.of("area_terrain", area.getTerrain().name());
+                            Caption item = TranslatableCaption.of("info.area_list_item");
+                            caption.set(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
+                                .parse(item.getComponent(player), tooltipTemplate, visitcmdTemplate, numberTemplate, nameTemplate, typeTemplate,
+                                    terrainTemplate))));
                         }
-                    }, "/plot area list", Captions.AREA_LIST_HEADER_PAGED.getTranslated());
+                    }, "/plot area list", TranslatableCaption.of("list.area_list_header_paged"));
                 return true;
             case "regen":
             case "clear":

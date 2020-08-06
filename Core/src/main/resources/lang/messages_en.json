@@ -280,6 +280,7 @@
   "debugexec.task_not_running": "<prefix><gray>Task not running.</gray>",
   "debugexec.expiry_started": "<prefix><gold>Started plot expiry task.</gold>",
   "debugexec.expiry_already_started": "<prefix><gold>Plot expiry task already started.</gold>",
+  "debugexec.script_list_item": "<dark_grey>[</dark_grey><gold><number></gold><dark_grey>]</dark_grey><gold> <name></gold>",
 
   "debugimportworlds.single_plot_area": "<prefix><red>Must be a single plot area.</red>",
   "debugimportworlds.world_container": "<prefix><red>World container must be configured to be a separate directory to your base files.</red>",
@@ -375,8 +376,10 @@
   "info.plot_no_description": "<prefix><gray>No description set.</gray>",
   "info.plot_caps_header": "<dark_gray><strikethrough>--------- <reset><gold>CAPS </gold><dark_gray><strikethrough>---------<reset>",
   "info.plot_caps_format": "<prefix><gray>- Cap Type: </gray><gold><cap> </gold><gray>| Status: </gray><gold><current></gold><gray>/</gray><gold><limit> </gold><gray>(</gray><gold><percentage>%</gold><gray>)</gray>",
-  "info.area_format": "<header>\n<reset><gold>NAME: </gold><grey><name></grey>\n<gold>Type: </gold><grey><type></grey>\n<gold>Terrain: </gold><grey><terrain></grey>\n<gold>Usage: </gold><grey><usage>%</grey>\n<gold>Claimed: </gold><grey><claimed></grey>\n<gold>Clusters: </gold><grey><clusters></grey>\n<gold>Region: </gold><grey><region></grey>\n<gold>Generator: </gold><grey><generator></grey>\n<footer>",
-  
+  "info.area_info_format": "<header>\n<reset><gold>NAME: </gold><grey><name></grey>\n<gold>Type: </gold><grey><type></grey>\n<gold>Terrain: </gold><grey><terrain></grey>\n<gold>Usage: </gold><grey><usage>%</grey>\n<gold>Claimed: </gold><grey><claimed></grey>\n<gold>Clusters: </gold><grey><clusters></grey>\n<gold>Region: </gold><grey><region></grey>\n<gold>Generator: </gold><grey><generator></grey>\n<footer>",
+  "info.area_list_tooltip": "<gold>Claimed=</gold><grey><claimed></grey>\n<gold>Usage=</gold><grey><usage></grey>\n<gold>Clusters=</gold><grey><clusters></grey>\n<gold>Region=</gold><grey><region></grey>\n<gold>Generator=</gold><grey><generator></grey>\n",
+  "info.area_list_item": "<click:run_command:<command_tp>><hover:show_text:<command_tp>><dark_grey>[</dark_grey><gold><number></gold><dark_grey>]</dark_grey></hover></click><click:run_command:<command_info>><hover:show_text:<hover_info>><gold> <area_name></gold></hover></click><grey> - </grey><dark_grey><area_type>:<area_terrain></dark_grey>",
+
   "working.generating_component": "<prefix><gold>Started generating component from your settings.</gold>",
   "working.clearing_done": "<prefix><dark_aqua>Clear completed! Took <amount>ms.</dark_aqua>",
   "working.deleting_done": "<prefix><dark_aqua>Delete completed! Took <amount>ms.</dark_aqua>",
@@ -389,7 +392,8 @@
   "list.area_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> areas</gold>",
   "list.plot_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gray><gray>) </gray><gold>List of <amount> plots</gold>",
   "list.plot_list_header": "<prefix><gold>List of <word> plots.</gold>",
-  
+  "list.page_turn": "<gold><click:run_command:<command1>><-</click></gold><dark_gray> | </dark_gray><gold><click:run_command:<command2>>-></click></gold><grey><clickable></grey>",
+
   "chat.plot_chat_spy_format": "<gray>[<gold>Plot Spy</gold>] [<gold><plot_id></gold>] <gold><sender></gold>: <gold><msg></gold></gray>",
   "chat.plot_chat_format": "<gray>[<gold>Plot Chat</gold>] [<gold><plot_id></gold>] <gold><sender></gold>: <gold><msg></gold></gray>",
   "chat.plot_chat_forced": "<prefix><gray>This world forces everyone to use plot chat.</gray>",

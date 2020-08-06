@@ -26,9 +26,10 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.PermissionHolder;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
@@ -36,7 +37,7 @@ import com.plotsquared.core.util.StringComparison;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.permissions.PermissionHolder;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nullable;
@@ -54,6 +55,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class Command {
+
+    static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     // May be none
     private final ArrayList<Command> allCommands = new ArrayList<>();
@@ -82,7 +85,7 @@ public abstract class Command {
         this.permission = permission;
         this.required = required;
         this.category = category;
-        this.aliases = Arrays.asList(id);
+        this.aliases = Collections.singletonList(id);
         if (this.parent != null) {
             this.parent.register(this);
         }
@@ -98,7 +101,7 @@ public abstract class Command {
         for (final Method method : getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(CommandDeclaration.class)) {
                 Class<?>[] types = method.getParameterTypes();
-                // final PlotPlayer player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult>
+                // final PlotPlayer<?> player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult>
                 // whenDone
                 if (types.length == 5 && types[0] == Command.class && types[1] == PlotPlayer.class
                     && types[2] == String[].class && types[3] == RunnableVal3.class
@@ -138,7 +141,7 @@ public abstract class Command {
         return this.id;
     }
 
-    public List<Command> getCommands(PlotPlayer player) {
+    public List<Command> getCommands(PlotPlayer<?> player) {
         List<Command> commands = new ArrayList<>();
         for (Command cmd : this.allCommands) {
             if (cmd.canExecute(player, false)) {
@@ -148,7 +151,7 @@ public abstract class Command {
         return commands;
     }
 
-    public List<Command> getCommands(CommandCategory category, PlotPlayer player) {
+    public List<Command> getCommands(CommandCategory category, PlotPlayer<?> player) {
         List<Command> commands = getCommands(player);
         if (category != null) {
             commands.removeIf(command -> command.category != category);
@@ -226,12 +229,12 @@ public abstract class Command {
     }
 
     public <T> void paginate(PlotPlayer<?> player, List<T> c, int size, int page,
-                             RunnableVal3<Integer, T, Caption> add, String baseCommand, String header) {
+                             RunnableVal3<Integer, T, CaptionHolder> add, String baseCommand, Caption header) {
         // Calculate pages & index
         if (page < 0) {
             page = 0;
         }
-        int totalPages = (int) Math.ceil(c.size() / size);
+        int totalPages = (int) Math.ceil((double) c.size() / size);
         if (page > totalPages) {
             page = totalPages;
         }
@@ -240,35 +243,39 @@ public abstract class Command {
             max = c.size();
         }
         // Send the header
-        header = header.replaceAll("%cur", page + 1 + "").replaceAll("%max", totalPages + 1 + "")
-            .replaceAll("%amount%", c.size() + "").replaceAll("%word%", "all");
-        player.sendMessage(StaticCaption.of(header));
+        Template curTemplate = Template.of("cur", String.valueOf(page + 1));
+        Template maxTemplate = Template.of("max", String.valueOf(totalPages + 1));
+        Template amountTemplate = Template.of("amount", String.valueOf(c.size()));
+        player.sendMessage(header, curTemplate, maxTemplate, amountTemplate);
         // Send the page content
         List<T> subList = c.subList(page * size, max);
         int i = page * size;
         for (T obj : subList) {
             i++;
-            PlotMessage msg = new PlotMessage();
+            CaptionHolder msg = new CaptionHolder();
             add.run(i, obj, msg);
-            msg.send(player);
+            player.sendMessage(msg.get());
         }
         // Send the footer
         if (page < totalPages && page > 0) { // Back | Next
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
-                .color("$3").text("->").color("$1").command(baseCommand + " " + (page + 2))
-                .text(Captions.CLICKABLE.getTranslated()).color("$2").send(player);
+            Template command1 = Template.of("command1", baseCommand + " " + page);
+            Template command2 = Template.of("command2", baseCommand + " " + (page + 2));
+            Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
+            player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
             return;
         }
         if (page == 0 && totalPages != 0) { // Next
-            new PlotMessage().text("<-").color("$3").text(" | ").color("$3").text("->").color("$1")
-                .command(baseCommand + " " + 2).text(Captions.CLICKABLE.getTranslated()).color("$2")
-                .send(player);
+            Template command1 = Template.of("command1", "");
+            Template command2 = Template.of("command2", baseCommand + " " + (page + 2));
+            Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
+            player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
             return;
         }
         if (totalPages != 0) { // Back
-            new PlotMessage().text("<-").color("$1").command(baseCommand + " " + page).text(" | ")
-                .color("$3").text("->").color("$3").text(Captions.CLICKABLE.getTranslated())
-                .color("$2").send(player);
+            Template command1 = Template.of("command1", "");
+            Template command2 = Template.of("command2", "");
+            Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
+            player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
         }
     }
 
@@ -351,7 +358,7 @@ public abstract class Command {
         return CompletableFuture.completedFuture(true);
     }
 
-    public boolean checkArgs(PlotPlayer player, String[] args) {
+    public boolean checkArgs(PlotPlayer<?> player, String[] args) {
         Argument<?>[] reqArgs = getRequiredArguments();
         if (reqArgs != null && reqArgs.length > 0) {
             boolean failed = args.length < reqArgs.length;
@@ -446,7 +453,7 @@ public abstract class Command {
         return null;
     }
 
-    public boolean canExecute(PlotPlayer player, boolean message) {
+    public boolean canExecute(PlotPlayer<?> player, boolean message) {
         if (player == null) {
             return true;
         }
@@ -502,7 +509,7 @@ public abstract class Command {
         return getCommandString() + " " + args + "]";
     }
 
-    public Collection<Command> tabOf(PlotPlayer player, String[] input, boolean space,
+    public Collection<Command> tabOf(PlotPlayer<?> player, String[] input, boolean space,
         String... args) {
         if (!space) {
             return null;
@@ -523,7 +530,7 @@ public abstract class Command {
         return result;
     }
 
-    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         switch (args.length) {
             case 0:
                 return this.allCommands;
@@ -537,7 +544,7 @@ public abstract class Command {
                         return null;
                     }
                 } else {
-                    Set<Command> commands = new HashSet<Command>();
+                    Set<Command> commands = new HashSet<>();
                     for (Map.Entry<String, Command> entry : this.staticCommands.entrySet()) {
                         if (entry.getKey().startsWith(arg) && entry.getValue()
                             .canExecute(player, false)) {
