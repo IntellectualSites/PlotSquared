@@ -494,7 +494,7 @@
  
   "legacyconfig.legacy_config_found": "<prefix><green>A legacy configuration file was detected. Conversion will be attempted.</green>",
   "legacyconfig.legacy_config_backup": "<prefix><gold>A copy of worlds.yml has been saved in the file worlds.yml.old</gold>.",
-  "legacyconfig.legacy_config_replaced": "<prefix><gray>> <value1> has been replaced with <value2></gray>",
+  "legacyconfig.legacy_config_replaced": "<prefix><gray><value1> has been replaced with <value2></gray>",
   "legacyconfig.legacy_config_done": "<prefix><green>The conversion has finished. PlotSquared will now be disabled and the new configuration file will be used at next startup. Please review the new worlds.yml file. Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. You need to re-generate the schematics.</green>",
   "legacyconfig.legacy_config_conversion_failed": "<prefix><red>Failed to convert the legacy configuration file. See stack trace for information.</red>",
  
@@ -512,8 +512,8 @@
   "flag.flag_parse_error": "<red>Failed to parse flag </red><gray><flag_name><red>, value </red><gray><flag_value></gray><red>: <error></red>",
   "flag.flag_info_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Flags </gold><dark_gray><strikethrough>---------<reset>",
   "flag.flag_info_footer": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Flags </gold><dark_gray><strikethrough>---------<reset>",
-  "flag.flag_info_color_key": "<gold>",
-  "flag.flag_info_color_value": "<gray>",
+  "flag.flag_list_categories": "<gold><category>: </gold>",
+  "flag.flag_list_flag": "<click:run_command:<command>><hover:show_text:<grey>Click to view information about the flag.</grey>><gray><flag></grey></hover></click><grey><suffix></grey>",
   "flag.flag_info_name": "<gray>Name: </gray>",
   "flag.flag_info_category": "<gray>Category: </gray>",
   "flag.flag_info_description": "<gray>Description: </gray>",

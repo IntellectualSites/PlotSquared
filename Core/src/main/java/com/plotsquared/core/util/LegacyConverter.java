@@ -26,12 +26,12 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
+import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,23 +108,20 @@ public final class LegacyConverter {
             .toArray(BlockState[]::new);
     }
 
-    private void convertBlock(@Nonnull final ConfigurationSection section,
-        @Nonnull final String key, @Nonnull final String block) {
+    private void convertBlock(@Nonnull final ConfigurationSection section, @Nonnull final String key, @Nonnull final String block) {
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
-        logger.info(CaptionUtility
-            .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(),
-                block, bucket.toString()));
+        ConsolePlayer.getConsole().sendMessage(TranslatableCaption.of("legacyconfig.legacy_config_replaced"), Template.of("value1", block),
+            Template.of("value2", bucket.toString()));
     }
 
-    private void convertBlockList(@Nonnull final ConfigurationSection section,
-        @Nonnull final String key, @Nonnull final List<String> blockList) {
+    private void convertBlockList(@Nonnull final ConfigurationSection section, @Nonnull final String key, @Nonnull final List<String> blockList) {
         final BlockState[] blocks = this.splitBlockList(blockList);
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
-        logger.info(CaptionUtility
-            .format(ConsolePlayer.getConsole(), Captions.LEGACY_CONFIG_REPLACED.getTranslated(),
-                plotBlockArrayString(blocks), bucket.toString()));
+        ConsolePlayer.getConsole()
+            .sendMessage(TranslatableCaption.of("legacyconfig.legacy_config_replaced"), Template.of("value1", plotBlockArrayString(blocks)),
+                Template.of("value2", bucket.toString()));
     }
 
     private String plotBlockArrayString(@Nonnull final BlockState[] blocks) {
