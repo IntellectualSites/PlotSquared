@@ -97,6 +97,17 @@ public class OfflinePlayerUtil {
         return callConstructor(c, worldServer);
     }
 
+    public static Object getWorldServer116() {
+        Object server = getMinecraftServer();
+        Class<?> minecraftServerClass = getNmsClass("MinecraftServer");
+        Class<?> dimensionManager = getNmsClass("DimensionManager");
+        Class<?> genericResourceKey = getNmsClass("ResourceKey");
+        Object overworld = getField(makeField(dimensionManager, "OVERWORLD"), null);
+        Method getWorldServer =
+                makeMethod(minecraftServerClass, "getWorldServer", genericResourceKey);
+        return callMethod(getWorldServer, server, overworld);
+    }
+
     public static Object getWorldServerNew() {
         Object server = getMinecraftServer();
         Class<?> minecraftServerClass = getNmsClass("MinecraftServer");
@@ -115,7 +126,11 @@ public class OfflinePlayerUtil {
         try {
             o = callMethod(getWorldServer, server, 0);
         } catch (final RuntimeException e) {
-            o = getWorldServerNew();
+            try {
+                o = getWorldServerNew();
+            } catch (final RuntimeException f) {
+                o = getWorldServer116();
+            }
         }
         return o;
     }
