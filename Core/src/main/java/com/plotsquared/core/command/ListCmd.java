@@ -29,7 +29,9 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -361,68 +363,69 @@ public class ListCmd extends SubCommand {
     public void displayPlots(final PlotPlayer<?> player, List<Plot> plots, int pageSize, int page, String[] args) {
         // Header
         plots.removeIf(plot -> !plot.isBasePlot());
-        this.paginate(player, plots, pageSize, page,
-            new RunnableVal3<Integer, Plot, CaptionHolder>() {
-                @Override public void run(Integer i, Plot plot, CaptionHolder caption) {
-                    String color;
-                    if (plot.getOwner() == null) {
-                        color = "$3";
-                    } else if (plot.isOwner(player.getUUID())) {
-                        color = "$1";
-                    } else if (plot.isAdded(player.getUUID())) {
-                        color = "$4";
-                    } else if (plot.isDenied(player.getUUID())) {
-                        color = "$2";
-                    } else {
-                        color = "$1";
-                    }
-                    PlotMessage trusted = new PlotMessage().text(Captions.color(
-                        Captions.PLOT_INFO_TRUSTED.getTranslated()
-                            .replaceAll("%trusted%", PlayerManager.getPlayerList(plot.getTrusted()))))
-                        .color("$1");
-                    PlotMessage members = new PlotMessage().text(Captions.color(
-                        Captions.PLOT_INFO_MEMBERS.getTranslated()
-                            .replaceAll("%members%", PlayerManager.getPlayerList(plot.getMembers()))))
-                        .color("$1");
-                    message.text("[").color("$3").text(i + "")
-                        .command("/plot visit " + plot.getArea() + ";" + plot.getId())
-                        .tooltip("/plot visit " + plot.getArea() + ";" + plot.getId()).color("$1")
-                        .text("]").color("$3").text(" " + plot.toString()).tooltip(trusted, members)
-                        .command("/plot info " + plot.getArea() + ";" + plot.getId()).color(color)
-                        .text(" - ").color("$2");
-                    String prefix = "";
-
-                    try {
-                        final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline()
-                            .getNames(plot.getOwners()).get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
-                        for (final UUIDMapping uuidMapping : names) {
-                            PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
-                            if (pp != null) {
-                                message = message.text(prefix).color("$4").text(uuidMapping.getUsername()).color("$1")
-                                    .tooltip(new PlotMessage("Online").color("$4"));
-                            } else {
-                                message = message.text(prefix).color("$4").text(uuidMapping.getUsername()).color("$1")
-                                    .tooltip(new PlotMessage("Offline").color("$3"));
-                            }
-                            prefix = ", ";
-                        }
-                    } catch (InterruptedException | ExecutionException e) {
-                        final StringBuilder playerBuilder = new StringBuilder();
-                        final Iterator<UUID> uuidIterator = plot.getOwners().iterator();
-                        while (uuidIterator.hasNext()) {
-                            final UUID uuid = uuidIterator.next();
-                            playerBuilder.append(uuid);
-                            if (uuidIterator.hasNext()) {
-                                playerBuilder.append(", ");
-                            }
-                        }
-                        player.sendMessage(TranslatableCaption.of("errors.invalid_player"),
-                            Templates.of("value", playerBuilder.toString()));
-                    } catch (TimeoutException e) {
-                        player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
-                    }
+        this.paginate(player, plots, pageSize, page, new RunnableVal3<Integer, Plot, CaptionHolder>() {
+            @Override public void run(Integer i, Plot plot, CaptionHolder caption) {
+                Caption color;
+                if (plot.getOwner() == null) {
+                    color = TranslatableCaption.of("info.plot_list_no_owner");
+                } else if (plot.isOwner(player.getUUID())) {
+                    color = TranslatableCaption.of("info.plot_list_owned_by");
+                } else if (plot.isAdded(player.getUUID())) {
+                    color = TranslatableCaption.of("info.plot_list_added_to");
+                } else if (plot.isDenied(player.getUUID())) {
+                    color = TranslatableCaption.of("info.plot_list_denied_on");
+                } else {
+                    color = TranslatableCaption.of("info.plot_list_default");
                 }
-            }, "/plot list " + args[0], TranslatableCaption.of("list.plot_list_header_paged"));
+                String trusted = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("info.plot_info_trusted").getComponent(player),
+                    Template.of("trusted", PlayerManager.getPlayerList(plot.getTrusted()))));
+                String members = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("info.plot_info_members").getComponent(player),
+                    Template.of("members", PlayerManager.getPlayerList(plot.getMembers()))));
+                Template command_tp = Template.of("command_tp", "/plot visit " + plot.getArea() + ";" + plot.getId());
+                Template command_info = Template.of("command_info", "/plot info " + plot.getArea() + ";" + plot.getId());
+                Template hover_info = Template.of("hover_info", trusted + "\n" + members);
+                Template numberTemplate = Template.of("number", String.valueOf(i));
+                Template plotTemplate =
+                    Template.of("plot", MINI_MESSAGE.serialize(MINI_MESSAGE.parse(color.getComponent(player), Template.of("plot", plot.toString()))));
+                String prefix = "";
+                String online = TranslatableCaption.of("info.plot_list_player_online").getComponent(player);
+                String offline = TranslatableCaption.of("info.plot_list_player_offline").getComponent(player);
+                StringBuilder builder = new StringBuilder();
+
+                try {
+                    final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
+                        .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
+                    for (final UUIDMapping uuidMapping : names) {
+                        PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
+                        Template prefixTemplate = Template.of("prefix", prefix);
+                        Template playerTemplate = Template.of("prefix", uuidMapping.getUsername());
+                        if (pp != null) {
+                            builder.append(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(online, prefixTemplate, playerTemplate)));
+                        } else {
+                            builder.append(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(offline, prefixTemplate, playerTemplate)));
+                        }
+                        prefix = ", ";
+                    }
+                } catch (InterruptedException | ExecutionException e) {
+                    final StringBuilder playerBuilder = new StringBuilder();
+                    final Iterator<UUID> uuidIterator = plot.getOwners().iterator();
+                    while (uuidIterator.hasNext()) {
+                        final UUID uuid = uuidIterator.next();
+                        playerBuilder.append(uuid);
+                        if (uuidIterator.hasNext()) {
+                            playerBuilder.append(", ");
+                        }
+                    }
+                    player.sendMessage(TranslatableCaption.of("errors.invalid_player"), Templates.of("value", playerBuilder.toString()));
+                } catch (TimeoutException e) {
+                    player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                }
+                Template players = Template.of("players", builder.toString());
+                caption.set(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
+                    .parse(TranslatableCaption.of("info.plot_list_item").getComponent(player), command_tp, command_info, hover_info, numberTemplate,
+                        plotTemplate, players))));
+            }
+        }, "/plot list " + args[0], TranslatableCaption.of("list.plot_list_header_paged"));
     }
 
     @Override public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {

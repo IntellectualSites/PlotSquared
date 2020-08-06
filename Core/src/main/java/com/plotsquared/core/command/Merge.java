@@ -61,7 +61,6 @@ public class Merge extends SubCommand {
 
     public static final String[] values = new String[] {"north", "east", "south", "west"};
     public static final String[] aliases = new String[] {"n", "e", "s", "w"};
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
