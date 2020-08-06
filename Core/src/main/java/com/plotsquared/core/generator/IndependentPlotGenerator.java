@@ -28,7 +28,6 @@ package com.plotsquared.core.generator;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 
@@ -75,7 +74,7 @@ public abstract class IndependentPlotGenerator {
      * If any additional setup options need to be changed before world creation.
      * - e.g. If setup doesn't support some standard options
      *
-     * @param setup setup object
+     * @param setup
      */
     @Deprecated public void processSetup(SetupObject setup) {
     }
