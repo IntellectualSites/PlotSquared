@@ -502,6 +502,12 @@
   "legacyconfig.legacy_config_replaced": "<prefix><gray><value1> has been replaced with <value2></gray>",
   "legacyconfig.legacy_config_done": "<prefix><green>The conversion has finished. PlotSquared will now be disabled and the new configuration file will be used at next startup. Please review the new worlds.yml file. Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. You need to re-generate the schematics.</green>",
   "legacyconfig.legacy_config_conversion_failed": "<prefix><red>Failed to convert the legacy configuration file. See stack trace for information.</red>",
+
+  "update.update_boundary": "<gold>-----------------------------------</gold>",
+  "update.update_notification": "<prefix><gold>There appears to be a PlotSquared update available!</gold>",
+  "update.internal_version": "<prefix><gold>You are running version </gold><dark_aqua><p2version></dark_aqua>",
+  "update.spigot_version": "<prefix><gold>Latest version is </gold><dark_aqua><spigotversion></dark_aqua>",
+  "update.download": "<prefix><gold>Download the update at: <click:open_url:<downloadurl>>",
  
   "flag.flag_key": "<gray>Key: <key></gray>",
   "flag.flag_desc": "<gray>Desc: <value></gray>",

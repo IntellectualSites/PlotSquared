@@ -27,7 +27,6 @@ package com.plotsquared.core.util.helpmenu;
 
 import com.plotsquared.core.command.Argument;
 import com.plotsquared.core.command.Command;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.util.StringMan;
 
 public class HelpObject {

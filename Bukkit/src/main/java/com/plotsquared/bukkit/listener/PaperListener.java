@@ -36,14 +36,15 @@ import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.MainCommand;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -287,7 +288,10 @@ public class PaperListener implements Listener {
         final int tileEntityCount = event.getBlock().getChunk().getTileEntities(false).length;
         if (tileEntityCount >= Settings.Chunk_Processor.MAX_TILES) {
             final PlotPlayer<?> plotPlayer = BukkitUtil.adapt(event.getPlayer());
-            Captions.TILE_ENTITY_CAP_REACHED.send(plotPlayer, Settings.Chunk_Processor.MAX_TILES);
+            plotPlayer.sendMessage(
+                    TranslatableCaption.of("errors.tile_entity_cap_reached"),
+                    Template.of("<amount>", String.valueOf(Settings.Chunk_Processor.MAX_TILES))
+            );
             event.setCancelled(true);
             event.setBuild(false);
         }

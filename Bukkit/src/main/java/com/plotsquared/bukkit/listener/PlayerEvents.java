@@ -32,6 +32,7 @@ import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -706,19 +707,17 @@ import java.util.regex.Pattern;
             this.eventDispatcher.doJoinTask(pp);
         }, TaskTime.seconds(1L));
 
-        if (pp.hasPermission(Permission.PERMISSION_ADMIN_UPDATE_NOTIFICATION.getTranslated())
-            && Settings.Enabled_Components.UPDATE_NOTIFICATIONS && PremiumVerification.isPremium()
+        if (pp.hasPermission(Permission.PERMISSION_ADMIN_UPDATE_NOTIFICATION.toString())
+            && Settings.Enabled_Components.UPDATE_NOTIFICATIONS
+                && PremiumVerification.isPremium()
             && UpdateUtility.hasUpdate) {
-            new PlotMessage("-----------------------------------").send(pp);
-            new PlotMessage(Captions.PREFIX + "There appears to be a PlotSquared update available!")
-                .color("$1").send(pp);
-            new PlotMessage(
-                Captions.PREFIX + "&6You are running version " + UpdateUtility.internalVersion
-                    .versionString() + ", &6latest version is " + UpdateUtility.spigotVersion)
-                .color("$1").send(pp);
-            new PlotMessage(Captions.PREFIX + "Download at:").color("$1").send(pp);
-            player.sendMessage("    https://www.spigotmc.org/resources/77506/updates");
-            new PlotMessage("-----------------------------------").send(pp);
+            Caption upperBoundary = TranslatableCaption.of("update.update_boundary");
+            Caption updateNotification = TranslatableCaption.of("update.update_notification");
+            Template internalVersion = Template.of("p2version", String.valueOf(UpdateUtility.internalVersion.versionString()));
+            Template spigotVersion = Template.of("spigotversion", UpdateUtility.spigotVersion);
+            Template downloadUrl = Template.of("downloadurl", "https://www.spigotmc.org/resources/77506/updates");
+            Caption lowerBoundary = TranslatableCaption.of("update.update_boundary");
+            pp.sendMessage(upperBoundary, updateNotification, internalVersion, spigotVersion, downloadUrl, lowerBoundary);
         }
     }
 
@@ -1025,10 +1024,11 @@ import java.util.regex.Pattern;
             return;
         }
         event.setCancelled(true);
-        String message = event.getMessage();
-        String format = Captions.PLOT_CHAT_FORMAT.getTranslated();
-        String sender = event.getPlayer().getDisplayName();
-        PlotId id = plot.getId();
+        Caption msg = TranslatableCaption.of("chat.plot_chat_format");
+        Template msgTemplate = Template.of("msg", event.getMessage());
+        Template plotTemplate = Template.of("plot_id", String.valueOf(plot.getId()));
+        Template senderTemplate = Template.of("sender", event.getPlayer().getDisplayName());
+        plotPlayer.sendMessage(msg, msgTemplate, plotTemplate, senderTemplate);
         Set<Player> recipients = event.getRecipients();
         recipients.clear();
         Set<Player> spies = new HashSet<>();
@@ -1052,11 +1052,12 @@ import java.util.regex.Pattern;
             receiver.sendMessage(full);
         }
         if (!spies.isEmpty()) {
-            String spyMessage = Captions.PLOT_CHAT_SPY_FORMAT.getTranslated()
-                .replace("%plot_id%", id.getX() + ";" + id.getY()).replace("%sender%", sender)
-                .replace("%msg%", message);
+            Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
+            Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
+            Template spysenderTemplate = Template.of("sender", sender);
+            Template spymessageTemplate = Template.of("msg", message);
             for (Player player : spies) {
-                player.sendMessage(spyMessage);
+                plotPlayer.sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
             }
         }
         // TODO: Re-implement

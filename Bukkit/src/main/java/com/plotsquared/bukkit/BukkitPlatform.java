@@ -65,7 +65,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.command.WE_Anywhere;
 import com.plotsquared.core.components.ComponentPresetManager;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -276,7 +275,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         if (!plotSquared.getConfigurationVersion().equalsIgnoreCase("v5")) {
             // Perform upgrade
             if (DBFunc.dbManager.convertFlags()) {
-                log(Captions.PREFIX.getTranslated() + "Flags were converted successfully!");
+                logger.info("[P2] Flags were converted successfully!");
                 // Update the config version
                 try {
                     plotSquared.setConfigurationVersion("v5");
