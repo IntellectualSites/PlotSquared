@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -127,7 +127,7 @@ public class Claim extends SubCommand {
                     );
                 }
                 if (!Permissions.hasPermission(player, CaptionUtility
-                    .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(),
+                    .format(player, Permission.PERMISSION_CLAIM_SCHEMATIC.toString(),
                         schematic)) && !Permissions.hasPermission(player, "plots.admin.command.schematic")
                         && !force) {
                         player.sendMessage(

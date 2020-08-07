@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotDoneEvent;
@@ -80,7 +80,7 @@ public class Done extends SubCommand {
         }
         boolean force = event.getEventResult() == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DONE)) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }

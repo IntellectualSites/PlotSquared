@@ -26,7 +26,6 @@
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;

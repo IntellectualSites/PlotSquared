@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -50,7 +50,7 @@ public class Copy extends SubCommand {
             return false;
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.toString())) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }

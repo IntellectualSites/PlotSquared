@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
@@ -104,11 +104,11 @@ public class HomeCommand extends Command {
         // /plot home <[area;]x;y>
         // /plot home <area> <x;y>
         // /plot home <area> <page>
-        if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions
-                .hasPermission(player, Captions.PERMISSION_HOME)) {
+        if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OWNED) && !Permissions
+                .hasPermission(player, Permission.PERMISSION_HOME)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.PERMISSION_VISIT_OWNED.toString())
+                    Template.of("node", Permission.PERMISSION_VISIT_OWNED.toString())
             );
             return CompletableFuture.completedFuture(false);
         }

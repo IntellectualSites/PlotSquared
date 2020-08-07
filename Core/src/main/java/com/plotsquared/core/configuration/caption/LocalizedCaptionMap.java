@@ -25,6 +25,8 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import com.google.common.collect.ImmutableMap;
+
 import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.Map;
@@ -54,6 +56,10 @@ public class LocalizedCaptionMap implements CaptionMap {
 
     @Override @Nonnull public Locale getLocale() {
         return this.locale;
+    }
+
+    @Nonnull @Override public Map<TranslatableCaption, String> getCaptions() {
+        return ImmutableMap.copyOf(captions);
     }
 
 }

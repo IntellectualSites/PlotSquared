@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
@@ -72,7 +72,7 @@ public class Remove extends SubCommand {
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_REMOVE)) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_REMOVE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }

@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -61,7 +61,7 @@ public class Continue extends SubCommand {
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", TranslatableCaption.of("permission.no_plot_perms").getComponent(player))
@@ -77,7 +77,7 @@ public class Continue extends SubCommand {
             < player.getPlotCount() + size)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.PERMISSION_ADMIN_COMMAND_CONTINUE.toString())
+                    Template.of("node", Permission.PERMISSION_ADMIN_COMMAND_CONTINUE.toString())
             );
             return false;
         }

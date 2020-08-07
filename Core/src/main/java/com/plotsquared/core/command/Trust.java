@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -73,7 +73,7 @@ public class Trust extends Command {
         }
         checkTrue(currentPlot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(currentPlot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
                 TranslatableCaption.of("permission.no_plot_perms"));
 
         checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
@@ -101,8 +101,8 @@ public class Trust extends Command {
                 while (iterator.hasNext()) {
                     UUID uuid = iterator.next();
                     if (uuid == DBFunc.EVERYONE && !(
-                        Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
-                            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
+                        Permissions.hasPermission(player, Permission.PERMISSION_TRUST_EVERYONE) || Permissions
+                            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
                                 Template.of("value", PlayerManager.getName(uuid))
@@ -130,7 +130,7 @@ public class Trust extends Command {
                 }
                 checkTrue(!uuids.isEmpty(), null);
                 checkTrue(size <= currentPlot.getArea().getMaxPlotMembers() || Permissions
-                        .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
                         TranslatableCaption.of("member.plot_max_members"));
                 // Success
                 confirm.run(this, () -> {

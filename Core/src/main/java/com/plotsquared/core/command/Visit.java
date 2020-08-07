@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
@@ -106,32 +106,32 @@ public class Visit extends Command {
 
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_UNOWNED)) {
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_UNOWNED)) {
                 player.sendMessage(TranslatableCaption.of("permission.no_permission"),
                     Templates.of("node", "plots.visit.unowned"));
                 return;
             }
         } else if (plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions
-                .hasPermission(player, Captions.PERMISSION_HOME)) {
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OWNED) && !Permissions
+                .hasPermission(player, Permission.PERMISSION_HOME)) {
                 player.sendMessage(TranslatableCaption.of("permission.no_permission"),
                     Templates.of("node", "plots.visit.owned"));
                 return;
             }
         } else if (plot.isAdded(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_SHARED)) {
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_SHARED)) {
                 player.sendMessage(TranslatableCaption.of("permission.no_permission"),
                     Templates.of("node", "plots.visit.shared"));
                 return;
             }
         } else {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER)) {
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OTHER)) {
                 player.sendMessage(TranslatableCaption.of("permission.no_permission"),
                     Templates.of("node", "plots.visit.other"));
                 return;
             }
             if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
                 player.sendMessage(TranslatableCaption.of("permission.no_permission"),
                     Templates.of("node", "plots.admin.visit.untrusted"));
                 return;

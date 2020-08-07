@@ -27,6 +27,7 @@ package com.plotsquared.core.configuration.caption;
 
 import javax.annotation.Nonnull;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Map containing mappings between {@link TranslatableCaption captions} and
@@ -67,6 +68,13 @@ public interface CaptionMap {
      * @return Message locale
      */
     @Nonnull Locale getLocale();
+
+    /**
+     * Gets a copy of the map of captions stored in the CaptionMap
+     *
+     * @return ImmutableMap of TranslatableCaption, String captionMap
+     */
+    @Nonnull Map<TranslatableCaption, String> getCaptions();
 
     class NoSuchCaptionException extends IllegalArgumentException {
 

@@ -27,9 +27,10 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.RegionManager;
@@ -50,6 +51,7 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Set;
 
 @CommandDeclaration(command = "debug",
     category = CommandCategory.DEBUG,
@@ -133,10 +135,11 @@ public class Debug extends SubCommand {
                 });
             return true;
         }
+        Set<TranslatableCaption> captions = PlotSquared.get().getCaptionMap(TranslatableCaption.DEFAULT_NAMESPACE).getCaptions().keySet();
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             StringBuilder msg = new StringBuilder();
-            for (Captions caption : Captions.values()) {
-                msg.append(caption.getTranslated()).append("\n");
+            for (Caption caption : captions) {
+                msg.append(caption.getComponent(ConsolePlayer.getConsole())).append("\n");
             }
             player.sendMessage(StaticCaption.of(msg.toString()));
             return true;
@@ -152,8 +155,7 @@ public class Debug extends SubCommand {
         information.append(
             MINI_MESSAGE.parse(line, Template.of("var", "Owned Plots"), Template.of("val", String.valueOf(PlotQuery.newQuery().allPlots().count()))));
         information.append(MINI_MESSAGE.parse(section, Template.of("val", "Messages")));
-        information
-            .append(MINI_MESSAGE.parse(line, Template.of("var", "Total Messages"), Template.of("val", String.valueOf(Captions.values().length))));
+        information.append(MINI_MESSAGE.parse(line, Template.of("var", "Total Messages"), Template.of("val", String.valueOf(captions.size()))));
         information.append(MINI_MESSAGE.parse(line, Template.of("var", "View all captions"), Template.of("val", "/plot debug msg")));
         player.sendMessage(StaticCaption.of(information.toString()));
         return true;

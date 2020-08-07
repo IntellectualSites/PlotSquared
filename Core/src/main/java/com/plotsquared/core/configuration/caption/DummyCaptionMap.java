@@ -26,7 +26,9 @@
 package com.plotsquared.core.configuration.caption;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * {@link CaptionMap} implementation that throws exception on all getters
@@ -49,6 +51,10 @@ public class DummyCaptionMap implements CaptionMap {
 
     @Override @Nonnull public Locale getLocale() {
         throw new UnsupportedOperationException("Cannot get locale of DummyCaptionMap");
+    }
+
+    @Nonnull @Override public Map<TranslatableCaption, String> getCaptions() {
+        return new HashMap<>();
     }
 
 }

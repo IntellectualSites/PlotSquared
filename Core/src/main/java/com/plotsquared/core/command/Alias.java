@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -84,9 +84,9 @@ public class Alias extends SubCommand {
                     return false;
                 }
 
-                permission = isPermitted(player, Captions.PERMISSION_ALIAS_SET)
-                        || isPermitted(player, Captions.PERMISSION_ALIAS_SET_OBSOLETE);
-                admin = isPermitted(player, Captions.PERMISSION_ADMIN_ALIAS_SET);
+                permission = isPermitted(player, Permission.PERMISSION_ALIAS_SET)
+                        || isPermitted(player, Permission.PERMISSION_ALIAS_SET_OBSOLETE);
+                admin = isPermitted(player, Permission.PERMISSION_ADMIN_ALIAS_SET);
                 if (!admin && !owner) {
                     player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
@@ -101,8 +101,8 @@ public class Alias extends SubCommand {
 
                 break;
             case "remove":
-                permission = isPermitted(player, Captions.PERMISSION_ALIAS_REMOVE);
-                admin = isPermitted(player, Captions.PERMISSION_ADMIN_ALIAS_REMOVE);
+                permission = isPermitted(player, Permission.PERMISSION_ALIAS_REMOVE);
+                admin = isPermitted(player, Permission.PERMISSION_ADMIN_ALIAS_REMOVE);
                 if (!admin && !owner) {
                     player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
@@ -172,7 +172,7 @@ public class Alias extends SubCommand {
         return true;
     }
 
-    private boolean isPermitted(PlotPlayer<?> player, Captions caption) {
-        return Permissions.hasPermission(player, caption);
+    private boolean isPermitted(PlotPlayer<?> player, Permission permission) {
+        return Permissions.hasPermission(player, permission);
     }
 }

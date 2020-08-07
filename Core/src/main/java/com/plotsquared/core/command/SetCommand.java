@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -45,9 +45,9 @@ public abstract class SetCommand extends SubCommand {
         }
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, CaptionUtility
-                .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
+                .format(player, Permission.PERMISSION_ADMIN_COMMAND.toString(), getFullId()))) {
+                MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
+                    .format(player, Permission.PERMISSION_ADMIN_COMMAND.toString(),
                         getFullId()));
                 player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                 return false;
@@ -55,9 +55,9 @@ public abstract class SetCommand extends SubCommand {
         }
         if (!plot.isOwner(player.getUUID())) {
             if (!Permissions.hasPermission(player, CaptionUtility
-                .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
+                .format(player, Permission.PERMISSION_ADMIN_COMMAND.toString(), getFullId()))) {
+                MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
+                    .format(player, Permission.PERMISSION_ADMIN_COMMAND.toString(),
                         getFullId()));
                 player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;

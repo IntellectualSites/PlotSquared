@@ -28,7 +28,7 @@ package com.plotsquared.bukkit.listener;
 import com.google.common.collect.Iterables;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -112,7 +112,7 @@ public class ForceFieldListener {
                 Set<PlotPlayer> players = getNearbyPlayers(player, plot);
                 for (PlotPlayer oPlayer : players) {
                     if (!Permissions
-                        .hasPermission(oPlayer, Captions.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
+                        .hasPermission(oPlayer, Permission.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
                         ((BukkitPlayer) oPlayer).player
                             .setVelocity(calculateVelocity(plotPlayer, oPlayer));
                     }
@@ -123,7 +123,7 @@ public class ForceFieldListener {
                     return;
                 }
                 if (!Permissions
-                    .hasPermission(plotPlayer, Captions.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
+                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
                     player.setVelocity(calculateVelocity(oPlayer, plotPlayer));
                 }
             }

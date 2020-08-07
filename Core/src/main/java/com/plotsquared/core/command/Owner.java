@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotChangeOwnerEvent;
@@ -95,7 +95,7 @@ public class Owner extends SetCommand {
             boolean force = event.getEventResult() == Result.FORCE;
             if (uuid == null) {
                 if (!force && !Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER,
+                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER,
                         true)) {
                     return;
                 }
@@ -124,7 +124,7 @@ public class Owner extends SetCommand {
                 return;
             }
             if (!force && !Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
                 if (other == null) {
                     player.sendMessage(
                             TranslatableCaption.of("invalid_player_offline"),

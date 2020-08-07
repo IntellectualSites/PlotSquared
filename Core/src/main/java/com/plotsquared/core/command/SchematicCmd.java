@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -81,7 +81,7 @@ public class SchematicCmd extends SubCommand {
         String arg = args[0].toLowerCase();
         switch (arg) {
             case "paste": {
-                if (!Permissions.hasPermission(player, Captions.PERMISSION_SCHEMATIC_PASTE)) {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_PASTE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             Template.of("node", "plots.schematic.paste")
@@ -212,7 +212,7 @@ public class SchematicCmd extends SubCommand {
             }
             case "export":
             case "save":
-                if (!Permissions.hasPermission(player, Captions.PERMISSION_SCHEMATIC_SAVE)) {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_SAVE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             Template.of("node", "plots.schematic.save")
@@ -251,7 +251,7 @@ public class SchematicCmd extends SubCommand {
                 }
                 break;
             case "list": {
-                if (!Permissions.hasPermission(player, Captions.PERMISSION_SCHEMATIC_LIST)) {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             Template.of("node", "plots.schematic.list")

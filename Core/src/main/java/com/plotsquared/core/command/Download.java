@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -82,12 +82,12 @@ public class Download extends SubCommand {
             return false;
         }
         if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!DoneFlag.isDone(plot))) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
             player.sendMessage(TranslatableCaption.of("done.done_not_done"));
             return false;
         }
         if ((!plot.isOwner(player.getUUID())) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.toString())) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
@@ -119,10 +119,10 @@ public class Download extends SubCommand {
             });
         } else if (args.length == 1 && StringMan
             .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_DOWNLOAD_WORLD)) {
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Captions.PERMISSION_DOWNLOAD_WORLD.toString())
+                        Template.of("node", Permission.PERMISSION_DOWNLOAD_WORLD.toString())
                 );
                 return false;
             }

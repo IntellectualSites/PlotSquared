@@ -27,7 +27,7 @@ package com.plotsquared.core.util;
 
 import com.google.common.eventbus.EventBus;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
@@ -281,11 +281,11 @@ public class EventDispatcher {
             case INTERACT_BLOCK: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
+                        Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
+                        Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
                 }
                 final List<BlockTypeWrapper> use = plot.getFlag(UseFlag.class);
                 for (final BlockTypeWrapper blockTypeWrapper : use) {
@@ -294,7 +294,7 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                if (Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(), false)) {
+                if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(), false)) {
                     return true;
                 }
                 if (notifyPerms) {
@@ -306,11 +306,11 @@ public class EventDispatcher {
             case TRIGGER_PHYSICAL: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), false);
+                        Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), false);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), false);
+                        Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), false);
                 }
                 if (plot.getFlag(DeviceInteractFlag.class)) {
                     return true;
@@ -323,17 +323,17 @@ public class EventDispatcher {
                     }
                 }
                 return Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
+                    .hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
                         false);
             }
             case SPAWN_MOB: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
+                        Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
+                        Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
                 }
                 if (plot.getFlag(MobPlaceFlag.class)) {
                     return true;
@@ -346,7 +346,7 @@ public class EventDispatcher {
                     }
                 }
                 if (Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
+                    .hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
                         false)) {
                     return true;
                 }
@@ -360,11 +360,11 @@ public class EventDispatcher {
             case PLACE_MISC: {
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
+                        Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
+                        Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
                 }
                 if (plot.getFlag(MiscPlaceFlag.class)) {
                     return true;
@@ -377,7 +377,7 @@ public class EventDispatcher {
                     }
                 }
                 if (Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
+                    .hasPermission(player, Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
                         false)) {
                     return true;
                 }
@@ -391,11 +391,11 @@ public class EventDispatcher {
             case PLACE_VEHICLE:
                 if (plot == null) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
+                        Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
                 }
                 if (!plot.hasOwner()) {
                     return Permissions.hasPermission(player,
-                        Captions.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
+                        Permission.PERMISSION_ADMIN_INTERACT_UNOWNED.toString(), notifyPerms);
                 }
                 return plot.getFlag(VehiclePlaceFlag.class);
             default:

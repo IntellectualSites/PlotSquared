@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
@@ -69,7 +69,7 @@ public class Add extends Command {
         final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
             TranslatableCaption.of("permission.no_plot_perms"));
         checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
                 Template.of("value", "/plot add <player | *>"));
@@ -93,8 +93,8 @@ public class Add extends Command {
                     while (iterator.hasNext()) {
                         UUID uuid = iterator.next();
                         if (uuid == DBFunc.EVERYONE && !(
-                            Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
-                                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
+                            Permissions.hasPermission(player, Permission.PERMISSION_TRUST_EVERYONE) || Permissions
+                                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                             player.sendMessage(TranslatableCaption.of("errors.invalid_player"),
                                     Template.of("value", PlayerManager.getName(uuid)));
                             iterator.remove();
@@ -115,7 +115,7 @@ public class Add extends Command {
                         size += plot.getTrusted().contains(uuid) ? 0 : 1;
                     }
                     checkTrue(!uuids.isEmpty(), null);
-                    checkTrue(size <= plot.getArea().getMaxPlotMembers() || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
+                    checkTrue(size <= plot.getArea().getMaxPlotMembers() || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
                         TranslatableCaption.of("members.plot_max_members"));
                     // Success
                     confirm.run(this, () -> {

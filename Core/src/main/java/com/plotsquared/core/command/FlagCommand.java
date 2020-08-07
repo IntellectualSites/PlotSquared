@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -96,7 +96,7 @@ public final class FlagCommand extends Command {
         key = key.toLowerCase();
         value = value.toLowerCase();
         String perm = CaptionUtility
-            .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+            .format(player, Permission.PERMISSION_SET_FLAG_KEY_VALUE.toString(),
                 key.toLowerCase(), value.toLowerCase());
         if (flag instanceof IntegerFlag && MathMan.isInteger(value)) {
             try {
@@ -108,8 +108,8 @@ public final class FlagCommand extends Command {
                         Settings.Limit.MAX_PLOTS;
                     final boolean result = player.hasPermissionRange(perm, checkRange) >= numeric;
                     if (!result) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                            .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                        MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
+                            .format(player, Permission.PERMISSION_SET_FLAG_KEY_VALUE.toString(),
                                 key.toLowerCase(), value.toLowerCase()));
                     }
                     return result;
@@ -122,12 +122,12 @@ public final class FlagCommand extends Command {
                 PlotFlag<? extends List<?>, ?> parsedFlag = listFlag.parse(value);
                 for (final Object entry : parsedFlag.getValue()) {
                     final String permission = CaptionUtility
-                        .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                        .format(player, Permission.PERMISSION_SET_FLAG_KEY_VALUE.toString(),
                             key.toLowerCase(), entry.toString().toLowerCase());
                     final boolean result = Permissions.hasPermission(player, permission);
                     if (!result) {
-                        MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                            .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+                        MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
+                            .format(player, Permission.PERMISSION_SET_FLAG_KEY_VALUE.toString(),
                                 key.toLowerCase(), value.toLowerCase()));
                         return false;
                     }
@@ -147,8 +147,8 @@ public final class FlagCommand extends Command {
         }
         final boolean result = Permissions.hasPermission(player, perm);
         if (!result) {
-            MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                .format(player, Captions.PERMISSION_SET_FLAG_KEY_VALUE.getTranslated(),
+            MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
+                .format(player, Permission.PERMISSION_SET_FLAG_KEY_VALUE.toString(),
                     key.toLowerCase(), value.toLowerCase()));
         }
         return result;
@@ -171,7 +171,7 @@ public final class FlagCommand extends Command {
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_SET_FLAG_OTHER)) {
+            .hasPermission(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", "plots.set.flag.other")
@@ -441,11 +441,11 @@ public final class FlagCommand extends Command {
         boolean force = event.getEventResult() == Result.FORCE;
         flag = event.getFlag();
         if (!force && !Permissions.hasPermission(player, CaptionUtility
-            .format(player, Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
+            .format(player, Permission.PERMISSION_SET_FLAG_KEY.toString(),
                 args[0].toLowerCase()))) {
             if (args.length != 2) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(player, Captions.PERMISSION_SET_FLAG_KEY.getTranslated(),
+                MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
+                    .format(player, Permission.PERMISSION_SET_FLAG_KEY.toString(),
                         args[0].toLowerCase()));
                 return;
             }
@@ -481,7 +481,7 @@ public final class FlagCommand extends Command {
                         return;
                     }
                 } else {
-                    // MainUtil.sendMessage(player, Captions.FLAG_REMOVED);
+                    // MainUtil.sendMessage(player, Permission.FLAG_REMOVED);
                     PlotFlag plotFlag = parsedFlag.createFlagInstance(list);
                     PlotFlagAddEvent addEvent = new PlotFlagAddEvent(plotFlag, plot);
                     if (addEvent.getEventResult() == Result.DENY) {

@@ -31,7 +31,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Like;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
@@ -3010,7 +3010,7 @@ public class Plot {
             Template plotTemplate = Template.of("plot", this.toString());
             Template messageTemplate = Template.of("message", message);
             for (final PlotPlayer<?> player : players) {
-                if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_DEBUG_OTHER)) {
+                if (isOwner(player.getUUID()) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_DEBUG_OTHER)) {
                     player.sendMessage(caption, plotTemplate, messageTemplate);
                 }
             }

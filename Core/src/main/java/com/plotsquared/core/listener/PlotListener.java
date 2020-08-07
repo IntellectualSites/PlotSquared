@@ -26,7 +26,7 @@
 package com.plotsquared.core.listener;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
@@ -323,7 +323,7 @@ public class PlotListener {
                 try (final MetaDataAccess<Boolean> kickAccess =
                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
                     if (plot.getFlag(DenyExitFlag.class) && !Permissions
-                        .hasPermission(player, Captions.PERMISSION_ADMIN_EXIT_DENIED) &&
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_EXIT_DENIED) &&
                         !kickAccess.get().orElse(false)) {
                         if (previous != null) {
                             lastPlot.set(previous);

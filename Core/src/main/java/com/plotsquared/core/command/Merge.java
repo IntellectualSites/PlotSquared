@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
@@ -175,7 +175,7 @@ public class Merge extends SubCommand {
                 terrain = "true".equalsIgnoreCase(args[1]);
             }
             if (!force && !terrain && !Permissions
-                .hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
+                .hasPermission(player, Permission.PERMISSION_MERGE_KEEP_ROAD)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
                             Template.of("node", "plots.merge.keeproad")
@@ -197,7 +197,7 @@ public class Merge extends SubCommand {
             return false;
         }
         if (!force && !plot.isOwner(uuid)) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_MERGE)) {
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_MERGE)) {
                 player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;
             } else {
@@ -219,7 +219,7 @@ public class Merge extends SubCommand {
             terrain = true;
         }
         if (!force && !terrain && !Permissions
-            .hasPermission(player, Captions.PERMISSION_MERGE_KEEP_ROAD)) {
+            .hasPermission(player, Permission.PERMISSION_MERGE_KEEP_ROAD)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", "plots.merge.keeproad")
@@ -243,7 +243,7 @@ public class Merge extends SubCommand {
             player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
         }
-        if (!force && !Permissions.hasPermission(player, Captions.PERMISSION_MERGE_OTHER)) {
+        if (!force && !Permissions.hasPermission(player, Permission.PERMISSION_MERGE_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", "plots.merge.other")

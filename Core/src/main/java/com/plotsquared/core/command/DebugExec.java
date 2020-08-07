@@ -28,7 +28,7 @@ package com.plotsquared.core.command;
 import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -198,7 +198,7 @@ public class DebugExec extends SubCommand {
         this.scope.put("MainCommand", MainCommand.getInstance());
 
         // enums
-        for (Enum<?> value : Captions.values()) {
+        for (Enum<?> value : Permission.values()) {
             this.scope.put("C_" + value.name(), value);
         }
     }

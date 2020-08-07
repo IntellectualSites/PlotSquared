@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.MetaDataAccess;
@@ -78,7 +78,7 @@ public class Save extends SubCommand {
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SAVE)) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SAVE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }

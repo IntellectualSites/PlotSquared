@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
@@ -75,7 +75,7 @@ public class Kick extends SubCommand {
             return false;
         }
         if ((!plot.hasOwner() || !plot.isOwner(player.getUUID())) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_KICK)) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_KICK)) {
             player.sendMessage(TranslatableCaption.of("permission.no_permission"));
             return false;
         }
@@ -94,7 +94,7 @@ public class Kick extends SubCommand {
                     if (uuid == DBFunc.EVERYONE) {
                         for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
                             if (pp == player || Permissions
-                                .hasPermission(pp, Captions.PERMISSION_ADMIN_ENTRY_DENIED)) {
+                                .hasPermission(pp, Permission.PERMISSION_ADMIN_ENTRY_DENIED)) {
                                 continue;
                             }
                             players.add(pp);
@@ -122,7 +122,7 @@ public class Kick extends SubCommand {
                         );
                         return;
                     }
-                    if (Permissions.hasPermission(player2, Captions.PERMISSION_ADMIN_ENTRY_DENIED)) {
+                    if (Permissions.hasPermission(player2, Permission.PERMISSION_ADMIN_ENTRY_DENIED)) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.cannot_kick_player"),
                                 Template.of("name", player2.getName())

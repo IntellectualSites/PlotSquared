@@ -27,7 +27,6 @@ package com.plotsquared.core.plot.comment;
 
 import com.google.common.annotations.Beta;
 import com.google.inject.TypeLiteral;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;

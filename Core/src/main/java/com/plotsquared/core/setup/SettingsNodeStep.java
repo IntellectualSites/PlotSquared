@@ -27,7 +27,6 @@ package com.plotsquared.core.setup;
 
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.RequiredType;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;

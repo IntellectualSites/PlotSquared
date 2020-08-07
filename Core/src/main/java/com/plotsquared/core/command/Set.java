@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -104,7 +104,7 @@ public class Set extends SubCommand {
                         BlockType::getName).collect(Collectors.toList()));
                 }
 
-                if (!Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_ALLOW_UNSAFE) &&
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_ALLOW_UNSAFE) &&
                     !forbiddenTypes.isEmpty()) {
                     for (String forbiddenType : forbiddenTypes) {
                         forbiddenType = forbiddenType.toLowerCase(Locale.ENGLISH);
@@ -141,10 +141,10 @@ public class Set extends SubCommand {
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
                         if (!Permissions.hasPermission(player, CaptionUtility
-                            .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(),
+                            .format(player, Permission.PERMISSION_SET_COMPONENT.toString(),
                                 component))) {
-                            MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                                .format(player, Captions.PERMISSION_SET_COMPONENT.getTranslated(),
+                            MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
+                                .format(player, Permission.PERMISSION_SET_COMPONENT.toString(),
                                     component));
                             return false;
                         }

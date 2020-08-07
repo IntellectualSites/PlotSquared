@@ -26,7 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -114,7 +114,7 @@ public class Rate extends SubCommand {
                         return false;
                     }
                     if (!Permissions
-                        .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_RATE, true)) {
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_RATE, true)) {
                         return false;
                     }
                     plot.clearRatings();
@@ -168,7 +168,7 @@ public class Rate extends SubCommand {
                                             Template.of("plot", plot.getId().toString())
                                     );
                                     if (Permissions
-                                        .hasPermission(this.player, Captions.PERMISSION_COMMENT)) {
+                                        .hasPermission(this.player, Permission.PERMISSION_COMMENT)) {
                                         Command command =
                                             MainCommand.getInstance().getCommand(Comment.class);
                                         if (command != null) {

@@ -27,7 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Injector;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
@@ -241,8 +241,8 @@ public class MainCommand extends Command {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
-                .equals(area) || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN)
-                || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_SUDO_AREA))
+                .equals(area) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN)
+                || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_SUDO_AREA))
                 && !newPlot.isDenied(player.getUUID())) {
                 Location newLoc = newPlot.getCenterSynchronous();
                 if (player.canTeleport(newLoc)) {

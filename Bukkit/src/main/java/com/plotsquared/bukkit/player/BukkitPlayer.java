@@ -28,7 +28,7 @@ package com.plotsquared.bukkit.player;
 import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
@@ -162,15 +162,15 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     @Override @Nonnegative public int hasPermissionRange(@Nonnull final String stub,
                                             @Nonnegative final int range) {
-        if (hasPermission(Captions.PERMISSION_ADMIN.getTranslated())) {
+        if (hasPermission(Permission.PERMISSION_ADMIN.getTranslated())) {
             return Integer.MAX_VALUE;
         }
         final String[] nodes = stub.split("\\.");
         final StringBuilder n = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i]).append(".");
-            if (!stub.equals(n + Captions.PERMISSION_STAR.getTranslated())) {
-                if (hasPermission(n + Captions.PERMISSION_STAR.getTranslated())) {
+            if (!stub.equals(n + Permission.PERMISSION_STAR.getTranslated())) {
+                if (hasPermission(n + Permission.PERMISSION_STAR.getTranslated())) {
                     return Integer.MAX_VALUE;
                 }
             }

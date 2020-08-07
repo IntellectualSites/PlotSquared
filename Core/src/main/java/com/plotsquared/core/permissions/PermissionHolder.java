@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.permissions;
 
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 
 import javax.annotation.Nonnegative;
@@ -58,15 +57,15 @@ public interface PermissionHolder {
      */
     @Nonnegative default int hasPermissionRange(@Nonnull final String stub,
                                                 @Nonnegative final int range) {
-        if (hasPermission(Captions.PERMISSION_ADMIN.toString())) {
+        if (hasPermission(Permission.PERMISSION_ADMIN.toString())) {
             return Integer.MAX_VALUE;
         }
         String[] nodes = stub.split("\\.");
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < (nodes.length - 1); i++) {
             builder.append(nodes[i]).append(".");
-            if (!stub.equals(builder + Captions.PERMISSION_STAR.toString())) {
-                if (hasPermission(builder + Captions.PERMISSION_STAR.toString())) {
+            if (!stub.equals(builder + Permission.PERMISSION_STAR.toString())) {
+                if (hasPermission(builder + Permission.PERMISSION_STAR.toString())) {
                     return Integer.MAX_VALUE;
                 }
             }

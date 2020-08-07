@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -285,7 +285,7 @@ public class Auto extends SubCommand {
                 return true;
             }
             if (!force && !Permissions.hasPermission(player, CaptionUtility
-                .format(player, Captions.PERMISSION_CLAIM_SCHEMATIC.getTranslated(), schematic))
+                .format(player, Permission.PERMISSION_CLAIM_SCHEMATIC.toString(), schematic))
                 && !Permissions
                 .hasPermission(player, "plots.admin.command.schematic")) {
                 player.sendMessage(

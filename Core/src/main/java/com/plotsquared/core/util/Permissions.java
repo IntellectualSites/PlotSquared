@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.PermissionHolder;
@@ -41,8 +41,8 @@ import javax.annotation.Nonnull;
  */
 public class Permissions {
 
-    public static boolean hasPermission(PlotPlayer<?> player, Captions caption, boolean notify) {
-        return hasPermission(player, caption.toString(), notify);
+    public static boolean hasPermission(PlotPlayer<?> player, Permission permission, boolean notify) {
+        return hasPermission(player, permission.toString(), notify);
     }
 
     /**
@@ -51,7 +51,7 @@ public class Permissions {
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    public static boolean hasPermission(@Nonnull final PermissionHolder caller, @Nonnull final Captions permission) {
+    public static boolean hasPermission(@Nonnull final PermissionHolder caller, @Nonnull final Permission permission) {
         return caller.hasPermission(permission.toString());
     }
 
@@ -86,8 +86,8 @@ public class Permissions {
         return true;
     }
 
-    public static int hasPermissionRange(PlotPlayer<?> player, Captions perm, int range) {
-        return hasPermissionRange(player, perm.toString(), range);
+    public static int hasPermissionRange(PlotPlayer<?> player, Permission Permission, int range) {
+        return hasPermissionRange(player, Permission.toString(), range);
     }
 
     /**

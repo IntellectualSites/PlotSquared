@@ -26,7 +26,6 @@
 package com.plotsquared.core.plot.flag.types;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.StringMan;
 

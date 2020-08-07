@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -99,7 +99,7 @@ public class Info extends SubCommand {
             for (final String argument : args) {
                 if (argument.equalsIgnoreCase("-f")) {
                     if (!player
-                        .hasPermission(Captions.PERMISSION_AREA_INFO_FORCE.toString())) {
+                        .hasPermission(Permission.PERMISSION_AREA_INFO_FORCE.toString())) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
                                 Template.of("node", "plots.area.info.force")
