@@ -27,8 +27,13 @@ package com.plotsquared.core.plot;
 
 import com.plotsquared.core.database.AbstractDBTest;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.UseFlag;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class FlagTest {
 
@@ -58,4 +63,9 @@ public class FlagTest {
 //            assertEquals(flag.get(), flag2.get());
 //        }
 //    }
+
+    @Test public void testFlagName() {
+        String flagName = PlotFlag.getFlagName(UseFlag.class);
+        assertEquals("use", flagName);
+    }
 }

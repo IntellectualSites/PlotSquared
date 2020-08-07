@@ -62,8 +62,20 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
         this.flagDescription =
             Preconditions.checkNotNull(flagDescription, "flag description may not be null");
         // Parse flag name
+        // noinspection unchecked
+        this.flagName = getFlagName(this.getClass());
+    }
+
+    /**
+     * Return the name of the flag.
+     * @param flagClass Flag class
+     * @param <T> Value type
+     * @param <F> Flag type
+     * @return The name of the flag implemented by the given class
+     */
+    public static <T, F extends PlotFlag<T, F>> String getFlagName(Class<F> flagClass) {
         final StringBuilder flagName = new StringBuilder();
-        final char[] chars = this.getClass().getSimpleName().replace("Flag", "").toCharArray();
+        final char[] chars = flagClass.getSimpleName().replace("Flag", "").toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (i == 0) {
                 flagName.append(Character.toLowerCase(chars[i]));
@@ -73,7 +85,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
                 flagName.append(chars[i]);
             }
         }
-        this.flagName = flagName.toString();
+        return flagName.toString();
     }
 
     /**

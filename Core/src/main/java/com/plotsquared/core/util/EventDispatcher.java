@@ -294,11 +294,14 @@ public class EventDispatcher {
                         return true;
                     }
                 }
-                return Permissions
-                        .hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(),
-                                false) || !(!notifyPerms || MainUtil
-                        .sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                                Captions.FLAG_USE.getTranslated()));
+                if (Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_INTERACT_OTHER.toString(), false)) {
+                    return true;
+                }
+                if (notifyPerms) {
+                    player.sendMessage(TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
+                            Template.of("flag", PlaceFlag.getFlagName(UseFlag.class)));
+                }
+                return false;
             }
             case TRIGGER_PHYSICAL: {
                 if (plot == null) {
@@ -347,9 +350,12 @@ public class EventDispatcher {
                         false)) {
                     return true;
                 }
-                return !(!notifyPerms || MainUtil.sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                    Captions.FLAG_MOB_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
-                        .getTranslated()));
+                if (notifyPerms) {
+                    player.sendMessage(TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
+                            Template.of("flag", PlotFlag.getFlagName(MobPlaceFlag.class)
+                                    + '/' + PlotFlag.getFlagName(PlaceFlag.class)));
+                }
+                return false;
             }
             case PLACE_MISC: {
                 if (plot == null) {
@@ -375,9 +381,12 @@ public class EventDispatcher {
                         false)) {
                     return true;
                 }
-                return !(!notifyPerms || MainUtil.sendMessage(player, Captions.FLAG_TUTORIAL_USAGE,
-                    Captions.FLAG_MISC_PLACE.getTranslated() + '/' + Captions.FLAG_PLACE
-                        .getTranslated()));
+                if (notifyPerms) {
+                    player.sendMessage(TranslatableCaption.of("commandconfig.flag_tutorial_usage"),
+                            Template.of("flag", PlotFlag.getFlagName(MiscPlaceFlag.class)
+                                    + '/' + PlotFlag.getFlagName(PlaceFlag.class)));
+                }
+                return false;
             }
             case PLACE_VEHICLE:
                 if (plot == null) {

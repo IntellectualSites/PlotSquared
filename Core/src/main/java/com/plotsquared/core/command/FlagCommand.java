@@ -30,6 +30,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -136,7 +137,7 @@ public final class FlagCommand extends Command {
                         TranslatableCaption.of("flag.flag_parse_error"),
                         Template.of("flag_name", flag.getName()),
                         Template.of("flag_value", e.getValue()),
-                        Template.of("error", e.getErrorMessage())
+                        Templates.of(player, "error", e.getErrorMessage(), e.getTemplates())
                 );
                 return false;
             } catch (final Exception e) {
@@ -333,7 +334,7 @@ public final class FlagCommand extends Command {
                     TranslatableCaption.of("flag.flag_parse_error"),
                     Template.of("flag_name", plotFlag.getName()),
                     Template.of("flag_value", e.getValue()),
-                    Template.of("error", e.getErrorMessage())
+                    Templates.of(player, "error", e.getErrorMessage(), e.getTemplates())
             );
             return;
         }
@@ -392,7 +393,7 @@ public final class FlagCommand extends Command {
                     TranslatableCaption.of("flag.flag_parse_error"),
                     Template.of("flag_name", plotFlag.getName()),
                     Template.of("flag_value", e.getValue()),
-                    Template.of("error", e.getErrorMessage())
+                    Templates.of(player, "error", e.getErrorMessage(), e.getTemplates())
             );
             return;
         }
@@ -462,7 +463,7 @@ public final class FlagCommand extends Command {
                         TranslatableCaption.of("flag.flag_parse_error"),
                         Template.of("flag_name", flag.getName()),
                         Template.of("flag_value", e.getValue()),
-                        Template.of("error", e.getErrorMessage())
+                        Templates.of(player, "error", e.getErrorMessage(), e.getTemplates())
                 );
                 return;
             }
@@ -576,32 +577,23 @@ public final class FlagCommand extends Command {
         if (plotFlag != null) {
             player.sendMessage(TranslatableCaption.of("flag.flag_info_header"));
             // Flag name
-            new PlotMessage(Captions.FLAG_INFO_NAME.getTranslated())
-                .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).text(plotFlag.getName())
-                .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()).send(player);
+            player.sendMessage(TranslatableCaption.of("flag.flag_info_name"), Template.of("flag", plotFlag.getName()));
             // Flag category
-            new PlotMessage(Captions.FLAG_INFO_CATEGORY.getTranslated())
-                .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated())
-                .text(plotFlag.getFlagCategory().getTranslated())
-                .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()).send(player);
+            player.sendMessage(TranslatableCaption.of("flag.flag_info_category"),
+                    Templates.of(player, "value", plotFlag.getFlagCategory()));
             // Flag description
-            new PlotMessage(Captions.FLAG_INFO_DESCRIPTION.getTranslated())
-                .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).send(player);
-            new PlotMessage(plotFlag.getFlagDescription().getTranslated())
-                .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()).send(player);
+            // TODO maybe merge and \n instead?
+            player.sendMessage(TranslatableCaption.of("flag.flag_info_description"));
+            player.sendMessage(plotFlag.getFlagDescription());
             // Flag example
-            new PlotMessage(Captions.FLAG_INFO_EXAMPLE.getTranslated())
-                .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated())
-                .text("/plot flag set " + plotFlag.getName() + " " + plotFlag.getExample())
-                .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated())
-                .suggest("/plot flag set " + plotFlag.getName() + " " + plotFlag.getExample())
-                .send(player);
+            player.sendMessage(TranslatableCaption.of("flag.flag_info_example"),
+                    Template.of("flag", plotFlag.getName()),
+                    Template.of("value", plotFlag.getExample()));
             // Default value
             final String defaultValue = player.getLocation().getPlotArea().getFlagContainer()
                 .getFlagErased(plotFlag.getClass()).toString();
-            new PlotMessage(Captions.FLAG_INFO_DEFAULT_VALUE.getTranslated())
-                .color(Captions.FLAG_INFO_COLOR_KEY.getTranslated()).text(defaultValue)
-                .color(Captions.FLAG_INFO_COLOR_VALUE.getTranslated()).send(player);
+            player.sendMessage(TranslatableCaption.of("flag.flag_info_default_value"),
+                    Template.of("value", defaultValue));
             // Footer. Done this way to prevent the duplicate-message-thingy from catching it
             player.sendMessage(TranslatableCaption.of("flag.flag_info_footer"));
         }
