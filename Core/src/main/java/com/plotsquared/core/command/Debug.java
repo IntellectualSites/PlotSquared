@@ -40,6 +40,8 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.entity.EntityType;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,27 +141,21 @@ public class Debug extends SubCommand {
             player.sendMessage(StaticCaption.of(msg.toString()));
             return true;
         }
-        StringBuilder information = new StringBuilder();
-        String header = Captions.DEBUG_HEADER.getTranslated();
-        String line = Captions.DEBUG_LINE.getTranslated();
-        String section = Captions.DEBUG_SECTION.getTranslated();
+        TextComponent.Builder information = TextComponent.builder();
+        Component header = MINI_MESSAGE.parse(TranslatableCaption.of("debug.debug_header").getComponent(player) + "\n");
+        String line = TranslatableCaption.of("debug.debug_line").getComponent(player) + "\n";
+        String section = TranslatableCaption.of("debug.debug_section").getComponent(player) + "\n";
         information.append(header);
-        information.append(getSection(section, "PlotArea"));
+        information.append(MINI_MESSAGE.parse(section, Template.of("val", "PlotArea")));
+        information.append(MINI_MESSAGE
+            .parse(line, Template.of("var", "Plot Worlds"), Template.of("val", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", "))));
         information.append(
-            getLine(line, "Plot Worlds", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", ")));
-        information.append(getLine(line, "Owned Plots", PlotQuery.newQuery().allPlots().count()));
-        information.append(getSection(section, "Messages"));
-        information.append(getLine(line, "Total Messages", Captions.values().length));
-        information.append(getLine(line, "View all captions", "/plot debug msg"));
+            MINI_MESSAGE.parse(line, Template.of("var", "Owned Plots"), Template.of("val", String.valueOf(PlotQuery.newQuery().allPlots().count()))));
+        information.append(MINI_MESSAGE.parse(section, Template.of("val", "Messages")));
+        information
+            .append(MINI_MESSAGE.parse(line, Template.of("var", "Total Messages"), Template.of("val", String.valueOf(Captions.values().length))));
+        information.append(MINI_MESSAGE.parse(line, Template.of("var", "View all captions"), Template.of("val", "/plot debug msg")));
         player.sendMessage(StaticCaption.of(information.toString()));
         return true;
-    }
-
-    private String getSection(String line, String val) {
-        return line.replaceAll("%val%", val) + "\n";
-    }
-
-    private String getLine(String line, String var, Object val) {
-        return line.replaceAll("%var%", var).replaceAll("%val%", "" + val) + "\n";
     }
 }

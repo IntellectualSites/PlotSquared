@@ -330,7 +330,7 @@
   "trim.trim_done": "<prefix><gold>Trim done.</gold>",
   "trim.trim_starting": "<prefix><gold>Collecting region data...</gold>",
 
-  "blocklist.block_list_separator": "<gold>,</gold><gray> ",
+  "blocklist.block_list_separator": "</grey><gold>,</gold><gray> ",
   
   "biome.need_biome": "<prefix><red>You need to specify a valid biome.</red>",
   "biome.biome_set_to": "<prefix><gold>Plot biome set to <gray><value></gray></gold>",
@@ -398,6 +398,9 @@
   "working.claimed": "<prefix><dark_aqua>You successfully claimed the plot.</dark_aqua>",
   
   "list.comment_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> comments</gold>",
+  "list.comment_list_comment": "<dark_grey>[</dark_grey><grey>#<number></grey><dark_grey>[</dark_grey><grey><world>;<plot_id></grey><dark_grey>][</dark_grey><gold><commenter></gold><dark_grey>]</dark_grey><comment>\n",
+  "list.comment_list_by_lister": "<green><comment></green>",
+  "list.comment_list_by_other": "<grey><comment></grey>",
   "list.clickable": "<gray> (interactive)</gray>",
   "list.area_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> areas</gold>",
   "list.plot_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gray><gray>) </gray><gold>List of <amount> plots</gold>",

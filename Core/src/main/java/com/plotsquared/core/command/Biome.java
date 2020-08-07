@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -55,8 +54,8 @@ public class Biome extends SetCommand {
         } catch (final Exception ignore) {
         }
         if (biome == null) {
-            String biomes = StringMan
-                .join(BiomeType.REGISTRY.values(), Captions.BLOCK_LIST_SEPARATOR.toString());
+            String biomes = StringMan.join(BiomeType.REGISTRY.values(),
+                MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("blocklist.block_list_separator").getComponent(player))));
             player.sendMessage(TranslatableCaption.of("biome.need_biome"));
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.subcommand_set_options_header"),

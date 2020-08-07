@@ -53,7 +53,7 @@ public class Continue extends SubCommand {
     @Inject public Continue(@Nonnull final EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-    
+
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
@@ -64,7 +64,7 @@ public class Continue extends SubCommand {
             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Captions.NO_PLOT_PERMS.toString())
+                    Template.of("node", TranslatableCaption.of("permission.no_plot_perms").getComponent(player))
             );
             return false;
         }

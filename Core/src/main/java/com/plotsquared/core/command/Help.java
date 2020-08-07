@@ -25,14 +25,16 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.helpmenu.HelpMenu;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -104,22 +106,21 @@ public class Help extends Command {
                 }
             }
             if (cat == null && page == 0) {
-                StringBuilder builder = new StringBuilder();
-                builder.append(Captions.HELP_HEADER.getTranslated());
+                TextComponent.Builder builder = TextComponent.builder();
+                builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_header").getComponent(player)));
                 for (CommandCategory c : CommandCategory.values()) {
-                    builder.append("\n").append(StringMan
-                        .replaceAll(Captions.HELP_INFO_ITEM.getTranslated(), "%category%",
-                            c.toString().toLowerCase(), "%category_desc%", c.toString()));
+                    builder.append("\n").append(MINI_MESSAGE
+                        .parse(TranslatableCaption.of("help.help_info_item").getComponent(player), Template.of("category", c.name().toLowerCase()),
+                            Template.of("category_desc", c.getComponent(player))));
                 }
-                builder.append("\n").append(
-                    Captions.HELP_INFO_ITEM.getTranslated().replaceAll("%category%", "all")
-                        .replaceAll("%category_desc%", "Display all commands"));
-                builder.append("\n").append(Captions.HELP_FOOTER.getTranslated());
-                player.sendMessage(StaticCaption.of(builder.toString()));
+                builder.append("\n").append(MINI_MESSAGE
+                    .parse(TranslatableCaption.of("help.help_info_item").getComponent(player), Template.of("category", "all"),
+                        Template.of("category_desc", "Display all commands")));
+                builder.append("\n").append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_footer").getComponent(player)));
+                player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.asComponent())));
                 return true;
             }
-            new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages()
-                .generatePage(page - 1, getParent().toString()).render();
+            new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(page - 1, getParent().toString()).render();
             return true;
         });
     }

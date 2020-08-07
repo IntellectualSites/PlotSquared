@@ -27,9 +27,10 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -187,9 +188,8 @@ public class Set extends SubCommand {
         if (plot != null) {
             newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
-        MainUtil.sendMessage(player,
-            Captions.SUBCOMMAND_SET_OPTIONS_HEADER.getTranslated() + StringMan
-                .join(newValues, Captions.BLOCK_LIST_SEPARATOR.formatted()));
+        player.sendMessage(StaticCaption.of(TranslatableCaption.of("commandconfig.subcommand_set_options_header").getComponent(player) + StringMan
+            .join(newValues, TranslatableCaption.of("blocklist.block_list_separator").getComponent(player))));
         return false;
     }
 

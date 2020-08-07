@@ -83,7 +83,7 @@ public final class FlagCommand extends Command {
         super(MainCommand.getInstance(), true);
     }
 
-    private static boolean sendMessage(PlotPlayer<?> player, Captions message, Object... args) {
+    private static boolean sendMessage(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
                 Template.of("value", "/plot flag <set | remove | add | list | info> <flag> <value>")
@@ -167,7 +167,7 @@ public final class FlagCommand extends Command {
             return false;
         }
         if (!plot.hasOwner()) {
-            sendMessage(player, Captions.PLOT_NOT_CLAIMED);
+            player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions

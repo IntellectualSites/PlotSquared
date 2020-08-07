@@ -27,12 +27,14 @@ package com.plotsquared.core.backup;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -53,6 +55,8 @@ import java.util.concurrent.CompletableFuture;
  * {@inheritDoc}
  */
 public class PlayerBackupProfile implements BackupProfile {
+
+    static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final UUID owner;
     private final Plot plot;
@@ -182,7 +186,8 @@ public class PlayerBackupProfile implements BackupProfile {
                             if (value) {
                                 future.complete(null);
                             } else {
-                                future.completeExceptionally(new RuntimeException(Captions.SCHEMATIC_PASTE_FAILED.toString()));
+                                future.completeExceptionally(new RuntimeException(MINI_MESSAGE.stripTokens(
+                                    TranslatableCaption.of("schematics.schematic_paste_failed").getComponent(ConsolePlayer.getConsole()))));
                             }
                         }
                     });

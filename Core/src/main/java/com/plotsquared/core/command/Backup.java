@@ -30,7 +30,6 @@ import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.backup.BackupProfile;
 import com.plotsquared.core.backup.NullBackupProfile;
 import com.plotsquared.core.backup.PlayerBackupProfile;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -71,7 +70,7 @@ public final class Backup extends Command {
         this.backupManager = backupManager;
     }
 
-    private static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
+    private static boolean sendMessage(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
                 Template.of("value", "/plot backup <save | list | load>")
@@ -85,12 +84,12 @@ public final class Backup extends Command {
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         if (args.length == 0 || !Arrays.asList("save", "list", "load")
             .contains(args[0].toLowerCase(Locale.ENGLISH))) {
-            return CompletableFuture.completedFuture(sendMessage(player, Captions.BACKUP_USAGE));
+            return CompletableFuture.completedFuture(sendMessage(player));
         }
         return super.execute(player, args, confirm, whenDone);
     }
 
-    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    @Override public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         if (args.length == 1) {
             return Stream.of("save", "list", "load")
                 .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
@@ -128,7 +127,7 @@ public final class Backup extends Command {
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER,
         permission = "plots.backup.save")
-    public void save(final Command command, final PlotPlayer player, final String[] args,
+    public void save(final Command command, final PlotPlayer<?> player, final String[] args,
         final RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
         final Plot plot = player.getCurrentPlot();
@@ -179,7 +178,7 @@ public final class Backup extends Command {
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER,
         permission = "plots.backup.list")
-    public void list(final Command command, final PlotPlayer player, final String[] args,
+    public void list(final Command command, final PlotPlayer<?> player, final String[] args,
         final RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
         final Plot plot = player.getCurrentPlot();
@@ -246,7 +245,7 @@ public final class Backup extends Command {
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER,
         permission = "plots.backup.load")
-    public void load(final Command command, final PlotPlayer player, final String[] args,
+    public void load(final Command command, final PlotPlayer<?> player, final String[] args,
         final RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
         final Plot plot = player.getCurrentPlot();

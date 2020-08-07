@@ -26,10 +26,10 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.TypeLiteral;
-import com.plotsquared.core.configuration.Captions;
-import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.MetaDataKey;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.comment.CommentInbox;
@@ -37,7 +37,8 @@ import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.player.MetaDataKey;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.List;
@@ -70,25 +71,31 @@ public class Inbox extends SubCommand {
         if (max > comments.length) {
             max = comments.length;
         }
-        StringBuilder string = new StringBuilder();
-        string.append(StringMan
-            .replaceAll(Captions.COMMENT_LIST_HEADER_PAGED.getTranslated(), "%amount%",
-                comments.length, "%cur", page + 1, "%max", totalPages + 1, "%word", "all") + '\n');
+        TextComponent.Builder builder = TextComponent.builder();
+        builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("list.comment_list_header_paged").getComponent(player) + '\n',
+            Template.of("amount", String.valueOf(comments.length)), Template.of("cur", String.valueOf(page + 1)),
+            Template.of("max", String.valueOf(totalPages + 1)), Template.of("word", "all")));
 
         // This might work xD
         for (int x = page * 12; x < max; x++) {
             PlotComment comment = comments[x];
-            String color;
+            Component commentColored;
             if (player.getName().equals(comment.senderName)) {
-                color = "&a";
+                commentColored = MINI_MESSAGE
+                    .parse(TranslatableCaption.of("list.comment_list_by_lister").getComponent(player), Template.of("comment", comment.comment));
             } else {
-                color = "&7";
+                commentColored = MINI_MESSAGE
+                    .parse(TranslatableCaption.of("list.comment_list_by_other").getComponent(player), Template.of("comment", comment.comment));
             }
-            string.append("&8[&7#").append(x + 1).append("&8][&7").append(comment.world).append(';')
-                .append(comment.id).append("&8][&6").append(comment.senderName).append("&8]")
-                .append(color).append(comment.comment).append('\n');
+            Template number = Template.of("number", String.valueOf(x));
+            Template world = Template.of("world", comment.world);
+            Template plot_id = Template.of("plot_id", comment.id.getX() + "" + comment.id.getY());
+            Template commenter = Template.of("commenter", comment.senderName);
+            Template commentTemplate = Template.of("comment", commentColored);
+            builder.append(MINI_MESSAGE
+                .parse(TranslatableCaption.of("list.comment_list_comment").getComponent(player), number, world, plot_id, commenter, commentTemplate));
         }
-        player.sendMessage(StaticCaption.of(string.toString()));
+        player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
     }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
