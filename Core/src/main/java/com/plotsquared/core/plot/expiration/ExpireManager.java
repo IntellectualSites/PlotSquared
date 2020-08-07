@@ -26,6 +26,7 @@
 package com.plotsquared.core.plot.expiration;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -50,6 +51,7 @@ import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
+import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +76,7 @@ public class ExpireManager {
     private final ConcurrentHashMap<UUID, Long> account_age_cache;
     private final EventDispatcher eventDispatcher;
     private volatile HashSet<Plot> plotsToDelete;
-    private ArrayDeque<ExpiryTask> tasks;
+    private final ArrayDeque<ExpiryTask> tasks;
 
     /**
      * 0 = stopped, 1 = stopping, 2 = running
@@ -102,7 +104,7 @@ public class ExpireManager {
         confirmExpiry(pp);
     }
 
-    public void handleEntry(PlotPlayer pp, Plot plot) {
+    public void handleEntry(PlotPlayer<?> pp, Plot plot) {
         if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp
             .hasPermission("plots.admin.command.autoclear") && plotsToDelete.contains(plot)) {
             if (!isExpired(new ArrayDeque<>(tasks), plot).isEmpty()) {
@@ -154,18 +156,16 @@ public class ExpireManager {
                             metaDataAccess.set(true);
                             current.getCenter(pp::teleport);
                             metaDataAccess.remove();
-                            PlotMessage msg = new PlotMessage().text(
-                                num + " " + (num > 1 ? "plots are" : "plot is") + " expired: ").color("$1").text(current.toString()).color("$2")
-                                .command("/plot list expired").tooltip("/plot list expired")
-                                //.text("\n - ").color("$3").text("Delete all (/plot delete expired)").color("$2").command("/plot delete expired")
-                                .text("\n - ").color("$3").text("Delete this (/plot delete)").color("$2").command("/plot delete").tooltip("/plot delete")
-                                .text("\n - ").color("$3").text("Remind later (/plot flag set keep 1d)").color("$2")
-                                .command("/plot flag set keep 1d").tooltip("/plot flag set keep 1d")
-                                .text("\n - ").color("$3").text("Keep this (/plot flag set keep true)").color("$2")
-                                .command("/plot flag set keep true").tooltip("/plot flag set keep true").text("\n - ").color("$3")
-                                .text("Don't show me this").color("$2").command("/plot toggle clear-confirmation")
-                                .tooltip("/plot toggle clear-confirmation");
-                            msg.send(pp);
+                            Caption msg = TranslatableCaption.of("expiry.expired_options_clicky");
+                            Template numTemplate = Template.of("num", String.valueOf(num));
+                            Template areIsTemplate = Template.of("are_or_is", (num > 1 ? "plots are" : "plot is"));
+                            Template list_cmd = Template.of("list_cmd", "/plot list expired");
+                            Template plot = Template.of("plot", current.toString());
+                            Template cmd_del = Template.of("cmd_del", "/plot delete");
+                            Template cmd_keep_1d = Template.of("cmd_keep_1d", "/plot flag set keep 1d");
+                            Template cmd_keep = Template.of("cmd_keep", "/plot flag set keep true");
+                            Template cmd_no_show_expir = Template.of("cmd_no_show_expir", "/plot toggle clear-confirmation");
+                            pp.sendMessage(msg, numTemplate, areIsTemplate, list_cmd, plot, cmd_del, cmd_keep_1d, cmd_keep, cmd_no_show_expir);
                         });
                         return;
                     } else {

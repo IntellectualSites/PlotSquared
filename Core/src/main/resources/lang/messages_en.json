@@ -282,6 +282,8 @@
   "debugexec.expiry_already_started": "<prefix><gold>Plot expiry task already started.</gold>",
   "debugexec.script_list_item": "<dark_grey>[</dark_grey><gold><number></gold><dark_grey>]</dark_grey><gold> <name></gold>",
 
+  "expiry.expired_options_clicky": "<gold><num> <are_or_is> expired: </gold><click:run_command:<list_cmd>><hover:show_text:<list_cmd>><grey><plot></grey></hover></click>\n<dark_grey> - </dark_grey><click:run_command:<cmd_del>><hover:show_text:<cmd_del>><grey>Delete this (<cmd_del>)</grey></hover></click>\n<dark_grey> - </dark_grey><click:run_command:<cmd_keep_1d>><hover:show_text:<cmd_keep_1d>><grey>Remind later (<cmd_keep_1d>)</grey></hover></click>\n<dark_grey> - </dark_grey><click:run_command:<cmd_keep>><hover:show_text:<cmd_keep>><grey>Keep this (<cmd_keep>)</grey></hover></click>\n<dark_grey> - </dark_grey><click:run_command:<cmd_no_show_expir>><hover:show_text:<cmd_no_show_expir>><grey>Don't show me this (<cmd_no_show_expir>)</grey></hover></click>",
+
   "debugimportworlds.single_plot_area": "<prefix><red>Must be a single plot area.</red>",
   "debugimportworlds.world_container": "<prefix><red>World container must be configured to be a separate directory to your base files.</red>",
   "debugimportworlds.done": "<prefix><gold>Done!</gold>",
