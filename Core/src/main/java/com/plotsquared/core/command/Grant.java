@@ -27,10 +27,9 @@ package com.plotsquared.core.command;
 
 import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -66,10 +65,9 @@ public class Grant extends Command {
         switch (arg0) {
             case "add":
             case "check":
-                if (!Permissions.hasPermission(player, CaptionUtility
-                    .format(player, Permission.PERMISSION_GRANT.toString(), arg0))) {
-                    Permission.NO_PERMISSION.send(player, CaptionUtility
-                        .format(player, Permission.PERMISSION_GRANT.toString(), arg0));
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_GRANT.format(arg0))) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", Permission.PERMISSION_GRANT.format(arg0)));
                     return CompletableFuture.completedFuture(false);
                 }
                 if (args.length > 2) {

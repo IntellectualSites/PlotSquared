@@ -28,8 +28,6 @@ package com.plotsquared.core.command;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -37,9 +35,10 @@ import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
-import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -284,9 +283,7 @@ public class Auto extends SubCommand {
                 );
                 return true;
             }
-            if (!force && !Permissions.hasPermission(player, CaptionUtility
-                .format(player, Permission.PERMISSION_CLAIM_SCHEMATIC.toString(), schematic))
-                && !Permissions
+            if (!force && !Permissions.hasPermission(player, Permission.PERMISSION_CLAIM_SCHEMATIC.format(schematic)) && !Permissions
                 .hasPermission(player, "plots.admin.command.schematic")) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),

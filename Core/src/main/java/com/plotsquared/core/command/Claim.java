@@ -126,10 +126,8 @@ public class Claim extends SubCommand {
                             Template.of("reason", "non-existant")
                     );
                 }
-                if (!Permissions.hasPermission(player, CaptionUtility
-                    .format(player, Permission.PERMISSION_CLAIM_SCHEMATIC.toString(),
-                        schematic)) && !Permissions.hasPermission(player, "plots.admin.command.schematic")
-                        && !force) {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_CLAIM_SCHEMATIC
+                    .format(schematic)) && !Permissions.hasPermission(player, "plots.admin.command.schematic") && !force) {
                         player.sendMessage(
                             TranslatableCaption.of("permission.no_schematic_permission"),
                             Template.of("value", schematic)

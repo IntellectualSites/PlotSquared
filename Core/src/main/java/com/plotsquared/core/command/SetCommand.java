@@ -25,14 +25,14 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.caption.CaptionUtility;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.Template;
 
 public abstract class SetCommand extends SubCommand {
 
@@ -44,21 +44,17 @@ public abstract class SetCommand extends SubCommand {
             return false;
         }
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, CaptionUtility
-                .format(player, Permission.PERMISSION_ADMIN_COMMAND.toString(), getFullId()))) {
-                MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
-                    .format(player, Permission.PERMISSION_ADMIN_COMMAND.toString(),
-                        getFullId()));
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
+                player.sendMessage(TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId())));
                 player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                 return false;
             }
         }
         if (!plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, CaptionUtility
-                .format(player, Permission.PERMISSION_ADMIN_COMMAND.toString(), getFullId()))) {
-                MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
-                    .format(player, Permission.PERMISSION_ADMIN_COMMAND.toString(),
-                        getFullId()));
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
+                player.sendMessage(TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId())));
                 player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;
             }

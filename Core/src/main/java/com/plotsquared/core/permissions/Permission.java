@@ -75,7 +75,7 @@ public enum Permission {
     PERMISSION_AREA_REGEN("plots.area.regen"),
     PERMISSION_AREA_TP("plots.area.tp"),
     PERMISSION_AUTO_MEGA("plots.auto.mega"),
-    PERMISSION_CLAIM_SCHEMATIC("plots.claim.%s0"),
+    PERMISSION_CLAIM_SCHEMATIC("plots.claim.%s"),
     PERMISSION_ADMIN_COMMAND_SCHEMATIC("plots.admin.command.schematic"),
     PERMISSION_ADMIN_COMMAND_CLEAR("plots.admin.command.clear"),
     PERMISSION_CONTINUE("plots.continue"),
@@ -110,18 +110,18 @@ public enum Permission {
     PERMISSION_DOWNLOAD_WORLD("plots.download.world"),
     PERMISSION_SET_FLAG_OTHER("plots.set.flag.other"),
     PERMISSION_SET_FLAG("plots.set.flag"),
-    PERMISSION_SET_FLAG_KEY("plots.set.flag.%s0"),
-    PERMISSION_SET_FLAG_KEY_VALUE("plots.set.flag.%s0.%s1"),
+    PERMISSION_SET_FLAG_KEY("plots.set.flag.%s"),
+    PERMISSION_SET_FLAG_KEY_VALUE("plots.set.flag.%s.%s"),
     PERMISSION_FLAG_REMOVE("plots.flag.remove"),
     PERMISSION_FLAG_ADD("plots.flag.add"),
     PERMISSION_FLAG_LIST("plots.flag.list"),
     PERMISSION_ADMIN_COMMAND_KICK("plots.admin.command.kick"),
-    PERMISSION_GRANT("plots.grant.%s0"),
+    PERMISSION_GRANT("plots.grant.%s"),
     PERMISSION_LIST_FOR_SALE("plots.list.forsale"),
     PERMISSION_LIST_MINE("plots.list.mine"),
     PERMISSION_LIST_SHARED("plots.list.shared"),
     PERMISSION_LIST_WORLD("plots.list.world"),
-    PERMISSION_LIST_WORLD_NAME("plots.list.world.%s0"),
+    PERMISSION_LIST_WORLD_NAME("plots.list.world.%s"),
     PERMISSION_LIST_TOP("plots.list.top"),
     PERMISSION_LIST_ALL("plots.list.all"),
     PERMISSION_LIST_UNOWNED("plots.list.unowned"),
@@ -142,8 +142,8 @@ public enum Permission {
     PERMISSION_SCHEMATIC_LIST("plots.schematic.list"),
     PERMISSION_SCHEMATIC_SAVE("plots.schematic.save"),
     PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE("plots.admin.command.schematic.save"),
-    PERMISSION_SET_COMPONENT("plots.set.%s0"),
-    PERMISSION_ADMIN_COMMAND("plots.admin.command.%s0"),
+    PERMISSION_SET_COMPONENT("plots.set.%s"),
+    PERMISSION_ADMIN_COMMAND("plots.admin.command.%s"),
     PERMISSION_ADMIN_COMMAND_UNLINK("plots.ad2min.command.unlink"),
     PERMISSION_VISIT_UNOWNED("plots.visit.unowned"),
     PERMISSION_VISIT_OWNED("plots.visit.owned"),
@@ -174,6 +174,10 @@ public enum Permission {
 
     @Override public String toString() {
         return this.text;
+    }
+
+    public String format(Object... replacements) {
+        return String.format(this.toString(), replacements);
     }
 
 }

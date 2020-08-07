@@ -27,11 +27,10 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -140,12 +139,9 @@ public class Set extends SubCommand {
 
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
-                        if (!Permissions.hasPermission(player, CaptionUtility
-                            .format(player, Permission.PERMISSION_SET_COMPONENT.toString(),
-                                component))) {
-                            MainUtil.sendMessage(player, Permission.NO_PERMISSION, CaptionUtility
-                                .format(player, Permission.PERMISSION_SET_COMPONENT.toString(),
-                                    component));
+                        if (!Permissions.hasPermission(player, Permission.PERMISSION_SET_COMPONENT.format(component))) {
+                            player.sendMessage(TranslatableCaption.of("permission.no_permission"),
+                                Template.of("node", Permission.PERMISSION_SET_COMPONENT.format(component)));
                             return false;
                         }
                         if (args.length < 2) {
