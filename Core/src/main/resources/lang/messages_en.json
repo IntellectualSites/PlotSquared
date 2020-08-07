@@ -477,7 +477,7 @@
   "preset.preset_cannot_afford": "<prefix><red>You cannot afford that preset.</red>",
   "preset.preset_invalid": "<prefix><red>Could not generate a pattern from that preset.</red>",
   "preset.preset_lore_cost": "<prefix><gray>Cost: </gray><gold><cost></gold>",
-  "preset-preset_lore_component": "<prefix><gray>Component: </gray><gold><component></gold>",
+  "preset.preset_lore_component": "<prefix><gray>Component: </gray><gold><component></gold>",
   
   "generic.generic_other": "<prefix><gray>other</gray>",
   "generic.generic_merged": "<prefix><gray>merged</gray>",

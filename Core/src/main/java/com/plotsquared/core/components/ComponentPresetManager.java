@@ -29,7 +29,6 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.command.MainCommand;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
@@ -44,6 +43,7 @@ import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +62,7 @@ import java.util.stream.Collectors;
 
 public class ComponentPresetManager {
 
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final Logger logger = LoggerFactory.getLogger("P2/" + ComponentPresetManager.class.getSimpleName());
 
     private final List<ComponentPreset> presets;
@@ -131,7 +132,7 @@ public class ComponentPresetManager {
      *
      * @return Build inventory, if it could be created
      */
-    @Nullable public PlotInventory buildInventory(final PlotPlayer player) {
+    @Nullable public PlotInventory buildInventory(final PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
 
         if (plot == null) {
@@ -207,19 +208,20 @@ public class ComponentPresetManager {
         for (int i = 0; i < allowedPresets.size(); i++) {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
-            if (preset.getCost() > 0 && this.econHandler != null && plot.getArea().useEconomy()){
-                lore.add(Captions.PRESET_LORE_COST.getTranslated().replace("%cost%",
-                    String.format("%.2f", preset.getCost())));
+            if (preset.getCost() > 0 && this.econHandler != null && plot.getArea().useEconomy()) {
+                lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("preset.preset_lore_cost").getComponent(player),
+                    Template.of("cost", String.format("%.2f", preset.getCost())))));
             }
-            lore.add(Captions.PRESET_LORE_COMPONENT.getTranslated().replace("%component%",
-                preset.getComponent().name().toLowerCase()));
+            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("preset.preset_lore_component").getComponent(player),
+                Template.of("component", preset.getComponent().name().toLowerCase()))));
             lore.removeIf(String::isEmpty);
             if (!lore.isEmpty()) {
-                lore.add("&6");
+                lore.add("<gold>");
             }
             lore.addAll(preset.getDescription());
-            plotInventory.setItem(i, new PlotItemStack(preset.getIcon().getId().replace("minecraft:", ""),
-                1, preset.getDisplayName(), lore.toArray(new String[0])));
+            lore.add("</gold>");
+            plotInventory.setItem(i,
+                new PlotItemStack(preset.getIcon().getId().replace("minecraft:", ""), 1, preset.getDisplayName(), lore.toArray(new String[0])));
         }
 
         return plotInventory;

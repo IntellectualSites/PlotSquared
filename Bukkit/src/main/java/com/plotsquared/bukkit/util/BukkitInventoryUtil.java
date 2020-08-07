@@ -96,7 +96,7 @@ import java.util.stream.IntStream;
             }
             List<String> lore = new ArrayList<>();
             for (String entry : item.lore) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', entry));
+                lore.add(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(BukkitUtil.MINI_MESSAGE.deserialize(entry)));
             }
             meta.setLore(lore);
         }
