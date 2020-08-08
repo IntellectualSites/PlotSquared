@@ -35,12 +35,12 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
+import com.plotsquared.core.uuid.UUIDMapping;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "kick",
@@ -75,8 +75,8 @@ public class Kick extends SubCommand {
                 MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
             } else {
                 Set<PlotPlayer<?>> players = new HashSet<>();
-                for (UUID uuid : uuids) {
-                    if (uuid == DBFunc.EVERYONE) {
+                for (UUIDMapping uuidMapping : uuids) {
+                    if (uuidMapping.getUuid() == DBFunc.EVERYONE) {
                         for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
                             if (pp == player || Permissions
                                 .hasPermission(pp, Captions.PERMISSION_ADMIN_ENTRY_DENIED)) {
@@ -86,7 +86,7 @@ public class Kick extends SubCommand {
                         }
                         continue;
                     }
-                    PlotPlayer<?> pp = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                    PlotPlayer<?> pp = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
                     if (pp != null) {
                         players.add(pp);
                     }

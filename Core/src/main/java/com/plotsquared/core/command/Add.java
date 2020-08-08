@@ -35,11 +35,11 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.uuid.UUIDMapping;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
@@ -79,44 +79,49 @@ public class Add extends Command {
             } else {
                 try {
                     checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
-                    Iterator<UUID> iterator = uuids.iterator();
+
+                    Iterator<UUIDMapping> iterator = uuids.iterator();
                     int size = plot.getTrusted().size() + plot.getMembers().size();
                     while (iterator.hasNext()) {
-                        UUID uuid = iterator.next();
-                        if (uuid == DBFunc.EVERYONE && !(
+                        UUIDMapping uuidMapping = iterator.next();
+                        if (uuidMapping.getUuid() == DBFunc.EVERYONE && !(
                             Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
                                 .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
-                            MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
+                            MainUtil.sendMessage(player, Captions.ALREADY_ADDED, uuidMapping.getUsername());
                             iterator.remove();
                             continue;
                         }
-                        if (plot.isOwner(uuid)) {
-                            MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                        if (plot.isOwner(uuidMapping.getUuid())) {
+                            new Thread(() ->
+                                    MainUtil.sendMessage(player, Captions.ALREADY_ADDED, uuidMapping.getUsername())
+                            ).start();
                             iterator.remove();
                             continue;
                         }
-                        if (plot.getMembers().contains(uuid)) {
-                            MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                        if (plot.getMembers().contains(uuidMapping.getUuid())) {
+                            new Thread(() ->
+                                    MainUtil.sendMessage(player, Captions.ALREADY_ADDED, uuidMapping.getUsername())
+                            ).start();
                             iterator.remove();
                             continue;
                         }
-                        size += plot.getTrusted().contains(uuid) ? 0 : 1;
+                        size += plot.getTrusted().contains(uuidMapping.getUuid()) ? 0 : 1;
                     }
                     checkTrue(!uuids.isEmpty(), null);
                     checkTrue(size <= plot.getArea().getMaxPlotMembers() || Permissions.hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST),
                         Captions.PLOT_MAX_MEMBERS);
                     // Success
                     confirm.run(this, () -> {
-                        for (UUID uuid : uuids) {
-                            if (uuid != DBFunc.EVERYONE) {
-                                if (!plot.removeTrusted(uuid)) {
-                                    if (plot.getDenied().contains(uuid)) {
-                                        plot.removeDenied(uuid);
+                        for (UUIDMapping uuidMapping : uuids) {
+                            if (uuidMapping.getUuid() != DBFunc.EVERYONE) {
+                                if (!plot.removeTrusted(uuidMapping.getUuid())) {
+                                    if (plot.getDenied().contains(uuidMapping.getUuid())) {
+                                        plot.removeDenied(uuidMapping.getUuid());
                                     }
                                 }
                             }
-                            plot.addMember(uuid);
-                            PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, true);
+                            plot.addMember(uuidMapping.getUuid());
+                            PlotSquared.get().getEventDispatcher().callMember(player, plot, uuidMapping.getUuid(), true);
                             MainUtil.sendMessage(player, Captions.MEMBER_ADDED);
                         }
                     }, null);
