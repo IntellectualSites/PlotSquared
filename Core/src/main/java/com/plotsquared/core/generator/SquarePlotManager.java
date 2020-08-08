@@ -30,13 +30,16 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.HashUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -56,12 +59,14 @@ public abstract class SquarePlotManager extends GridPlotManager {
         this.regionManager = regionManager;
     }
 
-    @Override public boolean clearPlot(final Plot plot, final Runnable whenDone) {
+    @Override public boolean clearPlot(final @NotNull Plot plot, final @Nullable Runnable whenDone, @Nullable QueueCoordinator queue) {
         final Set<CuboidRegion> regions = plot.getRegions();
         Runnable run = new Runnable() {
             @Override public void run() {
                 if (regions.isEmpty()) {
-                    whenDone.run();
+                    if (whenDone != null) {
+                        whenDone.run();
+                    }
                     return;
                 }
                 Iterator<CuboidRegion> iterator = regions.iterator();
@@ -76,13 +81,13 @@ public abstract class SquarePlotManager extends GridPlotManager {
         return true;
     }
 
-    @Override public Location getPlotTopLocAbs(PlotId plotId) {
+    @Override public Location getPlotTopLocAbs(@NotNull PlotId plotId) {
         int px = plotId.getX();
         int pz = plotId.getY();
-        int x = (squarePlotWorld.ROAD_OFFSET_X + (px * (squarePlotWorld.ROAD_WIDTH
-            + squarePlotWorld.PLOT_WIDTH))) - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
-        int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
-            + squarePlotWorld.PLOT_WIDTH))) - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
+        int x = (squarePlotWorld.ROAD_OFFSET_X + (px * (squarePlotWorld.ROAD_WIDTH + squarePlotWorld.PLOT_WIDTH))) - (int) Math
+            .floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
+        int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH + squarePlotWorld.PLOT_WIDTH))) - (int) Math
+            .floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
         return Location.at(squarePlotWorld.getWorldName(), x, Math.min(getWorldHeight(), 255), z);
     }
 
@@ -130,7 +135,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
     }
 
-    public PlotId getNearestPlotId(PlotArea plotArea, int x, int y, int z) {
+    public PlotId getNearestPlotId(@Nonnull PlotArea plotArea, int x, int y, int z) {
         SquarePlotWorld dpw = (SquarePlotWorld) plotArea;
         if (dpw.ROAD_OFFSET_X != 0) {
             x -= dpw.ROAD_OFFSET_X;
@@ -191,8 +196,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 rz = z % size;
             }
             PlotId id = PlotId.of(dx, dz);
-            boolean[] merged =
-                new boolean[] {rz <= pathWidthLower, rx > end, rz > end, rx <= pathWidthLower};
+            boolean[] merged = new boolean[] {rz <= pathWidthLower, rx > end, rz > end, rx <= pathWidthLower};
             int hash = HashUtil.hash(merged);
             // Not merged, and no need to check if it is
             if (hash == 0) {
@@ -230,8 +234,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                     return plot.getMerged(Direction.NORTHWEST) ? id : null;
             }
         } catch (Exception ignored) {
-            logger.error( "Invalid plot / road width in settings.yml for world: {}", squarePlotWorld
-                .getWorldName());
+            logger.error("Invalid plot / road width in settings.yml for world: {}", squarePlotWorld.getWorldName());
         }
         return null;
     }
@@ -239,15 +242,13 @@ public abstract class SquarePlotManager extends GridPlotManager {
     /**
      * Get the bottom plot loc (some basic math).
      */
-    @Override public Location getPlotBottomLocAbs(PlotId plotId) {
+    @Override public Location getPlotBottomLocAbs(@NotNull PlotId plotId) {
         int px = plotId.getX();
         int pz = plotId.getY();
-        int x = (squarePlotWorld.ROAD_OFFSET_X + (px * (squarePlotWorld.ROAD_WIDTH
-            + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH - (int) Math
-            .floor(squarePlotWorld.ROAD_WIDTH / 2);
-        int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH
-            + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH - (int) Math
-            .floor(squarePlotWorld.ROAD_WIDTH / 2);
+        int x = (squarePlotWorld.ROAD_OFFSET_X + (px * (squarePlotWorld.ROAD_WIDTH + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH
+            - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2);
+        int z = (squarePlotWorld.ROAD_OFFSET_Z + (pz * (squarePlotWorld.ROAD_WIDTH + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH
+            - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2);
         return Location.at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinBuildHeight(), z);
     }
 }

@@ -32,7 +32,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.schematic.Schematic;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.net.AbstractDelegateOutputStream;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -107,18 +107,18 @@ public abstract class SchematicHandler {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + SchematicHandler.class.getSimpleName());
     public static SchematicHandler manager;
-
-    private boolean exportAll = false;
-
     private final WorldUtil worldUtil;
+    private boolean exportAll = false;
 
     public SchematicHandler(@Nonnull final WorldUtil worldUtil) {
         this.worldUtil = worldUtil;
     }
 
-    public static void upload(@Nullable UUID uuid, @Nullable final String file,
-        @Nonnull final String extension, @Nullable final RunnableVal<OutputStream> writeTask,
-        @Nonnull final RunnableVal<URL> whenDone) {
+    public static void upload(@Nullable UUID uuid,
+                              @Nullable final String file,
+                              @Nonnull final String extension,
+                              @Nullable final RunnableVal<OutputStream> writeTask,
+                              @Nonnull final RunnableVal<URL> whenDone) {
         if (writeTask == null) {
             TaskManager.runTask(whenDone);
             return;
@@ -148,23 +148,16 @@ public abstract class SchematicHandler {
                 con.setDoOutput(true);
                 con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
                 try (OutputStream output = con.getOutputStream();
-                    PrintWriter writer = new PrintWriter(
-                        new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
+                    PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
                     String CRLF = "\r\n";
                     writer.append("--" + boundary).append(CRLF);
                     writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
-                    writer.append(
-                        "Content-Type: text/plain; charset=" + StandardCharsets.UTF_8.displayName())
-                        .append(CRLF);
+                    writer.append("Content-Type: text/plain; charset=" + StandardCharsets.UTF_8.displayName()).append(CRLF);
                     String param = "value";
                     writer.append(CRLF).append(param).append(CRLF).flush();
                     writer.append("--" + boundary).append(CRLF);
-                    writer.append(
-                        "Content-Disposition: form-data; name=\"schematicFile\"; filename=\""
-                            + filename + '"').append(CRLF);
-                    writer
-                        .append("Content-Type: " + URLConnection.guessContentTypeFromName(filename))
-                        .append(CRLF);
+                    writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + filename + '"').append(CRLF);
+                    writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(filename)).append(CRLF);
                     writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                     writer.append(CRLF).flush();
                     writeTask.value = new AbstractDelegateOutputStream(output) {
@@ -194,8 +187,7 @@ public abstract class SchematicHandler {
         });
     }
 
-    public boolean exportAll(Collection<Plot> collection, final File outputDir,
-        final String namingScheme, final Runnable ifSuccess) {
+    public boolean exportAll(Collection<Plot> collection, final File outputDir, final String namingScheme, final Runnable ifSuccess) {
         if (this.exportAll) {
             return false;
         }
@@ -224,13 +216,10 @@ public abstract class SchematicHandler {
 
                 final String name;
                 if (namingScheme == null) {
-                    name =
-                        plot.getId().getX() + ";" + plot.getId().getY() + ',' + plot.getArea() + ',' + owner;
+                    name = plot.getId().getX() + ";" + plot.getId().getY() + ',' + plot.getArea() + ',' + owner;
                 } else {
-                    name = namingScheme.replaceAll("%id%", plot.getId().toString())
-                        .replaceAll("%idx%", plot.getId().getX() + "")
-                        .replaceAll("%idy%", plot.getId().getY() + "")
-                        .replaceAll("%world%", plot.getArea().toString());
+                    name = namingScheme.replaceAll("%id%", plot.getId().toString()).replaceAll("%idx%", plot.getId().getX() + "")
+                        .replaceAll("%idy%", plot.getId().getY() + "").replaceAll("%world%", plot.getArea().toString());
                 }
 
                 final String directory;
@@ -267,9 +256,13 @@ public abstract class SchematicHandler {
      * @param xOffset   offset x to paste it from plot origin
      * @param zOffset   offset z to paste it from plot origin
      */
-    public void paste(final Schematic schematic, final Plot plot, final int xOffset,
-        final int yOffset, final int zOffset, final boolean autoHeight,
-        final RunnableVal<Boolean> whenDone) {
+    public void paste(final Schematic schematic,
+                      final Plot plot,
+                      final int xOffset,
+                      final int yOffset,
+                      final int zOffset,
+                      final boolean autoHeight,
+                      final RunnableVal<Boolean> whenDone) {
 
         TaskManager.runTask(() -> {
             if (whenDone != null) {
@@ -280,17 +273,14 @@ public abstract class SchematicHandler {
                 return;
             }
             try {
-                final LocalBlockQueue queue = plot.getArea().getQueue(false);
                 BlockVector3 dimension = schematic.getClipboard().getDimensions();
                 final int WIDTH = dimension.getX();
                 final int LENGTH = dimension.getZ();
                 final int HEIGHT = dimension.getY();
                 // Validate dimensions
                 CuboidRegion region = plot.getLargestRegion();
-                if (((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset
-                    + 1) < WIDTH) || (
-                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset
-                        + 1) < LENGTH) || (HEIGHT > 256)) {
+                if (((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
+                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
                     TaskManager.runTask(whenDone);
                     return;
                 }
@@ -306,9 +296,8 @@ public abstract class SchematicHandler {
                         if (pw instanceof ClassicPlotWorld) {
                             y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                         } else {
-                            y_offset_actual = yOffset + 1 +  this.worldUtil
-                                .getHighestBlockSynchronous(plot.getWorldName(),
-                                    region.getMinimumPoint().getX() + 1,
+                            y_offset_actual = yOffset + 1 + this.worldUtil
+                                .getHighestBlockSynchronous(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
                                     region.getMinimumPoint().getZ() + 1);
                         }
                     }
@@ -316,8 +305,8 @@ public abstract class SchematicHandler {
                     y_offset_actual = yOffset;
                 }
 
-                final Location pos1 = Location.at(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual,
-                    region.getMinimumPoint().getZ() + zOffset);
+                final Location pos1 = Location
+                    .at(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual, region.getMinimumPoint().getZ() + zOffset);
                 final Location pos2 = pos1.add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
 
                 final int p1x = pos1.getX();
@@ -328,58 +317,32 @@ public abstract class SchematicHandler {
                 final int bcz = p1z >> 4;
                 final int tcx = p2x >> 4;
                 final int tcz = p2z >> 4;
+                // Paste schematic here
+                final QueueCoordinator queue = plot.getArea().getQueue();
 
-                ChunkManager.chunkTask(pos1, pos2, new RunnableVal<int[]>() {
-                    @Override public void run(int[] value) {
-                        BlockVector2 chunk = BlockVector2.at(value[0], value[1]);
-                        int x = chunk.getX();
-                        int z = chunk.getZ();
-                        int xxb = x << 4;
-                        int zzb = z << 4;
-                        int xxt = xxb + 15;
-                        int zzt = zzb + 15;
-                        if (x == bcx) {
-                            xxb = p1x;
-                        }
-                        if (x == tcx) {
-                            xxt = p2x;
-                        }
-                        if (z == bcz) {
-                            zzb = p1z;
-                        }
-                        if (z == tcz) {
-                            zzt = p2z;
-                        }
-                        // Paste schematic here
-
-                        for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
-                            int yy = y_offset_actual + ry;
-                            if (yy > 255) {
-                                continue;
-                            }
-                            for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
-                                for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
-                                    int xx = p1x + xOffset + rx;
-                                    int zz = p1z + zOffset + rz;
-                                    BaseBlock id = blockArrayClipboard
-                                        .getFullBlock(BlockVector3.at(rx, ry, rz));
-                                    queue.setBlock(xx, yy, zz, id);
-                                    if (ry == 0) {
-                                        BiomeType biome =
-                                            blockArrayClipboard.getBiome(BlockVector2.at(rx, rz));
-                                        queue.setBiome(xx, zz, biome);
-                                    }
-                                }
+                for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
+                    int yy = y_offset_actual + ry;
+                    if (yy > 255) {
+                        continue;
+                    }
+                    for (int rz = 0; rz <= blockArrayClipboard.getDimensions().getZ(); rz++) {
+                        for (int rx = 0; rx < blockArrayClipboard.getDimensions().getX(); rx++) {
+                            int xx = p1x + xOffset + rx;
+                            int zz = p1z + zOffset + rz;
+                            BaseBlock id = blockArrayClipboard.getFullBlock(BlockVector3.at(rx, ry, rz));
+                            queue.setBlock(xx, yy, zz, id);
+                            if (ry == 0) {
+                                BiomeType biome = blockArrayClipboard.getBiome(BlockVector3.at(rx, ry, rz));
+                                queue.setBiome(xx, yy, zz, biome);
                             }
                         }
-                        queue.enqueue();
                     }
-                }, () -> {
-                    if (whenDone != null) {
-                        whenDone.value = true;
-                        whenDone.run();
-                    }
-                }, 10);
+                }
+                if (whenDone != null) {
+                    whenDone.value = true;
+                }
+                queue.setCompleteTask(whenDone);
+                queue.enqueue();
             } catch (Exception e) {
                 e.printStackTrace();
                 TaskManager.runTask(whenDone);
@@ -387,8 +350,7 @@ public abstract class SchematicHandler {
         });
     }
 
-    public abstract boolean restoreTile(LocalBlockQueue queue, CompoundTag tag, int x, int y,
-        int z);
+    public abstract boolean restoreTile(QueueCoordinator queue, CompoundTag tag, int x, int y, int z);
 
     /**
      * Get a schematic
@@ -397,8 +359,7 @@ public abstract class SchematicHandler {
      * @return schematic if found, else null
      */
     public Schematic getSchematic(String name) throws UnsupportedFormatException {
-        File parent =
-            FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
+        File parent = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
         if (!parent.exists()) {
             if (!parent.mkdir()) {
                 throw new RuntimeException("Could not create schematic parent directory");
@@ -407,11 +368,9 @@ public abstract class SchematicHandler {
         if (!name.endsWith(".schem") && !name.endsWith(".schematic")) {
             name = name + ".schem";
         }
-        File file = FileUtils.getFile(PlotSquared.platform().getDirectory(),
-            Settings.Paths.SCHEMATICS + File.separator + name);
+        File file = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS + File.separator + name);
         if (!file.exists()) {
-            file = FileUtils.getFile(PlotSquared.platform().getDirectory(),
-                Settings.Paths.SCHEMATICS + File.separator + name);
+            file = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS + File.separator + name);
         }
         return getSchematic(file);
     }
@@ -422,12 +381,10 @@ public abstract class SchematicHandler {
      * @return Immutable collection with schematic names
      */
     public Collection<String> getSchematicNames() {
-        final File parent =
-            FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
+        final File parent = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
         final List<String> names = new ArrayList<>();
         if (parent.exists()) {
-            final String[] rawNames =
-                parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
+            final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
             if (rawNames != null) {
                 final List<String> transformed = Arrays.stream(rawNames)
                     //.map(rawName -> rawName.substring(0, rawName.length() - 10))
@@ -457,8 +414,7 @@ public abstract class SchematicHandler {
                 e.printStackTrace();
             }
         } else {
-            throw new UnsupportedFormatException(
-                "This schematic format is not recognised or supported.");
+            throw new UnsupportedFormatException("This schematic format is not recognised or supported.");
         }
         return null;
     }
@@ -476,14 +432,12 @@ public abstract class SchematicHandler {
 
     public Schematic getSchematic(@Nonnull InputStream is) {
         try {
-            SpongeSchematicReader schematicReader =
-                new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
+            SpongeSchematicReader schematicReader = new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
             Clipboard clip = schematicReader.read();
             return new Schematic(clip);
         } catch (IOException ignored) {
             try {
-                MCEditSchematicReader schematicReader =
-                    new MCEditSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
+                MCEditSchematicReader schematicReader = new MCEditSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
                 Clipboard clip = schematicReader.read();
                 return new Schematic(clip);
             } catch (IOException e) {
@@ -500,8 +454,7 @@ public abstract class SchematicHandler {
             URL url = new URL(website);
             URLConnection connection = new URL(url.toString()).openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
-            try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(connection.getInputStream()))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 rawJSON = reader.lines().collect(Collectors.joining());
             }
             JSONArray array = new JSONArray(rawJSON);
@@ -524,8 +477,7 @@ public abstract class SchematicHandler {
         }
         upload(uuid, file, "schem", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
-                try (NBTOutputStream nos = new NBTOutputStream(
-                    new GZIPOutputStream(output, true))) {
+                try (NBTOutputStream nos = new NBTOutputStream(new GZIPOutputStream(output, true))) {
                     nos.writeNamedTag("Schematic", tag);
                 } catch (IOException e1) {
                     e1.printStackTrace();
@@ -548,8 +500,7 @@ public abstract class SchematicHandler {
         try {
             File tmp = FileUtils.getFile(PlotSquared.platform().getDirectory(), path);
             tmp.getParentFile().mkdirs();
-            try (NBTOutputStream nbtStream = new NBTOutputStream(
-                new GZIPOutputStream(new FileOutputStream(tmp)))) {
+            try (NBTOutputStream nbtStream = new NBTOutputStream(new GZIPOutputStream(new FileOutputStream(tmp)))) {
                 nbtStream.writeNamedTag("Schematic", tag);
             }
         } catch (FileNotFoundException e) {
@@ -561,8 +512,7 @@ public abstract class SchematicHandler {
         return true;
     }
 
-    public void getCompoundTag(final String world, final Set<CuboidRegion> regions,
-        final RunnableVal<CompoundTag> whenDone) {
+    public void getCompoundTag(final String world, final Set<CuboidRegion> regions, final RunnableVal<CompoundTag> whenDone) {
         // async
         TaskManager.runTaskAsync(() -> {
             // Main positions
@@ -570,17 +520,15 @@ public abstract class SchematicHandler {
             final Location bot = corners[0];
             final Location top = corners[1];
 
-            CuboidRegion cuboidRegion =
-                new CuboidRegion(this.worldUtil.getWeWorld(world), bot.getBlockVector3(),
-                    top.getBlockVector3());
+            CuboidRegion cuboidRegion = new CuboidRegion(this.worldUtil.getWeWorld(world), bot.getBlockVector3(), top.getBlockVector3());
 
             final int width = cuboidRegion.getWidth();
             int height = cuboidRegion.getHeight();
             final int length = cuboidRegion.getLength();
             Map<String, Tag> schematic = new HashMap<>();
             schematic.put("Version", new IntTag(2));
-            schematic.put("DataVersion", new IntTag(WorldEdit.getInstance().getPlatformManager()
-                .queryCapability(Capability.WORLD_EDITING).getDataVersion()));
+            schematic.put("DataVersion",
+                new IntTag(WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.WORLD_EDITING).getDataVersion()));
 
             Map<String, Tag> metadata = new HashMap<>();
             metadata.put("WEOffsetX", new IntTag(0));
@@ -615,14 +563,12 @@ public abstract class SchematicHandler {
 
                             schematic.put("Palette", new CompoundTag(paletteTag));
                             schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
-                            schematic
-                                .put("TileEntities", new ListTag(CompoundTag.class, tileEntities));
+                            schematic.put("TileEntities", new ListTag(CompoundTag.class, tileEntities));
 
                             schematic.put("BiomePaletteMax", new IntTag(biomePalette.size()));
 
                             Map<String, Tag> biomePaletteTag = new HashMap<>();
-                            biomePalette.forEach(
-                                (key, value) -> biomePaletteTag.put(key, new IntTag(value)));
+                            biomePalette.forEach((key, value) -> biomePaletteTag.put(key, new IntTag(value)));
 
                             schematic.put("BiomePalette", new CompoundTag(biomePaletteTag));
                             schematic.put("BiomeData", new ByteArrayTag(biomeBuffer.toByteArray()));
@@ -653,33 +599,23 @@ public abstract class SchematicHandler {
                                 final Runnable zTask = new Runnable() {
                                     @Override public void run() {
                                         long zstart = System.currentTimeMillis();
-                                        while (ziter.hasNext()
-                                            && System.currentTimeMillis() - zstart < 20) {
+                                        while (ziter.hasNext() && System.currentTimeMillis() - zstart < 20) {
                                             final int z = ziter.next();
-                                            Iterator<Integer> xiter =
-                                                IntStream.range(p1x, p2x + 1).iterator();
+                                            Iterator<Integer> xiter = IntStream.range(p1x, p2x + 1).iterator();
                                             final Runnable xTask = new Runnable() {
                                                 @Override public void run() {
                                                     long xstart = System.currentTimeMillis();
                                                     final int ry = y - sy;
                                                     final int rz = z - p1z;
-                                                    while (xiter.hasNext()
-                                                        && System.currentTimeMillis() - xstart
-                                                        < 20) {
+                                                    while (xiter.hasNext() && System.currentTimeMillis() - xstart < 20) {
                                                         final int x = xiter.next();
                                                         final int rx = x - p1x;
-                                                        BlockVector3 point =
-                                                            BlockVector3.at(x, y, z);
-                                                        BaseBlock block = cuboidRegion.getWorld()
-                                                            .getFullBlock(point);
+                                                        BlockVector3 point = BlockVector3.at(x, y, z);
+                                                        BaseBlock block = cuboidRegion.getWorld().getFullBlock(point);
                                                         if (block.getNbtData() != null) {
-                                                            Map<String, Tag> values =
-                                                                new HashMap<>();
-                                                            for (Map.Entry<String, Tag> entry : block
-                                                                .getNbtData().getValue()
-                                                                .entrySet()) {
-                                                                values.put(entry.getKey(),
-                                                                    entry.getValue());
+                                                            Map<String, Tag> values = new HashMap<>();
+                                                            for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
+                                                                values.put(entry.getKey(), entry.getValue());
                                                             }
                                                             // Remove 'id' if it exists. We want 'Id'
                                                             values.remove("id");
@@ -689,16 +625,12 @@ public abstract class SchematicHandler {
                                                             values.remove("y");
                                                             values.remove("z");
 
-                                                            values.put("Id",
-                                                                new StringTag(block.getNbtId()));
-                                                            values.put("Pos", new IntArrayTag(
-                                                                new int[] {rx, ry, rz}));
+                                                            values.put("Id", new StringTag(block.getNbtId()));
+                                                            values.put("Pos", new IntArrayTag(new int[] {rx, ry, rz}));
 
-                                                            tileEntities
-                                                                .add(new CompoundTag(values));
+                                                            tileEntities.add(new CompoundTag(values));
                                                         }
-                                                        String blockKey =
-                                                            block.toImmutableState().getAsString();
+                                                        String blockKey = block.toImmutableState().getAsString();
                                                         int blockId;
                                                         if (palette.containsKey(blockKey)) {
                                                             blockId = palette.get(blockKey);
@@ -717,8 +649,7 @@ public abstract class SchematicHandler {
                                                             continue;
                                                         }
                                                         BlockVector2 pt = BlockVector2.at(x, z);
-                                                        BiomeType biome =
-                                                            cuboidRegion.getWorld().getBiome(pt);
+                                                        BiomeType biome = cuboidRegion.getWorld().getBiome(pt);
                                                         String biomeStr = biome.getId();
                                                         int biomeId;
                                                         if (biomePalette.containsKey(biomeStr)) {

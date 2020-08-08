@@ -33,8 +33,8 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.entity.EntityCategory;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -63,12 +63,12 @@ public class Debug extends SubCommand {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + Debug.class.getSimpleName());
 
     private final PlotAreaManager plotAreaManager;
-    private final RegionManager regionManager;
+    private final WorldUtil worldUtil;
 
     @Inject public Debug(@Nonnull final PlotAreaManager plotAreaManager,
-                         @Nonnull final RegionManager regionManager) {
+                         @Nonnull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
-        this.regionManager = regionManager;
+        this.worldUtil = worldUtil;
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -82,9 +82,9 @@ public class Debug extends SubCommand {
         if (args.length > 0 && "loadedchunks".equalsIgnoreCase(args[0])) {
             final long start = System.currentTimeMillis();
             player.sendMessage(TranslatableCaption.of("debug.fetching_loaded_chunks"));
-            TaskManager.runTaskAsync(() -> player.sendMessage(StaticCaption.of("Loaded chunks: " + this.regionManager.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (
-                            System.currentTimeMillis() - start) + "ms) using thread: " + Thread
-                            .currentThread().getName())));
+            TaskManager.runTaskAsync(() -> player.sendMessage(StaticCaption
+                .of("Loaded chunks: " + this.worldUtil.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (System.currentTimeMillis()
+                    - start) + "ms) using thread: " + Thread.currentThread().getName())));
             return true;
         }
         if (args.length > 0 && "uuids".equalsIgnoreCase(args[0])) {

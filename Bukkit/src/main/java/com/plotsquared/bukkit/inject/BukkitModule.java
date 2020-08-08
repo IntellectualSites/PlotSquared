@@ -31,7 +31,8 @@ import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
-import com.plotsquared.bukkit.queue.BukkitLocalQueue;
+import com.plotsquared.bukkit.queue.BukkitChunkCoordinator;
+import com.plotsquared.bukkit.queue.BukkitQueueCoordinator;
 import com.plotsquared.bukkit.schematic.BukkitSchematicHandler;
 import com.plotsquared.bukkit.util.BukkitChunkManager;
 import com.plotsquared.bukkit.util.BukkitEconHandler;
@@ -45,10 +46,13 @@ import com.plotsquared.core.generator.HybridGen;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.inject.annotations.ConsoleActor;
 import com.plotsquared.core.inject.annotations.DefaultGenerator;
+import com.plotsquared.core.inject.factory.ChunkCoordinatorBuilderFactory;
+import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
+import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueProvider;
 import com.plotsquared.core.util.ChunkManager;
@@ -88,8 +92,7 @@ public class BukkitModule extends AbstractModule {
         bind(InventoryUtil.class).to(BukkitInventoryUtil.class);
         bind(SetupUtils.class).to(BukkitSetupUtils.class);
         bind(WorldUtil.class).to(BukkitUtil.class);
-        bind(GlobalBlockQueue.class).toInstance(new GlobalBlockQueue(
-            QueueProvider.of(BukkitLocalQueue.class, BukkitLocalQueue.class), 1, Settings.QUEUE.TARGET_TIME));
+        bind(GlobalBlockQueue.class).toInstance(new GlobalBlockQueue(QueueProvider.of(BukkitQueueCoordinator.class)));
         bind(ChunkManager.class).to(BukkitChunkManager.class);
         bind(RegionManager.class).to(BukkitRegionManager.class);
         bind(SchematicHandler.class).to(BukkitSchematicHandler.class);
@@ -99,6 +102,8 @@ public class BukkitModule extends AbstractModule {
             bind(PlotAreaManager.class).to(DefaultPlotAreaManager.class);
         }
         install(new FactoryModuleBuilder().build(HybridPlotWorldFactory.class));
+        install(new FactoryModuleBuilder().implement(ChunkCoordinator.class, BukkitChunkCoordinator.class).build(ChunkCoordinatorFactory.class));
+        install(new FactoryModuleBuilder().build(ChunkCoordinatorBuilderFactory.class));
     }
 
     @Provides @Singleton @Nullable EconHandler provideEconHandler() {

@@ -79,7 +79,7 @@ subprojects { subproject ->
 
     dependencies {
         compile group: 'org.json', name: 'json', version: '20200518'
-        implementation("com.sk89q.worldedit:worldedit-core:7.0.0") {
+        implementation("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") {
             exclude(module: "bukkit-classloader-check")
             exclude(module: "mockito-core")
             exclude(module: "dummypermscompat")
@@ -100,6 +100,7 @@ subprojects { subproject ->
     }
 
     repositories {
+        mavenLocal()
         mavenCentral()
         maven { url = "https://maven.enginehub.org/repo/" }
         maven { url = "https://repo.maven.apache.org/maven2" }
@@ -110,6 +111,8 @@ subprojects { subproject ->
         dependencies {
             include(dependency("org.json:json:20200518"))
             include(dependency("net.kyori:text-api:3.0.2"))
+            include(dependency("javax.inject:javax.inject:1"))
+            include(dependency("aopalliance:aopalliance:1.0"))
         }
         relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
         relocate("org.json", "com.plotsquared.json") {

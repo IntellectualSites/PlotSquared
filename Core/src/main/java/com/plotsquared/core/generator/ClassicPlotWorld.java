@@ -58,6 +58,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public BlockBucket ROAD_BLOCK = new BlockBucket(BlockTypes.QUARTZ_BLOCK);
     // BlockUtil.get((short) 155, (byte) 0);
     public boolean PLOT_BEDROCK = true;
+    public boolean PLACE_TOP_BLOCK = true;
 
     public ClassicPlotWorld(@Nonnull final String worldName,
                             @Nullable final String id,
@@ -91,6 +92,8 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
                 ConfigurationUtil.BLOCK_BUCKET),
             new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK,
                 "Wall block (claimed)", ConfigurationUtil.BLOCK_BUCKET),
+            new ConfigurationNode("wall.place_top_block", this.PLACE_TOP_BLOCK,
+                "Place or not the top block", ConfigurationUtil.BOOLEAN),
             new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width",
                 ConfigurationUtil.INTEGER),
             new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height",
@@ -121,5 +124,6 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         this.WALL_FILLING = new BlockBucket(config.getString("wall.filling"));
         this.WALL_HEIGHT = Math.min(254, config.getInt("wall.height"));
         this.CLAIMED_WALL_BLOCK = new BlockBucket(config.getString("wall.block_claimed"));
+        this.PLACE_TOP_BLOCK = config.getBoolean("wall.place_top_block");
     }
 }

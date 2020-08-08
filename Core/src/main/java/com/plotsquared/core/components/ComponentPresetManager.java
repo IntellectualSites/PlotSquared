@@ -37,6 +37,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.PatternUtil;
@@ -70,8 +71,7 @@ public class ComponentPresetManager {
     private final EconHandler econHandler;
     private final InventoryUtil inventoryUtil;
 
-    @Inject public ComponentPresetManager(@Nullable final EconHandler econHandler, @Nonnull final
-        InventoryUtil inventoryUtil) {
+    @Inject public ComponentPresetManager(@Nullable final EconHandler econHandler, @Nonnull final InventoryUtil inventoryUtil) {
         this.econHandler = econHandler;
         this.inventoryUtil = inventoryUtil;
         final File file = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "components.yml");
@@ -105,15 +105,13 @@ public class ComponentPresetManager {
         this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
 
         if (yamlConfiguration.contains("presets")) {
-            this.presets = yamlConfiguration.getMapList("presets").stream().map(o -> (Map<String, Object>) o)
-                .map(ComponentPreset::deserialize).collect(Collectors.toList());
+            this.presets = yamlConfiguration.getMapList("presets").stream().map(o -> (Map<String, Object>) o).map(ComponentPreset::deserialize)
+                .collect(Collectors.toList());
         } else {
-            final List<ComponentPreset> defaultPreset =
-                Collections.singletonList(new ComponentPreset(ClassicPlotManagerComponent.FLOOR,
-                    "##wool", 0, "", "&6D&ai&cs&ec&bo &2F&3l&do&9o&4r",
+            final List<ComponentPreset> defaultPreset = Collections.singletonList(
+                new ComponentPreset(ClassicPlotManagerComponent.FLOOR, "##wool", 0, "", "&6D&ai&cs&ec&bo &2F&3l&do&9o&4r",
                     Arrays.asList("&6Spice up your plot floor"), ItemTypes.YELLOW_WOOL));
-            yamlConfiguration.set("presets", defaultPreset.stream().map(ComponentPreset::serialize)
-                .collect(Collectors.toList()));
+            yamlConfiguration.set("presets", defaultPreset.stream().map(ComponentPreset::serialize).collect(Collectors.toList()));
             try {
                 yamlConfiguration.save(file);
             } catch (final IOException e) {
@@ -148,8 +146,7 @@ public class ComponentPresetManager {
 
         final List<ComponentPreset> allowedPresets = new ArrayList<>(this.presets.size());
         for (final ComponentPreset componentPreset : this.presets) {
-            if (!componentPreset.getPermission().isEmpty() && !Permissions
-                .hasPermission(player, componentPreset.getPermission())) {
+            if (!componentPreset.getPermission().isEmpty() && !Permissions.hasPermission(player, componentPreset.getPermission())) {
                 continue;
             }
             allowedPresets.add(componentPreset);
@@ -194,11 +191,13 @@ public class ComponentPresetManager {
 
                 BackupManager.backup(player, plot, () -> {
                     plot.addRunning();
+                    QueueCoordinator queue = plot.getArea().getQueue();
                     for (Plot current : plot.getConnectedPlots()) {
-                        current.setComponent(componentPreset.getComponent().name(), pattern);
+                        current.setComponent(componentPreset.getComponent().name(), pattern, queue);
                     }
+                    queue.setCompleteTask(plot::removeRunning);
+                    queue.enqueue();
                     player.sendMessage(TranslatableCaption.of("working.generating_component"));
-                    PlotSquared.platform().getGlobalBlockQueue().addEmptyTask(plot::removeRunning);
                 });
                 return false;
             }

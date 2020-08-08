@@ -28,9 +28,12 @@ package com.plotsquared.core.plot;
 import com.plotsquared.core.command.Template;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.FileBytes;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,7 +43,7 @@ public abstract class PlotManager {
 
     private final PlotArea plotArea;
 
-    public PlotManager(PlotArea plotArea) {
+    public PlotManager(@Nonnull PlotArea plotArea) {
         this.plotArea = plotArea;
     }
 
@@ -53,19 +56,22 @@ public abstract class PlotManager {
     public abstract PlotId getPlotId(int x, int y, int z);
 
     // If you have a circular plot, just return the corner if it were a square
-    public abstract Location getPlotBottomLocAbs(PlotId plotId);
+    public abstract Location getPlotBottomLocAbs(@Nonnull PlotId plotId);
 
     // the same applies here
-    public abstract Location getPlotTopLocAbs(PlotId plotId);
+    public abstract Location getPlotTopLocAbs(@Nonnull PlotId plotId);
 
-    /*
-     * Plot clearing (return false if you do not support some method)
+    public abstract boolean clearPlot(@Nonnull Plot plot, @Nullable Runnable whenDone, @Nullable QueueCoordinator queue);
+
+    public abstract boolean claimPlot(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
+
+    /**
+     * Completes block changes associated with plot unclaim.
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
      */
-    public abstract boolean clearPlot(Plot plot, Runnable whenDone);
-
-    public abstract boolean claimPlot(Plot plot);
-
-    public abstract boolean unClaimPlot(Plot plot, Runnable whenDone);
+    public abstract boolean unClaimPlot(@Nonnull Plot plot, @Nullable Runnable whenDone, @Nullable QueueCoordinator queue);
 
     /**
      * Retrieves the location of where a sign should be for a plot.
@@ -73,44 +79,98 @@ public abstract class PlotManager {
      * @param plot The plot
      * @return The location where a sign should be
      */
-    public abstract Location getSignLoc(Plot plot);
+    public abstract Location getSignLoc(@Nonnull Plot plot);
 
     /*
      * Plot set functions (return false if you do not support the specific set
      * method).
      */
-    public abstract String[] getPlotComponents(PlotId plotId);
+    public abstract String[] getPlotComponents(@Nonnull PlotId plotId);
 
-    public abstract boolean setComponent(PlotId plotId, String component, Pattern blocks);
-
-    /*
-     * PLOT MERGING (return false if your generator does not support plot
-     * merging).
+    /**
+     * Set the specified components to the specified Pattern on the specified plot.
+     *
+     * @param component FLOOR, WALL, AIR, MAIN, MIDDLE, OUTLINE, BORDER, ALL (floor, air and main).
+     * @param queue     Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *                  otherwise writes to the queue but does not enqueue.
      */
-    public abstract boolean createRoadEast(Plot plot);
+    public abstract boolean setComponent(@Nonnull PlotId plotId,
+                                         @Nonnull String component,
+                                         @Nonnull Pattern blocks,
+                                         @Nullable QueueCoordinator queue);
 
-    public abstract boolean createRoadSouth(Plot plot);
+    /**
+     * Create the road east of the plot (not schematic-based)
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
+    public abstract boolean createRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean createRoadSouthEast(Plot plot);
+    /**
+     * Create the road south of the plot (not schematic-based)
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
+    public abstract boolean createRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean removeRoadEast(Plot plot);
+    /**
+     * Create the south-east corner of the road (intersection, not schematic-based)
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
+    public abstract boolean createRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean removeRoadSouth(Plot plot);
+    /**
+     * Replace the road to the east of the plot with standard plot blocks (for when merging plots)
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
+    public abstract boolean removeRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean removeRoadSouthEast(Plot plot);
+    /**
+     * Replace the road to the south of the plot with standard plot blocks (for when merging plots)
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
+    public abstract boolean removeRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean startPlotMerge(List<PlotId> plotIds);
+    /**
+     * Replace the road to the south east of the plot (intersection) with standard plot blocks (for when merging plots)
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
+    public abstract boolean removeRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
-    public abstract boolean startPlotUnlink(List<PlotId> plotIds);
+    public abstract boolean startPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
 
-    public abstract boolean finishPlotMerge(List<PlotId> plotIds);
+    public abstract boolean startPlotUnlink(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
 
-    public abstract boolean finishPlotUnlink(List<PlotId> plotIds);
+    /**
+     * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED).
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     * @return false if part if the merge failed, otherwise true if successful.
+     */
+    public abstract boolean finishPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
+
+    /**
+     * Finished off an unlink by resetting the top wall block for unlinked plots
+     *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     */
+    public abstract boolean finishPlotUnlink(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
 
     public void exportTemplate() throws IOException {
-        HashSet<FileBytes> files = new HashSet<>(Collections.singletonList(
-            new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml",
-                Template.getBytes(plotArea))));
+        HashSet<FileBytes> files =
+            new HashSet<>(Collections.singletonList(new FileBytes(Settings.Paths.TEMPLATES + "/tmp-data.yml", Template.getBytes(plotArea))));
         Template.zipAll(plotArea.getWorldName(), files);
     }
 
@@ -121,15 +181,17 @@ public abstract class PlotManager {
     /**
      * Sets all the blocks along all the plot walls to their correct state (claimed or unclaimed).
      *
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
      * @return true if the wall blocks were successfully set
      */
-    public boolean regenerateAllPlotWalls() {
+    public boolean regenerateAllPlotWalls(@Nullable QueueCoordinator queue) {
         boolean success = true;
         for (Plot plot : plotArea.getPlots()) {
             if (plot.hasOwner()) {
-                success &= claimPlot(plot);
+                success &= claimPlot(plot, queue);
             } else {
-                success &= unClaimPlot(plot, null);
+                success &= unClaimPlot(plot, null, queue);
             }
         }
         return success;

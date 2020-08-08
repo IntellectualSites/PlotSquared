@@ -139,10 +139,6 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return true;
     }
 
-    @Override public boolean isPermissionSet(@Nonnull String permission) {
-        return true;
-    }
-
     @Override public void sendMessage(@Nonnull final Caption caption,
                                      @Nonnull final Template... replacements) {
         String message = caption.getComponent(this);

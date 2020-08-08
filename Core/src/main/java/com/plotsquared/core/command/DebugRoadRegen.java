@@ -35,6 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import net.kyori.adventure.text.minimessage.Template;
+import com.plotsquared.core.queue.QueueCoordinator;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -91,9 +92,10 @@ public class DebugRoadRegen extends SubCommand {
             player.sendMessage(TranslatableCaption.of("debug.requires_unmerged"));
         } else {
             PlotManager manager = area.getPlotManager();
-            manager.createRoadEast(plot);
-            manager.createRoadSouth(plot);
-            manager.createRoadSouthEast(plot);
+            QueueCoordinator queue = area.getQueue();
+            manager.createRoadEast(plot, queue);
+            manager.createRoadSouth(plot, queue);
+            manager.createRoadSouthEast(plot, queue);
             player.sendMessage(
                     TranslatableCaption.of("debugroadregen.regen_done"),
                     Template.of("value", String.valueOf(plot.getId()))

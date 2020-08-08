@@ -25,12 +25,8 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 
@@ -50,12 +46,13 @@ public class Relight extends Command {
     public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
-        final Plot plot = player.getCurrentPlot();
+        player.sendMessage(StaticCaption.of("Not implemented."));
+/*        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return CompletableFuture.completedFuture(false);
         }
-        final LocalBlockQueue queue = plot.getArea().getQueue(false);
+        final QueueCoordinator queue = plot.getArea().getQueue(false);
         ChunkManager.chunkTask(plot, new RunnableVal<int[]>() {
             @Override public void run(int[] value) {
                 queue.fixChunkLighting(value[0], value[1]);
@@ -63,7 +60,7 @@ public class Relight extends Command {
         }, () -> {
             plot.refreshChunks();
             player.sendMessage(TranslatableCaption.of("setblock.set_block_action_finished"));
-        }, 5);
+        }, 5);*/
 
         return CompletableFuture.completedFuture(true);
     }

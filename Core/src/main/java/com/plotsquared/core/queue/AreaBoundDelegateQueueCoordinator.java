@@ -26,6 +26,7 @@
 package com.plotsquared.core.queue;
 
 import com.plotsquared.core.plot.PlotArea;
+import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -35,45 +36,64 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class AreaBoundDelegateLocalBlockQueue extends DelegateLocalBlockQueue {
+/**
+ * Queue Coordinator that only sets blocks with the specified PlotArea
+ */
+public class AreaBoundDelegateQueueCoordinator extends DelegateQueueCoordinator {
 
     private final PlotArea area;
 
-    public AreaBoundDelegateLocalBlockQueue(@Nonnull final PlotArea area,
-        @Nullable final LocalBlockQueue parent) {
+    public AreaBoundDelegateQueueCoordinator(@Nonnull final PlotArea area, @Nullable final QueueCoordinator parent) {
         super(parent);
         this.area = Objects.requireNonNull(area);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
+    /**
+     * Gets the plot area block settings is limited to
+     */
+    public PlotArea getArea() {
+        return this.area;
+    }
+
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
         if (area.contains(x, z)) {
             return super.setBlock(x, y, z, id);
         }
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
         if (area.contains(x, z)) {
             return super.setBlock(x, y, z, id);
         }
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
         if (area.contains(x, z)) {
             return super.setBlock(x, y, z, pattern);
         }
         return false;
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biome) {
+    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biome) {
         if (area.contains(x, z)) {
             return super.setBiome(x, z, biome);
         }
         return false;
     }
 
-    public PlotArea getArea() {
-        return this.area;
+    @Override public boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome) {
+        if (area.contains(x, z)) {
+            return super.setBiome(x, y, z, biome);
+        }
+        return false;
+    }
+
+    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
+        if (area.contains(x, z)) {
+            return super.setTile(x, y, z, tag);
+        }
+        return false;
     }
 }

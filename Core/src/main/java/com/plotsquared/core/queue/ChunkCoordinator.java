@@ -25,26 +25,38 @@
  */
 package com.plotsquared.core.queue;
 
-import com.sk89q.worldedit.world.biome.BiomeType;
-import com.sk89q.worldedit.world.block.BaseBlock;
+import com.plotsquared.core.util.task.PlotSquaredTask;
 
-public class OffsetLocalBlockQueue extends DelegateLocalBlockQueue {
-    private final int ox;
-    private final int oy;
-    private final int oz;
+public abstract class ChunkCoordinator implements PlotSquaredTask {
 
-    public OffsetLocalBlockQueue(LocalBlockQueue parent, int ox, int oy, int oz) {
-        super(parent);
-        this.ox = ox;
-        this.oy = oy;
-        this.oz = oz;
+    @Override public abstract void runTask();
+
+    @Override public boolean isCancelled() {
+        return false;
     }
 
-    @Override public boolean setBiome(int x, int y, BiomeType biome) {
-        return super.setBiome(ox + x, oy + y, biome);
+    @Override public void cancel() {
+        // Do nothing
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
-        return super.setBlock(ox + x, oy + y, oz + z, id);
-    }
+    /**
+     * Starts the chunk coordinator. This will usually (implementation-specific-permitting) mark chunks to be loaded in batches,
+     * then add them to a queue and apply tickets once loaded to prevent unloading. A repeating task will then iterate over loaded
+     * chunks, access them with a Consumer(BlockVector2) and remove the ticket once work has been completed on it.
+     */
+    public abstract void start();
+
+    /**
+     * Get the amount of remaining chunks (at the time of the method call)
+     *
+     * @return Snapshot view of remaining chunk count
+     */
+    public abstract int getRemainingChunks();
+
+    /**
+     * Get the amount of requested chunks
+     *
+     * @return Requested chunk count
+     */
+    public abstract int getTotalChunks();
 }

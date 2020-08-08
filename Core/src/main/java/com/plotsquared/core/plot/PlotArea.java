@@ -27,6 +27,7 @@ package com.plotsquared.core.plot;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.plotsquared.core.PlotSquared;
 import com.google.common.collect.Lists;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -55,7 +56,7 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MathMan;
@@ -183,8 +184,8 @@ public abstract class PlotArea {
 
     @Nonnull protected abstract PlotManager createManager();
 
-    public LocalBlockQueue getQueue(final boolean autoQueue) {
-        return this.globalBlockQueue.getNewQueue(worldName, autoQueue);
+    public QueueCoordinator getQueue() {
+        return this.globalBlockQueue.getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(worldName));
     }
 
     /**
@@ -947,7 +948,8 @@ public abstract class PlotArea {
         final PlotId pos2 = plotIds.get(plotIds.size() - 1);
         final PlotManager manager = getPlotManager();
 
-        manager.startPlotMerge(plotIds);
+        QueueCoordinator queue = getQueue();
+        manager.startPlotMerge(plotIds, queue);
         final Set<UUID> trusted = new HashSet<>();
         final Set<UUID> members = new HashSet<>();
         final Set<UUID> denied = new HashSet<>();
@@ -982,24 +984,25 @@ public abstract class PlotArea {
                     if (ly) {
                         if (!plot.getMerged(Direction.EAST) || !plot.getMerged(Direction.SOUTH)) {
                             if (removeRoads) {
-                                plot.removeRoadSouthEast();
+                                plot.removeRoadSouthEast(queue);
                             }
                         }
                     }
                     if (!plot.getMerged(Direction.EAST)) {
                         plot2 = plot.getRelative(1, 0);
-                        plot.mergePlot(plot2, removeRoads);
+                        plot.mergePlot(plot2, removeRoads, queue);
                     }
                 }
                 if (ly) {
                     if (!plot.getMerged(Direction.SOUTH)) {
                         plot2 = plot.getRelative(0, 1);
-                        plot.mergePlot(plot2, removeRoads);
+                        plot.mergePlot(plot2, removeRoads, queue);
                     }
                 }
             }
         }
-        manager.finishPlotMerge(plotIds);
+        manager.finishPlotMerge(plotIds, queue);
+        queue.enqueue();
         return true;
     }
 

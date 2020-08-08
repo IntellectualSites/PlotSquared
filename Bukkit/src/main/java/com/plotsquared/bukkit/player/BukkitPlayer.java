@@ -73,10 +73,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
 
     private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
-    private final EconHandler econHandler;
     private String name;
-    private String lastMessage = "";
-    private long lastMessageTime = 0L;
     /**
      * <p>Please do not use this method. Instead use
      * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
@@ -94,7 +91,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         @Nonnull final PermissionHandler permissionHandler) {
         super(plotAreaManager, eventDispatcher, econHandler, permissionHandler);
         this.player = player;
-        this.econHandler = econHandler;
         this.setupPermissionProfile();
         if (realPlayer) {
             super.populatePersistentMetaMap();
@@ -151,13 +147,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override public boolean hasPermission(@Nonnull final String permission) {
-        if (this.offline && this.econHandler != null) {
-            return this.econHandler.hasPermission(getName(), permission);
-        }
-        return this.player.hasPermission(permission);
     }
 
     @Override @Nonnegative public int hasPermissionRange(@Nonnull final String stub,

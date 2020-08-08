@@ -26,12 +26,19 @@
 package com.plotsquared.core.queue;
 
 import com.plotsquared.core.location.Location;
+import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 
-public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+/**
+ * Queue that only sets blocks with a designated area
+ */
+public class ScopedQueueCoordinator extends DelegateQueueCoordinator {
     private final int minX;
     private final int minY;
     private final int minZ;
@@ -44,7 +51,7 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
     private final int dy;
     private final int dz;
 
-    public ScopedLocalBlockQueue(LocalBlockQueue parent, Location min, Location max) {
+    public ScopedQueueCoordinator(@Nullable QueueCoordinator parent, @Nonnull Location min, @Nonnull Location max) {
         super(parent);
         this.minX = min.getX();
         this.minY = min.getY();
@@ -59,39 +66,46 @@ public class ScopedLocalBlockQueue extends DelegateLocalBlockQueue {
         this.dz = maxZ - minZ;
     }
 
-    @Override public boolean setBiome(int x, int z, BiomeType biome) {
+    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biome) {
         return x >= 0 && x <= dx && z >= 0 && z <= dz && super.setBiome(x + minX, z + minZ, biome);
     }
 
+    @Override public boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBiome(x + minX, y + minY, z + minZ, biome);
+    }
+
     public void fillBiome(BiomeType biome) {
-        for (int x = 0; x <= dx; x++) {
-            for (int z = 0; z < dz; z++) {
-                setBiome(x, z, biome);
+        for (int y = 0; y <= dy; y++) {
+            for (int x = 0; x <= dx; x++) {
+                for (int z = 0; z < dz; z++) {
+                    setBiome(x, y, z, biome);
+                }
             }
         }
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BaseBlock id) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
-            .setBlock(x + minX, y + minY, z + minZ, id);
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, id);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, BlockState id) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
-            .setBlock(x + minX, y + minY, z + minZ, id);
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, id);
     }
 
-    @Override public boolean setBlock(int x, int y, int z, Pattern pattern) {
-        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super
-            .setBlock(x + minX, y + minY, z + minZ, pattern);
+    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setBlock(x + minX, y + minY, z + minZ, pattern);
     }
 
-    public Location getMin() {
-        return Location.at(this.getWorld(), this.minX, this.minY, this.minZ);
+    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
+        return x >= 0 && x <= dx && y >= 0 && y <= dy && z >= 0 && z <= dz && super.setTile(x + minX, y + minY, z + minZ, tag);
     }
 
-    public Location getMax() {
-        return Location.at(this.getWorld(), this.maxX, this.maxY, this.maxZ);
+    @Nonnull public Location getMin() {
+        return Location.at(this.getWorld().getName(), this.minX, this.minY, this.minZ);
+    }
+
+    @Nonnull public Location getMax() {
+        return Location.at(this.getWorld().getName(), this.maxX, this.maxY, this.maxZ);
     }
 
 }

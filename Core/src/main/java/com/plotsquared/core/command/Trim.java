@@ -35,7 +35,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.WorldUtil;
@@ -98,7 +98,7 @@ public class Trim extends SubCommand {
         if (ExpireManager.IMP != null) {
             plots.removeAll(ExpireManager.IMP.getPendingExpired());
         }
-        result.value1 = new HashSet<>(PlotSquared.platform().getRegionManager().getChunkChunks(world));
+        result.value1 = new HashSet<>(PlotSquared.platform().getWorldUtil().getChunkChunks(world));
         result.value2 = new HashSet<>();
         StaticCaption.of(" - MCA #: " + result.value1.size());
         StaticCaption.of(" - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
@@ -190,7 +190,7 @@ public class Trim extends SubCommand {
                                     }
                                 }
                             }
-                            final LocalBlockQueue queue = blockQueue.getNewQueue(world, false);
+                            final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
                             TaskManager.getPlatformImplementation().objectTask(chunks, new RunnableVal<BlockVector2>() {
                                 @Override public void run(BlockVector2 value) {
                                     queue.regenChunk(value.getX(), value.getZ());

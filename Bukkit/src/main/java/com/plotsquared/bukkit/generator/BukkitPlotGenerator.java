@@ -34,7 +34,7 @@ import com.plotsquared.core.generator.SingleWorldGenerator;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
 import com.sk89q.worldedit.math.BlockVector2;
 import org.bukkit.World;
@@ -62,7 +62,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
 
     private final String levelName;
 
-    public BukkitPlotGenerator(@Nonnull final  String name,
+    public BukkitPlotGenerator(@Nonnull final String name,
                                @Nonnull final IndependentPlotGenerator generator,
                                @Nonnull final PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
@@ -186,7 +186,7 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return result.getChunkData();
     }
 
-    private void generate(BlockVector2 loc, World world, ScopedLocalBlockQueue result) {
+    private void generate(BlockVector2 loc, World world, ScopedQueueCoordinator result) {
         // Load if improperly loaded
         if (!this.loaded) {
             String name = world.getName();

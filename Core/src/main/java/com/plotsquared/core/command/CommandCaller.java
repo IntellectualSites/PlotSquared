@@ -52,15 +52,6 @@ public interface CommandCaller {
     boolean hasPermission(@Nonnull String permission);
 
     /**
-     * Checks if this object contains an override for the specified
-     * permission, by fully qualified name
-     *
-     * @param permission Name of the permission
-     * @return true if the permission is set, otherwise false
-     */
-    boolean isPermissionSet(@Nonnull String permission);
-
-    /**
      * Get the type of the caller
      *
      * @return Caller type

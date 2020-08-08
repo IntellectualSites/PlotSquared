@@ -25,25 +25,29 @@
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.PlotSquared;
+import com.sk89q.worldedit.world.World;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+
 public abstract class QueueProvider {
-    public static QueueProvider of(final Class<? extends LocalBlockQueue> primary,
-        final Class<? extends LocalBlockQueue> fallback) {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotSquared.class.getSimpleName());
+
+    public static QueueProvider of(@Nonnull final Class<? extends QueueCoordinator> primary) {
         return new QueueProvider() {
 
-            private boolean failed = false;
-
-            @Override public LocalBlockQueue getNewQueue(String world) {
-                if (!failed) {
-                    try {
-                        return (LocalBlockQueue) primary.getConstructors()[0].newInstance(world);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        failed = true;
-                    }
-                }
+            @Override public QueueCoordinator getNewQueue(@Nonnull World world) {
                 try {
-                    return (LocalBlockQueue) fallback.getConstructors()[0].newInstance(world);
+                    return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
                 } catch (Throwable e) {
+                    logger.error("Error creating Queue: {} - Does it have the correct constructor(s)?", primary.getName());
+                    if (!primary.getName().contains("com.plotsquared")) {
+                        logger.error("It looks like {} is a custom queue. Please look for a plugin in its classpath and report to them.",
+                            primary.getSimpleName());
+                    }
                     e.printStackTrace();
                 }
                 return null;
@@ -51,5 +55,8 @@ public abstract class QueueProvider {
         };
     }
 
-    public abstract LocalBlockQueue getNewQueue(String world);
+    /**
+     * Get a queue for the given world
+     */
+    public abstract QueueCoordinator getNewQueue(@Nonnull World world);
 }

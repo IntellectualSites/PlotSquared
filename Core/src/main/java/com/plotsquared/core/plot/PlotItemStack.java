@@ -43,7 +43,7 @@ public class PlotItemStack {
      * @param amount Amount of items in the stack
      * @param name   The display name of the item stack
      * @param lore   The item stack lore
-     * @deprecated Use {@link PlotItemStack(String, int, String, String...)}
+     * @deprecated Use {@link #PlotItemStack(String, int, String, String...)}
      */
     @Deprecated public PlotItemStack(final int id, final short data, final int amount,
         final String name, final String... lore) {

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.plot.flag;
 
+import com.google.common.base.Preconditions;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalAttackFlag;
 import com.plotsquared.core.plot.flag.implementations.AnimalCapFlag;
@@ -113,7 +114,13 @@ import java.util.Map;
 
 public final class GlobalFlagContainer extends FlagContainer {
 
-    private static final GlobalFlagContainer instance = new GlobalFlagContainer();
+    private static GlobalFlagContainer instance;
+
+    public static void setup() {
+        Preconditions.checkState(instance == null, "Cannot setup the container twice");
+        instance = new GlobalFlagContainer();
+    }
+
     private static Map<String, Class<?>> stringClassMap;
 
     private GlobalFlagContainer() {
@@ -123,6 +130,7 @@ public final class GlobalFlagContainer extends FlagContainer {
             }
         });
         stringClassMap = new HashMap<>();
+
         // Register all default flags here
         // Boolean flags
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);

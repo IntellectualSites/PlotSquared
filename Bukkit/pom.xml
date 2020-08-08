@@ -27,7 +27,7 @@
     <dependency>
       <groupId>com.plotsquared</groupId>
       <artifactId>PlotSquared-Core</artifactId>
-      <version>5.12.5</version>
+      <version>6.0.0-SUPER-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -39,7 +39,7 @@
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-bukkit</artifactId>
-      <version>7.1.0</version>
+      <version>7.2.0-SNAPSHOT</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -91,9 +91,21 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>be.maximvdw</groupId>
+      <artifactId>MVdWPlaceholderAPI</artifactId>
+      <version>3.1.1-SNAPSHOT</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-core</artifactId>
-      <version>7.0.0</version>
+      <version>7.2.0-SNAPSHOT</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -109,30 +121,6 @@
           <groupId>*</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>net.kyori</groupId>
-      <artifactId>text-api</artifactId>
-      <version>3.0.2</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.kyori</groupId>
-      <artifactId>text-serializer-gson</artifactId>
-      <version>3.0.2</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.kyori</groupId>
-      <artifactId>text-serializer-legacy</artifactId>
-      <version>3.0.2</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>net.kyori</groupId>
-      <artifactId>text-serializer-plain</artifactId>
-      <version>3.0.2</version>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -180,6 +168,18 @@
       <groupId>net.alpenblock</groupId>
       <artifactId>BungeePerms</artifactId>
       <version>4.0-dev-106</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-platform-bukkit</artifactId>
+      <version>4.0.0-SNAPSHOT</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-text-minimessage</artifactId>
+      <version>3.0.0-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

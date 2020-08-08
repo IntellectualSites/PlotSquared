@@ -107,7 +107,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
 
     /**
      * Get a list of names given a list of UUIDs.
-     * - Uses the format {@link Captions#PLOT_USER_LIST} for the returned string
+     * - Uses the format {@link TranslatableCaption#of(String)} of "info.plot_user_list" for the returned string
      *
      * @param uuids UUIDs
      * @return Name list

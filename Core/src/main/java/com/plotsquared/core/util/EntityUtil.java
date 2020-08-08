@@ -42,7 +42,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 /**
  * Entity related general utility methods
  */
-public final class EntityUtil {
+public class EntityUtil {
 
     private EntityUtil() {
         throw new UnsupportedOperationException(

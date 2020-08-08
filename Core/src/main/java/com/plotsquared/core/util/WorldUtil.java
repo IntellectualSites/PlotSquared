@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -68,20 +69,14 @@ import java.util.zip.ZipOutputStream;
 
 public abstract class WorldUtil {
 
-    private final RegionManager regionManager;
-
-    public WorldUtil(@Nonnull final RegionManager regionManager) {
-        this.regionManager = regionManager;
-    }
-
     /**
      * Set the biome in a region
      *
      * @param world World name
-     * @param p1x Min X
-     * @param p1z Min Z
-     * @param p2x Max X
-     * @param p2z Max Z
+     * @param p1x   Min X
+     * @param p1z   Min Z
+     * @param p2x   Max X
+     * @param p2z   Max Z
      * @param biome Biome
      */
     public static void setBiome(String world, int p1x, int p1z, int p2x, int p2z, BiomeType biome) {
@@ -135,8 +130,7 @@ public abstract class WorldUtil {
      * @param name Block name
      * @return Comparison result containing the closets matching block
      */
-    @Nonnull public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(
-        @Nonnull String name);
+    @Nonnull public abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(@Nonnull String name);
 
     /**
      * Set the block at the specified location to a sign, with given text
@@ -156,8 +150,7 @@ public abstract class WorldUtil {
      * @param z      Chunk Z coordinate
      * @param result Result consumer
      */
-    public abstract void getBiome(@Nonnull String world, int x, int z,
-        @Nonnull Consumer<BiomeType> result);
+    public abstract void getBiome(@Nonnull String world, int x, int z, @Nonnull Consumer<BiomeType> result);
 
     /**
      * Get the biome in a given chunk, asynchronously
@@ -168,8 +161,7 @@ public abstract class WorldUtil {
      * @return Biome
      * @deprecated Use {@link #getBiome(String, int, int, Consumer)}
      */
-    @Deprecated @Nonnull public abstract BiomeType getBiomeSynchronous(@Nonnull String world, int x,
-        int z);
+    @Deprecated @Nonnull public abstract BiomeType getBiomeSynchronous(@Nonnull String world, int x, int z);
 
     /**
      * Get the block at a given location (asynchronously)
@@ -196,8 +188,7 @@ public abstract class WorldUtil {
      * @param z      Z coordinate
      * @param result Result consumer
      */
-    public abstract void getHighestBlock(@Nonnull String world, int x, int z,
-        @Nonnull IntConsumer result);
+    public abstract void getHighestBlock(@Nonnull String world, int x, int z, @Nonnull IntConsumer result);
 
 
     /**
@@ -209,8 +200,7 @@ public abstract class WorldUtil {
      * @return Result
      * @deprecated Use {@link #getHighestBlock(String, int, int, IntConsumer)}
      */
-    @Deprecated @Nonnegative
-    public abstract int getHighestBlockSynchronous(@Nonnull String world, int x, int z);
+    @Deprecated @Nonnegative public abstract int getHighestBlockSynchronous(@Nonnull String world, int x, int z);
 
     /**
      * Set the biome in a region
@@ -219,8 +209,7 @@ public abstract class WorldUtil {
      * @param region Region
      * @param biome  New biome
      */
-    public abstract void setBiomes(@Nonnull String world, @Nonnull CuboidRegion region,
-        @Nonnull BiomeType biome);
+    public abstract void setBiomes(@Nonnull String world, @Nonnull CuboidRegion region, @Nonnull BiomeType biome);
 
     /**
      * Get the WorldEdit {@link com.sk89q.worldedit.world.World} corresponding to a world name
@@ -230,8 +219,16 @@ public abstract class WorldUtil {
      */
     @Nonnull public abstract com.sk89q.worldedit.world.World getWeWorld(@Nonnull String world);
 
-    public void upload(@Nonnull final Plot plot, @Nullable final UUID uuid,
-        @Nullable final String file, @Nonnull final RunnableVal<URL> whenDone) {
+    /**
+     * Refresh (resend) chunk to player. Usually after setting the biome
+     *
+     * @param x     Chunk x location
+     * @param z     Chunk z location
+     * @param world World of the chunk
+     */
+    public abstract void refreshChunk(int x, int z, String world);
+
+    public void upload(@Nonnull final Plot plot, @Nullable final UUID uuid, @Nullable final String file, @Nonnull final RunnableVal<URL> whenDone) {
         plot.getHome(home -> SchematicHandler.upload(uuid, file, "zip", new RunnableVal<OutputStream>() {
             @Override public void run(OutputStream output) {
                 try (final ZipOutputStream zos = new ZipOutputStream(output)) {
@@ -240,8 +237,7 @@ public abstract class WorldUtil {
                     if (dat != null) {
                         ZipEntry ze = new ZipEntry("world" + File.separator + dat.getName());
                         zos.putNextEntry(ze);
-                        try (NBTInputStream nis = new NBTInputStream(
-                            new GZIPInputStream(new FileInputStream(dat)))) {
+                        try (NBTInputStream nis = new NBTInputStream(new GZIPInputStream(new FileInputStream(dat)))) {
                             CompoundTag tag = (CompoundTag) nis.readNamedTag().getTag();
                             CompoundTag data = (CompoundTag) tag.getValue().get("Data");
                             Map<String, Tag> map = ReflectionUtils.getMap(data.getValue());
@@ -249,8 +245,7 @@ public abstract class WorldUtil {
                             map.put("SpawnY", new IntTag(home.getY()));
                             map.put("SpawnZ", new IntTag(home.getZ()));
                             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                                try (NBTOutputStream out = new NBTOutputStream(
-                                    new GZIPOutputStream(baos, true))) {
+                                try (NBTOutputStream out = new NBTOutputStream(new GZIPOutputStream(baos, true))) {
                                     //TODO Find what this should be called
                                     out.writeNamedTag("Schematic????", tag);
                                 }
@@ -267,18 +262,14 @@ public abstract class WorldUtil {
                         int brz = bot.getZ() >> 9;
                         int trx = top.getX() >> 9;
                         int trz = top.getZ() >> 9;
-                        Set<BlockVector2> files = regionManager.getChunkChunks(bot.getWorldName());
+                        Set<BlockVector2> files = getChunkChunks(bot.getWorldName());
                         for (BlockVector2 mca : files) {
-                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz
-                                && mca.getZ() <= trz) {
-                                final File file =
-                                    getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
+                            if (mca.getX() >= brx && mca.getX() <= trx && mca.getZ() >= brz && mca.getZ() <= trz) {
+                                final File file = getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
                                 if (file != null) {
                                     //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
                                     String name = file.getName();
-                                    final ZipEntry ze = new ZipEntry(
-                                        "world" + File.separator + "region" + File.separator
-                                            + name);
+                                    final ZipEntry ze = new ZipEntry("world" + File.separator + "region" + File.separator + name);
                                     zos.putNextEntry(ze);
                                     try (FileInputStream in = new FileInputStream(file)) {
                                         int len;
@@ -302,9 +293,7 @@ public abstract class WorldUtil {
     }
 
     @Nullable final File getDat(@Nonnull final String world) {
-        File file = new File(
-            PlotSquared.platform().getWorldContainer() + File.separator + world + File.separator
-                + "level.dat");
+        File file = new File(PlotSquared.platform().getWorldContainer() + File.separator + world + File.separator + "level.dat");
         if (file.exists()) {
             return file;
         }
@@ -312,12 +301,36 @@ public abstract class WorldUtil {
     }
 
     @Nullable private File getMcr(@Nonnull final String world, final int x, final int z) {
-        final File file = new File(PlotSquared.platform().getWorldContainer(),
-            world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
+        final File file =
+            new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
         if (file.exists()) {
             return file;
         }
         return null;
+    }
+
+
+    public Set<BlockVector2> getChunkChunks(String world) {
+        File folder = new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region");
+        File[] regionFiles = folder.listFiles();
+        if (regionFiles == null) {
+            throw new RuntimeException("Could not find worlds folder: " + folder + " ? (no read access?)");
+        }
+        HashSet<BlockVector2> chunks = new HashSet<>();
+        for (File file : regionFiles) {
+            String name = file.getName();
+            if (name.endsWith("mca")) {
+                String[] split = name.split("\\.");
+                try {
+                    int x = Integer.parseInt(split[1]);
+                    int z = Integer.parseInt(split[2]);
+                    BlockVector2 loc = BlockVector2.at(x, z);
+                    chunks.add(loc);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+        return chunks;
     }
 
     /**
@@ -383,7 +396,6 @@ public abstract class WorldUtil {
      * @param chunk Chunk coordinates
      * @return Tile entity count
      */
-    @Nonnegative public abstract int getTileEntityCount(@Nonnull String world,
-        @Nonnull BlockVector2 chunk);
+    @Nonnegative public abstract int getTileEntityCount(@Nonnull String world, @Nonnull BlockVector2 chunk);
 
 }

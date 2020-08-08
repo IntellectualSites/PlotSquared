@@ -144,8 +144,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     }
 
     /**
-     * Get the category this flag belongs to. Usually a caption from
-     * {@link Captions}
+     * Get the category this flag belongs to. Usually a caption from {@link com.plotsquared.core.configuration.caption.TranslatableCaption}
      * <p>
      * These categories are used to categorize the flags when outputting
      * flag lists to players.

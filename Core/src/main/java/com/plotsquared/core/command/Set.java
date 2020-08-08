@@ -35,7 +35,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.PatternUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
@@ -70,13 +70,8 @@ public class Set extends SubCommand {
     public static final String[] aliases = new String[] {"b", "w", "wf", "a", "h"};
 
     private final SetCommand component;
-    private final WorldUtil worldUtil;
-    private final GlobalBlockQueue blockQueue;
 
-    @Inject public Set(@Nonnull final WorldUtil worldUtil,
-                       @Nonnull final GlobalBlockQueue blockQueue) {
-        this.worldUtil = worldUtil;
-        this.blockQueue = blockQueue;
+    @Inject public Set(@Nonnull final WorldUtil worldUtil) {
         this.component = new SetCommand() {
 
             @Override public String getId() {
@@ -158,11 +153,13 @@ public class Set extends SubCommand {
 
                         BackupManager.backup(player, plot, () -> {
                             plot.addRunning();
+                            QueueCoordinator queue = plotArea.getQueue();
                             for (Plot current : plot.getConnectedPlots()) {
-                                current.setComponent(component, pattern);
+                                current.setComponent(component, pattern, queue);
                             }
+                            queue.setCompleteTask(plot::removeRunning);
+                            queue.enqueue();
                             player.sendMessage(TranslatableCaption.of("working.generating_component"));
-                            blockQueue.addEmptyTask(plot::removeRunning);
                         });
                         return true;
                     }
