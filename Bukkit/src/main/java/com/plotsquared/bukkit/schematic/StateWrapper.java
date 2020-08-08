@@ -35,6 +35,7 @@ import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.blocks.BaseItemStack;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.item.ItemType;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
@@ -161,9 +162,7 @@ public class StateWrapper {
             .replace("\"underlined\":true,", "&n").replace("\"italic\":true,", "&o")
             .replace("[{\"text\":\"", "&0").replace("{\"text\":\"", "&0").replace("\"},", "")
             .replace("\"}]", "").replace("\"}", "");
-        for (Entry<String, String> entry : Captions.replacements.entrySet()) {
-            str = str.replace(entry.getKey(), entry.getValue());
-        }
+        str = ChatColor.translateAlternateColorCodes('&', str);
         return str;
     }
 

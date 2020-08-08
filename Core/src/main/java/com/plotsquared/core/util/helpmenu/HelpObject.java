@@ -27,19 +27,24 @@ package com.plotsquared.core.util.helpmenu;
 
 import com.plotsquared.core.command.Argument;
 import com.plotsquared.core.command.Command;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 
 public class HelpObject {
 
+    static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+
     private final String _rendered;
 
-    public HelpObject(final Command command, final String label) {
-        _rendered = StringMan.replaceAll(Captions.HELP_ITEM.getTranslated(), "%usage%",
-            command.getUsage().replaceAll("\\{label\\}", label), "[%alias%]",
-            !command.getAliases().isEmpty() ?
-                "(" + StringMan.join(command.getAliases(), "|") + ")" :
-                "", "%desc%", command.getDescription(), "%arguments%",
-            buildArgumentList(command.getRequiredArguments()), "{label}", label);
+    public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
+        _rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_item").getComponent(audience),
+            Template.of("usage", command.getUsage().replaceAll("\\{label\\}", label)),
+            Template.of("alias", command.getAliases().isEmpty() ? StringMan.join(command.getAliases(), "|") : ""),
+            Template.of("desc", command.getDescription()), Template.of("arguments", buildArgumentList(command.getRequiredArguments())),
+            Template.of("label", label)));
     }
 
     @Override public String toString() {

@@ -217,7 +217,7 @@ public final class FlagCommand extends Command {
             .contains(args[0].toLowerCase(Locale.ENGLISH))) {
             new HelpMenu(player).setCategory(CommandCategory.SETTINGS)
                 .setCommands(this.getCommands()).generateMaxPages()
-                .generatePage(0, getParent().toString()).render();
+                .generatePage(0, getParent().toString(), player).render();
             return CompletableFuture.completedFuture(true);
         }
         return super.execute(player, args, confirm, whenDone);

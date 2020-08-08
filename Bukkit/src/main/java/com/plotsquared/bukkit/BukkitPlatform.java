@@ -685,18 +685,6 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
         Bukkit.getScheduler().cancelTasks(this);
     }
 
-    @Override public void log(@Nonnull String message) {
-        try {
-            message = Captions.color(message);
-            if (!Settings.Chat.CONSOLE_COLOR) {
-                message = ChatColor.stripColor(message);
-            }
-            this.getServer().getConsoleSender().sendMessage(message);
-        } catch (final Throwable ignored) {
-            System.out.println(ConsoleColors.fromString(message));
-        }
-    }
-
     @Override public void shutdown() {
         this.getServer().getPluginManager().disablePlugin(this);
     }

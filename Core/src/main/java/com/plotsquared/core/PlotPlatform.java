@@ -61,13 +61,6 @@ import java.util.Map;
 public interface PlotPlatform<P> extends LocaleHolder {
 
     /**
-     * Logs a message to console.
-     *
-     * @param message the message to log
-     */
-    void log(String message);
-
-    /**
      * Gets the directory which contains PlotSquared files. The directory may not exist.
      *
      * @return the PlotSquared directory

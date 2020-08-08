@@ -32,14 +32,14 @@ import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -118,6 +118,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -707,17 +708,16 @@ import java.util.regex.Pattern;
             this.eventDispatcher.doJoinTask(pp);
         }, TaskTime.seconds(1L));
 
-        if (pp.hasPermission(Permission.PERMISSION_ADMIN_UPDATE_NOTIFICATION.toString())
-            && Settings.Enabled_Components.UPDATE_NOTIFICATIONS
-                && PremiumVerification.isPremium()
-            && UpdateUtility.hasUpdate) {
-            Caption upperBoundary = TranslatableCaption.of("update.update_boundary");
+        if (pp.hasPermission(Permission.PERMISSION_ADMIN_UPDATE_NOTIFICATION.toString()) && Settings.Enabled_Components.UPDATE_NOTIFICATIONS
+            && PremiumVerification.isPremium() && UpdateUtility.hasUpdate) {
+            Caption boundary = TranslatableCaption.of("update.update_boundary");
             Caption updateNotification = TranslatableCaption.of("update.update_notification");
             Template internalVersion = Template.of("p2version", String.valueOf(UpdateUtility.internalVersion.versionString()));
             Template spigotVersion = Template.of("spigotversion", UpdateUtility.spigotVersion);
             Template downloadUrl = Template.of("downloadurl", "https://www.spigotmc.org/resources/77506/updates");
-            Caption lowerBoundary = TranslatableCaption.of("update.update_boundary");
-            pp.sendMessage(upperBoundary, updateNotification, internalVersion, spigotVersion, downloadUrl, lowerBoundary);
+            pp.sendMessage(boundary);
+            pp.sendMessage(updateNotification, internalVersion, spigotVersion, downloadUrl);
+            pp.sendMessage(boundary);
         }
     }
 
@@ -1024,40 +1024,48 @@ import java.util.regex.Pattern;
             return;
         }
         event.setCancelled(true);
-        Caption msg = TranslatableCaption.of("chat.plot_chat_format");
-        Template msgTemplate = Template.of("msg", event.getMessage());
-        Template plotTemplate = Template.of("plot_id", String.valueOf(plot.getId()));
-        Template senderTemplate = Template.of("sender", event.getPlayer().getDisplayName());
-        plotPlayer.sendMessage(msg, msgTemplate, plotTemplate, senderTemplate);
         Set<Player> recipients = event.getRecipients();
         recipients.clear();
-        Set<Player> spies = new HashSet<>();
+        Set<PlotPlayer<?>> spies = new HashSet<>();
+        Set<PlotPlayer<?>> plotRecipients = new HashSet<>();
         for (final PlotPlayer<?> pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
             if (pp.getAttribute("chatspy")) {
-                spies.add(((BukkitPlayer) pp).player);
+                spies.add(pp);
             } else {
                 Plot current = pp.getCurrentPlot();
                 if (current != null && current.getBasePlot(false).equals(plot)) {
-                    recipients.add(((BukkitPlayer) pp).player);
+                    plotRecipients.add(pp);
                 }
             }
         }
-        String partial = ChatColor.translateAlternateColorCodes('&',
-            format.replace("%plot_id%", id.getX() + ";" + id.getY()).replace("%sender%", sender));
+        String message = event.getMessage();
+        String sender = event.getPlayer().getDisplayName();
+        PlotId id = plot.getId();
+        Caption msg = TranslatableCaption.of("chat.plot_chat_format");
+        Template msgTemplate;
+        Template plotTemplate = Template.of("plot_id", id.toString());
+        Template senderTemplate = Template.of("sender", sender);
+        // If we do/don't want colour, we need to be careful about how to go about it, as players could attempt either <gold></gold> or &6 etc.
+        // In both cases, we want to use a Component Template to ensure that the player cannot use any placeholders in their message on purpose
+        //  or accidentally, as component templates are done at the end. We also need to deserialize from legacy color codes to a Component if
+        //  allowing colour.
         if (plotPlayer.hasPermission("plots.chat.color")) {
-            message = Captions.color(message);
+            msgTemplate = Template
+                .of("msg", BukkitUtil.LEGACY_COMPONENT_SERIALIZER.deserialize(ChatColor.translateAlternateColorCodes('&', message)));
+        } else {
+            msgTemplate = Template.of("msg", BukkitUtil.MINI_MESSAGE.deserialize(
+                ChatColor.stripColor(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(TextComponent.builder(message).build()))));
         }
-        String full = partial.replace("%msg%", message);
-        for (Player receiver : recipients) {
-            receiver.sendMessage(full);
+        for (PlotPlayer<?> receiver : plotRecipients) {
+            receiver.sendMessage(msg, msgTemplate, plotTemplate, senderTemplate);
         }
         if (!spies.isEmpty()) {
             Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
             Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
             Template spysenderTemplate = Template.of("sender", sender);
-            Template spymessageTemplate = Template.of("msg", message);
-            for (Player player : spies) {
-                plotPlayer.sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
+            Template spymessageTemplate = Template.of("msg", TextComponent.builder(message).build());
+            for (PlotPlayer<?> player : spies) {
+                player.sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
             }
         }
         // TODO: Re-implement

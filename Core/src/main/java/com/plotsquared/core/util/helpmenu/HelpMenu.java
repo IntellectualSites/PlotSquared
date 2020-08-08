@@ -67,7 +67,7 @@ public class HelpMenu {
         return this;
     }
 
-    public HelpMenu generatePage(int currentPage, String label) {
+    public HelpMenu generatePage(int currentPage, String label, PlotPlayer<?> audience) {
         if (currentPage > this.maxPage) {
             currentPage = this.maxPage;
         }
@@ -77,7 +77,7 @@ public class HelpMenu {
         this.page = new HelpPage(this.commandCategory, currentPage, this.maxPage);
         int max = Math.min((currentPage * PER_PAGE) + (PER_PAGE - 1), this.commands.size());
         for (int i = currentPage * PER_PAGE; i < max; i++) {
-            this.page.addHelpItem(new HelpObject(this.commands.get(i), label));
+            this.page.addHelpItem(new HelpObject(this.commands.get(i), label, audience));
         }
         return this;
     }

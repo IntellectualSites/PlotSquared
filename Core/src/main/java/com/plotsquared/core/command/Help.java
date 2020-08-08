@@ -120,7 +120,8 @@ public class Help extends Command {
                 player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.asComponent())));
                 return true;
             }
-            new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(page - 1, getParent().toString()).render();
+            new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(page - 1, getParent().toString(), player)
+                .render();
             return true;
         });
     }
