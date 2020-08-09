@@ -309,6 +309,113 @@ flag:
   flag_removed: $4Flag erfolgreich entfernt.
   flag_added: $4Flag erfolreich hinzugefügt
   not_valid_flag_suggested: '$2Ungültige Flag. Meintest du: $1%s'
+flags:
+  flag_category_string: String Flags
+  flag_category_integers: Integer Flags
+  flag_category_doubles: Decimal Flags
+  flag_category_teleport_deny: Teleport Deny Flag
+  flag_category_string_list: String List Flags
+  flag_category_weather: Weather Flags
+  flag_category_music: Music Flags
+  flag_category_block_list: Material Flags
+  flag_category_intervals: Interval Flags
+  flag_category_integer_list: Integer List Flags
+  flag_category_gamemode: Game Mode Flags
+  flag_category_enum: Generic Enum Flags
+  flag_category_decimal: Decimal Flags
+  flag_category_boolean: Boolean Flags
+  flag_category_fly: Flight Flags
+  flag_category_mixed: Mixed Value Flags
+  flag_description_entity_cap: Lege einen Integer fest, um die Anzahl an Entities auf dem Plot zu begrenzen.
+  flag_description_explosion: Auf `true` stellen, um Explosionen auf dem Plot zu aktivieren, oder auf `false`, zum deaktivieren.
+  flag_description_music: Lege eine Schallplatten ID (Item-Name) fest, um diese auf dem Plot abzuspielen.
+  flag_description_flight: Auf `true` stellen, um Fliegen innerhalb des Plots im Survival oder Adventure Mode zu aktivieren, auf `default`, um dem Standard des Spielmodus zu verwenden oder auf `false` stellen, um Fliegen komplett zu deaktivieren.
+  flag_description_untrusted: Auf `false` stellen, um Spielern, die nicht 'trusted' sind, den Besuch auf dem Plot zu verwähren.
+  flag_description_deny_exit: Auf `true` stellen, um Spielern das Verlassen des Plots zu verwähren.
+  flag_description_chat: Auf `false` stellen, um Plot-Chat auf dem Plot zu deakitvieren.
+  flag_description_description: Plot-Beschreibung. Unterstütz '&' Color-Codes.
+  flag_description_greeting: Nachricht, die Spielern beim Betreten des Plot angezeigt wird. Unterstütz '&' Color-Codes.
+  flag_description_farewell: Nachricht, die Spieler beim Verlassen des Plots angezeigt wird. Unterstütz '&' Color-Codes.
+  flag_description_weather: Legt die Wetterbedingungen auf dem Plot fest.
+  flag_description_animal_attack: Auf `true` stellen, um das Angreifen von Tieren auf dem Plot zu erlauben.
+  flag_description_animal_cap: Lege ein Zahl fest, um die Anzahl an Tieren auf dem Plot zu begrenzen.
+  flag_description_animal_interact: Auf `true` stellen, um das Interagieren mit Tieren auf dem Plot zu erlauben.
+  flag_description_block_burn: Auf `true` stellen, um das Verbrennen von Blöcken auf dem Plot zu erlauben.
+  flag_description_block_ignition: Auf `false` stellen, um das Entzünden von Blöcken auf dem Plot zu deaktivieren.
+  flag_description_break: Lege eine Liste mit Materialien fest, die Spieler, die nicht auf dem Plot zugelassen sind, abbauen können.
+  flag_description_device_interact: Auf `true` stellen, um das Interagieren mit Geräten auf dem Plot zu erlauben.
+  flag_description_disable_physics: Auf `true` stellen, um Block-Physik auf dem Plot zu deaktivieren.
+  flag_description_drop_protection: Auf `true` stellen, um Items, die auf dem Boden liegen, nicht von nicht-Mitgliedern des Plot aufsammelbar zu machen.
+  flag_description_feed: Lege ein Intervall in Sekunden und einen optionalen Wert fest, um welchen der Spieler gefüttert wird (1 ist der standard Fütterungswert).
+  flag_description_forcefield: Auf `true` stellen, um Forcefield für Mitglieder auf dem Plot zu aktivieren.
+  flag_description_grass_grow: Auf `false` stellen, um das Wachsen von Gras auf dem Plot zu deaktivieren.
+  flag_description_hanging_break: Auf `true` stellen, um Gästen das Abbauen von hängenden Objekten zu erlauben.
+  flag_description_hanging_place: Auf `true` stellen, um Gästen das Platzieren von hängenden Objekten zu erlauben.
+  flag_description_heal: Lege einen Intervall in Sekunden und einen optionalen Wert fest, um welchen der Spieler geheilt wird. (1 ist der standard Heilungswert).
+  flag_description_hide_info: Auf `true` stellen, um Plot-Informationen zu verstecken.
+  flag_description_hostile_attack: Auf `true` stellen, um Spielern das Attakieren von feindlichen Mobs zu erlauben.
+  flag_description_hostile_cap: Lege eine Zahl fest, auf die das Limit an feindlichen Kreaturen auf dem Plot gesetzt wird.
+  flag_description_hostile_interact: Auf `true` stellen, um Spielern das Interagieren mit feindlichen Kreaturen zu erlauben.
+  flag_description_ice_form: Auf `true` stellen, um generieren von Eis auf dem Plot zu erlauben.
+  flag_description_ice_melt: Auf `false` stellen, um das Schmelzen von Eis auf dem Plot zu deaktivieren.
+  flag_description_instabreak: Auf `true` stellen, um das sofortige Abbauen von Blöcken im Survival-Modus zu erlauben.
+  flag_description_invincible: Auf `true` stellen, um zu verhindern, dass Spieler Schaden auf dem Plot nehmen.
+  flag_description_item_drop: Auf `false` stellen, um das Droppen von Items auf dem Plot zu verhindern.
+  flag_description_kelp_grow: Auf `false` stellen, um das Wachsen von Seegras auf dem Plot zu verhindern.
+  flag_description_liquid_flow: Auf `false` stellen, um das Fließen von Flüssigkeiten auf dem Plot zu verhindern.
+  flag_description_misc_break: Auf `true` stellen, um Gästen das Abbauen von verschiedenen Items zu erlauben.
+  flag_description_misc_cap: Lege eine Zahl fest, um die Anzahl an diversen Entities auf dem Plot zu begrenzen.
+  flag_description_misc_interact: Auf `true` stellen, um Gästen das Interagieren mit verschiedenen Items zu erlauben.
+  flag_description_misc_place: Auf `true` stellen, um Gästen das Platzieren von verschiedenen Items zu erlauben.
+  flag_description_mob_break: Auf `true` stellen, um Mobs das Zerstören von Blöcken auf dem Plot zu erlauben.
+  flag_description_mob_cap: Lege eine Zahl fest, um die Anzahl von Mobs auf dem Plot zu begrenzen.
+  flag_description_mob_place: Auf `true` stellen, um Mobs das Platzieren von Blöcken auf dem Plot zu erlauben.
+  flag_description_mycel_grow: Auf `false` stellen, um das Wachsen von Myzel auf dem Plot zu verhindern.
+  flag_description_notify_enter: Auf `true` stellen, um eine Benachrichtigung an die Plot-Besitzer zu senden, wenn jemand das Plot betritt.
+  flag_description_notify_leave: Auf `true` stellen, um eine Benachrichtigung an die Plot-Besitzer zu senden, wenn jemand das Plot verlässt.
+  flag_description_no_worldedit: Auf `true` stellen, um die Nutzung von WorldEdit auf dem Plot verhindern.
+  flag_description_place: Definiere eine Liste an Materialien, die Spieler auf dem Plot platzieren können sollen.
+  flag_description_player_interact: Auf `true` stellen, um Gästen das Interagieren mit Spielern auf dem Plot zu erlauben.
+  flag_description_price: Lege einen Preis für das Plot fest. Muss ein positvier dezimal Wert sein.
+  flag_description_pve: Auf `true` stellen, um PVE auf dem Plot zu aktivieren.
+  flag_description_pvp: Auf `true` stellen, um PVP auf dem Plot zu aktivieren.
+  flag_description_redstone: Auf `false` stellen, um Redstone auf dem Plot zu deaktivieren.
+  flag_description_server_plot: Auf `true` stellen, um das Plot in ein Server-Plot zu verwandeln. Das ist das Äquivalent zu dem Setzen des Servers als Plot-Besitzer.
+  flag_description_snow_form: Auf `true` stellen, um das Generieren von Schnee auf dem Plot zu erlauben.
+  flag_description_snow_melt: Auf `true` stellen, um das Schmelzen von Schnee zu erlauben.
+  flag_description_soil_dry: Auf `true` stellen, um das Trocknen von Boden auf dem Plot zu erlauben.
+  flag_description_coral_dry: Auf `true` stellen, um das Trocknen von Korallen auf dem Plot zu erlauben.
+  flag_description_tamed_attack: Auf `true` stellen, um Gästen das Attackieren von gezähmten Tieren auf dem Plot zu erlauben.
+  flag_description_tamed_interact: Auf `true` stellen, um Gästen das Interagieren mit gezähmten Tieren zu erlauben.
+  flag_description_time: Setze die Zeit des Plots auf einen festen Wert.
+  flag_description_titles: 'Auf `false` stellen, um Plot-Titel zu deaktivieren. Mögliche Einstellungen: `none` (um Einstellung der Welt zu erben), `true` oder `false`'
+  flag_description_use: Definiere eine Liste an Materialien, mit denen Spielern auf dem Plot interagieren können sollen.
+  flag_description_vehicle_break: Auf `true` stellen, um Gästen das Zerstören von Fahrzeugen auf dem Plot zu erlauben.
+  flag_description_vehicle_cap: Lege eine Zahl fest, die die Anzahl an Fahrzeugen auf dem Plot zu begrenzen.
+  flag_description_vehicle_place: Auf `true` stellen, um Gästen das Platzieren von Fahrzeugen auf dem Plot zu aktivieren.
+  flag_description_vehicle_use: Auf `true` stellen, um Gästen die Nutzung von Fahrzeugen auf dem Plot zu erlauben.
+  flag_description_villager_interact: Auf `true` stellen, um Gästen das Interagieren mit Dorfbewohnern auf dem Plot zu erlauben.
+  flag_description_vine_grow: Auf `true` stellen, um das Wachsen von Ranken azf den Plot zu verhindern.
+  flag_description_deny_teleport: 'Verweigere einer bestimmten Gruppe das Teleportieren auf das Plot. Verfügbare Gruppen: members, nonmembers, trusted, nontrusted und nonowners'
+  flag_description_gamemode: Legt den Spielmodus auf dem Plot fest.
+  flag_description_guest_gamemode: Legt den Spielmodus von Gästen auf dem Plot fest.
+  flag_description_blocked_cmds: Eine Liste an Befehlen, die auf dem Plot blockiert sind.
+  flag_description_keep: 'Verhindert das Ablaufen des Plots. Mögliche Einstellungen: true; false; Anzahl an Millisekunden, um das Plot zu behalten oder Zeitstempel (3w 2d 5h)'
+  flag_error_boolean: Wert der Flag muss ein Boolean sein (true|false)
+  flag_error_enum: 'Wert muss einer der Folgenden sein: %s'
+  flag_error_gamemode: 'Wert muss ein Spielmodus sein: ''survival'', ''creative'', ''adventure'' oder ''spectator''.'
+  flag_error_integer: Wert der Flag muss eine ganze Zahl sein
+  flag_error_integer_list: Wert der Flag muss eine Zahlen-Liste sein
+  flag_error_interval: Wert(e) müssen numerisch sein. /plot set flag <flag> <interval> [amount]
+  flag_error_keep: Wert der Flag muss ein Zeitstempel oder Boolean sein
+  flag_error_long: Wert der Flag muss eine ganze Zahl sein (große Zahlen erlaubt)
+  flag_error_plotblocklist: Wert der Flag muss eine Block-Liste sein
+  flag_error_invalid_block: Der angegebene Wert ist kein gültiger Block oder gültige Block-Kategorie
+  flag_error_double: Wert der Flag muss eine Dezimalzahl sein.
+  flag_error_string: Wert der Flag muss alphanumerisch sein. Einige Sonderzeichen sind erlaubt.
+  flag_error_stringlist: Wert der Flag muss eine String-Liste sein
+  flag_error_weather: 'Wert muss ein Wetter sein: ''rain'' oder ''sun'''
+  flag_error_music: Wert der Flag muss eine gültige Schallplatten-ID sein.
 trusted:
   trusted_added: $4Spieler erfolgreich in diesem Plot vertraut.
   trusted_removed: $1Diesem Spieler wird auf diesem Plot nicht mehr vertraut.
