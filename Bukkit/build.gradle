@@ -6,7 +6,7 @@ repositories {
     maven { url = "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url = "https://jitpack.io" }
     maven { url = "https://repo.codemc.org/repository/maven-public" }
-    maven { url = "http://repo.extendedclip.com/content/repositories/placeholderapi/" }
+    maven { url = "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
     maven {
         name = "papermc"
         url = "https://papermc.io/repo/repository/maven-public/"
