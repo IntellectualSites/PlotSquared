@@ -3,15 +3,15 @@
 BORDER: $2Du befindest dich außerhalb der aktuellen Weltengrenze.
 confirm:
   failed_confirm: $2Es gibt keine zur Bestätigung ausstehenden Befehle!
-  requires_confirm: '$2Bist du sicher, dass du diesen Befehl ausführen willst: $1%s$2?&-$2Die
-    Änderung ist unwiderruflich! Wenn du sicher bist: $1/plot confirm'
-  expired_confirm: $2Bestätigung abgelaufgen, führe den Befehl erneut aus!
+  requires_confirm: '$2Bist du sicher, dass du diesen Befehl ausführen willst: $1%s$2?&-$2Diese
+    Änderung ist unwiderruflich! Wenn du sicher bist, führe $1/plot confirm $2aus.'
+  expired_confirm: $2Die Bestätigung ist abgelaufgen, bitte führe den Befehl erneut aus!
 move:
-  move_success: $4Plot erfolgreich verschoben.
-  copy_success: $4Plot erfolgreich kopiert.
+  move_success: $4Plot wurde erfolgreich verschoben.
+  copy_success: $4Plot wurde erfolgreich kopiert.
   requires_unowned: $2Der angegebene Ort ist bereits belegt.
 compass:
-  compass_target: $4Plot erfolgreich mit dem Kompass anvisiert.
+  compass_target: $4Plot wurde erfolgreich mit dem Kompass anvisiert.
 cluster:
   cluster_available_args: '$1Die folgenden Parameter sind verfügbar: $4list$2, $4create$2,
     $4delete$2, $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4helpers$2, $4info$2,
@@ -20,14 +20,14 @@ cluster:
   cluster_list_element: $2 - $1%sn
   cluster_intersection: $2Der vorgeschlagene Bereich überlappt mit $1%s$2 existierendem/n
     Cluster/n
-  cluster_added: $4Cluster erfolgreich erstellt.
-  cluster_deleted: $4Cluster erfolgreich gelöscht.
+  cluster_added: $4Cluster wurde erfolgreich erstellt.
+  cluster_deleted: $4Cluster wurde erfolgreich gelöscht.
   cluster_resized: $4Größe des Clusters wurde erfolgreich geändert.
-  cluster_added_user: $4Spieler erfolgreich zum Cluster hinzugefügt.
+  cluster_added_user: $4Spieler wurde erfolgreich zum Cluster hinzugefügt.
   cannot_kick_player: $2Du kannst diesen Spieler nicht kicken.
   cluster_invited: '$1Du wurdest in folgenden Cluster eingeladen: $2%s'
   cluster_removed: '$1Du wurdest aus folgendem Cluster entfernt: $2%s'
-  cluster_kicked_user: $4Spieler erfolgreich gekickt.
+  cluster_kicked_user: $4Spieler wurde erfolgreich gekickt.
   invalid_cluster: '$1Clustername ungültig: $2%s'
   cluster_not_added: $2Dieser Spieler war nicht zum Cluster hinzugefügt.
   cluster_cannot_leave: $1Du musst deinen Besitz löschen oder transferieren bevor
@@ -140,7 +140,7 @@ reload:
   reloaded_configs: $1Übersetzungen und Welteneinstellungen wurden neu geladen.
   reload_failed: $2Erneutes Laden der Konfiguration fehlgeschlagen.
 alias:
-  alias_set_to: $2Plot Alias auf $1%alias% gesetzt.
+  alias_set_to: $2Der Plot Alias wurde auf $1%alias% gesetzt.
   missing_alias: $2Du musst einen Alias angeben.
   alias_too_long: $2Der Alias darf nicht länger als 50 Zeichen sein.
   alias_is_taken: $2Dieser Alias wird bereits verwendet.
@@ -277,8 +277,8 @@ working:
   clearing_done: $4Erfolgreich in %sms geleert.
   plot_not_claimed: $2Dieser Plot hat keinen Besitzer.
   plot_is_claimed: $2Dieser Plot hat bereits einen Besitzer.
-  claimed: $4Plot erfolgreich in Besitz genommen.
-  deleting_done: $4Löschung in %sms abgeschlossen.
+  claimed: $4Plot wurde erfolgreich in Besitz genommen.
+  deleting_done: $4Löschen in %sms abgeschlossen.
 list:
   plot_list_header_paged: $2(Seite $1%von$2/$1%max$2) $1Liste Plots nach %word%
   plot_list_header: $1Liste aller %word% Plots.
@@ -450,12 +450,12 @@ set:
   set_attribute: $4Successfully set %s0 set to %s1
 web:
   generating_link: $1Lade Plot hoch...
-  generating_link_failed: $2Es konnte kein Download Link erstellt werden!
+  generating_link_failed: $2Es konnte kein Download-Link erstellt werden!
   save_failed: $2Konnte Plot nicht speichern.
   load_null: $2Benutze $4/plot load $2um eine Liste der Schematics zu bekommen.
   load_failed: $2Fehler beim Laden des Plots.
   load_list: '$2Um eine Schematic zu laden benutze $1/plot load #'
-  save_success: $1Gespeichert!
+  save_success: $1Speichern erfolgreich!
 gamemode:
   gamemode_was_bypassed: $1Du ignorierst den Spielmodus ($2{gamemode}$1) $1im Plot $2{plot}
 height limit:
