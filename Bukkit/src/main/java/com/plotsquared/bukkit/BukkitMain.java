@@ -770,6 +770,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                             }
                             continue;
                         case "ZOMBIFIED_PIGLIN":
+                        case "PIGLIN_BRUTE":
                         case "LLAMA":
                         case "DONKEY":
                         case "MULE":

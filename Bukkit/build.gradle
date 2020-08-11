@@ -23,8 +23,8 @@ dependencies {
     implementation(project(":PlotSquared-Core"))
     compile("org.bstats:bstats-bukkit:1.7")
     compile(project(":PlotSquared-Core"))
-    compile("com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT")
-    implementation("org.spigotmc:spigot-api:1.16.1-R0.1-SNAPSHOT")
+    compile("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
+    implementation("org.spigotmc:spigot-api:1.16.2-R0.1-SNAPSHOT")
     compile(group: "com.sk89q.worldedit", name: "worldedit-bukkit", version: "7.1.0") {
         exclude(module: "bukkit")
 
@@ -36,7 +36,7 @@ dependencies {
     }
     implementation("me.clip:placeholderapi:2.10.6")
     implementation("net.luckperms:api:5.1")
-    implementation("net.ess3:EssentialsX:2.17.2") {
+    implementation("net.ess3:EssentialsX:2.18.0") {
         exclude(group: "io.papermc", module: "paperlib")
     }
     implementation("net.alpenblock:BungeePerms:4.0-dev-106")

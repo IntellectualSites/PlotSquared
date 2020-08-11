@@ -310,6 +310,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case "HOGLIN":
             case "ZOMBIFIED_PIGLIN":
             case "PIGLIN":
+            case "PIGLIN_BRUTE":
             case "ZOMBIE":
             case "WITHER":
             case "WITCH":
@@ -711,6 +712,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case "HOGLIN":
             case "PIGLIN":
             case "ZOMBIFIED_PIGLIN":
+            case "PIGLIN_BRUTE":
             case "ZOMBIE":
             case "WITHER":
             case "WITCH":
