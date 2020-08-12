@@ -283,6 +283,12 @@ public class EventDispatcher {
                 return true;
             case INTERACT_BLOCK: {
                 if (plot == null) {
+                    final List<BlockTypeWrapper> use = area.getRoadFlag(UseFlag.class);
+                    for(final BlockTypeWrapper blockTypeWrapper : use) {
+                        if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
+                            return true;
+                        }
+                    }
                     return Permissions.hasPermission(player,
                         Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), notifyPerms);
                 }
@@ -308,6 +314,12 @@ public class EventDispatcher {
             }
             case TRIGGER_PHYSICAL: {
                 if (plot == null) {
+                    final List<BlockTypeWrapper> use = area.getRoadFlag(UseFlag.class);
+                    for(final BlockTypeWrapper blockTypeWrapper : use) {
+                        if (blockTypeWrapper.accepts(BlockTypes.AIR) || blockTypeWrapper.accepts(blockType)) {
+                            return true;
+                        }
+                    }
                     return Permissions.hasPermission(player,
                         Permission.PERMISSION_ADMIN_INTERACT_ROAD.toString(), false);
                 }

@@ -150,6 +150,7 @@ public class EntityEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
+                break;
             case "BREEDING":
                 if (!area.isSpawnBreeding()) {
                     event.setCancelled(true);

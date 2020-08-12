@@ -201,6 +201,7 @@ public class PaperListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
+                break;
             case "BREEDING":
                 if (!area.isSpawnBreeding()) {
                     event.setShouldAbortSpawn(true);
