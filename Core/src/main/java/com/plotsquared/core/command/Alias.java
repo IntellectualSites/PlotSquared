@@ -84,8 +84,7 @@ public class Alias extends SubCommand {
                     return false;
                 }
 
-                permission = isPermitted(player, Permission.PERMISSION_ALIAS_SET)
-                        || isPermitted(player, Permission.PERMISSION_ALIAS_SET_OBSOLETE);
+                permission = isPermitted(player, Permission.PERMISSION_ALIAS_SET);
                 admin = isPermitted(player, Permission.PERMISSION_ADMIN_ALIAS_SET);
                 if (!admin && !owner) {
                     player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));

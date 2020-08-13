@@ -402,7 +402,7 @@ public final class FlagCommand extends Command {
         description = "Remove a flag",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE,
-        permission = "plots.flag.add")
+        permission = "plots.flag.remove")
     public void remove(final Command command, PlotPlayer<?> player, final String[] args,
         final RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {

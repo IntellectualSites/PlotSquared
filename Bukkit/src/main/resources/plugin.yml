@@ -19,8 +19,245 @@ commands:
 permissions:
   plots.use:
     default: true
+  plots.projectile.unowned:
+    default: false
+  plots.projectile.other:
+    default: false
+  plots.toggle.titles:
+    default: false
+  plots.toggle.chat:
+    default: false
+  plots.toggle.time:
+    default: false
+  plots.merge.other:
+    default: false
+  plots.merge.keeproad.denied:
+    default: false
+  plots.trust.everyone:
+    default: false
+  plots.area.create:
+    default: false
+  plots.area.info:
+    default: false
+  plots.area.list:
+    default: false
+  plots.area.regen:
+    default: false
+  plots.area.tp:
+    default: false
+  plots.auto.mega:
+    default: false
+  plots.continue:
+    default: false
+  plots.cluster.list:
+    default: false
+  plots.cluster.create:
+    default: false
+  plots.cluster.create.other:
+    default: false
+  plots.cluster.size:
+    default: false
+  plots.cluster.delete.other:
+    default: false
+  plots.cluster.resize:
+    default: false
+  plots.cluster.resize.other:
+    default: false
+  plots.cluster.resize.shrink:
+    default: false
+  plots.cluster.resize.expand:
+    default: false
+  plots.cluster:
+    default: false
+  plots.cluster.invite:
+    default: false
+  plots.cluster.invite.other:
+    default: false
+  plots.cluster.kick:
+    default: false
+  plots.cluster.kick.other:
+    default: false
+  plots.cluster.leave:
+    default: false
+  plots.cluster.tp:
+    default: false
+  plots.cluster.tp.other:
+    default: false
+  plots.cluster.sethome:
+    default: false
+  plots.cluster.sethome.other:
+    default: false
+  plots.cluster.command.continue:
+    default: false
+  plots.deny.everyone:
+    default: false
+  plots.download.world:
+    default: false
+  plots.set.flag.other:
+    default: false
+  plots.set.flag:
+    default: false
+  plots.flag.remove:
+    default: false
+  plots.flag.list:
+    default: false
+  plots.list.forsale:
+    default: false
+  plots.list.mine:
+    default: false
+  plots.list.shared:
+    default: false
+  plots.list.world:
+    default: false
+  plots.list.top:
+    default: false
+  plots.list.all:
+    default: false
+  plots.list.unowned:
+    default: false
+  plots.list.player:
+    default: false
+  plots.list.done:
+    default: false
+  plots.list.expired:
+    default: false
+  plots.list.fuzzy:
+    default: false
+  plots.list.area:
+    default: false
+  plots.comment:
+    default: false
+  plots.schematic.paste:
+    default: false
+  plots.schematic.list:
+    default: false
+  plots.schematic.save:
+    default: false
+  plots.visit.shared:
+    default: false
+  plots.visit.unowned:
+    default: false
+  plots.visit.owned:
+    default: false
+  plots.visit.other:
+    default: false
+  plots.home:
+    default: false
+  plots.alias.remove:
+    default: false
+  plots.backup:
+    default: false
+  plots.backup.save:
+    default: false
+  plots.backup.list:
+    default: false
+  plots.backup.load:
+    default: false
+
+  plots.admin:
+    default: false
+  plots.admin.command.continue:
+    default: false
+  plots.admin.command.delete:
+    default: false
+  plots.admin.command.deny:
+    default: false
+  plots.admin.command.done:
+    default: false
+  plots.admin.command.download:
+    default: false
+  plots.admin.command.kick:
+    default: false
+  plots.admin.command.load:
+    default: false
+  plots.admin.command.merge:
+    default: false
+  plots.admin.command.setowner:
+    default: false
+  plots.admin.command.remove:
+    default: false
+  plots.admin.command.save:
+    default: false
+  plots.admin.command.schematic.paste:
+    default: false
+  plots.admin.command.schematic.save:
+    default: false
+  plots.admin.command.unlink:
+    default: false
+  plots.admin.alias.set:
+    default: false
+  plots.admin.alias.remove:
+    default: false
+  plots.admin.chat.bypass:
+    default: false
+  plots.admin.backup.other:
+    default: false
+  plots.admin.unsafe:
+    default: false
+  plots.admin.debug.other:
+    default: false
+  plots.admin.area.sudo:
+    default: false
+  plots.admin.interact.blockedcommands:
+    default: false
+  plots.admin.update.notify:
+    default: false
+  plots.admin.exit.denied:
+    default: false
+  plots.admin.entry.denied:
+    default: false
+  plots.admin.visit.untrusted:
+    default: false
+  plots.admin.entry.forcefield:
+    default: false
+  plots.admin.command.chat:
+    default: false
+  plots.admin.caps.other:
+    default: false
+  plots.admin.destroy.unowned:
+    default: false
+  plots.admin.destroy.groundlevel:
+    default: false
+  plots.admin.destroy.other:
+    default: false
+  plots.admin.destroy.road:
+    default: false
+  plots.admin.build.road:
+    default: false
+  plots.admin.build.unowned:
+    default: false
+  plots.admin.build.other:
+    default: false
+  plots.admin.interact.road:
+    default: false
+  plots.admin.interact.unowned:
+    default: false
+  plots.admin.interact.other:
+    default: false
+  plots.admin.build.heightlimit:
+    default: false
+  plots.admin.command.update:
+    default: false
+  plots.admin.command.rate:
+    default: false
+  plots.admin.command.trust:
+    default: false
+  plots.admin.info.force:
+    default: false
+  plots.admin.command.schematic:
+    default: false
+  plots.admin.command.clear:
+    default: false
+
   plots.teleport.delay.bypass:
+    default: false
+  plots.worldedit.bypass:
+    default: false
+  plots.gamemode.bypass:
     default: op
+  plots.confirm.bypass:
+    default: false
+
   plots.permpack.basicflags:
     default: op
     children:
@@ -73,7 +310,6 @@ permissions:
   plots.permpack.basicinbox:
     default: op
     children:
-      comments.notifications.enabled: true
       plots.inbox.read.public: true
       plots.inbox.modify.public: true
       plots.inbox.write.public: true
@@ -111,7 +347,6 @@ permissions:
       plots.list.all: true
       plots.list.forsale: true
       plots.list.unowned: true
-      plots.list.unknown: true
       plots.set: true
       plots.visit: true
       plots.visit.owned: true
@@ -131,7 +366,6 @@ permissions:
       plots.toggle.time: true
       plots.set.biome: true
       plots.set.home: true
-      plots.set.alias: true
       plots.alias.set: true
       plots.alias.remove: true
       plots.set.description: true
@@ -154,161 +388,3 @@ permissions:
       plots.done: true
       plots.continue: true
       plots.middle: true
-  plots.worldedit.bypass:
-    default: false
-  plots.gamemode.bypass:
-    default: op
-  plots.confirm.bypass:
-    default: false
-  plotme.use:
-    description: Gives default user commands
-    children:
-      plots.permpack.basic: true
-      plots.plot.1: true
-  plotme.admin:
-    description: Gives default administrator commands
-    children:
-      plots.admin: true
-  plotme.use.middle:
-    children:
-      plots.middle: true
-  plotme.use.buy:
-    children:
-      plots.buy: true
-  plotme.use.sell:
-    children:
-      plots.set: true
-      plots.flag: true
-      plots.set.flag: true
-      plots.set.price.*: true
-  plotme.use.dispose:
-    children:
-      plots.delete: true
-  plotme.use.done:
-    children:
-      plots.done: true
-  plotme.use.claim:
-    children:
-      plots.claim: true
-  plotme.use.auto:
-    children:
-      plots.auto: true
-  plotme.use.reset:
-    children:
-      plots.delete: true
-  plotme.use.home:
-    children:
-      plots.home: true
-  plotme.use.info:
-    children:
-      plots.info: true
-  plotme.use.biome:
-    children:
-      plots.set: true
-      plots.set.biome: true
-  plotme.use.clear:
-    children:
-      plots.clear: true
-  plotme.use.list:
-    children:
-      plots.list: true
-      plots.list.forsale: true
-      plots.list.mine: true
-      plots.list.shared: true
-  plotme.use.add:
-    children:
-      plots.add: true
-      plots.trust: true
-      plots.add.everyone: true
-      plots.trust.everyone: true
-  plotme.use.deny:
-    children:
-      plots.deny: true
-      plots.deny.everyone: true
-  plotme.use.remove:
-    children:
-      plots.remove: true
-  plotme.use.undeny:
-    children:
-      plots.remove: true
-  plotme.use.protect:
-    children:
-      plots.set: true
-      plots.flag: true
-      plots.set.flag: true
-      plots.set.keep.*: true
-  plotme.use.nameplot:
-    children:
-      plots.set.alias: true
-      plots.alias.set: true
-      plots.alias.remove: true
-  plotme.limit.*:
-    children:
-      plots.plot.*: true
-  plotme.limit.1:
-    children:
-      plots.plot.1: true
-  plotme.limit.5:
-    children:
-      plots.plot.5: true
-  plotme.limit.10:
-    children:
-      plots.plot.10: true
-  plotme.admin.clear:
-    children:
-      plots.admin.command.clear: true
-  plotme.admin.reset:
-    children:
-      plots.admin.command.delete: true
-  plotme.admin.add:
-    children:
-      plots.admin.command.add: true
-  plotme.admin.deny:
-    children:
-      plots.admin.command.deny: true
-  plotme.admin.remove:
-    children:
-      plots.admin.command.remove: true
-  plotme.admin.undeny:
-    children:
-      plots.admin.command.remove: true
-  plotme.admin.bypassdeny:
-    children:
-      plots.admin.entry.denied: true
-  plotme.admin.setowner:
-    children:
-      plots.admin.command.setowner: true
-  plotme.admin.move:
-    children:
-      plots.admin.command.move: true
-  plotme.admin.weanywhere:
-    children:
-      plots.worldedit.bypass: true
-  plotme.admin.list:
-    children:
-      plots.list.world: true
-      plots.list.world.*: true
-      plots.list.top: true
-      plots.list.all: true
-      plots.list.unowned: true
-      plots.list.unknown: true
-      plots.list.player: true
-      plots.list.done: true
-      plots.list.expired: true
-      plots.list.fuzzy: true
-      plots.list.area: true
-  plotme.admin.dispose:
-    children:
-      plots.admin.command.delete: true
-  plotme.admin.done:
-    children:
-      plots.admin.command.done: true
-  plotme.admin.expired:
-    children:
-      plots.list.expired: true
-  plotme.admin.buildanywhere:
-    children:
-      plots.admin.vehicle.*: true
-      plots.admin.interact.*: true
-      plots.admin.build.*: true
-      plots.admin.destroy.*: true

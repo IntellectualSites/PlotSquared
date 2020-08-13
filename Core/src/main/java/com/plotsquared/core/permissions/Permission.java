@@ -28,7 +28,7 @@ package com.plotsquared.core.permissions;
 import javax.annotation.Nonnull;
 
 /**
- * Captions class.
+ * Permission class.
  */
 public enum Permission {
 
@@ -79,6 +79,7 @@ public enum Permission {
     PERMISSION_ADMIN_COMMAND_SCHEMATIC("plots.admin.command.schematic"),
     PERMISSION_ADMIN_COMMAND_CLEAR("plots.admin.command.clear"),
     PERMISSION_CONTINUE("plots.continue"),
+    PERMISSION_CLUSTER("plots.cluster"),
     PERMISSION_CLUSTER_LIST("plots.cluster.list"),
     PERMISSION_CLUSTER_CREATE("plots.cluster.create"),
     PERMISSION_CLUSTER_CREATE_OTHER("plots.cluster.create.other"),
@@ -89,7 +90,6 @@ public enum Permission {
     PERMISSION_CLUSTER_RESIZE_OTHER("plots.cluster.resize.other"),
     PERMISSION_CLUSTER_RESIZE_SHRINK("plots.cluster.resize.shrink"),
     PERMISSION_CLUSTER_RESIZE_EXPAND("plots.cluster.resize.expand"),
-    PERMISSION_CLUSTER("plots.cluster"),
     PERMISSION_CLUSTER_INVITE("plots.cluster.invite"),
     PERMISSION_CLUSTER_INVITE_OTHER("plots.cluster.invite.other"),
     PERMISSION_CLUSTER_KICK("plots.cluster.kick"),
@@ -125,7 +125,6 @@ public enum Permission {
     PERMISSION_LIST_TOP("plots.list.top"),
     PERMISSION_LIST_ALL("plots.list.all"),
     PERMISSION_LIST_UNOWNED("plots.list.unowned"),
-    PERMISSION_LIST_UNKNOWN("plots.list.unknown"),
     PERMISSION_LIST_PLAYER("plots.list.player"),
     PERMISSION_LIST_DONE("plots.list.done"),
     PERMISSION_LIST_EXPIRED("plots.list.expired"),
@@ -144,13 +143,12 @@ public enum Permission {
     PERMISSION_ADMIN_COMMAND_SCHEMATIC_SAVE("plots.admin.command.schematic.save"),
     PERMISSION_SET_COMPONENT("plots.set.%s"),
     PERMISSION_ADMIN_COMMAND("plots.admin.command.%s"),
-    PERMISSION_ADMIN_COMMAND_UNLINK("plots.ad2min.command.unlink"),
+    PERMISSION_ADMIN_COMMAND_UNLINK("plots.admin.command.unlink"),
     PERMISSION_VISIT_UNOWNED("plots.visit.unowned"),
     PERMISSION_VISIT_OWNED("plots.visit.owned"),
     PERMISSION_SHARED("plots.visit.shared"),
     PERMISSION_VISIT_OTHER("plots.visit.other"),
     PERMISSION_HOME("plots.home"),
-    PERMISSION_ALIAS_SET_OBSOLETE("plots.set.alias"), // Note this is for backwards compatibility
     PERMISSION_ALIAS_SET("plots.alias.set"),
     PERMISSION_ADMIN_ALIAS_SET("plots.admin.alias.set"),
     PERMISSION_ALIAS_REMOVE("plots.alias.remove"),
@@ -164,7 +162,6 @@ public enum Permission {
     PERMISSION_ADMIN_ALLOW_UNSAFE("plots.admin.unsafe"),
     PERMISSION_ADMIN_DEBUG_OTHER("plots.admin.debug.other");
     //</editor-fold>
-
 
     private final String text;
 
