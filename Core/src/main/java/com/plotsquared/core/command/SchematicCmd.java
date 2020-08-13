@@ -29,7 +29,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.ConsolePlayer;
@@ -46,7 +45,6 @@ import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
-import javax.swing.plaf.basic.BasicSliderUI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;

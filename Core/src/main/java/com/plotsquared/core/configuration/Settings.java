@@ -412,16 +412,12 @@ public class Settings extends Config {
     }
 
 
-    @Comment("Schematic and Asset interface related settings")
+    @Comment("Schematic interface related settings")
     public static class Web {
         @Comment({"The web interface for schematics", " - All schematics are anonymous and private",
             " - Downloads can be deleted by the user",
             " - Supports plot uploads, downloads and saves",}) public static String URL =
             "https://schem.intellectualsites.com/plots/";
-        @Comment({"The web interface for assets", " - All schematics are organized and public",
-            " - Assets can be searched, selected and downloaded",}) public static String ASSETS =
-            "https://empcraft.com/assetpack/";
-
     }
 
 
@@ -581,7 +577,7 @@ public class Settings extends Config {
         @Comment("Actively purge invalid database entries") public static boolean DATABASE_PURGER =
             false;
         @Comment({"Delete plots when a player is banned.",
-        "Note: This only works with the /minecraft:ban command. Any punishment plugin like LiteBans is not supported."}) public static boolean BAN_DELETER = false;
+        "Note: This only works with the /minecraft:ban command. Any punishment plugin is not supported."}) public static boolean BAN_DELETER = false;
         @Comment("Allows PlaceholderAPI placeholders to be used in captions, flags, etc.")
         public static boolean EXTERNAL_PLACEHOLDERS = true;
         @Comment("Make road regeneration persistent across restarts") public static boolean
