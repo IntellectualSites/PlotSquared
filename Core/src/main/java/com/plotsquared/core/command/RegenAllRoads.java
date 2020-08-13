@@ -93,9 +93,8 @@ public class RegenAllRoads extends SubCommand {
             return false;
         }
         //Set<BlockVector2> chunks = ChunkManager.manager.getChunkChunks(name);
-        player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"));
-        //MainUtil.sendMessage(player, "&6Potential chunks to update: &7" + (chunks.size() * 1024));
-        //MainUtil.sendMessage(player, "&6Estimated time: &7" + chunks.size() + " seconds");
+        player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"),
+                Template.of("command", "/plot createroadschematic"));
         boolean result = this.hybridUtils.scheduleRoadUpdate(area, height);
         if (!result) {
             player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));

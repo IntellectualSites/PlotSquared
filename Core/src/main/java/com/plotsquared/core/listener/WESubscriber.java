@@ -45,6 +45,7 @@ import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -91,7 +92,8 @@ public class WESubscriber {
                 mask = WEManager.getMask(plotPlayer);
                 if (mask.isEmpty()) {
                     if (Permissions.hasPermission(plotPlayer, "plots.worldedit.bypass")) {
-                        plotPlayer.sendMessage(TranslatableCaption.of("worldedit.worldedit_bypass"));
+                        plotPlayer.sendMessage(TranslatableCaption.of("worldedit.worldedit_bypass"),
+                                Template.of("command", "/plot wea"));
                     }
                     if (this.plotAreaManager.hasPlotArea(world)) {
                         event.setExtent(new NullExtent());

@@ -75,7 +75,8 @@ import java.util.concurrent.atomic.AtomicInteger;
                             player.sendTitle(
                                 StaticCaption.of(""),
                                 TranslatableCaption.of("comment.inbox_notification"),
-                                Template.of("amount", Integer.toString(total))
+                                Template.of("amount", Integer.toString(total)),
+                                Template.of("command", "/plot inbox")
                             );
                         }
                     }

@@ -143,8 +143,10 @@ public class DebugRoadRegen extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
             return true;
         }
-        player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"));
-        player.sendMessage(TranslatableCaption.of("debugroadregen.regenallroads"));
+        player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"),
+                Template.of("command", "/plot createroadschematic"));
+        player.sendMessage(TranslatableCaption.of("debugroadregen.regenallroads"),
+                Template.of("command", "/plot regenallroads"));
         boolean result = this.hybridUtils.scheduleSingleRegionRoadUpdate(plot, height);
         if (!result) {
             player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));

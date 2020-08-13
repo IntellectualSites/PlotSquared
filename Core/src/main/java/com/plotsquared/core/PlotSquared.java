@@ -218,14 +218,6 @@ public class PlotSquared {
             copyFile("town.template", Settings.Paths.TEMPLATES);
             copyFile("bridge.template", Settings.Paths.TEMPLATES);
             copyFile("skyblock.template", Settings.Paths.TEMPLATES);
-            copyFile("de-DE.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("es-ES.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("zh-CN.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("it-IT.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("ko-KR.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("hu-HU.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("pt-BR.yml", Settings.Paths.TRANSLATIONS);
-            copyFile("fr-FR.yml", Settings.Paths.TRANSLATIONS);
             showDebug();
         } catch (Throwable e) {
             e.printStackTrace();
@@ -1314,7 +1306,6 @@ public class PlotSquared {
      * Setup all configuration files<br>
      * - Config: settings.yml<br>
      * - Storage: storage.yml<br>
-     * - Translation: PlotSquared.use_THIS.yml, style.yml<br>
      */
     public boolean setupConfigs() {
         File folder = new File(this.platform.getDirectory(), "config");

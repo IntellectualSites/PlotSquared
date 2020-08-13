@@ -1,7 +1,7 @@
 {
   "confirm.expired_confirm": "<prefix><red>Confirmation has expired, please run the command again!</red>",
   "confirm.failed_confirm": "<prefix><red>You have no pending actions to confirm!</red>",
-  "confirm.requires_confirm": "<prefix><gray>Are you sure you wish to execute: </gray><gold><command></orange><gray>?</gray>\n<red>This cannot be undone! If you are sure: </red><gray>/plot confirm</gray>",
+  "confirm.requires_confirm": "<prefix><gray>Are you sure you wish to execute: </gray><gold><command></orange><gray>?</gray>\n<red>This cannot be undone! If you are sure: </red><gray><value></gray>",
   
   "move.move_success": "<prefix><dark_aqua>Successfully moved plot.</dark_aqua>",
   "move.move_merged": "<prefix><red>Merged plots may not be moved. Please unmerge the plot before performing the move.</red>",
@@ -21,14 +21,14 @@
   
   "set.set_attribute": "<prefix><dark_aqua>Successfully set <attribute> to <value>.</dark_aqua>",
 
-  "area.set_pos2": "You will now set pos2: /plot area create pos2. Note: The chosen plot size may result in the created area not exactly matching your second position.",
+  "area.set_pos2": "You will now set pos2: <command>. Note: The chosen plot size may result in the created area not exactly matching your second position.",
   
   "web.generating_link": "<prefix><gold>Processing plot...</gold>",
   "web.generating_link_failed": "<prefix><red>Failed to generate download link!</red>",
   "web.save_failed": "<prefix><red>Failed to save.</red>",
-  "web.load_null": "<prefix><gray>Please use </gray><dark_aqua>/plot load </dark_aqua><gray>to get a list of schematics.</gray>",
+  "web.load_null": "<prefix><gray>Please use </gray><dark_aqua><command> </dark_aqua><gray>to get a list of schematics.</gray>",
   "web.load_failed": "<prefix><red>Failed to load schematic.</red>",
-  "web.load_list": "<prefix><gray>To load a schematic, use </gray><gold>/plot load #</gold><gray>.</gray>",
+  "web.load_list": "<prefix><gray>To load a schematic, use </gray><gold><command</gold><gray>.</gray>",
   "web.save_success": "<prefix><gold>Successfully saved!</gold>",
   
   "compass.compass_target": "<prefix><dark_aqua>Successfully targeted plot with your compass.</dark_aqua>",
@@ -60,7 +60,7 @@
   
   "border.border": "<prefix><gray>You are outside the current map border.</gray>",
   
-  "worldedit.worldedit_bypass": "<prefix><gray><italic>To bypass your restrictions use </gray><dark_aqua>/plot wea</dark_aqua></italic>",
+  "worldedit.worldedit_bypass": "<prefix><gray><italic>To bypass your restrictions use </gray><dark_aqua><command></dark_aqua></italic>",
   "worldedit.worldedit_bypassed": "<prefix><gray>Currently bypassing WorldEdit restriction.</gray>",
   
   "gamemode.gamemode_was_bypassed": "<prefix><gold>You bypassed the gamemode (</gold><gray><gamemode></gray><gold>) <gold>set for </gold><gray><plot>.</gray>",
@@ -74,10 +74,10 @@
   "swap.swap_success": "<prefix><dark_aqua>Successfully swapped plots.</dark_aqua>",
   "swap.swap_merged": "<prefix><red>Merged plots may not be swapped. Please unmerge the plots before performing the swap.</red>",
   
-  "comment.inbox_notification": "<prefix><dark_aqua><amount> </dark_aqua><gray>unread messages. Use /plot inbox.</gray>",
+  "comment.inbox_notification": "<prefix><dark_aqua><amount> </dark_aqua><gray>unread messages. Use <command>.</gray>",
   "comment.not_valid_inbox_index": "<prefix><gray>No comment at index <number>.</gray>",
   "comment.inbox_item": "<gray> - </gray><dark_aqua><value></dark_aqua>",
-  "comment.comment_syntax": "<prefix><gray>Use /plot comment [X;Z] <<list>> <comment></gray>",
+  "comment.comment_syntax": "<prefix><gray>Use <command> <<list>> <comment></gray>",
   "comment.invalid_inbox": "<prefix><gray>That is not a valid inbox.</gray>\n<gold>Accepted values: <list></gold>",
   "comment.no_perm_inbox": "<prefix><red>You do not have permission for that inbox.</red>",
   "comment.no_perm_inbox_modify": "<prefix><red>You do not have permission to modify that inbox.</red>",
@@ -129,7 +129,6 @@
   "setup.setup_not_started": "<prefix><gold>No setup started.</gold>",
   "setup.setup_init": "<prefix><gold>Usage: </gold><gray>/plot setup </gray><value>",
   "setup.setup_step": "<gold><dark_gray>[</dark_gray>Step <step><dark_gray>]</dark_gray> <description> <gray>-</gray> Expecting: <gray><type></gray> Default: <gray><value></gray></gold>",
-  "setup.setup_invalid_arg": "<prefix><gray><value> is not a valid argument for step <step>. To cancel setup use: </gray><gold>/plot setup cancel.</gold>",
   "setup.setup_valid_arg": "<prefix><gray>Value </gray><gold><description></gold> <gray>set to <value>.</gray>",
   "setup.setup_finished": "<prefix><dark_aqua>You should have been teleported to the created world. Otherwise you will need to set the generator manually using the bukkit.yml or your chosen world management plugin.</dark_aqua>",
   "setup.setup_world_taken": "<prefix><gray><value> </gray><red>is already a world. Choose a different name.</red>",
@@ -292,9 +291,9 @@
 
   "debugroadregen.regen_done": "<prefix><gold>Regenerating plot south/east roads: </gold><gray><value></gray>\n<gold> - Result: </gold><green>Success!</green",
   "debugroadregen.regen_all": "<prefix><green>To regen all roads: </green><gold><value></gold>",
-  "schematics.schematic_road_created": "<prefix><gold>Saved new road schematic. To test the schematic, fly to a few other plots and run /plot debugroadregen.</gold>",
-  "debugroadregen.schematic": "<prefix><red>If no schematic is set, the following will not do anything.</red>\n<gray> - To set a schematic, stand in a plot and use </gray><red>/plot createroadschematic</red>",
-  "debugroadregen.regenallroads": "<prefix><red>To regenerate all roads: /plot regenallroads</red>",
+  "schematics.schematic_road_created": "<prefix><gold>Saved new road schematic. To test the schematic, fly to a few other plots and run <command>.</gold>",
+  "debugroadregen.schematic": "<prefix><red>If no schematic is set, the following will not do anything.</red>\n<gray> - To set a schematic, stand in a plot and use </gray><red><command></red>",
+  "debugroadregen.regenallroads": "<prefix><red>To regenerate all roads: <command></red>",
 
   "errors.invalid_player": "<prefix><red>Player not found: </red><gray><value></gray><red>.</red>",
   "errors.invalid_player_offline": "<prefix><gray><player></gray><red> must be online.</red>",
@@ -462,13 +461,11 @@
   
   "events.event_denied": "<prefix><gold><value> </gold><gray>Cancelled by external plugin.</gray>",
   
-  "backups.backup_usage": "<prefix><gold>Usage: </gold><gray>/plot backup save/list/load</gray>",
   "backups.backup_impossible": "<prefix><gray>Backups are not enabled for this plot: <plot>.</gray>",
   "backups.backup_save_success": "<prefix><gold>The backup was created successfully.</gold>",
   "backups.backup_save_failed": "<prefix><red>The backup could not be created: </red><gray><reason></gray>",
   "backups.backup_load_success": "<prefix><gold>The backup was restored successfully.</gold>",
   "backups.backup_load_failure": "<prefix><red>The backup could not be restored: </red><gray><reason></gray>",
-  "backups.backup_load_usage": "<prefix><gold>Usage: </gold><gray>/plot backup load [#]</gray>",
   "backups.backup_list_header": "<prefix><gold>Available backups for plot <gray><plot></gray></gold>",
   "backups.backup_list_entry": "<prefix><dark_gray>- </dark_gray><gold>#<number> </gold><gray><value></gray>",
   "backups.backup_list_failed": "<prefix><red>Backup listing failed: </red><gray><reason></gray>",
@@ -489,7 +486,7 @@
   "single.single_area_missing_selection": "<prefix><red>Error! You need to select a square region.</red>",
   "single.single_area_not_square": "<prefix><red>Error! Your selection needs to be a square.</red>",
   "single.single_area_overlapping": "<prefix><red>Error! Your selection overlaps with an existing plot area.</red>",
-  "single.single_area_needs_name": "<prefix><red>Error! Please specify a plot name: /plot area single <name></red>",
+  "single.single_area_needs_name": "<prefix><red>Error! Please specify a plot name: <command></red>",
   "single.single_area_name_taken": "<prefix><red>Error! The plot name is already taken.</red>",
   "single.single_area_failed_to_save": "<prefix><red>Error! Failed to save the area schematic.</red>",
   "single.single_area_could_not_make_directories": "<prefix><red>Error! Failed to create the schematic directory.</red>",
@@ -632,7 +629,6 @@
   "flags.flag_error_gamemode": "<prefix><red>Flag value must be a gamemode: 'survival', 'creative', 'adventure' or 'spectator.</red>",
   "flags.flag_error_integer": "<prefix><red>Flag value must be a whole number.</red>",
   "flags.flag_error_integer_list": "<prefix><red>Flag value must be an integer list.</red>",
-  "flags.flag_error_internal": "<prefix><red>Value(s) must be numeric. /plot set flag <flag> <interval> [amount].</red>",
   "flags.flag_error_keep": "<prefix><red>Flag value must be a timestamp or a boolean.</red>",
   "flags.flag_error_long": "<prefix><red>Flag value must be a whole number (large numbers allowed).</red>",
   "flags.flag_error_plotblocklist": "<prefix><red>Flag value must be a block list.</red>",

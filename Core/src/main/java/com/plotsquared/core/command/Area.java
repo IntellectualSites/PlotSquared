@@ -143,7 +143,8 @@ public class Area extends SubCommand {
                     return false;
                 }
                 if (args.length < 2) {
-                    player.sendMessage(TranslatableCaption.of("single.single_area_needs_name"));
+                    player.sendMessage(TranslatableCaption.of("single.single_area_needs_name"),
+                            Template.of("command", "/plot area single <name>"));
                     return false;
                 }
                 final PlotArea existingArea =
@@ -305,7 +306,8 @@ public class Area extends SubCommand {
                                 player.sendMessage(TranslatableCaption.of("set.set_attribute"),
                                         Template.of("attribute", "area_pos1"),
                                         Template.of("value", location.getX() + "," + location.getZ()));
-                                player.sendMessage(TranslatableCaption.of("area.set_pos2"));
+                                player.sendMessage(TranslatableCaption.of("area.set_pos2"),
+                                        Template.of("command", "/plot area create pos2"));
                                 return true;
                             }
                             case "pos2":  // Set position 2 and finish creation for type=2 (partial)

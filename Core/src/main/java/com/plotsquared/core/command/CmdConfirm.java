@@ -57,7 +57,8 @@ public class CmdConfirm {
         if (commandStr != null) {
             player.sendMessage(
                     TranslatableCaption.of("confirm.requires_confirm"),
-                    Template.of("command", commandStr)
+                    Template.of("command", commandStr),
+                    Template.of("value", "/plot confirm")
             );
         }
         TaskManager.runTaskLater(() -> {

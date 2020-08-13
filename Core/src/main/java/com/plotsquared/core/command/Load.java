@@ -100,7 +100,10 @@ public class Load extends SubCommand {
                     List<String> schematics = metaDataAccess.get().orElse(null);
                     if (schematics == null) {
                         // No schematics found:
-                        player.sendMessage(TranslatableCaption.of("web.load_null"));
+                        player.sendMessage(
+                                TranslatableCaption.of("web.load_null"),
+                                Template.of("command", "/plot load")
+                        );
                         return false;
                     }
                     String schematic;
@@ -201,7 +204,10 @@ public class Load extends SubCommand {
                     e.printStackTrace();
                 }
             }
-            player.sendMessage(TranslatableCaption.of("web.load_list"));
+            player.sendMessage(
+                    TranslatableCaption.of("web.load_list"),
+                    Template.of("command", "/plot load #")
+            );
         }
     }
 
