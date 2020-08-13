@@ -28,7 +28,7 @@
   "web.save_failed": "<prefix><red>Failed to save.</red>",
   "web.load_null": "<prefix><gray>Please use </gray><dark_aqua><command> </dark_aqua><gray>to get a list of schematics.</gray>",
   "web.load_failed": "<prefix><red>Failed to load schematic.</red>",
-  "web.load_list": "<prefix><gray>To load a schematic, use </gray><gold><command</gold><gray>.</gray>",
+  "web.load_list": "<prefix><gray>To load a schematic, use </gray><gold><command></gold><gray>.</gray>",
   "web.save_success": "<prefix><gold>Successfully saved!</gold>",
   
   "compass.compass_target": "<prefix><dark_aqua>Successfully targeted plot with your compass.</dark_aqua>",
