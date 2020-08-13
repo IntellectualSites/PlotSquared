@@ -41,24 +41,24 @@ processResources {
 }
 
 //noinspection GroovyAssignabilityCheck
-jar.archiveFileName = "PlotSquared-${project.parent.version}.jar"
-jar.destinationDirectory = file("../mvn/com/plotsquared/PlotSquared/" + project.parent.version)
+jar.archiveFileName = "PlotSquared-Core-${project.parent.version}.jar"
+jar.destinationDirectory = file("../mvn/com/plotsquared/PlotSquared-Core/" + project.parent.version)
 task createPom {
     doLast {
         pom {
             project {
                 groupId = rootProject.group
-                artifactId = "PlotSquared"
+                artifactId = "PlotSquared-Core"
                 version = project.parent.version
             }
-        }.writeTo("../mvn/com/plotsquared/PlotSquared/${project.parent.version}/PlotSquared-${project.parent.version}.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared-Core/${project.parent.version}/PlotSquared-Core-${project.parent.version}.pom")
         pom {
             project {
                 groupId = rootProject.group
-                artifactId = "PlotSquared"
+                artifactId = "PlotSquared-Core"
                 version = "latest"
             }
-        }.writeTo("../mvn/com/plotsquared/PlotSquared/latest/PlotSquared-latest.pom")
+        }.writeTo("../mvn/com/plotsquared/PlotSquared-Core/latest/PlotSquared-Core-latest.pom")
          .writeTo("pom.xml")
     }
 }
@@ -66,10 +66,10 @@ task createPom {
 task copyFiles {
     doLast {
         copy {
-            from("../mvn/com/plotsquared/PlotSquared/${project.parent.version}/")
-            into("../mvn/com/plotsquared/PlotSquared/latest/")
-            include("*.jar")
-            rename("PlotSquared-${project.parent.version}.jar", "PlotSquared-latest.jar")
+            from("../mvn/com/plotsquared/PlotSquared-Core/${project.parent.version}/")
+            into("../mvn/com/plotsquared/PlotSquared-Core/latest/")
+            include("PlotSquared-Core*.jar")
+            rename("PlotSquared-Core-${project.parent.version}.jar", "PlotSquared-Core-latest.jar")
         }
     }
 }
