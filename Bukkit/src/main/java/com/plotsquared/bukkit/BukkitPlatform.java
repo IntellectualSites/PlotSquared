@@ -100,7 +100,6 @@ import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
-import com.plotsquared.core.util.ConsoleColors;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
@@ -120,7 +119,6 @@ import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -305,7 +303,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     new WE_Anywhere();
                 }
             } catch (Throwable e) {
-                logger.error("[P2] Incompatible version of WorldEdit, please upgrade: http://builds.enginehub.org/job/worldedit?branch=master");
+                logger.error("[P2] Incompatible version of WorldEdit, please upgrade: https://builds.enginehub.org/job/worldedit?branch=master");
             }
         }
 
@@ -502,7 +500,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             logger.info("[P2] PlaceholderAPI is not in use. Hook deactivated");
         }
 
-        this.startMetrics();
+        if (Settings.Enabled_Components.BSTATS) {
+            this.startMetrics();
+        }
+        else {
+            logger.info("[P2] bStats is disabled. Enabling it in /plugins/PlotSquared/config/settings.yml helps the developers to identify the features most used");
+            logger.info("[P2] and organize future updates better. Cheers.");
+        }
+
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(1L));
             try {

@@ -184,10 +184,12 @@ public class Settings extends Config {
         Limit.MAX_PLOTS = config.getInt("max_plots", Limit.MAX_PLOTS);
         Limit.GLOBAL = config.getBoolean("global_limit", Limit.GLOBAL);
 
-        // Misc
+        // Miscellaneous
         DEBUG = config.getBoolean("debug", DEBUG);
         Chat.CONSOLE_COLOR = config.getBoolean("console.color", Chat.CONSOLE_COLOR);
         Chat.INTERACTIVE = config.getBoolean("chat.fancy", Chat.INTERACTIVE);
+        Enabled_Components.BSTATS =
+                config.getBoolean("bstats", Enabled_Components.BSTATS);
 
         Enabled_Components.DATABASE_PURGER =
             config.getBoolean("auto-purge", Enabled_Components.DATABASE_PURGER);
@@ -421,7 +423,7 @@ public class Settings extends Config {
     }
 
 
-    @Comment("Misc settings")
+    @Comment("Miscellaneous settings")
     public static final class Done {
         @Comment("Require a plot marked as done to download (/plot download)") public static boolean
             REQUIRED_FOR_DOWNLOAD = false;
@@ -590,6 +592,8 @@ public class Settings extends Config {
         public static boolean EXTENDED_USERNAME_COMPLETION = true;
         @Comment("Command aliases that will be tab completed")
         public static List<String> TAB_COMPLETED_ALIASES = Arrays.asList("plot", "plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap");
+        @Comment({"Send anonymous PlotSquared statistics to https://bstats.org/.",
+                "Please keep this setting enabled. It helps us identifying which parts of PlotSquared are used the most to organize future updates better."}) public static boolean BSTATS = true;
     }
 
 }
