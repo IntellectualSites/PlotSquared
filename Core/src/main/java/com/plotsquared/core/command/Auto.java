@@ -25,8 +25,9 @@
  */
 package com.plotsquared.core.command;
 
-import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
+import com.intellectualsites.services.ServicePipeline;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -34,7 +35,6 @@ import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlayerAutoPlotEvent;
 import com.plotsquared.core.events.PlotAutoMergeEvent;
 import com.plotsquared.core.events.Result;
-import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.MetaDataAccess;
@@ -42,9 +42,8 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotAreaType;
-import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.services.plots.AutoService;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
@@ -56,8 +55,10 @@ import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "auto",
     permission = "plots.auto",
@@ -71,13 +72,23 @@ public class Auto extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
+    private final ServicePipeline servicePipeline;
 
     @Inject public Auto(@Nonnull final PlotAreaManager plotAreaManager,
                         @Nonnull final EventDispatcher eventDispatcher,
-                        @Nullable final EconHandler econHandler) {
+                        @Nullable final EconHandler econHandler,
+                        @Nonnull final ServicePipeline servicePipeline) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
+        this.servicePipeline = servicePipeline;
+        this.servicePipeline.registerServiceType(TypeToken.of(AutoService.class), new AutoService.DefaultAutoService());
+        final AutoService.MultiPlotService multiPlotService = new AutoService.MultiPlotService();
+        this.servicePipeline.registerServiceImplementation(AutoService.class, multiPlotService,
+            Collections.singletonList(multiPlotService));
+        final AutoService.SinglePlotService singlePlotService = new AutoService.SinglePlotService();
+        this.servicePipeline.registerServiceImplementation(AutoService.class, singlePlotService,
+            Collections.singletonList(singlePlotService));
     }
 
     public static boolean checkAllowedPlots(PlotPlayer player, PlotArea plotarea,
@@ -123,62 +134,32 @@ public class Auto extends SubCommand {
         return true;
     }
 
-    /**
-     * Teleport the player home, or claim a new plot
-     *
-     * @param player
-     * @param area
-     * @param start
-     * @param schematic
-     */
-    public static void homeOrAuto(final PlotPlayer player, final PlotArea area, PlotId start,
-        final String schematic) {
-        Set<Plot> plots = player.getPlots();
-        if (!plots.isEmpty()) {
-            plots.iterator().next().teleportPlayer(player, TeleportCause.COMMAND, result -> {
-            });
-        } else {
-            autoClaimSafe(player, area, start, schematic);
-        }
-    }
-
-    /**
-     * Claim a new plot for a player
-     *
-     * @param player
-     * @param area
-     * @param start
-     * @param schematic
-     */
-    public static void autoClaimSafe(final PlotPlayer<?> player, final PlotArea area, PlotId start,
-        final String schematic) {
+    private void claimSingle(@Nonnull final PlotPlayer<?> player, @Nonnull final Plot plot,
+        @Nonnull final PlotArea plotArea, @Nullable final String schematic) {
         try (final MetaDataAccess<Boolean> metaDataAccess =
             player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
             metaDataAccess.set(true);
         }
-        autoClaimFromDatabase(player, area, start, new RunnableVal<Plot>() {
+        plot.setOwnerAbs(player.getUUID());
+
+        final RunnableVal<Plot> runnableVal = new RunnableVal<Plot>() {
+            {
+                this.value = plot;
+            }
+
             @Override public void run(final Plot plot) {
                 try {
-                    TaskManager.getPlatformImplementation().sync(new AutoClaimFinishTask(player, plot, area, schematic,
-                        PlotSquared.get().getEventDispatcher()));
+                    TaskManager.getPlatformImplementation().sync(
+                        new AutoClaimFinishTask(player, plot, plotArea, schematic,
+                            PlotSquared.get().getEventDispatcher()));
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
             }
-        });
-    }
+        };
 
-    public static void autoClaimFromDatabase(final PlotPlayer player, final PlotArea area,
-        PlotId start, final RunnableVal<Plot> whenDone) {
-        final Plot plot = area.getNextFreePlot(player, start);
-        if (plot == null) {
-            whenDone.run(null);
-            return;
-        }
-        whenDone.value = plot;
-        plot.setOwnerAbs(player.getUUID());
-        DBFunc.createPlotSafe(plot, whenDone,
-            () -> autoClaimFromDatabase(player, area, plot.getId(), whenDone));
+        DBFunc.createPlotSafe(plot, runnableVal, () -> claimSingle(player, plot, plotArea, schematic));
+
     }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -313,49 +294,33 @@ public class Auto extends SubCommand {
                 );
             }
         }
-        // TODO handle type 2 (partial) the same as normal worlds!
-        if (size_x == 1 && size_z == 1) {
-            autoClaimSafe(player, plotarea, null, schematic);
-            return true;
+
+        final List<Plot> plots = this.servicePipeline
+            .pump(new AutoService.AutoQuery(player, null, size_x, size_z, plotarea))
+            .through(AutoService.class)
+            .getResult();
+
+        if (plots.isEmpty()) {
+            player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
+            return false;
+        } else if (plots.size() == 1) {
+            this.claimSingle(player, plots.get(0), plotarea, schematic);
         } else {
-            if (plotarea.getType() == PlotAreaType.PARTIAL) {
-                player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
+            final Iterator<Plot> plotIterator = plots.iterator();
+            while (plotIterator.hasNext()) {
+                plotIterator.next().claim(player, !plotIterator.hasNext(), null);
+            }
+            final PlotAutoMergeEvent mergeEvent = this.eventDispatcher.callAutoMerge(plots.get(0),
+                plots.stream().map(Plot::getId).collect(Collectors.toList()));
+            if (!force && mergeEvent.getEventResult() == Result.DENY) {
+                player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Auto merge")
+                );
                 return false;
             }
-            while (true) {
-                PlotId start = plotarea.getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
-                PlotId end = PlotId.of(start.getX() + size_x - 1, start.getY() + size_z - 1);
-                if (plotarea.canClaim(player, start, end)) {
-                    plotarea.setMeta("lastPlot", start);
-
-                    for (final PlotId plotId : PlotId.PlotRangeIterator.range(start, end)) {
-                        final Plot plot = plotarea.getPlot(plotId);
-                        if (plot == null) {
-                            return false;
-                        }
-                        plot.claim(player, plotId.equals(end), null);
-                    }
-
-                    final List<PlotId> plotIds = Lists.newArrayList((Iterable<? extends PlotId>)
-                        PlotId.PlotRangeIterator.range(start, end));
-                    final PlotId pos1 = plotIds.get(0);
-                    final PlotAutoMergeEvent mergeEvent = this.eventDispatcher
-                        .callAutoMerge(plotarea.getPlotAbs(pos1), plotIds);
-                    if (!force && mergeEvent.getEventResult() == Result.DENY) {
-                        player.sendMessage(
-                                TranslatableCaption.of("events.event_denied"),
-                                Template.of("value", "Auto merge")
-                        );
-                        return false;
-                    }
-                    if (!plotarea.mergePlots(mergeEvent.getPlots(), true)) {
-                        return false;
-                    }
-                    break;
-                }
-                plotarea.setMeta("lastPlot", start);
-            }
-            return true;
+            return plotarea.mergePlots(mergeEvent.getPlots(), true);
         }
+        return true;
     }
 }
