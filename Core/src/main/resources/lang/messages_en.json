@@ -42,7 +42,7 @@
   "cluster.cluster_intersection": "<prefix><gray>The proposed area overlaps with: <cluster></gray>",
   "cluster.cluster_outside": "<prefix><gray>The proposed area is outside the plot area: <area></gray>",
   "cluster.cluster_added": "<prefix><dark_aqua>Successfully created the cluster.</dark_aqua>",
-  "cluster.cluster_deleted": "<prefix><dark_aqua>Successfully deleted the cluster.</ark_aqua>",
+  "cluster.cluster_deleted": "<prefix><dark_aqua>Successfully deleted the cluster.</dark_aqua>",
   "cluster.cluster_resized": "<prefix><dark_aqua>Successfully resized the cluster.</dark_aqua>",
   "cluster.cluster_added_user": "<prefix><dark_aqua>Successfully added user to the cluster.</dark_aqua>",
   "cluster.cannot_kick_player": "<prefix><red>You cannot kick that player: </red><gray><name></gray>",
