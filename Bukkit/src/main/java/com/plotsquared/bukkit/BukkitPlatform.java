@@ -504,7 +504,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             this.startMetrics();
         }
         else {
-            logger.info("[P2] bStats is disabled. Enabling it in /plugins/PlotSquared/config/settings.yml helps the developers to identify the features most used");
+            logger.info("[P2] bStats is disabled. Please enable it in /plugins/PlotSquared/config/settings.yml. It helps the developers to identify the features most used");
             logger.info("[P2] and organize future updates better. Cheers.");
         }
 
