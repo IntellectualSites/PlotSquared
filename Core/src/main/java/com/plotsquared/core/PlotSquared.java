@@ -1736,10 +1736,11 @@ public class PlotSquared {
 
             if (this.worlds.contains("worlds")) {
                 if (!this.worlds.contains("configuration_version") || (
-                    !this.worlds.getString("configuration_version")
-                        .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION) && !this.worlds
-                        .getString("configuration_version").equalsIgnoreCase("v5"))) {
-                    // Conversion needed
+                    !this.worlds.getString("configuration_version").equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION) &&
+                    !this.worlds.getString("configuration_version").equalsIgnoreCase("v5"))) {
+                    // This means that the server is updating from version 3 to version 5. For this to be possible,
+                    // it must first go through v3->v4 (post_flattening), then on next restart
+                    // it must do v4 (post_flattening) -> v5
                     log(Captions.LEGACY_CONFIG_FOUND.getTranslated());
                     try {
                         com.google.common.io.Files
@@ -1761,7 +1762,9 @@ public class PlotSquared {
                     return false;
                 }
             } else {
-                this.worlds.set("configuration_version", LegacyConverter.CONFIGURATION_VERSION);
+                // If the server does not have a worlds section in their
+                // worlds.yml, we assume they generated their database using v5
+                this.setConfigurationVersion("v5");
             }
         } catch (IOException ignored) {
             PlotSquared.log("Failed to save settings.yml");
