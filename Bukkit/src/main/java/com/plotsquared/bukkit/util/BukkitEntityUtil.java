@@ -272,11 +272,12 @@ public class BukkitEntityUtil {
                     }
                 } else if (roadFlags && (area.getRoadFlag(AnimalAttackFlag.class) || area
                     .getFlag(PveFlag.class))) {
-                    if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
-                        MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
-                            "plots.admin.pve." + stub);
-                        return false;
-                    }
+                    return true;
+                }
+                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                    MainUtil.sendMessage(plotPlayer, Captions.NO_PERMISSION_EVENT,
+                        "plots.admin.pve." + stub);
+                    return false;
                 }
             } else if (EntityCategories.VEHICLE
                 .contains(entityType)) { // Vehicles are managed in vehicle destroy event
