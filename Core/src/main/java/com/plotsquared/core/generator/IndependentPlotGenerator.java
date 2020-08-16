@@ -74,15 +74,6 @@ public abstract class IndependentPlotGenerator {
      * If any additional setup options need to be changed before world creation.
      * - e.g. If setup doesn't support some standard options
      *
-     * @param setup
-     */
-    @Deprecated public void processSetup(SetupObject setup) {
-    }
-
-    /**
-     * If any additional setup options need to be changed before world creation.
-     * - e.g. If setup doesn't support some standard options
-     *
      * @param builder the area builder to modify
      */
     public void processAreaSetup(PlotAreaBuilder builder) {
