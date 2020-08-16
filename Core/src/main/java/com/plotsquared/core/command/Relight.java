@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -46,7 +46,7 @@ public class Relight extends Command {
     public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
-        player.sendMessage(StaticCaption.of("Not implemented."));
+        player.sendMessage(TranslatableCaption.of("errors.not_implemented"));
 /*        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));

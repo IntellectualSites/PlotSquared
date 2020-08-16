@@ -47,7 +47,7 @@ public class PluginCmd extends SubCommand {
                     Template.of("version", String.valueOf(PlotSquared.get().getVersion()))
             );
             player.sendMessage(StaticCaption.of("<gray> >> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray><gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray><gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));
-            player.sendMessage(StaticCaption.of("<gray> >> </gray><gold><bold>Wiki<reset><gray>: </gray><gold>https://wiki.intellectualsites.com/plotsquared/home</gold>"));
+            player.sendMessage(StaticCaption.of("<gray> >> </gray><gold><bold>Wiki<reset><gray>: </gray><gold><click:open_url>https://wiki.intellectualsites.com/plotsquared/home</gold>"));
             player.sendMessage(
                     StaticCaption.of("<gray> >> </gray><gold><bold>Premium<reset><gray>: <gold><value></gold>"),
                     Template.of("value", String.valueOf(PremiumVerification.isPremium()))

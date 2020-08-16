@@ -158,13 +158,13 @@ public class DebugPaste extends SubCommand {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml",
                         readFile(this.configFile)));
                 } catch (final IllegalArgumentException ignored) {
-                    player.sendMessage(StaticCaption.of("&cSkipping settings.yml because it's empty."));
+                    player.sendMessage(StaticCaption.of("<red>Skipping settings.yml because it's empty.</red>"));
                 }
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml",
                         readFile(this.worldfile)));
                 } catch (final IllegalArgumentException ignored) {
-                    player.sendMessage(StaticCaption.of("&cSkipping worlds.yml because it's empty."));
+                    player.sendMessage(StaticCaption.of("<red>Skipping worlds.yml because it's empty.</red>"));
                 }
 
                 try {
@@ -173,7 +173,7 @@ public class DebugPaste extends SubCommand {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml",
                         readFile(MultiverseWorlds)));
                 } catch (final IOException ignored) {
-                    player.sendMessage(StaticCaption.of("&cSkipping Multiverse world's.yml because Multiverse is not in use."));
+                    player.sendMessage(StaticCaption.of("<red>Skipping Multiverse world's.yml because Multiverse is not in use.</red>"));
                 }
 
                 try {
