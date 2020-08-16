@@ -317,7 +317,7 @@
   "error.command_went_wrong": "<prefix><red>Something went wrong when executing that command.</red>",
   "errors.not_implemented": "<prefix><red>Not implemented.</red>",
   
-  "debugpaste.debug_report_created": "<prefix><gold>Uploaded a full debug to: </gold><gray><click:open_url:<url>></gray>",
+  "debugpaste.debug_report_created": "<prefix><gold>Uploaded a full debug to: </gold><gray><click:open_url:<url>><url></click></gray>",
   "debugpaste.creation_failed": "<prefix><red>Failed to create the debugpaste: </red><gray><value></gray>",
 
   "debugsavetest.starting": "<prefix><gold>Starting debugsavetest.</gold>",
@@ -507,7 +507,7 @@
   "update.update_notification": "<prefix><gold>There appears to be a PlotSquared update available!</gold>",
   "update.internal_version": "<prefix><gold>You are running version </gold><dark_aqua><p2version></dark_aqua>",
   "update.spigot_version": "<prefix><gold>Latest version is </gold><dark_aqua><spigotversion></dark_aqua>",
-  "update.download": "<prefix><gold>Download the update at: <click:open_url:<downloadurl>>",
+  "update.download": "<prefix><gold>Download the update at: <click:open_url:<downloadurl>><downloadurl></click>",
  
   "flag.flag_key": "<gray>Key: <key></gray>",
   "flag.flag_desc": "<gray>Desc: <value></gray>",
