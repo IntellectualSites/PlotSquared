@@ -117,7 +117,7 @@ public class Reload extends SubCommand {
             });
             this.worldConfiguration.save(this.worldFile);
             player.sendMessage(TranslatableCaption.of("reload.reloaded_configs"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             player.sendMessage(TranslatableCaption.of("reload.reload_failed"));
         }

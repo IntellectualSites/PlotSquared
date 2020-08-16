@@ -79,7 +79,7 @@ public interface CaptionMap {
     class NoSuchCaptionException extends IllegalArgumentException {
 
         public NoSuchCaptionException(@Nonnull final NamespacedCaption caption) {
-            super(String.format("No caption with the key '%s' exists in the map", caption.getKey()));
+            super(String.format("No caption with the key '%s:%s' exists in the map", caption.getNamespace(), caption.getKey()));
         }
 
     }

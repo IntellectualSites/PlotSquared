@@ -301,12 +301,12 @@ public class MainCommand extends Command {
             throw e;
         } catch (Throwable e) {
             e.printStackTrace();
-            String message = e.getLocalizedMessage();
+            String message = e.getMessage();
             if (message != null) {
                 player.sendMessage(TranslatableCaption.of("errors.error"),
                         net.kyori.adventure.text.minimessage.Template.of("value", message));
             } else {
-                player.sendMessage(TranslatableCaption.of("errors.error"));
+                player.sendMessage(TranslatableCaption.of("errors.error"), net.kyori.adventure.text.minimessage.Template.of("value", ""));
             }
         }
         // Reset command scope //

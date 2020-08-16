@@ -90,7 +90,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
 import java.util.ArrayDeque;
@@ -141,7 +140,7 @@ public class PlotSquared {
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     private YamlConfiguration config;
     // Localization
-    private Map<String, CaptionMap> captionMaps;
+    private final Map<String, CaptionMap> captionMaps = new HashMap<>();
     // Platform / Version / Update URL
     private PlotVersion version;
     // Files and configuration
@@ -174,6 +173,13 @@ public class PlotSquared {
         //
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
+        // Load caption map
+        try {
+            this.loadCaptionMap();
+        } catch (final Exception e) {
+            logger.error("Failed to load caption map", e);
+        }
+
         // Setup the global flag container
         GlobalFlagContainer.setup();
 
@@ -196,8 +202,6 @@ public class PlotSquared {
             if (!setupConfigs()) {
                 return;
             }
-
-            this.captionMaps = new HashMap<>();
 
             this.worldedit = WorldEdit.getInstance();
 
@@ -224,16 +228,19 @@ public class PlotSquared {
         }
     }
 
-    public void loadCaptionMap() throws IOException {
+    public void loadCaptionMap() throws Exception {
+        this.platform.copyCaptionMaps();
         // Setup localization
         CaptionMap captionMap;
         if (Settings.Enabled_Components.PER_USER_LOCALE) {
-            captionMap = CaptionLoader.loadAll(Paths.get("lang"));
+            captionMap = CaptionLoader.loadAll(new File(this.platform.getDirectory(), "lang").toPath());
         } else {
             String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
-            captionMap = CaptionLoader.loadSingle(Paths.get("lang", fileName));
+            captionMap = CaptionLoader.loadSingle(new File(new File(this.platform.getDirectory(), "lang"), fileName).toPath());
         }
         this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
+        logger.info("Loaded caption map for namespace 'plotsquared': {}",
+            this.captionMaps.get(TranslatableCaption.DEFAULT_NAMESPACE).getClass().getCanonicalName());
     }
 
     /**

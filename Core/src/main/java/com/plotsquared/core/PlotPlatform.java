@@ -254,6 +254,11 @@ public interface PlotPlatform<P> extends LocaleHolder {
     @Nonnull Audience getConsoleAudience();
 
     /**
+     * Load the caption maps
+     */
+    void copyCaptionMaps();
+
+    /**
      * Get the {@link PermissionHandler} implementation for the platform
      *
      * @return Permission handler

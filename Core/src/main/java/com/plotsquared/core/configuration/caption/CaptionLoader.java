@@ -25,10 +25,9 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -64,7 +63,7 @@ public final class CaptionLoader {
         }
     }
 
-    public static CaptionMap loadSingle(@Nonnull final Path file) throws IOException {
+    @Nonnull public static CaptionMap loadSingle(@Nonnull final Path file) {
         final String fileName = file.getFileName().toString();
         final Matcher matcher = FILE_NAME_PATTERN.matcher(fileName);
         final Locale locale;
@@ -73,14 +72,14 @@ public final class CaptionLoader {
         } else {
             throw new IllegalArgumentException(fileName + " is an invalid message file (cannot extract locale)");
         }
-        JsonObject object = GSON.fromJson(
-                Files.newBufferedReader(file, StandardCharsets.UTF_16),
-                JsonObject.class);
-        Map<TranslatableCaption, String> captions = new HashMap<>();
-        for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-            TranslatableCaption key = TranslatableCaption.of(entry.getKey());
-            captions.put(key, entry.getValue().getAsString());
+        final Map<String, String> object;
+        try {
+            object = GSON.fromJson(Files.newBufferedReader(file, StandardCharsets.UTF_8), new TypeToken<Map<String, String>>() {}.getType());
+        } catch (final Exception e) {
+            throw new RuntimeException(String.format("Failed to load caption file '%s'", file.getFileName().toString()), e);
         }
+        final Map<TranslatableCaption, String> captions = new HashMap<>();
+        object.forEach((key, value) -> captions.put(TranslatableCaption.of(key), value));
         return new LocalizedCaptionMap(locale, captions);
     }
 

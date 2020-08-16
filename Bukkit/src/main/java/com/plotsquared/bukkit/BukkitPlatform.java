@@ -1094,4 +1094,15 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return (PlayerManager<BukkitPlayer, Player>) getInjector().getInstance(PlayerManager.class);
     }
 
+    @Override public void copyCaptionMaps() {
+        /* Make this prettier at some point */
+        final String[] languages = new String[] { "en" };
+        for (final String language : languages) {
+            if (!new File(new File(this.getDataFolder(), "lang"), String.format("messages_%s.json", language)).exists()) {
+                this.saveResource(String.format("lang/messages_%s.json", language), false);
+                logger.info("Copied language file 'messages_{}.json'", language);
+            }
+        }
+    }
+
 }
