@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.placeholder.MVdWPlaceholders;
 import com.plotsquared.core.PlotSquared;
@@ -35,11 +36,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 
+import javax.annotation.Nonnull;
+
 public class ServerListener implements Listener {
 
     private final BukkitPlatform plugin;
 
-    public ServerListener(BukkitPlatform plugin) {
+    @Inject public ServerListener(@Nonnull final BukkitPlatform plugin) {
         this.plugin = plugin;
     }
 

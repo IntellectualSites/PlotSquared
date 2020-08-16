@@ -29,6 +29,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Singleton;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
@@ -161,7 +162,7 @@ import static com.plotsquared.core.util.PremiumVerification.getResourceID;
 import static com.plotsquared.core.util.PremiumVerification.getUserID;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("unused") @Singleton
 public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitPlatform.class.getSimpleName());

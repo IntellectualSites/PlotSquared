@@ -84,6 +84,7 @@ public class BukkitModule extends AbstractModule {
         bind(PlayerManager.class).to(BukkitPlayerManager.class);
         bind(JavaPlugin.class).toInstance(bukkitPlatform);
         bind(PlotPlatform.class).toInstance(bukkitPlatform);
+        bind(BukkitPlatform.class).toInstance(bukkitPlatform);
         bind(IndependentPlotGenerator.class).annotatedWith(DefaultGenerator.class).to(HybridGen.class);
         // Console actor
         @Nonnull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
