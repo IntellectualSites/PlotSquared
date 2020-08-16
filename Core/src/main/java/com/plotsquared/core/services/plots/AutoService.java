@@ -1,5 +1,7 @@
 package com.plotsquared.core.services.plots;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.intellectualsites.services.types.Service;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -11,9 +13,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> {
+
+    Cache<PlotId, Plot> plotCandidateCache = CacheBuilder.newBuilder()
+        .expireAfterWrite(20, TimeUnit.SECONDS).build();
+    Object plotLock = new Object();
 
     final class AutoQuery {
 
@@ -101,11 +108,17 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
     final class SinglePlotService implements AutoService, Predicate<AutoQuery> {
 
         @Nullable @Override public List<Plot> handle(@Nonnull AutoQuery autoQuery) {
-            final Plot plot = autoQuery.getPlotArea().getNextFreePlot(autoQuery.getPlayer(), autoQuery.getStartId());
-            if (plot == null) {
-                return null;
-            }
-            return Collections.singletonList(plot);
+            Plot plot;
+            do {
+                synchronized (plotLock) {
+                    plot = autoQuery.getPlotArea().getNextFreePlot(autoQuery.getPlayer(), autoQuery.getStartId());
+                    if (plot != null && plotCandidateCache.getIfPresent(plot.getId()) == null) {
+                        plotCandidateCache.put(plot.getId(), plot);
+                        return Collections.singletonList(plot);
+                    }
+                }
+            } while (plot != null);
+            return null;
         }
 
         @Override public boolean test(@Nonnull final AutoQuery autoQuery) {
@@ -119,13 +132,24 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
 
         @Override public List<Plot> handle(@Nonnull final AutoQuery autoQuery) {
             /* TODO: Add timeout? */
-            while (true) {
-                final PlotId start = autoQuery.getPlotArea().getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
-                final PlotId end = PlotId.of(start.getX() + autoQuery.getSizeX() - 1, start.getY() + autoQuery.getSizeZ() - 1);
-                final List<Plot> plots = autoQuery.getPlotArea().canClaim(autoQuery.getPlayer(), start, end);
-                if (plots != null && !plots.isEmpty()) {
-                    autoQuery.getPlotArea().setMeta("lastPlot", start);
-                    return plots;
+            outer: while (true) {
+                synchronized (plotLock) {
+                    final PlotId start =
+                        autoQuery.getPlotArea().getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
+                    final PlotId end = PlotId.of(start.getX() + autoQuery.getSizeX() - 1,
+                        start.getY() + autoQuery.getSizeZ() - 1);
+                    final List<Plot> plots =
+                        autoQuery.getPlotArea().canClaim(autoQuery.getPlayer(), start, end);
+                    if (plots != null && !plots.isEmpty()) {
+                        autoQuery.getPlotArea().setMeta("lastPlot", start);
+                        for (final Plot plot : plots) {
+                            if (plotCandidateCache.getIfPresent(plot.getId()) != null) {
+                                continue outer;
+                            }
+                            plotCandidateCache.put(plot.getId(), plot);
+                        }
+                        return plots;
+                    }
                 }
             }
         }
