@@ -55,7 +55,7 @@ import java.util.function.Consumer;
  * and allows the caller to specify a sink for the loaded chunks. The
  * coordinator will prevent the chunks from being unloaded until the sink
  * has fully consumed the chunk
- * <p>
+ * </p>
  **/
 public final class BukkitChunkCoordinator extends ChunkCoordinator {
 

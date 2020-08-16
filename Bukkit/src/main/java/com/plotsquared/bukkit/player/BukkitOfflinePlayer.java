@@ -45,6 +45,9 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
      * as it caches player objects.
+     *
+     * @param player Bukkit OfflinePlayer player to convert
+     * @param permissionHandler Permission Profile to be used
      */
     public BukkitOfflinePlayer(@Nonnull final OfflinePlayer player, @Nonnull final
         PermissionHandler permissionHandler) {

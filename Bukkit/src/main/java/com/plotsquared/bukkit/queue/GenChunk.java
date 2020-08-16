@@ -71,6 +71,8 @@ public class GenChunk extends ScopedQueueCoordinator {
 
     /**
      * Set the internal Bukkit chunk data
+     *
+     * @param chunkData Bukkit ChunkData
      */
     public void setChunkData(@Nonnull ChunkData chunkData) {
         this.chunkData = chunkData;
@@ -88,6 +90,8 @@ public class GenChunk extends ScopedQueueCoordinator {
 
     /**
      * Set the chunk being represented
+     *
+     * @param chunk Bukkit Chunk
      */
     public void setChunk(@Nonnull Chunk chunk) {
         this.chunk = chunk;
@@ -96,6 +100,8 @@ public class GenChunk extends ScopedQueueCoordinator {
 
     /**
      * Set the world and XZ of the chunk being represented via {@link ChunkWrapper}
+     *
+     * @param wrap P2 ChunkWrapper
      */
     public void setChunk(@Nonnull ChunkWrapper wrap) {
         chunk = null;
@@ -146,6 +152,12 @@ public class GenChunk extends ScopedQueueCoordinator {
 
     /**
      * Set the in the whole column of XZ
+     *
+     * @param x Relative x location within the chunk (0 - 15)
+     * @param z Relative z location within the chunk (0 - 15)
+     * @param biome Bukkit biome to set
+     *
+     * @return if successful
      */
     public boolean setBiome(int x, int z, @Nonnull Biome biome) {
         if (this.biomeGrid != null) {
