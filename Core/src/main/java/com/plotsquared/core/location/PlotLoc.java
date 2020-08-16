@@ -78,11 +78,11 @@ public final class PlotLoc {
     }
 
     public int getX() {
-        return this.getX();
+        return this.x;
     }
 
     public int getY() {
-        return this.getY();
+        return this.y;
     }
 
     public int getZ() {
