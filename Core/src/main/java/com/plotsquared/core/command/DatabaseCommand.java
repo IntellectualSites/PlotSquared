@@ -48,7 +48,6 @@ import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
-import sun.net.TransferProtocolClient;
 
 import javax.annotation.Nonnull;
 import java.io.File;
