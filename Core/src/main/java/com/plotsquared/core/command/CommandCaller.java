@@ -48,6 +48,7 @@ public interface CommandCaller {
      * Check the player's permissions. <i>Will be cached if permission caching is enabled.</i>
      *
      * @param permission the name of the permission
+     * @return if permission is had
      */
     boolean hasPermission(@Nonnull String permission);
 

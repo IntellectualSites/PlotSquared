@@ -117,6 +117,8 @@ public class PlotCluster {
 
     /**
      * Get the area (in plots).
+     *
+     * @return area of plots
      */
     public int getArea() {
         return (1 + this.pos2.getX() - this.pos1.getX()) * (1 + this.pos2.getY() - this.pos1.getY());

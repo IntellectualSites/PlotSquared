@@ -85,11 +85,13 @@ public interface PlotPlatform<P> extends LocaleHolder {
 
     /**
      * Gets the version of Minecraft that is running.
+     * @return server version as array of numbers
      */
     int[] getServerVersion();
 
     /**
      * Gets the server implementation name and version
+     * @return server implementationa and version as string
      */
     String getServerImplementation();
 

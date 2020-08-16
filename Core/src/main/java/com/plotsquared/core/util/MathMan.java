@@ -207,11 +207,11 @@ public class MathMan {
     }
 
     /**
-     * Returns [x, y, z]
+     * get the x,y,z unit vector from pitch and yaw specified
      *
-     * @param yaw
-     * @param pitch
-     * @return
+     * @param yaw yaw
+     * @param pitch pitch
+     * @return x,y,z unit vector
      */
     public static float[] getDirection(float yaw, float pitch) {
         double pitch_sin = Math.sin(pitch);
@@ -234,10 +234,10 @@ public class MathMan {
     /**
      * Returns [ pitch, yaw ]
      *
-     * @param x
-     * @param y
-     * @param z
-     * @return
+     * @param x x
+     * @param y y
+     * @param z z
+     * @return pitch and yaw of x,y,z from 0,0,0
      */
     public static float[] getPitchAndYaw(float x, float y, float z) {
         float distance = sqrtApprox((z * z) + (x * x));

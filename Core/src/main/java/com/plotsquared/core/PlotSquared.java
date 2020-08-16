@@ -1313,6 +1313,8 @@ public class PlotSquared {
      * Setup all configuration files<br>
      * - Config: settings.yml<br>
      * - Storage: storage.yml<br>
+     *
+     * @return success or not
      */
     public boolean setupConfigs() {
         File folder = new File(this.platform.getDirectory(), "config");

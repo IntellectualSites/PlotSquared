@@ -269,8 +269,15 @@ public class Plot {
      * @param id      the plot id
      * @param owner   the plot owner
      * @param trusted the plot trusted players
+     * @param members the plot added players
      * @param denied  the plot denied players
+     * @param alias the plot's alias
+     * @param position plot home position
+     * @param flags the plot's flags
+     * @param area the plot's PlotArea
      * @param merged  an array giving merged plots
+     * @param timestamp when the plot was created
+     * @param temp value representing whatever DBManager needs to to. Do not touch tbh.
      * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(@Nonnull PlotId id,
@@ -563,6 +570,8 @@ public class Plot {
      * Direct access is discouraged: use getOwners()
      *
      * @see #getOwnerAbs() getOwnerAbs() to get the owner as stored in the database
+     *
+     * @return Server if ServerPlot flag set, else {@link #getOwnerAbs()}
      */
     public UUID getOwner() {
         if (this.getFlag(ServerPlotFlag.class)) {
@@ -749,6 +758,8 @@ public class Plot {
      * - Some data such as home location needs to be associated with the group rather than each plot<br>
      * - If the plot is not merged it will return itself.<br>
      * - The result is cached locally
+     *
+     * @param recalculate whether to recalculate the merged plots to find the origin
      *
      * @return base Plot
      */
@@ -1210,6 +1221,8 @@ public class Plot {
     /**
      * This will return null if the plot hasn't been analyzed
      *
+     * @param settings The set of settings to obtain the analysis of
+     *
      * @return analysis of plot
      */
     public PlotAnalysis getComplexity(Settings.Auto_Clear settings) {
@@ -1233,6 +1246,7 @@ public class Plot {
      * Sets a flag for the plot and stores it in the database.
      *
      * @param flag Flag to set
+     * @param <V> flag value type
      * @return A boolean indicating whether or not the operation succeeded
      */
     public <V> boolean setFlag(PlotFlag<V, ?> flag) {
@@ -1343,6 +1357,10 @@ public class Plot {
      *
      * @see PlotSquared#removePlot(Plot, boolean)
      * @see #clear(boolean, boolean, Runnable) to simply clear a plot
+     *
+     * @param whenDone task to run when plot has been deleted. Nullable
+     *
+     * @return success status
      */
     public boolean deletePlot(final Runnable whenDone) {
         if (!this.hasOwner()) {
@@ -1490,6 +1508,8 @@ public class Plot {
 
     /**
      * @deprecated May cause synchronous chunk loads
+     *
+     * @return Location of center
      */
     @Deprecated public Location getCenterSynchronous() {
         Location[] corners = getCorners();
@@ -1509,6 +1529,8 @@ public class Plot {
 
     /**
      * @deprecated May cause synchronous chunk loads
+     *
+     * @return side where players should teleport to
      */
     @Deprecated public Location getSideSynchronous() {
         CuboidRegion largest = getLargestRegion();
@@ -1546,6 +1568,8 @@ public class Plot {
 
     /**
      * @deprecated May cause synchronous chunk loading
+     *
+     * @return the plot home location
      */
     @Deprecated public Location getHomeSynchronous() {
         BlockLoc home = this.getPosition();
@@ -1569,6 +1593,8 @@ public class Plot {
 
     /**
      * Return the home location for the plot
+     *
+     * @param result consumer to pass location to when found
      */
     public void getHome(final Consumer<Location> result) {
         BlockLoc home = this.getPosition();
@@ -1615,6 +1641,8 @@ public class Plot {
     /**
      * Gets the default home location for a plot<br>
      * - Ignores any home location set for that specific plot
+     *
+     * @param result consumer to pass location to when found
      */
     public void getDefaultHome(Consumer<Location> result) {
         getDefaultHome(false, result);
@@ -1622,6 +1650,10 @@ public class Plot {
 
     /**
      * @deprecated May cause synchronous chunk loads
+     *
+     * @param member if to get the home for plot members
+     *
+     * @return location of home for members or visitors
      */
     @Deprecated public Location getDefaultHomeSynchronous(final boolean member) {
         Plot plot = this.getBasePlot(false);
@@ -1927,6 +1959,13 @@ public class Plot {
     /**
      * Sets components such as border, wall, floor.
      * (components are generator specific)
+     *
+     * @param component component to set
+     * @param blocks string of block(s) to set component to
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
+     *
+     * @return success or not
      */
     @Deprecated public boolean setComponent(String component, String blocks, QueueCoordinator queue) {
         BlockBucket parsed = ConfigurationUtil.BLOCK_BUCKET.parseString(blocks);
@@ -1940,6 +1979,8 @@ public class Plot {
 
     /**
      * Retrieve the biome of the plot.
+     *
+     * @param result consumer to pass biome to when found
      */
     public void getBiome(Consumer<BiomeType> result) {
         this.getCenter(location -> this.worldUtil.getBiome(location.getWorldName(), location.getX(), location.getZ(), result));
@@ -1949,6 +1990,8 @@ public class Plot {
 
     /**
      * @deprecated May cause synchronous chunk loads
+     *
+     * @return biome at center of plot
      */
     @Deprecated public BiomeType getBiomeSynchronous() {
         final Location location = this.getCenterSynchronous();
@@ -1957,6 +2000,8 @@ public class Plot {
 
     /**
      * Returns the top location for the plot.
+     *
+     * @return location of Absolute Top
      */
     public Location getTopAbs() {
         return this.getManager().getPlotTopLocAbs(this.id).withWorld(this.getWorldName());
@@ -1964,6 +2009,8 @@ public class Plot {
 
     /**
      * Returns the bottom location for the plot.
+     *
+     * @return location of absolute bottom of plot
      */
     public Location getBottomAbs() {
         return this.getManager().getPlotBottomLocAbs(this.id).withWorld(this.getWorldName());
@@ -2003,8 +2050,8 @@ public class Plot {
      * Moves the settings for a plot.
      *
      * @param plot     the plot to move
-     * @param whenDone
-     * @return
+     * @param whenDone task to run when settings have been moved
+     * @return success or not
      */
     public boolean moveData(Plot plot, Runnable whenDone) {
         if (!this.hasOwner()) {
@@ -2100,8 +2147,8 @@ public class Plot {
     }
 
     /**
-     * @return
      * @deprecated in favor of getCorners()[0];<br>
+     * @return bottom corner location
      */
     // Won't remove as suggestion also points to deprecated method
     @Deprecated public Location getBottom() {
@@ -2109,8 +2156,8 @@ public class Plot {
     }
 
     /**
-     * @return the top corner of the plot
      * @deprecated in favor of getCorners()[1];
+     * @return the top corner of the plot
      */
     // Won't remove as suggestion also points to deprecated method
     @Deprecated public Location getTop() {
@@ -2158,7 +2205,9 @@ public class Plot {
      * Remove a denied player (use DBFunc as well)<br>
      * Using the * uuid will remove all users
      *
-     * @param uuid
+     * @param uuid uuid of player to remove from denied list
+     *
+     * @return success or not
      */
     public boolean removeDenied(UUID uuid) {
         if (uuid == DBFunc.EVERYONE && !denied.contains(uuid)) {
@@ -2186,7 +2235,9 @@ public class Plot {
      * Remove a helper (use DBFunc as well)<br>
      * Using the * uuid will remove all users
      *
-     * @param uuid
+     * @param uuid uuid of trusted player to remove
+     *
+     * @return success or not
      */
     public boolean removeTrusted(UUID uuid) {
         if (uuid == DBFunc.EVERYONE && !trusted.contains(uuid)) {
@@ -2214,7 +2265,9 @@ public class Plot {
      * Remove a trusted user (use DBFunc as well)<br>
      * Using the * uuid will remove all users
      *
-     * @param uuid
+     * @param uuid uuid of player to remove
+     *
+     * @return success or not
      */
     public boolean removeMember(UUID uuid) {
         if (this.members == null) {
@@ -2243,6 +2296,8 @@ public class Plot {
 
     /**
      * Export the plot as a schematic to the configured output directory.
+     *
+     * @param whenDone task to run when the export has finished
      */
     public void export(final RunnableVal<Boolean> whenDone) {
         this.schematicHandler.getCompoundTag(this, new RunnableVal<CompoundTag>() {
@@ -2284,7 +2339,7 @@ public class Plot {
      * - The mca files are each 512x512, so depending on the plot size it may also download adjacent plots<br>
      * - Works best when (plot width + road width) % 512 == 0<br>
      *
-     * @param whenDone
+     * @param whenDone task to run when plot is uploaded
      * @see WorldUtil
      */
     public void uploadWorld(RunnableVal<URL> whenDone) {
@@ -2354,8 +2409,8 @@ public class Plot {
      * - Updates DB<br>
      * - Does not modify terrain<br>
      *
-     * @param direction
-     * @param value
+     * @param direction direction to merge the plot in
+     * @param value if the plot is merged or not
      */
     public void setMerged(Direction direction, boolean value) {
         if (this.getSettings().setMerged(direction, value)) {
@@ -2404,7 +2459,7 @@ public class Plot {
      * ----------<br>
      * Note: Diagonal merging (4-7) must be done by merging the corresponding plots.
      *
-     * @param merged
+     * @param merged set the plot's merged plots
      */
     public void setMerged(boolean[] merged) {
         this.getSettings().setMerged(merged);
@@ -2424,6 +2479,8 @@ public class Plot {
     /**
      * Gets the set home location or 0,0,0 if no location is set<br>
      * - Does not take the default home location into account
+     *
+     * @return home location
      */
     public BlockLoc getPosition() {
         return this.getSettings().getPosition();
@@ -2433,6 +2490,8 @@ public class Plot {
      * Check if a plot can be claimed by the provided player.
      *
      * @param player the claiming player
+     *
+     * @return if the given player can claim the plot
      */
     public boolean canClaim(@Nonnull PlotPlayer player) {
         PlotCluster cluster = this.getCluster();
@@ -2574,7 +2633,7 @@ public class Plot {
      * Merge the plot settings<br>
      * - Used when a plot is merged<br>
      *
-     * @param plot
+     * @param plot plot to merge the data from
      */
     public void mergeData(Plot plot) {
         final FlagContainer flagContainer1 = this.getFlagContainer();
@@ -2640,8 +2699,8 @@ public class Plot {
      * Gets the plot in a relative location<br>
      * Note: May be null if the partial plot area does not include the relative location
      *
-     * @param x
-     * @param y
+     * @param x relative id X
+     * @param y relative id Y
      * @return Plot
      */
     public Plot getRelative(int x, int y) {
@@ -2793,7 +2852,7 @@ public class Plot {
      * - This result is cached globally<br>
      * - Useful for handling non rectangular shapes
      *
-     * @return
+     * @return all regions within the plot
      */
     @Nonnull public Set<CuboidRegion> getRegions() {
         if (regions_cache != null && connected_cache != null && connected_cache.contains(this)) {
@@ -2922,7 +2981,7 @@ public class Plot {
     /**
      * Attempt to find the largest rectangular region in a plot (as plots can form non rectangular shapes)
      *
-     * @return
+     * @return the plot's largest CuboidRegion
      */
     public CuboidRegion getLargestRegion() {
         Set<CuboidRegion> regions = this.getRegions();
@@ -3085,6 +3144,8 @@ public class Plot {
      *
      * @param component Component to set
      * @param blocks    Pattern to use the generation
+     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *              otherwise writes to the queue but does not enqueue.
      * @return True if the component was set successfully
      */
     public boolean setComponent(String component, Pattern blocks, @Nullable QueueCoordinator queue) {
@@ -3117,6 +3178,8 @@ public class Plot {
     /**
      * Merges two plots. <br>- Assumes plots are directly next to each other <br> - saves to DB
      *
+     * @param lesserPlot the plot to merge into this plot instance
+     * @param removeRoads if roads should be removed during the merge
      * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *              otherwise writes to the queue but does not enqueue.
      */
@@ -3297,9 +3360,9 @@ public class Plot {
     /**
      * Copy a plot to a location, both physically and the settings
      *
-     * @param destination
-     * @param whenDone
-     * @return
+     * @param destination destination plot
+     * @param whenDone task to run when copy is complete
+     * @return success or not
      */
     public boolean copy(final Plot destination, final Runnable whenDone) {
         PlotId offset = PlotId.of(destination.getId().getX() - this.getId().getX(), destination.getId().getY() - this.getId().getY());
@@ -3419,6 +3482,7 @@ public class Plot {
      * and at last, it will look at the default values stored in {@link GlobalFlagContainer}.
      *
      * @param flagClass The flag type (Class)
+     * @param <T> the flag value type
      * @return The flag value
      */
     public <T> T getFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
@@ -3431,6 +3495,8 @@ public class Plot {
      * and at last, it will look at the default values stored in {@link GlobalFlagContainer}.
      *
      * @param flag The flag type (Any instance of the flag)
+     * @param <V> the flag type (Any instance of the flag)
+     * @param <T> the flag's value type
      * @return The flag value
      */
     public <T, V extends PlotFlag<T, ?>> T getFlag(final V flag) {

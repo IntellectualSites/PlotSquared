@@ -57,6 +57,9 @@ public abstract class QueueProvider {
 
     /**
      * Get a queue for the given world
+     *
+     * @param world world
+     * @return new QueueCoordinator
      */
     public abstract QueueCoordinator getNewQueue(@Nonnull World world);
 }

@@ -86,7 +86,7 @@ public class Trim extends SubCommand {
      *
      * @param world  The world
      * @param result (viable = .mcr to trim, nonViable = .mcr keep)
-     * @return
+     * @return success or not
      */
     public static boolean getTrimRegions(String world,
         final RunnableVal2<Set<BlockVector2>, Set<BlockVector2>> result) {

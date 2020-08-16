@@ -48,6 +48,7 @@ public class Permissions {
     /**
      * Check if the owner of the profile has a given (global) permission
      *
+     * @param caller permission holder
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
@@ -58,6 +59,7 @@ public class Permissions {
     /**
      * Check if the owner of the profile has a given (global) permission
      *
+     * @param caller permission holder
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
@@ -68,10 +70,10 @@ public class Permissions {
     /**
      * Checks if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
      *
-     * @param player
-     * @param permission
-     * @param notify
-     * @return
+     * @param player permission holder
+     * @param permission permission
+     * @param notify if to notify the permission holder
+     * @return if permission is had
      */
     public static boolean hasPermission(PlotPlayer<?> player, String permission, boolean notify) {
         if (!hasPermission(player, permission)) {

@@ -128,6 +128,7 @@ public class ComponentPresetManager {
      * if the player is in a compatible plot, and sends appropriate
      * error messages if not
      *
+     * @param player player
      * @return Build inventory, if it could be created
      */
     @Nullable public PlotInventory buildInventory(final PlotPlayer<?> player) {

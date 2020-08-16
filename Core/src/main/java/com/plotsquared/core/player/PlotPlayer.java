@@ -317,7 +317,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * Get the number of plots this player owns in the world.
      *
      * @param world the name of the plotworld to check.
-     * @return
+     * @return plot count
      */
     public int getPlotCount(String world) {
         UUID uuid = getUUID();
@@ -393,6 +393,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     /**
      * Get this player's full location (including yaw/pitch)
+     * @return location
      */
     public abstract Location getLocationFull();
 
@@ -460,7 +461,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * - Please note that this is not intended to store large values
      * - For session only data use meta
      *
-     * @param key
+     * @param key metadata key
      */
     public void setAttribute(String key) {
         setPersistentMeta("attrib_" + key, new byte[] {(byte) 1});
@@ -469,7 +470,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * Retrieves the attribute of this player.
      *
-     * @param key
+     * @param key metadata key
      * @return the attribute will be either true or false
      */
     public boolean getAttribute(String key) {
@@ -482,7 +483,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * Remove an attribute from a player.
      *
-     * @param key
+     * @param key metadata key
      */
     public void removeAttribute(String key) {
         removePersistentMeta("attrib_" + key);
@@ -605,8 +606,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * Get the amount of clusters this player owns in the specific world.
      *
-     * @param world
-     * @return
+     * @param world world
+     * @return number of clusters owned
      */
     public int getPlayerClusterCount(String world) {
         return PlotSquared.get().getClusters(world).stream()
@@ -914,6 +915,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     /**
      * The amount of money this Player has.
+     *
+     * @return amount of money owned by the player
      */
     public double getMoney() {
         return this.econHandler == null ?

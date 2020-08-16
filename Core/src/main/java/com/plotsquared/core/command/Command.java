@@ -280,9 +280,10 @@ public abstract class Command {
     }
 
     /**
-     * @param player  Caller
-     * @param args    Arguments
-     * @param confirm Instance, Success, Failure
+     * @param player   Caller
+     * @param args     Arguments
+     * @param confirm  Instance, Success, Failure
+     * @param whenDone task to run when done
      * @return CompletableFuture true if the command executed fully, false in
      * any other case
      */

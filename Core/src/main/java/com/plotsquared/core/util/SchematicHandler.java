@@ -251,10 +251,13 @@ public abstract class SchematicHandler {
     /**
      * Paste a schematic.
      *
-     * @param schematic the schematic object to paste
-     * @param plot      plot to paste in
-     * @param xOffset   offset x to paste it from plot origin
-     * @param zOffset   offset z to paste it from plot origin
+     * @param schematic  the schematic object to paste
+     * @param plot       plot to paste in
+     * @param xOffset    offset x to paste it from plot origin
+     * @param yOffset    offset y to paste it from plot origin
+     * @param zOffset    offset z to paste it from plot origin
+     * @param autoHeight if to automatically choose height to paste from
+     * @param whenDone   task to run when schematic is pasted
      */
     public void paste(final Schematic schematic,
                       final Plot plot,
@@ -357,6 +360,7 @@ public abstract class SchematicHandler {
      *
      * @param name to check
      * @return schematic if found, else null
+     * @throws UnsupportedFormatException thrown if schematic format is unsupported
      */
     public Schematic getSchematic(String name) throws UnsupportedFormatException {
         File parent = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.SCHEMATICS);
@@ -400,6 +404,7 @@ public abstract class SchematicHandler {
      *
      * @param file to check
      * @return schematic if found, else null
+     * @throws UnsupportedFormatException thrown if schematic format is unsupported
      */
     public Schematic getSchematic(File file) throws UnsupportedFormatException {
         if (!file.exists()) {

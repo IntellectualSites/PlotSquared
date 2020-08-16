@@ -58,6 +58,7 @@ public final class PlotId {
      *
      * @param x The plot x coordinate
      * @param y The plot y coordinate
+     * @return a new PlotId at x,y
      */
     @Nonnull public static PlotId of(final int x, final int y) {
         return new PlotId(x, y);
@@ -275,7 +276,7 @@ public final class PlotId {
 
         @Override public PlotId next() {
             if (!hasNext()) {
-               throw new IndexOutOfBoundsException("The iterator has no more entries");
+                throw new IndexOutOfBoundsException("The iterator has no more entries");
             }
             if (this.y == this.end.getY()) {
                 this.x++;

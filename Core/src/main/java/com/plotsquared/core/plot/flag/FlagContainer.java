@@ -128,6 +128,8 @@ public class FlagContainer {
      * Add a flag to the container
      *
      * @param flag Flag to add
+     * @param <T>  flag type
+     * @param <V>  flag value type
      * @see #addAll(Collection) to add multiple flags
      */
     public <V, T extends PlotFlag<V, ?>> void addFlag(final T flag) {
@@ -158,6 +160,9 @@ public class FlagContainer {
      * Remove a flag from the container
      *
      * @param flag Flag to remove
+     * @param <T>  flag type
+     * @param <V>  flag value type
+     * @return value of flag removed
      */
     public <V, T extends PlotFlag<V, ?>> V removeFlag(final T flag) {
         final Object value = this.flagMap.remove(flag.getClass());
@@ -224,6 +229,7 @@ public class FlagContainer {
      * with wildcard generic types.
      *
      * @param flagClass The {@link PlotFlag} class.
+     * @return the plot flag
      */
     public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
         final PlotFlag<?, ?> flag = this.flagMap.get(flagClass);

@@ -51,6 +51,7 @@ public interface World<T> {
     /**
      * Get a {@link NullWorld} implementation
      *
+     * @param <T> implementation-specific world object type e.g. a bukkit World
      * @return NullWorld instance
      */
     static <T> NullWorld<T> nullWorld() {

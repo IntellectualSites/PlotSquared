@@ -92,8 +92,8 @@ public class PlotAnalysis {
      * This will set the optimal modifiers for the plot analysis based on the current plot ratings<br>
      * - Will be used to calibrate the threshold for plot clearing
      *
-     * @param whenDone
-     * @param threshold
+     * @param whenDone task to run when done
+     * @param threshold threshold
      */
     public static void calcOptimalModifiers(final Runnable whenDone, final double threshold) {
         if (running) {
@@ -495,7 +495,9 @@ public class PlotAnalysis {
     /**
      * Get correlation coefficient.
      *
-     * @return
+     * @param n   n
+     * @param sum sum
+     * @return result
      */
     public static double getCC(int n, int sum) {
         return 1 - 6 * (double) sum / (n * (n * n - 1));
@@ -503,6 +505,9 @@ public class PlotAnalysis {
 
     /**
      * Calls {@code Arrays.stream(array).sum()}
+     *
+     * @param array array
+     * @return sum
      */
     public static int sum(int[] array) {
         return Arrays.stream(array).sum();
@@ -512,8 +517,8 @@ public class PlotAnalysis {
      * A simple array squaring algorithm.
      * - Used for calculating the variance
      *
-     * @param array
-     * @return
+     * @param array array
+     * @return result
      */
     public static int[] square(int[] array) {
         array = array.clone();
@@ -526,8 +531,8 @@ public class PlotAnalysis {
     /**
      * An optimized lossy standard deviation algorithm.
      *
-     * @param ranks
-     * @return
+     * @param ranks ranks
+     * @return result
      */
     public static int[] getSD(int[]... ranks) {
         if (ranks.length == 0) {
@@ -555,9 +560,8 @@ public class PlotAnalysis {
      * - Input is an array of int with a max size of 102400<br>
      * - A reduced sample space allows for sorting (and ranking in this case) in linear time
      *
-     * @param input
-     * @param input
-     * @return
+     * @param input input
+     * @return result
      */
     public static int[] rank(int[] input) {
         return rank(input, 102400);
@@ -566,8 +570,9 @@ public class PlotAnalysis {
     /**
      * An optimized algorithm for ranking a very specific set of inputs
      *
-     * @param input
-     * @return
+     * @param input input
+     * @param size  size
+     * @return result
      */
     public static int[] rank(int[] input, int size) {
         int[] cache = new int[size];

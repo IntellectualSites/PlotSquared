@@ -58,6 +58,7 @@ public final class MetaDataKey<T> {
      * Get a new named lock key
      *
      * @param key Key name
+     * @param type type
      * @param <T> Type
      * @return MetaData key instance
      */

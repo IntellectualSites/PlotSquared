@@ -78,6 +78,9 @@ public abstract class RegionManager {
      * 3 = Mob
      * 4 = Boat
      * 5 = Misc
+     *
+     * @param plot plot
+     * @return array of counts of entity types
      */
     public abstract int[] countEntities(Plot plot);
 
@@ -98,8 +101,13 @@ public abstract class RegionManager {
     /**
      * Set a number of cuboids to a certain block between two y values.
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param area    plot area
+     * @param regions cuboid regions
+     * @param blocks  pattern
+     * @param minY    y to set from
+     * @param maxY    y to set to
+     * @param queue   Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *                otherwise writes to the queue but does not enqueue.
      * @return true if not enqueued, otherwise whether the created queue enqueued.
      */
     public boolean setCuboids(final PlotArea area,
@@ -124,6 +132,7 @@ public abstract class RegionManager {
     /**
      * Notify any plugins that may want to modify clear behaviour that a clear is occuring
      *
+     * @param manager plot manager
      * @return true if the notified will accept the clear task
      */
     public boolean notifyClear(PlotManager manager) {
@@ -133,12 +142,21 @@ public abstract class RegionManager {
     /**
      * Only called when {@link RegionManager#notifyClear(PlotManager)} returns true in specific PlotManagers
      *
+     * @param plot     plot
+     * @param whenDone task to run when complete
+     * @param manager  plot manager
      * @return true if the clear worked. False if someone went wrong so P2 can then handle the clear
      */
     public abstract boolean handleClear(Plot plot, final Runnable whenDone, PlotManager manager);
 
     /**
      * Copy a region to a new location (in the same world)
+     *
+     * @param pos1     position 1
+     * @param pos2     position 2
+     * @param newPos   position to move pos1 to
+     * @param whenDone task to run when complete
+     * @return success or not
      */
     public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
@@ -152,14 +170,19 @@ public abstract class RegionManager {
         copyFrom
             .addReadChunks(new CuboidRegion(BlockVector3.at(pos1.getX(), 0, pos1.getZ()), BlockVector3.at(pos2.getX(), 0, pos2.getZ())).getChunks());
         copyTo.setCompleteTask(whenDone);
-        copyFrom.enqueue();
-        return true;
+        return copyFrom.enqueue();
     }
 
     /**
      * Assumptions:<br>
      * - pos1 and pos2 are in the same plot<br>
      * It can be harmful to the world if parameters outside this scope are provided
+     *
+     * @param pos1          position 1
+     * @param pos2          position 2
+     * @param ignoreAugment if to bypass synchronisation ish thing
+     * @param whenDone      task to run when regeneration completed
+     * @return success or not
      */
     public abstract boolean regenerateRegion(Location pos1, Location pos2, boolean ignoreAugment, Runnable whenDone);
 

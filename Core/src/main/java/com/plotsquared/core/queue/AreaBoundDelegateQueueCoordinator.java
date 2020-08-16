@@ -50,6 +50,8 @@ public class AreaBoundDelegateQueueCoordinator extends DelegateQueueCoordinator 
 
     /**
      * Gets the plot area block settings is limited to
+     *
+     * @return PlotArea
      */
     public PlotArea getArea() {
         return this.area;

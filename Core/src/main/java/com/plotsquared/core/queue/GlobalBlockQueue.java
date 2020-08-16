@@ -45,6 +45,9 @@ public class GlobalBlockQueue {
 
     /**
      * Get a new {@link QueueCoordinator} for the given world.
+     *
+     * @param world world to get new queue for
+     * @return new QueueCoordinator for world
      */
     @Nonnull public QueueCoordinator getNewQueue(@Nonnull World world) {
         QueueCoordinator queue = provider.getNewQueue(world);

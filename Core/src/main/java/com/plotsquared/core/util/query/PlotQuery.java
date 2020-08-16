@@ -150,6 +150,8 @@ public final class PlotQuery implements Iterable<Plot> {
     /**
      * Query for plots based on a search term
      *
+     * @param searchTerm search term to use (uuid, plotID, username)
+     *
      * @return The query instance
      */
     @Nonnull public PlotQuery plotsBySearch(@Nonnull final String searchTerm) {
@@ -160,6 +162,8 @@ public final class PlotQuery implements Iterable<Plot> {
 
     /**
      * Query with a pre-defined result
+     *
+     * @param plot to return when Query is searched
      *
      * @return The query instance
      */

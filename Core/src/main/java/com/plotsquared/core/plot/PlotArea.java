@@ -659,6 +659,9 @@ public abstract class PlotArea {
      * Retrieves the plots for the player in this PlotArea.
      *
      * @deprecated Use {@link #getPlots(UUID)}
+     *
+     * @param player player to get plots of
+     * @return set of player's plots
      */
     @Deprecated public Set<Plot> getPlots(@Nonnull final PlotPlayer player) {
         return getPlots(player.getUUID());
@@ -737,6 +740,9 @@ public abstract class PlotArea {
      * Session only plot metadata (session is until the server stops).
      * <br>
      * For persistent metadata use the flag system
+     *
+     * @param key metadata key
+     * @param value metadata value
      */
     public void setMeta(@Nonnull final String key, @Nullable final Object value) {
         if (this.meta == null) {
@@ -754,6 +760,8 @@ public abstract class PlotArea {
      * Get the metadata for a key<br>
      * <br>
      * For persistent metadata use the flag system
+     * @param key metadata key to get value for
+     * @return metadata value
      */
     @Nullable public Object getMeta(@Nonnull final String key) {
         if (this.meta != null) {
@@ -784,15 +792,10 @@ public abstract class PlotArea {
 
     /**
      * Returns an ImmutableMap of PlotId's and Plots in this PlotArea.
-     */
-    public Map<PlotId, Plot> getPlotsMap() {
-        return ImmutableMap.copyOf(plots);
-    }
-
-    /**
-     * Returns an ImmutableMap of PlotId's and Plots in this PlotArea.
      *
-     * @deprecated Use {@link #getPlotsMap()}
+     * @deprecated Poorly implemented. May be removed in future.
+     *
+     * @return map of PlotId against Plot for all plots in this area
      */
     //todo eventually remove
     @Deprecated @Nonnull public Map<PlotId, Plot> getPlotsRaw() {
@@ -1159,6 +1162,7 @@ public abstract class PlotArea {
      * the default values stored in {@link GlobalFlagContainer}.
      *
      * @param flagClass The flag type (Class)
+     * @param <T> The flag value type
      * @return The flag value
      */
     public <T> T getFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
@@ -1170,6 +1174,8 @@ public abstract class PlotArea {
      * the default values stored in {@link GlobalFlagContainer}.
      *
      * @param flag The flag type (Any instance of the flag)
+     * @param <V> The flag type (Any instance of the flag)
+     * @param <T> flag valye type
      * @return The flag value
      */
     public <T, V extends PlotFlag<T, ?>> T getFlag(final V flag) {
@@ -1183,6 +1189,7 @@ public abstract class PlotArea {
      * the default values stored in {@link GlobalFlagContainer}.
      *
      * @param flagClass The flag type (Class)
+     * @param <T> the flag value type
      * @return The flag value
      */
     public <T> T getRoadFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
@@ -1194,6 +1201,8 @@ public abstract class PlotArea {
      * the default values stored in {@link GlobalFlagContainer}.
      *
      * @param flag The flag type (Any instance of the flag)
+     * @param <V> The flag type (Any instance of the flag)
+     * @param <T> flag valye type
      * @return The flag value
      */
     public <T, V extends PlotFlag<T, ?>> T getRoadFlag(final V flag) {

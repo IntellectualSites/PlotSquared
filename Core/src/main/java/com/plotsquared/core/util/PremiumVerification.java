@@ -60,6 +60,8 @@ public class PremiumVerification {
 
     /**
      * Returns true if this plugin is premium
+     *
+     * @return if is premium
      */
     public static Boolean isPremium() {
         return usingPremium == null ? (usingPremium = isPremium(getUserID())) : usingPremium;

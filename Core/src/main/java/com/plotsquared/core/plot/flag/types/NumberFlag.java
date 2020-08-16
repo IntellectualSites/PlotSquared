@@ -62,10 +62,10 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
 
     /**
      * Parse the raw string input to the number type.
-     * Throw a {@link FlagParseException} if the number couldn't be parsed.
      *
      * @param input the string to parse the number from.
      * @return the parsed number.
+     * @throws FlagParseException if the number couldn't be parsed.
      */
     @Nonnull protected abstract N parseNumber(String input) throws FlagParseException;
 }

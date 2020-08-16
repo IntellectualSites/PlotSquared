@@ -60,10 +60,8 @@ public class ClassicPlotManager extends SquarePlotManager {
         this.regionManager = regionManager;
     }
 
-    @Override public boolean setComponent(@Nonnull PlotId plotId,
-                                          @Nonnull String component,
-                                          @Nonnull Pattern blocks,
-                                          @Nullable QueueCoordinator queue) {
+    @Override
+    public boolean setComponent(@Nonnull PlotId plotId, @Nonnull String component, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         final Optional<ClassicPlotManagerComponent> componentOptional = ClassicPlotManagerComponent.fromString(component);
         if (componentOptional.isPresent()) {
             switch (componentOptional.get()) {
@@ -101,8 +99,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set the plot floor
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set floor of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setFloor(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -116,8 +117,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Sets the plot main, floor and air areas.
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set all of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setAll(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -130,8 +134,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Sets the plot air region.
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set air of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setAir(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -145,8 +152,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Sets the plot main blocks.
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set main of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setMain(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -159,8 +169,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set the middle plot block to a Pattern
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set middle block of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setMiddle(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -184,8 +197,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set a plot's outline
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set outline of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setOutline(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
@@ -257,8 +273,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set the wall filling for a plot
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set wall filling of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setWallFilling(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
@@ -321,8 +340,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set a plot's wall top block only
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set wall top block of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setWall(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {

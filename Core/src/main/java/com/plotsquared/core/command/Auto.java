@@ -126,10 +126,10 @@ public class Auto extends SubCommand {
     /**
      * Teleport the player home, or claim a new plot
      *
-     * @param player
-     * @param area
-     * @param start
-     * @param schematic
+     * @param player    player
+     * @param area      plot area
+     * @param start     start id
+     * @param schematic schematic
      */
     public static void homeOrAuto(final PlotPlayer player, final PlotArea area, PlotId start,
         final String schematic) {
@@ -145,10 +145,10 @@ public class Auto extends SubCommand {
     /**
      * Claim a new plot for a player
      *
-     * @param player
-     * @param area
-     * @param start
-     * @param schematic
+     * @param player    player
+     * @param area      plot area
+     * @param start     start id
+     * @param schematic schematic
      */
     public static void autoClaimSafe(final PlotPlayer<?> player, final PlotArea area, PlotId start,
         final String schematic) {

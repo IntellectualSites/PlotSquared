@@ -53,11 +53,9 @@ public class ConfigurationSerialization {
     /**
      * Attempts to deserialize the given arguments into a new instance of the
      * given class.
-     * <p>
      * <p>The class must implement {@link ConfigurationSerializable}, including
      * the extra methods as specified in the javadoc of
      * ConfigurationSerializable.</p>
-     * <p>
      * <p>If a new instance could not be made, an example being the class not
      * fully implementing the interface, null will be returned.</p>
      *
@@ -72,15 +70,12 @@ public class ConfigurationSerialization {
 
     /**
      * Attempts to deserialize the given arguments into a new instance of the
-     * <p>
      * given class.
-     * <p>
-     * The class must implement {@link ConfigurationSerializable}, including
+     *
+     * <p>The class must implement {@link ConfigurationSerializable}, including
      * the extra methods as specified in the javadoc of
      * ConfigurationSerializable.</p>
-     * <p>
-     * <p>
-     * If a new instance could not be made, an example being the class not
+     * <p>If a new instance could not be made, an example being the class not
      * fully implementing the interface, null will be returned.</p>
      *
      * @param args Arguments for deserialization

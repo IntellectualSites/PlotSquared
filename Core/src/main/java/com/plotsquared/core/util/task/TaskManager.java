@@ -69,6 +69,7 @@ public abstract class TaskManager {
      *
      * @param string String to remove
      *               return {@code true} if the value was stored in the map, or {@code false}
+     * @return if string was actually removed
      */
     public static boolean removeFromTeleportQueue(@Nonnull final String string) {
         return teleportQueue.remove(string);

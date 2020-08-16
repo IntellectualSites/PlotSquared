@@ -119,7 +119,7 @@ public class ExpireManager {
     /**
      * Gets the account last joined - first joined (or Long.MAX_VALUE)
      *
-     * @param uuid
+     * @param uuid player uuid
      * @return result
      */
     public long getAccountAge(UUID uuid) {

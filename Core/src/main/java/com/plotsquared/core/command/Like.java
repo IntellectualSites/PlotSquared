@@ -172,6 +172,7 @@ public class Like extends SubCommand {
     /**
      * Get the likes to dislike ratio of a plot as a percentage (in decimal form)
      *
+     * @param plot plot
      * @return likes to dislike ratio, returns zero if the plot has no likes
      */
     public static double getLikesPercentage(final Plot plot) {
