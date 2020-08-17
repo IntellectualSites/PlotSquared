@@ -39,18 +39,18 @@ public class PlotInventory {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotInventory.class.getSimpleName());
 
     private final PlotPlayer<?> player;
-    private final int size;
+    private final int lines;
     private final PlotItemStack[] items;
     private String title;
     private boolean open = false;
     private final InventoryUtil inventoryUtil;
 
     public PlotInventory(@Nonnull final InventoryUtil inventoryUtil,
-                         PlotPlayer<?> player, int size, String name) {
-        this.size = size;
+                         PlotPlayer<?> player, int lines, String name) {
+        this.lines = lines;
         this.title = name == null ? "" : name;
         this.player = player;
-        this.items = new PlotItemStack[size * 9];
+        this.items = new PlotItemStack[lines * 9];
         this.inventoryUtil = inventoryUtil;
     }
 
@@ -144,7 +144,7 @@ public class PlotInventory {
         return player;
     }
 
-    public int getSize() {
-        return size;
+    public int getLines() {
+        return lines;
     }
 }

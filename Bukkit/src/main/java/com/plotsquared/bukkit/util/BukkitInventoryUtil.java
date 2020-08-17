@@ -51,10 +51,10 @@ import java.util.stream.IntStream;
 
     @Override public void open(PlotInventory inv) {
         BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
-        Inventory inventory = Bukkit.createInventory(null, inv.getSize() * 9,
+        Inventory inventory = Bukkit.createInventory(null, inv.getLines() * 9,
             ChatColor.translateAlternateColorCodes('&', inv.getTitle()));
         PlotItemStack[] items = inv.getItems();
-        for (int i = 0; i < inv.getSize() * 9; i++) {
+        for (int i = 0; i < inv.getLines() * 9; i++) {
             PlotItemStack item = items[i];
             if (item != null) {
                 inventory.setItem(i, getItem(item));
