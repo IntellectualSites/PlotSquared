@@ -36,12 +36,14 @@ import javax.annotation.Nonnegative;
  */
 public final class PaperTimeConverter implements TaskTime.TimeConverter {
 
+    private static final long MIN_MS_PER_TICKS = 50L;
+
     @Override public long msToTicks(@Nonnegative final long ms) {
-        return Math.max(1L, (long) (ms / Bukkit.getAverageTickTime()));
+        return Math.max(1L, (long) (ms / Math.max(MIN_MS_PER_TICKS, Bukkit.getAverageTickTime())));
     }
 
     @Override public long ticksToMs(@Nonnegative final long ticks) {
-        return Math.max(1L, (long) (ticks * Bukkit.getAverageTickTime()));
+        return Math.max(1L, (long) (ticks * Math.max(MIN_MS_PER_TICKS, Bukkit.getAverageTickTime())));
     }
 
 }
