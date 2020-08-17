@@ -228,7 +228,7 @@ public class DatabaseCommand extends SubCommand {
                 return true;
             } catch (ClassNotFoundException | SQLException e) {
                 player.sendMessage(TranslatableCaption.of("database.failed_to_save_plots"));
-                player.sendMessage(TranslatableCaption.of(("errors.stacktrace_begin")));
+                player.sendMessage(TranslatableCaption.of("errors.stacktrace_begin"));
                 e.printStackTrace();
                 player.sendMessage(TranslatableCaption.of(("errors.stacktrace_end")));
                 player.sendMessage(TranslatableCaption.of("database.invalid_args"));
@@ -236,9 +236,9 @@ public class DatabaseCommand extends SubCommand {
             }
         } catch (ClassNotFoundException | SQLException e) {
             player.sendMessage(TranslatableCaption.of("database.failed_to_open"));
-            player.sendMessage(TranslatableCaption.of(("errors.stacktrace_begin")));
+            player.sendMessage(TranslatableCaption.of("errors.stacktrace_begin"));
             e.printStackTrace();
-            player.sendMessage(TranslatableCaption.of(("errors.stacktrace_end")));
+            player.sendMessage(TranslatableCaption.of("errors.stacktrace_end"));
             player.sendMessage(TranslatableCaption.of("database.invalid_args"));
             return false;
         }
