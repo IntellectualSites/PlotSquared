@@ -116,7 +116,7 @@ public class BukkitUtil extends WorldUtil {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
 
     public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitPlatform.getPlugin(BukkitPlatform.class));
-    public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+    public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final Collection<BlockType> tileEntityTypes = new HashSet<>();
@@ -334,7 +334,7 @@ public class BukkitUtil extends WorldUtil {
                 final Sign sign = (Sign) blockstate;
                 for (int i = 0; i < lines.length; i++) {
                     sign.setLine(i, LEGACY_COMPONENT_SERIALIZER
-                        .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()))));
+                        .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()), replacements)));
                 }
                 sign.update(true);
             }
