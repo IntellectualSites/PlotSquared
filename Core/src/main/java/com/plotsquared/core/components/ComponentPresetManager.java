@@ -155,7 +155,7 @@ public class ComponentPresetManager {
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
         final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size, this.guiName) {
             @Override public boolean onClick(final int index) {
-                if (!player.getCurrentPlot().equals(plot)) {
+                if (!getPlayer().getCurrentPlot().equals(plot)) {
                     return false;
                 }
 
@@ -169,28 +169,28 @@ public class ComponentPresetManager {
                 }
 
                 if (plot.getRunning() > 0) {
-                    player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+                    getPlayer().sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                     return false;
                 }
 
                 final Pattern pattern = PatternUtil.parse(null, componentPreset.getPattern(), false);
                 if (pattern == null) {
-                    player.sendMessage(TranslatableCaption.of("preset.preset_invalid"));
+                    getPlayer().sendMessage(TranslatableCaption.of("preset.preset_invalid"));
                     return false;
                 }
 
                 if (componentPreset.getCost() > 0.0D && econHandler != null && plot.getArea().useEconomy()) {
-                    if (econHandler.getMoney(player) < componentPreset.getCost()) {
-                        player.sendMessage(TranslatableCaption.of("preset.preset_cannot_afford"));
+                    if (econHandler.getMoney(getPlayer()) < componentPreset.getCost()) {
+                        getPlayer().sendMessage(TranslatableCaption.of("preset.preset_cannot_afford"));
                         return false;
                     } else {
-                        econHandler.withdrawMoney(player, componentPreset.getCost());
-                        player.sendMessage(TranslatableCaption.of("economy.removed_balance"),
+                        econHandler.withdrawMoney(getPlayer(), componentPreset.getCost());
+                        getPlayer().sendMessage(TranslatableCaption.of("economy.removed_balance"),
                                 Template.of("money", componentPreset.getCost() + ""));
                     }
                 }
 
-                BackupManager.backup(player, plot, () -> {
+                BackupManager.backup(getPlayer(), plot, () -> {
                     plot.addRunning();
                     QueueCoordinator queue = plot.getArea().getQueue();
                     for (Plot current : plot.getConnectedPlots()) {
@@ -198,7 +198,7 @@ public class ComponentPresetManager {
                     }
                     queue.setCompleteTask(plot::removeRunning);
                     queue.enqueue();
-                    player.sendMessage(TranslatableCaption.of("working.generating_component"));
+                    getPlayer().sendMessage(TranslatableCaption.of("working.generating_component"));
                 });
                 return false;
             }

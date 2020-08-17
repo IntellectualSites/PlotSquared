@@ -38,8 +38,8 @@ public class PlotInventory {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotInventory.class.getSimpleName());
 
-    public final PlotPlayer<?> player;
-    public final int size;
+    private final PlotPlayer<?> player;
+    private final int size;
     private final PlotItemStack[] items;
     private String title;
     private boolean open = false;
@@ -88,9 +88,9 @@ public class PlotInventory {
         if (this.title == null) {
             return;
         }
-        if (!hasPlotInventoryOpen(player)) {
+        if (!hasPlotInventoryOpen(getPlayer())) {
             this.open = true;
-            setPlotInventoryOpen(player, this);
+            setPlotInventoryOpen(getPlayer(), this);
             this.inventoryUtil.open(this);
         }
     }
@@ -99,7 +99,7 @@ public class PlotInventory {
         if (this.title == null) {
             return;
         }
-        removePlotInventoryOpen(player);
+        removePlotInventoryOpen(getPlayer());
         this.inventoryUtil.close(this);
         this.open = false;
     }
@@ -140,4 +140,11 @@ public class PlotInventory {
         return this.open;
     }
 
+    public PlotPlayer<?> getPlayer() {
+        return player;
+    }
+
+    public int getSize() {
+        return size;
+    }
 }

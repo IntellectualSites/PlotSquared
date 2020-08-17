@@ -160,19 +160,19 @@ public class Rate extends SubCommand {
                             if (index.getValue() >= Settings.Ratings.CATEGORIES.size()) {
                                 int rV = rating.getValue();
                                 PlotRateEvent event = Rate.this.eventDispatcher
-                                    .callRating(this.player, plot, new Rating(rV));
+                                    .callRating(this.getPlayer(), plot, new Rating(rV));
                                 if (event.getRating() != null) {
-                                    plot.addRating(this.player.getUUID(), event.getRating());
-                                    player.sendMessage(
+                                    plot.addRating(this.getPlayer().getUUID(), event.getRating());
+                                    getPlayer().sendMessage(
                                             TranslatableCaption.of("ratings.rating_applied"),
                                             Template.of("plot", plot.getId().toString())
                                     );
                                     if (Permissions
-                                        .hasPermission(this.player, Permission.PERMISSION_COMMENT)) {
+                                        .hasPermission(this.getPlayer(), Permission.PERMISSION_COMMENT)) {
                                         Command command =
                                             MainCommand.getInstance().getCommand(Comment.class);
                                         if (command != null) {
-                                            player.sendMessage(
+                                            getPlayer().sendMessage(
                                                     TranslatableCaption.of("tutorial.comment_this"),
                                                     Template.of("plot", "/plot rate")
                                             );

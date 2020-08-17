@@ -49,11 +49,11 @@ import java.util.stream.IntStream;
 @Singleton public class BukkitInventoryUtil extends InventoryUtil {
 
     @Override public void open(PlotInventory inv) {
-        BukkitPlayer bp = (BukkitPlayer) inv.player;
-        Inventory inventory = Bukkit.createInventory(null, inv.size * 9,
+        BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
+        Inventory inventory = Bukkit.createInventory(null, inv.getSize() * 9,
             ChatColor.translateAlternateColorCodes('&', inv.getTitle()));
         PlotItemStack[] items = inv.getItems();
-        for (int i = 0; i < inv.size * 9; i++) {
+        for (int i = 0; i < inv.getSize() * 9; i++) {
             PlotItemStack item = items[i];
             if (item != null) {
                 inventory.setItem(i, getItem(item));
@@ -66,12 +66,12 @@ import java.util.stream.IntStream;
         if (!inv.isOpen()) {
             return;
         }
-        BukkitPlayer bp = (BukkitPlayer) inv.player;
+        BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
         bp.player.closeInventory();
     }
 
     @Override public void setItem(PlotInventory inv, int index, PlotItemStack item) {
-        BukkitPlayer bp = (BukkitPlayer) inv.player;
+        BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
         InventoryView opened = bp.player.getOpenInventory();
         if (!inv.isOpen()) {
             return;
@@ -84,18 +84,18 @@ import java.util.stream.IntStream;
         if (item == null) {
             return null;
         }
-        ItemStack stack = new ItemStack(BukkitAdapter.adapt(item.getType()), item.amount);
+        ItemStack stack = new ItemStack(BukkitAdapter.adapt(item.getType()), item.getAmount());
         ItemMeta meta = null;
-        if (item.name != null) {
+        if (item.getName() != null) {
             meta = stack.getItemMeta();
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', item.name));
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', item.getName()));
         }
-        if (item.lore != null) {
+        if (item.getLore() != null) {
             if (meta == null) {
                 meta = stack.getItemMeta();
             }
             List<String> lore = new ArrayList<>();
-            for (String entry : item.lore) {
+            for (String entry : item.getLore()) {
                 lore.add(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(BukkitUtil.MINI_MESSAGE.deserialize(entry)));
             }
             meta.setLore(lore);
@@ -141,7 +141,7 @@ import java.util.stream.IntStream;
         if (!plotInventory.isOpen()) {
             return false;
         }
-        BukkitPlayer bp = (BukkitPlayer) plotInventory.player;
+        BukkitPlayer bp = (BukkitPlayer) plotInventory.getPlayer();
         InventoryView opened = bp.player.getOpenInventory();
         if (plotInventory.isOpen()) {
             if (opened.getType() == InventoryType.CRAFTING) {

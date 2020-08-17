@@ -87,27 +87,27 @@ public class Music extends SubCommand {
                         .createFlagInstance(item.getType());
                     PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
-                        player.sendMessage(
+                        getPlayer().sendMessage(
                     TranslatableCaption.of("events.event_denied"),
                     Template.of("value", "Music removal"));
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
-                    player.sendMessage(TranslatableCaption.of("flag.flag_removed"));
-                } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
+                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_removed"));
+                } else if (item.getName().toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
                         .createFlagInstance(item.getType());
                     PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
-                        player.sendMessage(
+                        getPlayer().sendMessage(
                     TranslatableCaption.of("events.event_denied"),
                     Template.of("value", "Music addition"));
                         return true;
                     }
                     plot.setFlag(event.getFlag());
-                    player.sendMessage(TranslatableCaption.of("flag.flag_added"));
+                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_added"));
                 } else {
-                    player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
+                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_not_added"));
                 }
                 return false;
             }
