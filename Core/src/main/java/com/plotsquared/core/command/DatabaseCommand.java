@@ -103,7 +103,7 @@ public class DatabaseCommand extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot database [area] <sqlite|mysql|import>")
+                    Template.of("value", "/plot database [area] <sqlite | mysql | import>")
             );
             return false;
         }

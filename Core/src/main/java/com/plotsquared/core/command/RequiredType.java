@@ -32,8 +32,8 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import javax.annotation.Nonnull;
 
 public enum RequiredType {
-    CONSOLE(TranslatableCaption.of("console.is_console")),
-    PLAYER(TranslatableCaption.of("console.not_console")),
+    CONSOLE(TranslatableCaption.of("console.not_console")),
+    PLAYER(TranslatableCaption.of("console.is_console")),
     NONE(StaticCaption.of("Something went wrong: RequiredType=NONE")); // this caption should never be sent
 
     private final Caption caption;
