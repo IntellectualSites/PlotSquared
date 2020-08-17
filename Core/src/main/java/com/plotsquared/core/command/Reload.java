@@ -39,7 +39,6 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 
 @CommandDeclaration(command = "reload",

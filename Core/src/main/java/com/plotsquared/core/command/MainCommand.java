@@ -315,7 +315,8 @@ public class MainCommand extends Command {
                 player.sendMessage(TranslatableCaption.of("errors.error"),
                         net.kyori.adventure.text.minimessage.Template.of("value", message));
             } else {
-                player.sendMessage(TranslatableCaption.of("errors.error"), net.kyori.adventure.text.minimessage.Template.of("value", ""));
+                player.sendMessage(
+                        TranslatableCaption.of("errors.error_console"));
             }
         }
         // Reset command scope //

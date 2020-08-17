@@ -73,7 +73,7 @@ public class Debug extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length == 0 ) {
-            player.sendMessage(StaticCaption.of("commandconfig.command_syntax"),
+            player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
                     Template.of("value", "/plot debug <loadedchunks | debug-players | logging | entitytypes | msg>"));
         }
         if (args.length > 0) {
@@ -121,11 +121,11 @@ public class Debug extends SubCommand {
             player.sendMessage(TranslatableCaption.of("debug.entity_categories"));
             EntityCategory.REGISTRY.forEach(category -> {
                 final StringBuilder builder =
-                    new StringBuilder(" §7- §6").append(category.getId()).append("§7: §6");
+                    new StringBuilder("§7- §6").append(category.getId()).append("§7: §6");
                 for (final EntityType entityType : category.getAll()) {
                     builder.append(entityType.getId()).append(" ");
                 }
-                player.sendMessage(StaticCaption.of("core.prefix" + builder.toString()));
+                player.sendMessage(StaticCaption.of("<prefix>" + builder.toString()));
             });
             EntityType.REGISTRY.values().stream().sorted(Comparator.comparing(EntityType::getId))
                 .forEach(entityType -> {
@@ -134,7 +134,7 @@ public class Debug extends SubCommand {
                     if (categoryCount > 0) {
                         return;
                     }
-                    player.sendMessage(StaticCaption.of("core.prefix" + entityType.getName() + " is in "
+                    player.sendMessage(StaticCaption.of("<prefix>" + entityType.getName() + " is in "
                             + categoryCount + " categories"));
                 });
             return true;

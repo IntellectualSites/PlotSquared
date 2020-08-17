@@ -334,11 +334,9 @@ public class DebugExec extends SubCommand {
                     } else {
                         player.sendMessage(TranslatableCaption.of("debugexec.expiry_already_started"));
                     }
-                case "h":
-                case "he":
                 case "?":
                 case "help":
-                    player.sendMessage(StaticCaption.of("<core.prefix><gold>Possible sub commands: </gray>/plot debugexec <" + StringMan.join(allowed_params, " | ") + "></gray>"));
+                    player.sendMessage(StaticCaption.of("<prefix><gold>Possible sub commands: </gray>/plot debugexec <" + StringMan.join(allowed_params, " | ") + "></gray>"));
                     return false;
                 case "addcmd":
                     try {

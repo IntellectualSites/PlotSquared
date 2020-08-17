@@ -175,7 +175,7 @@ public class Claim extends SubCommand {
             try {
                 TaskManager.getPlatformImplementation().sync(() -> {
                     if (!plot.claim(player, true, finalSchematic, false)) {
-                        logger.info(TranslatableCaption.of("core.prefix") + String
+                        logger.info(TranslatableCaption.of("<prefix>") + String
                             .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
                         player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                         plot.setOwnerAbs(null);
@@ -197,7 +197,7 @@ public class Claim extends SubCommand {
                 e.printStackTrace();
             }
         }, () -> {
-            logger.info(TranslatableCaption.of("core.prefix") + String
+            logger.info(TranslatableCaption.of("<prefix>") + String
                 .format("Failed to add plot %s to the database",
                     plot.getId().toCommaSeparatedString()));
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));

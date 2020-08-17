@@ -609,10 +609,7 @@ public class Cluster extends SubCommand {
                 }
                 return true;
             }
-            case "members":
-            case "admin":
-            case "helper":
-            case "helpers": {
+            case "members": {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_HELPERS)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -623,7 +620,7 @@ public class Cluster extends SubCommand {
                 if (args.length != 3) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot cluster <members | admin | helper> <add | remove> <player>")
+                            Template.of("value", "/plot cluster members <add | remove> <player>")
                     );
                     return false;
                 }
@@ -658,7 +655,7 @@ public class Cluster extends SubCommand {
                             } else {
                                 player.sendMessage(
                                         TranslatableCaption.of("commandconfig.command_syntax"),
-                                        Template.of("value", "/plot cluster helpers <add | remove> <player>")
+                                        Template.of("value", "/plot cluster members <add | remove> <player>")
                                 );
                             }
                         }

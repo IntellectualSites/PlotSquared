@@ -349,7 +349,7 @@ public class BukkitUtil extends WorldUtil {
     @Override public void setBiomes(@Nonnull final String worldName, @Nonnull final CuboidRegion region, @Nonnull final BiomeType biomeType) {
         final World world = getWorld(worldName);
         if (world == null) {
-            logger.warn("[P2] An error occured while setting the biome because the world was null", new RuntimeException());
+            logger.warn("[P2] An error occurred while setting the biome because the world was null", new RuntimeException());
             return;
         }
         final Biome biome = BukkitAdapter.adapt(biomeType);

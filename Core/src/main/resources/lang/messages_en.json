@@ -301,7 +301,7 @@
   "errors.invalid_player": "<prefix><red>Player not found: </red><gray><value></gray><red>.</red>",
   "errors.invalid_player_offline": "<prefix><gray><player></gray><red> must be online.</red>",
   "errors.invalid_command_flag": "<prefix><red>Invalid command flag: </red><value></gray>",
-  "errors.error": "<prefix><red>An error occurred: <gray><value></gray></red>",
+  "errors.error": "<prefix><red>An error occurred: </red></gray><value></gray>",
   "errors.error_create": "<prefix><red>An error occurred while creating the world: <gray><world></gray></red>",
   "errors.error_console": "<prefix><red>An error occurred. See the console for more information.</red>",
   "errors.command_went_wrong": "<prefix><red>Something went wrong when executing that command...</red>",
