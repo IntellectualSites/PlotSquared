@@ -32,6 +32,7 @@ import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
 import com.plotsquared.core.util.InventoryUtil;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -88,7 +89,8 @@ import java.util.stream.IntStream;
         ItemMeta meta = null;
         if (item.getName() != null) {
             meta = stack.getItemMeta();
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', item.getName()));
+            Component nameComponent = BukkitUtil.MINI_MESSAGE.parse(item.getName());
+            meta.setDisplayName(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(nameComponent));
         }
         if (item.getLore() != null) {
             if (meta == null) {
