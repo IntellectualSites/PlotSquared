@@ -25,6 +25,7 @@
   
   "web.generating_link": "<prefix><gold>Processing plot...</gold>",
   "web.generating_link_failed": "<prefix><red>Failed to generate download link!</red>",
+  "web.generation_link_success": "<click:open_url:<url>><url></click>",
   "web.save_failed": "<prefix><red>Failed to save.</red>",
   "web.load_null": "<prefix><gray>Please use </gray><dark_aqua><command> </dark_aqua><gray>to get a list of schematics.</gray>",
   "web.load_failed": "<prefix><red>Failed to load schematic.</red>",
@@ -441,7 +442,7 @@
   "signs.owner_sign_line_4": "<dark_gray>Claimed</dark_gray>",
   
   "help.help_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",
-  "help.help_page_header": "<gold>Category: </gold><gray><category>,</gray><gold> Page: </gold><gray><current></gray><dark_gray>/</dark_gray><gray><max></gray>",
+  "help.help_page_header": "\n<gold>Category: </gold><gray><category>,</gray><gold> Page: </gold><gray><current></gray><dark_gray>/</dark_gray><gray><max></gray>\n",
   "help.help_footer": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",
   "help.help_info_item": "<gold>/plot help <gray><category> </gray><dark_gray>- </dark_gray><gray><category_desc></gray>",
   "help.help_item": "<gold><usage> <gray>[</gray><gold><alias></gray>]</gray>\n <dark_gray>- </dark_gray><gray><desc></gray>\n",

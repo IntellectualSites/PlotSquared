@@ -110,7 +110,7 @@ public class ComponentPresetManager {
         } else {
             final List<ComponentPreset> defaultPreset = Collections.singletonList(
                 new ComponentPreset(ClassicPlotManagerComponent.FLOOR, "##wool", 0, "", "&6D&ai&cs&ec&bo &2F&3l&do&9o&4r",
-                    Arrays.asList("&6Spice up your plot floor"), ItemTypes.YELLOW_WOOL));
+                    Arrays.asList("<gold>Spice up your plot floor</gold>"), ItemTypes.YELLOW_WOOL));
             yamlConfiguration.set("presets", defaultPreset.stream().map(ComponentPreset::serialize).collect(Collectors.toList()));
             try {
                 yamlConfiguration.save(file);

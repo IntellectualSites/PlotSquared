@@ -49,6 +49,7 @@ import java.util.concurrent.TimeoutException;
     category = CommandCategory.CLAIMING,
     usage = "/plot grant <check | add> [player]",
     permission = "plots.grant",
+    description = "Manage plot grants.",
     requiredType = RequiredType.NONE)
 public class Grant extends Command {
 

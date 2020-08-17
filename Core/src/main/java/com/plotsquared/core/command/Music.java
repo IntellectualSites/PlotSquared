@@ -115,16 +115,16 @@ public class Music extends SubCommand {
         int index = 0;
 
         for (final String disc : DISCS) {
-            final String name = String.format("<reset><gold>%s</gold>", disc);
-            final String[] lore = {"<reset><green>Click to play!</green>"};
+            final String name = String.format("<gold>%s</gold>", disc);
+            final String[] lore = {"<green>Click to play!</green>"};
             final PlotItemStack item = new PlotItemStack(disc, 1, name, lore);
             inv.setItem(index++, item);
         }
 
         // Always add the cancel button
         // if (player.getMeta("music") != null) {
-        String name = "<reset><gold>Cancel music</gold>";
-        String[] lore = {"<reset><red>Click to cancel!<reset>"};
+        String name = "<gold>Cancel music</gold>";
+        String[] lore = {"<red>Click to cancel!<reset>"};
         inv.setItem(index, new PlotItemStack("bedrock", 1, name, lore));
         // }
 

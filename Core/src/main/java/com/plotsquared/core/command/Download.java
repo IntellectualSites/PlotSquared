@@ -45,7 +45,7 @@ import net.kyori.adventure.text.minimessage.Template;
 import javax.annotation.Nonnull;
 import java.net.URL;
 
-@CommandDeclaration(usage = "/plot download [schematic|world]",
+@CommandDeclaration(usage = "/plot download [schematic | world]",
     command = "download",
     aliases = {"dl"},
     category = CommandCategory.SCHEMATIC,
@@ -111,7 +111,9 @@ public class Download extends SubCommand {
                                 player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
                                 return;
                             }
-                            player.sendMessage(StaticCaption.of(url.toString())
+                            player.sendMessage(
+                                    TranslatableCaption.of("web.generation_link_success"),
+                                    Template.of("url", url.toString())
                             );
                         }
                     });
