@@ -241,7 +241,7 @@ public class Rate extends SubCommand {
                 plot.addRating(uuid, event.getRating());
                 player.sendMessage(
                         TranslatableCaption.of("ratings.rating_applied"),
-                        Template.of("value", plot.getId().toString())
+                        Template.of("plot", plot.getId().toString())
                 );
             }
         };

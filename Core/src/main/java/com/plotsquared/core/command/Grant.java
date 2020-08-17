@@ -90,7 +90,7 @@ public class Grant extends Command {
                                 PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
                                 if (args[0].equalsIgnoreCase("check")) {
                                     player.sendMessage(TranslatableCaption.of("grants.granted_plots"),
-                                    Template.of("grants", String.valueOf(access.get().orElse(0))));
+                                    Template.of("amount", String.valueOf(access.get().orElse(0))));
                                 } else {
                                     access.set(access.get().orElse(0) + 1);
                                 }
