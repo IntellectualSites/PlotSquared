@@ -1,7 +1,7 @@
 {
   "confirm.expired_confirm": "<prefix><red>Confirmation has expired, please run the command again!</red>",
   "confirm.failed_confirm": "<prefix><red>You have no pending actions to confirm!</red>",
-  "confirm.requires_confirm": "<prefix><gray>Are you sure you wish to execute: </gray><gold><command></orange><gray>?</gray>\n<red>This cannot be undone! If you are sure: </red><gray><value></gray>",
+  "confirm.requires_confirm": "<prefix><gray>Are you sure you wish to execute: </gray><gold><command></gold><gray>?</gray>\n<red>This cannot be undone! If you are sure: </red><gray><value></gray>",
   
   "move.move_success": "<prefix><dark_aqua>Successfully moved plot.</dark_aqua>",
   "move.move_merged": "<prefix><red>Merged plots may not be moved. Please unmerge the plot before performing the move.</red>",
@@ -9,7 +9,7 @@
   "move.requires_unowned": "<prefix><red>The location specified is already occupied.</red>",
   
   "debug.requires_unmerged": "<prefix><red>The plot cannot be merged.</red>",
-  "debug.debug_header": "<prefix> <gold>Debug Information</orange>\n",
+  "debug.debug_header": "<prefix> <gold>Debug Information</gold>\n",
   "debug.debug_section": "<gray>>></gray> <gold><bold>&l<val></bold></gold>",
   "debug.debug_line": "<gray>>></gray> <gold><var></gold><gray>:</gray><gold> <val></gold>\n",
   "debug.plot_debug": "<gray>[<gold>Plot </gold><gray>Debug] (</gray><gold><plot></gold><gray>): <message></gray>",
@@ -58,7 +58,7 @@
   "cluster.cluster_regenerated": "<prefix><dark_aqua>Successfully started cluster regeneration.</dark_aqua>",
   "cluster.cluster_teleporting": "<prefix><dark_aqua>Teleporting...</dark_aqua>",
   "cluster.cluster_info": "<prefix><gold>Current cluster: </gold><gray><id></gray>\n<gold>Name: </gold><gray><name></gray>\n<gold>Owner: </gold><gray><owner></gray>\n<gold>Size: </gold><gray><size></gray>\n<gold>Rights: </gold><gray><rights></gray>",
-  
+
   "border.border": "<prefix><gray>You are outside the current map border.</gray>",
   
   "worldedit.worldedit_bypass": "<prefix><gray><italic>To bypass your restrictions use </gray><dark_aqua><command></dark_aqua></italic>",
@@ -311,7 +311,8 @@
   "errors.not_in_plot_world": "<prefix><red>You're not in a plot area.</red>",
   "errors.plotworld_incompatible": "<prefix><red>The two worlds must be compatible.</red>",
   "errors.not_valid_world": "<prefix><red>That is not a valid world (case sensitive).</red>",
-  "errors.not_valid_plot_world": "<prefix><red><value> is not a valid plot area (case sensitive).</red>",
+  "errors.not_valid_plot_world": "<prefix><gray><value></gray><red> is not a valid plot area (case sensitive).</red>",
+  "errors.invalid_plot_world": "<prefix><redThat is not a valid plot area (case sensitive).</red>",
   "errors.no_plots": "<prefix><gray>You don't have any plots.</gray>",
   "errors.player_no_plots": "<prefix><gray>That player does not own any plots.</gray>",
   "errors.wait_for_timer": "<prefix><gray>A set block timer is bound to either the current plot or you. Please wait for it to finish.</gray>",

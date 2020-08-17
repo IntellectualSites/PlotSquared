@@ -34,7 +34,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "target",
-    usage = "/plot target <<plot> | nearest>",
+    usage = "/plot target <<X;Z> | nearest>",
     description = "Target a plot with your compass",
     permission = "plots.target",
     requiredType = RequiredType.PLAYER,
@@ -54,7 +54,7 @@ public class Target extends SubCommand {
         if (args.length == 0) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot target <<plot> | nearest>")
+                    Template.of("value", "/plot target <<X;Z> | nearest>")
             );
             return false;
         }

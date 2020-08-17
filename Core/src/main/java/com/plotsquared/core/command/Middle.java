@@ -50,6 +50,7 @@ public class Middle extends SubCommand {
             return false;
         }
         plot.getCenter(center -> player.teleport(center, TeleportCause.COMMAND));
+        player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
         return true;
     }
 }

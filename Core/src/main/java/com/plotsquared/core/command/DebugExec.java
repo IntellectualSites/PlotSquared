@@ -338,7 +338,7 @@ public class DebugExec extends SubCommand {
                 case "he":
                 case "?":
                 case "help":
-                    player.sendMessage(StaticCaption.of("Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, " | ") + ">"));
+                    player.sendMessage(StaticCaption.of("<core.prefix><gold>Possible sub commands: </gray>/plot debugexec <" + StringMan.join(allowed_params, " | ") + "></gray>"));
                     return false;
                 case "addcmd":
                     try {

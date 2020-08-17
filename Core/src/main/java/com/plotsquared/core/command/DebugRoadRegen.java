@@ -140,7 +140,7 @@ public class DebugRoadRegen extends SubCommand {
         Plot plot = player.getCurrentPlot();
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
-            player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
+            player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             return true;
         }
         player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"),

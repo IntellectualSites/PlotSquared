@@ -239,7 +239,8 @@ public class Template extends SubCommand {
                 }
                 final PlotArea area = this.plotAreaManager.getPlotAreaByString(world);
                 if (area == null) {
-                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
+                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", args[1]));
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();

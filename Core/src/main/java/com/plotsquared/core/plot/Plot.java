@@ -372,7 +372,7 @@ public class Plot {
         }
         if (area == null) {
             if (message) {
-                player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
+                player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             }
             return null;
         }

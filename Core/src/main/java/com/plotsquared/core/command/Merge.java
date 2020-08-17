@@ -234,7 +234,7 @@ public class Merge extends SubCommand {
                         Template.of("money", String.valueOf(price))
                 );
             }
-            player.sendMessage(TranslatableCaption.of("success_merge"));
+            player.sendMessage(TranslatableCaption.of("merge.success_merge"));
             return true;
         }
         Plot adjacent = plot.getRelative(direction);

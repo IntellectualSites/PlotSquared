@@ -89,7 +89,7 @@ public class RegenAllRoads extends SubCommand {
         String name = args[0];
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
-            player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
+            player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             return false;
         }
         //Set<BlockVector2> chunks = ChunkManager.manager.getChunkChunks(name);
