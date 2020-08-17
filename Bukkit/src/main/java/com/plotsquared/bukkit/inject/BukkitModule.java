@@ -49,12 +49,15 @@ import com.plotsquared.core.inject.annotations.DefaultGenerator;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorBuilderFactory;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.plot.world.DefaultPlotAreaManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueProvider;
+import com.plotsquared.core.queue.subscriber.DefaultProgressSubscriber;
+import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.plotsquared.core.util.ChunkManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.InventoryUtil;
@@ -105,6 +108,7 @@ public class BukkitModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(HybridPlotWorldFactory.class));
         install(new FactoryModuleBuilder().implement(ChunkCoordinator.class, BukkitChunkCoordinator.class).build(ChunkCoordinatorFactory.class));
         install(new FactoryModuleBuilder().build(ChunkCoordinatorBuilderFactory.class));
+        install(new FactoryModuleBuilder().implement(ProgressSubscriber.class, DefaultProgressSubscriber.class).build(ProgressSubscriberFactory.class));
     }
 
     @Provides @Singleton @Nonnull EconHandler provideEconHandler() {

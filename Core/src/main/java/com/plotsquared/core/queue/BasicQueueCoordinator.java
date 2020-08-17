@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
@@ -67,6 +68,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private Consumer<BlockVector2> consumer = null;
     private boolean unloadAfter = true;
     private Runnable whenDone;
+    private List<ProgressSubscriber> progressSubscribers = new ArrayList<>();
 
     public BasicQueueCoordinator(@Nonnull World world) {
         super(world);
@@ -250,6 +252,17 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     @Override public final void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer) {
         this.consumer = consumer;
+    }
+
+    /**
+     * Get the list of progress subscribers currently added to the queue to be added to the Chunk Coordinator
+     */
+    public final List<ProgressSubscriber> getProgressSubscribers() {
+        return this.progressSubscribers;
+    }
+
+    @Override public final void addProgressSubscriber(@Nonnull ProgressSubscriber progressSubscriber) {
+        this.progressSubscribers.add(progressSubscriber);
     }
 
     @Override public Runnable getCompleteTask() {
