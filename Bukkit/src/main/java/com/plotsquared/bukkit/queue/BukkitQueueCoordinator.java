@@ -185,9 +185,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                     }));
                 }
                 if (localChunk.getEntities().size() > 0) {
-                    localChunk.getEntities().forEach((location, entity) -> {
-                        getWorld().createEntity(location, entity);
-                    });
+                    localChunk.getEntities().forEach((location, entity) -> getWorld().createEntity(location, entity));
                 }
             };
         }
@@ -198,7 +196,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         chunkCoordinator =
             chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(getWorld()).withChunks(getBlockChunks().keySet()).withChunks(read)
                 .withInitialBatchSize(3).withMaxIterationTime(40).withThrowableConsumer(Throwable::printStackTrace).withFinalAction(getCompleteTask())
-                .withConsumer(consumer).unloadAfter(isUnloadAfter()).build();
+                .withConsumer(consumer).unloadAfter(isUnloadAfter()).withProgressSubscribers(getProgressSubscribers()).build();
         return super.enqueue();
     }
 

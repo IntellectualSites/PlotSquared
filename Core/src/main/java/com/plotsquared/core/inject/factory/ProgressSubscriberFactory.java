@@ -21,29 +21,22 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.inject.factory;
 
-import com.plotsquared.core.queue.ChunkCoordinator;
+import com.google.inject.assistedinject.Assisted;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
-import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.world.World;
+import com.plotsquared.core.util.task.TaskManager;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
-public interface ChunkCoordinatorFactory {
+public interface ProgressSubscriberFactory {
 
-    @Nonnull ChunkCoordinator create(final long maxIterationTime,
-                                     final int initialBatchSize,
-                                     @Nonnull final Consumer<BlockVector2> chunkConsumer,
-                                     @Nonnull final World world,
-                                     @Nonnull final Collection<BlockVector2> requestedChunks,
-                                     @Nonnull final Runnable whenDone,
-                                     @Nonnull final Consumer<Throwable> throwableConsumer,
-                                     final boolean unloadAfter,
-                                     @Nonnull final Collection<ProgressSubscriber> progressSubscribers);
+    @Nonnull ProgressSubscriber create(@Nullable @Assisted("subscriber") PlotPlayer actor,
+                                       @Assisted("progressInterval") final long interval,
+                                       @Nonnull TaskManager taskManager);
 
 }

@@ -29,6 +29,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 
@@ -46,6 +47,7 @@ import java.util.function.Consumer;
 public class ChunkCoordinatorBuilder {
 
     private final List<BlockVector2> requestedChunks = new LinkedList<>();
+    private final List<ProgressSubscriber> progressSubscribers = new ArrayList<>();
     private final ChunkCoordinatorFactory chunkCoordinatorFactory;
     private Consumer<Throwable> throwableConsumer = Throwable::printStackTrace;
     private World world;
@@ -193,6 +195,16 @@ public class ChunkCoordinatorBuilder {
         return this;
     }
 
+    @Nonnull public ChunkCoordinatorBuilder withProgressSubscriber(ProgressSubscriber progressSubscriber) {
+        this.progressSubscribers.add(progressSubscriber);
+        return this;
+    }
+
+    @Nonnull public ChunkCoordinatorBuilder withProgressSubscribers(Collection<ProgressSubscriber> progressSubscribers) {
+        this.progressSubscribers.addAll(progressSubscribers);
+        return this;
+    }
+
     /**
      * Create a new {@link ChunkCoordinator} instance based on the values in the Builder instance.
      *
@@ -205,7 +217,7 @@ public class ChunkCoordinatorBuilder {
         Preconditions.checkNotNull(this.throwableConsumer, "No throwable consumer was supplied");
         return chunkCoordinatorFactory
             .create(this.maxIterationTime, this.initialBatchSize, this.chunkConsumer, this.world, this.requestedChunks, this.whenDone,
-                this.throwableConsumer, this.unloadAfter);
+                this.throwableConsumer, this.unloadAfter, this.progressSubscribers);
     }
 
 }

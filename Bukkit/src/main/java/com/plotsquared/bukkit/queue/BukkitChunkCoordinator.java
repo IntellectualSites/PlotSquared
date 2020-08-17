@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.core.queue.ChunkCoordinator;
+import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -82,7 +83,8 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
                                            @Assisted @Nonnull final Collection<BlockVector2> requestedChunks,
                                            @Assisted @Nonnull final Runnable whenDone,
                                            @Assisted @Nonnull final Consumer<Throwable> throwableConsumer,
-                                           @Assisted final boolean unloadAfter) {
+                                           @Assisted final boolean unloadAfter,
+                                           @Assisted @Nonnull final Collection<ProgressSubscriber> progressSubscribers) {
         this.requestedChunks = new LinkedBlockingQueue<>(requestedChunks);
         this.availableChunks = new LinkedBlockingQueue<>();
         this.totalSize = requestedChunks.size();
@@ -95,6 +97,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         this.unloadAfter = unloadAfter;
         this.plugin = JavaPlugin.getPlugin(BukkitPlatform.class);
         this.bukkitWorld = Bukkit.getWorld(world.getName());
+        this.progressSubscribers.addAll(progressSubscribers);
     }
 
     @Override public void start() {
@@ -205,21 +208,8 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
      *
      * @param subscriber Subscriber
      */
-    public void subscribeToProgress(@Nonnull final BukkitChunkCoordinator.ProgressSubscriber subscriber) {
+    public void subscribeToProgress(@Nonnull final ProgressSubscriber subscriber) {
         this.progressSubscribers.add(subscriber);
-    }
-
-    @FunctionalInterface
-    public interface ProgressSubscriber {
-
-        /**
-         * Notify about a progress update in the coordinator
-         *
-         * @param coordinator Coordinator instance that triggered the notification
-         * @param progress    Progress in the range [0, 1]
-         */
-        void notifyProgress(@Nonnull final BukkitChunkCoordinator coordinator, final float progress);
-
     }
 
 }

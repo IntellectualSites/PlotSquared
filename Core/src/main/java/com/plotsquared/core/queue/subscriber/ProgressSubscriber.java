@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2020 IntellectualSites
+ *                  Copyright (C) ${year} IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -21,29 +21,24 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.inject.factory;
+
+package com.plotsquared.core.queue.subscriber;
 
 import com.plotsquared.core.queue.ChunkCoordinator;
-import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
-import com.sk89q.worldedit.math.BlockVector2;
-import com.sk89q.worldedit.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.function.Consumer;
 
-public interface ChunkCoordinatorFactory {
+@FunctionalInterface
+public interface ProgressSubscriber {
 
-    @Nonnull ChunkCoordinator create(final long maxIterationTime,
-                                     final int initialBatchSize,
-                                     @Nonnull final Consumer<BlockVector2> chunkConsumer,
-                                     @Nonnull final World world,
-                                     @Nonnull final Collection<BlockVector2> requestedChunks,
-                                     @Nonnull final Runnable whenDone,
-                                     @Nonnull final Consumer<Throwable> throwableConsumer,
-                                     final boolean unloadAfter,
-                                     @Nonnull final Collection<ProgressSubscriber> progressSubscribers);
+    /**
+     * Notify about a progress update in the coordinator
+     *
+     * @param coordinator Coordinator instance that triggered the notification
+     * @param progress    Progress in the range [0, 1]
+     */
+    void notifyProgress(@Nonnull final ChunkCoordinator coordinator, final float progress);
 
 }
