@@ -57,7 +57,7 @@ public class Music extends SubCommand {
     private static final Collection<String> DISCS = Arrays
         .asList("music_disc_13", "music_disc_cat", "music_disc_blocks", "music_disc_chirp",
             "music_disc_far", "music_disc_mall", "music_disc_mellohi", "music_disc_stal",
-            "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait");
+            "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait", "music_disc_pigstep");
 
     private final InventoryUtil inventoryUtil;
 
@@ -124,7 +124,7 @@ public class Music extends SubCommand {
         // Always add the cancel button
         // if (player.getMeta("music") != null) {
         String name = "<gold>Cancel music</gold>";
-        String[] lore = {"<red>Click to cancel!<reset>"};
+        String[] lore = {"<red>Click to remove the music!<reset>"};
         inv.setItem(index, new PlotItemStack("bedrock", 1, name, lore));
         // }
 

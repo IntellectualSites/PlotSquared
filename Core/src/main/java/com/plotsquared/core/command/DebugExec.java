@@ -230,7 +230,10 @@ public class DebugExec extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("debugexec.starting_task"));
                     this.hybridUtils.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
                         @Override public void run(PlotAnalysis value) {
-                            player.sendMessage(StaticCaption.of("&6Done: &7Use &6/plot debugexec analyze &7for more information."));
+                            player.sendMessage(
+                                    TranslatableCaption.of("debugexec.analyze_done"),
+                                    Template.of("command", "/plot debugexec analyze")
+                            );
                         }
                     });
                     return true;
@@ -335,7 +338,7 @@ public class DebugExec extends SubCommand {
                 case "he":
                 case "?":
                 case "help":
-                    player.sendMessage(StaticCaption.of("Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, "|") + ">"));
+                    player.sendMessage(StaticCaption.of("Possible sub commands: /plot debugexec <" + StringMan.join(allowed_params, " | ") + ">"));
                     return false;
                 case "addcmd":
                     try {
@@ -422,7 +425,7 @@ public class DebugExec extends SubCommand {
                             message.set(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
                                 .parse(TranslatableCaption.of("debugexec.script_list_item").getComponent(player), numTemplate, nameTemplate))));
                         }
-                    }, "/plot debugexec list-scripts", StaticCaption.of("List of scripts"));
+                    }, "/plot debugexec list-scripts", TranslatableCaption.of("scripts.script_list"));
                     return true;
                 case "all":
                     if (args.length < 3) {
@@ -458,12 +461,12 @@ public class DebugExec extends SubCommand {
                         } catch (ScriptException e) {
                             e.printStackTrace();
                         }
-                        logger.info("[P2] > {}ms -> {}", System.currentTimeMillis() - start, result);
+                        logger.info("[P2] {}ms -> {}", System.currentTimeMillis() - start, result);
                     });
                 } else {
                     long start = System.currentTimeMillis();
                     Object result = this.engine.eval(script, this.scope);
-                    logger.info("[P2] > {}ms -> {}", System.currentTimeMillis() - start, result);
+                    logger.info("[P2] {}ms -> {}", System.currentTimeMillis() - start, result);
                 }
                 return true;
             } catch (ScriptException e) {

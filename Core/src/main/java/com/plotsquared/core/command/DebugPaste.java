@@ -146,25 +146,30 @@ public class DebugPaste extends SubCommand {
                     final File logFile =
                         new File(PlotSquared.platform().getDirectory(), "../../logs/latest.log");
                     if (Files.size(logFile.toPath()) > 14_000_000) {
-                        throw new IOException("Too big...");
+                        throw new IOException("The latest.log is larger than 14MB. Please reboot your server and submit a new paste.");
                     }
                     incendoPaster
                         .addFile(new IncendoPaster.PasteFile("latest.log", readFile(logFile)));
                 } catch (IOException ignored) {
-                    player.sendMessage(StaticCaption.of("&clatest.log is too big to be pasted, please reboot your server and submit a new paste."));
+                    player.sendMessage(
+                            TranslatableCaption.of("debugpaste.latest_log"),
+                            Template.of("file", "latest.log"),
+                            Template.of("size", "14MB"));
                 }
 
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml",
                         readFile(this.configFile)));
                 } catch (final IllegalArgumentException ignored) {
-                    player.sendMessage(StaticCaption.of("<red>Skipping settings.yml because it's empty.</red>"));
+                    player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
+                            Template.of("file", "settings.yml"));
                 }
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml",
                         readFile(this.worldfile)));
                 } catch (final IllegalArgumentException ignored) {
-                    player.sendMessage(StaticCaption.of("<red>Skipping worlds.yml because it's empty.</red>"));
+                    player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
+                            Template.of("file", "worlds.yml"));
                 }
 
                 try {
@@ -173,7 +178,8 @@ public class DebugPaste extends SubCommand {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml",
                         readFile(MultiverseWorlds)));
                 } catch (final IOException ignored) {
-                    player.sendMessage(StaticCaption.of("<red>Skipping Multiverse world's.yml because Multiverse is not in use.</red>"));
+                    player.sendMessage(TranslatableCaption.of("debugpaste.skip_multiverse"),
+                            Template.of("file", "worlds.yml"));
                 }
 
                 try {

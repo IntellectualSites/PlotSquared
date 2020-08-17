@@ -264,6 +264,7 @@
   "database.failed_to_save_plots": "<prefix><red>Failed to save plots, read stacktrace for info.</red>",
   "database.invalid_args": "<prefix><red>Please make sure you are using the correct arguments.</red>",
   "database.failed_to_open": "<prefix><red>Failed to open connection, read stacktrace for info.</red>",
+  "database.skipping_duplicated_plot": "<prefix><red>Skipping duplicate plot: </red><gray><plot></gray><red> | ID: </red><gray><id></gray>",
 
   "template.invalid_template": "<prefix><red>Invalid template file: </red><gray><value>.template</gray>",
   "template.template_failed": "<prefix><red>Failed: </red><gray><value></gray>",
@@ -272,7 +273,7 @@
   "debugexec.starting_task": "<prefix><gold>Starting task...</gold>",
   "debugexec.threshold_default": "<prefix><gray>`threshold` = The percentage of plots you want to clear (100 clears 100% of plots so no point calibrating it.</gray>",
   "debugexec.invalid_threshold": "<prefix><red>Invalid threshold: </red><gray><value></gray>",
-  "debugexec.threshold_default_double": "<prefix><gray>$1<threshold> $2= $1The percentage of plots you want to clear as a number between 0 - 100.</gray>",
+  "debugexec.threshold_default_double": "<prefix><gray><gold><threshold> </gold><gray>= </gray><gold>The percentage of plots you want to clear as a number between 0 - 100.</gold>",
   "debugexec.calibration_done": "<prefix><gold>Thank you for calibrating plot expiry.</gold>",
   "debugexec.task_halted": "<prefix><gray>Task already halted.</gray>",
   "debugexec.cancelling_task": "<prefix><red>Task cancelled.</red>",
@@ -283,6 +284,7 @@
   "debugexec.expiry_started": "<prefix><gold>Started plot expiry task.</gold>",
   "debugexec.expiry_already_started": "<prefix><gold>Plot expiry task already started.</gold>",
   "debugexec.script_list_item": "<dark_gray>[</dark_gray><gold><number></gold><dark_gray>]</dark_gray><gold> <name></gold>",
+  "debugexec.analyze_done": "<prefix><gold>Done. Use </gold><gray><command></gray><gold> for more information. ",
 
   "expiry.expired_options_clicky": "<gold><num> <are_or_is> expired: </gold><click:run_command:<list_cmd>><hover:show_text:<list_cmd>><gray><plot></gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_del>><hover:show_text:<cmd_del>><gray>Delete this (<cmd_del>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_keep_1d>><hover:show_text:<cmd_keep_1d>><gray>Remind later (<cmd_keep_1d>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_keep>><hover:show_text:<cmd_keep>><gray>Keep this (<cmd_keep>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_no_show_expir>><hover:show_text:<cmd_no_show_expir>><gray>Don't show me this (<cmd_no_show_expir>)</gray></hover></click>",
 
@@ -317,7 +319,12 @@
   "error.plot_size": "<prefix><red>Error: size <= 0.</red>",
   "error.command_went_wrong": "<prefix><red>Something went wrong when executing that command.</red>",
   "errors.not_implemented": "<prefix><red>Not implemented.</red>",
-  
+  "errors.stacktrace_begin": "<red>=== Begin of stacktrace ===</red>",
+  "errors.stacktrace_end": "<red>=== End of stacktrace ===</red>",
+
+  "debugpaste.latest_log": "<red><file> is larger than <size>. Please reboot the server and submit a new paste.",
+  "debugpaste.empty_file": "<red>Skipping <file> because it's empty.",
+  "debugpaste.skip_multiverse": "<red>Skipping Multiverse <file> because it's not in use.",
   "debugpaste.debug_report_created": "<prefix><gold>Uploaded a full debug to: </gold><gray><click:open_url:<url>><url></click></gray>",
   "debugpaste.creation_failed": "<prefix><red>Failed to create the debugpaste: </red><gray><value></gray>",
 
@@ -351,6 +358,8 @@
   "need.need_block": "<prefix><red>You've got to specify a block.</red>",
   
   "near.plot_near": "<prefix><gold>Players: <gray><list></gray></gold>",
+
+  "scripts.script_list": "<dark_gray><strikethrough>--------- <reset><gold>SCRIPTS </gold><dark_gray><strikethrough>---------</dark_gray><reset>",
   
   "info.none": "<gray>None</gray>",
   "info.now": "<gray>Now</gray>",
@@ -521,7 +530,7 @@
   "flag.flag_partially_removed": "<prefix><dark_aqua>Successfully removed flag value(s).</dark_aqua>",
   "flag.flag_added": "<prefix><dark_aqua>The flag has been added successfully.</dark_aqua>",
   "flag.flag_list_see_info": "<prefix><gray>Click to view information about the flag.</gray>",
-  "flag.flag_parse_error": "<red>Failed to parse flag </red><gray><flag_name><red>, value </red><gray><flag_value></gray><red>: <error></red>",
+  "flag.flag_parse_error": "<red>Failed to parse flag </red><gray><flag_name></gray><red>, value </red><gray><flag_value></gray><red>Error: <error></red>",
   "flag.flag_info_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Flags </gold><dark_gray><strikethrough>---------<reset>",
   "flag.flag_info_footer": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Flags </gold><dark_gray><strikethrough>---------<reset>",
   "flag.flag_list_categories": "<gold><category>: </gold>",

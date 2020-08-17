@@ -177,7 +177,11 @@ public class DatabaseCommand extends SubCommand {
                                             continue;
                                         }
                                     }
-                                    player.sendMessage(StaticCaption.of("Skipping duplicate plot: " + plot + " | id=" + plot.temp));
+                                    player.sendMessage(
+                                            TranslatableCaption.of("database.skipping_duplicated_plot"),
+                                            Template.of("plot", String.valueOf(plot)),
+                                            Template.of("id", String.valueOf(plot.temp))
+                                    );
                                     continue;
                                 }
                                 plot.setArea(pa);
@@ -224,17 +228,17 @@ public class DatabaseCommand extends SubCommand {
                 return true;
             } catch (ClassNotFoundException | SQLException e) {
                 player.sendMessage(TranslatableCaption.of("database.failed_to_save_plots"));
-                player.sendMessage(StaticCaption.of(("=== Begin of stacktrace. ===")));
+                player.sendMessage(TranslatableCaption.of(("errors.stacktrace_begin")));
                 e.printStackTrace();
-                player.sendMessage(StaticCaption.of(("=== End of stacktrace. ===")));
+                player.sendMessage(TranslatableCaption.of(("errors.stacktrace_end")));
                 player.sendMessage(TranslatableCaption.of("database.invalid_args"));
                 return false;
             }
         } catch (ClassNotFoundException | SQLException e) {
             player.sendMessage(TranslatableCaption.of("database.failed_to_open"));
-            player.sendMessage(StaticCaption.of(("=== Begin of stacktrace. ===")));
+            player.sendMessage(TranslatableCaption.of(("errors.stacktrace_begin")));
             e.printStackTrace();
-            player.sendMessage(StaticCaption.of(("=== End of stacktrace. ===")));
+            player.sendMessage(TranslatableCaption.of(("errors.stacktrace_end")));
             player.sendMessage(TranslatableCaption.of("database.invalid_args"));
             return false;
         }

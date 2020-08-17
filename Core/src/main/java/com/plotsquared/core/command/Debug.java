@@ -72,6 +72,10 @@ public class Debug extends SubCommand {
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        if (args.length == 0 ) {
+            player.sendMessage(StaticCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot debug <loadedchunks | debug-players | logging | entitytypes | msg>"));
+        }
         if (args.length > 0) {
             if ("player".equalsIgnoreCase(args[0])) {
                 for (Map.Entry<String, Object> meta : player.getMeta().entrySet()) {
@@ -83,7 +87,7 @@ public class Debug extends SubCommand {
             final long start = System.currentTimeMillis();
             player.sendMessage(TranslatableCaption.of("debug.fetching_loaded_chunks"));
             TaskManager.runTaskAsync(() -> player.sendMessage(StaticCaption
-                .of("Loaded chunks: " + this.worldUtil.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (System.currentTimeMillis()
+                .of("Loaded chunks: " + this.worldUtil.getChunkChunks(player.getLocation().getWorldName()).size() + " (" + (System.currentTimeMillis()
                     - start) + "ms) using thread: " + Thread.currentThread().getName())));
             return true;
         }
@@ -117,7 +121,7 @@ public class Debug extends SubCommand {
             player.sendMessage(TranslatableCaption.of("debug.entity_categories"));
             EntityCategory.REGISTRY.forEach(category -> {
                 final StringBuilder builder =
-                    new StringBuilder("§7- §6").append(category.getId()).append("§7: §6");
+                    new StringBuilder(" §7- §6").append(category.getId()).append("§7: §6");
                 for (final EntityType entityType : category.getAll()) {
                     builder.append(entityType.getId()).append(" ");
                 }
