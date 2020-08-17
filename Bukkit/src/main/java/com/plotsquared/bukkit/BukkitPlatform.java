@@ -501,12 +501,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             logger.info("[P2] PlaceholderAPI is not in use. Hook deactivated");
         }
 
-        if (Settings.Enabled_Components.BSTATS) {
-            this.startMetrics();
-        }
-        else {
-            logger.info("[P2] bStats is disabled. Please enable it in /plugins/PlotSquared/config/settings.yml. It helps the developers to identify the features most used and organize future updates better. Cheers.");
-        }
+        this.startMetrics();
 
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(1L));
@@ -980,7 +975,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             return;
         }
         this.metricsStarted = true;
-        Metrics metrics = new Metrics(this, BSTATS_ID);// bstats
+        Metrics metrics = new Metrics(this, BSTATS_ID); // bstats
         metrics.addCustomChart(new Metrics.DrilldownPie("area_types", () -> {
             final Map<String, Map<String, Integer>> map = new HashMap<>();
             for (final PlotAreaType plotAreaType : PlotAreaType.values()) {

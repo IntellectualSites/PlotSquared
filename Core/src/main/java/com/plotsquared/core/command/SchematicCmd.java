@@ -72,7 +72,7 @@ public class SchematicCmd extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "Possible values: save, paste , exportall, list")
+                    Template.of("value", "Possible values: save, paste, exportall, list")
             );
             return true;
         }
@@ -89,7 +89,7 @@ public class SchematicCmd extends SubCommand {
                 if (args.length < 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "Possible values: save, paste , exportall, list")
+                            Template.of("value", "Possible values: save, paste, exportall, list")
                     );
                     break;
                 }
@@ -266,7 +266,7 @@ public class SchematicCmd extends SubCommand {
             default:
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "Possible values: save, paste , exportall, list")
+                        Template.of("value", "Possible values: save, paste, exportall, list")
                 );
                 break;
         }
