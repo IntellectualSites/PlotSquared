@@ -42,6 +42,8 @@ import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -54,6 +56,8 @@ import java.util.concurrent.CompletableFuture;
 @CommandDeclaration(command = "plot",
     aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
 public class MainCommand extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + MainCommand.class.getSimpleName());
 
     private static MainCommand instance;
     public Help help;
@@ -144,7 +148,12 @@ public class MainCommand extends Command {
             }
 
             for (final Class<? extends Command> command : commands) {
-                injector.getInstance(command);
+                try {
+                    injector.getInstance(command);
+                } catch (final Exception e) {
+                    logger.error("Failed to register command {}", command.getCanonicalName());
+                    e.printStackTrace();
+                }
             }
 
             // Referenced commands

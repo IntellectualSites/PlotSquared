@@ -158,7 +158,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
                 lastPlot.set(location.getPlot());
             }
         }
-        try (final MetaDataAccess<Location> locationMetaDataAccess = accessPersistentMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+        try (final MetaDataAccess<Location> locationMetaDataAccess = accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
             locationMetaDataAccess.set(location);
         }
     }
