@@ -40,10 +40,14 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
 
+import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "grant",
     category = CommandCategory.CLAIMING,
@@ -131,5 +135,11 @@ public class Grant extends Command {
         }
         sendUsage(player);
         return CompletableFuture.completedFuture(true);
+    }
+    @Override public Collection<Command> tab(final PlotPlayer player, String[] args, boolean space) {
+        return Stream.of("check", "add")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.grant", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 }

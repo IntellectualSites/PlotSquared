@@ -71,7 +71,7 @@ public class Condense extends SubCommand {
         if (args.length != 2 && args.length != 3) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot condense <area> <start|stop|info> [radius]")
+                    Template.of("value", "/plot condense <area> <start | stop | info> [radius]")
             );
             return false;
         }

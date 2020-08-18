@@ -30,8 +30,15 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.minimessage.Template;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "target",
     usage = "/plot target <<X;Z> | nearest>",
@@ -78,5 +85,11 @@ public class Target extends SubCommand {
         target.getCenter(player::setCompassTarget);
         player.sendMessage(TranslatableCaption.of("compass.compass_target"));
         return true;
+    }
+    @Override public Collection<Command> tab(final PlotPlayer player, String[] args, boolean space) {
+        return Stream.of("<X;Z>", "nearest")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.target", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 }

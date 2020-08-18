@@ -54,7 +54,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -262,5 +266,11 @@ public class Template extends SubCommand {
                 sendUsage(player);
         }
         return false;
+    }
+    @Override public Collection<Command> tab(final PlotPlayer player, String[] args, boolean space) {
+        return Stream.of("import", "export")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 }

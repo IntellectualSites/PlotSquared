@@ -45,7 +45,7 @@ import java.util.List;
 
 @CommandDeclaration(command = "inbox",
     description = "Review the comments for a plot",
-    usage = "/plot inbox [inbox] [delete <index>|clear|page]",
+    usage = "/plot inbox [inbox] [delete <index> | clear | page]",
     permission = "plots.inbox",
     category = CommandCategory.CHAT,
     requiredType = RequiredType.PLAYER)
