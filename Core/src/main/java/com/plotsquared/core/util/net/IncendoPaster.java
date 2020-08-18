@@ -161,7 +161,7 @@ public final class IncendoPaster {
         if (!httpURLConnection.getResponseMessage().contains("OK")) {
             if (httpURLConnection.getResponseCode() == 413) {
                 final long size = content.length;
-                logger.error("[P2] Paste too big > size: {}MB", size / 1_000_000);
+                logger.error("Paste too big > size: {}MB", size / 1_000_000);
             }
             throw new IllegalStateException(String
                 .format("Server returned status: %d %s", httpURLConnection.getResponseCode(),

@@ -68,7 +68,7 @@ public class SQLite extends Database {
             try {
                 file.createNewFile();
             } catch (IOException ignored) {
-                logger.error("[P2] Unable to create database");
+                logger.error("Unable to create database");
             }
         }
         Class.forName("org.sqlite.JDBC");

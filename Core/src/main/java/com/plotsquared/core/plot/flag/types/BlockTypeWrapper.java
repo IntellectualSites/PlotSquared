@@ -133,7 +133,7 @@ public class BlockTypeWrapper {
             this.blockCategory = BlockCategory.REGISTRY.get(this.blockCategoryId);
             if (this.blockCategory == null && !BlockCategory.REGISTRY.values().isEmpty()) {
                 if (Settings.DEBUG) {
-                    logger.info("[P2] - Block category #{} does not exist", this.blockCategoryId);
+                    logger.info("- Block category #{} does not exist", this.blockCategoryId);
                 }
                 this.blockCategory = new NullBlockCategory(this.blockCategoryId);
             }

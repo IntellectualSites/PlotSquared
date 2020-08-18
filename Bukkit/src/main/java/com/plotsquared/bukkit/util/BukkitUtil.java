@@ -349,7 +349,7 @@ public class BukkitUtil extends WorldUtil {
     @Override public void setBiomes(@Nonnull final String worldName, @Nonnull final CuboidRegion region, @Nonnull final BiomeType biomeType) {
         final World world = getWorld(worldName);
         if (world == null) {
-            logger.warn("[P2] An error occurred while setting the biome because the world was null", new RuntimeException());
+            logger.warn("An error occurred while setting the biome because the world was null", new RuntimeException());
             return;
         }
         final Biome biome = BukkitAdapter.adapt(biomeType);
@@ -459,7 +459,7 @@ public class BukkitUtil extends WorldUtil {
             }
             break;
             default: {
-                logger.error("[P2] Unknown entity category requested: {}", category);
+                logger.error("Unknown entity category requested: {}", category);
             }
             break;
         }

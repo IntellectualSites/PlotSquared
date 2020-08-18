@@ -459,12 +459,12 @@ public class DebugExec extends SubCommand {
                         } catch (ScriptException e) {
                             e.printStackTrace();
                         }
-                        logger.info("[P2] {}ms -> {}", System.currentTimeMillis() - start, result);
+                        logger.info("{}ms -> {}", System.currentTimeMillis() - start, result);
                     });
                 } else {
                     long start = System.currentTimeMillis();
                     Object result = this.engine.eval(script, this.scope);
-                    logger.info("[P2] {}ms -> {}", System.currentTimeMillis() - start, result);
+                    logger.info("{}ms -> {}", System.currentTimeMillis() - start, result);
                 }
                 return true;
             } catch (ScriptException e) {

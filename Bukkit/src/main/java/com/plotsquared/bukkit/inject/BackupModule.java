@@ -46,8 +46,8 @@ public class BackupModule extends AbstractModule {
                 .implement(BackupProfile.class, PlayerBackupProfile.class).build(PlayerBackupProfileFactory.class));
             bind(BackupManager.class).to(SimpleBackupManager.class);
         } catch (final Exception e) {
-            logger.error("[P2] Failed to initialize backup manager", e);
-            logger.error("[P2] Backup features will be disabled");
+            logger.error("Failed to initialize backup manager", e);
+            logger.error("Backup features will be disabled");
             bind(BackupManager.class).to(NullBackupManager.class);
         }
     }

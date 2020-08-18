@@ -110,10 +110,10 @@ public class Debug extends SubCommand {
             return true;
         }
         if (args.length > 0 && "logging".equalsIgnoreCase(args[0])) {
-            logger.info("[P2] Info!");
-            logger.warn("[P2] Warning!");
-            logger.error("[P2] Error!", new RuntimeException());
-            logger.debug("[P2] Debug!");
+            logger.info("Info!");
+            logger.warn("Warning!");
+            logger.error("Error!", new RuntimeException());
+            logger.debug("Debug!");
             return true;
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {

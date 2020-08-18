@@ -175,7 +175,7 @@ public class Claim extends SubCommand {
             try {
                 TaskManager.getPlatformImplementation().sync(() -> {
                     if (!plot.claim(player, true, finalSchematic, false)) {
-                        logger.info("[P2] Failed to claim plot {}", plot.getId().toCommaSeparatedString());
+                        logger.info("Failed to claim plot {}", plot.getId().toCommaSeparatedString());
                         player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                         plot.setOwnerAbs(null);
                     } else if (area.isAutoMerge()) {
@@ -196,7 +196,7 @@ public class Claim extends SubCommand {
                 e.printStackTrace();
             }
         }, () -> {
-            logger.info("[P2] Failed to add plot to database: {}", plot.getId().toCommaSeparatedString());
+            logger.info("Failed to add plot to database: {}", plot.getId().toCommaSeparatedString());
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             plot.setOwnerAbs(null);
         });

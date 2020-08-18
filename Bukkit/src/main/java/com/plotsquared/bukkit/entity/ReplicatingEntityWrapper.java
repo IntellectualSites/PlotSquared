@@ -391,7 +391,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         try {
             entity.getInventory().setContents(this.inventory);
         } catch (IllegalArgumentException e) {
-            logger.error("[P2] Failed to restore inventory", e);
+            logger.error("Failed to restore inventory", e);
         }
     }
 
@@ -738,7 +738,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return entity;
             default:
                 if (Settings.DEBUG) {
-                    logger.info("[P2] Could not identify entity: {}", entity.getType());
+                    logger.info("Could not identify entity: {}", entity.getType());
                 }
                 return entity;
             // END LIVING

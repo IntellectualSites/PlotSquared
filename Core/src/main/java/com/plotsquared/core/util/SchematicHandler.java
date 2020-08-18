@@ -236,7 +236,7 @@ public abstract class SchematicHandler {
                             TaskManager.runTaskAsync(() -> {
                                 boolean result = save(value, directory + File.separator + name + ".schem");
                                 if (!result) {
-                                    logger.error("[P2] Failed to save {}", plot.getId());
+                                    logger.error("Failed to save {}", plot.getId());
                                 }
                                 TaskManager.runTask(THIS);
                             });

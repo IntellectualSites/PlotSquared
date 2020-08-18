@@ -327,7 +327,7 @@ public class Plot {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    logger.info("[P2] No plot area string was supplied");
+                    logger.info("No plot area string was supplied");
                 }
                 return null;
             }
@@ -1093,7 +1093,7 @@ public class Plot {
                     try {
                         regionManager.regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false, this);
                     } catch (UnsupportedOperationException exception) {
-                        logger.info("[P2] Please ask md_5 to fix regenerateChunk() because it breaks plugins. We apologize for the inconvenience.");
+                        logger.info("Please ask md_5 to fix regenerateChunk() because it breaks plugins. We apologize for the inconvenience.");
                         return;
                     }
                     return;
@@ -1859,7 +1859,7 @@ public class Plot {
 
         if (updateDB) {
             if (!create(player.getUUID(), true)) {
-                logger.error("[P2] Player {} attempted to claim plot {}, but the database failed to update", player.getName(),
+                logger.error("Player {} attempted to claim plot {}, but the database failed to update", player.getName(),
                     this.getId().toCommaSeparatedString());
                 return false;
             }
@@ -1952,7 +1952,7 @@ public class Plot {
             });
             return true;
         }
-        logger.info("[P2] Failed to add plot {} to plot area {}", this.getId().toCommaSeparatedString(), this.area.toString());
+        logger.info("Failed to add plot {} to plot area {}", this.getId().toCommaSeparatedString(), this.area.toString());
         return false;
     }
 

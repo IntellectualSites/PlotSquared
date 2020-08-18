@@ -89,7 +89,7 @@ public abstract class RegionManager {
             for (BlockVector2 loc : chunks) {
                 String directory = world + File.separator + "region" + File.separator + "r." + loc.getX() + "." + loc.getZ() + ".mca";
                 File file = new File(PlotSquared.platform().getWorldContainer(), directory);
-                logger.info("[P2] - Deleting file: {} (max 1024 chunks)", file.getName());
+                logger.info("- Deleting file: {} (max 1024 chunks)", file.getName());
                 if (file.exists()) {
                     file.delete();
                 }

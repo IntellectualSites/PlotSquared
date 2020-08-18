@@ -201,7 +201,7 @@ public class Purge extends SubCommand {
         boolean finalClear = clear;
         Runnable run = () -> {
             if (Settings.DEBUG) {
-                logger.info("[P2] Calculating plots to purge, please wait...");
+                logger.info("Calculating plots to purge, please wait...");
             }
             HashSet<Integer> ids = new HashSet<>();
             Iterator<Plot> iterator = toDelete.iterator();
@@ -217,7 +217,7 @@ public class Purge extends SubCommand {
                                 if (finalClear) {
                                     plot.clear(false, true, () -> {
                                         if (Settings.DEBUG) {
-                                            logger.info("[P2] Plot {} cleared by purge", plot.getId());
+                                            logger.info("Plot {} cleared by purge", plot.getId());
                                         }
                                     });
                                 } else {
@@ -228,7 +228,7 @@ public class Purge extends SubCommand {
                                     Purge.this.plotListener.plotEntry(pp, plot);
                                 }
                             } catch (NullPointerException e) {
-                                logger.error("[P2] NullPointer during purge detected. This is likely"
+                                logger.error("NullPointer during purge detected. This is likely"
                                     + " because you are deleting a world that has been removed", e);
                             }
                         }
