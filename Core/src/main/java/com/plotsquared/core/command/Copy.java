@@ -37,7 +37,6 @@ import net.kyori.adventure.text.minimessage.Template;
     permission = "plots.copy",
     aliases = {"copypaste"},
     category = CommandCategory.CLAIMING,
-    description = "Copy a plot",
     usage = "/plot copy <X;Z>",
     requiredType = RequiredType.NONE)
 public class Copy extends SubCommand {

@@ -54,7 +54,6 @@ import java.util.List;
     aliases = "restore",
     category = CommandCategory.SCHEMATIC,
     requiredType = RequiredType.NONE,
-    description = "Load your plot",
     permission = "plots.load",
     usage = "/plot load")
 public class Load extends SubCommand {

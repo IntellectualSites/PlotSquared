@@ -55,7 +55,6 @@ import java.util.Set;
 
 @CommandDeclaration(command = "debug",
     category = CommandCategory.DEBUG,
-    description = "Show debug information",
     usage = "/plot debug [msg]",
     permission = "plots.admin")
 public class Debug extends SubCommand {

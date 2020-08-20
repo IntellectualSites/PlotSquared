@@ -39,7 +39,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "leave",
-    description = "Removes self from being trusted or a member of the plot",
     permission = "plots.leave",
     usage = "/plot leave",
     category = CommandCategory.CLAIMING,

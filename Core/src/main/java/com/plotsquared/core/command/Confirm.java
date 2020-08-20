@@ -32,7 +32,6 @@ import com.plotsquared.core.util.task.TaskManager;
 
 @CommandDeclaration(command = "confirm",
     permission = "plots.use",
-    description = "Confirm an action",
     category = CommandCategory.INFO)
 public class Confirm extends SubCommand {
 

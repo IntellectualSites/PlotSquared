@@ -57,7 +57,6 @@ import java.util.stream.Stream;
 
 @CommandDeclaration(command = "backup",
     usage = "/plot backup <save | list | load>",
-    description = "Manage plot backups",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.PLAYER,
     permission = "plots.backup")
@@ -123,7 +122,6 @@ public final class Backup extends Command {
 
     @CommandDeclaration(command = "save",
         usage = "/plot backup save",
-        description = "Create a plot backup",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER,
         permission = "plots.backup.save")
@@ -174,7 +172,6 @@ public final class Backup extends Command {
 
     @CommandDeclaration(command = "list",
         usage = "/plot backup list",
-        description = "List available plot backups",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER,
         permission = "plots.backup.list")
@@ -241,7 +238,6 @@ public final class Backup extends Command {
 
     @CommandDeclaration(command = "load",
         usage = "/plot backup load <#>",
-        description = "Restore a plot backup",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER,
         permission = "plots.backup.load")

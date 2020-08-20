@@ -29,7 +29,6 @@ import com.plotsquared.core.player.PlotPlayer;
 
 @CommandDeclaration(command = "weanywhere",
     permission = "plots.worldedit.bypass",
-    description = "Force bypass of WorldEdit restrictions",
     aliases = {"wea"},
     usage = "/plot weanywhere",
     requiredType = RequiredType.NONE,

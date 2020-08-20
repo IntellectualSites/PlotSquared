@@ -34,7 +34,6 @@ import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "sethome",
     permission = "plots.set.home",
-    description = "Set the plot home to your current position",
     usage = "/plot sethome [none]",
     aliases = {"sh", "seth"},
     category = CommandCategory.SETTINGS,

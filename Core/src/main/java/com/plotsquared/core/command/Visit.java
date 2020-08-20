@@ -57,7 +57,6 @@ import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "visit",
     permission = "plots.visit",
-    description = "Visit someones plot",
     usage = "/plot visit <player> | <alias> | <plot> [area]|[#] [#]",
     aliases = {"v", "tp", "teleport", "goto", "warp"},
     requiredType = RequiredType.PLAYER,

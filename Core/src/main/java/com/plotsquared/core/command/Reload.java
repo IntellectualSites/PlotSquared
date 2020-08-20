@@ -44,7 +44,6 @@ import java.util.Objects;
 @CommandDeclaration(command = "reload",
     aliases = "rl",
     permission = "plots.admin.command.reload",
-    description = "Reload translations and world settings",
     usage = "/plot reload",
     category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {

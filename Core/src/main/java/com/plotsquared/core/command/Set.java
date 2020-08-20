@@ -58,7 +58,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @CommandDeclaration(command = "set",
-    description = "Set a plot value",
     aliases = {"s"},
     usage = "/plot set <biome | alias | home | flag> <value...>",
     permission = "plots.set",

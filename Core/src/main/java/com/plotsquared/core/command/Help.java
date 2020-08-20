@@ -39,7 +39,6 @@ import net.kyori.adventure.text.minimessage.Template;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "help",
-    description = "Get this help menu",
     aliases = "?",
     category = CommandCategory.INFO,
     usage = "help [category|#]",

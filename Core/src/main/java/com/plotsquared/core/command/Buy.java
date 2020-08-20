@@ -46,7 +46,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "buy",
-    description = "Buy the plot you are standing on",
     usage = "/plot buy",
     permission = "plots.buy",
     category = CommandCategory.CLAIMING,

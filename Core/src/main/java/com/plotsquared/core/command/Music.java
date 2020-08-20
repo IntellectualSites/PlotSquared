@@ -48,7 +48,6 @@ import java.util.Locale;
 
 @CommandDeclaration(command = "music",
     permission = "plots.music",
-    description = "Play music in your plot",
     usage = "/plot music",
     category = CommandCategory.APPEARANCE,
     requiredType = RequiredType.PLAYER)

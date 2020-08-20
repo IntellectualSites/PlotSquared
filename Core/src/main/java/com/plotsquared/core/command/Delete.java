@@ -47,7 +47,6 @@ import javax.annotation.Nullable;
 
 @CommandDeclaration(command = "delete",
     permission = "plots.delete",
-    description = "Delete the plot you stand on",
     usage = "/plot delete",
     aliases = {"dispose", "del"},
     category = CommandCategory.CLAIMING,

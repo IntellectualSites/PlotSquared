@@ -62,7 +62,6 @@ import java.util.Map.Entry;
     aliases = {"convert"},
     category = CommandCategory.ADMINISTRATION,
     permission = "plots.database",
-    description = "Convert/Backup Storage",
     requiredType = RequiredType.CONSOLE,
     usage = "/plot database [area] <sqlite | mysql | import>")
 public class DatabaseCommand extends SubCommand {

@@ -34,7 +34,6 @@ import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "plugin",
     permission = "plots.use",
-    description = "Show plugin information",
     usage = "/plot plugin",
     aliases = "version",
     category = CommandCategory.INFO)

@@ -29,7 +29,6 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 
 @CommandDeclaration(command = "chat",
-    description = "Toggles plot chat on or off",
     usage = "/plot chat",
     permission = "plots.chat",
     category = CommandCategory.CHAT,

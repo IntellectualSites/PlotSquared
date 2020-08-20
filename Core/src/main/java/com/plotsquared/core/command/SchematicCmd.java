@@ -52,7 +52,6 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "schematic",
     permission = "plots.schematic",
-    description = "Schematic command",
     aliases = {"sch", "schem"},
     category = CommandCategory.SCHEMATIC,
     usage = "/plot schematic <save | saveall | paste>")

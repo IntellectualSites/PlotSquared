@@ -27,13 +27,13 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -50,7 +50,6 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "merge",
     aliases = "m",
-    description = "Merge the plot you are standing on with another plot",
     permission = "plots.merge",
     usage = "/plot merge <all | n | e | s | w> [removeroads]",
     category = CommandCategory.SETTINGS,

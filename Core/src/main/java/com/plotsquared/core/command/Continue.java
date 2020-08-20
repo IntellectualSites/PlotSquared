@@ -42,7 +42,6 @@ import net.kyori.adventure.text.minimessage.Template;
 import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "continue",
-    description = "Continue a plot that was previously marked as done",
     permission = "plots.continue",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.PLAYER)

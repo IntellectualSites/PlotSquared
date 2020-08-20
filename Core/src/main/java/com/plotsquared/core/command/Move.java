@@ -43,7 +43,6 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(usage = "/plot move <X;Z>",
     command = "move",
-    description = "Move a plot",
     permission = "plots.move",
     category = CommandCategory.CLAIMING,
     requiredType = RequiredType.PLAYER)

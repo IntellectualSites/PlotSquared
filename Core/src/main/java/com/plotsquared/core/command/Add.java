@@ -48,7 +48,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "add",
-    description = "Allow a user to build in a plot while the plot owner is online.",
     usage = "/plot add <player | *>",
     category = CommandCategory.SETTINGS,
     permission = "plots.add",

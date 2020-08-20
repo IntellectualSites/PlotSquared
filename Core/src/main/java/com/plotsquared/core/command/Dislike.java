@@ -32,7 +32,6 @@ import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "dislike",
     permission = "plots.dislike",
-    description = "Dislike the plot",
     usage = "/plot dislike [next|purge]",
     category = CommandCategory.INFO,
     requiredType = RequiredType.PLAYER)

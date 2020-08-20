@@ -89,7 +89,6 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugexec",
     permission = "plots.admin",
-    description = "Mutli-purpose debug command",
     aliases = {"exec", "$"},
     category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {

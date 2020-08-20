@@ -35,7 +35,6 @@ import net.kyori.adventure.text.minimessage.Template;
     aliases = {"attribute"},
     permission = "plots.use",
     usage = "/plot toggle <chat | chatspy | clear-confirmation | time | titles | worldedit>",
-    description = "Toggle per user settings",
     requiredType = RequiredType.NONE,
     category = CommandCategory.SETTINGS)
 public class Toggle extends Command {
@@ -45,8 +44,7 @@ public class Toggle extends Command {
 
     @CommandDeclaration(command = "chatspy",
         aliases = {"spy"},
-        permission = "plots.admin.command.chat",
-        description = "Toggle plot chat spy")
+        permission = "plots.admin.command.chat")
     public void chatspy(Command command, PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
@@ -65,8 +63,7 @@ public class Toggle extends Command {
 
     @CommandDeclaration(command = "worldedit",
         aliases = {"we", "wea"},
-        permission = "plots.worldedit.bypass",
-        description = "Toggle worldedit area restrictions")
+        permission = "plots.worldedit.bypass")
     public void worldedit(Command command, PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
@@ -84,8 +81,7 @@ public class Toggle extends Command {
     }
 
     @CommandDeclaration(command = "chat",
-        permission = "plots.toggle.chat",
-        description = "Toggle plot chat")
+        permission = "plots.toggle.chat")
     public void chat(Command command, PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
@@ -103,8 +99,7 @@ public class Toggle extends Command {
     }
 
     @CommandDeclaration(command = "clear-confirmation",
-        permission = "plots.admin.command.autoclear",
-        description = "Toggle autoclear confirmation")
+        permission = "plots.admin.command.autoclear")
     public void clearConfirmation(Command command, PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
@@ -122,8 +117,7 @@ public class Toggle extends Command {
     }
 
     @CommandDeclaration(command = "titles",
-        permission = "plots.toggle.titles",
-        description = "Toggle plot title messages")
+        permission = "plots.toggle.titles")
     public void titles(Command command, PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
@@ -141,8 +135,7 @@ public class Toggle extends Command {
     }
 
     @CommandDeclaration(command = "time",
-        permission = "plots.toggle.time",
-        description = "Toggle plot time settings")
+        permission = "plots.toggle.time")
     public void time(Command command, PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
@@ -160,8 +153,7 @@ public class Toggle extends Command {
     }
 
     @CommandDeclaration(command = "debug",
-        permission = "plots.toggle.debug",
-        description = "Toggle plot debugging")
+        permission = "plots.toggle.debug")
     public void debug(Command command, PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {

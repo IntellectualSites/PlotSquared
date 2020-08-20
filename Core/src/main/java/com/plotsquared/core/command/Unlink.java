@@ -43,7 +43,6 @@ import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "unlink",
     aliases = {"u", "unmerge"},
-    description = "Unlink a mega-plot",
     usage = "/plot unlink [createroads]",
     requiredType = RequiredType.PLAYER,
     category = CommandCategory.SETTINGS,

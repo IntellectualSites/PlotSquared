@@ -39,7 +39,6 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(usage = "/plot swap <X;Z>",
     command = "swap",
-    description = "Swap two plots",
     aliases = {"switch"},
     category = CommandCategory.CLAIMING,
     requiredType = RequiredType.PLAYER)

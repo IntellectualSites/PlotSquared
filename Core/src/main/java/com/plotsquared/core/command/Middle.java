@@ -36,7 +36,6 @@ import com.plotsquared.core.plot.Plot;
  */
 @CommandDeclaration(command = "middle",
     aliases = {"center", "centre"},
-    description = "Teleports you to the center of the plot",
     usage = "/plot middle",
     category = CommandCategory.TELEPORT,
     requiredType = RequiredType.PLAYER)

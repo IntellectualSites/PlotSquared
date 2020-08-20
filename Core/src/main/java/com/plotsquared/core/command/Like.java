@@ -50,7 +50,6 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "like",
     permission = "plots.like",
-    description = "Like the plot",
     usage = "/plot like [next | purge]",
     category = CommandCategory.INFO,
     requiredType = RequiredType.PLAYER)

@@ -31,7 +31,6 @@ import com.plotsquared.core.player.PlotPlayer;
 
 @CommandDeclaration(command = "debugloadtest",
     permission = "plots.debugloadtest",
-    description = "This debug command will force the reload of all plots in the DB",
     usage = "/plot debugloadtest",
     category = CommandCategory.DEBUG,
     requiredType = RequiredType.CONSOLE)

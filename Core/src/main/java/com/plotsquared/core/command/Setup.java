@@ -47,7 +47,6 @@ import java.util.Map.Entry;
 
 @CommandDeclaration(command = "setup",
     permission = "plots.admin.command.setup",
-    description = "Setup wizard for plot worlds",
     usage = "/plot setup",
     aliases = {"create"},
     category = CommandCategory.ADMINISTRATION)

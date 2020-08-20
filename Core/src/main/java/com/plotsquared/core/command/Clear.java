@@ -47,7 +47,6 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "clear",
-    description = "Clear the plot you stand on",
     requiredType = RequiredType.NONE,
     permission = "plots.clear",
     category = CommandCategory.APPEARANCE,

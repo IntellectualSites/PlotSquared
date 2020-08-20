@@ -41,7 +41,6 @@ import java.util.Locale;
 
 @CommandDeclaration(command = "comment",
     aliases = {"msg"},
-    description = "Comment on a plot",
     category = CommandCategory.CHAT,
     requiredType = RequiredType.PLAYER,
     permission = "plots.comment")

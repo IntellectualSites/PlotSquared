@@ -37,7 +37,6 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "near",
     aliases = "n",
-    description = "Display nearby players",
     usage = "/plot near",
     category = CommandCategory.INFO,
     requiredType = RequiredType.PLAYER)

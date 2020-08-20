@@ -43,7 +43,6 @@ import java.util.Arrays;
 @CommandDeclaration(command = "debugroadregen",
     usage = DebugRoadRegen.USAGE,
     requiredType = RequiredType.NONE,
-    description = "Regenerate roads in the plot or region the user is, based on the road schematic",
     category = CommandCategory.DEBUG,
     permission = "plots.debugroadregen")
 public class DebugRoadRegen extends SubCommand {

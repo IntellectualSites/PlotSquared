@@ -53,8 +53,7 @@ import java.util.concurrent.TimeoutException;
     aliases = "clusters",
     category = CommandCategory.ADMINISTRATION,
     requiredType = RequiredType.NONE,
-    permission = "plots.cluster",
-    description = "Manage a plot cluster")
+    permission = "plots.cluster")
 public class Cluster extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {

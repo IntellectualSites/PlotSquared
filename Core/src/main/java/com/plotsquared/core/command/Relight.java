@@ -33,7 +33,6 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "relight",
-    description = "Relight your plot",
     usage = "/plot relight",
     category = CommandCategory.DEBUG,
     requiredType = RequiredType.PLAYER)

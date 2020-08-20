@@ -63,7 +63,6 @@ import java.util.Set;
     permission = "plots.auto",
     category = CommandCategory.CLAIMING,
     requiredType = RequiredType.NONE,
-    description = "Claim the nearest plot",
     aliases = "a",
     usage = "/plot auto [length, width]")
 public class Auto extends SubCommand {

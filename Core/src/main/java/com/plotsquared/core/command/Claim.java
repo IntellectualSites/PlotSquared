@@ -55,7 +55,6 @@ import javax.annotation.Nullable;
 @CommandDeclaration(
         command = "claim",
         aliases = "c",
-        description = "Claim the current plot you're standing on",
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.PLAYER, permission = "plots.claim",
         usage = "/plot claim")

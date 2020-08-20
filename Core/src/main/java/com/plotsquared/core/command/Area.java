@@ -93,7 +93,6 @@ import java.util.UUID;
     permission = "plots.area",
     category = CommandCategory.ADMINISTRATION,
     requiredType = RequiredType.NONE,
-    description = "Create a new PlotArea",
     aliases = "world",
     usage = "/plot area <create | info | list | tp | regen>",
     confirmation = true)

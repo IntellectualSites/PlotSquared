@@ -38,7 +38,6 @@ import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "info",
     aliases = "i",
-    description = "Display plot info",
     usage = "/plot info <id> [-f to force info]",
     category = CommandCategory.INFO)
 public class Info extends SubCommand {

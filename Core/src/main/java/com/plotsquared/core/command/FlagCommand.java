@@ -71,7 +71,6 @@ import java.util.stream.Stream;
 @CommandDeclaration(command = "flag",
     aliases = {"f", "flag"},
     usage = "/plot flag <set | remove | add | list | info> <flag> <value>",
-    description = "Manage plot flags",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.NONE,
     permission = "plots.flag")
@@ -282,7 +281,6 @@ public final class FlagCommand extends Command {
     @CommandDeclaration(command = "set",
         aliases = {"s", "set"},
         usage = "/plot flag set <flag> <value>",
-        description = "Set a plot flag",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE,
         permission = "plots.set.flag")
@@ -335,7 +333,6 @@ public final class FlagCommand extends Command {
     @CommandDeclaration(command = "add",
         aliases = {"a", "add"},
         usage = "/plot flag add <flag> <value>",
-        description = "Add a plot flag value",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE,
         permission = "plots.flag.add")
@@ -399,7 +396,6 @@ public final class FlagCommand extends Command {
     @CommandDeclaration(command = "remove",
         aliases = {"r", "remove", "delete"},
         usage = "/plot flag remove <flag> [values]",
-        description = "Remove a flag",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE,
         permission = "plots.flag.remove")
@@ -503,7 +499,6 @@ public final class FlagCommand extends Command {
     @CommandDeclaration(command = "list",
         aliases = {"l", "list", "flags"},
         usage = "/plot flag list",
-        description = "List all available plot flags",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE,
         permission = "plots.flag.list")
@@ -543,7 +538,6 @@ public final class FlagCommand extends Command {
     @CommandDeclaration(command = "info",
         aliases = {"i", "info"},
         usage = "/plot flag info <flag>",
-        description = "View information about a flag",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE,
         permission = "plots.flag.info")

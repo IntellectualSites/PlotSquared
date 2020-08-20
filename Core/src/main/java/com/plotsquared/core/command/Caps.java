@@ -47,7 +47,6 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
 @CommandDeclaration(command = "caps",
     category = CommandCategory.INFO,
-    description = "Show plot entity caps",
     usage = "/plot caps")
 public class Caps extends SubCommand {
 

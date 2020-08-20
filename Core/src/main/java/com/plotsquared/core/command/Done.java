@@ -49,7 +49,6 @@ import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "done",
     aliases = {"submit"},
-    description = "Mark a plot as done",
     permission = "plots.done",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.NONE)

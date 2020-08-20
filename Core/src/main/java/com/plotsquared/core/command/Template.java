@@ -65,7 +65,6 @@ import java.util.zip.ZipOutputStream;
 
 @CommandDeclaration(command = "template",
     permission = "plots.admin",
-    description = "Create or use a world template",
     usage = "/plot template [import | export] <world> <template>",
     category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {

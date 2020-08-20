@@ -50,7 +50,6 @@ import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "deny",
     aliases = {"d", "ban"},
-    description = "Deny a user from entering a plot",
     usage = "/plot deny <player | *>",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.PLAYER)

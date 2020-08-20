@@ -56,7 +56,6 @@ import java.util.stream.Collectors;
 @CommandDeclaration(command = "debugpaste",
     aliases = "dp",
     usage = "/plot debugpaste",
-    description = "Upload settings.yml, worlds.yml, your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste",
     permission = "plots.debugpaste",
     category = CommandCategory.DEBUG,
     confirmation = true,

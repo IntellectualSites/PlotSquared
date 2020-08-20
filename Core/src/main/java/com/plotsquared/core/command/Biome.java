@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "setbiome",
     permission = "plots.set.biome",
-    description = "Set the plot biome",
     usage = "/plot biome [biome]",
     aliases = {"biome", "sb", "setb", "b"},
     category = CommandCategory.APPEARANCE,

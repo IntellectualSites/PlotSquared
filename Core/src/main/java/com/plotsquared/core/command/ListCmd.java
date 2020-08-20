@@ -72,7 +72,6 @@ import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "list",
     aliases = {"l", "find", "search"},
-    description = "List plots",
     permission = "plots.list",
     category = CommandCategory.INFO,
     usage = "/plot list <forsale | mine | shared | world | top | all | unowned | player | world | done | fuzzy <search...>> [#]")

@@ -38,7 +38,6 @@ import net.kyori.adventure.text.minimessage.Template;
 import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "regenallroads",
-    description = "Regenerate all roads in the map using the set road schematic",
     aliases = {"rgar"},
     usage = "/plot regenallroads <world> [height]",
     category = CommandCategory.ADMINISTRATION,

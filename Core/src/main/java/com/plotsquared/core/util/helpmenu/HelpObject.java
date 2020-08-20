@@ -27,6 +27,7 @@ package com.plotsquared.core.util.helpmenu;
 
 import com.plotsquared.core.command.Argument;
 import com.plotsquared.core.command.Command;
+import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
@@ -37,21 +38,22 @@ public class HelpObject {
 
     static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
-    private final String _rendered;
+    private final String rendered;
 
     public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
-        _rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_item").getComponent(audience),
-            Template.of("usage", command.getUsage().replaceAll("\\{label\\}", label)),
-            Template.of("alias", command.getAliases().isEmpty() ? StringMan.join(command.getAliases(), "|") : ""),
-            Template.of("desc", command.getDescription()), Template.of("arguments", buildArgumentList(command.getRequiredArguments())),
+        rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_item").getComponent(audience),
+            Template.of("usage", command.getUsage().replace("{label}", label)),
+            Template.of("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
+            Templates.of(audience, "desc", command.getDescription()),
+            Template.of("arguments", buildArgumentList(command.getRequiredArguments())),
             Template.of("label", label)));
     }
 
     @Override public String toString() {
-        return _rendered;
+        return rendered;
     }
 
-    private String buildArgumentList(final Argument[] arguments) {
+    private String buildArgumentList(final Argument<?>[] arguments) {
         if (arguments == null) {
             return "";
         }

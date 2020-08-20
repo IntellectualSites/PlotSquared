@@ -52,7 +52,6 @@ import java.util.concurrent.TimeoutException;
     aliases = {"t"},
     requiredType = RequiredType.PLAYER,
     usage = "/plot trust <player | *>",
-    description = "Allow a user to build in a plot and use WorldEdit while the plot owner is offline.",
     category = CommandCategory.SETTINGS)
 public class Trust extends Command {
 

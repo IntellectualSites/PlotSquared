@@ -54,7 +54,6 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "rate",
     permission = "plots.rate",
-    description = "Rate the plot",
     usage = "/plot rate [# | next | purge]",
     aliases = "rt",
     category = CommandCategory.INFO,

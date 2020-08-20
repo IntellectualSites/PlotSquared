@@ -49,7 +49,6 @@ import java.util.function.Consumer;
 
 @CommandDeclaration(command = "setowner",
     permission = "plots.set.owner",
-    description = "Set the plot owner",
     usage = "/plot setowner <player>",
     aliases = {"owner", "so", "seto"},
     category = CommandCategory.CLAIMING,

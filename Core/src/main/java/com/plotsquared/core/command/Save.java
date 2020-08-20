@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.UUID;
 
 @CommandDeclaration(command = "save",
-    description = "Save your plot",
     category = CommandCategory.SCHEMATIC,
     requiredType = RequiredType.NONE,
     permission = "plots.save")

@@ -44,7 +44,6 @@ import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "alias",
     permission = "plots.alias",
-    description = "Set the plot name",
     usage = "/plot alias <set | remove> <alias>",
     aliases = {"setalias", "sa", "name", "rename", "setname", "seta", "nameplot"},
     category = CommandCategory.SETTINGS,

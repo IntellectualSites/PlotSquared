@@ -54,7 +54,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @CommandDeclaration(usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true | false] clear:[true | false]",
     command = "purge",
     permission = "plots.admin",
-    description = "Purge all plots for a world",
     category = CommandCategory.ADMINISTRATION,
     requiredType = RequiredType.CONSOLE,
     confirmation = true)

@@ -50,7 +50,6 @@ import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "kick",
     aliases = "k",
-    description = "Kick a player from your plot",
     permission = "plots.kick",
     usage = "/plot kick <player | *>",
     category = CommandCategory.TELEPORT,

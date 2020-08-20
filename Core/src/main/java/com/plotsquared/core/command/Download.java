@@ -50,7 +50,6 @@ import java.net.URL;
     aliases = {"dl"},
     category = CommandCategory.SCHEMATIC,
     requiredType = RequiredType.NONE,
-    description = "Download your plot",
     permission = "plots.download")
 public class Download extends SubCommand {
 
