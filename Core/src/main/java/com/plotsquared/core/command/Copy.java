@@ -77,11 +77,15 @@ public class Copy extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
             return false;
         }
-        if (plot1.copy(plot2, () -> player.sendMessage(TranslatableCaption.of("move.copy_success")))) {
-            return true;
-        } else {
-            player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
-            return false;
-        }
+
+        plot1.getPlotModificationManager().copy(plot2).thenAccept(result -> {
+            if (result) {
+                player.sendMessage(TranslatableCaption.of("move.copy_success"));
+            } else {
+                player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
+            }
+        });
+
+        return true;
     }
 }

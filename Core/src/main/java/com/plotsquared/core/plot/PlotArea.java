@@ -964,7 +964,7 @@ public abstract class PlotArea {
                 members.addAll(plot.getMembers());
                 denied.addAll(plot.getDenied());
                 if (removeRoads) {
-                    plot.removeSign();
+                    plot.getPlotModificationManager().removeSign();
                 }
             }
         }
@@ -985,19 +985,19 @@ public abstract class PlotArea {
                 Plot plot2;
                 if (lx) {
                     if (ly) {
-                        if (!plot.getMerged(Direction.EAST) || !plot.getMerged(Direction.SOUTH)) {
+                        if (!plot.isMerged(Direction.EAST) || !plot.isMerged(Direction.SOUTH)) {
                             if (removeRoads) {
-                                plot.removeRoadSouthEast(queue);
+                                plot.getPlotModificationManager().removeRoadSouthEast(queue);
                             }
                         }
                     }
-                    if (!plot.getMerged(Direction.EAST)) {
+                    if (!plot.isMerged(Direction.EAST)) {
                         plot2 = plot.getRelative(1, 0);
                         plot.mergePlot(plot2, removeRoads, queue);
                     }
                 }
                 if (ly) {
-                    if (!plot.getMerged(Direction.SOUTH)) {
+                    if (!plot.isMerged(Direction.SOUTH)) {
                         plot2 = plot.getRelative(0, 1);
                         plot.mergePlot(plot2, removeRoads, queue);
                     }

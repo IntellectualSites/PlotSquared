@@ -99,7 +99,7 @@ public class Delete extends SubCommand {
                 return;
             }
             final long start = System.currentTimeMillis();
-            boolean result = plot.deletePlot(() -> {
+            boolean result = plot.getPlotModificationManager().deletePlot(() -> {
                 plot.removeRunning();
                 if ((this.econHandler != null) && plotArea.useEconomy()) {
                     Expression<Double> valueExr = plotArea.getPrices().get("sell");

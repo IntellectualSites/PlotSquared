@@ -85,7 +85,7 @@ public class Swap extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
-        return plot1.move(plot2, () -> {
+        return plot1.getPlotModificationManager().move(plot2, () -> {
         }, true).thenApply(result -> {
             if (result) {
                 player.sendMessage(TranslatableCaption.of("swap.swap_success"));

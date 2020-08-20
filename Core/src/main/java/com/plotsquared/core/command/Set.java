@@ -154,8 +154,8 @@ public class Set extends SubCommand {
                         BackupManager.backup(player, plot, () -> {
                             plot.addRunning();
                             QueueCoordinator queue = plotArea.getQueue();
-                            for (Plot current : plot.getConnectedPlots()) {
-                                current.setComponent(component, pattern, queue);
+                            for (final Plot current : plot.getConnectedPlots()) {
+                                current.getPlotModificationManager().setComponent(component, pattern, queue);
                             }
                             queue.setCompleteTask(plot::removeRunning);
                             queue.enqueue();

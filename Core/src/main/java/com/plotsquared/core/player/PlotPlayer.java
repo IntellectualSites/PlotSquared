@@ -263,15 +263,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     /**
-     * Get the total number of allowed clusters
-     *
-     * @return number of allowed clusters within the scope (globally, or in the player's current world as defined in the settings.yml)
-     */
-    public int getAllowedClusters() {
-        return Permissions.hasPermissionRange(this, "plots.cluster", Settings.Limit.MAX_PLOTS);
-    }
-
-    /**
      * Get the number of plots this player owns.
      *
      * @return number of plots within the scope (globally, or in the player's current world as defined in the settings.yml)
@@ -588,7 +579,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         }
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
-                owned.deletePlot(null);
+                owned.getPlotModificationManager().deletePlot(null);
                 if (Settings.DEBUG) {
                     logger.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
                 }

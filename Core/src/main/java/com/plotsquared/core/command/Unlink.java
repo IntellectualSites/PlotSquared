@@ -96,7 +96,7 @@ public class Unlink extends SubCommand {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
         }
         Runnable runnable = () -> {
-            if (!plot.unlinkPlot(createRoad, createRoad)) {
+            if (!plot.getPlotModificationManager().unlinkPlot(createRoad, createRoad)) {
                 player.sendMessage(TranslatableCaption.of("merge.unmerge_cancelled"));
                 return;
             }

@@ -92,8 +92,8 @@ public class Clear extends Command {
         confirm.run(this, () -> {
             BackupManager.backup(player, plot, () -> {
                 final long start = System.currentTimeMillis();
-                boolean result = plot.clear(true, false, () -> {
-                    plot.unlink();
+                boolean result = plot.getPlotModificationManager().clear(true, false, () -> {
+                    plot.getPlotModificationManager().unlink();
                     TaskManager.runTask(() -> {
                         plot.removeRunning();
                         // If the state changes, then mark it as no longer done

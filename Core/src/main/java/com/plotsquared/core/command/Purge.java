@@ -215,13 +215,13 @@ public class Purge extends SubCommand {
                             try {
                                 ids.add(plot.temp);
                                 if (finalClear) {
-                                    plot.clear(false, true, () -> {
+                                    plot.getPlotModificationManager().clear(false, true, () -> {
                                         if (Settings.DEBUG) {
                                             logger.info("Plot {} cleared by purge", plot.getId());
                                         }
                                     });
                                 } else {
-                                    plot.removeSign();
+                                    plot.getPlotModificationManager().removeSign();
                                 }
                                 plot.getArea().removePlot(plot.getId());
                                 for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {

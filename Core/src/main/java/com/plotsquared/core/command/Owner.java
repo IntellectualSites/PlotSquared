@@ -106,11 +106,11 @@ public class Owner extends SetCommand {
                     Template.of("value", "Unlink on owner change"));
                     return;
                 }
-                plot.unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
+                plot.getPlotModificationManager().unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
                 Set<Plot> connected = plot.getConnectedPlots();
                 for (Plot current : connected) {
                     current.unclaim();
-                    current.removeSign();
+                    current.getPlotModificationManager().removeSign();
                 }
                 player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                 return;
@@ -148,7 +148,7 @@ public class Owner extends SetCommand {
                     if (plot.setOwner(finalUUID, player)) {
                         if (removeDenied)
                             plot.removeDenied(finalUUID);
-                        plot.setSign(finalName);
+                        plot.getPlotModificationManager().setSign(finalName);
                         player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                         if (other != null) {
                             other.sendMessage(

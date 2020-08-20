@@ -42,7 +42,6 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
@@ -182,7 +181,7 @@ public class Merge extends SubCommand {
                     );
                 return true;
             }
-            if (plot.autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
+            if (plot.getPlotModificationManager().autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
                 if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
                     this.econHandler.withdrawMoney(player, price);
                     player.sendMessage(
@@ -226,7 +225,7 @@ public class Merge extends SubCommand {
             );
             return true;
         }
-        if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
+        if (plot.getPlotModificationManager().autoMerge(direction, maxSize - size, uuid, terrain)) {
             if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
                 this.econHandler.withdrawMoney(player, price);
                 player.sendMessage(
@@ -239,7 +238,7 @@ public class Merge extends SubCommand {
         }
         Plot adjacent = plot.getRelative(direction);
         if (adjacent == null || !adjacent.hasOwner() || adjacent
-            .getMerged((direction.getIndex() + 2) % 4) || (!force && adjacent.isOwner(uuid))) {
+            .isMerged((direction.getIndex() + 2) % 4) || (!force && adjacent.isOwner(uuid))) {
             player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
         }
@@ -261,8 +260,8 @@ public class Merge extends SubCommand {
             final Direction dir = direction;
             Runnable run = () -> {
                 accepter.sendMessage(TranslatableCaption.of("merge.merge_accepted"));
-                plot.autoMerge(dir, maxSize - size, owner, terrain);
-                PlotPlayer plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(player.getUUID());
+                plot.getPlotModificationManager().autoMerge(dir, maxSize - size, owner, terrain);
+                PlotPlayer<?> plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(player.getUUID());
                 if (plotPlayer == null) {
                     accepter.sendMessage(TranslatableCaption.of("merge.merge_not_valid"));
                     return;
