@@ -53,7 +53,6 @@ import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.FlagContainer;
@@ -153,6 +152,10 @@ public class Plot {
      * Plot flag container
      */
     private final FlagContainer flagContainer = new FlagContainer(null);
+    /**
+     * Utility used to manage plot comments
+     */
+    private final PlotCommentContainer plotCommentContainer = new PlotCommentContainer(this);
     /**
      * Has the plot changed since the last save cycle?
      */
@@ -323,7 +326,9 @@ public class Plot {
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
      */
-    @Nullable public static Plot getPlotFromString(PlotPlayer<?> player, String arg, boolean message) {
+    @Nullable public static Plot getPlotFromString(@Nullable final PlotPlayer<?> player,
+                                                   @Nullable final String arg,
+                                                   final boolean message) {
         if (arg == null) {
             if (player == null) {
                 if (message) {
@@ -365,13 +370,13 @@ public class Plot {
                     return p;
                 }
             }
-            if (message) {
+            if (message && player != null) {
                 player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
             }
             return null;
         }
         if (area == null) {
-            if (message) {
+            if (message && player != null) {
                 player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             }
             return null;
@@ -386,8 +391,8 @@ public class Plot {
      * @param string      plot id/area + id
      * @return New or existing plot object
      */
-    public static Plot fromString(PlotArea defaultArea, String string) {
-        String[] split = string.split(";|,");
+    @Nullable public static Plot fromString(@Nullable final PlotArea defaultArea, @Nonnull final String string) {
+        final String[] split = string.split(";|,");
         if (split.length == 2) {
             if (defaultArea != null) {
                 PlotId id = PlotId.fromString(split[0] + ';' + split[1]);
@@ -416,8 +421,8 @@ public class Plot {
      * @return plot at location or null
      * @see PlotPlayer#getCurrentPlot() if a player is expected here.
      */
-    public static Plot getPlot(Location location) {
-        PlotArea pa = location.getPlotArea();
+    @Nullable public static Plot getPlot(@Nullable final Location location) {
+        final PlotArea pa = location.getPlotArea();
         if (pa != null) {
             return pa.getPlot(location);
         }
@@ -3452,26 +3457,6 @@ public class Plot {
         return true;
     }
 
-    public boolean removeComment(PlotComment comment) {
-        return getSettings().removeComment(comment);
-    }
-
-    public void removeComments(List<PlotComment> comments) {
-        getSettings().removeComments(comments);
-    }
-
-    public List<PlotComment> getComments(String inbox) {
-        return getSettings().getComments(inbox);
-    }
-
-    public void addComment(PlotComment comment) {
-        getSettings().addComment(comment);
-    }
-
-    public void setComments(List<PlotComment> list) {
-        getSettings().setComments(list);
-    }
-
     public boolean getMerged(Direction direction) {
         return getMerged(direction.getIndex());
     }
@@ -3627,8 +3612,9 @@ public class Plot {
      * - The index corresponds to the index of the category in the config
      *
      * @return Average ratings in each category
+     * @see Settings.Ratings#CATEGORIES Rating categories
      */
-    public double[] getAverageRatings() {
+    @Nonnull public double[] getAverageRatings() {
         Map<UUID, Integer> rating;
         if (this.getSettings().getRatings() != null) {
             rating = this.getSettings().getRatings();
@@ -3662,8 +3648,23 @@ public class Plot {
         return ratings;
     }
 
+    /**
+     * Get the plot flag container
+     *
+     * @return Flag container
+     */
     @Nonnull public FlagContainer getFlagContainer() {
         return this.flagContainer;
+    }
+
+    /**
+     * Get the plot comment container. This can be used to manage
+     * and access plot comments
+     *
+     * @return Plot comment container
+     */
+    @Nonnull public PlotCommentContainer getPlotCommentContainer() {
+        return this.plotCommentContainer;
     }
 
 }

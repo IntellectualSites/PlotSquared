@@ -208,7 +208,7 @@ public class Inbox extends SubCommand {
                             }
                             PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
-                            boolean success = plot.removeComment(comment);
+                            boolean success = plot.getPlotCommentContainer().removeComment(comment);
                             if (success) {
                                 player.sendMessage(
                                         TranslatableCaption.of("comment.comment_removed_success"),
@@ -231,9 +231,9 @@ public class Inbox extends SubCommand {
                         player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox_modify"));
                     }
                     inbox.clearInbox(plot);
-                    List<PlotComment> comments = plot.getComments(inbox.toString());
+                    List<PlotComment> comments = plot.getPlotCommentContainer().getComments(inbox.toString());
                     if (!comments.isEmpty()) {
-                        plot.removeComments(comments);
+                        plot.getPlotCommentContainer().removeComments(comments);
                     }
                     player.sendMessage(
                             TranslatableCaption.of("comment.comment_removed_success"),

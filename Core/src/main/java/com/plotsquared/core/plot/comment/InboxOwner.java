@@ -37,7 +37,7 @@ public class InboxOwner extends CommentInbox {
 
     @Override
     public boolean getComments(final Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
-        List<PlotComment> comments = plot.getComments(toString());
+        List<PlotComment> comments = plot.getPlotCommentContainer().getComments(toString());
         if (!comments.isEmpty()) {
             whenDone.value = comments;
             TaskManager.runTask(whenDone);
@@ -48,10 +48,10 @@ public class InboxOwner extends CommentInbox {
                 whenDone.value = value;
                 if (value != null) {
                     for (PlotComment comment : value) {
-                        plot.addComment(comment);
+                        plot.getPlotCommentContainer().addComment(comment);
                     }
                 } else {
-                    plot.setComments(new ArrayList<>());
+                    plot.getPlotCommentContainer().setComments(new ArrayList<>());
                 }
                 TaskManager.runTask(whenDone);
             }
@@ -63,7 +63,7 @@ public class InboxOwner extends CommentInbox {
         if (plot.getOwner() == null) {
             return false;
         }
-        plot.addComment(comment);
+        plot.getPlotCommentContainer().addComment(comment);
         DBFunc.setComment(plot, comment);
         return true;
     }
