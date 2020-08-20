@@ -180,7 +180,9 @@ public class Visit extends Command {
                             Captions.COMMAND_SYNTAX.send(player, getUsage());
                         } else {
                             final UUID uuid = uuids.toArray(new UUID[0])[0];
-                            this.visit(player, PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(), finalSortByArea, confirm, whenDone, finalPage1);
+                            this.visit(player, PlotQuery.newQuery()
+                                    .thatPasses(plot -> plot.isOwner(uuid)),
+                                    finalSortByArea, confirm, whenDone, finalPage1);
                         }
                     });
                     break;
@@ -209,7 +211,7 @@ public class Visit extends Command {
                                 MainUtil.sendMessage(player, Captions.INVALID_PLAYER, finalArgs[0]);
                             }
                         } else {
-                            this.visit(player, PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(), null, confirm, whenDone, finalPage);
+                            this.visit(player, PlotQuery.newQuery().thatPasses(plot -> plot.isOwner(uuid)).whereBasePlot(), null, confirm, whenDone, finalPage);
                         }
                     });
                 } else {
