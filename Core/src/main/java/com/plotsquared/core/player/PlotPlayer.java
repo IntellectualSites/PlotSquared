@@ -818,10 +818,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         final Component titleComponent = MiniMessage.get().parse(title.getComponent(this), replacements);
         final Component subtitleComponent =
             MiniMessage.get().parse(subtitle.getComponent(this), replacements);
-        getAudience().showTitle(Title
-            .of(titleComponent, subtitleComponent, Duration.of(fadeIn * 50, ChronoUnit.MILLIS),
+        final Title.Times times = Title.Times.of(Duration.of(fadeIn * 50, ChronoUnit.MILLIS),
                 Duration.of(stay * 50, ChronoUnit.MILLIS),
-                Duration.of(fadeOut * 50, ChronoUnit.MILLIS)));
+                Duration.of(fadeOut * 50, ChronoUnit.MILLIS));
+        getAudience().showTitle(Title
+            .of(titleComponent, subtitleComponent, times));
     }
 
     @Override public void sendMessage(@Nonnull final Caption caption,
