@@ -34,10 +34,10 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
+import com.plotsquared.core.uuid.UUIDMapping;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "remove",
@@ -78,37 +78,37 @@ public class Remove extends SubCommand {
                 MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
                 return;
             } else if (!uuids.isEmpty()) {
-                for (UUID uuid : uuids) {
-                    if (plot.getTrusted().contains(uuid)) {
-                        if (plot.removeTrusted(uuid)) {
+                for (UUIDMapping uuidMapping : uuids) {
+                    if (plot.getTrusted().contains(uuidMapping.getUuid())) {
+                        if (plot.removeTrusted(uuidMapping.getUuid())) {
                             PlotSquared.get().getEventDispatcher()
-                                .callTrusted(player, plot, uuid, false);
+                                .callTrusted(player, plot, uuidMapping.getUuid(), false);
                             count++;
                         }
-                    } else if (plot.getMembers().contains(uuid)) {
-                        if (plot.removeMember(uuid)) {
+                    } else if (plot.getMembers().contains(uuidMapping.getUuid())) {
+                        if (plot.removeMember(uuidMapping.getUuid())) {
                             PlotSquared.get().getEventDispatcher()
-                                .callMember(player, plot, uuid, false);
+                                .callMember(player, plot, uuidMapping.getUuid(), false);
                             count++;
                         }
-                    } else if (plot.getDenied().contains(uuid)) {
-                        if (plot.removeDenied(uuid)) {
+                    } else if (plot.getDenied().contains(uuidMapping.getUuid())) {
+                        if (plot.removeDenied(uuidMapping.getUuid())) {
                             PlotSquared.get().getEventDispatcher()
-                                .callDenied(player, plot, uuid, false);
+                                .callDenied(player, plot, uuidMapping.getUuid(), false);
                             count++;
                         }
-                    } else if (uuid == DBFunc.EVERYONE) {
-                        if (plot.removeTrusted(uuid)) {
+                    } else if (uuidMapping.getUuid() == DBFunc.EVERYONE) {
+                        if (plot.removeTrusted(uuidMapping.getUuid())) {
                             PlotSquared.get().getEventDispatcher()
-                                .callTrusted(player, plot, uuid, false);
+                                .callTrusted(player, plot, uuidMapping.getUuid(), false);
                             count++;
-                        } else if (plot.removeMember(uuid)) {
+                        } else if (plot.removeMember(uuidMapping.getUuid())) {
                             PlotSquared.get().getEventDispatcher()
-                                .callMember(player, plot, uuid, false);
+                                .callMember(player, plot, uuidMapping.getUuid(), false);
                             count++;
-                        } else if (plot.removeDenied(uuid)) {
+                        } else if (plot.removeDenied(uuidMapping.getUuid())) {
                             PlotSquared.get().getEventDispatcher()
-                                .callDenied(player, plot, uuid, false);
+                                .callDenied(player, plot, uuidMapping.getUuid(), false);
                             count++;
                         }
                     }

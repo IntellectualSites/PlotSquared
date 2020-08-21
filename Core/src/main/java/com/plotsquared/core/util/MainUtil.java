@@ -748,10 +748,9 @@ public class MainUtil {
         return ratings;
     }
 
-    public static void getUUIDsFromString(final String list, final BiConsumer<Collection<UUID>, Throwable> consumer) {
+    public static void getUUIDsFromString(final String list, final BiConsumer<Collection<UUIDMapping>, Throwable> consumer) {
         String[] split = list.split(",");
-
-        final Set<UUID> result = new HashSet<>();
+        final Set<UUIDMapping> result = new HashSet<>();
         final List<String> request = new LinkedList<>();
 
         for (final String name : split) {
@@ -759,10 +758,10 @@ public class MainUtil {
                 consumer.accept(Collections.emptySet(), null);
                 return;
             } else if ("*".equals(name)) {
-                result.add(DBFunc.EVERYONE);
+                result.add(new UUIDMapping(DBFunc.EVERYONE, "*"));
             } else if (name.length() > 16) {
                 try {
-                    result.add(UUID.fromString(name));
+                    result.add(new UUIDMapping(UUID.fromString(name), name));
                 } catch (IllegalArgumentException ignored) {
                     consumer.accept(Collections.emptySet(), null);
                     return;
@@ -776,16 +775,14 @@ public class MainUtil {
             consumer.accept(result, null);
         } else {
             PlotSquared.get().getImpromptuUUIDPipeline().getUUIDs(request, Settings.UUID.NON_BLOCKING_TIMEOUT)
-                .whenComplete((uuids, throwable) -> {
-                if (throwable != null) {
-                    consumer.accept(null, throwable);
-                } else {
-                    for (final UUIDMapping uuid : uuids) {
-                        result.add(uuid.getUuid());
-                    }
-                    consumer.accept(result, null);
-                }
-            });
+                    .whenComplete((uuids, throwable) -> {
+                        if (throwable != null) {
+                            consumer.accept(null, throwable);
+                        } else {
+                            result.addAll(uuids);
+                            consumer.accept(result, null);
+                        }
+                    });
         }
     }
 

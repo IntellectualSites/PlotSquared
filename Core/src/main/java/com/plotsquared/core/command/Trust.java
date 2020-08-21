@@ -35,11 +35,11 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.uuid.UUIDMapping;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
@@ -81,28 +81,28 @@ public class Trust extends Command {
                 return;
             } else {
                 checkTrue(!uuids.isEmpty(), Captions.INVALID_PLAYER, args[0]);
-                Iterator<UUID> iterator = uuids.iterator();
+                Iterator<UUIDMapping> iterator = uuids.iterator();
                 int size = currentPlot.getTrusted().size() + currentPlot.getMembers().size();
                 while (iterator.hasNext()) {
-                    UUID uuid = iterator.next();
-                    if (uuid == DBFunc.EVERYONE && !(
+                    UUIDMapping uuidMapping = iterator.next();
+                    if (uuidMapping.getUuid() == DBFunc.EVERYONE && !(
                         Permissions.hasPermission(player, Captions.PERMISSION_TRUST_EVERYONE) || Permissions
                             .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_TRUST))) {
-                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, MainUtil.getName(uuid));
+                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, uuidMapping.getUsername());
                         iterator.remove();
                         continue;
                     }
-                    if (currentPlot.isOwner(uuid)) {
-                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                    if (currentPlot.isOwner(uuidMapping.getUuid())) {
+                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, uuidMapping.getUsername());
                         iterator.remove();
                         continue;
                     }
-                    if (currentPlot.getTrusted().contains(uuid)) {
-                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, MainUtil.getName(uuid));
+                    if (currentPlot.getTrusted().contains(uuidMapping.getUuid())) {
+                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, uuidMapping.getUsername());
                         iterator.remove();
                         continue;
                     }
-                    size += currentPlot.getMembers().contains(uuid) ? 0 : 1;
+                    size += currentPlot.getMembers().contains(uuidMapping.getUuid()) ? 0 : 1;
                 }
                 checkTrue(!uuids.isEmpty(), null);
                 checkTrue(size <= currentPlot.getArea().getMaxPlotMembers() || Permissions
@@ -110,16 +110,16 @@ public class Trust extends Command {
                     Captions.PLOT_MAX_MEMBERS);
                 // Success
                 confirm.run(this, () -> {
-                    for (UUID uuid : uuids) {
-                        if (uuid != DBFunc.EVERYONE) {
-                            if (!currentPlot.removeMember(uuid)) {
-                                if (currentPlot.getDenied().contains(uuid)) {
-                                    currentPlot.removeDenied(uuid);
+                    for (UUIDMapping uuidMapping : uuids) {
+                        if (uuidMapping.getUuid() != DBFunc.EVERYONE) {
+                            if (!currentPlot.removeMember(uuidMapping.getUuid())) {
+                                if (currentPlot.getDenied().contains(uuidMapping.getUuid())) {
+                                    currentPlot.removeDenied(uuidMapping.getUuid());
                                 }
                             }
                         }
-                        currentPlot.addTrusted(uuid);
-                        PlotSquared.get().getEventDispatcher().callTrusted(player, currentPlot, uuid, true);
+                        currentPlot.addTrusted(uuidMapping.getUuid());
+                        PlotSquared.get().getEventDispatcher().callTrusted(player, currentPlot, uuidMapping.getUuid(), true);
                         MainUtil.sendMessage(player, Captions.TRUSTED_ADDED);
                     }
                 }, null);
