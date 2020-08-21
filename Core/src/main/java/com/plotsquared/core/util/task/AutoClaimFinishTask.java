@@ -21,11 +21,10 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.task;
 
-import com.plotsquared.core.command.Auto;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
@@ -73,7 +72,7 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
                 player.sendMessage(TranslatableCaption.of("events.event_denied"),
                                    Templates.of("value", "Auto Merge"));
             } else {
-                plot.autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
+                plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
             }
         }
         return true;

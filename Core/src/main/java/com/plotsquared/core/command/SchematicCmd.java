@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -52,7 +52,6 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "schematic",
     permission = "plots.schematic",
-    description = "Schematic command",
     aliases = {"sch", "schem"},
     category = CommandCategory.SCHEMATIC,
     usage = "/plot schematic <save | saveall | paste>")
@@ -72,7 +71,7 @@ public class SchematicCmd extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "Possible values: save, paste , exportall, list")
+                    Template.of("value", "Possible values: save, paste, exportall, list")
             );
             return true;
         }
@@ -89,7 +88,7 @@ public class SchematicCmd extends SubCommand {
                 if (args.length < 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "Possible values: save, paste , exportall, list")
+                            Template.of("value", "Possible values: save, paste, exportall, list")
                     );
                     break;
                 }
@@ -266,7 +265,7 @@ public class SchematicCmd extends SubCommand {
             default:
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "Possible values: save, paste , exportall, list")
+                        Template.of("value", "Possible values: save, paste, exportall, list")
                 );
                 break;
         }

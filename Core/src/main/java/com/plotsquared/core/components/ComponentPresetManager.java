@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.components;
 
@@ -83,7 +83,7 @@ public class ComponentPresetManager {
                 e.printStackTrace();
             }
             if (!created) {
-                logger.error("[P2] Failed to create components.yml");
+                logger.error("Failed to create components.yml");
                 this.guiName = "&cInvalid!";
                 this.presets = new ArrayList<>();
                 return;
@@ -99,7 +99,7 @@ public class ComponentPresetManager {
             try {
                 yamlConfiguration.save(file);
             } catch (IOException e) {
-                logger.error("[P2] Failed to save default values to components.yml", e);
+                logger.error("Failed to save default values to components.yml", e);
             }
         }
         this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
@@ -109,13 +109,13 @@ public class ComponentPresetManager {
                 .collect(Collectors.toList());
         } else {
             final List<ComponentPreset> defaultPreset = Collections.singletonList(
-                new ComponentPreset(ClassicPlotManagerComponent.FLOOR, "##wool", 0, "", "&6D&ai&cs&ec&bo &2F&3l&do&9o&4r",
-                    Arrays.asList("&6Spice up your plot floor"), ItemTypes.YELLOW_WOOL));
+                new ComponentPreset(ClassicPlotManagerComponent.FLOOR, "##wool", 0, "", "<gold>D</gold><green>i</green><red>s</red><yellow>c</yellow><aqua>o</aqua><dark_green> F</dark_green><dark_aqua>l</dark_aqua><light_purple>o</light_purple><blue>o</blue><dark_red>r</dark_red>",
+                    Arrays.asList("<gold>Spice up your plot floor</gold>"), ItemTypes.YELLOW_WOOL));
             yamlConfiguration.set("presets", defaultPreset.stream().map(ComponentPreset::serialize).collect(Collectors.toList()));
             try {
                 yamlConfiguration.save(file);
             } catch (final IOException e) {
-                logger.error("[P2] Failed to save default values to components.yml", e);
+                logger.error("Failed to save default values to components.yml", e);
             }
             this.presets = defaultPreset;
         }
@@ -128,6 +128,7 @@ public class ComponentPresetManager {
      * if the player is in a compatible plot, and sends appropriate
      * error messages if not
      *
+     * @param player player
      * @return Build inventory, if it could be created
      */
     @Nullable public PlotInventory buildInventory(final PlotPlayer<?> player) {
@@ -154,7 +155,7 @@ public class ComponentPresetManager {
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
         final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size, this.guiName) {
             @Override public boolean onClick(final int index) {
-                if (!player.getCurrentPlot().equals(plot)) {
+                if (!getPlayer().getCurrentPlot().equals(plot)) {
                     return false;
                 }
 
@@ -168,36 +169,36 @@ public class ComponentPresetManager {
                 }
 
                 if (plot.getRunning() > 0) {
-                    player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
+                    getPlayer().sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                     return false;
                 }
 
                 final Pattern pattern = PatternUtil.parse(null, componentPreset.getPattern(), false);
                 if (pattern == null) {
-                    player.sendMessage(TranslatableCaption.of("preset.preset_invalid"));
+                    getPlayer().sendMessage(TranslatableCaption.of("preset.preset_invalid"));
                     return false;
                 }
 
                 if (componentPreset.getCost() > 0.0D && econHandler != null && plot.getArea().useEconomy()) {
-                    if (econHandler.getMoney(player) < componentPreset.getCost()) {
-                        player.sendMessage(TranslatableCaption.of("preset.preset_cannot_afford"));
+                    if (econHandler.getMoney(getPlayer()) < componentPreset.getCost()) {
+                        getPlayer().sendMessage(TranslatableCaption.of("preset.preset_cannot_afford"));
                         return false;
                     } else {
-                        econHandler.withdrawMoney(player, componentPreset.getCost());
-                        player.sendMessage(TranslatableCaption.of("economy.removed_balance"),
+                        econHandler.withdrawMoney(getPlayer(), componentPreset.getCost());
+                        getPlayer().sendMessage(TranslatableCaption.of("economy.removed_balance"),
                                 Template.of("money", componentPreset.getCost() + ""));
                     }
                 }
 
-                BackupManager.backup(player, plot, () -> {
+                BackupManager.backup(getPlayer(), plot, () -> {
                     plot.addRunning();
                     QueueCoordinator queue = plot.getArea().getQueue();
                     for (Plot current : plot.getConnectedPlots()) {
-                        current.setComponent(componentPreset.getComponent().name(), pattern, queue);
+                        current.getPlotModificationManager().setComponent(componentPreset.getComponent().name(), pattern, queue);
                     }
                     queue.setCompleteTask(plot::removeRunning);
                     queue.enqueue();
-                    player.sendMessage(TranslatableCaption.of("working.generating_component"));
+                    getPlayer().sendMessage(TranslatableCaption.of("working.generating_component"));
                 });
                 return false;
             }

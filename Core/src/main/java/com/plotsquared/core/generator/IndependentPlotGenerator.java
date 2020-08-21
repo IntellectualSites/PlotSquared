@@ -21,14 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 
@@ -41,6 +40,8 @@ public abstract class IndependentPlotGenerator {
 
     /**
      * Get the name of this generator.
+     *
+     * @return generator name
      */
     public abstract String getName();
 
@@ -49,8 +50,8 @@ public abstract class IndependentPlotGenerator {
      * The PlotArea settings is the same one this was initialized with.
      * The PseudoRandom random is a fast random object.
      *
-     * @param result
-     * @param settings
+     * @param result   queue
+     * @param settings PlotArea (settings)
      */
     public abstract void generateChunk(ScopedQueueCoordinator result, PlotArea settings);
 
@@ -65,18 +66,9 @@ public abstract class IndependentPlotGenerator {
      * @param id    (May be null) Area name
      * @param min   Min plot id (may be null)
      * @param max   Max plot id (may be null)
-     * @return
+     * @return new plot area
      */
     public abstract PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max);
-
-    /**
-     * If any additional setup options need to be changed before world creation.
-     * - e.g. If setup doesn't support some standard options
-     *
-     * @param setup
-     */
-    @Deprecated public void processSetup(SetupObject setup) {
-    }
 
     /**
      * If any additional setup options need to be changed before world creation.
@@ -90,7 +82,7 @@ public abstract class IndependentPlotGenerator {
     /**
      * It is preferred for the PlotArea object to do most of the initialization necessary.
      *
-     * @param area
+     * @param area area
      */
     public abstract void initialize(PlotArea area);
 
@@ -98,9 +90,9 @@ public abstract class IndependentPlotGenerator {
      * Get the generator for your specific implementation (bukkit/sponge).<br>
      * - e.g. YourIndependentGenerator.&lt;ChunkGenerator&gt;specify() - Would return a ChunkGenerator object<br>
      *
-     * @param <T>
-     * @param <T>
-     * @return
+     * @param <T>   world
+     * @param world ChunkGenerator Implementation
+     * @return Chunk generator
      */
     public <T> GeneratorWrapper<T> specify(String world) {
         return (GeneratorWrapper<T>) PlotSquared.platform().wrapPlotGenerator(world, this);

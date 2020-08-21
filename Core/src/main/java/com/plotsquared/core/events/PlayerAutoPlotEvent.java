@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
@@ -70,6 +70,8 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
 
     /**
      * Set the schematic string used in the claim.
+     *
+     * @param schematic the schematic name
      */
     public void setSchematic(String schematic) {
         this.schematic = schematic;

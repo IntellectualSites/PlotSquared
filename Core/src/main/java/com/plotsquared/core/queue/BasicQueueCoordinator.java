@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
 
@@ -201,6 +201,8 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     /**
      * Gets the int[x,z] chunk coordinates where regeneration should start from
+     *
+     * @return int[x, z] of regen start
      */
     public int[] getRegenStart() {
         return regenStart;
@@ -208,6 +210,8 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     /**
      * Gets the int[x,z] chunk coordinates where regeneration should finish
+     *
+     * @return int[x, z] of regen end
      */
     public int[] getRegenEnd() {
         return regenEnd;
@@ -215,6 +219,8 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     /**
      * Whether the queue has a start/end to chunk regeneration
+     *
+     * @return if is regenerating queue with int[x,z] start and end
      */
     public boolean isRegen() {
         return regen;
@@ -222,6 +228,8 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     /**
      * Gets the map of ChunkCoordinates in {@link BlockVector2} form against the {@link LocalChunk} of cached chunks to be written
+     *
+     * @return ConcurrentHashMap of chunks to be accessed
      */
     @Nonnull public ConcurrentHashMap<BlockVector2, LocalChunk> getBlockChunks() {
         return this.blockChunks;
@@ -229,6 +237,8 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     /**
      * Forces an {@link LocalChunk} into the list of chunks to be written. Overwrites existing chunks in the map
+     *
+     * @param chunk add a LocalChunk to be written to by the queue
      */
     public final void setChunk(@Nonnull LocalChunk chunk) {
         this.blockChunks.put(BlockVector2.at(chunk.getX(), chunk.getZ()), chunk);

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -37,7 +37,6 @@ import net.kyori.adventure.text.minimessage.Template;
     permission = "plots.copy",
     aliases = {"copypaste"},
     category = CommandCategory.CLAIMING,
-    description = "Copy a plot",
     usage = "/plot copy <X;Z>",
     requiredType = RequiredType.NONE)
 public class Copy extends SubCommand {
@@ -77,11 +76,15 @@ public class Copy extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
             return false;
         }
-        if (plot1.copy(plot2, () -> player.sendMessage(TranslatableCaption.of("move.copy_success")))) {
-            return true;
-        } else {
-            player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
-            return false;
-        }
+
+        plot1.getPlotModificationManager().copy(plot2).thenAccept(result -> {
+            if (result) {
+                player.sendMessage(TranslatableCaption.of("move.copy_success"));
+            } else {
+                player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
+            }
+        });
+
+        return true;
     }
 }

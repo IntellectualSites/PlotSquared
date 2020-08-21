@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -39,13 +39,11 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 
 @CommandDeclaration(command = "reload",
     aliases = "rl",
     permission = "plots.admin.command.reload",
-    description = "Reload translations and world settings",
     usage = "/plot reload",
     category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {
@@ -117,7 +115,7 @@ public class Reload extends SubCommand {
             });
             this.worldConfiguration.save(this.worldFile);
             player.sendMessage(TranslatableCaption.of("reload.reloaded_configs"));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             player.sendMessage(TranslatableCaption.of("reload.reload_failed"));
         }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -50,7 +50,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "home",
-                    description = "Teleport to your plot(s)",
                     permission = "plots.home",
                     usage = "/plot home [<page> | <alias> | <area;x;y> | <area> <x;y> | <area> <page>]",
                     aliases = {"h"},

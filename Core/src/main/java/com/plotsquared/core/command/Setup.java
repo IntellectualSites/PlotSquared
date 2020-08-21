@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -47,7 +47,6 @@ import java.util.Map.Entry;
 
 @CommandDeclaration(command = "setup",
     permission = "plots.admin.command.setup",
-    description = "Setup wizard for plot worlds",
     usage = "/plot setup",
     aliases = {"create"},
     category = CommandCategory.ADMINISTRATION)
@@ -61,14 +60,14 @@ public class Setup extends SubCommand {
 
     public void displayGenerators(PlotPlayer<?> player) {
         StringBuilder message = new StringBuilder();
-        message.append("&6What generator do you want?");
+        message.append("<gold>What generator do you want?</gold>");
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
             if (entry.getKey().equals(PlotSquared.platform().getPluginName())) {
-                message.append("\n&8 - &2").append(entry.getKey()).append(" (Default Generator)");
+                message.append("\n<dark_gray> - </dark_gray><dark_green>").append(entry.getKey()).append(" (Default Generator)</dark_green>");
             } else if (entry.getValue().isFull()) {
-                message.append("\n&8 - &7").append(entry.getKey()).append(" (Plot Generator)");
+                message.append("\n<dark_gray> - </dark_gray><gray>").append(entry.getKey()).append(" (Plot Generator)</gray>");
             } else {
-                message.append("\n&8 - &7").append(entry.getKey()).append(" (Unknown structure)");
+                message.append("\n<dark_gray> - </dark_gray><gray>").append(entry.getKey()).append(" (Unknown structure)</gray>");
             }
         }
         player.sendMessage(StaticCaption.of(message.toString()));

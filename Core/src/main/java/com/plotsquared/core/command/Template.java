@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -54,14 +54,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @CommandDeclaration(command = "template",
     permission = "plots.admin",
-    description = "Create or use a world template",
     usage = "/plot template [import | export] <world> <template>",
     category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
@@ -239,7 +242,8 @@ public class Template extends SubCommand {
                 }
                 final PlotArea area = this.plotAreaManager.getPlotAreaByString(world);
                 if (area == null) {
-                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
+                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", args[1]));
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();
@@ -261,5 +265,11 @@ public class Template extends SubCommand {
                 sendUsage(player);
         }
         return false;
+    }
+    @Override public Collection<Command> tab(final PlotPlayer player, String[] args, boolean space) {
+        return Stream.of("import", "export")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -32,8 +32,8 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import javax.annotation.Nonnull;
 
 public enum RequiredType {
-    CONSOLE(TranslatableCaption.of("console.is_console")),
-    PLAYER(TranslatableCaption.of("console.not_console")),
+    CONSOLE(TranslatableCaption.of("console.not_console")),
+    PLAYER(TranslatableCaption.of("console.is_console")),
     NONE(StaticCaption.of("Something went wrong: RequiredType=NONE")); // this caption should never be sent
 
     private final Caption caption;

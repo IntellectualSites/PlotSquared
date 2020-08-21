@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -38,8 +38,7 @@ import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "info",
     aliases = "i",
-    description = "Display plot info",
-    usage = "/plot info <id> [-f, to force info]",
+    usage = "/plot info <id> [-f to force info]",
     category = CommandCategory.INFO)
 public class Info extends SubCommand {
 

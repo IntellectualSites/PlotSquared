@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -54,7 +54,6 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "rate",
     permission = "plots.rate",
-    description = "Rate the plot",
     usage = "/plot rate [# | next | purge]",
     aliases = "rt",
     category = CommandCategory.INFO,
@@ -160,19 +159,19 @@ public class Rate extends SubCommand {
                             if (index.getValue() >= Settings.Ratings.CATEGORIES.size()) {
                                 int rV = rating.getValue();
                                 PlotRateEvent event = Rate.this.eventDispatcher
-                                    .callRating(this.player, plot, new Rating(rV));
+                                    .callRating(this.getPlayer(), plot, new Rating(rV));
                                 if (event.getRating() != null) {
-                                    plot.addRating(this.player.getUUID(), event.getRating());
-                                    player.sendMessage(
+                                    plot.addRating(this.getPlayer().getUUID(), event.getRating());
+                                    getPlayer().sendMessage(
                                             TranslatableCaption.of("ratings.rating_applied"),
                                             Template.of("plot", plot.getId().toString())
                                     );
                                     if (Permissions
-                                        .hasPermission(this.player, Permission.PERMISSION_COMMENT)) {
+                                        .hasPermission(this.getPlayer(), Permission.PERMISSION_COMMENT)) {
                                         Command command =
                                             MainCommand.getInstance().getCommand(Comment.class);
                                         if (command != null) {
-                                            player.sendMessage(
+                                            getPlayer().sendMessage(
                                                     TranslatableCaption.of("tutorial.comment_this"),
                                                     Template.of("plot", "/plot rate")
                                             );
@@ -241,7 +240,7 @@ public class Rate extends SubCommand {
                 plot.addRating(uuid, event.getRating());
                 player.sendMessage(
                         TranslatableCaption.of("ratings.rating_applied"),
-                        Template.of("value", plot.getId().toString())
+                        Template.of("plot", plot.getId().toString())
                 );
             }
         };

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.inject;
 
@@ -46,8 +46,8 @@ public class BackupModule extends AbstractModule {
                 .implement(BackupProfile.class, PlayerBackupProfile.class).build(PlayerBackupProfileFactory.class));
             bind(BackupManager.class).to(SimpleBackupManager.class);
         } catch (final Exception e) {
-            logger.error("[P2] Failed to initialize backup manager", e);
-            logger.error("[P2] Backup features will be disabled");
+            logger.error("Failed to initialize backup manager", e);
+            logger.error("Backup features will be disabled");
             bind(BackupManager.class).to(NullBackupManager.class);
         }
     }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
 
@@ -72,22 +72,22 @@ public class UpdateUtility implements Listener {
                     .getAsJsonObject();
                 spigotVersion = result.get("current_version").getAsString();
             } catch (IOException e) {
-                logger.error("[P2] Unable to check for updates. Error: {}", e.getMessage());
+                logger.error("Unable to check for updates. Error: {}", e.getMessage());
                 return;
             }
 
             if (internalVersion.isLaterVersion(spigotVersion)) {
-                logger.info("[P2] There appears to be a PlotSquared update available!");
-                logger.info("[P2] You are running version {}, the latest version is {}",
+                logger.info("There appears to be a PlotSquared update available!");
+                logger.info("You are running version {}, the latest version is {}",
                     internalVersion.versionString(), spigotVersion);
-                logger.info("[P2] https://www.spigotmc.org/resources/77506/updates");
+                logger.info("https://www.spigotmc.org/resources/77506/updates");
                 hasUpdate = true;
                 if (Settings.UpdateChecker.NOTIFY_ONCE) {
                     cancelTask();
                 }
             } else if (notify) {
                 notify = false;
-                logger.info("[P2] Congratulations! You are running the latest PlotSquared version");
+                logger.info("Congratulations! You are running the latest PlotSquared version");
             }
         }, 0L, Settings.UpdateChecker.POLL_RATE * 60 * 20);
     }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -47,7 +47,6 @@ import javax.annotation.Nullable;
 
 @CommandDeclaration(command = "delete",
     permission = "plots.delete",
-    description = "Delete the plot you stand on",
     usage = "/plot delete",
     aliases = {"dispose", "del"},
     category = CommandCategory.CLAIMING,
@@ -99,7 +98,7 @@ public class Delete extends SubCommand {
                 return;
             }
             final long start = System.currentTimeMillis();
-            boolean result = plot.deletePlot(() -> {
+            boolean result = plot.getPlotModificationManager().deletePlot(() -> {
                 plot.removeRunning();
                 if ((this.econHandler != null) && plotArea.useEconomy()) {
                     Expression<Double> valueExr = plotArea.getPrices().get("sell");

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
 
@@ -82,7 +82,7 @@ public class SquirrelIdUUIDService implements UUIDService {
                 //
                 if (uuids.size() >= 2) {
                     if (Settings.DEBUG) {
-                        logger.info("[P2] (UUID) Found invalid UUID in batch. Will try each UUID individually.");
+                        logger.info("(UUID) Found invalid UUID in batch. Will try each UUID individually.");
                     }
                     for (final UUID uuid : uuids) {
                         final List<UUIDMapping> result = this.getNames(Collections.singletonList(uuid));
@@ -92,7 +92,7 @@ public class SquirrelIdUUIDService implements UUIDService {
                         results.add(result.get(0));
                     }
                 } else if (uuids.size() == 1 && Settings.DEBUG) {
-                    logger.info("[P2] (UUID) Found invalid UUID: {}", uuids.get(0));
+                    logger.info("(UUID) Found invalid UUID: {}", uuids.get(0));
                 }
             }
         } catch (IOException | InterruptedException e) {

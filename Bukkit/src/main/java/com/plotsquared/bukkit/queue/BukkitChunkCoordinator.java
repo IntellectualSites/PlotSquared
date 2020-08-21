@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.queue;
 
@@ -55,7 +55,7 @@ import java.util.function.Consumer;
  * and allows the caller to specify a sink for the loaded chunks. The
  * coordinator will prevent the chunks from being unloaded until the sink
  * has fully consumed the chunk
- * <p>
+ * </p>
  **/
 public final class BukkitChunkCoordinator extends ChunkCoordinator {
 

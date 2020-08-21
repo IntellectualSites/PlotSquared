@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.player;
 
@@ -32,12 +32,11 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.ByteArrayUtilities;
 import com.plotsquared.core.command.CommandCaller;
 import com.plotsquared.core.command.RequiredType;
-import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
@@ -79,13 +78,11 @@ import javax.annotation.Nullable;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -98,7 +95,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer, LocaleHolder {
 
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final String NON_EXISTENT_CAPTION = "<red>PlotSquared does not recognize the caption: ";
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotPlayer.class.getSimpleName());
@@ -267,15 +263,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     /**
-     * Get the total number of allowed clusters
-     *
-     * @return number of allowed clusters within the scope (globally, or in the player's current world as defined in the settings.yml)
-     */
-    public int getAllowedClusters() {
-        return Permissions.hasPermissionRange(this, "plots.cluster", Settings.Limit.MAX_PLOTS);
-    }
-
-    /**
      * Get the number of plots this player owns.
      *
      * @return number of plots within the scope (globally, or in the player's current world as defined in the settings.yml)
@@ -321,7 +308,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * Get the number of plots this player owns in the world.
      *
      * @param world the name of the plotworld to check.
-     * @return
+     * @return plot count
      */
     public int getPlotCount(String world) {
         UUID uuid = getUUID();
@@ -397,6 +384,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     /**
      * Get this player's full location (including yaw/pitch)
+     * @return location
      */
     public abstract Location getLocationFull();
 
@@ -464,7 +452,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * - Please note that this is not intended to store large values
      * - For session only data use meta
      *
-     * @param key
+     * @param key metadata key
      */
     public void setAttribute(String key) {
         setPersistentMeta("attrib_" + key, new byte[] {(byte) 1});
@@ -473,7 +461,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * Retrieves the attribute of this player.
      *
-     * @param key
+     * @param key metadata key
      * @return the attribute will be either true or false
      */
     public boolean getAttribute(String key) {
@@ -486,7 +474,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * Remove an attribute from a player.
      *
-     * @param key
+     * @param key metadata key
      */
     public void removeAttribute(String key) {
         removePersistentMeta("attrib_" + key);
@@ -591,9 +579,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         }
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
-                owned.deletePlot(null);
+                owned.getPlotModificationManager().deletePlot(null);
                 if (Settings.DEBUG) {
-                    logger.info("[P2] Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
+                    logger.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
                 }
             }
         }
@@ -609,8 +597,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     /**
      * Get the amount of clusters this player owns in the specific world.
      *
-     * @param world
-     * @return
+     * @param world world
+     * @return number of clusters owned
      */
     public int getPlayerClusterCount(String world) {
         return PlotSquared.get().getClusters(world).stream()
@@ -827,13 +815,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     public void sendTitle(@Nonnull final Caption title, @Nonnull final Caption subtitle,
         final int fadeIn, final int stay, final int fadeOut,
         @Nonnull final Template... replacements) {
-        final Component titleComponent = MINI_MESSAGE.parse(title.getComponent(this), replacements);
+        final Component titleComponent = MiniMessage.get().parse(title.getComponent(this), replacements);
         final Component subtitleComponent =
-            MINI_MESSAGE.parse(subtitle.getComponent(this), replacements);
-        getAudience().showTitle(Title
-            .of(titleComponent, subtitleComponent, Duration.of(fadeIn * 50, ChronoUnit.MILLIS),
+            MiniMessage.get().parse(subtitle.getComponent(this), replacements);
+        final Title.Times times = Title.Times.of(Duration.of(fadeIn * 50, ChronoUnit.MILLIS),
                 Duration.of(stay * 50, ChronoUnit.MILLIS),
-                Duration.of(fadeOut * 50, ChronoUnit.MILLIS)));
+                Duration.of(fadeOut * 50, ChronoUnit.MILLIS));
+        getAudience().showTitle(Title
+            .of(titleComponent, subtitleComponent, times));
     }
 
     @Override public void sendMessage(@Nonnull final Caption caption,
@@ -851,14 +840,11 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             return;
         }
         // Replace placeholders, etc
-        message = CaptionUtility.format(this, message).
-            /* Magic replacement characters */
-            replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&');
-        // Create the template list, and add the prefix as a replacement
-        final List<Template> templates = Arrays.asList(replacements);
-        templates.add(Templates.of(this, "prefix", TranslatableCaption.of("core.prefix")));
+        message = CaptionUtility.format(this, message)
+            .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
+            .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
-        final Component component = MINI_MESSAGE.parse(message, templates);
+        final Component component = MiniMessage.get().parse(message, replacements);
         if (!Objects.equal(component, this.getMeta("lastMessage"))
             || System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000) {
             setMeta("lastMessage", component);
@@ -921,6 +907,8 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     /**
      * The amount of money this Player has.
+     *
+     * @return amount of money owned by the player
      */
     public double getMoney() {
         return this.econHandler == null ?

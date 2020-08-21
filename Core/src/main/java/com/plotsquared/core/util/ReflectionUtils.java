@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
@@ -130,7 +130,7 @@ public class ReflectionUtils {
          * @param name  name
          * @param types method parameters. can be Class or RefClass
          * @return RefMethod object
-         * @throws RuntimeException if method not found
+         * @throws NoSuchMethodException if method not found
          */
         public RefMethod getMethod(String name, Object... types) throws NoSuchMethodException {
             Class[] classes = new Class[types.length];
@@ -156,7 +156,7 @@ public class ReflectionUtils {
          *
          * @param name field name
          * @return RefField
-         * @throws RuntimeException if field not found
+         * @throws NoSuchFieldException if field not found
          */
         public RefField getField(String name) throws NoSuchFieldException {
             try {
@@ -242,8 +242,8 @@ public class ReflectionUtils {
          *
          * @param params parameters for constructor
          * @return new object
-         * @throws ReflectiveOperationException
-         * @throws IllegalArgumentException
+         * @throws ReflectiveOperationException reflective operation exception
+         * @throws IllegalArgumentException illegal argument exception
          */
         public Object create(Object... params)
             throws ReflectiveOperationException, IllegalArgumentException {

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -53,8 +53,7 @@ import java.util.concurrent.TimeoutException;
     aliases = "clusters",
     category = CommandCategory.ADMINISTRATION,
     requiredType = RequiredType.NONE,
-    permission = "plots.cluster",
-    description = "Manage a plot cluster")
+    permission = "plots.cluster")
 public class Cluster extends SubCommand {
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
@@ -270,7 +269,7 @@ public class Cluster extends SubCommand {
                 } else {
                     cluster = area.getCluster(player.getLocation());
                     if (cluster == null) {
-                        player.sendMessage(TranslatableCaption.of("cluster.not_in_cluster"));
+                        player.sendMessage(TranslatableCaption.of("errors.not_in_cluster"));
                         return false;
                     }
                 }
@@ -298,7 +297,7 @@ public class Cluster extends SubCommand {
                 if (args.length != 3) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot cluster delete [name]")
+                            Template.of("value", "/plot cluster resize [name]")
                     );
                     return false;
                 }
@@ -609,10 +608,7 @@ public class Cluster extends SubCommand {
                 }
                 return true;
             }
-            case "members":
-            case "admin":
-            case "helper":
-            case "helpers": {
+            case "members": {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_HELPERS)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -623,7 +619,7 @@ public class Cluster extends SubCommand {
                 if (args.length != 3) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot cluster helpers <add | remove> <player>")
+                            Template.of("value", "/plot cluster members <add | remove> <player>")
                     );
                     return false;
                 }
@@ -658,7 +654,7 @@ public class Cluster extends SubCommand {
                             } else {
                                 player.sendMessage(
                                         TranslatableCaption.of("commandconfig.command_syntax"),
-                                        Template.of("value", "/plot cluster helpers <add | remove> <player>")
+                                        Template.of("value", "/plot cluster members <add | remove> <player>")
                                 );
                             }
                         }
@@ -690,7 +686,7 @@ public class Cluster extends SubCommand {
                 PlotCluster cluster = area.getCluster(args[1]);
                 if (cluster == null) {
                     player.sendMessage(
-                            TranslatableCaption.of("cluster.invalid_cluster"),
+                            TranslatableCaption.of("cluster.invalid_cluster_name"),
                             Template.of("cluster", args[1])
                     );
                     return false;
@@ -733,7 +729,7 @@ public class Cluster extends SubCommand {
                 if (args.length == 2) {
                     cluster = area.getCluster(args[1]);
                     player.sendMessage(
-                            TranslatableCaption.of("cluster.invalid_cluster"),
+                            TranslatableCaption.of("cluster.invalid_cluster_name"),
                             Template.of("cluster", args[1])
                     );
                 } else {

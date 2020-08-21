@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -43,7 +43,6 @@ import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "unlink",
     aliases = {"u", "unmerge"},
-    description = "Unlink a mega-plot",
     usage = "/plot unlink [createroads]",
     requiredType = RequiredType.PLAYER,
     category = CommandCategory.SETTINGS,
@@ -96,7 +95,7 @@ public class Unlink extends SubCommand {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
         }
         Runnable runnable = () -> {
-            if (!plot.unlinkPlot(createRoad, createRoad)) {
+            if (!plot.getPlotModificationManager().unlinkPlot(createRoad, createRoad)) {
                 player.sendMessage(TranslatableCaption.of("merge.unmerge_cancelled"));
                 return;
             }

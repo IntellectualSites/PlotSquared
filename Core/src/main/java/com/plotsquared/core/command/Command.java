@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -71,7 +71,7 @@ public abstract class Command {
     private List<String> aliases;
     private RequiredType required;
     private String usage;
-    private String description;
+    private Caption description;
     private String permission;
     private boolean confirmation;
     private CommandCategory category;
@@ -171,7 +171,7 @@ public abstract class Command {
         return this.aliases;
     }
 
-    public String getDescription() {
+    public Caption getDescription() {
         return this.description;
     }
 
@@ -198,7 +198,21 @@ public abstract class Command {
         aliasOptions.addAll(Arrays.asList(declaration.aliases()));
 
         this.aliases = aliasOptions;
-        this.description = declaration.description();
+        if (declaration.description().isEmpty()) {
+            Command parent = getParent();
+            // we're collecting the "path" of the command
+            List<String> path = new ArrayList<>();
+            path.add(this.id);
+            while (parent != null && !parent.equals(MainCommand.getInstance())) {
+                path.add(parent.getId());
+                parent = parent.getParent();
+            }
+            Collections.reverse(path);
+            String descriptionKey = String.join(".", path);
+            this.description = TranslatableCaption.of(String.format("commands.description.%s", descriptionKey));
+        } else {
+            this.description = StaticCaption.of(declaration.description());
+        }
         this.usage = declaration.usage();
         this.confirmation = declaration.confirmation();
 
@@ -280,9 +294,10 @@ public abstract class Command {
     }
 
     /**
-     * @param player  Caller
-     * @param args    Arguments
-     * @param confirm Instance, Success, Failure
+     * @param player   Caller
+     * @param args     Arguments
+     * @param confirm  Instance, Success, Failure
+     * @param whenDone task to run when done
      * @return CompletableFuture true if the command executed fully, false in
      * any other case
      */
@@ -334,7 +349,7 @@ public abstract class Command {
             String[] allArgs = setArgs.toArray(new String[0]);
             int best = 0;
             for (Command current : commands) {
-                int match = getMatch(allArgs, current);
+                int match = getMatch(allArgs, current, player);
                 if (match > best) {
                     cmd = current;
                 }
@@ -384,12 +399,12 @@ public abstract class Command {
         return true;
     }
 
-    public int getMatch(String[] args, Command cmd) {
+    public int getMatch(String[] args, Command cmd, PlotPlayer<?> player) {
         String perm = cmd.getPermission();
         HashSet<String> desc = new HashSet<>();
         int count = cmd.getAliases().stream().filter(alias -> alias.startsWith(args[0]))
             .mapToInt(alias -> 5).sum();
-        Collections.addAll(desc, cmd.getDescription().split(" "));
+        Collections.addAll(desc, cmd.getDescription().getComponent(player).split(" "));
         for (String arg : args) {
             if (perm.startsWith(arg)) {
                 count++;

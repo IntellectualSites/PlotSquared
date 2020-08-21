@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.expiration;
 
@@ -119,7 +119,7 @@ public class ExpireManager {
     /**
      * Gets the account last joined - first joined (or Long.MAX_VALUE)
      *
-     * @param uuid
+     * @param uuid player uuid
      * @return result
      */
     public long getAccountAge(UUID uuid) {
@@ -399,10 +399,6 @@ public class ExpireManager {
         }
     }
 
-    public void storeAccountAge(UUID uuid, long time) {
-        this.account_age_cache.put(uuid, time);
-    }
-
     public HashSet<Plot> getPendingExpired() {
         return plotsToDelete == null ? new HashSet<>() : plotsToDelete;
     }
@@ -413,7 +409,7 @@ public class ExpireManager {
                 .callUnlink(plot.getArea(), plot, true, false,
                     PlotUnlinkEvent.REASON.EXPIRE_DELETE);
             if (event.getEventResult() != Result.DENY) {
-                plot.unlinkPlot(event.isCreateRoad(), event.isCreateSign());
+                plot.getPlotModificationManager().unlinkPlot(event.isCreateRoad(), event.isCreateSign());
             }
         }
         for (UUID helper : plot.getTrusted()) {
@@ -430,7 +426,7 @@ public class ExpireManager {
                     Templates.of("plot", plot.toString()));
             }
         }
-        plot.deletePlot(whenDone);
+        plot.getPlotModificationManager().deletePlot(whenDone);
     }
 
     public long getAge(UUID uuid) {

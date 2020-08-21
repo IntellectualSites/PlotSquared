@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
 
@@ -37,7 +37,6 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
-import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.util.SetupUtils;
@@ -116,111 +115,6 @@ import java.util.Objects;
             }
         }
         Bukkit.unloadWorld(world, false);
-    }
-
-    @Deprecated @Override public String setupWorld(SetupObject object) {
-        this.updateGenerators();
-        ConfigurationNode[] steps = object.step == null ? new ConfigurationNode[0] : object.step;
-        String world = object.world;
-        PlotAreaType type = object.type;
-        String worldPath = "worlds." + object.world;
-        switch (type) {
-            case PARTIAL: {
-                if (object.id != null) {
-                    if (!this.worldConfiguration.contains(worldPath)) {
-                        this.worldConfiguration.createSection(worldPath);
-                    }
-                    ConfigurationSection worldSection = this.worldConfiguration.getConfigurationSection(worldPath);
-                    String areaName = object.id + "-" + object.min + "-" + object.max;
-                    String areaPath = "areas." + areaName;
-                    if (!worldSection.contains(areaPath)) {
-                        worldSection.createSection(areaPath);
-                    }
-                    ConfigurationSection areaSection =
-                        worldSection.getConfigurationSection(areaPath);
-                    HashMap<String, Object> options = new HashMap<>();
-                    for (ConfigurationNode step : steps) {
-                        options.put(step.getConstant(), step.getValue());
-                    }
-                    options.put("generator.type", object.type.toString());
-                    options.put("generator.terrain", object.terrain.toString());
-                    options.put("generator.plugin", object.plotManager);
-                    if (object.setupGenerator != null && !object.setupGenerator
-                        .equals(object.plotManager)) {
-                        options.put("generator.init", object.setupGenerator);
-                    }
-                    for (Entry<String, Object> entry : options.entrySet()) {
-                        String key = entry.getKey();
-                        Object value = entry.getValue();
-                        if (worldSection.contains(key)) {
-                            Object current = worldSection.get(key);
-                            if (!Objects.equals(value, current)) {
-                                areaSection.set(key, value);
-                            }
-                        } else {
-                            worldSection.set(key, value);
-                        }
-                    }
-                }
-                GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
-                if (gen != null && gen.isFull()) {
-                    object.setupGenerator = null;
-                }
-                break;
-            }
-            case AUGMENTED: {
-                if (!object.plotManager.endsWith(":single")) {
-                    if (!this.worldConfiguration.contains(worldPath)) {
-                        this.worldConfiguration.createSection(worldPath);
-                    }
-                    if (steps.length != 0) {
-                        ConfigurationSection worldSection = this.worldConfiguration.getConfigurationSection(worldPath);
-                        for (ConfigurationNode step : steps) {
-                            worldSection.set(step.getConstant(), step.getValue());
-                        }
-                    }
-                    this.worldConfiguration.set("worlds." + world + ".generator.type", object.type.toString());
-                    this.worldConfiguration.set("worlds." + world + ".generator.terrain", object.terrain.toString());
-                    this.worldConfiguration.set("worlds." + world + ".generator.plugin", object.plotManager);
-                    if (object.setupGenerator != null && !object.setupGenerator
-                        .equals(object.plotManager)) {
-                        this.worldConfiguration.set("worlds." + world + ".generator.init", object.setupGenerator);
-                    }
-                }
-                GeneratorWrapper<?> gen = SetupUtils.generators.get(object.setupGenerator);
-                if (gen != null && gen.isFull()) {
-                    object.setupGenerator = null;
-                }
-                break;
-            }
-            case NORMAL: {
-                if (steps.length != 0) {
-                    if (!this.worldConfiguration.contains(worldPath)) {
-                        this.worldConfiguration.createSection(worldPath);
-                    }
-                    ConfigurationSection worldSection = this.worldConfiguration.getConfigurationSection(worldPath);
-                    for (ConfigurationNode step : steps) {
-                        worldSection.set(step.getConstant(), step.getValue());
-                    }
-                }
-                break;
-            }
-        }
-
-        try {
-            this.worldConfiguration.save(this.worldFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Objects.requireNonNull(PlotSquared.platform()).getWorldManager()
-            .handleWorldCreation(object.world, object.setupGenerator);
-
-        if (Bukkit.getWorld(world) != null) {
-            return world;
-        }
-
-        return object.world;
     }
 
     @Override public String setupWorld(PlotAreaBuilder builder) {

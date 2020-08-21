@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
 
@@ -62,10 +62,10 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
 
     /**
      * Parse the raw string input to the number type.
-     * Throw a {@link FlagParseException} if the number couldn't be parsed.
      *
      * @param input the string to parse the number from.
      * @return the parsed number.
+     * @throws FlagParseException if the number couldn't be parsed.
      */
     @Nonnull protected abstract N parseNumber(String input) throws FlagParseException;
 }

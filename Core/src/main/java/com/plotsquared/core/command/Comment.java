@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -41,7 +41,6 @@ import java.util.Locale;
 
 @CommandDeclaration(command = "comment",
     aliases = {"msg"},
-    description = "Comment on a plot",
     category = CommandCategory.CHAT,
     requiredType = RequiredType.PLAYER,
     permission = "plots.comment")

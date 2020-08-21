@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
 
@@ -68,7 +68,7 @@ public class SQLite extends Database {
             try {
                 file.createNewFile();
             } catch (IOException ignored) {
-                logger.error("[P2] Unable to create database");
+                logger.error("Unable to create database");
             }
         }
         Class.forName("org.sqlite.JDBC");

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -117,6 +117,8 @@ public class PlotCluster {
 
     /**
      * Get the area (in plots).
+     *
+     * @return area of plots
      */
     public int getArea() {
         return (1 + this.pos2.getX() - this.pos1.getX()) * (1 + this.pos2.getY() - this.pos1.getY());

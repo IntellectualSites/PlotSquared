@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.inject;
 
@@ -84,6 +84,7 @@ public class BukkitModule extends AbstractModule {
         bind(PlayerManager.class).to(BukkitPlayerManager.class);
         bind(JavaPlugin.class).toInstance(bukkitPlatform);
         bind(PlotPlatform.class).toInstance(bukkitPlatform);
+        bind(BukkitPlatform.class).toInstance(bukkitPlatform);
         bind(IndependentPlotGenerator.class).annotatedWith(DefaultGenerator.class).to(HybridGen.class);
         // Console actor
         @Nonnull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();

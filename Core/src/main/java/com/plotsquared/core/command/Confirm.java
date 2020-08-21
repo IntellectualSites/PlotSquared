@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -32,7 +32,6 @@ import com.plotsquared.core.util.task.TaskManager;
 
 @CommandDeclaration(command = "confirm",
     permission = "plots.use",
-    description = "Confirm an action",
     category = CommandCategory.INFO)
 public class Confirm extends SubCommand {
 

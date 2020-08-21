@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -37,8 +37,7 @@ import java.util.List;
     permission = "plots.debugsavetest",
     category = CommandCategory.DEBUG,
     requiredType = RequiredType.CONSOLE,
-    usage = "/plot debugsavetest",
-    description = "This command will force the recreation of all plots in the DB")
+    usage = "/plot debugsavetest")
 public class DebugSaveTest extends SubCommand {
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {

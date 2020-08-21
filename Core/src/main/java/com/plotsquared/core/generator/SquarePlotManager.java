@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
@@ -210,28 +210,28 @@ public abstract class SquarePlotManager extends GridPlotManager {
             switch (hash) {
                 case 8:
                     // north
-                    return plot.getMerged(Direction.NORTH) ? id : null;
+                    return plot.isMerged(Direction.NORTH) ? id : null;
                 case 4:
                     // east
-                    return plot.getMerged(Direction.EAST) ? id : null;
+                    return plot.isMerged(Direction.EAST) ? id : null;
                 case 2:
                     // south
-                    return plot.getMerged(Direction.SOUTH) ? id : null;
+                    return plot.isMerged(Direction.SOUTH) ? id : null;
                 case 1:
                     // west
-                    return plot.getMerged(Direction.WEST) ? id : null;
+                    return plot.isMerged(Direction.WEST) ? id : null;
                 case 12:
                     // northeast
-                    return plot.getMerged(Direction.NORTHEAST) ? id : null;
+                    return plot.isMerged(Direction.NORTHEAST) ? id : null;
                 case 6:
                     // southeast
-                    return plot.getMerged(Direction.SOUTHEAST) ? id : null;
+                    return plot.isMerged(Direction.SOUTHEAST) ? id : null;
                 case 3:
                     // southwest
-                    return plot.getMerged(Direction.SOUTHWEST) ? id : null;
+                    return plot.isMerged(Direction.SOUTHWEST) ? id : null;
                 case 9:
                     // northwest
-                    return plot.getMerged(Direction.NORTHWEST) ? id : null;
+                    return plot.isMerged(Direction.NORTHWEST) ? id : null;
             }
         } catch (Exception ignored) {
             logger.error("Invalid plot / road width in settings.yml for world: {}", squarePlotWorld.getWorldName());

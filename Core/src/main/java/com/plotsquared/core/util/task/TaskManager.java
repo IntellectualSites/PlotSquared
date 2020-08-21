@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.task;
 
@@ -69,6 +69,7 @@ public abstract class TaskManager {
      *
      * @param string String to remove
      *               return {@code true} if the value was stored in the map, or {@code false}
+     * @return if string was actually removed
      */
     public static boolean removeFromTeleportQueue(@Nonnull final String string) {
         return teleportQueue.remove(string);

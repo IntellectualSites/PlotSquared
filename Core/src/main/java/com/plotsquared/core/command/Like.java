@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -50,7 +50,6 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "like",
     permission = "plots.like",
-    description = "Like the plot",
     usage = "/plot like [next | purge]",
     category = CommandCategory.INFO,
     requiredType = RequiredType.PLAYER)
@@ -172,6 +171,7 @@ public class Like extends SubCommand {
     /**
      * Get the likes to dislike ratio of a plot as a percentage (in decimal form)
      *
+     * @param plot plot
      * @return likes to dislike ratio, returns zero if the plot has no likes
      */
     public static double getLikesPercentage(final Plot plot) {

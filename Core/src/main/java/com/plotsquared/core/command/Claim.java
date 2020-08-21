@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -55,7 +55,6 @@ import javax.annotation.Nullable;
 @CommandDeclaration(
         command = "claim",
         aliases = "c",
-        description = "Claim the current plot you're standing on",
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.PLAYER, permission = "plots.claim",
         usage = "/plot claim")
@@ -175,8 +174,7 @@ public class Claim extends SubCommand {
             try {
                 TaskManager.getPlatformImplementation().sync(() -> {
                     if (!plot.claim(player, true, finalSchematic, false)) {
-                        logger.info(TranslatableCaption.of("core.prefix") + String
-                            .format("Failed to claim plot %s", plot.getId().toCommaSeparatedString()));
+                        logger.info("Failed to claim plot {}", plot.getId().toCommaSeparatedString());
                         player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                         plot.setOwnerAbs(null);
                     } else if (area.isAutoMerge()) {
@@ -188,7 +186,7 @@ public class Claim extends SubCommand {
                                     Template.of("value", "Auto merge on claim")
                             );
                         } else {
-                            plot.autoMerge(mergeEvent.getDir(), mergeEvent.getMax(), player.getUUID(), true);
+                            plot.getPlotModificationManager().autoMerge(mergeEvent.getDir(), mergeEvent.getMax(), player.getUUID(), true);
                         }
                     }
                     return null;
@@ -197,9 +195,7 @@ public class Claim extends SubCommand {
                 e.printStackTrace();
             }
         }, () -> {
-            logger.info(TranslatableCaption.of("core.prefix") + String
-                .format("Failed to add plot %s to the database",
-                    plot.getId().toCommaSeparatedString()));
+            logger.info("Failed to add plot to database: {}", plot.getId().toCommaSeparatedString());
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             plot.setOwnerAbs(null);
         });

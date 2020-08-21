@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.player;
 
@@ -78,7 +78,11 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      * <p>Please do not use this method. Instead use
      * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
      *
+     * @param plotAreaManager PlotAreaManager instance
+     * @param eventDispatcher EventDispatcher instance
      * @param player Bukkit player instance
+     * @param econHandler EconHandler instance
+     * @param permissionHandler PermissionHandler instance
      */
     public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher,
         @Nonnull final Player player, @Nullable final EconHandler econHandler, @Nonnull final PermissionHandler permissionHandler) {

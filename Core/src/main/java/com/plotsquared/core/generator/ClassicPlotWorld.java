@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
@@ -73,7 +73,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
 
     /**
      * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED FOR INITIAL SETUP.
-     * <p>
+     *
      * <p>Set the last boolean to false if you do not check a specific config node to be set while using the setup
      * command - this may be useful if a config value can be changed at a later date, and has no impact on the actual
      * world generation</p>

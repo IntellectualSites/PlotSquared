@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -34,7 +34,6 @@ import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "plugin",
     permission = "plots.use",
-    description = "Show plugin information",
     usage = "/plot plugin",
     aliases = "version",
     category = CommandCategory.INFO)
@@ -47,7 +46,7 @@ public class PluginCmd extends SubCommand {
                     Template.of("version", String.valueOf(PlotSquared.get().getVersion()))
             );
             player.sendMessage(StaticCaption.of("<gray> >> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray><gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray><gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));
-            player.sendMessage(StaticCaption.of("<gray> >> </gray><gold><bold>Wiki<reset><gray>: </gray><gold>https://wiki.intellectualsites.com/plotsquared/home</gold>"));
+            player.sendMessage(StaticCaption.of("<gray> >> </gray><gold><bold>Wiki<reset><gray>: </gray><gold><click:open_url>https://wiki.intellectualsites.com/plotsquared/home</gold>"));
             player.sendMessage(
                     StaticCaption.of("<gray> >> </gray><gold><bold>Premium<reset><gray>: <gold><value></gold>"),
                     Template.of("value", String.valueOf(PremiumVerification.isPremium()))

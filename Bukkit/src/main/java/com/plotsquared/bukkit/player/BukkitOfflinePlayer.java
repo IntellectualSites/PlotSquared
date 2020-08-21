@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.player;
 
@@ -45,6 +45,9 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
      * as it caches player objects.
+     *
+     * @param player Bukkit OfflinePlayer player to convert
+     * @param permissionHandler Permission Profile to be used
      */
     public BukkitOfflinePlayer(@Nonnull final OfflinePlayer player, @Nonnull final
         PermissionHandler permissionHandler) {

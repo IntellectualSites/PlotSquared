@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -47,7 +47,6 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "clear",
-    description = "Clear the plot you stand on",
     requiredType = RequiredType.NONE,
     permission = "plots.clear",
     category = CommandCategory.APPEARANCE,
@@ -92,8 +91,8 @@ public class Clear extends Command {
         confirm.run(this, () -> {
             BackupManager.backup(player, plot, () -> {
                 final long start = System.currentTimeMillis();
-                boolean result = plot.clear(true, false, () -> {
-                    plot.unlink();
+                boolean result = plot.getPlotModificationManager().clear(true, false, () -> {
+                    plot.getPlotModificationManager().unlink();
                     TaskManager.runTask(() -> {
                         plot.removeRunning();
                         // If the state changes, then mark it as no longer done

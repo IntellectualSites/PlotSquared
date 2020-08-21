@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag;
 
@@ -128,6 +128,8 @@ public class FlagContainer {
      * Add a flag to the container
      *
      * @param flag Flag to add
+     * @param <T>  flag type
+     * @param <V>  flag value type
      * @see #addAll(Collection) to add multiple flags
      */
     public <V, T extends PlotFlag<V, ?>> void addFlag(final T flag) {
@@ -147,7 +149,7 @@ public class FlagContainer {
             this.updateSubscribers
                 .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
         } catch (IllegalStateException e) {
-            logger.info("[P2] Flag {} (class '{}') could not be added to the container because the "
+            logger.info("Flag {} (class '{}') could not be added to the container because the "
                 + "flag name exceeded the allowed limit of 64 characters. Please tell the developer "
                 + "of the flag to fix this.", flag.getName(), flag.getClass().getName());
             e.printStackTrace();
@@ -158,6 +160,9 @@ public class FlagContainer {
      * Remove a flag from the container
      *
      * @param flag Flag to remove
+     * @param <T>  flag type
+     * @param <V>  flag value type
+     * @return value of flag removed
      */
     public <V, T extends PlotFlag<V, ?>> V removeFlag(final T flag) {
         final Object value = this.flagMap.remove(flag.getClass());
@@ -224,6 +229,7 @@ public class FlagContainer {
      * with wildcard generic types.
      *
      * @param flagClass The {@link PlotFlag} class.
+     * @return the plot flag
      */
     public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
         final PlotFlag<?, ?> flag = this.flagMap.get(flagClass);

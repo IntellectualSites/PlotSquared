@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -40,10 +40,14 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
 
+import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "grant",
     category = CommandCategory.CLAIMING,
@@ -89,7 +93,7 @@ public class Grant extends Command {
                                 PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
                                 if (args[0].equalsIgnoreCase("check")) {
                                     player.sendMessage(TranslatableCaption.of("grants.granted_plots"),
-                                    Template.of("grants", String.valueOf(access.get().orElse(0))));
+                                    Template.of("amount", String.valueOf(access.get().orElse(0))));
                                 } else {
                                     access.set(access.get().orElse(0) + 1);
                                 }
@@ -130,5 +134,11 @@ public class Grant extends Command {
         }
         sendUsage(player);
         return CompletableFuture.completedFuture(true);
+    }
+    @Override public Collection<Command> tab(final PlotPlayer player, String[] args, boolean space) {
+        return Stream.of("check", "add")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.grant", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 }

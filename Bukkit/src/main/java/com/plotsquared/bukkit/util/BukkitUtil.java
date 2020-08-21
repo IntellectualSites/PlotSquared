@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
 
@@ -116,7 +116,7 @@ public class BukkitUtil extends WorldUtil {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
 
     public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitPlatform.getPlugin(BukkitPlatform.class));
-    public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacyAmpersand();
+    public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final Collection<BlockType> tileEntityTypes = new HashSet<>();
@@ -334,7 +334,7 @@ public class BukkitUtil extends WorldUtil {
                 final Sign sign = (Sign) blockstate;
                 for (int i = 0; i < lines.length; i++) {
                     sign.setLine(i, LEGACY_COMPONENT_SERIALIZER
-                        .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()))));
+                        .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()), replacements)));
                 }
                 sign.update(true);
             }
@@ -349,7 +349,7 @@ public class BukkitUtil extends WorldUtil {
     @Override public void setBiomes(@Nonnull final String worldName, @Nonnull final CuboidRegion region, @Nonnull final BiomeType biomeType) {
         final World world = getWorld(worldName);
         if (world == null) {
-            logger.warn("[P2] An error occured while setting the biome because the world was null", new RuntimeException());
+            logger.warn("An error occurred while setting the biome because the world was null", new RuntimeException());
             return;
         }
         final Biome biome = BukkitAdapter.adapt(biomeType);
@@ -459,7 +459,7 @@ public class BukkitUtil extends WorldUtil {
             }
             break;
             default: {
-                logger.error("[P2] Unknown entity category requested: {}", category);
+                logger.error("Unknown entity category requested: {}", category);
             }
             break;
         }

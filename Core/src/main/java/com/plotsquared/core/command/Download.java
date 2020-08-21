@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -45,12 +45,11 @@ import net.kyori.adventure.text.minimessage.Template;
 import javax.annotation.Nonnull;
 import java.net.URL;
 
-@CommandDeclaration(usage = "/plot download [schematic|world]",
+@CommandDeclaration(usage = "/plot download [schematic | world]",
     command = "download",
     aliases = {"dl"},
     category = CommandCategory.SCHEMATIC,
     requiredType = RequiredType.NONE,
-    description = "Download your plot",
     permission = "plots.download")
 public class Download extends SubCommand {
 
@@ -111,7 +110,9 @@ public class Download extends SubCommand {
                                 player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
                                 return;
                             }
-                            player.sendMessage(StaticCaption.of(url.toString())
+                            player.sendMessage(
+                                    TranslatableCaption.of("web.generation_link_success"),
+                                    Template.of("url", url.toString())
                             );
                         }
                     });

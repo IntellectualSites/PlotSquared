@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -32,9 +32,9 @@ import com.sk89q.worldedit.world.registry.LegacyMapper;
 
 public class PlotItemStack {
 
-    public final int amount;
-    public final String name;
-    public final String[] lore;
+    private final int amount;
+    private final String name;
+    private final String[] lore;
     private final ItemType type;
 
     /**
@@ -69,10 +69,22 @@ public class PlotItemStack {
     }
 
     public BlockState getBlockState() {
-        return type.getBlockType().getDefaultState();
+        return getType().getBlockType().getDefaultState();
     }
 
     public ItemType getType() {
         return this.type;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String[] getLore() {
+        return lore;
     }
 }

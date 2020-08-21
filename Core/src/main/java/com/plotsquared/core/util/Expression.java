@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
@@ -72,7 +72,7 @@ public abstract class Expression<T> {
                     return (Double) exec.getEngine().eval(expression.replace("{arg}", "" + arg));
                 } catch (ScriptException e) {
                     if (Settings.DEBUG) {
-                        logger.info("[P2] Invalid expression: {}", expression);
+                        logger.info("Invalid expression: {}", expression);
                     }
                     e.printStackTrace();
                 }

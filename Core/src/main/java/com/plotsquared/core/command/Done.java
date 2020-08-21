@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -49,7 +49,6 @@ import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "done",
     aliases = {"submit"},
-    description = "Mark a plot as done",
     permission = "plots.done",
     category = CommandCategory.SETTINGS,
     requiredType = RequiredType.NONE)
@@ -93,7 +92,7 @@ public class Done extends SubCommand {
             return false;
         }
         plot.addRunning();
-        player.sendMessage(TranslatableCaption.of("web.generating_lin"));
+        player.sendMessage(TranslatableCaption.of("web.generating_link"));
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
         if (ExpireManager.IMP == null || doneRequirements == null) {
             finish(plot, player, true);

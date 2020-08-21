@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -55,7 +55,6 @@ import java.util.Set;
 
 @CommandDeclaration(command = "debug",
     category = CommandCategory.DEBUG,
-    description = "Show debug information",
     usage = "/plot debug [msg]",
     permission = "plots.admin")
 public class Debug extends SubCommand {
@@ -72,6 +71,10 @@ public class Debug extends SubCommand {
     }
 
     @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        if (args.length == 0 ) {
+            player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot debug <loadedchunks | debug-players | logging | entitytypes | msg>"));
+        }
         if (args.length > 0) {
             if ("player".equalsIgnoreCase(args[0])) {
                 for (Map.Entry<String, Object> meta : player.getMeta().entrySet()) {
@@ -83,7 +86,7 @@ public class Debug extends SubCommand {
             final long start = System.currentTimeMillis();
             player.sendMessage(TranslatableCaption.of("debug.fetching_loaded_chunks"));
             TaskManager.runTaskAsync(() -> player.sendMessage(StaticCaption
-                .of("Loaded chunks: " + this.worldUtil.getChunkChunks(player.getLocation().getWorldName()).size() + "(" + (System.currentTimeMillis()
+                .of("Loaded chunks: " + this.worldUtil.getChunkChunks(player.getLocation().getWorldName()).size() + " (" + (System.currentTimeMillis()
                     - start) + "ms) using thread: " + Thread.currentThread().getName())));
             return true;
         }
@@ -106,10 +109,10 @@ public class Debug extends SubCommand {
             return true;
         }
         if (args.length > 0 && "logging".equalsIgnoreCase(args[0])) {
-            logger.info("[P2] Info!");
-            logger.warn("[P2] Warning!");
-            logger.error("[P2] Error!", new RuntimeException());
-            logger.debug("[P2] Debug!");
+            logger.info("Info!");
+            logger.warn("Warning!");
+            logger.error("Error!", new RuntimeException());
+            logger.debug("Debug!");
             return true;
         }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {
@@ -121,7 +124,7 @@ public class Debug extends SubCommand {
                 for (final EntityType entityType : category.getAll()) {
                     builder.append(entityType.getId()).append(" ");
                 }
-                player.sendMessage(StaticCaption.of("core.prefix" + builder.toString()));
+                player.sendMessage(StaticCaption.of("<prefix>" + builder.toString()));
             });
             EntityType.REGISTRY.values().stream().sorted(Comparator.comparing(EntityType::getId))
                 .forEach(entityType -> {
@@ -130,7 +133,7 @@ public class Debug extends SubCommand {
                     if (categoryCount > 0) {
                         return;
                     }
-                    player.sendMessage(StaticCaption.of("core.prefix" + entityType.getName() + " is in "
+                    player.sendMessage(StaticCaption.of("<prefix>" + entityType.getName() + " is in "
                             + categoryCount + " categories"));
                 });
             return true;

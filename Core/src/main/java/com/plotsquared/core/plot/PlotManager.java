@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -68,8 +68,11 @@ public abstract class PlotManager {
     /**
      * Completes block changes associated with plot unclaim.
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plot     plot to unclaim
+     * @param whenDone task to run when plot is unclaimed
+     * @param queue    Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *                 otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public abstract boolean unClaimPlot(@Nonnull Plot plot, @Nullable Runnable whenDone, @Nullable QueueCoordinator queue);
 
@@ -81,18 +84,23 @@ public abstract class PlotManager {
      */
     public abstract Location getSignLoc(@Nonnull Plot plot);
 
-    /*
-     * Plot set functions (return false if you do not support the specific set
-     * method).
+    /**
+     * Get an array of the plot's component values as string
+     *
+     * @param plotId plotId to get components of
+     * @return array of plot's component values
      */
     public abstract String[] getPlotComponents(@Nonnull PlotId plotId);
 
     /**
      * Set the specified components to the specified Pattern on the specified plot.
      *
+     * @param plotId    id of plot to set component to
      * @param component FLOOR, WALL, AIR, MAIN, MIDDLE, OUTLINE, BORDER, ALL (floor, air and main).
+     * @param blocks    Pattern to set component to
      * @param queue     Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *                  otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public abstract boolean setComponent(@Nonnull PlotId plotId,
                                          @Nonnull String component,
@@ -102,48 +110,60 @@ public abstract class PlotManager {
     /**
      * Create the road east of the plot (not schematic-based)
      *
+     * @param plot  plot to create the road for
      * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *              otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public abstract boolean createRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
     /**
      * Create the road south of the plot (not schematic-based)
      *
+     * @param plot  plot to create the road for
      * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *              otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public abstract boolean createRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
     /**
      * Create the south-east corner of the road (intersection, not schematic-based)
      *
+     * @param plot  plot to create the road for
      * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *              otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public abstract boolean createRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
     /**
      * Replace the road to the east of the plot with standard plot blocks (for when merging plots)
      *
+     * @param plot  plot to remove east road from
      * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *              otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public abstract boolean removeRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
     /**
      * Replace the road to the south of the plot with standard plot blocks (for when merging plots)
      *
+     * @param plot  plot to remove south road from
      * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *              otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public abstract boolean removeRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
     /**
      * Replace the road to the south east of the plot (intersection) with standard plot blocks (for when merging plots)
      *
+     * @param plot  plot to remove south east road intersection from
      * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *              otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public abstract boolean removeRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
@@ -154,8 +174,9 @@ public abstract class PlotManager {
     /**
      * Finishing off plot merging by adding in the walls surrounding the plot (OPTIONAL)(UNFINISHED).
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotIds list of PlotIds to finish the merge for
+     * @param queue   Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *                otherwise writes to the queue but does not enqueue.
      * @return false if part if the merge failed, otherwise true if successful.
      */
     public abstract boolean finishPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
@@ -163,8 +184,10 @@ public abstract class PlotManager {
     /**
      * Finished off an unlink by resetting the top wall block for unlinked plots
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotIds list of PlotIds to reset the top wall block of
+     * @param queue   Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *                otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public abstract boolean finishPlotUnlink(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue);
 

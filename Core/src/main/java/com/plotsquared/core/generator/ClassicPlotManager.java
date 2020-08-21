@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
@@ -60,10 +60,8 @@ public class ClassicPlotManager extends SquarePlotManager {
         this.regionManager = regionManager;
     }
 
-    @Override public boolean setComponent(@Nonnull PlotId plotId,
-                                          @Nonnull String component,
-                                          @Nonnull Pattern blocks,
-                                          @Nullable QueueCoordinator queue) {
+    @Override
+    public boolean setComponent(@Nonnull PlotId plotId, @Nonnull String component, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         final Optional<ClassicPlotManagerComponent> componentOptional = ClassicPlotManagerComponent.fromString(component);
         if (componentOptional.isPresent()) {
             switch (componentOptional.get()) {
@@ -101,8 +99,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set the plot floor
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set floor of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setFloor(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -116,8 +117,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Sets the plot main, floor and air areas.
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set all of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setAll(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -130,8 +134,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Sets the plot air region.
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set air of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setAir(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -145,8 +152,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Sets the plot main blocks.
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set main of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setMain(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -159,8 +169,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set the middle plot block to a Pattern
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set middle block of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setMiddle(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
@@ -184,8 +197,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set a plot's outline
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set outline of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setOutline(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
@@ -211,7 +227,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
 
         int maxY = classicPlotWorld.getPlotManager().getWorldHeight();
-        if (!plot.getMerged(Direction.NORTH)) {
+        if (!plot.isMerged(Direction.NORTH)) {
             int z = bottom.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
                 for (int y = classicPlotWorld.PLOT_HEIGHT; y <= maxY; y++) {
@@ -219,7 +235,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        if (!plot.getMerged(Direction.WEST)) {
+        if (!plot.isMerged(Direction.WEST)) {
             int x = bottom.getX();
             for (int z = bottom.getZ(); z <= top.getZ(); z++) {
                 for (int y = classicPlotWorld.PLOT_HEIGHT; y <= maxY; y++) {
@@ -228,7 +244,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             }
         }
 
-        if (!plot.getMerged(Direction.SOUTH)) {
+        if (!plot.isMerged(Direction.SOUTH)) {
             int z = top.getZ();
             for (int x = bottom.getX(); x <= top.getX(); x++) {
                 for (int y = classicPlotWorld.PLOT_HEIGHT; y <= maxY; y++) {
@@ -236,7 +252,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        if (!plot.getMerged(Direction.EAST)) {
+        if (!plot.isMerged(Direction.EAST)) {
             int x = top.getX();
             for (int z = bottom.getZ(); z <= top.getZ(); z++) {
                 for (int y = classicPlotWorld.PLOT_HEIGHT; y <= maxY; y++) {
@@ -257,8 +273,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set the wall filling for a plot
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set wall filling of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setWallFilling(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
@@ -274,7 +293,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (plot == null) {
             return false;
         }
-        Location bot = plot.getExtendedBottomAbs().subtract(plot.getMerged(Direction.WEST) ? 0 : 1, 0, plot.getMerged(Direction.NORTH) ? 0 : 1);
+        Location bot = plot.getExtendedBottomAbs().subtract(plot.isMerged(Direction.WEST) ? 0 : 1, 0, plot.isMerged(Direction.NORTH) ? 0 : 1);
         Location top = plot.getExtendedTopAbs().add(1, 0, 1);
 
         boolean enqueue = false;
@@ -283,7 +302,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             enqueue = true;
         }
 
-        if (!plot.getMerged(Direction.NORTH)) {
+        if (!plot.isMerged(Direction.NORTH)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
                 for (int y = 1; y <= classicPlotWorld.WALL_HEIGHT; y++) {
@@ -291,7 +310,7 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        if (!plot.getMerged(Direction.WEST)) {
+        if (!plot.isMerged(Direction.WEST)) {
             int x = bot.getX();
             for (int z = bot.getZ(); z < top.getZ(); z++) {
                 for (int y = 1; y <= classicPlotWorld.WALL_HEIGHT; y++) {
@@ -299,17 +318,17 @@ public class ClassicPlotManager extends SquarePlotManager {
                 }
             }
         }
-        if (!plot.getMerged(Direction.SOUTH)) {
+        if (!plot.isMerged(Direction.SOUTH)) {
             int z = top.getZ();
-            for (int x = bot.getX(); x < top.getX() + (plot.getMerged(Direction.EAST) ? 0 : 1); x++) {
+            for (int x = bot.getX(); x < top.getX() + (plot.isMerged(Direction.EAST) ? 0 : 1); x++) {
                 for (int y = 1; y <= classicPlotWorld.WALL_HEIGHT; y++) {
                     queue.setBlock(x, y, z, blocks);
                 }
             }
         }
-        if (!plot.getMerged(Direction.EAST)) {
+        if (!plot.isMerged(Direction.EAST)) {
             int x = top.getX();
-            for (int z = bot.getZ(); z < top.getZ() + (plot.getMerged(Direction.SOUTH) ? 0 : 1); z++) {
+            for (int z = bot.getZ(); z < top.getZ() + (plot.isMerged(Direction.SOUTH) ? 0 : 1); z++) {
                 for (int y = 1; y <= classicPlotWorld.WALL_HEIGHT; y++) {
                     queue.setBlock(x, y, z, blocks);
                 }
@@ -321,8 +340,11 @@ public class ClassicPlotManager extends SquarePlotManager {
     /**
      * Set a plot's wall top block only
      *
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param plotId id of plot to set wall top block of
+     * @param blocks pattern to set
+     * @param queue  Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *               otherwise writes to the queue but does not enqueue.
+     * @return success or not
      */
     public boolean setWall(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
@@ -338,7 +360,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (plot == null) {
             return false;
         }
-        Location bot = plot.getExtendedBottomAbs().subtract(plot.getMerged(Direction.WEST) ? 0 : 1, 0, plot.getMerged(Direction.NORTH) ? 0 : 1);
+        Location bot = plot.getExtendedBottomAbs().subtract(plot.isMerged(Direction.WEST) ? 0 : 1, 0, plot.isMerged(Direction.NORTH) ? 0 : 1);
         Location top = plot.getExtendedTopAbs().add(1, 0, 1);
 
         boolean enqueue = false;
@@ -348,27 +370,27 @@ public class ClassicPlotManager extends SquarePlotManager {
         }
 
         int y = classicPlotWorld.WALL_HEIGHT + 1;
-        if (!plot.getMerged(Direction.NORTH)) {
+        if (!plot.isMerged(Direction.NORTH)) {
             int z = bot.getZ();
             for (int x = bot.getX(); x < top.getX(); x++) {
                 queue.setBlock(x, y, z, blocks);
             }
         }
-        if (!plot.getMerged(Direction.WEST)) {
+        if (!plot.isMerged(Direction.WEST)) {
             int x = bot.getX();
             for (int z = bot.getZ(); z < top.getZ(); z++) {
                 queue.setBlock(x, y, z, blocks);
             }
         }
-        if (!plot.getMerged(Direction.SOUTH)) {
+        if (!plot.isMerged(Direction.SOUTH)) {
             int z = top.getZ();
-            for (int x = bot.getX(); x < top.getX() + (plot.getMerged(Direction.EAST) ? 0 : 1); x++) {
+            for (int x = bot.getX(); x < top.getX() + (plot.isMerged(Direction.EAST) ? 0 : 1); x++) {
                 queue.setBlock(x, y, z, blocks);
             }
         }
-        if (!plot.getMerged(Direction.EAST)) {
+        if (!plot.isMerged(Direction.EAST)) {
             int x = top.getX();
-            for (int z = bot.getZ(); z < top.getZ() + (plot.getMerged(Direction.SOUTH) ? 0 : 1); z++) {
+            for (int z = bot.getZ(); z < top.getZ() + (plot.isMerged(Direction.SOUTH) ? 0 : 1); z++) {
                 queue.setBlock(x, y, z, blocks);
             }
         }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
 
@@ -391,7 +391,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         try {
             entity.getInventory().setContents(this.inventory);
         } catch (IllegalArgumentException e) {
-            logger.error("[P2] Failed to restore inventory", e);
+            logger.error("Failed to restore inventory", e);
         }
     }
 
@@ -738,7 +738,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return entity;
             default:
                 if (Settings.DEBUG) {
-                    logger.info("[P2] Could not identify entity: {}", entity.getType());
+                    logger.info("Could not identify entity: {}", entity.getType());
                 }
                 return entity;
             // END LIVING

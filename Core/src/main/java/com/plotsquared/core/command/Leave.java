@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -39,7 +39,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "leave",
-    description = "Removes self from being trusted or a member of the plot",
     permission = "plots.leave",
     usage = "/plot leave",
     category = CommandCategory.CLAIMING,

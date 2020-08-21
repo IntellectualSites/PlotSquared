@@ -21,11 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -33,7 +33,6 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "relight",
-    description = "Relight your plot",
     usage = "/plot relight",
     category = CommandCategory.DEBUG,
     requiredType = RequiredType.PLAYER)
@@ -46,7 +45,7 @@ public class Relight extends Command {
     public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {
-        player.sendMessage(StaticCaption.of("Not implemented."));
+        player.sendMessage(TranslatableCaption.of("errors.not_implemented"));
 /*        final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));

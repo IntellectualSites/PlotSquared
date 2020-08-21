@@ -21,13 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.SetupObject;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 
 import java.util.HashMap;
@@ -39,9 +38,6 @@ public abstract class SetupUtils {
     public abstract void updateGenerators();
 
     public abstract String getGenerator(final PlotArea plotArea);
-
-    @Deprecated
-    public abstract String setupWorld(final SetupObject object);
 
     public abstract String setupWorld(final PlotAreaBuilder builder);
 

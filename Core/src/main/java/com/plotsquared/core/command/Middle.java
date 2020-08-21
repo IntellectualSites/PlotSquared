@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -36,7 +36,6 @@ import com.plotsquared.core.plot.Plot;
  */
 @CommandDeclaration(command = "middle",
     aliases = {"center", "centre"},
-    description = "Teleports you to the center of the plot",
     usage = "/plot middle",
     category = CommandCategory.TELEPORT,
     requiredType = RequiredType.PLAYER)
@@ -50,6 +49,7 @@ public class Middle extends SubCommand {
             return false;
         }
         plot.getCenter(center -> player.teleport(center, TeleportCause.COMMAND));
+        player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
         return true;
     }
 }

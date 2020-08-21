@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
@@ -126,6 +126,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -148,6 +149,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -1623,5 +1625,11 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 event.setKeepInventory(true);
             }
         }
+    }
+
+    @EventHandler public void onLocaleChange(final PlayerLocaleChangeEvent event) {
+        BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
+        // we're stripping the country code as we con't want to differ between countries
+        player.setLocale(Locale.forLanguageTag(event.getLocale().substring(0, 2)));
     }
 }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
 
@@ -150,6 +150,8 @@ public final class PlotQuery implements Iterable<Plot> {
     /**
      * Query for plots based on a search term
      *
+     * @param searchTerm search term to use (uuid, plotID, username)
+     *
      * @return The query instance
      */
     @Nonnull public PlotQuery plotsBySearch(@Nonnull final String searchTerm) {
@@ -160,6 +162,8 @@ public final class PlotQuery implements Iterable<Plot> {
 
     /**
      * Query with a pre-defined result
+     *
+     * @param plot to return when Query is searched
      *
      * @return The query instance
      */

@@ -21,19 +21,19 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -42,7 +42,6 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
@@ -51,7 +50,6 @@ import java.util.UUID;
 
 @CommandDeclaration(command = "merge",
     aliases = "m",
-    description = "Merge the plot you are standing on with another plot",
     permission = "plots.merge",
     usage = "/plot merge <all | n | e | s | w> [removeroads]",
     category = CommandCategory.SETTINGS,
@@ -182,7 +180,7 @@ public class Merge extends SubCommand {
                     );
                 return true;
             }
-            if (plot.autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
+            if (plot.getPlotModificationManager().autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
                 if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
                     this.econHandler.withdrawMoney(player, price);
                     player.sendMessage(
@@ -226,7 +224,7 @@ public class Merge extends SubCommand {
             );
             return true;
         }
-        if (plot.autoMerge(direction, maxSize - size, uuid, terrain)) {
+        if (plot.getPlotModificationManager().autoMerge(direction, maxSize - size, uuid, terrain)) {
             if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
                 this.econHandler.withdrawMoney(player, price);
                 player.sendMessage(
@@ -234,12 +232,12 @@ public class Merge extends SubCommand {
                         Template.of("money", String.valueOf(price))
                 );
             }
-            player.sendMessage(TranslatableCaption.of("success_merge"));
+            player.sendMessage(TranslatableCaption.of("merge.success_merge"));
             return true;
         }
         Plot adjacent = plot.getRelative(direction);
         if (adjacent == null || !adjacent.hasOwner() || adjacent
-            .getMerged((direction.getIndex() + 2) % 4) || (!force && adjacent.isOwner(uuid))) {
+            .isMerged((direction.getIndex() + 2) % 4) || (!force && adjacent.isOwner(uuid))) {
             player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
         }
@@ -261,8 +259,8 @@ public class Merge extends SubCommand {
             final Direction dir = direction;
             Runnable run = () -> {
                 accepter.sendMessage(TranslatableCaption.of("merge.merge_accepted"));
-                plot.autoMerge(dir, maxSize - size, owner, terrain);
-                PlotPlayer plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(player.getUUID());
+                plot.getPlotModificationManager().autoMerge(dir, maxSize - size, owner, terrain);
+                PlotPlayer<?> plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(player.getUUID());
                 if (plotPlayer == null) {
                     accepter.sendMessage(TranslatableCaption.of("merge.merge_not_valid"));
                     return;

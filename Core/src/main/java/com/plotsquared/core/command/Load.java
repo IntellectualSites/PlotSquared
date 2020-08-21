@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -54,7 +54,6 @@ import java.util.List;
     aliases = "restore",
     category = CommandCategory.SCHEMATIC,
     requiredType = RequiredType.NONE,
-    description = "Load your plot",
     permission = "plots.load",
     usage = "/plot load")
 public class Load extends SubCommand {

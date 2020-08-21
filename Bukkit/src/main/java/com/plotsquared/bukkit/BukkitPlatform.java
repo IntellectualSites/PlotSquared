@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit;
 
@@ -29,6 +29,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Singleton;
 import com.google.inject.Stage;
 import com.google.inject.TypeLiteral;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
@@ -161,7 +162,7 @@ import static com.plotsquared.core.util.PremiumVerification.getResourceID;
 import static com.plotsquared.core.util.PremiumVerification.getUserID;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("unused") @Singleton
 public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitPlatform.class.getSimpleName());
@@ -256,12 +257,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
 
         if (PremiumVerification.isPremium()) {
-            logger.info("[P2] PlotSquared version licensed to Spigot user {}", getUserID());
-            logger.info("[P2] https://www.spigotmc.org/resources/{}", getResourceID());
-            logger.info("[P2] Download ID: {}", getDownloadID());
-            logger.info("[P2] Thanks for supporting us :)");
+            logger.info("PlotSquared version licensed to Spigot user {}", getUserID());
+            logger.info("https://www.spigotmc.org/resources/{}", getResourceID());
+            logger.info("Download ID: {}", getDownloadID());
+            logger.info("Thanks for supporting us :)");
         } else {
-            logger.info("[P2] Couldn't verify purchase :(");
+            logger.info("Couldn't verify purchase :(");
         }
 
         // Database
@@ -273,7 +274,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         if (!plotSquared.getConfigurationVersion().equalsIgnoreCase("v5")) {
             // Perform upgrade
             if (DBFunc.dbManager.convertFlags()) {
-                logger.info("[P2] Flags were converted successfully!");
+                logger.info("Flags were converted successfully!");
                 // Update the config version
                 try {
                     plotSquared.setConfigurationVersion("v5");
@@ -297,13 +298,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         // WorldEdit
         if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
             try {
-                logger.info("[P2] {} hooked into WorldEdit", this.getPluginName());
+                logger.info("{} hooked into WorldEdit", this.getPluginName());
                 WorldEdit.getInstance().getEventBus().register(this.getInjector().getInstance(WESubscriber.class));
                 if (Settings.Enabled_Components.COMMANDS) {
                     new WE_Anywhere();
                 }
             } catch (Throwable e) {
-                logger.error("[P2] Incompatible version of WorldEdit, please upgrade: https://builds.enginehub.org/job/worldedit?branch=master");
+                logger.error("Incompatible version of WorldEdit, please upgrade: https://builds.enginehub.org/job/worldedit?branch=master");
             }
         }
 
@@ -346,7 +347,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             try {
                 getInjector().getInstance(ComponentPresetManager.class);
             } catch (final Exception e) {
-                logger.error("[P2] Failed to initialize the preset system", e);
+                logger.error("Failed to initialize the preset system", e);
             }
         }
 
@@ -369,11 +370,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         continue;
                     }
                     if (!worldUtil.isWorld(world) && !world.equals("*")) {
-                        logger.warn("[P2] `{}` was not properly loaded - {} will now try to load it properly", world, this.getPluginName());
+                        logger.warn("`{}` was not properly loaded - {} will now try to load it properly", world, this.getPluginName());
                         logger.warn(
-                            "[P2]  - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
-                        logger.warn("[P2]  - Your world management plugin may be faulty (or non existent)");
-                        logger.warn("[P2]  This message may also be a false positive and could be ignored.");
+                            " - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
+                        logger.warn(" - Your world management plugin may be faulty (or non existent)");
+                        logger.warn(" This message may also be a false positive and could be ignored.");
                         this.setGenerator(world);
                     }
                 }
@@ -393,7 +394,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             final OfflineModeUUIDService offlineModeUUIDService = new OfflineModeUUIDService();
             this.impromptuPipeline.registerService(offlineModeUUIDService);
             this.backgroundPipeline.registerService(offlineModeUUIDService);
-            logger.info("[P2] (UUID) Using the offline mode UUID service");
+            logger.info("(UUID) Using the offline mode UUID service");
         }
 
         if (Settings.UUID.SERVICE_BUKKIT) {
@@ -414,7 +415,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final LuckPermsUUIDService luckPermsUUIDService;
         if (Settings.UUID.SERVICE_LUCKPERMS && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
-            logger.info("[P2] (UUID) Using LuckPerms as a complementary UUID service");
+            logger.info("(UUID) Using LuckPerms as a complementary UUID service");
         } else {
             luckPermsUUIDService = null;
         }
@@ -422,7 +423,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final BungeePermsUUIDService bungeePermsUUIDService;
         if (Settings.UUID.SERVICE_BUNGEE_PERMS && Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
             bungeePermsUUIDService = new BungeePermsUUIDService();
-            logger.info("[P2] (UUID) Using BungeePerms as a complementary UUID service");
+            logger.info("(UUID) Using BungeePerms as a complementary UUID service");
         } else {
             bungeePermsUUIDService = null;
         }
@@ -430,7 +431,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final EssentialsUUIDService essentialsUUIDService;
         if (Settings.UUID.SERVICE_ESSENTIALSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
-            logger.info("[P2] (UUID) Using EssentialsX as a complementary UUID service");
+            logger.info("(UUID) Using EssentialsX as a complementary UUID service");
         } else {
             essentialsUUIDService = null;
         }
@@ -441,7 +442,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 this.impromptuPipeline.registerService(paperUUIDService);
                 this.backgroundPipeline.registerService(paperUUIDService);
-                logger.info("[P2] (UUID) Using Paper as a complementary UUID service");
+                logger.info("(UUID) Using Paper as a complementary UUID service");
             }
 
             this.impromptuPipeline.registerService(sqLiteUUIDService);
@@ -495,17 +496,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
                 ChatFormatter.formatters.add(getInjector().getInstance(PlaceholderFormatter.class));
             }
-            logger.info("[P2] PlotSquared hooked into PlaceholderAPI");
+            logger.info("PlotSquared hooked into PlaceholderAPI");
         } else {
-            logger.info("[P2] PlaceholderAPI is not in use. Hook deactivated");
+            logger.info("PlaceholderAPI is not in use. Hook deactivated");
         }
 
-        if (Settings.Enabled_Components.BSTATS) {
-            this.startMetrics();
-        }
-        else {
-            logger.info("[P2] bStats is disabled. Please enable it in /plugins/PlotSquared/config/settings.yml. It helps the developers to identify the features most used and organize future updates better. Cheers.");
-        }
+        this.startMetrics();
 
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(1L));
@@ -574,7 +570,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         final Chunk[] chunks = world.getLoadedChunks();
                         if (chunks.length == 0) {
                             if (!Bukkit.unloadWorld(world, true)) {
-                                logger.warn("[P2] Failed to unload {}", world.getName());
+                                logger.warn("Failed to unload {}", world.getName());
                             }
                             return;
                         } else {
@@ -623,7 +619,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
         });
 
-        logger.info("[P2] (UUID) {} UUIDs will be cached", uuidQueue.size());
+        logger.info("(UUID) {} UUIDs will be cached", uuidQueue.size());
 
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             // Begin by reading all the SQLite cache at once
@@ -631,7 +627,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             // Now fetch names for all known UUIDs
             final int totalSize = uuidQueue.size();
             int read = 0;
-            logger.info("[P2] (UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
+            logger.info("(UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
             final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
 
             // Used to indicate that the second retrieval has been attempted
@@ -639,7 +635,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
             while (!uuidQueue.isEmpty() || !uuidList.isEmpty()) {
                 if (!uuidList.isEmpty() && secondRun) {
-                    logger.warn("[P2] (UUID) Giving up on last batch. Fetching new batch instead");
+                    logger.warn("(UUID) Giving up on last batch. Fetching new batch instead");
                     uuidList.clear();
                 }
                 if (uuidList.isEmpty()) {
@@ -663,13 +659,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     // Print progress
                     final double percentage = ((double) read / (double) totalSize) * 100.0D;
                     if (Settings.DEBUG) {
-                        logger.info("[P2] (UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
+                        logger.info("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
                     }
                 } catch (final InterruptedException | ExecutionException e) {
-                    logger.error("[P2] (UUID) Failed to retrieve last batch. Will try again", e);
+                    logger.error("(UUID) Failed to retrieve last batch. Will try again", e);
                 }
             }
-            logger.info("[P2] (UUID) PlotSquared has cached all UUIDs");
+            logger.info("(UUID) PlotSquared has cached all UUIDs");
         }, 10, TimeUnit.SECONDS);
     }
 
@@ -701,7 +697,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @SuppressWarnings("deprecation") private void runEntityTask() {
-        logger.info("[P2] KillAllEntities started");
+        logger.info("KillAllEntities started");
         TaskManager.runTaskRepeat(() -> this.plotAreaManager.forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.getWorldName());
             try {
@@ -979,7 +975,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             return;
         }
         this.metricsStarted = true;
-        Metrics metrics = new Metrics(this, BSTATS_ID);// bstats
+        Metrics metrics = new Metrics(this, BSTATS_ID); // bstats
         metrics.addCustomChart(new Metrics.DrilldownPie("area_types", () -> {
             final Map<String, Map<String, Integer>> map = new HashMap<>();
             for (final PlotAreaType plotAreaType : PlotAreaType.values()) {
@@ -1022,7 +1018,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
             } catch (final Exception e) {
-                logger.error("[P2] Failed to reload world: {} | {}", world, e.getMessage());
+                logger.error("Failed to reload world: {} | {}", world, e.getMessage());
                 Bukkit.getServer().unloadWorld(world, false);
                 return;
             }
@@ -1091,6 +1087,17 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override @Nonnull @SuppressWarnings("ALL") public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> getPlayerManager() {
         return (PlayerManager<BukkitPlayer, Player>) getInjector().getInstance(PlayerManager.class);
+    }
+
+    @Override public void copyCaptionMaps() {
+        /* Make this prettier at some point */
+        final String[] languages = new String[] { "en" };
+        for (final String language : languages) {
+            if (!new File(new File(this.getDataFolder(), "lang"), String.format("messages_%s.json", language)).exists()) {
+                this.saveResource(String.format("lang/messages_%s.json", language), false);
+                logger.info("Copied language file 'messages_{}.json'", language);
+            }
+        }
     }
 
 }

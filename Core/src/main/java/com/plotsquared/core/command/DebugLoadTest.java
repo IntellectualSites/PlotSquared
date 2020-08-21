@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -31,7 +31,6 @@ import com.plotsquared.core.player.PlotPlayer;
 
 @CommandDeclaration(command = "debugloadtest",
     permission = "plots.debugloadtest",
-    description = "This debug command will force the reload of all plots in the DB",
     usage = "/plot debugloadtest",
     category = CommandCategory.DEBUG,
     requiredType = RequiredType.CONSOLE)

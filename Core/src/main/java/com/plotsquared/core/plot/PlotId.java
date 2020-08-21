@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -58,6 +58,7 @@ public final class PlotId {
      *
      * @param x The plot x coordinate
      * @param y The plot y coordinate
+     * @return a new PlotId at x,y
      */
     @Nonnull public static PlotId of(final int x, final int y) {
         return new PlotId(x, y);
@@ -275,7 +276,7 @@ public final class PlotId {
 
         @Override public PlotId next() {
             if (!hasNext()) {
-               throw new IndexOutOfBoundsException("The iterator has no more entries");
+                throw new IndexOutOfBoundsException("The iterator has no more entries");
             }
             if (this.y == this.end.getY()) {
                 this.x++;

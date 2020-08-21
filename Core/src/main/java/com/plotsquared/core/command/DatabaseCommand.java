@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -48,7 +48,6 @@ import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
-import sun.net.TransferProtocolClient;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -63,7 +62,6 @@ import java.util.Map.Entry;
     aliases = {"convert"},
     category = CommandCategory.ADMINISTRATION,
     permission = "plots.database",
-    description = "Convert/Backup Storage",
     requiredType = RequiredType.CONSOLE,
     usage = "/plot database [area] <sqlite | mysql | import>")
 public class DatabaseCommand extends SubCommand {
@@ -104,7 +102,7 @@ public class DatabaseCommand extends SubCommand {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot database [area] <sqlite|mysql|import>")
+                    Template.of("value", "/plot database [area] <sqlite | mysql | import>")
             );
             return false;
         }
@@ -178,7 +176,11 @@ public class DatabaseCommand extends SubCommand {
                                             continue;
                                         }
                                     }
-                                    player.sendMessage(StaticCaption.of("Skipping duplicate plot: " + plot + " | id=" + plot.temp));
+                                    player.sendMessage(
+                                            TranslatableCaption.of("database.skipping_duplicated_plot"),
+                                            Template.of("plot", String.valueOf(plot)),
+                                            Template.of("id", String.valueOf(plot.temp))
+                                    );
                                     continue;
                                 }
                                 plot.setArea(pa);
@@ -225,17 +227,17 @@ public class DatabaseCommand extends SubCommand {
                 return true;
             } catch (ClassNotFoundException | SQLException e) {
                 player.sendMessage(TranslatableCaption.of("database.failed_to_save_plots"));
-                player.sendMessage(StaticCaption.of(("=== Begin of stacktrace. ===")));
+                player.sendMessage(TranslatableCaption.of("errors.stacktrace_begin"));
                 e.printStackTrace();
-                player.sendMessage(StaticCaption.of(("=== End of stacktrace. ===")));
+                player.sendMessage(TranslatableCaption.of(("errors.stacktrace_end")));
                 player.sendMessage(TranslatableCaption.of("database.invalid_args"));
                 return false;
             }
         } catch (ClassNotFoundException | SQLException e) {
             player.sendMessage(TranslatableCaption.of("database.failed_to_open"));
-            player.sendMessage(StaticCaption.of(("=== Begin of stacktrace. ===")));
+            player.sendMessage(TranslatableCaption.of("errors.stacktrace_begin"));
             e.printStackTrace();
-            player.sendMessage(StaticCaption.of(("=== End of stacktrace. ===")));
+            player.sendMessage(TranslatableCaption.of("errors.stacktrace_end"));
             player.sendMessage(TranslatableCaption.of("database.invalid_args"));
             return false;
         }

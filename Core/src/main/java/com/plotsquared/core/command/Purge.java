@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -51,10 +51,9 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@CommandDeclaration(usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true|false] clear:[true|false]",
+@CommandDeclaration(usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true | false] clear:[true | false]",
     command = "purge",
     permission = "plots.admin",
-    description = "Purge all plots for a world",
     category = CommandCategory.ADMINISTRATION,
     requiredType = RequiredType.CONSOLE,
     confirmation = true)
@@ -201,7 +200,7 @@ public class Purge extends SubCommand {
         boolean finalClear = clear;
         Runnable run = () -> {
             if (Settings.DEBUG) {
-                logger.info("[P2] Calculating plots to purge, please wait...");
+                logger.info("Calculating plots to purge, please wait...");
             }
             HashSet<Integer> ids = new HashSet<>();
             Iterator<Plot> iterator = toDelete.iterator();
@@ -215,20 +214,20 @@ public class Purge extends SubCommand {
                             try {
                                 ids.add(plot.temp);
                                 if (finalClear) {
-                                    plot.clear(false, true, () -> {
+                                    plot.getPlotModificationManager().clear(false, true, () -> {
                                         if (Settings.DEBUG) {
-                                            logger.info("[P2] Plot {} cleared by purge", plot.getId());
+                                            logger.info("Plot {} cleared by purge", plot.getId());
                                         }
                                     });
                                 } else {
-                                    plot.removeSign();
+                                    plot.getPlotModificationManager().removeSign();
                                 }
                                 plot.getArea().removePlot(plot.getId());
                                 for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
                                     Purge.this.plotListener.plotEntry(pp, plot);
                                 }
                             } catch (NullPointerException e) {
-                                logger.error("[P2] NullPointer during purge detected. This is likely"
+                                logger.error("NullPointer during purge detected. This is likely"
                                     + " because you are deleting a world that has been removed", e);
                             }
                         }

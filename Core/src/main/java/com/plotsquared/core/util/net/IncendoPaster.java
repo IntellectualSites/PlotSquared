@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.net;
 
@@ -161,7 +161,7 @@ public final class IncendoPaster {
         if (!httpURLConnection.getResponseMessage().contains("OK")) {
             if (httpURLConnection.getResponseCode() == 413) {
                 final long size = content.length;
-                logger.error("[P2] Paste too big > size: {}MB", size / 1_000_000);
+                logger.error("Paste too big > size: {}MB", size / 1_000_000);
             }
             throw new IllegalStateException(String
                 .format("Server returned status: %d %s", httpURLConnection.getResponseCode(),

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -39,7 +39,6 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(usage = "/plot swap <X;Z>",
     command = "swap",
-    description = "Swap two plots",
     aliases = {"switch"},
     category = CommandCategory.CLAIMING,
     requiredType = RequiredType.PLAYER)
@@ -85,7 +84,7 @@ public class Swap extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
-        return plot1.move(plot2, () -> {
+        return plot1.getPlotModificationManager().move(plot2, () -> {
         }, true).thenApply(result -> {
             if (result) {
                 player.sendMessage(TranslatableCaption.of("swap.swap_success"));

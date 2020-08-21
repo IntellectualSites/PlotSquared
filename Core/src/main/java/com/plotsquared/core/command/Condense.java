@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -51,7 +51,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @CommandDeclaration(command = "condense",
     permission = "plots.admin",
     usage = "/plot condense <area> <start|stop|info> [radius]",
-    description = "Condense a plotworld",
     category = CommandCategory.ADMINISTRATION,
     requiredType = RequiredType.CONSOLE)
 public class Condense extends SubCommand {
@@ -71,7 +70,7 @@ public class Condense extends SubCommand {
         if (args.length != 2 && args.length != 3) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot condense <area> <start|stop|info> [radius]")
+                    Template.of("value", "/plot condense <area> <start | stop | info> [radius]")
             );
             return false;
         }
@@ -179,7 +178,7 @@ public class Condense extends SubCommand {
                             i++;
                             final AtomicBoolean result = new AtomicBoolean(false);
                             try {
-                                result.set(origin.move(possible, () -> {
+                                result.set(origin.getPlotModificationManager().move(possible, () -> {
                                     if (result.get()) {
                                         player.sendMessage(
                                                 TranslatableCaption.of("condense.moving"),

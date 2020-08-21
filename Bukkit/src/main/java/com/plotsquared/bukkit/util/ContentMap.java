@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
 
@@ -126,7 +126,7 @@ public class ContentMap {
             try {
                 entity.spawn(world, xOffset, zOffset);
             } catch (Exception e) {
-                logger.error("[P2] Failed to restore entity", e);
+                logger.error("Failed to restore entity", e);
             }
         }
         this.entities.clear();

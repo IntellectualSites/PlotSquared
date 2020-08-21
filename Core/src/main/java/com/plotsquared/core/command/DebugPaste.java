@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -56,7 +56,6 @@ import java.util.stream.Collectors;
 @CommandDeclaration(command = "debugpaste",
     aliases = "dp",
     usage = "/plot debugpaste",
-    description = "Upload settings.yml, worlds.yml, your latest.log and Multiverse's worlds.yml (if being used) to https://athion.net/ISPaster/paste",
     permission = "plots.debugpaste",
     category = CommandCategory.DEBUG,
     confirmation = true,
@@ -146,25 +145,30 @@ public class DebugPaste extends SubCommand {
                     final File logFile =
                         new File(PlotSquared.platform().getDirectory(), "../../logs/latest.log");
                     if (Files.size(logFile.toPath()) > 14_000_000) {
-                        throw new IOException("Too big...");
+                        throw new IOException("The latest.log is larger than 14MB. Please reboot your server and submit a new paste.");
                     }
                     incendoPaster
                         .addFile(new IncendoPaster.PasteFile("latest.log", readFile(logFile)));
                 } catch (IOException ignored) {
-                    player.sendMessage(StaticCaption.of("&clatest.log is too big to be pasted, please reboot your server and submit a new paste."));
+                    player.sendMessage(
+                            TranslatableCaption.of("debugpaste.latest_log"),
+                            Template.of("file", "latest.log"),
+                            Template.of("size", "14MB"));
                 }
 
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml",
                         readFile(this.configFile)));
                 } catch (final IllegalArgumentException ignored) {
-                    player.sendMessage(StaticCaption.of("&cSkipping settings.yml because it's empty."));
+                    player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
+                            Template.of("file", "settings.yml"));
                 }
                 try {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml",
                         readFile(this.worldfile)));
                 } catch (final IllegalArgumentException ignored) {
-                    player.sendMessage(StaticCaption.of("&cSkipping worlds.yml because it's empty."));
+                    player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
+                            Template.of("file", "worlds.yml"));
                 }
 
                 try {
@@ -173,7 +177,8 @@ public class DebugPaste extends SubCommand {
                     incendoPaster.addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml",
                         readFile(MultiverseWorlds)));
                 } catch (final IOException ignored) {
-                    player.sendMessage(StaticCaption.of("&cSkipping Multiverse world's.yml because Multiverse is not in use."));
+                    player.sendMessage(TranslatableCaption.of("debugpaste.skip_multiverse"),
+                            Template.of("file", "worlds.yml"));
                 }
 
                 try {

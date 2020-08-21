@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -57,7 +57,6 @@ import java.util.Set;
 
 @CommandDeclaration(command = "trim",
     permission = "plots.admin",
-    description = "Delete unmodified portions of your plotworld",
     usage = "/plot trim <world> [regenerate]",
     requiredType = RequiredType.CONSOLE,
     category = CommandCategory.ADMINISTRATION)
@@ -86,7 +85,7 @@ public class Trim extends SubCommand {
      *
      * @param world  The world
      * @param result (viable = .mcr to trim, nonViable = .mcr keep)
-     * @return
+     * @return success or not
      */
     public static boolean getTrimRegions(String world,
         final RunnableVal2<Set<BlockVector2>, Set<BlockVector2>> result) {
@@ -145,15 +144,15 @@ public class Trim extends SubCommand {
             @Override public void run(Set<BlockVector2> viable, final Set<BlockVector2> nonViable) {
                 Runnable regenTask;
                 if (regen) {
-                    logger.info("[P2] Starting regen task");
-                    logger.info("[P2]  - This is a VERY slow command");
-                    logger.info("[P2]  - It will say 'Trim done!' when complete");
+                    logger.info("Starting regen task");
+                    logger.info(" - This is a VERY slow command");
+                    logger.info(" - It will say 'Trim done!' when complete");
                     regenTask = new Runnable() {
                         @Override public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
                                 player.sendMessage(TranslatableCaption.of("trim.trim_done"));
-                                logger.info("[P2] Trim done!");
+                                logger.info("Trim done!");
                                 return;
                             }
                             Iterator<BlockVector2> iterator = nonViable.iterator();
@@ -203,7 +202,7 @@ public class Trim extends SubCommand {
                     regenTask = () -> {
                         Trim.TASK = false;
                         player.sendMessage(TranslatableCaption.of("trim.trim_done"));
-                        logger.info("[P2] Trim done!");
+                        logger.info("Trim done!");
                     };
                 }
                 regionManager.deleteRegionFiles(world, viable, regenTask);

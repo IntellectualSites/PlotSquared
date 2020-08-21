@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "setbiome",
     permission = "plots.set.biome",
-    description = "Set the plot biome",
     usage = "/plot biome [biome]",
     aliases = {"biome", "sb", "setb", "b"},
     category = CommandCategory.APPEARANCE,
@@ -67,7 +66,7 @@ public class Biome extends SetCommand {
             return false;
         }
         plot.addRunning();
-        plot.setBiome(biome, () -> {
+        plot.getPlotModificationManager().setBiome(biome, () -> {
             plot.removeRunning();
             player.sendMessage(
                     TranslatableCaption.of("biome.biome_set_to"),
@@ -78,8 +77,7 @@ public class Biome extends SetCommand {
     }
 
     @Override
-    public Collection<Command> tab(final PlotPlayer player, final String[] args,
-        final boolean space) {
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return SuggestionHelper.getNamespacedRegistrySuggestions(BiomeType.REGISTRY, args[0])
             .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
             .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))

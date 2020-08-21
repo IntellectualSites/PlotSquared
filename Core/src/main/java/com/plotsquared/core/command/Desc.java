@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -40,7 +40,6 @@ import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "setdescription",
     permission = "plots.set.desc",
-    description = "Set the plot description",
     usage = "/plot desc <description>",
     aliases = {"desc", "setdesc", "setd", "description"},
     category = CommandCategory.SETTINGS,

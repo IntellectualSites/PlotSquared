@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -58,7 +58,7 @@ public abstract class Argument<T> {
         }
     };
     public static final Argument<String> PlayerName =
-        new Argument<String>("PlayerName", "<player|*>") {
+        new Argument<String>("PlayerName", "<player | *>") {
             @Override public String parse(String in) {
                 return in.length() <= 16 ? in : null;
             }

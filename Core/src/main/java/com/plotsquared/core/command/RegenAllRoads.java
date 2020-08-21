@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -38,7 +38,6 @@ import net.kyori.adventure.text.minimessage.Template;
 import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "regenallroads",
-    description = "Regenerate all roads in the map using the set road schematic",
     aliases = {"rgar"},
     usage = "/plot regenallroads <world> [height]",
     category = CommandCategory.ADMINISTRATION,
@@ -89,7 +88,7 @@ public class RegenAllRoads extends SubCommand {
         String name = args[0];
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
-            player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
+            player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             return false;
         }
         //Set<BlockVector2> chunks = ChunkManager.manager.getChunkChunks(name);

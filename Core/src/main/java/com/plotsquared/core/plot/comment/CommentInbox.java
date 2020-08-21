@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.comment;
 
@@ -67,9 +67,9 @@ public abstract class CommentInbox {
      * The `whenDone` parameter should be executed when it's done fetching the comments.
      * The value should be set to List of comments
      *
-     * @param plot
-     * @param whenDone
-     * @return
+     * @param plot plot
+     * @param whenDone task to run when comments are obtained
+     * @return success or not
      */
     public abstract boolean getComments(Plot plot, RunnableVal<List<PlotComment>> whenDone);
 

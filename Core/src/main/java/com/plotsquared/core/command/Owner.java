@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -49,7 +49,6 @@ import java.util.function.Consumer;
 
 @CommandDeclaration(command = "setowner",
     permission = "plots.set.owner",
-    description = "Set the plot owner",
     usage = "/plot setowner <player>",
     aliases = {"owner", "so", "seto"},
     category = CommandCategory.CLAIMING,
@@ -106,11 +105,11 @@ public class Owner extends SetCommand {
                     Template.of("value", "Unlink on owner change"));
                     return;
                 }
-                plot.unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
+                plot.getPlotModificationManager().unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
                 Set<Plot> connected = plot.getConnectedPlots();
                 for (Plot current : connected) {
                     current.unclaim();
-                    current.removeSign();
+                    current.getPlotModificationManager().removeSign();
                 }
                 player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                 return;
@@ -148,7 +147,7 @@ public class Owner extends SetCommand {
                     if (plot.setOwner(finalUUID, player)) {
                         if (removeDenied)
                             plot.removeDenied(finalUUID);
-                        plot.setSign(finalName);
+                        plot.getPlotModificationManager().setSign(finalName);
                         player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                         if (other != null) {
                             other.sendMessage(

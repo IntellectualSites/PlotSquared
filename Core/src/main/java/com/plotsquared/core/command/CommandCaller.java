@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -48,6 +48,7 @@ public interface CommandCaller {
      * Check the player's permissions. <i>Will be cached if permission caching is enabled.</i>
      *
      * @param permission the name of the permission
+     * @return if permission is had
      */
     boolean hasPermission(@Nonnull String permission);
 

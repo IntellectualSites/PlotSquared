@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -43,7 +43,6 @@ import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(usage = "/plot move <X;Z>",
     command = "move",
-    description = "Move a plot",
     permission = "plots.move",
     category = CommandCategory.CLAIMING,
     requiredType = RequiredType.PLAYER)
@@ -107,7 +106,7 @@ public class Move extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
-        return plot1.move(plot2, () -> {
+        return plot1.getPlotModificationManager().move(plot2, () -> {
         }, false).thenApply(result -> {
             if (result) {
                 player.sendMessage(TranslatableCaption.of("move.move_success"));

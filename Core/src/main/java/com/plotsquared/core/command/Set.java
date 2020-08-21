@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -58,7 +58,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @CommandDeclaration(command = "set",
-    description = "Set a plot value",
     aliases = {"s"},
     usage = "/plot set <biome | alias | home | flag> <value...>",
     permission = "plots.set",
@@ -154,8 +153,8 @@ public class Set extends SubCommand {
                         BackupManager.backup(player, plot, () -> {
                             plot.addRunning();
                             QueueCoordinator queue = plotArea.getQueue();
-                            for (Plot current : plot.getConnectedPlots()) {
-                                current.setComponent(component, pattern, queue);
+                            for (final Plot current : plot.getConnectedPlots()) {
+                                current.getPlotModificationManager().setComponent(component, pattern, queue);
                             }
                             queue.setCompleteTask(plot::removeRunning);
                             queue.enqueue();

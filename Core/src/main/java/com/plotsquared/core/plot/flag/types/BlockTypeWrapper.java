@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
 
@@ -133,7 +133,7 @@ public class BlockTypeWrapper {
             this.blockCategory = BlockCategory.REGISTRY.get(this.blockCategoryId);
             if (this.blockCategory == null && !BlockCategory.REGISTRY.values().isEmpty()) {
                 if (Settings.DEBUG) {
-                    logger.info("[P2] - Block category #{} does not exist", this.blockCategoryId);
+                    logger.info("- Block category #{} does not exist", this.blockCategoryId);
                 }
                 this.blockCategory = new NullBlockCategory(this.blockCategoryId);
             }

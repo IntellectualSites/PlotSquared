@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -32,7 +32,6 @@ import javax.annotation.Nonnull;
 
 @CommandDeclaration(command = "dislike",
     permission = "plots.dislike",
-    description = "Dislike the plot",
     usage = "/plot dislike [next|purge]",
     category = CommandCategory.INFO,
     requiredType = RequiredType.PLAYER)

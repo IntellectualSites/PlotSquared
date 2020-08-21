@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
@@ -61,7 +61,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     @Override public void loadConfiguration(ConfigurationSection config) {
         if (!config.contains("plot.height")) {
             if (Settings.DEBUG) {
-                logger.info("[P2]  - Configuration is null? ({})", config.getCurrentPath());
+                logger.info(" - Configuration is null? ({})", config.getCurrentPath());
             }
 
         }

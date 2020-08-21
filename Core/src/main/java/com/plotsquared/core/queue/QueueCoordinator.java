@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
 
@@ -54,6 +54,8 @@ public abstract class QueueCoordinator {
 
     /**
      * Default constructor requires world to indicate any extents given to {@link QueueCoordinator} also need this constructor.
+     *
+     * @param world world as all queues should have this constructor
      */
     public QueueCoordinator(@Nullable World world) {
         PlotSquared.platform().getInjector().injectMembers(this);
@@ -61,6 +63,10 @@ public abstract class QueueCoordinator {
 
     /**
      * Get a {@link ScopedQueueCoordinator} limited to the chunk at the specific chunk Coordinates
+     *
+     * @param x chunk x coordinate
+     * @param z chunk z coordinate
+     * @return a new {@link ScopedQueueCoordinator}
      */
     public ScopedQueueCoordinator getForChunk(int x, int z) {
         int bx = x << 4;
@@ -71,16 +77,22 @@ public abstract class QueueCoordinator {
 
     /**
      * Get the size of the queue in chunks
+     *
+     * @return size
      */
     public abstract int size();
 
     /**
      * Set when the queue was last modified
+     *
+     * @param modified long of system millis
      */
     public abstract void setModified(long modified);
 
     /**
      * Returns true if the queue should be forced to be synchronous when enqueued.
+     *
+     * @return is force sync
      */
     public boolean isForceSync() {
         return forceSync;
@@ -88,6 +100,8 @@ public abstract class QueueCoordinator {
 
     /**
      * Set whether the queue should be forced to be synchronous
+     *
+     * @param forceSync force sync or not
      */
     public void setForceSync(boolean forceSync) {
         this.forceSync = forceSync;
@@ -95,6 +109,8 @@ public abstract class QueueCoordinator {
 
     /**
      * Get the Chunk Object set to the queue
+     *
+     * @return chunk object. Usually the implementation-specific chunk (e.g. bukkit Chunk)
      */
     @Nullable public Object getChunkObject() {
         return chunkObject;
@@ -102,6 +118,8 @@ public abstract class QueueCoordinator {
 
     /**
      * Set a chunk object (e.g. the Bukkit Chunk object) to the queue
+     *
+     * @param chunkObject chunk object. Usually the implementation-specific chunk (e.g. bukkit Chunk)
      */
     public void setChunkObject(@Nonnull Object chunkObject) {
         this.chunkObject = chunkObject;
@@ -114,6 +132,7 @@ public abstract class QueueCoordinator {
      * @param y  the y coordinate from from 0 (inclusive) - maxHeight(exclusive)
      * @param z  the z coordinate from 0 to 15 inclusive
      * @param id the BlockState to set the block to
+     * @return success or not
      */
     public abstract boolean setBlock(final int x, final int y, final int z, @Nonnull final BlockState id);
 
@@ -124,6 +143,7 @@ public abstract class QueueCoordinator {
      * @param y  the y coordinate from from 0 (inclusive) - maxHeight(exclusive)
      * @param z  the z coordinate from 0 to 15 inclusive
      * @param id the BaseBlock to set the block to
+     * @return success or not
      */
     public abstract boolean setBlock(final int x, final int y, final int z, @Nonnull final BaseBlock id);
 
@@ -134,6 +154,7 @@ public abstract class QueueCoordinator {
      * @param y       the y coordinate from from 0 (inclusive) - maxHeight(exclusive)
      * @param z       the z coordinate from 0 to 15 inclusive
      * @param pattern the pattern to set the block to
+     * @return success or not
      */
     public boolean setBlock(final int x, final int y, final int z, @Nonnull final Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
@@ -146,36 +167,59 @@ public abstract class QueueCoordinator {
      * @param y   the y coordinate from from 0 (inclusive) - maxHeight(exclusive)
      * @param z   the z coordinate from 0 to 15 inclusive
      * @param tag the CompoundTag to set the tile to
+     * @return success or not
      */
     public abstract boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag);
 
     /**
      * Whether the queue has any tiles being set
+     *
+     * @return if setting tiles
      */
     public abstract boolean isSettingTiles();
 
     /**
      * Get a block at the given coordinates.
+     *
+     * @param x block x
+     * @param y block y
+     * @param z block z
+     * @return WorldEdit BlockState
      */
     @Nullable public abstract BlockState getBlock(int x, int y, int z);
 
     /**
      * Set a biome in XZ. This will likely set to the whole column
+     *
+     * @param x     x coordinate
+     * @param z     z coordinate
+     * @param biome biome
+     * @return success or not
      */
     @Deprecated public abstract boolean setBiome(int x, int z, @Nonnull BiomeType biome);
 
     /**
      * Set a biome in XYZ
+     *
+     * @param x     x coordinate
+     * @param y     y coordinate
+     * @param z     z coordinate
+     * @param biome biome
+     * @return success or not
      */
     public abstract boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome);
 
     /**
      * Whether the queue has any biomes to be set
+     *
+     * @return if setting biomes
      */
     public abstract boolean isSettingBiomes();
 
     /**
      * Add entities to be created
+     *
+     * @param entities list of entities to add to queue
      */
     public void addEntities(@Nonnull List<? extends Entity> entities) {
         for (Entity e : entities) {
@@ -185,51 +229,73 @@ public abstract class QueueCoordinator {
 
     /**
      * Add an entity to be created
+     *
+     * @param entity entity to add to queue
+     * @return success or not
      */
     public abstract boolean setEntity(@Nonnull Entity entity);
 
     /**
      * Get the list of chunks that are added manually. This usually indicated the queue is "read only".
+     *
+     * @return list of BlockVector2 of chunks that are to be "read"
      */
     @Nonnull public abstract List<BlockVector2> getReadChunks();
 
     /**
      * Add a set of {@link BlockVector2} Chunk coordinates to the Read Chunks list
+     *
+     * @param readChunks set of BlockVector2 to add to "read" chunks
      */
     public abstract void addReadChunks(@Nonnull Set<BlockVector2> readChunks);
 
     /**
      * Add a {@link BlockVector2} Chunk coordinate to the Read Chunks list
+     *
+     * @param chunk BlockVector2 to add to "read" chunks
      */
     public abstract void addReadChunk(@Nonnull BlockVector2 chunk);
 
     /**
      * Whether chunks should be unloaded after being accessed
+     *
+     * @return if is unloading chunks after accessing them
      */
     public abstract boolean isUnloadAfter();
 
     /**
      * Set whether chunks should be unloaded after being accessed
+     *
+     * @param unloadAfter if to unload chunks after being accessed
      */
     public abstract void setUnloadAfter(boolean unloadAfter);
 
     /**
      * Get the {@link CuboidRegion} designated for direct regeneration
+     *
+     * @return CuboidRegion to regenerate
      */
     @Nullable public abstract CuboidRegion getRegenRegion();
 
     /**
      * Set the {@link CuboidRegion} designated for direct regeneration
+     *
+     * @param regenRegion CuboidRegion to regenerate
      */
     public abstract void setRegenRegion(@Nonnull CuboidRegion regenRegion);
 
     /**
      * Set a specific chunk at the chunk coordinates XZ to be regenerated.
+     *
+     * @param x chunk x
+     * @param z chunk z
      */
     public abstract void regenChunk(int x, int z);
 
     /**
      * Get the world the queue is writing to
+     *
+     * @return world of the queue
      */
     @Nullable public abstract World getWorld();
 
@@ -242,6 +308,8 @@ public abstract class QueueCoordinator {
 
     /**
      * Enqueue the queue with the {@link GlobalBlockQueue}
+     *
+     * @return success or not
      */
     public boolean enqueue() {
         return blockQueue.enqueue(this);
@@ -259,26 +327,38 @@ public abstract class QueueCoordinator {
 
     /**
      * Get the task to be run when all chunks have been accessed
+     *
+     * @return task to be run when queue is complete
      */
     public abstract Runnable getCompleteTask();
 
     /**
      * Set the task to be run when all chunks have been accessed
+     *
+     * @param whenDone task to be run when queue is complete
      */
     public abstract void setCompleteTask(@Nullable Runnable whenDone);
 
     /**
      * Return the chunk consumer set to the queue or null if one is not set
+     *
+     * @return Consumer to be executed on each chunk in queue
      */
     @Nullable public abstract Consumer<BlockVector2> getChunkConsumer();
 
     /**
-     * Set the Consumer that will
+     * Set the Consumer that will be executed on each chunk in queue
+     *
+     * @param consumer Consumer to be executed on each chunk in queue
      */
     public abstract void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer);
 
     /**
      * Fill a cuboid between two positions with a BlockState
+     *
+     * @param pos1  1st cuboid position
+     * @param pos2  2nd cuboid position
+     * @param block block to fill
      */
     public void setCuboid(@Nonnull Location pos1, @Nonnull Location pos2, @Nonnull BlockState block) {
         int yMin = Math.min(pos1.getY(), pos2.getY());
@@ -298,6 +378,10 @@ public abstract class QueueCoordinator {
 
     /**
      * Fill a cuboid between two positions with a Pattern
+     *
+     * @param pos1   1st cuboid position
+     * @param pos2   2nd cuboid position
+     * @param blocks pattern to fill
      */
     public void setCuboid(@Nonnull Location pos1, @Nonnull Location pos2, @Nonnull Pattern blocks) {
         int yMin = Math.min(pos1.getY(), pos2.getY());
@@ -317,6 +401,10 @@ public abstract class QueueCoordinator {
 
     /**
      * Fill a cuboid between two positions with a BiomeType
+     *
+     * @param pos1  1st cuboid position
+     * @param pos2  2nd cuboid position
+     * @param biome biome to fill
      */
     public void setBiomeCuboid(@Nonnull Location pos1, @Nonnull Location pos2, @Nonnull BiomeType biome) {
         int yMin = Math.min(pos1.getY(), pos2.getY());

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
@@ -421,23 +421,23 @@ public class HybridUtils {
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend);
                         if (!regenedRoad && Settings.DEBUG) {
-                            logger.info("[P2] Failed to regenerate roads");
+                            logger.info("Failed to regenerate roads");
                         }
                     }
                     if (Settings.DEBUG) {
-                        logger.info("[P2] Cancelled road task");
+                        logger.info("Cancelled road task");
                     }
                     return;
                 }
                 count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
-                    logger.info("[P2] Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
+                    logger.info("Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
                 }
                 if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    logger.info("[P2] Finished road conversion");
+                    logger.info("Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
@@ -449,8 +449,8 @@ public class HybridUtils {
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
                                     if (Settings.DEBUG) {
-                                        logger.info("[P2] Updating .mcr: {}, {} (approx 1024 chunks)", loc.getX(), loc.getZ());
-                                        logger.info("[P2] - Remaining: {}", HybridUtils.regions.size());
+                                        logger.info("Updating .mcr: {}, {} (approx 1024 chunks)", loc.getX(), loc.getZ());
+                                        logger.info("- Remaining: {}", HybridUtils.regions.size());
                                     }
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
@@ -465,7 +465,7 @@ public class HybridUtils {
                                         iterator.remove();
                                         boolean regenedRoads = regenerateRoad(area, chunk, extend);
                                         if (!regenedRoads && Settings.DEBUG) {
-                                            logger.info("[P2] Failed to regenerate road");
+                                            logger.info("Failed to regenerate road");
                                         }
                                     }
                                     return null;
@@ -476,7 +476,7 @@ public class HybridUtils {
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
-                            logger.error("[P2] Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)", area.getWorldHash(), loc.getX(),
+                            logger.error("Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)", area.getWorldHash(), loc.getX(),
                                 loc.getZ());
                         }
                         TaskManager.runTaskLater(task, TaskTime.seconds(1L));

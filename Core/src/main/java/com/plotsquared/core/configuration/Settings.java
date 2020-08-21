@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
 
@@ -186,10 +186,7 @@ public class Settings extends Config {
 
         // Miscellaneous
         DEBUG = config.getBoolean("debug", DEBUG);
-        Chat.CONSOLE_COLOR = config.getBoolean("console.color", Chat.CONSOLE_COLOR);
         Chat.INTERACTIVE = config.getBoolean("chat.fancy", Chat.INTERACTIVE);
-        Enabled_Components.BSTATS =
-                config.getBoolean("bstats", Enabled_Components.BSTATS);
 
         Enabled_Components.DATABASE_PURGER =
             config.getBoolean("auto-purge", Enabled_Components.DATABASE_PURGER);
@@ -284,7 +281,7 @@ public class Settings extends Config {
             INVALID_BLOCKS = Arrays.asList(
             // Acacia Stuff
             "acacia_button", "acacia_fence_gate", "acacia_door", "acacia_pressure_plate",
-            "acaia_trapdoor", "acacia_sapling", "acacia_sign", "acacia_wall_sign", "acacia_leaves",
+            "acacia_trapdoor", "acacia_sapling", "acacia_sign", "acacia_wall_sign", "acacia_leaves",
             // Birch Stuff
             "birch_button", "birch_fence_gate", "birch_door", "birch_pressure_plate",
             "birch_trapdoor", "birch_sapling", "birch_sign", "birch_wall_sign", "birch_leaves",
@@ -438,8 +435,6 @@ public class Settings extends Config {
 
     @Comment("Chat related settings")
     public static final class Chat {
-        @Comment("Sometimes console color doesn't work, you can disable it here")
-        public static boolean CONSOLE_COLOR = true;
         @Comment("Should the chat be interactive?") public static boolean INTERACTIVE = true;
     }
 
@@ -592,8 +587,6 @@ public class Settings extends Config {
         public static boolean EXTENDED_USERNAME_COMPLETION = true;
         @Comment("Command aliases that will be tab completed")
         public static List<String> TAB_COMPLETED_ALIASES = Arrays.asList("plot", "plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap");
-        @Comment({"Send anonymous PlotSquared statistics to https://bstats.org/.",
-                "Please keep this setting enabled. It helps us identifying which parts of PlotSquared are used the most to organize future updates better."}) public static boolean BSTATS = true;
     }
 
 }

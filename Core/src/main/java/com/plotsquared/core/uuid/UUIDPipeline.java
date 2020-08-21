@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid;
 
@@ -173,7 +173,7 @@ public class UUIDPipeline {
         } catch (TimeoutException ignored) {
             // This is completely valid, we just don't care anymore
             if (Settings.DEBUG) {
-                logger.warn("[P2] (UUID) Request for {} timed out", username);
+                logger.warn("(UUID) Request for {} timed out", username);
             }
         }
         return null;
@@ -198,7 +198,7 @@ public class UUIDPipeline {
         } catch (TimeoutException ignored) {
             // This is completely valid, we just don't care anymore
             if (Settings.DEBUG) {
-                logger.warn("[P2] (UUID) Request for {} timed out", uuid);
+                logger.warn("(UUID) Request for {} timed out", uuid);
             }
         }
         return null;
@@ -328,7 +328,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.info("[P2] (UUID) Failed to find all usernames");
+                logger.info("(UUID) Failed to find all usernames");
             }
 
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
@@ -391,7 +391,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.info("[P2] (UUID) Failed to find all UUIDs");
+                logger.info("(UUID) Failed to find all UUIDs");
             }
 
             throw new ServiceError("End of pipeline");

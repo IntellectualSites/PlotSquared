@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -48,7 +48,6 @@ import java.util.Locale;
 
 @CommandDeclaration(command = "music",
     permission = "plots.music",
-    description = "Play music in your plot",
     usage = "/plot music",
     category = CommandCategory.APPEARANCE,
     requiredType = RequiredType.PLAYER)
@@ -57,7 +56,7 @@ public class Music extends SubCommand {
     private static final Collection<String> DISCS = Arrays
         .asList("music_disc_13", "music_disc_cat", "music_disc_blocks", "music_disc_chirp",
             "music_disc_far", "music_disc_mall", "music_disc_mellohi", "music_disc_stal",
-            "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait");
+            "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait", "music_disc_pigstep");
 
     private final InventoryUtil inventoryUtil;
 
@@ -87,27 +86,27 @@ public class Music extends SubCommand {
                         .createFlagInstance(item.getType());
                     PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
-                        player.sendMessage(
+                        getPlayer().sendMessage(
                     TranslatableCaption.of("events.event_denied"),
                     Template.of("value", "Music removal"));
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
-                    player.sendMessage(TranslatableCaption.of("flag.flag_removed"));
-                } else if (item.name.toLowerCase(Locale.ENGLISH).contains("disc")) {
+                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_removed"));
+                } else if (item.getName().toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
                         .createFlagInstance(item.getType());
                     PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
-                        player.sendMessage(
+                        getPlayer().sendMessage(
                     TranslatableCaption.of("events.event_denied"),
                     Template.of("value", "Music addition"));
                         return true;
                     }
                     plot.setFlag(event.getFlag());
-                    player.sendMessage(TranslatableCaption.of("flag.flag_added"));
+                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_added"));
                 } else {
-                    player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
+                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_not_added"));
                 }
                 return false;
             }
@@ -115,16 +114,16 @@ public class Music extends SubCommand {
         int index = 0;
 
         for (final String disc : DISCS) {
-            final String name = String.format("&r&6%s", disc);
-            final String[] lore = {"&r&aClick to play!"};
+            final String name = String.format("<gold>%s</gold>", disc);
+            final String[] lore = {"<green>Click to play!</green>"};
             final PlotItemStack item = new PlotItemStack(disc, 1, name, lore);
             inv.setItem(index++, item);
         }
 
         // Always add the cancel button
         // if (player.getMeta("music") != null) {
-        String name = "&r&6Cancel music";
-        String[] lore = {"&r&cClick to cancel!"};
+        String name = "<gold>Cancel music</gold>";
+        String[] lore = {"<red>Click to remove the music!<reset>"};
         inv.setItem(index, new PlotItemStack("bedrock", 1, name, lore));
         // }
 

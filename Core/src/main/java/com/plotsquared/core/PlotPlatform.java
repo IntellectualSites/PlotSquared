@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core;
 
@@ -86,11 +86,13 @@ public interface PlotPlatform<P> extends LocaleHolder {
 
     /**
      * Gets the version of Minecraft that is running.
+     * @return server version as array of numbers
      */
     int[] getServerVersion();
 
     /**
      * Gets the server implementation name and version
+     * @return server implementationa and version as string
      */
     String getServerImplementation();
 
@@ -253,6 +255,11 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return Console audience
      */
     @Nonnull Audience getConsoleAudience();
+
+    /**
+     * Load the caption maps
+     */
+    void copyCaptionMaps();
 
     /**
      * Get the {@link PermissionHandler} implementation for the platform

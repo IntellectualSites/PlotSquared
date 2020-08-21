@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.player;
 
@@ -55,8 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer<Actor> {
@@ -145,15 +143,11 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         if (message.isEmpty()) {
             return;
         }
-        message = CaptionUtility.format(this, message).
-            /* Magic replacement characters */
-                replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&');
-        // Create the template list, and add the prefix as a replacement
-        final List<Template> templates = Arrays.asList(replacements);
-        templates.add(Template.of("prefix", MINI_MESSAGE.parse(
-            TranslatableCaption.of("core.prefix").getComponent(this))));
+        message = CaptionUtility.format(this, message)
+            .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
+            .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
-        PlotSquared.platform().getConsoleAudience().sendMessage(MINI_MESSAGE.parse(message, templates));
+        PlotSquared.platform().getConsoleAudience().sendMessage(MINI_MESSAGE.parse(message, replacements));
     }
 
     @Override public void teleport(Location location, TeleportCause cause) {
@@ -164,7 +158,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
                 lastPlot.set(location.getPlot());
             }
         }
-        try (final MetaDataAccess<Location> locationMetaDataAccess = accessPersistentMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+        try (final MetaDataAccess<Location> locationMetaDataAccess = accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
             locationMetaDataAccess.set(location);
         }
     }

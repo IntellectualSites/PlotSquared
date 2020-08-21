@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
 
@@ -33,11 +33,9 @@ import java.util.Map;
 public interface Configuration extends ConfigurationSection {
     /**
      * Sets the default value of the given path as provided.
-     * <p>
      * <p>If no source {@link Configuration} was provided as a default
      * collection, then a new {@link MemoryConfiguration} will be created to
      * hold the new default value.</p>
-     * <p>
      * <p>If value is null, the value will be removed from the default
      * Configuration source.</p>
      *
@@ -49,7 +47,6 @@ public interface Configuration extends ConfigurationSection {
 
     /**
      * Sets the default values of the given paths as provided.
-     * <p>
      * <p>If no source {@link Configuration} was provided as a default
      * collection, then a new {@link MemoryConfiguration} will be created to
      * hold the new default values.</p>
@@ -61,11 +58,9 @@ public interface Configuration extends ConfigurationSection {
 
     /**
      * Sets the default values of the given paths as provided.
-     * <p>
      * <p>If no source {@link Configuration} was provided as a default
      * collection, then a new {@link MemoryConfiguration} will be created to
      * hold the new default value.</p>
-     * <p>
      * <p>This method will not hold a reference to the specified Configuration,
      * nor will it automatically update if that Configuration ever changes. If
      * you check this, you should set the default source with {@link
@@ -78,9 +73,8 @@ public interface Configuration extends ConfigurationSection {
 
     /**
      * Gets the source {@link Configuration} for this configuration.
-     * <p>
-     * <p>
-     * If no configuration source was set, but default values were added, then
+     *
+     * <p>If no configuration source was set, but default values were added, then
      * a {@link MemoryConfiguration} will be returned. If no source was set
      * and no defaults were set, then this method will return null.</p>
      *
@@ -90,9 +84,8 @@ public interface Configuration extends ConfigurationSection {
 
     /**
      * Sets the source of all default values for this {@link Configuration}.
-     * <p>
-     * <p>
-     * If a previous source was set, or previous default values were defined,
+     *
+     * <p>If a previous source was set, or previous default values were defined,
      * then they will not be copied to the new source.</p>
      *
      * @param defaults New source of default values for this configuration.
@@ -102,7 +95,6 @@ public interface Configuration extends ConfigurationSection {
 
     /**
      * Gets the {@link ConfigurationOptions} for this {@link Configuration}.
-     * <p>
      * <p>All setters through this method are chainable.</p>
      *
      * @return Options for this configuration

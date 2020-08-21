@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -38,19 +38,19 @@ public class PlotInventory {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotInventory.class.getSimpleName());
 
-    public final PlotPlayer<?> player;
-    public final int size;
+    private final PlotPlayer<?> player;
+    private final int lines;
     private final PlotItemStack[] items;
     private String title;
     private boolean open = false;
     private final InventoryUtil inventoryUtil;
 
     public PlotInventory(@Nonnull final InventoryUtil inventoryUtil,
-                         PlotPlayer<?> player, int size, String name) {
-        this.size = size;
+                         PlotPlayer<?> player, int lines, String name) {
+        this.lines = lines;
         this.title = name == null ? "" : name;
         this.player = player;
-        this.items = new PlotItemStack[size * 9];
+        this.items = new PlotItemStack[lines * 9];
         this.inventoryUtil = inventoryUtil;
     }
 
@@ -88,9 +88,9 @@ public class PlotInventory {
         if (this.title == null) {
             return;
         }
-        if (!hasPlotInventoryOpen(player)) {
+        if (!hasPlotInventoryOpen(getPlayer())) {
             this.open = true;
-            setPlotInventoryOpen(player, this);
+            setPlotInventoryOpen(getPlayer(), this);
             this.inventoryUtil.open(this);
         }
     }
@@ -99,7 +99,7 @@ public class PlotInventory {
         if (this.title == null) {
             return;
         }
-        removePlotInventoryOpen(player);
+        removePlotInventoryOpen(getPlayer());
         this.inventoryUtil.close(this);
         this.open = false;
     }
@@ -140,4 +140,11 @@ public class PlotInventory {
         return this.open;
     }
 
+    public PlotPlayer<?> getPlayer() {
+        return player;
+    }
+
+    public int getLines() {
+        return lines;
+    }
 }

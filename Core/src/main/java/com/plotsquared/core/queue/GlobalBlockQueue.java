@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
 
@@ -45,6 +45,9 @@ public class GlobalBlockQueue {
 
     /**
      * Get a new {@link QueueCoordinator} for the given world.
+     *
+     * @param world world to get new queue for
+     * @return new QueueCoordinator for world
      */
     @Nonnull public QueueCoordinator getNewQueue(@Nonnull World world) {
         QueueCoordinator queue = provider.getNewQueue(world);

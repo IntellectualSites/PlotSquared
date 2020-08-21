@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -30,12 +30,18 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.minimessage.Template;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @CommandDeclaration(command = "target",
-    usage = "/plot target <<plot> | nearest>",
-    description = "Target a plot with your compass",
+    usage = "/plot target <<X;Z> | nearest>",
     permission = "plots.target",
     requiredType = RequiredType.PLAYER,
     category = CommandCategory.INFO)
@@ -54,7 +60,7 @@ public class Target extends SubCommand {
         if (args.length == 0) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot target <<plot> | nearest>")
+                    Template.of("value", "/plot target <<X;Z> | nearest>")
             );
             return false;
         }
@@ -78,5 +84,11 @@ public class Target extends SubCommand {
         target.getCenter(player::setCompassTarget);
         player.sendMessage(TranslatableCaption.of("compass.compass_target"));
         return true;
+    }
+    @Override public Collection<Command> tab(final PlotPlayer player, String[] args, boolean space) {
+        return Stream.of("<X;Z>", "nearest")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.target", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 }

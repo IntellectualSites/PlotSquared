@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
 
@@ -53,10 +53,10 @@ public class Config {
      * Get the value for a node<br>
      * Probably throws some error if you try to get a non existent key
      *
-     * @param key
-     * @param root
-     * @param <T>
-     * @return
+     * @param key configuration key
+     * @param root configuration class
+     * @param <T> value type
+     * @return value
      */
     public static <T> T get(String key, Class<?> root) {
         String[] split = key.split("\\.");
@@ -80,7 +80,7 @@ public class Config {
      *
      * @param key   config node
      * @param value value
-     * @param root
+     * @param root configuration class
      */
     public static void set(String key, Object value, Class<? extends Config> root) {
         String[] split = key.split("\\.");
@@ -98,12 +98,12 @@ public class Config {
                     field.set(instance, value);
                     return;
                 } catch (final Throwable e) {
-                    logger.error("[P2] Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
+                    logger.error("Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
                     e.printStackTrace();
                 }
             }
         }
-        logger.error("[P2] Failed to set config option '{}: {}' | {}", key, value, instance);
+        logger.error("Failed to set config option '{}: {}' | {}", key, value, instance);
     }
 
     public static boolean load(File file, Class<? extends Config> root) {
@@ -124,8 +124,8 @@ public class Config {
     /**
      * Set all values in the file (load first to avoid overwriting)
      *
-     * @param file
-     * @param root
+     * @param file file
+     * @param root configuration file class
      */
     public static void save(File file, Class<? extends Config> root) {
         try {
@@ -145,8 +145,8 @@ public class Config {
     /**
      * Get the static fields in a section.
      *
-     * @param clazz
-     * @return
+     * @param clazz config section
+     * @return map or string against object of static fields
      */
     public static Map<String, Object> getFields(Class<Enabled_Components> clazz) {
         HashMap<String, Object> map = new HashMap<>();
@@ -289,7 +289,7 @@ public class Config {
             setAccessible(field);
             return field;
         } catch (final Throwable e) {
-            logger.error("[P2] Invalid config field: {} for {}",
+            logger.error("Invalid config field: {} for {}",
                 StringMan.join(split, "."), toNodeName(instance.getClass().getSimpleName()));
             e.printStackTrace();
             return null;

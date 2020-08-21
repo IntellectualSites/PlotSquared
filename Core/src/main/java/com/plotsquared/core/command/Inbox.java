@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -44,8 +44,7 @@ import net.kyori.adventure.text.minimessage.Template;
 import java.util.List;
 
 @CommandDeclaration(command = "inbox",
-    description = "Review the comments for a plot",
-    usage = "/plot inbox [inbox] [delete <index>|clear|page]",
+    usage = "/plot inbox [inbox] [delete <index> | clear | page]",
     permission = "plots.inbox",
     category = CommandCategory.CHAT,
     requiredType = RequiredType.PLAYER)
@@ -208,7 +207,7 @@ public class Inbox extends SubCommand {
                             }
                             PlotComment comment = value.get(index - 1);
                             inbox.removeComment(plot, comment);
-                            boolean success = plot.removeComment(comment);
+                            boolean success = plot.getPlotCommentContainer().removeComment(comment);
                             if (success) {
                                 player.sendMessage(
                                         TranslatableCaption.of("comment.comment_removed_success"),
@@ -231,9 +230,9 @@ public class Inbox extends SubCommand {
                         player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox_modify"));
                     }
                     inbox.clearInbox(plot);
-                    List<PlotComment> comments = plot.getComments(inbox.toString());
+                    List<PlotComment> comments = plot.getPlotCommentContainer().getComments(inbox.toString());
                     if (!comments.isEmpty()) {
-                        plot.removeComments(comments);
+                        plot.getPlotCommentContainer().removeComments(comments);
                     }
                     player.sendMessage(
                             TranslatableCaption.of("comment.comment_removed_success"),

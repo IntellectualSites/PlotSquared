@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
@@ -43,7 +43,6 @@ import java.util.Arrays;
 @CommandDeclaration(command = "debugroadregen",
     usage = DebugRoadRegen.USAGE,
     requiredType = RequiredType.NONE,
-    description = "Regenerate roads in the plot or region the user is, based on the road schematic",
     category = CommandCategory.DEBUG,
     permission = "plots.debugroadregen")
 public class DebugRoadRegen extends SubCommand {
@@ -140,7 +139,7 @@ public class DebugRoadRegen extends SubCommand {
         Plot plot = player.getCurrentPlot();
         PlotManager manager = area.getPlotManager();
         if (!(manager instanceof HybridPlotManager)) {
-            player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"));
+            player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             return true;
         }
         player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"),
