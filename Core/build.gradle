@@ -23,6 +23,7 @@ dependencies {
     compile group: 'aopalliance', name: 'aopalliance', version: '1.0'
     // logging
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1")
+    implementation('com.intellectualsites:Pipeline:1.4.0-SNAPSHOT')
 }
 
 sourceCompatibility = 1.8

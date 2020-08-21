@@ -26,6 +26,7 @@
 package com.plotsquared.core.inject.modules;
 
 import com.google.inject.AbstractModule;
+import com.intellectualsites.services.ServicePipeline;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.BackgroundPipeline;
@@ -44,6 +45,7 @@ public class PlotSquaredModule extends AbstractModule {
 
     @Override protected void configure() {
         final PlotSquared plotSquared = PlotSquared.get();
+        bind(ServicePipeline.class).toInstance(ServicePipeline.builder().build());
         bind(YamlConfiguration.class).annotatedWith(WorldConfig.class).toInstance(plotSquared.getWorldConfiguration());
         bind(File.class).annotatedWith(WorldFile.class).toInstance(plotSquared.getWorldsFile());
         bind(File.class).annotatedWith(ConfigFile.class).toInstance(plotSquared.getConfigFile());

@@ -28,6 +28,7 @@ package com.plotsquared.core;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.intellectualsites.services.ServicePipeline;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.generator.GeneratorWrapper;
@@ -267,6 +268,15 @@ public interface PlotPlatform<P> extends LocaleHolder {
      */
     @Nonnull default PermissionHandler getPermissionHandler() {
         return getInjector().getInstance(PermissionHandler.class);
+    }
+
+    /**
+     * Get the {@link ServicePipeline} implementation
+     *
+     * @return Service pipeline
+     */
+    @Nonnull default ServicePipeline getServicePipeline() {
+        return getInjector().getInstance(ServicePipeline.class);
     }
 
 }

@@ -126,6 +126,7 @@ shadowJar {
         include(dependency('org.slf4j:slf4j-api'))
         include(dependency('javax.inject:javax.inject:1'))
         include(dependency('aopalliance:aopalliance:1.0'))
+        include(dependency('com.intellectualsites:Pipeline:1.4.0-SNAPSHOT'))
     }
 
     relocate('net.kyori.adventure', 'com.plotsquared.core.configuration.adventure')

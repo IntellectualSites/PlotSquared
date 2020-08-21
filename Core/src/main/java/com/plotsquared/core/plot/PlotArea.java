@@ -83,6 +83,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -911,31 +912,38 @@ public abstract class PlotArea {
         }
     }
 
-    public boolean canClaim(@Nullable final PlotPlayer player, @Nonnull final PlotId pos1,
+    @Nullable public List<Plot> canClaim(@Nullable final PlotPlayer player, @Nonnull final PlotId pos1,
         @Nonnull final PlotId pos2) {
         if (pos1.getX() == pos2.getX() && pos1.getY() == pos2.getY()) {
             if (getOwnedPlot(pos1) != null) {
-                return false;
+                return null;
             }
             final Plot plot = getPlotAbs(pos1);
             if (plot == null) {
-                return false;
+                return null;
             }
-            return plot.canClaim(player);
+            if (plot.canClaim(player)) {
+                return Collections.singletonList(plot);
+            } else {
+                return null;
+            }
         }
+        final List<Plot> plots = new LinkedList<>();
         for (int x = pos1.getX(); x <= pos2.getX(); x++) {
             for (int y = pos1.getY(); y <= pos2.getY(); y++) {
                 final PlotId id = PlotId.of(x, y);
                 final Plot plot = getPlotAbs(id);
                 if (plot == null) {
-                    return false;
+                    return null;
                 }
                 if (!plot.canClaim(player)) {
-                    return false;
+                    return null;
+                } else {
+                    plots.add(plot);
                 }
             }
         }
-        return true;
+        return plots;
     }
 
     public boolean removePlot(@Nonnull final PlotId id) {
