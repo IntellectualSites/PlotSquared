@@ -63,11 +63,11 @@ public class OfflinePlayerUtil {
         Object profile = newGameProfile(id, name);
         Class<?> entityPlayerClass = getNmsClass("EntityPlayer");
         Constructor entityPlayerConstructor =
-            makeConstructor(entityPlayerClass, getNmsClass("MinecraftServer"),
-                getNmsClass("WorldServer"), getUtilClass("com.mojang.authlib.GameProfile"),
-                getNmsClass("PlayerInteractManager"));
+                makeConstructor(entityPlayerClass, getNmsClass("MinecraftServer"),
+                        getNmsClass("WorldServer"), getUtilClass("com.mojang.authlib.GameProfile"),
+                        getNmsClass("PlayerInteractManager"));
         Object entityPlayer =
-            callConstructor(entityPlayerConstructor, server, worldServer, profile, interactManager);
+                callConstructor(entityPlayerConstructor, server, worldServer, profile, interactManager);
         return (Player) getBukkitEntity(entityPlayer);
     }
 
@@ -97,6 +97,26 @@ public class OfflinePlayerUtil {
         return callConstructor(c, worldServer);
     }
 
+    public static Object getWorldServer116() {
+        Object server = getMinecraftServer();
+        Class<?> minecraftServerClass = getNmsClass("MinecraftServer");
+        Class<?> genericResourceKey = getNmsClass("ResourceKey");
+        Class<?> minecraftKey = getNmsClass("MinecraftKey");
+        // MinecraftKey + MinecraftKey -> ResourceKey
+        Method constructResourceKey = makeMethod(genericResourceKey, "a", minecraftKey, minecraftKey);
+        // MinecraftKey(String)
+        Constructor<Object> minecraftKeyConstructor = makeConstructor(minecraftKey, String.class);
+        // minecraft:overworld
+        Object overworldKey = callConstructor(minecraftKeyConstructor, "overworld");
+        // minecraft:dimension
+        Object dimensionKey = callConstructor(minecraftKeyConstructor, "dimension");
+        // ResourceKey[minecraft:dimension / minecraft:overworld]
+        Object resourceKey = callMethod(constructResourceKey, null, dimensionKey, overworldKey);
+        Method getWorldServer =
+                makeMethod(minecraftServerClass, "getWorldServer", genericResourceKey);
+        return callMethod(getWorldServer, server, resourceKey);
+    }
+
     public static Object getWorldServerNew() {
         Object server = getMinecraftServer();
         Class<?> minecraftServerClass = getNmsClass("MinecraftServer");
@@ -115,7 +135,11 @@ public class OfflinePlayerUtil {
         try {
             o = callMethod(getWorldServer, server, 0);
         } catch (final RuntimeException e) {
-            o = getWorldServerNew();
+            try {
+                o = getWorldServerNew();
+            } catch (final RuntimeException f) {
+                o = getWorldServer116();
+            }
         }
         return o;
     }

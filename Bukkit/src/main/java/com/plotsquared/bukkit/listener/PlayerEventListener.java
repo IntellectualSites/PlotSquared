@@ -69,6 +69,7 @@ import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PremiumVerification;
+import com.plotsquared.core.util.ReflectionUtils;
 import com.plotsquared.core.util.RegExUtil;
 import com.plotsquared.core.util.entity.EntityCategories;
 import com.plotsquared.core.util.task.TaskManager;
@@ -139,6 +140,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -153,7 +155,15 @@ public class PlayerEventListener extends PlotListener implements Listener {
     private PlayerMoveEvent moveTmp;
     private String internalVersion;
 
+    private final Predicate<Player> isRealPlayerCheck;
+
     {
+        Class<?> playerImplementation = ReflectionUtils.getCbClass("entity.CraftPlayer");
+        if (playerImplementation == null) {
+            isRealPlayerCheck = p -> true;
+        } else {
+            isRealPlayerCheck = p -> p.getClass() == playerImplementation;
+        }
         try {
             fieldPlayer = PlayerEvent.class.getDeclaredField("player");
             fieldPlayer.setAccessible(true);
@@ -346,6 +356,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
+        if (!isRealPlayerCheck.test(event.getPlayer())) {
+            return;
+        }
         Player player = event.getPlayer();
         BukkitPlayer pp = BukkitUtil.getPlayer(player);
         Plot lastPlot = pp.getMeta(PlotPlayer.META_LAST_PLOT);
@@ -452,6 +465,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void playerMove(PlayerMoveEvent event) {
+        if (!isRealPlayerCheck.test(event.getPlayer())) {
+            return;
+        }
         org.bukkit.Location from = event.getFrom();
         org.bukkit.Location to = event.getTo();
         int x2;
@@ -643,6 +659,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldChanged(PlayerChangedWorldEvent event) {
+        if (!isRealPlayerCheck.test(event.getPlayer())) {
+            return;
+        }
         Player player = event.getPlayer();
         BukkitPlayer pp = BukkitUtil.getPlayer(player);
         // Delete last location
