@@ -21,7 +21,7 @@
     <dependency>
       <groupId>com.plotsquared</groupId>
       <artifactId>PlotSquared-Core</artifactId>
-      <version>5.13.1</version>
+      <version>5.13.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-bukkit</artifactId>
-      <version>7.1.0</version>
+      <version>7.2.0-SNAPSHOT</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
