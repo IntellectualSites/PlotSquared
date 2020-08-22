@@ -227,7 +227,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *      *
      * @return Econ handler
      */
-    @Nullable default EconHandler getEconHandler() {
+    @Nonnull default EconHandler getEconHandler() {
         return getInjector().getInstance(EconHandler.class);
     }
 

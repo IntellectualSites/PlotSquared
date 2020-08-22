@@ -67,7 +67,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
                             @Nonnull final PlotId max,
                             @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
                             @Nonnull final GlobalBlockQueue blockQueue,
-                            @Nullable final EconHandler econHandler) {
+                            @Nonnull final EconHandler econHandler) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
     }
 

@@ -67,7 +67,7 @@ public class Claim extends SubCommand {
     private final EconHandler econHandler;
 
     @Inject public Claim(@Nonnull final EventDispatcher eventDispatcher,
-        @Nullable final EconHandler econHandler) {
+        @Nonnull final EconHandler econHandler) {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
@@ -133,7 +133,7 @@ public class Claim extends SubCommand {
                 }
             }
         }
-        if ((this.econHandler != null) && area.useEconomy() && !force) {
+        if (this.econHandler.isEnabled(area) && !force) {
             Expression<Double> costExr = area.getPrices().get("claim");
             double cost = costExr.evaluate((double) currentPlots);
             if (cost > 0d) {

@@ -107,14 +107,14 @@ public class BukkitModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(ChunkCoordinatorBuilderFactory.class));
     }
 
-    @Provides @Singleton @Nullable EconHandler provideEconHandler() {
+    @Provides @Singleton @Nonnull EconHandler provideEconHandler() {
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             try {
                 return new BukkitEconHandler();
             } catch (final Exception ignored) {
             }
         }
-        return null;
+        return EconHandler.nullEconHandler();
     }
 
 }

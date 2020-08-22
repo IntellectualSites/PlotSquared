@@ -28,8 +28,25 @@ package com.plotsquared.core.util;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.PlotArea;
+import com.sk89q.worldedit.EditSession;
 
 public abstract class EconHandler {
+
+    /**
+     * Returns an econ handler that:
+     * <ul>
+     *     <li>Returns {@code false} on {@link #isEnabled(PlotArea)}</li>
+     *     <li>Returns {@link Double#MIN_VALUE} on {@link #getBalance(PlotPlayer)}</li>
+     *     <li>Doesn't do anything for {@link #withdrawMoney(PlotPlayer, double)},
+     *          {@link #depositMoney(OfflinePlotPlayer, double)}
+     *          {@link #depositMoney(PlotPlayer, double)}</li>
+     * </ul>
+     * @return A null econ handler
+     */
+    public static EconHandler nullEconHandler() {
+        return new NullEconHandler();
+    }
 
     public abstract boolean init();
 
@@ -47,5 +64,60 @@ public abstract class EconHandler {
     public abstract void depositMoney(PlotPlayer<?> player, double amount);
 
     public abstract void depositMoney(OfflinePlotPlayer player, double amount);
+
+    /**
+     * Returns whether economy is enabled in the given plot area or not.
+     * Implementations should only return true if {@link #isSupported()} returns
+     * true too.
+     *
+     * @param plotArea the plot area to check
+     * @return {@code true} if economy is enabled on the given plot area, {@code false} otherwise.
+     */
+    public abstract boolean isEnabled(PlotArea plotArea);
+
+    /**
+     * Returns whether economy is supported by the server or not.
+     *
+     * @return {@code true} if economy is supported, {@code false} otherwise.
+     */
+    public abstract boolean isSupported();
+
+    private static final class NullEconHandler extends EconHandler {
+
+        @Override
+        public boolean init() {
+            return false;
+        }
+
+        @Override
+        public double getBalance(PlotPlayer<?> player) {
+            return Double.MIN_VALUE;
+        }
+
+        @Override
+        public void withdrawMoney(PlotPlayer<?> player, double amount) {
+
+        }
+
+        @Override
+        public void depositMoney(PlotPlayer<?> player, double amount) {
+
+        }
+
+        @Override
+        public void depositMoney(OfflinePlotPlayer player, double amount) {
+
+        }
+
+        @Override
+        public boolean isEnabled(PlotArea plotArea) {
+            return false;
+        }
+
+        @Override
+        public boolean isSupported() {
+            return false;
+        }
+    }
 
 }

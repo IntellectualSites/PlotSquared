@@ -55,7 +55,6 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.synchronization.LockRepository;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
@@ -116,16 +115,14 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
-    private final EconHandler econHandler;
     private final PermissionHandler permissionHandler;
     // Delayed initialisation
     private PermissionProfile permissionProfile;
 
-    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher, @Nullable final EconHandler econHandler,
-        @Nonnull final PermissionHandler permissionHandler) {
+    public PlotPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher,
+                      @Nonnull final PermissionHandler permissionHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
-        this.econHandler = econHandler;
         this.permissionHandler = permissionHandler;
     }
 
@@ -904,29 +901,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      * @return Player audience
      */
     @Nonnull public abstract Audience getAudience();
-
-    /**
-     * The amount of money this Player has.
-     *
-     * @return amount of money owned by the player
-     */
-    public double getMoney() {
-        return this.econHandler == null ?
-            0 :
-            this.econHandler.getMoney(this);
-    }
-
-    public void withdraw(double amount) {
-        if (this.econHandler != null) {
-            this.econHandler.withdrawMoney(this, amount);
-        }
-    }
-
-    public void deposit(double amount) {
-        if (this.econHandler != null) {
-            this.econHandler.depositMoney(this, amount);
-        }
-    }
 
     /**
      * Get this player's {@link LockRepository}

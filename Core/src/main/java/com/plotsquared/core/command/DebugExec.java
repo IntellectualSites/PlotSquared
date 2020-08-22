@@ -114,7 +114,7 @@ public class DebugExec extends SubCommand {
                      @Nullable final WorldEdit worldEdit,
                      @Nonnull final GlobalBlockQueue blockQueue,
                      @Nonnull final SchematicHandler schematicHandler,
-                     @Nullable final EconHandler econHandler,
+                     @Nonnull final EconHandler econHandler,
                      @Nonnull final ChunkManager chunkManager,
                      @Nonnull final WorldUtil worldUtil,
                      @Nonnull final SetupUtils setupUtils,

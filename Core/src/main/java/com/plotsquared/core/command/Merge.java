@@ -64,7 +64,7 @@ public class Merge extends SubCommand {
     private final EconHandler econHandler;
 
     @Inject public Merge(@Nonnull final EventDispatcher eventDispatcher,
-                         @Nullable final EconHandler econHandler) {
+                         @Nonnull final EconHandler econHandler) {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
@@ -181,7 +181,7 @@ public class Merge extends SubCommand {
                 return true;
             }
             if (plot.getPlotModificationManager().autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
-                if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
+                if (this.econHandler.isEnabled(plotArea) && price > 0d) {
                     this.econHandler.withdrawMoney(player, price);
                     player.sendMessage(
                             TranslatableCaption.of("economy.removed_balance"),
@@ -202,7 +202,7 @@ public class Merge extends SubCommand {
                 uuid = plot.getOwnerAbs();
             }
         }
-        if (!force && this.econHandler != null && plotArea.useEconomy() && price > 0d
+        if (!force && this.econHandler.isEnabled(plotArea) && price > 0d
             && this.econHandler.getMoney(player) < price) {
             player.sendMessage(
                     TranslatableCaption.of("economy.cannot_afford_merge"),
@@ -225,7 +225,7 @@ public class Merge extends SubCommand {
             return true;
         }
         if (plot.getPlotModificationManager().autoMerge(direction, maxSize - size, uuid, terrain)) {
-            if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
+            if (this.econHandler.isEnabled(plotArea) && price > 0d) {
                 this.econHandler.withdrawMoney(player, price);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
@@ -265,7 +265,7 @@ public class Merge extends SubCommand {
                     accepter.sendMessage(TranslatableCaption.of("merge.merge_not_valid"));
                     return;
                 }
-                if (this.econHandler != null && plotArea.useEconomy() && price > 0d) {
+                if (this.econHandler.isEnabled(plotArea) && price > 0d) {
                     if (!force && this.econHandler.getMoney(player) < price) {
                         player.sendMessage(
                                 TranslatableCaption.of("economy.cannot_afford_merge"),

@@ -58,7 +58,7 @@ public class Delete extends SubCommand {
     private final EconHandler econHandler;
 
     @Inject public Delete(@Nonnull final EventDispatcher eventDispatcher,
-                          @Nullable final EconHandler econHandler) {
+                          @Nonnull final EconHandler econHandler) {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
@@ -100,7 +100,7 @@ public class Delete extends SubCommand {
             final long start = System.currentTimeMillis();
             boolean result = plot.getPlotModificationManager().deletePlot(() -> {
                 plot.removeRunning();
-                if ((this.econHandler != null) && plotArea.useEconomy()) {
+                if (this.econHandler.isEnabled(plotArea)) {
                     Expression<Double> valueExr = plotArea.getPrices().get("sell");
                     double value = plots.size() * valueExr.evaluate((double) currentPlots);
                     if (value > 0d) {

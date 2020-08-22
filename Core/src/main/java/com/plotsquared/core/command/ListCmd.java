@@ -81,7 +81,7 @@ public class ListCmd extends SubCommand {
     private final EconHandler econHandler;
 
     @Inject public ListCmd(@Nonnull final PlotAreaManager plotAreaManager,
-                           @Nullable final EconHandler econHandler) {
+                           @Nonnull final EconHandler econHandler) {
         this.plotAreaManager = plotAreaManager;
         this.econHandler = econHandler;
     }
@@ -279,7 +279,7 @@ public class ListCmd extends SubCommand {
                                        Templates.of("node", "plots.list.forsale"));
                     return false;
                 }
-                if (this.econHandler == null) {
+                if (this.econHandler.isSupported()) {
                     break;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().allPlots().thatPasses(plot -> plot.getFlag(PriceFlag.class) > 0));
@@ -429,7 +429,7 @@ public class ListCmd extends SubCommand {
 
     @Override public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<String> completions = new LinkedList<>();
-        if (this.econHandler != null && Permissions
+        if (this.econHandler.isSupported() && Permissions
             .hasPermission(player, Permission.PERMISSION_LIST_FOR_SALE)) {
             completions.add("forsale");
         }
