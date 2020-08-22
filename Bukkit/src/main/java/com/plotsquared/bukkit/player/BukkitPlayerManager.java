@@ -29,7 +29,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
 import org.bukkit.Bukkit;
@@ -46,16 +45,13 @@ import java.util.UUID;
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
-    private final EconHandler econHandler;
     private final PermissionHandler permissionHandler;
 
     @Inject public BukkitPlayerManager(@Nonnull final PlotAreaManager plotAreaManager,
                                        @Nonnull final EventDispatcher eventDispatcher,
-                                       @Nullable final EconHandler econHandler,
                                        @Nonnull final PermissionHandler permissionHandler) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
-        this.econHandler = econHandler;
         this.permissionHandler = permissionHandler;
     }
 
@@ -66,7 +62,7 @@ import java.util.UUID;
         try {
             return getPlayer(object.getUniqueId());
         } catch (final NoSuchPlayerException exception) {
-            return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object, false, this.econHandler, this.permissionHandler);
+            return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object, false, this.permissionHandler);
         }
     }
 
@@ -75,7 +71,7 @@ import java.util.UUID;
         if (player == null || !player.isOnline()) {
             throw new NoSuchPlayerException(uuid);
         }
-        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, this.econHandler, this.permissionHandler);
+        return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, this.permissionHandler);
     }
 
     @Nullable @Override public BukkitOfflinePlayer getOfflinePlayer(@Nullable final UUID uuid) {

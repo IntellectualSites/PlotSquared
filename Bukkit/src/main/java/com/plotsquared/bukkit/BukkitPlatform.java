@@ -337,9 +337,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             TaskManager.runTask(() -> {
                 this.getPermissionHandler().initialize();
                 final EconHandler econHandler = getInjector().getInstance(EconHandler.class);
-                if (econHandler != null) {
-                    econHandler.init();
-                }
+                econHandler.init();
             });
         }
 

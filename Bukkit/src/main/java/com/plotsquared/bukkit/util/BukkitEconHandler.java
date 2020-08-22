@@ -30,12 +30,12 @@ import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
-
-import javax.annotation.Nullable;
 
 @Singleton public class BukkitEconHandler extends EconHandler {
 
@@ -62,25 +62,39 @@ import javax.annotation.Nullable;
     @Override public double getMoney(PlotPlayer<?> player) {
         double bal = super.getMoney(player);
         if (Double.isNaN(bal)) {
-            return this.econ.getBalance(((BukkitPlayer) player).player);
+            return this.econ.getBalance(getBukkitOfflinePlayer(player));
         }
         return bal;
     }
 
     @Override public void withdrawMoney(PlotPlayer<?> player, double amount) {
-        this.econ.withdrawPlayer(((BukkitPlayer) player).player, amount);
+        this.econ.withdrawPlayer(getBukkitOfflinePlayer(player), amount);
     }
 
     @Override public void depositMoney(PlotPlayer<?> player, double amount) {
-        this.econ.depositPlayer(((BukkitPlayer) player).player, amount);
+        this.econ.depositPlayer(getBukkitOfflinePlayer(player), amount);
     }
 
     @Override public void depositMoney(OfflinePlotPlayer player, double amount) {
         this.econ.depositPlayer(((BukkitOfflinePlayer) player).player, amount);
     }
 
+    @Override
+    public boolean isEnabled(PlotArea plotArea) {
+        return plotArea.useEconomy();
+    }
+
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
     @Override public double getBalance(PlotPlayer<?> player) {
-        return this.econ.getBalance(player.getName());
+        return this.econ.getBalance(getBukkitOfflinePlayer(player));
+    }
+
+    private static OfflinePlayer getBukkitOfflinePlayer(PlotPlayer<?> plotPlayer) {
+        return ((BukkitPlayer) plotPlayer).player;
     }
 
 }

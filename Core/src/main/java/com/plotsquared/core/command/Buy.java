@@ -32,8 +32,11 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
+import com.plotsquared.core.synchronization.LockKey;
+import com.plotsquared.core.synchronization.LockRepository;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
@@ -56,7 +59,7 @@ public class Buy extends Command {
     private final EconHandler econHandler;
 
     @Inject public Buy(@Nonnull final EventDispatcher eventDispatcher,
-                       @Nullable final EconHandler econHandler) {
+                       @Nonnull final EconHandler econHandler) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
@@ -67,7 +70,9 @@ public class Buy extends Command {
         RunnableVal3<Command, Runnable, Runnable> confirm,
         final RunnableVal2<Command, CommandResult> whenDone) {
 
-        check(this.econHandler, TranslatableCaption.of("economy.econ_disabled"));
+        PlotArea area = player.getPlotAreaAbs();
+        check(area, TranslatableCaption.of("errors.not_in_plot_world"));
+        check(this.econHandler.isEnabled(area), TranslatableCaption.of("economy.econ_disabled"));
         final Plot plot;
         if (args.length != 0) {
             if (args.length != 1) {
@@ -87,8 +92,9 @@ public class Buy extends Command {
         if (price <= 0) {
             throw new CommandException(TranslatableCaption.of("economy.not_for_sale"));
         }
-        checkTrue(player.getMoney() >= price, TranslatableCaption.of("economy.cannot_afford_plot"));
-        player.withdraw(price);
+        checkTrue(this.econHandler.getMoney(player) >= price,
+                TranslatableCaption.of("economy.cannot_afford_plot"));
+        this.econHandler.withdrawMoney(player, price);
         // Failure
         // Success
         confirm.run(this, () -> {
@@ -117,7 +123,7 @@ public class Buy extends Command {
             player.sendMessage(TranslatableCaption.of("working.claimed"));
             whenDone.run(Buy.this, CommandResult.SUCCESS);
         }, () -> {
-            player.deposit(price);
+            this.econHandler.depositMoney(player, price);
             whenDone.run(Buy.this, CommandResult.FAILURE);
         });
         return CompletableFuture.completedFuture(true);

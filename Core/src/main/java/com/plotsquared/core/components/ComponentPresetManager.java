@@ -71,7 +71,7 @@ public class ComponentPresetManager {
     private final EconHandler econHandler;
     private final InventoryUtil inventoryUtil;
 
-    @Inject public ComponentPresetManager(@Nullable final EconHandler econHandler, @Nonnull final InventoryUtil inventoryUtil) {
+    @Inject public ComponentPresetManager(@Nonnull final EconHandler econHandler, @Nonnull final InventoryUtil inventoryUtil) {
         this.econHandler = econHandler;
         this.inventoryUtil = inventoryUtil;
         final File file = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "components.yml");
@@ -179,7 +179,7 @@ public class ComponentPresetManager {
                     return false;
                 }
 
-                if (componentPreset.getCost() > 0.0D && econHandler != null && plot.getArea().useEconomy()) {
+                if (componentPreset.getCost() > 0.0D && econHandler.isEnabled(plot.getArea())) {
                     if (econHandler.getMoney(getPlayer()) < componentPreset.getCost()) {
                         getPlayer().sendMessage(TranslatableCaption.of("preset.preset_cannot_afford"));
                         return false;
@@ -208,7 +208,7 @@ public class ComponentPresetManager {
         for (int i = 0; i < allowedPresets.size(); i++) {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
-            if (preset.getCost() > 0 && this.econHandler != null && plot.getArea().useEconomy()) {
+            if (preset.getCost() > 0 && this.econHandler.isEnabled(plot.getArea())) {
                 lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("preset.preset_lore_cost").getComponent(player),
                     Template.of("cost", String.format("%.2f", preset.getCost())))));
             }

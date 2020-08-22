@@ -186,19 +186,17 @@ public class MainCommand extends Command {
                 public void run(final Command cmd, final Runnable success, final Runnable failure) {
                     if (cmd.hasConfirmation(player)) {
                         CmdConfirm.addPending(player, cmd.getUsage(), () -> {
-                            if (econHandler != null) {
-                                PlotArea area = player.getApplicablePlotArea();
-                                if (area != null) {
-                                    Expression<Double> priceEval =
-                                        area.getPrices().get(cmd.getFullId());
-                                    Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                                    if (price != null
-                                        && econHandler.getMoney(player) < price) {
-                                        if (failure != null) {
-                                            failure.run();
-                                        }
-                                        return;
+                            PlotArea area = player.getApplicablePlotArea();
+                            if (area != null && econHandler.isEnabled(area)) {
+                                Expression<Double> priceEval =
+                                    area.getPrices().get(cmd.getFullId());
+                                Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                if (price != null
+                                    && econHandler.getMoney(player) < price) {
+                                    if (failure != null) {
+                                        failure.run();
                                     }
+                                    return;
                                 }
                             }
                             if (success != null) {

@@ -36,7 +36,6 @@ import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -58,7 +57,6 @@ import org.bukkit.plugin.RegisteredListener;
 import javax.annotation.Nonnegative;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -81,19 +79,18 @@ public class BukkitPlayer extends PlotPlayer<Player> {
      * @param plotAreaManager PlotAreaManager instance
      * @param eventDispatcher EventDispatcher instance
      * @param player Bukkit player instance
-     * @param econHandler EconHandler instance
      * @param permissionHandler PermissionHandler instance
      */
     public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher,
-        @Nonnull final Player player, @Nullable final EconHandler econHandler, @Nonnull final PermissionHandler permissionHandler) {
-        this(plotAreaManager, eventDispatcher, player, false, econHandler, permissionHandler);
+                        @Nonnull final Player player, @Nonnull final PermissionHandler permissionHandler) {
+        this(plotAreaManager, eventDispatcher, player, false, permissionHandler);
     }
 
     public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final
-        EventDispatcher eventDispatcher, @Nonnull final Player player,
-        final boolean realPlayer, @Nullable final EconHandler econHandler,
-        @Nonnull final PermissionHandler permissionHandler) {
-        super(plotAreaManager, eventDispatcher, econHandler, permissionHandler);
+    EventDispatcher eventDispatcher, @Nonnull final Player player,
+                        final boolean realPlayer,
+                        @Nonnull final PermissionHandler permissionHandler) {
+        super(plotAreaManager, eventDispatcher, permissionHandler);
         this.player = player;
         this.setupPermissionProfile();
         if (realPlayer) {

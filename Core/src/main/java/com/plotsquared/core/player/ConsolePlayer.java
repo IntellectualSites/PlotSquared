@@ -70,7 +70,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
                                   @ConsoleActor @Nonnull final Actor actor,
                                   @Nullable final EconHandler econHandler,
                                   @Nonnull final PermissionHandler permissionHandler) {
-        super(plotAreaManager, eventDispatcher, econHandler, permissionHandler);
+        super(plotAreaManager, eventDispatcher, permissionHandler);
         this.actor = actor;
         this.setupPermissionProfile();
         final PlotArea[] areas = plotAreaManager.getAllPlotAreas();

@@ -75,7 +75,7 @@ public class Auto extends SubCommand {
 
     @Inject public Auto(@Nonnull final PlotAreaManager plotAreaManager,
                         @Nonnull final EventDispatcher eventDispatcher,
-                        @Nullable final EconHandler econHandler,
+                        @Nonnull final EconHandler econHandler,
                         @Nonnull final ServicePipeline servicePipeline) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
