@@ -33,7 +33,6 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.EconHandler;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
 import javax.annotation.Nonnull;
@@ -63,12 +62,11 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public ClassicPlotWorld(@Nonnull final String worldName,
                             @Nullable final String id,
                             @Nonnull final IndependentPlotGenerator generator,
-                            @Nonnull final PlotId min,
-                            @Nonnull final PlotId max,
+                            @Nullable final PlotId min,
+                            @Nullable final PlotId max,
                             @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                            @Nonnull final GlobalBlockQueue blockQueue,
-                            @Nonnull final EconHandler econHandler) {
-        super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
+                            @Nonnull final GlobalBlockQueue blockQueue) {
+        super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
     }
 
     /**

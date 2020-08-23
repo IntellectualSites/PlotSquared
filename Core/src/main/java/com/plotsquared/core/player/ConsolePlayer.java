@@ -40,7 +40,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -54,7 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer<Actor> {
@@ -68,7 +66,6 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     @Inject private ConsolePlayer(@Nonnull final PlotAreaManager plotAreaManager,
                                   @Nonnull final EventDispatcher eventDispatcher,
                                   @ConsoleActor @Nonnull final Actor actor,
-                                  @Nullable final EconHandler econHandler,
                                   @Nonnull final PermissionHandler permissionHandler) {
         super(plotAreaManager, eventDispatcher, permissionHandler);
         this.actor = actor;
