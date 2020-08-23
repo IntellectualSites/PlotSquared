@@ -31,7 +31,6 @@ import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.EconHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +52,8 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
                            @Nullable final PlotId min,
                            @Nullable final PlotId max,
                            @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                           @Nonnull final GlobalBlockQueue blockQueue,
-                           @Nullable final EconHandler econHandler) {
-        super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
+                           @Nonnull final GlobalBlockQueue blockQueue) {
+        super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
     }
 
     @Override public void loadConfiguration(ConfigurationSection config) {

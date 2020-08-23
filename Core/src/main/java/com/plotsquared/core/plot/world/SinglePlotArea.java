@@ -45,7 +45,6 @@ import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.TaskManager;
 
@@ -66,10 +65,9 @@ public class SinglePlotArea extends GridPlotWorld {
                           @Nonnull final EventDispatcher eventDispatcher,
                           @Nonnull final PlotListener plotListener,
                           @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                          @Nonnull final GlobalBlockQueue globalBlockQueue,
-                          @Nonnull final EconHandler econHandler) {
+                          @Nonnull final GlobalBlockQueue globalBlockQueue) {
         super("*", null, new SingleWorldGenerator(plotAreaManager), null, null,
-            worldConfiguration, globalBlockQueue, econHandler);
+            worldConfiguration, globalBlockQueue);
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
         this.setAllowSigns(false);

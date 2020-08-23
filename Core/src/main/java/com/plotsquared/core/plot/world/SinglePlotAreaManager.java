@@ -34,7 +34,6 @@ import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SetupUtils;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -52,10 +51,9 @@ import javax.inject.Inject;
     @Inject public SinglePlotAreaManager(@Nonnull final EventDispatcher eventDispatcher,
                                          @Nonnull final PlotListener plotListener,
                                          @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                                         @Nonnull final GlobalBlockQueue blockQueue,
-                                         @Nonnull final EconHandler econHandler) {
+                                         @Nonnull final GlobalBlockQueue blockQueue) {
         this.area = new SinglePlotArea(this, eventDispatcher, plotListener,
-            worldConfiguration, blockQueue, econHandler);
+            worldConfiguration, blockQueue);
         this.array = new SinglePlotArea[] {area};
         this.all = new PlotArea[] {area};
         SetupUtils.generators.put("PlotSquared:single",

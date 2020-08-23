@@ -27,8 +27,8 @@ package com.plotsquared.core.plot;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.plotsquared.core.PlotSquared;
 import com.google.common.collect.Lists;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.collection.QuadMap;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -57,7 +57,6 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionUtil;
@@ -154,14 +153,12 @@ public abstract class PlotArea {
 
     private final YamlConfiguration worldConfiguration;
     private final GlobalBlockQueue globalBlockQueue;
-    private final EconHandler econHandler;
 
     public PlotArea(@Nonnull final String worldName, @Nullable final String id,
-        @Nonnull IndependentPlotGenerator generator, @Nullable final PlotId min,
-        @Nullable final PlotId max,
-        @WorldConfig @Nullable final YamlConfiguration worldConfiguration,
-        @Nonnull final GlobalBlockQueue blockQueue,
-        @Nullable final EconHandler econHandler) {
+                    @Nonnull IndependentPlotGenerator generator, @Nullable final PlotId min,
+                    @Nullable final PlotId max,
+                    @WorldConfig @Nullable final YamlConfiguration worldConfiguration,
+                    @Nonnull final GlobalBlockQueue blockQueue) {
         this.worldName = worldName;
         this.id = id;
         this.plotManager = createManager();
@@ -180,7 +177,6 @@ public abstract class PlotArea {
         }
         this.worldHash = worldName.hashCode();
         this.worldConfiguration = worldConfiguration;
-        this.econHandler = econHandler;
     }
 
     @Nonnull protected abstract PlotManager createManager();
@@ -305,7 +301,7 @@ public abstract class PlotArea {
         this.schematicClaimSpecify = config.getBoolean("schematic.specify_on_claim");
         this.schematics = new ArrayList<>(config.getStringList("schematic.schematics"));
         this.schematics.replaceAll(String::toLowerCase);
-        this.useEconomy = config.getBoolean("economy.use") && this.econHandler != null;
+        this.useEconomy = config.getBoolean("economy.use");
         ConfigurationSection priceSection = config.getConfigurationSection("economy.prices");
         if (this.useEconomy) {
             this.prices = new HashMap<>();

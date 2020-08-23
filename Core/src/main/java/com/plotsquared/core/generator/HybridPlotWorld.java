@@ -38,7 +38,6 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.SchematicHandler;
@@ -88,9 +87,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                                    @Nullable @Assisted("min") final PlotId min,
                                    @Nullable @Assisted("max") final PlotId max,
                                    @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                                   @Nonnull final GlobalBlockQueue blockQueue,
-                                   @Nullable final EconHandler econHandler) {
-        super(worldName, id, generator, min, max, worldConfiguration, blockQueue, econHandler);
+                                   @Nonnull final GlobalBlockQueue blockQueue) {
+        super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
         PlotSquared.platform().getInjector().injectMembers(this);
     }
 
