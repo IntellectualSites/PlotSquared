@@ -251,7 +251,7 @@ public class MainCommand extends Command {
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
                 .equals(area) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN)
-                || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_SUDO_AREA))
+                || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_AREA_SUDO))
                 && !newPlot.isDenied(player.getUUID())) {
                 Location newLoc = newPlot.getCenterSynchronous();
                 if (player.canTeleport(newLoc)) {
