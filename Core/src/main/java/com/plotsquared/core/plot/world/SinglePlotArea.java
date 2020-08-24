@@ -207,6 +207,11 @@ public class SinglePlotArea extends GridPlotWorld {
         return super.addPlotIfAbsent(plot);
     }
 
+    @Override
+    public boolean allowSigns() {
+        return false; // do not create signs for single plots
+    }
+
     protected Plot adapt(Plot p) {
         if (p instanceof SinglePlot) {
             return p;

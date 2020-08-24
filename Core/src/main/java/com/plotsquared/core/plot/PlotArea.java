@@ -1116,7 +1116,7 @@ public abstract class PlotArea {
      * @return true if plot signs are allow, false otherwise.
      */
     public boolean allowSigns() {
-        return allowSigns && (this.plots.size() > 1) /* Do not generate signs for single plots */;
+        return allowSigns;
     }
 
     /**
