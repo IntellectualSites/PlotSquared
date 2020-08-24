@@ -40,6 +40,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.uuid.UUIDMapping;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -179,9 +180,9 @@ public class Visit extends Command {
                         } else if (throwable != null || uuids.size() != 1) {
                             Captions.COMMAND_SYNTAX.send(player, getUsage());
                         } else {
-                            final UUID uuid = uuids.toArray(new UUID[0])[0];
+                            final UUIDMapping mapping = uuids.toArray(new UUIDMapping[0])[0];
                             this.visit(player, PlotQuery.newQuery()
-                                    .thatPasses(plot -> plot.isOwner(uuid)),
+                                    .thatPasses(plot -> plot.isOwner(mapping.getUuid())),
                                     finalSortByArea, confirm, whenDone, finalPage1);
                         }
                     });
