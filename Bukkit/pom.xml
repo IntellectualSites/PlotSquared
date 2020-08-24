@@ -27,13 +27,13 @@
     <dependency>
       <groupId>com.plotsquared</groupId>
       <artifactId>PlotSquared-Core</artifactId>
-      <version>6.0.0-SUPER-SNAPSHOT</version>
+      <version>6.0.0-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.destroystokyo.paper</groupId>
       <artifactId>paper-api</artifactId>
-      <version>1.16.1-R0.1-SNAPSHOT</version>
+      <version>1.16.2-R0.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -131,7 +131,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.16.1-R0.1-SNAPSHOT</version>
+      <version>1.16.2-R0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -155,7 +155,7 @@
     <dependency>
       <groupId>net.ess3</groupId>
       <artifactId>EssentialsX</artifactId>
-      <version>2.17.2</version>
+      <version>2.18.0</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>

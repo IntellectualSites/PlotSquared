@@ -832,6 +832,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                             }
                             continue;
                         case "ZOMBIFIED_PIGLIN":
+                        case "PIGLIN_BRUTE":
                         case "LLAMA":
                         case "DONKEY":
                         case "MULE":

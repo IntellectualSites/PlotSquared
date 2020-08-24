@@ -142,7 +142,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(AnimalAttackFlag.ANIMAL_ATTACK_FALSE);
         this.addFlag(AnimalInteractFlag.ANIMAL_INTERACT_FALSE);
         this.addFlag(BlockBurnFlag.BLOCK_BURN_FALSE);
-        this.addFlag(BlockIgnitionFlag.BLOCK_IGNITION_TRUE);
+        this.addFlag(BlockIgnitionFlag.BLOCK_IGNITION_FALSE);
         this.addFlag(DeviceInteractFlag.DEVICE_INTERACT_FALSE);
         this.addFlag(DisablePhysicsFlag.DISABLE_PHYSICS_FALSE);
         this.addFlag(DropProtectionFlag.DROP_PROTECTION_FALSE);

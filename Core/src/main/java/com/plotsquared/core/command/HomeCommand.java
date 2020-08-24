@@ -92,7 +92,7 @@ public class HomeCommand extends Command {
 
     @Nonnull private PlotQuery query(@Nonnull final PlotPlayer<?> player) {
         // everything plots need to have in common here
-        return PlotQuery.newQuery().ownedBy(player);
+        return PlotQuery.newQuery().thatPasses(plot -> plot.isOwner(player.getUUID()));
     }
 
     @Override public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,

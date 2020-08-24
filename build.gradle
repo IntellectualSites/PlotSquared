@@ -14,6 +14,7 @@ buildscript {
     configurations.all {
         resolutionStrategy {
             force("org.ow2.asm:asm:8.0.1")
+            force("org.jetbrains:annotations:20.0.0")
         }
     }
 }
@@ -30,7 +31,7 @@ ext {
 }
 
 def ver = "6.0.0"
-def versuffix = "-SUPER-SNAPSHOT"
+def versuffix = "-SNAPSHOT"
 ext {
     if (project.hasProperty("versionsuffix")) {
         versuffix = "-$versionsuffix"
@@ -95,6 +96,7 @@ subprojects { subproject ->
         resolutionStrategy {
             force("junit:junit:4.12")
             force("com.google.guava:guava:21.0")
+            force("org.jetbrains:annotations:20.0.0")
             force("com.google.code.findbugs:jsr305:3.0.2")
         }
     }
@@ -118,7 +120,6 @@ subprojects { subproject ->
         relocate("org.json", "com.plotsquared.json") {
             exclude "org/json/simple/**"
         }
-        // relocate('org.mcstats', 'com.plotsquared.stats')
         archiveFileName = "${project.name}-${parent.version}.jar"
         destinationDirectory = file "../target"
     }
