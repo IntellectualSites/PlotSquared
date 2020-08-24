@@ -44,7 +44,7 @@ public class Toggle extends Command {
 
     @CommandDeclaration(command = "chatspy",
         aliases = {"spy"},
-        permission = "plots.admin.command.chat")
+        permission = "plots.admin.command.chatspy")
     public void chatspy(Command command, PlotPlayer<?> player, String[] args,
         RunnableVal3<Command, Runnable, Runnable> confirm,
         RunnableVal2<Command, CommandResult> whenDone) {

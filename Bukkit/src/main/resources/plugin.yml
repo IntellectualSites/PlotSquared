@@ -210,7 +210,7 @@ permissions:
     default: false
   plots.admin.entry.forcefield:
     default: false
-  plots.admin.command.chat:
+  plots.admin.command.chatspy:
     default: false
   plots.admin.caps.other:
     default: false
@@ -235,8 +235,6 @@ permissions:
   plots.admin.interact.other:
     default: false
   plots.admin.build.heightlimit:
-    default: false
-  plots.admin.command.update:
     default: false
   plots.admin.command.rate:
     default: false

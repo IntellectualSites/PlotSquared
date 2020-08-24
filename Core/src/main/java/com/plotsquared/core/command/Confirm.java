@@ -31,7 +31,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.TaskManager;
 
 @CommandDeclaration(command = "confirm",
-    permission = "plots.use",
+    permission = "plots.confirm",
     category = CommandCategory.INFO)
 public class Confirm extends SubCommand {
 
