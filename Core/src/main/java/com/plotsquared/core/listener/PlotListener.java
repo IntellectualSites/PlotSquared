@@ -40,6 +40,7 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotPermission;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.expiration.ExpireManager;
@@ -60,6 +61,7 @@ import com.plotsquared.core.plot.flag.implementations.TimeFlag;
 import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
+import com.plotsquared.core.plot.membership.PlotMembership;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
@@ -134,8 +136,9 @@ public class PlotListener {
     }
 
     public boolean plotEntry(final PlotPlayer<?> player, final Plot plot) {
-        if (plot.isDenied(player.getUUID()) && !Permissions
-            .hasPermission(player, "plots.admin.entry.denied")) {
+        final PlotMembership membership = plot.getMembership(player);
+        if (!membership.hasPermission(PlotPermission.ENTER_PLOT) &&
+            !Permissions.hasPermission(player, "plots.admin.entry.denied")) {
             return false;
         }
         try (final MetaDataAccess<Plot> lastPlot = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {

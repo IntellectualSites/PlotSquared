@@ -57,6 +57,8 @@ import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
+import com.plotsquared.core.plot.membership.PlotMembership;
+import com.plotsquared.core.plot.membership.PlotMemberships;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EventDispatcher;
@@ -658,6 +660,26 @@ public class Plot {
             return isOnline();
         }
         return false;
+    }
+
+    /**
+     * Get the membership instance for a given player. Will default to {@link com.plotsquared.core.plot.membership.PlotMemberships#GUEST}
+     *
+     * @param player Player to check membership for
+     * @return Membership that player belongs to
+     */
+    @Nonnull public PlotMembership getMembership(@Nonnull final PlotPlayer<?> player) {
+        if (this.isOwner(player.getUUID())) {
+            return PlotMemberships.OWNER;
+        } else if (this.getTrusted().contains(player.getUUID())) {
+            return PlotMemberships.TRUSTED;
+        } else if (this.getMembers().contains(player.getUUID())) {
+            return PlotMemberships.ADDED;
+        } else if (this.isDenied(player.getUUID())) {
+            return PlotMemberships.DENIED;
+        } else {
+            return PlotMemberships.GUEST;
+        }
     }
 
     /**

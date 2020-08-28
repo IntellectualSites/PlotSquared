@@ -46,6 +46,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.PlotInventory;
+import com.plotsquared.core.plot.PlotPermission;
 import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.implementations.AnimalInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockedCmdsFlag;
@@ -68,9 +69,9 @@ import com.plotsquared.core.plot.flag.implementations.VehicleBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.VehicleUseFlag;
 import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
+import com.plotsquared.core.plot.membership.PlotMembership;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PremiumVerification;
@@ -649,10 +650,17 @@ public class PlayerEventListener extends PlotListener implements Listener {
             || area.isForcingPlotChat())) {
             return;
         }
-        if (plot.isDenied(plotPlayer.getUUID()) && !Permissions
-            .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_CHAT_BYPASS)) {
+
+        final PlotMembership membership = plot.getMembership(plotPlayer);
+
+        /*
+         * To chat in a plot, you need to first enter the plot...
+         */
+        if (!membership.hasPermission(PlotPermission.ENTER_PLOT) &&
+            !Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_CHAT_BYPASS)) {
             return;
         }
+
         event.setCancelled(true);
         Set<Player> recipients = event.getRecipients();
         recipients.clear();

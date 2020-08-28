@@ -27,19 +27,21 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotPermission;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
+import com.plotsquared.core.plot.membership.PlotMembership;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.MathMan;
@@ -55,7 +57,6 @@ import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -365,13 +366,14 @@ public class ListCmd extends SubCommand {
         this.paginate(player, plots, pageSize, page, new RunnableVal3<Integer, Plot, CaptionHolder>() {
             @Override public void run(Integer i, Plot plot, CaptionHolder caption) {
                 Caption color;
+                final PlotMembership membership = plot.getMembership(player);
                 if (plot.getOwner() == null) {
                     color = TranslatableCaption.of("info.plot_list_no_owner");
                 } else if (plot.isOwner(player.getUUID())) {
                     color = TranslatableCaption.of("info.plot_list_owned_by");
                 } else if (plot.isAdded(player.getUUID())) {
                     color = TranslatableCaption.of("info.plot_list_added_to");
-                } else if (plot.isDenied(player.getUUID())) {
+                } else if (!membership.hasPermission(PlotPermission.ENTER_PLOT)) {
                     color = TranslatableCaption.of("info.plot_list_denied_on");
                 } else {
                     color = TranslatableCaption.of("info.plot_list_default");
