@@ -46,6 +46,7 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
@@ -678,12 +679,12 @@ public class Plot {
 
     /**
      * Get the membership instance for a given player. Will default to {@link com.plotsquared.core.plot.membership.PlotMemberships#GUEST}.
-     * This delegates to {@link PlotMembershipRegistry#getMembership(PlotPlayer)}
+     * This delegates to {@link PlotMembershipRegistry#getMembership(OfflinePlotPlayer)}
      *
      * @param player Player to check membership for
      * @return Membership that player belongs to
      */
-    @Nonnull public PlotMembership getMembership(@Nonnull final PlotPlayer<?> player) {
+    @Nonnull public PlotMembership getMembership(@Nonnull final OfflinePlotPlayer player) {
         return this.plotMembershipRegistry.getMembership(player);
     }
 

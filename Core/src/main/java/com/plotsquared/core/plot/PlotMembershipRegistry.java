@@ -27,7 +27,7 @@ package com.plotsquared.core.plot;
 
 import com.google.common.base.Objects;
 import com.plotsquared.core.database.DBFunc;
-import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.plot.membership.PlotMembership;
 import com.plotsquared.core.plot.membership.PlotMemberships;
 
@@ -52,7 +52,7 @@ public class PlotMembershipRegistry {
      * @param player Player to check membership for
      * @return Membership that player belongs to
      */
-    @Nonnull public PlotMembership getMembership(@Nonnull final PlotPlayer<?> player) {
+    @Nonnull public PlotMembership getMembership(@Nonnull final OfflinePlotPlayer player) {
         if (this.plot.isOwner(player.getUUID())) {
             return PlotMemberships.OWNER;
         } else if (this.plot.getTrusted().contains(player.getUUID()) ||
