@@ -29,5 +29,16 @@ package com.plotsquared.core.plot;
  * Intra-plot permissions
  */
 public enum PlotPermission {
+    /**
+     * The player can build on the plot
+     */
+    BUILD,
+    /**
+     * The player can only build on the plot when the owner is online
+     */
+    BUILD_ONLINE,
+    /**
+     * The player is allowed to enter the plot
+     */
     ENTER_PLOT
 }

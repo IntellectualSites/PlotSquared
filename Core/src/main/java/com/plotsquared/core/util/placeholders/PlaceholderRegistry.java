@@ -110,7 +110,7 @@ public final class PlaceholderRegistry {
             return String.valueOf(plot.getDenied().size());
         });
         this.createPlaceholder("has_build_rights", (player, plot) ->
-            plot.isAdded(player.getUUID()) ? "true" : "false");
+            plot.canBuild(player) ? "true" : "false");
         this.createPlaceholder("currentplot_x", (player, plot) -> Integer.toString(plot.getId().getX()));
         this.createPlaceholder("currentplot_y", (player, plot) -> Integer.toString(plot.getId().getY()));
         this.createPlaceholder("currentplot_xy", (player, plot) -> plot.getId().toString());

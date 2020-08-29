@@ -58,7 +58,6 @@ import com.plotsquared.core.plot.flag.implementations.SoilDryFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -308,14 +307,11 @@ public class BlockEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-            } else if (!plot.isAdded(pp.getUUID())) {
-                List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
-                if (place != null) {
-                    Block block = event.getBlock();
-                    if (place.contains(
-                        BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))) {
-                        return;
-                    }
+            } else if (!plot.canBuild(pp)) {
+                final List<BlockTypeWrapper> place = plot.getFlag(PlaceFlag.class);
+                final Block block = event.getBlock();
+                if (place.contains(BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))) {
+                    return;
                 }
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
@@ -390,7 +386,7 @@ public class BlockEventListener implements Listener {
                 }
                 return;
             }
-            if (!plot.isAdded(plotPlayer.getUUID())) {
+            if (!plot.canBuild(plotPlayer)) {
                 List<BlockTypeWrapper> destroy = plot.getFlag(BreakFlag.class);
                 Block block = event.getBlock();
                 final BlockType blockType = BukkitAdapter.asBlockType(block.getType());
@@ -543,7 +539,7 @@ public class BlockEventListener implements Listener {
                 return;
             }
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-            if (!plot.isAdded(plotPlayer.getUUID())) {
+            if (!plot.canBuild(plotPlayer)) {
                 if (plot.getFlag(IceFormFlag.class)) {
                     plot.debug("Ice could not be formed because ice-form = false");
                     return;
@@ -593,7 +589,7 @@ public class BlockEventListener implements Listener {
                 return;
             }
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-            if (!plot.isAdded(plotPlayer.getUUID())) {
+            if (!plot.canBuild(plotPlayer)) {
                 List<BlockTypeWrapper> destroy = plot.getFlag(BreakFlag.class);
                 Block block = event.getBlock();
                 if (destroy
@@ -1023,7 +1019,7 @@ public class BlockEventListener implements Listener {
                     );
                     event.setCancelled(true);
                 }
-            } else if (!plot.isAdded(pp.getUUID())) {
+            } else if (!plot.canBuild(pp)) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),

@@ -29,13 +29,16 @@ import com.plotsquared.core.plot.PlotPermission;
 
 import java.util.EnumSet;
 
+/**
+ * Default plot membership tiers
+ */
 public final class PlotMemberships {
 
     public static final PlotMembership OWNER = new PlotMembership("owner", EnumSet.allOf(PlotPermission.class));
-    public static final PlotMembership TRUSTED = new PlotMembership("trusted", EnumSet.of(PlotPermission.ENTER_PLOT));
+    public static final PlotMembership TRUSTED = new PlotMembership("trusted", EnumSet.of(PlotPermission.ENTER_PLOT, PlotPermission.BUILD));
     public static final PlotMembership ADDED = new PlotMembership("added", EnumSet.of(PlotPermission.ENTER_PLOT));
     public static final PlotMembership GUEST = new PlotMembership("guest", EnumSet.of(PlotPermission.ENTER_PLOT));
-    public static final PlotMembership DENIED = new PlotMembership("denied", EnumSet.of(PlotPermission.ENTER_PLOT));
+    public static final PlotMembership DENIED = new PlotMembership("denied", EnumSet.noneOf(PlotPermission.class));
 
     private PlotMemberships() {
     }

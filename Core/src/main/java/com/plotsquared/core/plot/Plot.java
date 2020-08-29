@@ -58,7 +58,6 @@ import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.plot.membership.PlotMembership;
-import com.plotsquared.core.plot.membership.PlotMemberships;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EventDispatcher;
@@ -142,6 +141,10 @@ public class Plot {
      * Utility used to modify the plot
      */
     private final PlotModificationManager plotModificationManager = new PlotModificationManager(this);
+    /**
+     * Class that contains per-plot memberships
+     */
+    private final PlotMembershipRegistry plotMembershipRegistry = new PlotMembershipRegistry(this);
     /**
      * Represents whatever the database manager needs it to: <br>
      * - A value of -1 usually indicates the plot will not be stored in the DB<br>
@@ -651,35 +654,37 @@ public class Plot {
             return true;
         }
         if (getMembers().contains(uuid)) {
-            return isOnline();
+            return ownerOnline();
         }
         if (getTrusted().contains(uuid) || getTrusted().contains(DBFunc.EVERYONE)) {
             return true;
         }
         if (getMembers().contains(DBFunc.EVERYONE)) {
-            return isOnline();
+            return ownerOnline();
         }
         return false;
     }
 
     /**
-     * Get the membership instance for a given player. Will default to {@link com.plotsquared.core.plot.membership.PlotMemberships#GUEST}
+     * Check whether or not the player is permitted to build on the plot
+     *
+     * @param player Player
+     * @return {@code true} if the player is allowed to build on the plot, {@code false} if not
+     */
+    public boolean canBuild(@Nonnull final PlotPlayer<?> player) {
+        final PlotMembership membership = this.getMembership(player);
+        return membership.hasPermission(PlotPermission.BUILD) || (membership.hasPermission(PlotPermission.BUILD_ONLINE) && this.ownerOnline());
+    }
+
+    /**
+     * Get the membership instance for a given player. Will default to {@link com.plotsquared.core.plot.membership.PlotMemberships#GUEST}.
+     * This delegates to {@link PlotMembershipRegistry#getMembership(PlotPlayer)}
      *
      * @param player Player to check membership for
      * @return Membership that player belongs to
      */
     @Nonnull public PlotMembership getMembership(@Nonnull final PlotPlayer<?> player) {
-        if (this.isOwner(player.getUUID())) {
-            return PlotMemberships.OWNER;
-        } else if (this.getTrusted().contains(player.getUUID())) {
-            return PlotMemberships.TRUSTED;
-        } else if (this.getMembers().contains(player.getUUID())) {
-            return PlotMemberships.ADDED;
-        } else if (this.isDenied(player.getUUID())) {
-            return PlotMemberships.DENIED;
-        } else {
-            return PlotMemberships.GUEST;
-        }
+        return this.plotMembershipRegistry.getMembership(player);
     }
 
     /**
@@ -2540,7 +2545,7 @@ public class Plot {
      *
      * @return true if the owner of the Plot is online
      */
-    public boolean isOnline() {
+    public boolean ownerOnline() {
         if (!this.hasOwner()) {
             return false;
         }
@@ -2690,7 +2695,7 @@ public class Plot {
             String denied = PlayerManager.getPlayerList(this.getDenied());
             String seen;
             if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
-                if (this.isOnline()) {
+                if (this.ownerOnline()) {
                     seen = TranslatableCaption.of("info.now").getComponent(player);
                 } else {
                     int time = (int) (ExpireManager.IMP.getAge(this) / 1000);
@@ -2863,6 +2868,15 @@ public class Plot {
      */
     @Nonnull public PlotModificationManager getPlotModificationManager() {
         return this.plotModificationManager;
+    }
+
+    /**
+     * Get the plot membership registry
+     *
+     * @return Plot membership registry
+     */
+    @Nonnull public PlotMembershipRegistry getPlotMembershipRegistry() {
+        return this.plotMembershipRegistry;
     }
 
 }

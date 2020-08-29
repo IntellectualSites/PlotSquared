@@ -44,11 +44,10 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public class ForceFieldListener {
 
-    private static Set<PlotPlayer> getNearbyPlayers(Player player, Plot plot) {
-        Set<PlotPlayer> players = new HashSet<>();
-        for (Player nearPlayer : Iterables
-            .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
-            PlotPlayer plotPlayer;
+    private static Set<PlotPlayer<?>> getNearbyPlayers(Player player, Plot plot) {
+        Set<PlotPlayer<?>> players = new HashSet<>();
+        for (Player nearPlayer : Iterables.filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
+            PlotPlayer<?> plotPlayer;
             if ((plotPlayer = BukkitUtil.adapt(nearPlayer)) == null || !plot
                 .equals(plotPlayer.getCurrentPlot())) {
                 continue;
@@ -60,10 +59,10 @@ public class ForceFieldListener {
         return players;
     }
 
-    private static PlotPlayer hasNearbyPermitted(Player player, Plot plot) {
+    private static PlotPlayer<?> hasNearbyPermitted(Player player, Plot plot) {
         for (Player nearPlayer : Iterables
             .filter(player.getNearbyEntities(5d, 5d, 5d), Player.class)) {
-            PlotPlayer plotPlayer;
+            PlotPlayer<?> plotPlayer;
             if ((plotPlayer = BukkitUtil.adapt(nearPlayer)) == null || !plot
                 .equals(plotPlayer.getCurrentPlot())) {
                 continue;
@@ -75,7 +74,7 @@ public class ForceFieldListener {
         return null;
     }
 
-    private static Vector calculateVelocity(PlotPlayer player, PlotPlayer e) {
+    private static Vector calculateVelocity(PlotPlayer<?> player, PlotPlayer<?> e) {
         Location playerLocation = player.getLocationFull();
         Location oPlayerLocation = e.getLocation();
         double playerX = playerLocation.getX();
@@ -105,12 +104,12 @@ public class ForceFieldListener {
         return new Vector(x, y, z);
     }
 
-    public static void handleForcefield(Player player, PlotPlayer plotPlayer, Plot plot) {
+    public static void handleForcefield(Player player, PlotPlayer<?> plotPlayer, Plot plot) {
         if (plot.getFlag(ForcefieldFlag.class)) {
             UUID uuid = plotPlayer.getUUID();
             if (plot.isAdded(uuid)) {
-                Set<PlotPlayer> players = getNearbyPlayers(player, plot);
-                for (PlotPlayer oPlayer : players) {
+                Set<PlotPlayer<?>> players = getNearbyPlayers(player, plot);
+                for (PlotPlayer<?> oPlayer : players) {
                     if (!Permissions
                         .hasPermission(oPlayer, Permission.PERMISSION_ADMIN_ENTRY_FORCEFIELD)) {
                         ((BukkitPlayer) oPlayer).player
@@ -118,7 +117,7 @@ public class ForceFieldListener {
                     }
                 }
             } else {
-                PlotPlayer oPlayer = hasNearbyPermitted(player, plot);
+                PlotPlayer<?> oPlayer = hasNearbyPermitted(player, plot);
                 if (oPlayer == null) {
                     return;
                 }

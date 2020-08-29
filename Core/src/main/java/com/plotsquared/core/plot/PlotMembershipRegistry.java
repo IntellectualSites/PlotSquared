@@ -26,11 +26,17 @@
 package com.plotsquared.core.plot;
 
 import com.google.common.base.Objects;
+import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.membership.PlotMembership;
+import com.plotsquared.core.plot.membership.PlotMemberships;
 
 import javax.annotation.Nonnull;
 
 /**
- * Registry of plot memberships, unique per plot
+ * Registry of plot memberships, unique per plot.
+ * Does not currently do anything, but existsfor
+ * future use.
  */
 public class PlotMembershipRegistry {
 
@@ -38,6 +44,28 @@ public class PlotMembershipRegistry {
 
     PlotMembershipRegistry(@Nonnull final Plot plot) {
         this.plot = plot;
+    }
+
+    /**
+     * Get the membership instance for a given player. Will default to {@link com.plotsquared.core.plot.membership.PlotMemberships#GUEST}
+     *
+     * @param player Player to check membership for
+     * @return Membership that player belongs to
+     */
+    @Nonnull public PlotMembership getMembership(@Nonnull final PlotPlayer<?> player) {
+        if (this.plot.isOwner(player.getUUID())) {
+            return PlotMemberships.OWNER;
+        } else if (this.plot.getTrusted().contains(player.getUUID()) ||
+                   this.plot.getTrusted().contains(DBFunc.EVERYONE)) {
+            return PlotMemberships.TRUSTED;
+        } else if (this.plot.getMembers().contains(player.getUUID()) ||
+                   this.plot.getMembers().contains(DBFunc.EVERYONE)) {
+            return PlotMemberships.ADDED;
+        } else if (this.plot.isDenied(player.getUUID())) {
+            return PlotMemberships.DENIED;
+        } else {
+            return PlotMemberships.GUEST;
+        }
     }
 
     /**
