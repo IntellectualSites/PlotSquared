@@ -91,9 +91,9 @@ public class RegenAllRoads extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             return false;
         }
-        //Set<BlockVector2> chunks = ChunkManager.manager.getChunkChunks(name);
         player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"),
                 Template.of("command", "/plot createroadschematic"));
+        player.sendMessage(TranslatableCaption.of("debugroadregen.regenallroads_started"));
         boolean result = this.hybridUtils.scheduleRoadUpdate(area, height);
         if (!result) {
             player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));

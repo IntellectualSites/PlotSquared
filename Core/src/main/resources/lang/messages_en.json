@@ -297,6 +297,7 @@
   "schematics.schematic_road_created": "<prefix><gold>Saved new road schematic. To test the schematic, fly to a few other plots and run <command>.</gold>",
   "debugroadregen.schematic": "<prefix><red>If no schematic is set, the following will not do anything.</red>\n<gray> - To set a schematic, stand in a plot and use </gray><red><command></red>",
   "debugroadregen.regenallroads": "<prefix><red>To regenerate all roads: <command></red>",
+  "debugroadregen.regenallroads_started": "<prefix><green>PlotSquared will now attempt to generate roads based on your input. This may take a while.</green>",
 
   "errors.invalid_player": "<prefix><red>Player not found: </red><gray><value></gray><red>.</red>",
   "errors.invalid_player_offline": "<prefix><gray><player></gray><red> must be online.</red>",
