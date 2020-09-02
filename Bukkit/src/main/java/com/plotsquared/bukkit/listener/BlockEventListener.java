@@ -555,6 +555,7 @@ public class BlockEventListener implements Listener {
         }
         if (!plot.getFlag(IceFormFlag.class)) {
             event.setCancelled(true);
+            plot.debug("Ice could not form because ice-form = false");
         }
     }
 
@@ -1033,6 +1034,7 @@ public class BlockEventListener implements Listener {
                 }
             } else if (!plot.getFlag(BlockIgnitionFlag.class)) {
                 event.setCancelled(true);
+                plot.debug("Block ignition was cancelled because block-ignition = false");
             }
         } else {
             if (plot == null) {
