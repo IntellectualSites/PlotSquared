@@ -1,0 +1,32 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  target-branch: v5
+  ignore:
+  - dependency-name: com.google.guava:guava
+    versions:
+    - ">= 22.a"
+    - "< 23"
+  - dependency-name: com.google.guava:guava
+    versions:
+    - ">= 23.a"
+    - "< 24"
+  - dependency-name: com.squareup.okhttp3:okhttp
+    versions:
+    - "> 4.2.2"
+  - dependency-name: com.squareup.okio:okio
+    versions:
+    - "> 2.4.1"
+    - "< 3"
+  - dependency-name: com.squareup.retrofit2:retrofit
+    versions:
+    - "> 2.4.0"
+    - "< 3"
+  - dependency-name: net.kyori:text-adapter-bukkit
+    versions:
+    - "> 3.0.3"
+    - "< 3.1"
