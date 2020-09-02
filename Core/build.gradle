@@ -5,7 +5,7 @@ repositories {
 def textVersion = "3.0.2"
 
 dependencies {
-    implementation("org.yaml:snakeyaml:1.25")
+    implementation("org.yaml:snakeyaml:1.26")
     implementation("com.google.code.gson:gson:2.8.6") {
         because("Minecraft uses GSON 2.8.0")
         force = true
