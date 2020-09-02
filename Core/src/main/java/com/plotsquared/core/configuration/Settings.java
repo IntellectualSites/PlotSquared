@@ -587,6 +587,8 @@ public class Settings extends Config {
         public static boolean EXTENDED_USERNAME_COMPLETION = true;
         @Comment("Command aliases that will be tab completed")
         public static List<String> TAB_COMPLETED_ALIASES = Arrays.asList("plot", "plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap");
+        @Comment("Whether PlotSquared should hook into MvDWPlaceholderAPI or not")
+        public static boolean USE_MVDWAPI = true;
     }
 
 }

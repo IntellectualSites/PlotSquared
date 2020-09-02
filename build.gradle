@@ -14,14 +14,14 @@ buildscript {
     configurations.all {
         resolutionStrategy {
             force("org.ow2.asm:asm:8.0.1")
-            force("org.jetbrains:annotations:20.0.0")
+            force("org.jetbrains:annotations:20.1.0")
         }
     }
 }
 
 plugins {
     id "maven-publish"
-    id "org.ajoberstar.grgit" version "4.0.1"
+    id "org.ajoberstar.grgit" version "4.0.2"
 }
 
 group = "com.plotsquared"
@@ -96,7 +96,7 @@ subprojects { subproject ->
         resolutionStrategy {
             force("junit:junit:4.12")
             force("com.google.guava:guava:21.0")
-            force("org.jetbrains:annotations:20.0.0")
+            force("org.jetbrains:annotations:20.1.0")
             force("com.google.code.findbugs:jsr305:3.0.2")
         }
     }
