@@ -29,6 +29,7 @@ import com.plotsquared.bukkit.BukkitMain;
 import com.plotsquared.bukkit.placeholder.MVdWPlaceholders;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -43,7 +44,7 @@ public class ServerListener implements Listener {
     }
 
     @EventHandler public void onServerLoad(ServerLoadEvent event) {
-        if (Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI") != null) {
+        if (Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI") != null && Settings.Enabled_Components.USE_MVDWAPI) {
             new MVdWPlaceholders(this.plugin, PlotSquared.get().getPlaceholderRegistry());
             PlotSquared.log(Captions.PREFIX + "&6PlotSquared hooked into MVdWPlaceholderAPI");
         }

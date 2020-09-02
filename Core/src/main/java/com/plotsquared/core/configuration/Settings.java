@@ -582,7 +582,7 @@ public class Settings extends Config {
         @Comment("Actively purge invalid database entries") public static boolean DATABASE_PURGER =
             false;
         @Comment({"Delete plots when a player is banned.",
-        "Note: This only works with the /minecraft:ban command. Any punishment plugin like LiteBans is not supported."}) public static boolean BAN_DELETER = false;
+        "Note: This only works with the /minecraft:ban command. Any punishment plugin is not supported."}) public static boolean BAN_DELETER = false;
         @Comment("Allows PlaceholderAPI placeholders to be used in captions, flags, etc.")
         public static boolean EXTERNAL_PLACEHOLDERS = true;
         @Comment("Make road regeneration persistent across restarts") public static boolean
@@ -593,6 +593,8 @@ public class Settings extends Config {
         public static boolean EXTENDED_USERNAME_COMPLETION = true;
         @Comment("Command aliases that will be tab completed")
         public static List<String> TAB_COMPLETED_ALIASES = Arrays.asList("plot", "plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap");
+        @Comment("Whether PlotSquared should hook into MvDWPlaceholderAPI or not")
+        public static boolean USE_MVDWAPI = true;
     }
 
 }
