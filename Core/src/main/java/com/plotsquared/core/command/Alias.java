@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -149,6 +150,12 @@ public class Alias extends SubCommand {
                     .withAlias(alias)
                     .anyMatch()) {
                 MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
+                return;
+            }
+            if (Settings.UUID.OFFLINE) {
+                plot.setAlias(alias);
+                MainUtil.sendMessage(player,
+                        Captions.ALIAS_SET_TO.getTranslated().replaceAll("%alias%", alias));
                 return;
             }
             PlotSquared.get().getImpromptuUUIDPipeline().getSingle(alias, ((uuid, throwable) -> {
