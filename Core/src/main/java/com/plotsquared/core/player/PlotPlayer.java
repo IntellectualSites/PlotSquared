@@ -727,6 +727,16 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer 
         }
     }
 
+    /**
+     * Check if the player is able to see the other player.
+     * This does not mean that the other player is in line of sight of the player,
+     * but rather that the player is permitted to see the other player.
+     *
+     * @param other Other player
+     * @return {@code true} if the player is able to see the other player, {@code false} if not
+     */
+    public abstract boolean canSee(PlotPlayer<?> other);
+
     public boolean hasPersistentMeta(String key) {
         return this.metaMap.containsKey(key);
     }

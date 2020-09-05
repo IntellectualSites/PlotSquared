@@ -174,4 +174,8 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return false;
     }
 
+    @Override public boolean canSee(final PlotPlayer<?> other) {
+        return true;
+    }
+
 }

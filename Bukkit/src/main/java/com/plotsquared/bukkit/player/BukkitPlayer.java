@@ -32,6 +32,7 @@ import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.util.EconHandler;
@@ -354,6 +355,13 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return this.player.isBanned();
     }
 
+    @Override public boolean canSee(final PlotPlayer<?> other) {
+        if (other instanceof ConsolePlayer) {
+            return true;
+        } else {
+            return this.player.canSee(((BukkitPlayer) other).getPlatformPlayer());
+        }
+    }
 
     public PlayerTeleportEvent.TeleportCause getTeleportCause(@NotNull final TeleportCause cause) {
         switch (cause) {
