@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit;
 
+import com.plotsquared.bukkit.chat.Reflection;
 import com.plotsquared.bukkit.generator.BukkitHybridUtils;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
 import com.plotsquared.bukkit.listener.BlockEventListener;
@@ -32,6 +33,7 @@ import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntityEventListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
 import com.plotsquared.bukkit.listener.PaperListener;
+import com.plotsquared.bukkit.listener.PaperListener113;
 import com.plotsquared.bukkit.listener.PlayerEventListener;
 import com.plotsquared.bukkit.listener.ProjectileEventListener;
 import com.plotsquared.bukkit.listener.ServerListener;
@@ -904,7 +906,11 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         getServer().getPluginManager().registerEvents(new ProjectileEventListener(), this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
         if (PaperLib.isPaper() && Settings.Paper_Components.PAPER_LISTENERS) {
-            getServer().getPluginManager().registerEvents(new PaperListener(), this);
+            if (Reflection.getVersion().startsWith("v1_13")) {
+                getServer().getPluginManager().registerEvents(new PaperListener113(), this);
+            } else {
+                getServer().getPluginManager().registerEvents(new PaperListener(), this);
+            }
         }
         PlotListener.startRunnable();
     }
