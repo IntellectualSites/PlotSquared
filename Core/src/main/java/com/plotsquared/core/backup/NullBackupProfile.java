@@ -25,7 +25,10 @@
  */
 package com.plotsquared.core.backup;
 
+import com.plotsquared.core.player.PlotPlayer;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -53,7 +56,7 @@ public class NullBackupProfile implements BackupProfile {
         throw new UnsupportedOperationException("Cannot create backup of an unowned plot");
     }
 
-    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup) {
+    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup, @Nullable PlotPlayer<?> player) {
         return CompletableFuture.completedFuture(null);
     }
 

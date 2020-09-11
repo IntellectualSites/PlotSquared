@@ -314,7 +314,7 @@ public final class Backup extends Command {
                                 );
                             } else {
                                 CmdConfirm.addPending(player, "/plot backup load " + number,
-                                    () -> backupProfile.restoreBackup(backup)
+                                    () -> backupProfile.restoreBackup(backup, player)
                                         .whenComplete((n, error) -> {
                                             if (error != null) {
                                                 player.sendMessage(

@@ -154,7 +154,7 @@ public class Set extends SubCommand {
                             plot.addRunning();
                             QueueCoordinator queue = plotArea.getQueue();
                             for (final Plot current : plot.getConnectedPlots()) {
-                                current.getPlotModificationManager().setComponent(component, pattern, queue);
+                                current.getPlotModificationManager().setComponent(component, pattern, player, queue);
                             }
                             queue.setCompleteTask(plot::removeRunning);
                             queue.enqueue();

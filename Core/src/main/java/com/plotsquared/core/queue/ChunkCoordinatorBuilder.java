@@ -27,6 +27,7 @@ package com.plotsquared.core.queue;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
@@ -54,8 +55,8 @@ public class ChunkCoordinatorBuilder {
     private Consumer<BlockVector2> chunkConsumer;
     private Runnable whenDone = () -> {
     };
-    private long maxIterationTime = 60; // A little over 1 tick;
-    private int initialBatchSize = 4;
+    private long maxIterationTime = Settings.QUEUE.MAX_ITERATION_TIME; // A little over 1 tick;
+    private int initialBatchSize = Settings.QUEUE.INITIAL_BATCH_SIZE;
     private boolean unloadAfter = true;
 
     @Inject public ChunkCoordinatorBuilder(@Nonnull ChunkCoordinatorFactory chunkCoordinatorFactory) {

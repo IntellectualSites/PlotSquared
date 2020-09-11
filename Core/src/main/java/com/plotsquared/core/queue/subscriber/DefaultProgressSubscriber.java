@@ -26,8 +26,12 @@
 
 package com.plotsquared.core.queue.subscriber;
 
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AtomicDouble;
+import com.google.inject.Inject;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.util.task.PlotSquaredTask;
@@ -48,33 +52,43 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
 
     @Nonnull private final AtomicDouble progress = new AtomicDouble(0);
     @Nonnull private final AtomicBoolean started = new AtomicBoolean(false);
-    @Nonnull private final TaskManager taskManager;
     @Nonnull private final TaskTime interval;
+    @Nonnull private final TaskTime wait;
     @Nonnull private final PlotPlayer<?> actor;
     @Nonnull private final Caption caption;
+    @Inject @Nonnull private TaskManager taskManager;
     private PlotSquaredTask task;
 
-    public DefaultProgressSubscriber(@Nullable final PlotPlayer<?> actor,
-                                     @Nonnull final TaskTime interval,
-                                     @Nonnull TaskManager taskManager,
-                                     @Nullable Caption caption) {
-        if (actor == null) {
-            throw new NullPointerException(
-                "Actor cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!");
-        }
-        if (caption == null) {
-            throw new NullPointerException(
-                "Caption cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!");
-        }
-        this.interval = interval;
-        this.taskManager = taskManager;
+    @Inject public DefaultProgressSubscriber(@Nonnull final PlotPlayer<?> actor) {
+        Preconditions.checkNotNull(actor,
+            "Actor cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!");
         this.actor = actor;
-        this.caption = caption;
+        this.interval = TaskTime.ms(Settings.QUEUE.NOTIFY_INTERVAL);
+        this.wait = TaskTime.ms(Settings.QUEUE.NOTIFY_WAIT);
+        this.caption = TranslatableCaption.of("working.progress");
+    }
+
+    public DefaultProgressSubscriber(@Nonnull final PlotPlayer<?> actor,
+                                     @Nonnull final TaskManager taskManager,
+                                     final long interval,
+                                     final long wait,
+                                     @Nullable final Caption caption) {
+        Preconditions.checkNotNull(actor,
+            "Actor cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!");
+        this.actor = actor;
+        this.interval = TaskTime.ms(interval);
+        this.wait = TaskTime.ms(wait);
+        this.taskManager = taskManager;
+        if (caption == null) {
+            this.caption = TranslatableCaption.of("working.progress");
+        } else {
+            this.caption = caption;
+        }
     }
 
     @Override public void notifyProgress(@Nonnull ChunkCoordinator coordinator, float progress) {
-        this.progress.set((double) Math.round(progress * 100) / 100);
-        if (coordinator.isCancelled() || progress == 1) {
+        this.progress.set(progress);
+        if (coordinator.isCancelled() || progress >= 1) {
             if (task != null) {
                 task.cancel();
             }
@@ -83,8 +97,8 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
                 if (!started.get()) {
                     return;
                 }
-                actor.sendMessage(caption, Template.of("%s", this.progress.toString()));
-            }, interval), interval);
+                actor.sendMessage(caption, Template.of("progress", String.valueOf((double) Math.round(this.progress.doubleValue() * 100) / 100)));
+            }, interval), wait);
         }
     }
 }

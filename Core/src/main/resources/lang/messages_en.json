@@ -410,6 +410,7 @@
   "working.plot_not_claimed": "<prefix><gray>Plot not claimed.</gray>",
   "working.plot_is_claimed": "<prefix><gray>This plot is already claimed.</gray>",
   "working.claimed": "<prefix><dark_aqua>You successfully claimed the plot.</dark_aqua>",
+  "working.progress": "<prefix><gray>Current progress: </gray><gold><progress></gold><gray>%</gray>",
   
   "list.comment_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> comments</gold>",
   "list.comment_list_comment": "<dark_gray>[</dark_gray><gray>#<number></gray><dark_gray>[</dark_gray><gray><world>;<plot_id></gray><dark_gray>][</dark_gray><gold><commenter></gold><dark_gray>]</dark_gray><comment>\n",

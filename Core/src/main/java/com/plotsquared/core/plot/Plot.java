@@ -1623,7 +1623,7 @@ public class Plot {
                 e.printStackTrace();
                 return true;
             }
-            schematicHandler.paste(sch, this, 0, 1, 0, Settings.Schematics.PASTE_ON_TOP, new RunnableVal<Boolean>() {
+            schematicHandler.paste(sch, this, 0, 1, 0, Settings.Schematics.PASTE_ON_TOP, player, new RunnableVal<Boolean>() {
                 @Override public void run(Boolean value) {
                     if (value) {
                         player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));

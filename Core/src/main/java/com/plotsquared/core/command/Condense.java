@@ -178,7 +178,7 @@ public class Condense extends SubCommand {
                             i++;
                             final AtomicBoolean result = new AtomicBoolean(false);
                             try {
-                                result.set(origin.getPlotModificationManager().move(possible, () -> {
+                                result.set(origin.getPlotModificationManager().move(possible, player, () -> {
                                     if (result.get()) {
                                         player.sendMessage(
                                                 TranslatableCaption.of("condense.moving"),

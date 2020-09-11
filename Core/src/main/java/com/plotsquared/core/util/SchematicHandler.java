@@ -25,10 +25,13 @@
  */
 package com.plotsquared.core.util;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.ClassicPlotWorld;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.schematic.Schematic;
@@ -109,8 +112,9 @@ public abstract class SchematicHandler {
     public static SchematicHandler manager;
     private final WorldUtil worldUtil;
     private boolean exportAll = false;
+    @Inject private ProgressSubscriberFactory subscriberFactory;
 
-    public SchematicHandler(@Nonnull final WorldUtil worldUtil) {
+    @Inject public SchematicHandler(@Nonnull final WorldUtil worldUtil) {
         this.worldUtil = worldUtil;
     }
 
@@ -257,6 +261,7 @@ public abstract class SchematicHandler {
      * @param yOffset    offset y to paste it from plot origin
      * @param zOffset    offset z to paste it from plot origin
      * @param autoHeight if to automatically choose height to paste from
+     * @param actor      the actor pasting the schematic
      * @param whenDone   task to run when schematic is pasted
      */
     public void paste(final Schematic schematic,
@@ -265,6 +270,7 @@ public abstract class SchematicHandler {
                       final int yOffset,
                       final int zOffset,
                       final boolean autoHeight,
+                      final PlotPlayer<?> actor,
                       final RunnableVal<Boolean> whenDone) {
 
         TaskManager.runTask(() -> {
@@ -343,6 +349,9 @@ public abstract class SchematicHandler {
                 }
                 if (whenDone != null) {
                     whenDone.value = true;
+                }
+                if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+                    queue.addProgressSubscriber(subscriberFactory.create(actor));
                 }
                 queue.setCompleteTask(whenDone);
                 queue.enqueue();

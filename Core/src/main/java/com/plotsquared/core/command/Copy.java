@@ -77,7 +77,7 @@ public class Copy extends SubCommand {
             return false;
         }
 
-        plot1.getPlotModificationManager().copy(plot2).thenAccept(result -> {
+        plot1.getPlotModificationManager().copy(plot2, player).thenAccept(result -> {
             if (result) {
                 player.sendMessage(TranslatableCaption.of("move.copy_success"));
             } else {

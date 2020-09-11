@@ -26,6 +26,7 @@
 package com.plotsquared.core.inject.factory;
 
 import com.google.inject.assistedinject.Assisted;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.plotsquared.core.util.task.TaskManager;
@@ -35,8 +36,12 @@ import javax.annotation.Nullable;
 
 public interface ProgressSubscriberFactory {
 
-    @Nonnull ProgressSubscriber create(@Nullable @Assisted("subscriber") PlotPlayer actor,
+    @Nonnull ProgressSubscriber create(@Nonnull @Assisted("subscriber") PlotPlayer<?> actor);
+
+    @Nonnull ProgressSubscriber create(@Nonnull @Assisted("subscriber") PlotPlayer<?> actor,
+                                       @Nonnull TaskManager taskManager,
                                        @Assisted("progressInterval") final long interval,
-                                       @Nonnull TaskManager taskManager);
+                                       @Assisted("progressInterval") final long wait,
+                                       @Nullable @Assisted("caption") Caption caption);
 
 }

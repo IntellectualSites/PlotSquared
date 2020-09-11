@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.world;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
@@ -64,7 +65,7 @@ public class SinglePlotManager extends PlotManager {
         return Location.at(plotId.toCommaSeparatedString(), 30000000, 0, 30000000);
     }
 
-    @Override public boolean clearPlot(@NotNull Plot plot, final Runnable whenDone, @Nullable QueueCoordinator queue) {
+    @Override public boolean clearPlot(@NotNull Plot plot, final Runnable whenDone, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
         PlotSquared.platform().getSetupUtils().unload(plot.getWorldName(), false);
         final File worldFolder = new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
         TaskManager.getPlatformImplementation().taskAsync(() -> {
@@ -96,8 +97,11 @@ public class SinglePlotManager extends PlotManager {
         return new String[0];
     }
 
-    @Override
-    public boolean setComponent(@NotNull PlotId plotId, @NotNull String component, @NotNull Pattern blocks, @Nullable QueueCoordinator queue) {
+    @Override public boolean setComponent(@NotNull PlotId plotId,
+                                          @NotNull String component,
+                                          @NotNull Pattern blocks,
+                                          @Nullable PlotPlayer<?> actor,
+                                          @Nullable QueueCoordinator queue) {
         return false;
     }
 

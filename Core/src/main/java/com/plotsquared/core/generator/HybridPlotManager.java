@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Template;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
@@ -200,17 +201,13 @@ public class HybridPlotManager extends ClassicPlotManager {
         return !enqueue || queue.enqueue();
     }
 
-    /**
-     * <p>Clearing the plot needs to only consider removing the blocks - This implementation has
-     * used the setCuboidAsync function, as it is fast, and uses NMS code - It also makes use of the
-     * fact that deleting chunks is a lot faster than block updates This code is very messy, but you
-     * don't need to do something quite as complex unless you happen to have 512x512 sized plots.
-     * </p>
-     */
-    @Override public boolean clearPlot(@Nonnull final Plot plot, @Nullable final Runnable whenDone, @Nullable QueueCoordinator queue) {
+    @Override public boolean clearPlot(@Nonnull final Plot plot,
+                                       @Nullable final Runnable whenDone,
+                                       @Nullable PlotPlayer<?> actor,
+                                       @Nullable QueueCoordinator queue) {
         if (this.regionManager.notifyClear(this)) {
             //If this returns false, the clear didn't work
-            if (this.regionManager.handleClear(plot, whenDone, this)) {
+            if (this.regionManager.handleClear(plot, whenDone, this, actor)) {
                 return true;
             }
         }

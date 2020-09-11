@@ -25,7 +25,10 @@
  */
 package com.plotsquared.core.backup;
 
+import com.plotsquared.core.player.PlotPlayer;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -64,8 +67,9 @@ public interface BackupProfile {
      * Restore a backup
      *
      * @param backup Backup to restore
+     * @param player The player restoring the backup
      * @return Future that completes when the backup has finished
      */
-    @Nonnull CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup);
+    @Nonnull CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup, @Nullable PlotPlayer<?> player);
 
 }

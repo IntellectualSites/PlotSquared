@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -203,6 +204,12 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
     }
 
+    @Override public void addProgressSubscriber(@Nonnull ProgressSubscriber progressSubscriber) {
+        if (parent != null) {
+            parent.addProgressSubscriber(progressSubscriber);
+        }
+    }
+
     @Override @Nonnull public List<BlockVector2> getReadChunks() {
         if (parent != null) {
             return parent.getReadChunks();
@@ -246,6 +253,5 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         if (parent != null) {
             parent.setRegenRegion(regenRegion);
         }
-
     }
 }

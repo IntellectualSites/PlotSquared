@@ -112,7 +112,7 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         if (chunk == null) {
             return;
         }
-        long iterationTime;
+        long[] iterationTime = new long[2];
         int processedChunks = 0;
         do {
             final long start = System.currentTimeMillis();
@@ -127,8 +127,9 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             processedChunks++;
             final long end = System.currentTimeMillis();
             // Update iteration time
-            iterationTime = end - start;
-        } while (2 * iterationTime /* last chunk + next chunk */ < this.maxIterationTime && (chunk = availableChunks.poll()) != null);
+            iterationTime[0] = iterationTime[1];
+            iterationTime[1] = end - start;
+        } while (iterationTime[0] + iterationTime[1] < this.maxIterationTime * 2 && (chunk = availableChunks.poll()) != null);
         if (processedChunks < this.batchSize) {
             // Adjust batch size based on the amount of processed chunks per tick
             this.batchSize = processedChunks;

@@ -50,7 +50,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 @CommandDeclaration(
         command = "claim",
@@ -186,7 +185,7 @@ public class Claim extends SubCommand {
                                     Template.of("value", "Auto merge on claim")
                             );
                         } else {
-                            plot.getPlotModificationManager().autoMerge(mergeEvent.getDir(), mergeEvent.getMax(), player.getUUID(), true);
+                            plot.getPlotModificationManager().autoMerge(mergeEvent.getDir(), mergeEvent.getMax(), player.getUUID(), player, true);
                         }
                     }
                     return null;
