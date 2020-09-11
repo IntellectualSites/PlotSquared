@@ -543,6 +543,12 @@ public class Settings extends Config {
         @Comment({"Time to wait in ms before beginning to notify player or console of progress.",
             "Prevent needless notification of progress for short queues."})
         public static int NOTIFY_WAIT = 5000;
+        @Comment({"How lighitng should be handled by the queue. Modes:",
+        "  - 0 - Do not do any lighting (fastest)",
+        "  - 1 - Only execute lighting where blocks with light values are placed",
+        "  - 2 - Only execute lighting where blocks with light values are placed or removed/replaced",
+        "  - 3 - Always execute lighting (slowest)"})
+        public static int LIGHTING_MODE = 0;
     }
 
     @Comment("Settings related to tab completion")

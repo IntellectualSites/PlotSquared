@@ -360,6 +360,18 @@ public abstract class QueueCoordinator {
     public abstract void addProgressSubscriber(@Nonnull ProgressSubscriber progressSubscriber);
 
     /**
+     * Get the {@link LightingMode} to be used when setting blocks
+     */
+    @Nonnull public abstract LightingMode getLightingMode();
+
+    /**
+     * Set the {@link LightingMode} to be used when setting blocks
+     *
+     * @param mode lighting mode. Null to use default.
+     */
+    public abstract void setLightingMode(@Nullable LightingMode mode);
+
+    /**
      * Fill a cuboid between two positions with a BlockState
      *
      * @param pos1  1st cuboid position

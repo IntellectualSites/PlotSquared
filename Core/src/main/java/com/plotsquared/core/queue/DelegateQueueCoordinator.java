@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
@@ -191,7 +192,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
     }
 
-    @Nullable @Override public Consumer<BlockVector2> getChunkConsumer() {
+    @Override @Nullable public Consumer<BlockVector2> getChunkConsumer() {
         if (parent != null) {
             return parent.getChunkConsumer();
         }
@@ -207,6 +208,19 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
     @Override public void addProgressSubscriber(@Nonnull ProgressSubscriber progressSubscriber) {
         if (parent != null) {
             parent.addProgressSubscriber(progressSubscriber);
+        }
+    }
+
+    @Override @Nonnull public LightingMode getLightingMode() {
+        if (parent != null) {
+            return parent.getLightingMode();
+        }
+        return LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
+    }
+
+    @Override public void setLightingMode(@Nullable LightingMode mode) {
+        if (parent != null) {
+            parent.setLightingMode(mode);
         }
     }
 
