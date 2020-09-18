@@ -25,7 +25,7 @@
 
   "web.generating_link": "<prefix><gold>Processing plot...</gold>",
   "web.generating_link_failed": "<prefix><red>Failed to generate download link!</red>",
-  "web.generation_link_success": "<click:open_url:<url>><url></click>",
+  "web.generation_link_success": "<prefix><gold>Download: <click:open_url:<download>><download></click> \n Deletion: <click:open_url:<delete>><delete></click> </gold>",
   "web.save_failed": "<prefix><red>Failed to save.</red>",
   "web.load_null": "<prefix><gray>Please use </gray><dark_aqua><command> </dark_aqua><gray>to get a list of schematics.</gray>",
   "web.load_failed": "<prefix><red>Failed to load schematic.</red>",

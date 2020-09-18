@@ -414,7 +414,7 @@ public class Settings extends Config {
         @Comment({"The web interface for schematics", " - All schematics are anonymous and private",
             " - Downloads can be deleted by the user",
             " - Supports plot uploads, downloads and saves",}) public static String URL =
-            "https://schem.intellectualsites.com/plots/";
+            "https://ark.jacobandersen.dev/";
     }
 
 

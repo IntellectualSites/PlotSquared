@@ -63,6 +63,10 @@ dependencies {
     // Other libraries
     implementation("com.sk89q:squirrelid:1.0.0-SNAPSHOT") { isTransitive = false }
 
+    // Our libraries
+    implementation('com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT')
+    implementation('com.intellectualsites.http:HTTP4J:1.1-SNAPSHOT')
+
     // Adventure
     implementation("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
 }
@@ -91,6 +95,8 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("javax.inject", "com.plotsquared.core.inject.javax")
     relocate("org.aopalliance", "com.plotsquared.core.aopalliance")
     relocate("com.intellectualsites.services", "com.plotsquared.core.services")
+    relocate("com.intellectualsites.arkitektonika", "com.plotsquared.core.arkitektonika")
+    relocate("com.intellectualsites.http", "com.plotsquared.core.http")
 
     // Get rid of all the libs which are 100% unused.
     minimize()

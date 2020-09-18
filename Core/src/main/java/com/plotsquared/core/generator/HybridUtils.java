@@ -510,19 +510,19 @@ public class HybridUtils {
         final String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.getArea().toString() + File.separator;
 
         this.schematicHandler.getCompoundTag(world, sideRoad, new RunnableVal<CompoundTag>() {
-            @Override public void run(CompoundTag value) {
+            @Override
+            public void run(CompoundTag value) {
                 schematicHandler.save(value, dir + "sideroad.schem");
-                schematicHandler.getCompoundTag(world, intersection, new RunnableVal<CompoundTag>() {
-                    @Override public void run(CompoundTag value) {
-                        schematicHandler.save(value, dir + "intersection.schem");
-                        plotworld.ROAD_SCHEMATIC_ENABLED = true;
-                        try {
-                            plotworld.setupSchematics();
-                        } catch (SchematicHandler.UnsupportedFormatException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                schematicHandler.getCompoundTag(world, intersection)
+                        .whenComplete((compoundTag, throwable) -> {
+                            schematicHandler.save(value, dir + "intersection.schem");
+                            plotworld.ROAD_SCHEMATIC_ENABLED = true;
+                            try {
+                                plotworld.setupSchematics();
+                            } catch (SchematicHandler.UnsupportedFormatException e) {
+                                e.printStackTrace();
+                            }
+                        });
             }
         });
         return true;

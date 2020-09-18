@@ -26,21 +26,20 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.SchematicHandler;
+import com.plotsquared.core.util.PlotUploader;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
-import com.sk89q.jnbt.CompoundTag;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
@@ -60,14 +59,14 @@ import java.util.stream.Collectors;
 public class Download extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
-    private final SchematicHandler schematicHandler;
+    private final PlotUploader plotUploader;
     private final WorldUtil worldUtil;
 
     @Inject public Download(@Nonnull final PlotAreaManager plotAreaManager,
-                            @Nonnull final SchematicHandler schematicHandler,
+                            @Nonnull final PlotUploader plotUploader,
                             @Nonnull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
-        this.schematicHandler = schematicHandler;
+        this.plotUploader = plotUploader;
         this.worldUtil = worldUtil;
     }
 
@@ -107,23 +106,17 @@ public class Download extends SubCommand {
                 return false;
             }
             plot.addRunning();
-            this.schematicHandler.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
-                @Override public void run(CompoundTag value) {
-                    plot.removeRunning();
-                    schematicHandler.upload(value, null, null, new RunnableVal<URL>() {
-                        @Override public void run(URL url) {
-                            if (url == null) {
-                                player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
-                                return;
-                            }
+            this.plotUploader.upload(plot)
+                    .whenComplete((result, throwable) -> {
+                        if (throwable != null) {
+                            player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
+                        } else {
                             player.sendMessage(
                                     TranslatableCaption.of("web.generation_link_success"),
-                                    Template.of("url", url.toString())
-                            );
+                                    Template.of("download", result.getDownloadUrl()),
+                                    Template.of("delete", result.getDeletionUrl()));
                         }
                     });
-                }
-            });
         } else if (args.length == 1 && StringMan
             .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
