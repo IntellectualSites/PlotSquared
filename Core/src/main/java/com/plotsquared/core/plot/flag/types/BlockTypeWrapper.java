@@ -50,6 +50,7 @@ public class BlockTypeWrapper {
     private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
     private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();
     @Nullable private final BlockType blockType;
+    private static final String minecraftNamespace = "minecraft";
     @Nullable private final String blockCategoryId;
     @Nullable private BlockCategory blockCategory;
 
@@ -81,7 +82,14 @@ public class BlockTypeWrapper {
     }
 
     public static BlockTypeWrapper get(final String blockCategoryId) {
-        return blockCategories.computeIfAbsent(blockCategoryId, BlockTypeWrapper::new);
+        // use minecraft as default namespace
+        String id;
+        if (blockCategoryId.indexOf(':') == -1) {
+            id = minecraftNamespace + ":" + blockCategoryId;
+        } else {
+            id = blockCategoryId;
+        }
+        return blockCategories.computeIfAbsent(id, BlockTypeWrapper::new);
     }
 
     @Override public String toString() {

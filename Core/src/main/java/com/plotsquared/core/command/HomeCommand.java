@@ -118,6 +118,7 @@ public class HomeCommand extends Command {
         PlotQuery query = query(player);
         int page = 1; // page = index + 1
         String identifier;
+        PlotArea plotArea;
         boolean basePlotOnly = true;
         switch (args.length) {
             case 1:
@@ -143,12 +144,18 @@ public class HomeCommand extends Command {
                     query.withPlot(fromId);
                     break;
                 }
+                // allow for plot home within a plot area
+                plotArea = this.plotAreaManager.getPlotAreaByString(args[0]);
+                if (plotArea != null) {
+                    query.inArea(plotArea);
+                    break;
+                }
                 // it wasn't a valid plot id, trying to find plot by alias
                 query.withAlias(identifier);
                 break;
             case 2:
                 // we assume args[0] is a plot area and args[1] an identifier
-                final PlotArea plotArea = this.plotAreaManager.getPlotAreaByString(args[0]);
+                plotArea = this.plotAreaManager.getPlotAreaByString(args[0]);
                 identifier = args[1];
                 if (plotArea == null) {
                     // invalid command, therefore no plots

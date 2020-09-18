@@ -218,4 +218,8 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return PlotSquared.platform().getConsoleAudience();
     }
 
+    @Override public boolean canSee(final PlotPlayer<?> other) {
+        return true;
+    }
+
 }
