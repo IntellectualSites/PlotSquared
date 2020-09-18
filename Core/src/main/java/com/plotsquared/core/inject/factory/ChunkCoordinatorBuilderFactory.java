@@ -28,12 +28,11 @@ package com.plotsquared.core.inject.factory;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.queue.ChunkCoordinatorBuilder;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
 public interface ChunkCoordinatorBuilderFactory {
 
-    @Inject @Nonnull ChunkCoordinatorBuilder create(@Assisted @NotNull ChunkCoordinatorFactory chunkCoordinatorFactory);
+    @Inject @Nonnull ChunkCoordinatorBuilder create(@Assisted @Nonnull ChunkCoordinatorFactory chunkCoordinatorFactory);
 
 }

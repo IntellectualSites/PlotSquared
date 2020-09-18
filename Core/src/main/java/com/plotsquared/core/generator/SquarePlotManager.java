@@ -34,7 +34,6 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.HashUtil;
 import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         this.regionManager = regionManager;
     }
 
-    @Override public boolean clearPlot(final @NotNull Plot plot, final @Nullable Runnable whenDone, @Nullable QueueCoordinator queue) {
+    @Override public boolean clearPlot(final @Nonnull Plot plot, final @Nullable Runnable whenDone, @Nullable QueueCoordinator queue) {
         final Set<CuboidRegion> regions = plot.getRegions();
         Runnable run = new Runnable() {
             @Override public void run() {
@@ -81,7 +80,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
         return true;
     }
 
-    @Override public Location getPlotTopLocAbs(@NotNull PlotId plotId) {
+    @Override public Location getPlotTopLocAbs(@Nonnull PlotId plotId) {
         int px = plotId.getX();
         int pz = plotId.getY();
         int x = (squarePlotWorld.ROAD_OFFSET_X + (px * (squarePlotWorld.ROAD_WIDTH + squarePlotWorld.PLOT_WIDTH))) - (int) Math
@@ -242,7 +241,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
     /**
      * Get the bottom plot loc (some basic math).
      */
-    @Override public Location getPlotBottomLocAbs(@NotNull PlotId plotId) {
+    @Override public Location getPlotBottomLocAbs(@Nonnull PlotId plotId) {
         int px = plotId.getX();
         int pz = plotId.getY();
         int x = (squarePlotWorld.ROAD_OFFSET_X + (px * (squarePlotWorld.ROAD_WIDTH + squarePlotWorld.PLOT_WIDTH))) - squarePlotWorld.PLOT_WIDTH

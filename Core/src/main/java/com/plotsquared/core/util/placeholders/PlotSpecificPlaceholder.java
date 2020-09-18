@@ -27,18 +27,19 @@ package com.plotsquared.core.util.placeholders;
 
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * A {@link Placeholder placeholder} that requires a {@link com.plotsquared.core.plot.Plot plot}
  */
 public abstract class PlotSpecificPlaceholder extends Placeholder {
 
-    public PlotSpecificPlaceholder(@NotNull final String key) {
+    public PlotSpecificPlaceholder(@Nonnull final String key) {
         super(key);
     }
 
-    @Override @NotNull public final String getValue(@NotNull final PlotPlayer<?> player) {
+    @Override @Nonnull public final String getValue(@Nonnull final PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             return "";
@@ -53,7 +54,7 @@ public abstract class PlotSpecificPlaceholder extends Placeholder {
      * @param plot   Plot that the player is in
      * @return Placeholder value, or {@code ""} if the placeholder does not apply
      */
-    @NotNull public abstract String getValue(@NotNull final PlotPlayer<?> player,
-        @NotNull final Plot plot);
+    @Nonnull public abstract String getValue(@Nonnull final PlotPlayer<?> player,
+        @Nonnull final Plot plot);
 
 }

@@ -35,7 +35,6 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,15 +55,15 @@ public class SinglePlotManager extends PlotManager {
         return PlotId.of(0, 0);
     }
 
-    @Override public Location getPlotBottomLocAbs(@Nonnull final @NotNull PlotId plotId) {
+    @Override public Location getPlotBottomLocAbs(@Nonnull final PlotId plotId) {
         return Location.at(plotId.toCommaSeparatedString(), -30000000, 0, -30000000);
     }
 
-    @Override public Location getPlotTopLocAbs(@Nonnull final @NotNull PlotId plotId) {
+    @Override public Location getPlotTopLocAbs(@Nonnull final PlotId plotId) {
         return Location.at(plotId.toCommaSeparatedString(), 30000000, 0, 30000000);
     }
 
-    @Override public boolean clearPlot(@NotNull Plot plot, final Runnable whenDone, @Nullable QueueCoordinator queue) {
+    @Override public boolean clearPlot(@Nonnull Plot plot, final Runnable whenDone, @Nullable QueueCoordinator queue) {
         PlotSquared.platform().getSetupUtils().unload(plot.getWorldName(), false);
         final File worldFolder = new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
         TaskManager.getPlatformImplementation().taskAsync(() -> {
@@ -76,68 +75,68 @@ public class SinglePlotManager extends PlotManager {
         return true;
     }
 
-    @Override public boolean claimPlot(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean claimPlot(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         // TODO
         return true;
     }
 
-    @Override public boolean unClaimPlot(@NotNull Plot plot, Runnable whenDone, @Nullable QueueCoordinator queue) {
+    @Override public boolean unClaimPlot(@Nonnull Plot plot, Runnable whenDone, @Nullable QueueCoordinator queue) {
         if (whenDone != null) {
             whenDone.run();
         }
         return true;
     }
 
-    @Override public Location getSignLoc(@NotNull Plot plot) {
+    @Override public Location getSignLoc(@Nonnull Plot plot) {
         return null;
     }
 
-    @Override public String[] getPlotComponents(@NotNull PlotId plotId) {
+    @Override public String[] getPlotComponents(@Nonnull PlotId plotId) {
         return new String[0];
     }
 
     @Override
-    public boolean setComponent(@NotNull PlotId plotId, @NotNull String component, @NotNull Pattern blocks, @Nullable QueueCoordinator queue) {
+    public boolean setComponent(@Nonnull PlotId plotId, @Nonnull String component, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean createRoadEast(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean createRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean createRoadSouth(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean createRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean createRoadSouthEast(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean createRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean removeRoadEast(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean removeRoadEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean removeRoadSouth(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean removeRoadSouth(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean removeRoadSouthEast(@NotNull Plot plot, @Nullable QueueCoordinator queue) {
+    @Override public boolean removeRoadSouthEast(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean startPlotMerge(@NotNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
+    @Override public boolean startPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean startPlotUnlink(@NotNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
+    @Override public boolean startPlotUnlink(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean finishPlotMerge(@NotNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
+    @Override public boolean finishPlotMerge(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
 
-    @Override public boolean finishPlotUnlink(@NotNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
+    @Override public boolean finishPlotUnlink(@Nonnull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
 
