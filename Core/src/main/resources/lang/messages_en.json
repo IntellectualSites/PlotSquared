@@ -670,6 +670,7 @@
   "commands.description.comment": "<gray>Comment on a plot.</gray>",
   "commands.description.condense": "<gray>Condense a plotworld.</gray>",
   "commands.description.confirm": "<gray>Confirm an action.</gray>",
+  "commands.description.continue": "<gray>Continue a plot that was previously marked as done.</gray>",
   "commands.description.copy": "<gray>Copy a plot.</gray>",
   "commands.description.createroadschematic": "<gray>Add a road schematic to your world using the roads around your current plot.</gray>",
   "commands.description.database": "<gray>Convert/Backup Storage.</gray>",
