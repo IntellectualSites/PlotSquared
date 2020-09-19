@@ -47,6 +47,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * This class handles communication with the Arkitektonika REST service.
+ */
 public class PlotUploader {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotUploader.class.getSimpleName());
     private static final Path TEMP_DIR = Paths.get(PlotSquared.platform().getDirectory().getPath());
@@ -59,6 +62,14 @@ public class PlotUploader {
         this.arkitektonika = Arkitektonika.builder().withUrl(Settings.Arkitektonika.BACKEND_URL).build();
     }
 
+    /**
+     * Upload a plot and retrieve a result. The plot will be saved into a temporary
+     * schematic file and uploaded to the REST service
+     * 2specified by {@link Settings.Arkitektonika#BACKEND_URL}.
+     *
+     * @param plot The plot to upload
+     * @return a {@link CompletableFuture} that provides a {@link PlotUploadResult} if finished.
+     */
     public CompletableFuture<PlotUploadResult> upload(@Nonnull final Plot plot) {
         return this.schematicHandler.getCompoundTag(plot)
                 .handle((tag, t) -> {
@@ -122,6 +133,9 @@ public class PlotUploader {
         }
     }
 
+    /**
+     * A result of a plot upload process.
+     */
     public static class PlotUploadResult {
         private final boolean success;
         private final String downloadUrl;
@@ -134,11 +148,13 @@ public class PlotUploader {
             this.deletionUrl = deletionUrl;
         }
 
-        public static PlotUploadResult success(@Nonnull final String downloadUrl, @Nullable final String deletionUrl) {
+        @Nonnull
+        private static PlotUploadResult success(@Nonnull final String downloadUrl, @Nullable final String deletionUrl) {
             return new PlotUploadResult(true, downloadUrl, deletionUrl);
         }
 
-        public static PlotUploadResult failed() {
+        @Nonnull
+        private static PlotUploadResult failed() {
             return new PlotUploadResult(false, null, null);
         }
 

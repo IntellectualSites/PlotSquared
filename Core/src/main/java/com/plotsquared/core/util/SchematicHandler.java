@@ -66,6 +66,11 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
+<<<<<<< HEAD
+=======
+import org.json.JSONArray;
+import org.json.JSONException;
+>>>>>>> Some QoL and javadocs
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -532,7 +537,12 @@ public abstract class SchematicHandler {
         return true;
     }
 
-    private void writeSchematicData(Map<String, Tag> schematic, Map<String, Integer> palette, ByteArrayOutputStream buffer, List<CompoundTag> tileEntities, Map<String, Integer> biomePalette, ByteArrayOutputStream biomeBuffer) {
+    private void writeSchematicData(@Nonnull final Map<String, Tag> schematic,
+                                    @Nonnull final Map<String, Integer> palette,
+                                    @Nonnull final Map<String, Integer> biomePalette,
+                                    @Nonnull final List<CompoundTag> tileEntities,
+                                    @Nonnull final ByteArrayOutputStream buffer,
+                                    @Nonnull final ByteArrayOutputStream biomeBuffer) {
         schematic.put("PaletteMax", new IntTag(palette.size()));
 
         Map<String, Tag> paletteTag = new HashMap<>();
@@ -574,24 +584,36 @@ public abstract class SchematicHandler {
         return schematic;
     }
 
+    /**
+     * Get the given plot as {@link CompoundTag} matching the Sponge schematic format.
+     *
+     * @param plot The plot to get the contents from.
+     * @return a {@link CompletableFuture} that provides the created {@link CompoundTag}.
+     */
     public CompletableFuture<CompoundTag> getCompoundTag(@Nonnull final Plot plot) {
         return getCompoundTag(Objects.requireNonNull(plot.getWorldName()), plot.getRegions());
     }
 
+    /**
+     * Get the contents of the given regions in the given world as {@link CompoundTag}
+     * matching the Sponge schematic format.
+     *
+     * @param worldName The world to get the contents from.
+     * @param regions The regions to get the contents from.
+     * @return a {@link CompletableFuture} that provides the created {@link CompoundTag}.
+     */
+    @Nonnull
     public CompletableFuture<CompoundTag> getCompoundTag(@Nonnull final String worldName,
                                                          @Nonnull final Set<CuboidRegion> regions) {
         CompletableFuture<CompoundTag> completableFuture = new CompletableFuture<>();
         TaskManager.runTaskAsync(() -> {
             // Main positions
-            Location[] corners = RegionUtil.getCorners(worldName, regions);
-            final Location bot = corners[0];
-            final Location top = corners[1];
+            CuboidRegion aabb = RegionUtil.getAxisAlignedBoundingBox(regions);
+            aabb.setWorld(this.worldUtil.getWeWorld(worldName));
 
-            CuboidRegion cuboidRegion = new CuboidRegion(this.worldUtil.getWeWorld(worldName), bot.getBlockVector3(), top.getBlockVector3());
-
-            final int width = cuboidRegion.getWidth();
-            int height = cuboidRegion.getHeight();
-            final int length = cuboidRegion.getLength();
+            final int width = aabb.getWidth();
+            int height = aabb.getHeight();
+            final int length = aabb.getLength();
 
             Map<String, Tag> schematic = initSchematic((short) width, (short) height, (short) length);
 
@@ -607,7 +629,7 @@ public abstract class SchematicHandler {
                 @Override public void run() {
                     if (queue.isEmpty()) {
                         TaskManager.runTaskAsync(() -> {
-                            writeSchematicData(schematic, palette, buffer, tileEntities, biomePalette, biomeBuffer);
+                            writeSchematicData(schematic, palette, biomePalette, tileEntities, buffer, biomeBuffer);
                             completableFuture.complete(new CompoundTag(schematic));
                         });
                         return;
@@ -646,7 +668,7 @@ public abstract class SchematicHandler {
                                         }
                                         int relativeX = currentX - minX;
                                         BlockVector3 point = BlockVector3.at(currentX, currentY, currentZ);
-                                        BaseBlock block = cuboidRegion.getWorld().getFullBlock(point);
+                                        BaseBlock block = aabb.getWorld().getFullBlock(point);
                                         if (block.getNbtData() != null) {
                                             Map<String, Tag> values = new HashMap<>();
                                             for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
@@ -684,7 +706,7 @@ public abstract class SchematicHandler {
                                             continue;
                                         }
                                         BlockVector2 pt = BlockVector2.at(currentX, currentZ);
-                                        BiomeType biome = cuboidRegion.getWorld().getBiome(pt);
+                                        BiomeType biome = aabb.getWorld().getBiome(pt);
                                         String biomeStr = biome.getId();
                                         int biomeId;
                                         if (biomePalette.containsKey(biomeStr)) {
