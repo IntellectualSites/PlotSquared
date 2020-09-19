@@ -3,6 +3,7 @@ package com.plotsquared.core.util;
 import com.google.inject.Inject;
 import com.intellectualsites.arkitektonika.Arkitektonika;
 import com.intellectualsites.arkitektonika.SchematicKeys;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.sk89q.jnbt.CompoundTag;
@@ -23,16 +24,14 @@ import java.util.zip.GZIPOutputStream;
 
 public class PlotUploader {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotUploader.class.getSimpleName());
-    private static final Path TEMP_DIR = Paths.get("."); // TODO Path
+    private static final Path TEMP_DIR = Paths.get(PlotSquared.platform().getDirectory().getPath());
     private final SchematicHandler schematicHandler;
     private final Arkitektonika arkitektonika;
-    private final String baseUrl;
 
     @Inject
     public PlotUploader(@Nonnull final SchematicHandler schematicHandler) {
         this.schematicHandler = schematicHandler;
-        this.baseUrl = Settings.Web.URL;
-        this.arkitektonika = Arkitektonika.builder().withUrl(Settings.Web.URL).build();
+        this.arkitektonika = Arkitektonika.builder().withUrl(Settings.Arkitektonika.BACKEND_URL).build();
     }
 
     public CompletableFuture<PlotUploadResult> upload(@Nonnull final Plot plot) {
@@ -50,22 +49,25 @@ public class PlotUploader {
         if (schematicKeys == null) {
             return PlotUploadResult.failed();
         }
-        // TODO proper urls
-        return PlotUploadResult.success(baseUrl + "download/" + schematicKeys.getAccessKey(),
-                baseUrl + "delete/" + schematicKeys.getDeletionKey());
+        String download = Settings.Arkitektonika.DOWNLOAD_URL.replace("{key}", schematicKeys.getAccessKey());
+        String delete = Settings.Arkitektonika.DELETE_URL.replace("{key}", schematicKeys.getAccessKey());
+        return PlotUploadResult.success(download, delete);
     }
 
     @Nullable
     private SchematicKeys uploadAndDelete(@Nonnull final Path file) {
         try {
             final CompletableFuture<SchematicKeys> upload = this.arkitektonika.upload(file.toFile());
-            final SchematicKeys keys = upload.join();
-            Files.delete(file);
-            return keys;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            return upload.join();
         } catch (CompletionException e) {
+            logger.error("Failed to upload schematic", e);
             return null;
+        } finally {
+            try {
+                Files.delete(file);
+            } catch (IOException e) {
+                logger.error("Failed to delete temporary file {}", file, e);
+            }
         }
     }
 

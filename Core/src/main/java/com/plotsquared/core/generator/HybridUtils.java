@@ -504,27 +504,25 @@ public class HybridUtils {
         int tz = sz - 1;
         int ty = get_ey(plotManager, queue, sx, ex, bz, tz, sy);
 
-        Set<CuboidRegion> sideRoad = new HashSet<>(Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez)));
-        final Set<CuboidRegion> intersection = new HashSet<>(Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz)));
+        final Set<CuboidRegion> sideRoad = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez));
+        final Set<CuboidRegion> intersection = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz));
 
         final String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.getArea().toString() + File.separator;
 
-        this.schematicHandler.getCompoundTag(world, sideRoad, new RunnableVal<CompoundTag>() {
-            @Override
-            public void run(CompoundTag value) {
-                schematicHandler.save(value, dir + "sideroad.schem");
-                schematicHandler.getCompoundTag(world, intersection)
-                        .whenComplete((compoundTag, throwable) -> {
-                            schematicHandler.save(value, dir + "intersection.schem");
-                            plotworld.ROAD_SCHEMATIC_ENABLED = true;
-                            try {
-                                plotworld.setupSchematics();
-                            } catch (SchematicHandler.UnsupportedFormatException e) {
-                                e.printStackTrace();
-                            }
-                        });
-            }
-        });
+        this.schematicHandler.getCompoundTag(world, sideRoad)
+                .whenComplete((compoundTag, throwable) -> {
+                    schematicHandler.save(compoundTag, dir + "sideroad.schem");
+                    schematicHandler.getCompoundTag(world, intersection)
+                            .whenComplete((c, t) -> {
+                                schematicHandler.save(c, dir + "intersection.schem");
+                                plotworld.ROAD_SCHEMATIC_ENABLED = true;
+                                try {
+                                    plotworld.setupSchematics();
+                                } catch (SchematicHandler.UnsupportedFormatException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                });
         return true;
     }
 

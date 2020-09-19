@@ -415,6 +415,24 @@ public class Settings extends Config {
             " - Downloads can be deleted by the user",
             " - Supports plot uploads, downloads and saves",}) public static String URL =
             "https://ark.jacobandersen.dev/";
+        @Comment({"Whether or not the legacy web interface will be used for /plot download and /plot save",
+                 "Note that this will be removed in future versions. Updating to Arkitektonika is highly suggested"})
+        public static boolean LEGACY_WEBINTERFACE = false;
+    }
+
+    @Comment("Schematic web interface related settings")
+    public static class Arkitektonika {
+
+        @Comment("The url of the backend server (Arkitektonika)")
+        public static String BACKEND_URL = "https://ark.jacobandersen.dev/";
+
+        @Comment({"The url used to generate a download link from.",
+                        "{key} will be replaced with the generated key"})
+        public static String DOWNLOAD_URL = "https://sw.jacobandersen.dev/download/?key={key}";
+
+        @Comment({"The url used to generate a deletion link from.",
+                         "{key} will be replaced with the generated key"})
+        public static String DELETE_URL = "https://sw.jacobandersen.dev/delete/?key={key}";
     }
 
 
