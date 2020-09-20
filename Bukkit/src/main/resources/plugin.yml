@@ -1,4 +1,4 @@
-name: ${name}
+name: PlotSquared
 main: com.plotsquared.bukkit.BukkitPlatform
 api-version: "1.13"
 version: "${version}"
