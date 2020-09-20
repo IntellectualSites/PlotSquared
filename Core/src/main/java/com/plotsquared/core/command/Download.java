@@ -102,7 +102,7 @@ public class Download extends SubCommand {
         if (args.length == 0 || (args.length == 1 && StringMan
             .isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
             if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+                player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
                 return false;
             }
             plot.addRunning();
