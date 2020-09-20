@@ -56,6 +56,12 @@ public class PlotUploader {
     private final SchematicHandler schematicHandler;
     private final Arkitektonika arkitektonika;
 
+    /**
+     * Create a new PlotUploader instance that uses the given schematic handler to create
+     * schematics of plots.
+     *
+     * @param schematicHandler the handler to create schematics of plots.
+     */
     @Inject
     public PlotUploader(@Nonnull final SchematicHandler schematicHandler) {
         this.schematicHandler = schematicHandler;
@@ -65,7 +71,7 @@ public class PlotUploader {
     /**
      * Upload a plot and retrieve a result. The plot will be saved into a temporary
      * schematic file and uploaded to the REST service
-     * 2specified by {@link Settings.Arkitektonika#BACKEND_URL}.
+     * specified by {@link Settings.Arkitektonika#BACKEND_URL}.
      *
      * @param plot The plot to upload
      * @return a {@link CompletableFuture} that provides a {@link PlotUploadResult} if finished.
@@ -81,12 +87,13 @@ public class PlotUploader {
                 .thenApply(this::wrapIntoResult);
     }
 
-    private PlotUploadResult wrapIntoResult(SchematicKeys schematicKeys) {
+    @Nonnull
+    private PlotUploadResult wrapIntoResult(@Nullable final SchematicKeys schematicKeys) {
         if (schematicKeys == null) {
             return PlotUploadResult.failed();
         }
         String download = Settings.Arkitektonika.DOWNLOAD_URL.replace("{key}", schematicKeys.getAccessKey());
-        String delete = Settings.Arkitektonika.DELETE_URL.replace("{key}", schematicKeys.getAccessKey());
+        String delete = Settings.Arkitektonika.DELETE_URL.replace("{key}", schematicKeys.getDeletionKey());
         return PlotUploadResult.success(download, delete);
     }
 
@@ -107,6 +114,7 @@ public class PlotUploader {
         }
     }
 
+    @Nonnull
     private Path writeToTempFile(@Nonnull final CompoundTag schematic) {
         try {
             final Path tempFile = Files.createTempFile(TEMP_DIR, null, null);
@@ -158,14 +166,29 @@ public class PlotUploader {
             return new PlotUploadResult(false, null, null);
         }
 
+        /**
+         * Get whether this result is a success.
+         *
+         * @return {@code true} if this is a sucessful result, {@code false} otherwise.
+         */
         public boolean isSuccess() {
             return success;
         }
 
+        /**
+         * Get the url that can be used to download the uploaded plot schematic.
+         *
+         * @return The url to download the schematic.
+         */
         public String getDownloadUrl() {
             return downloadUrl;
         }
 
+        /**
+         * Get the url that can be used to delete the uploaded plot schematic.
+         *
+         * @return The url to delete the schematic.
+         */
         public String getDeletionUrl() {
             return deletionUrl;
         }
