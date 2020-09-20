@@ -36,6 +36,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotUploader;
+import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
@@ -60,13 +61,16 @@ public class Download extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final PlotUploader plotUploader;
+    @Nonnull private final SchematicHandler schematicHandler;
     private final WorldUtil worldUtil;
 
     @Inject public Download(@Nonnull final PlotAreaManager plotAreaManager,
                             @Nonnull final PlotUploader plotUploader,
+                            @Nonnull final SchematicHandler schematicHandler,
                             @Nonnull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
         this.plotUploader = plotUploader;
+        this.schematicHandler = schematicHandler;
         this.worldUtil = worldUtil;
     }
 
@@ -158,6 +162,23 @@ public class Download extends SubCommand {
     }
 
     private void upload(PlotPlayer<?> player, Plot plot) {
+        if (Settings.Web.LEGACY_WEBINTERFACE) {
+            schematicHandler
+                    .getCompoundTag(plot)
+                    .whenComplete((compoundTag, throwable) -> {
+                        schematicHandler.upload(compoundTag, null, null, new RunnableVal<URL>() {
+                            @Override
+                            public void run(URL value) {
+                                player.sendMessage(
+                                        TranslatableCaption.of("web.generation_link_success"),
+                                        Template.of("download", value.toString()),
+                                        Template.of("delete", "Not available"));
+                                player.sendMessage(StaticCaption.of(value.toString()));
+                            }
+                        });
+                    });
+            return;
+        }
         // TODO legacy support
         this.plotUploader.upload(plot)
                 .whenComplete((result, throwable) -> {
