@@ -68,7 +68,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.title.Title;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -851,7 +850,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     // Redefine from PermissionHolder as it's required from CommandCaller
-    @Override public boolean hasPermission(@NotNull String permission) {
+    @Override public boolean hasPermission(@Nonnull String permission) {
         return hasPermission(null, permission);
     }
 

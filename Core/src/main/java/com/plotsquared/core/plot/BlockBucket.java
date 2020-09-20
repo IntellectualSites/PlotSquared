@@ -36,7 +36,6 @@ import com.sk89q.worldedit.function.pattern.BlockPattern;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -57,21 +56,21 @@ public final class BlockBucket implements ConfigurationSerializable {
     private BlockState single;
     private Pattern pattern;
 
-    public BlockBucket(@NotNull final BlockType type) {
+    public BlockBucket(@Nonnull final BlockType type) {
         this(type.getId());
         this.single = type.getDefaultState();
         this.pattern = new BlockPattern(this.single);
         this.compiled = true;
     }
 
-    public BlockBucket(@NotNull final BlockState state) {
+    public BlockBucket(@Nonnull final BlockState state) {
         this(state.getAsString());
         this.single = state;
         this.pattern = new BlockPattern(this.single);
         this.compiled = true;
     }
 
-    public BlockBucket(@NotNull final String input) {
+    public BlockBucket(@Nonnull final String input) {
         this.input = new StringBuilder(input);
     }
 
