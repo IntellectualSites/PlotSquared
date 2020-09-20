@@ -36,6 +36,7 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.uuid.UUIDMapping;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -76,8 +77,8 @@ public class Grant extends Command {
                     } else if (throwable != null || uuids.size() != 1) {
                         MainUtil.sendMessage(player, Captions.INVALID_PLAYER);
                     } else {
-                        final UUID uuid = uuids.toArray(new UUID[0])[0];
-                        MainUtil.getPersistentMeta(uuid,
+                        final UUIDMapping uuid = uuids.toArray(new UUIDMapping[0])[0];
+                        MainUtil.getPersistentMeta(uuid.getUuid(),
                             "grantedPlots", new RunnableVal<byte[]>() {
                             @Override public void run(byte[] array) {
                                 if (arg0.equals("check")) { // check
@@ -99,11 +100,11 @@ public class Grant extends Command {
                                     String key = "grantedPlots";
                                     byte[] rawData = Ints.toByteArray(amount);
 
-                                    PlotPlayer online = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+                                    PlotPlayer online = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid.getUuid());
                                     if (online != null) {
                                         online.setPersistentMeta(key, rawData);
                                     } else {
-                                        DBFunc.addPersistentMeta(uuid, key, rawData, replace);
+                                        DBFunc.addPersistentMeta(uuid.getUuid(), key, rawData, replace);
                                     }
                                 }
                             }
