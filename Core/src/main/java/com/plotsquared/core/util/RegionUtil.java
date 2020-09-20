@@ -70,7 +70,7 @@ public class RegionUtil {
             next = iterator.next();
             // as max >= min, this is enough to check
             min = min.getMinimum(next.getMinimumPoint());
-            max = max.getMinimum(next.getMaximumPoint());
+            max = max.getMaximum(next.getMaximumPoint());
         }
         return new CuboidRegion(min, max);
     }
