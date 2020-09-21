@@ -1,5 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+plugins {
+    `java-library`
+}
+
 applyTasksConfiguration()
 
 repositories {
@@ -36,9 +40,9 @@ repositories {
 
 
 dependencies {
-    "compileOnly"(project(":PlotSquared-Core"))
+    "api"(project(":PlotSquared-Core"))
     "compileOnly"("org.bstats:bstats-bukkit:1.7")
-    "compileOnly"("org.spigotmc:spigot-api:1.16.3-R0.1-SNAPSHOT")
+    "api"("org.spigotmc:spigot-api:1.16.3-R0.1-SNAPSHOT")
     "compileOnly"("com.destroystokyo.paper:paper-api:1.16.3-R0.1-SNAPSHOT")
     "compileOnly"("com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT") {
         exclude(group = "bukkit")
