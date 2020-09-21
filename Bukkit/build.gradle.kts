@@ -1,18 +1,12 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+applyTasksConfiguration()
+
 repositories {
     mavenLocal()
     maven {
         name = "SpigotMC"
         url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    }
-    maven {
-        name = "Sonatype OSS"
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-    maven {
-        name = "Jitpack"
-        url = uri("https://jitpack.io")
     }
     maven {
         name = "CodeMC"
@@ -31,10 +25,6 @@ repositories {
         url = uri("https://ci.ender.zone/plugin/repository/everything/")
     }
     maven {
-        name = "IntellectualSites"
-        url = uri("https://mvn.intellectualsites.com/content/repositories/snapshots")
-    }
-    maven {
         name = "BungeePerms"
         url = uri("https://repo.wea-ondara.net/repository/public/")
     }
@@ -46,11 +36,11 @@ repositories {
 
 
 dependencies {
-    "implementation"(project(":PlotSquared-Core"))
+    "compileOnly"(project(":PlotSquared-Core"))
     "compileOnly"("org.bstats:bstats-bukkit:1.7")
     "compileOnly"(project(":PlotSquared-Core"))
-    "compileOnly"("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
-    "compileOnly"("org.spigotmc:spigot-api:1.16.2-R0.1-SNAPSHOT")
+    "compileOnly"("org.spigotmc:spigot-api:1.16.3-R0.1-SNAPSHOT")
+    "compileOnly"("com.destroystokyo.paper:paper-api:1.16.3-R0.1-SNAPSHOT")
     "compileOnly"("com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT") {
         exclude(group = "bukkit")
     }
@@ -61,9 +51,7 @@ dependencies {
     }
     "implementation"("me.clip:placeholderapi:2.10.6")
     "implementation"("net.luckperms:api:5.1")
-    "implementation"("net.ess3:EssentialsX:2.18.0") {
-        exclude(group = "io.papermc", module = "paperlib")
-    }
+    "implementation"("net.ess3:EssentialsX:2.18.0")
     "implementation"("net.alpenblock:BungeePerms:4.0-dev-106")
     "implementation"("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
     "implementation"("net.kyori:adventure-text-minimessage:4.0.0-SNAPSHOT")
@@ -74,33 +62,26 @@ dependencies {
     "implementation"("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1")
 }
 
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
 tasks.named<Copy>("processResources") {
     filesMatching("plugin.yml") {
         expand("version" to project.version)
     }
 }
 
-var adventureVersion = "4.0.0-SNAPSHOT"
-
 tasks.named<ShadowJar>("shadowJar") {
     dependencies {
         include(dependency(":PlotSquared-Core"))
         include(dependency("io.papermc:paperlib:1.0.4"))
-        include(dependency("net.kyori:adventure-platform-bukkit:${adventureVersion}"))
-        include(dependency("net.kyori:adventure-text-minimessage:${adventureVersion}"))
-        include(dependency("net.kyori:adventure-text-serializer-bungeecord:${adventureVersion}"))
-        include(dependency("net.kyori:adventure-text-serializer-legacy:${adventureVersion}"))
-        include(dependency("net.kyori:adventure-text-serializer-gson:${adventureVersion}"))
-        include(dependency("net.kyori:adventure-api:${adventureVersion}"))
-        include(dependency("net.kyori:adventure-platform-api:${adventureVersion}"))
-        include(dependency("net.kyori:adventure-platform-common:${adventureVersion}"))
-        include(dependency("net.kyori:adventure-platform-viaversion:${adventureVersion}"))
-        include(dependency("net.kyori:adventure-nbt:${adventureVersion}"))
+        include(dependency("net.kyori:adventure-platform-bukkit:${Versions.ADVENTURE}"))
+        include(dependency("net.kyori:adventure-text-minimessage:${Versions.ADVENTURE}"))
+        include(dependency("net.kyori:adventure-text-serializer-bungeecord:${Versions.ADVENTURE}"))
+        include(dependency("net.kyori:adventure-text-serializer-legacy:${Versions.ADVENTURE}"))
+        include(dependency("net.kyori:adventure-text-serializer-gson:${Versions.ADVENTURE}"))
+        include(dependency("net.kyori:adventure-api:${Versions.ADVENTURE}"))
+        include(dependency("net.kyori:adventure-platform-api:${Versions.ADVENTURE}"))
+        include(dependency("net.kyori:adventure-platform-common:${Versions.ADVENTURE}"))
+        include(dependency("net.kyori:adventure-platform-viaversion:${Versions.ADVENTURE}"))
+        include(dependency("net.kyori:adventure-nbt:${Versions.ADVENTURE}"))
         include(dependency("net.kyori:examination-api:1.0.0"))
         include(dependency("net.kyori:examination-string:1.0.0"))
         include(dependency("org.bstats:bstats-bukkit:1.7"))

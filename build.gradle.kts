@@ -1,16 +1,9 @@
 import org.ajoberstar.grgit.Grgit
-import net.minecrell.gradle.licenser.LicenseExtension
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
+applyTasksConfiguration()
+
 buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            name = "Sonatype OSS"
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-        }
-        jcenter()
-    }
     dependencies {
         classpath("com.github.jengelman.gradle.plugins:shadow:5.0.0")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
@@ -25,12 +18,11 @@ buildscript {
 plugins {
     kotlin("multiplatform") version "1.3.72"
     id("maven-publish")
-    id("org.ajoberstar.grgit") version "4.0.2"
-    id("net.minecrell.licenser") version "0.4.1"
 }
 
 group = "com.plotsquared"
 
+apply(plugin = "org.ajoberstar.grgit")
 ext {
     val git: Grgit = Grgit.open {
         dir = File("$rootDir/.git")
@@ -47,25 +39,16 @@ ext {
 version = ver + versuffix
 
 allprojects {
-    apply(plugin = "net.minecrell.licenser")
 
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile::class) {
             options.compilerArgs.addAll(arrayOf("-Xmaxerrs", "1000"))
         }
     }
-    configure<LicenseExtension> {
-        header = rootProject.file("HEADER")
-        include("**/*.java")
-    }
 }
 
 subprojects {
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
-    apply(plugin = "eclipse")
-    apply(plugin = "idea")
-    apply(plugin = "com.github.johnrengelman.shadow")
+    applyTasksConfiguration()
 
     dependencies {
         "compileOnly"("org.json:json:20200518")
@@ -74,17 +57,15 @@ subprojects {
             exclude(group = "mockito-core")
             exclude(group = "dummypermscompat")
         }
-        "implementation"("com.google.guava:guava:21.0") {
-            because("Minecraft uses Guava 21 as of 1.13")
-        }
-        "testImplementation"("junit:junit:4.13")
+        "implementation"("com.google.guava:guava:${Versions.GUAVA}")
+        "testImplementation"("junit:junit:${Versions.JUNIT}")
         "compileOnly"("javax.annotation:javax.annotation-api:1.3.2")
     }
 
     configurations.all {
         resolutionStrategy {
-            force("junit:junit:4.12")
-            force("com.google.guava:guava:21.0")
+            force("junit:junit:${Versions.JUNIT}")
+            force("com.google.guava:guava:${Versions.GUAVA}")
             force("com.google.code.findbugs:jsr305:3.0.2")
         }
     }
@@ -94,7 +75,6 @@ subprojects {
         mavenCentral()
         maven { url = uri("https://maven.enginehub.org/repo/") }
         maven { url = uri("https://repo.maven.apache.org/maven2") }
-        maven { url = uri("https://jitpack.io") }
     }
 
     tasks.named<ShadowJar>("shadowJar") {
@@ -113,33 +93,4 @@ subprojects {
     }
 
     version = rootProject.version
-}
-
-tasks.withType<Javadoc>().configureEach {
-    (options as StandardJavadocDocletOptions).apply {
-        addStringOption("Xdoclint:none", "-quiet")
-        tags(
-                "apiNote:a:API Note:",
-                "implSpec:a:Implementation Requirements:",
-                "implNote:a:Implementation Note:"
-        )
-    }
-}
-
-tasks.register<Jar>("javadocJar") {
-    dependsOn("javadoc")
-    archiveClassifier.set("javadoc")
-    from(tasks.getByName<Javadoc>("javadoc").destinationDir)
-}
-
-tasks.register<Jar>("sourcesJar") {
-    dependsOn("classes")
-    archiveClassifier.set("sources")
-    from(sourceSets["main"].allSource)
-}
-
-artifacts {
-    add("archives", tasks.named("jar"))
-    add("archives", tasks.named("javadocJar"))
-    add("archives", tasks.named("sourcesJar"))
 }
