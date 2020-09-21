@@ -47,16 +47,16 @@ repositories {
 
 dependencies {
     "implementation"(project(":PlotSquared-Core"))
-    "compile"("org.bstats:bstats-bukkit:1.7")
-    "compile"(project(":PlotSquared-Core"))
-    "compile"("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
-    "implementation"("org.spigotmc:spigot-api:1.16.2-R0.1-SNAPSHOT")
-    "compile"("com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT") {
+    "compileOnly"("org.bstats:bstats-bukkit:1.7")
+    "compileOnly"(project(":PlotSquared-Core"))
+    "compileOnly"("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
+    "compileOnly"("org.spigotmc:spigot-api:1.16.2-R0.1-SNAPSHOT")
+    "compileOnly"("com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT") {
         exclude(group = "bukkit")
     }
-    "compile"("io.papermc:paperlib:1.0.4")
+    "compileOnly"("io.papermc:paperlib:1.0.4")
     "implementation"("net.kyori:text-adapter-bukkit:3.0.3")
-    "compile"("com.github.MilkBowl:VaultAPI:1.7") {
+    "compileOnly"("com.github.MilkBowl:VaultAPI:1.7") {
         exclude(group = "bukkit")
     }
     "implementation"("me.clip:placeholderapi:2.10.6")
@@ -67,9 +67,9 @@ dependencies {
     "implementation"("net.alpenblock:BungeePerms:4.0-dev-106")
     "implementation"("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
     "implementation"("net.kyori:adventure-text-minimessage:4.0.0-SNAPSHOT")
-    "compile"("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT") { isTransitive = false }
-    "compile"("com.sk89q:squirrelid:1.0.0-SNAPSHOT") { isTransitive = false }
-    "compile"("be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT") { isTransitive = false }
+    "compileOnly"("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT") { isTransitive = false }
+    "compileOnly"("com.sk89q:squirrelid:1.0.0-SNAPSHOT") { isTransitive = false }
+    "compileOnly"("be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT") { isTransitive = false }
     // logging
     "implementation"("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1")
 }
@@ -82,17 +82,6 @@ configure<JavaPluginConvention> {
 tasks.named<Copy>("processResources") {
     filesMatching("plugin.yml") {
         expand("version" to project.version)
-    }
-}
-
-tasks.register<Copy>("copyFiles") {
-    doLast {
-        copy {
-            from("../mvn/com/plotsquared/PlotSquared-Bukkit/${project.version}/")
-            into("../mvn/com/plotsquared/PlotSquared-Bukkit/latest/")
-            include("PlotSquared-Bukkit*.jar")
-            rename("PlotSquared-Bukkit-${project.version}.jar", "PlotSquared-Bukkit-latest.jar")
-        }
     }
 }
 
@@ -142,12 +131,4 @@ tasks.named<ShadowJar>("shadowJar") {
 
 tasks.named("build").configure {
     dependsOn("shadowJar")
-}
-
-tasks.named("build").configure {
-    finalizedBy("copyFiles")
-}
-
-tasks.named("copyFiles").configure {
-    dependsOn("createPom")
 }

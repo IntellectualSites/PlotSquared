@@ -13,6 +13,7 @@ buildscript {
     }
     dependencies {
         classpath("com.github.jengelman.gradle.plugins:shadow:5.0.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
     }
     configurations.all {
         resolutionStrategy {
@@ -22,7 +23,7 @@ buildscript {
 }
 
 plugins {
-    `kotlin-dsl`
+    kotlin("multiplatform") version "1.3.72"
     id("maven-publish")
     id("org.ajoberstar.grgit") version "4.0.2"
     id("net.minecrell.licenser") version "0.4.1"
@@ -40,7 +41,7 @@ var ver by extra("6.0.0")
 var versuffix by extra("-SNAPSHOT")
 ext {
     if (project.hasProperty("versionsuffix")) {
-            versuffix = "-$versionsuffix"
+        //    versuffix = "-$versionsuffix"
     }
 }
 version = ver + versuffix
@@ -61,13 +62,13 @@ allprojects {
 
 subprojects {
     apply(plugin = "java")
-    apply(plugin = "maven")
+    apply(plugin = "maven-publish")
     apply(plugin = "eclipse")
     apply(plugin = "idea")
     apply(plugin = "com.github.johnrengelman.shadow")
 
     dependencies {
-        "compile"("org.json:json:20200518")
+        "compileOnly"("org.json:json:20200518")
         "implementation"("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") {
             exclude(group = "bukkit-classloader-check")
             exclude(group = "mockito-core")
@@ -77,7 +78,7 @@ subprojects {
             because("Minecraft uses Guava 21 as of 1.13")
         }
         "testImplementation"("junit:junit:4.13")
-        "compile"("javax.annotation:javax.annotation-api:1.3.2")
+        "compileOnly"("javax.annotation:javax.annotation-api:1.3.2")
     }
 
     configurations.all {
@@ -131,7 +132,14 @@ tasks.register<Jar>("javadocJar") {
     from(tasks.getByName<Javadoc>("javadoc").destinationDir)
 }
 
+tasks.register<Jar>("sourcesJar") {
+    dependsOn("classes")
+    archiveClassifier.set("sources")
+    from(sourceSets["main"].allSource)
+}
+
 artifacts {
     add("archives", tasks.named("jar"))
     add("archives", tasks.named("javadocJar"))
+    add("archives", tasks.named("sourcesJar"))
 }
