@@ -65,5 +65,6 @@ fun Project.applyGeneralConfiguration() {
     configure<LicenseExtension> {
         header = rootProject.file("HEADER.txt")
         include("**/*.java")
+        newLine = false
     }
 }

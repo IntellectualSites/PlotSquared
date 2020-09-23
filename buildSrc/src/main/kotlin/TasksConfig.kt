@@ -38,14 +38,6 @@ fun Project.applyTasksConfiguration() {
                 options.encoding = "UTF-8"
             }
 
-    /*
-    //Commenting this out until our checkstyle is done
-    configure<CheckstyleExtension> {
-        configFile = rootProject.file("checkstyle.xml")
-        toolVersion = "Figure a tool version that matches our needs"
-    }
-     */
-
     tasks.withType<Test>().configureEach {
         useJUnitPlatform()
     }
@@ -94,11 +86,4 @@ fun Project.applyTasksConfiguration() {
             dependsOn("sourcesJar")
         }
     }
-
-    /*
-    tasks.named("check").configure {
-        dependsOn("checkstyleMain", "checkstyleTest")
-    }
-
-     */
 }
