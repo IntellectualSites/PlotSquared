@@ -14,12 +14,6 @@ val Project.sourceSets: SourceSetContainer
 
 fun Project.applyTasksConfiguration() {
     applyGeneralConfiguration()
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
-    apply(plugin = "eclipse")
-    apply(plugin = "idea")
-    apply(plugin = "com.github.johnrengelman.shadow")
-    apply(plugin = "org.jetbrains.kotlin.jvm")
 
     configure<JavaPluginConvention> {
         sourceCompatibility = JavaVersion.VERSION_1_8

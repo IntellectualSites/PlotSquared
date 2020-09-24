@@ -8,9 +8,15 @@ fun Project.applyGeneralConfiguration() {
     version = rootProject.version
 
     apply(plugin = "java")
+    apply(plugin = "maven-publish")
+    apply(plugin = "eclipse")
+    apply(plugin = "idea")
+    apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "org.jetbrains.kotlin.jvm")
 
     repositories {
         mavenCentral()
+        jcenter()
         maven {
             name = "Sonatype OSS"
             url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
