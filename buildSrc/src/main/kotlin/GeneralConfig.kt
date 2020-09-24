@@ -7,6 +7,8 @@ fun Project.applyGeneralConfiguration() {
     group = rootProject.group
     version = rootProject.version
 
+    apply(plugin = "java")
+
     repositories {
         mavenCentral()
         maven {

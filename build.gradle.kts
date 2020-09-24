@@ -1,7 +1,5 @@
 import org.ajoberstar.grgit.Grgit
 
-applyTasksConfiguration()
-
 buildscript {
     configurations.all {
         resolutionStrategy {
@@ -27,7 +25,7 @@ var ver by extra("6.0.0")
 var versuffix by extra("-SNAPSHOT")
 ext {
     if (project.hasProperty("versionsuffix")) {
-       //     versuffix = "-$versionsuffix"
+            versuffix = "-$versionsuffix"
     }
 }
 version = ver + versuffix
