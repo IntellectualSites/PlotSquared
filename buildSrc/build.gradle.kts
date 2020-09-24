@@ -16,5 +16,5 @@ dependencies {
     implementation(gradleApi())
     implementation("gradle.plugin.net.minecrell:licenser:0.4.1")
     implementation("org.ajoberstar.grgit:grgit-gradle:4.1.0")
-    implementation("com.github.jengelman.gradle.plugins:shadow:5.2.0")
+    implementation("com.github.jengelman.gradle.plugins:shadow:6.0.0")
 }

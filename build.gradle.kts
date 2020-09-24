@@ -23,6 +23,7 @@ ext {
 
 var ver by extra("6.0.0")
 var versuffix by extra("-SNAPSHOT")
+val versionsuffix: String by project
 ext {
     if (project.hasProperty("versionsuffix")) {
             versuffix = "-$versionsuffix"
