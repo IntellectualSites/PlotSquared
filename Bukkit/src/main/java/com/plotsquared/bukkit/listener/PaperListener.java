@@ -221,19 +221,22 @@ public class PaperListener implements Listener {
         }
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
+            EntityType type = event.getType();
             if (!area.isMobSpawning()) {
-                EntityType type = event.getType();
                 switch (type) {
                     case DROPPED_ITEM:
                         if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
-                            event.setShouldAbortSpawn(true);
                             event.setCancelled(true);
-                            break;
+                            return;
                         }
                     case PLAYER:
                         return;
                 }
-                event.setShouldAbortSpawn(true);
+                if (type.isAlive()) {
+                    event.setCancelled(true);
+                }
+            }
+            if (!area.isMiscSpawnUnowned() && !type.isAlive()) {
                 event.setCancelled(true);
             }
             return;
