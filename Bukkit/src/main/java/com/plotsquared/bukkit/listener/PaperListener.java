@@ -226,6 +226,7 @@ public class PaperListener implements Listener {
                 switch (type) {
                     case DROPPED_ITEM:
                         if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
+                            event.setShouldAbortSpawn(true);
                             event.setCancelled(true);
                             return;
                         }
@@ -233,10 +234,12 @@ public class PaperListener implements Listener {
                         return;
                 }
                 if (type.isAlive()) {
+                    event.setShouldAbortSpawn(true);
                     event.setCancelled(true);
                 }
             }
             if (!area.isMiscSpawnUnowned() && !type.isAlive()) {
+                event.setShouldAbortSpawn(true);
                 event.setCancelled(true);
             }
             return;
