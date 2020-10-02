@@ -282,7 +282,7 @@ public enum CommonSetupSteps implements SetupStep {
 
     private static boolean isValidWorldName(String s) {
         return s.chars().allMatch((i) -> {
-            return i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 48 && i <= 57 || i == 46;
+            return i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 65 && i <= 90 || i >= 48 && i <= 57 || i == 46;
         });
     }
 }
