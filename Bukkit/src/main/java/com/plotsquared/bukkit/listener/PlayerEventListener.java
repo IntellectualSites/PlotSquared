@@ -82,6 +82,7 @@ import org.bukkit.FluidCollisionMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -1070,9 +1071,16 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
         BlockFace bf = event.getBlockFace();
-        Block block =
-            event.getBlockClicked().getLocation().add(bf.getModX(), bf.getModY(), bf.getModZ())
-                .getBlock();
+        final Block block;
+        // if the block can be waterlogged, the event might waterlog the block
+        // sometimes
+        if (event.getBlockClicked().getBlockData() instanceof Waterlogged) {
+            block = event.getBlockClicked();
+        } else {
+            block = event.getBlockClicked().getLocation()
+                    .add(bf.getModX(), bf.getModY(), bf.getModZ())
+                            .getBlock();
+        }
         Location location = BukkitUtil.getLocation(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
