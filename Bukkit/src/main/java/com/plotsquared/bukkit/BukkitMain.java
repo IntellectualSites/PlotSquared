@@ -1149,14 +1149,21 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         return new BukkitPlotGenerator(world, generator);
     }
 
-    @Override public List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds() {
-        List<Map.Entry<Map.Entry<String, String>, Boolean>> names = new ArrayList<>();
-        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            Map.Entry<String, String> id = new AbstractMap.SimpleEntry<>(plugin.getName(),
-                plugin.getDescription().getVersion());
-            names.add(new AbstractMap.SimpleEntry<>(id, plugin.isEnabled()));
+    @Override public String getPluginList() {
+        StringBuilder msg = new StringBuilder();
+        Plugin[] plugins = Bukkit.getServer().getPluginManager().getPlugins();
+        msg.append("Plugins (").append(plugins.length).append("): \n");
+        for (Plugin p : plugins) {
+            msg.append(" - ").append(p.getName()).append(":").append("\n")
+                .append("  • Version: ").append(p.getDescription().getVersion()).append("\n")
+                .append("  • Enabled: ").append(p.isEnabled()).append("\n")
+                .append("  • Main: ").append(p.getDescription().getMain()).append("\n")
+                .append("  • Authors: ").append(p.getDescription().getAuthors()).append("\n")
+                .append("  • Load Before: ").append(p.getDescription().getLoadBefore()).append("\n")
+                .append("  • Dependencies: ").append(p.getDescription().getDepend()).append("\n")
+                .append("  • Soft Dependencies: ").append(p.getDescription().getSoftDepend()).append("\n");
         }
-        return names;
+        return msg.toString();
     }
 
     @Override public Actor getConsole() {

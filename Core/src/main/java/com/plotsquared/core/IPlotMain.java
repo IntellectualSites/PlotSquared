@@ -282,7 +282,7 @@ public interface IPlotMain<P> extends ILogger {
      */
     @NotNull IndependentPlotGenerator getDefaultGenerator();
 
-    List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds();
+    String getPluginList();
 
     Actor getConsole();
 
