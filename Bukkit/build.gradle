@@ -13,7 +13,6 @@ repositories {
     }
     maven { url = "https://ci.ender.zone/plugin/repository/everything/" }
     maven { url = "https://mvn.intellectualsites.com/content/repositories/snapshots" }
-    maven { url = "https://repo.wea-ondara.net/repository/public/" }
     maven { url = "http://repo.mvdw-software.be/content/groups/public/" }
     mavenLocal()
 }
@@ -39,7 +38,6 @@ dependencies {
     implementation("net.ess3:EssentialsX:2.18.0") {
         exclude(group: "io.papermc", module: "paperlib")
     }
-    implementation("net.alpenblock:BungeePerms:4.0-dev-106")
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile('com.sk89q:squirrelid:1.0.0-SNAPSHOT'){ transitive = false }
     compile('be.maximvdw:MVdWPlaceholderAPI:3.1.1-SNAPSHOT'){ transitive = false }
