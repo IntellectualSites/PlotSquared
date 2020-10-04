@@ -58,7 +58,6 @@ import com.plotsquared.bukkit.util.BukkitTaskManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.SetGenCB;
 import com.plotsquared.bukkit.util.UpdateUtility;
-import com.plotsquared.bukkit.uuid.BungeePermsUUIDService;
 import com.plotsquared.bukkit.uuid.EssentialsUUIDService;
 import com.plotsquared.bukkit.uuid.LuckPermsUUIDService;
 import com.plotsquared.bukkit.uuid.OfflinePlayerUUIDService;
@@ -291,16 +290,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             luckPermsUUIDService = null;
         }
 
-        final BungeePermsUUIDService bungeePermsUUIDService;
-        if (Settings.UUID.SERVICE_BUNGEE_PERMS &&
-            Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
-            bungeePermsUUIDService = new BungeePermsUUIDService();
-            PlotSquared
-                .log(Captions.PREFIX + "(UUID) Using BungeePerms as a complementary UUID service");
-        } else {
-            bungeePermsUUIDService = null;
-        }
-
         final EssentialsUUIDService essentialsUUIDService;
         if (Settings.UUID.SERVICE_ESSENTIALSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
@@ -334,10 +323,6 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             if (luckPermsUUIDService != null) {
                 impromptuPipeline.registerService(luckPermsUUIDService);
                 backgroundPipeline.registerService(luckPermsUUIDService);
-            }
-            if (bungeePermsUUIDService != null) {
-                impromptuPipeline.registerService(bungeePermsUUIDService);
-                backgroundPipeline.registerService(bungeePermsUUIDService);
             }
             if (essentialsUUIDService != null) {
                 impromptuPipeline.registerService(essentialsUUIDService);
