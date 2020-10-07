@@ -23,7 +23,6 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.PlotVersion;
