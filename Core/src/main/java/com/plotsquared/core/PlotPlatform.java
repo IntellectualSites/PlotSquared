@@ -142,8 +142,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
         return getInjector().getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class));
     }
 
-    List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds();
-
     /**
      * Get the backup manager instance
      *
@@ -255,6 +253,8 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return Console audience
      */
     @Nonnull Audience getConsoleAudience();
+
+    String getPluginList();
 
     /**
      * Load the caption maps

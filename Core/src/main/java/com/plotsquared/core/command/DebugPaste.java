@@ -103,28 +103,21 @@ public class DebugPaste extends SubCommand {
                     .append("\n");
                 b.append("online_mode: ").append(!Settings.UUID.OFFLINE).append(';')
                     .append(!Settings.UUID.OFFLINE).append('\n');
-                b.append("Plugins:");
-                for (Map.Entry<Map.Entry<String, String>, Boolean> pluginInfo : PlotSquared
-                    .platform().getPluginIds()) {
-                    Map.Entry<String, String> nameVersion = pluginInfo.getKey();
-                    String name = nameVersion.getKey();
-                    String version = nameVersion.getValue();
-                    boolean enabled = pluginInfo.getValue();
-                    b.append("\n  ").append(name).append(":\n    ").append("version: '")
-                        .append(version).append('\'').append("\n    enabled: ").append(enabled);
-                }
+                b.append(PlotSquared.platform().getPluginList());
                 b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
                 Runtime runtime = Runtime.getRuntime();
                 RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
-                b.append("Uptime: ").append(
-                    TimeUnit.MINUTES.convert(rb.getUptime(), TimeUnit.MILLISECONDS) + " minutes")
+                b.append("Uptime: ")
+                    .append(TimeUnit.MINUTES.convert(rb.getUptime(), TimeUnit.MILLISECONDS))
+                    .append(" minutes")
                     .append('\n');
                 b.append("JVM Flags: ").append(rb.getInputArguments()).append('\n');
-                b.append("Free Memory: ").append(runtime.freeMemory() / 1024 / 1024 + " MB")
+                b.append("Free Memory: ").append(runtime.freeMemory() / 1024 / 1024).append(" MB")
                     .append('\n');
-                b.append("Max Memory: ").append(runtime.maxMemory() / 1024 / 1024 + " MB")
+                b.append("Max Memory: ").append(runtime.maxMemory() / 1024 / 1024).append(" MB")
                     .append('\n');
-                b.append("Total Memory: ").append(runtime.totalMemory() / 1024 / 1024 + " MB").append('\n');
+                b.append("Total Memory: ").append(runtime.totalMemory() / 1024 / 1024).append(" MB")
+                    .append('\n');
                 b.append("Available Processors: ").append(runtime.availableProcessors()).append('\n');
                 b.append("Java Name: ").append(rb.getVmName()).append('\n');
                 b.append("Java Version: '").append(System.getProperty("java.version"))

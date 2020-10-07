@@ -59,7 +59,6 @@ import com.plotsquared.bukkit.util.UpdateUtility;
 import com.plotsquared.bukkit.util.task.BukkitTaskManager;
 import com.plotsquared.bukkit.util.task.PaperTimeConverter;
 import com.plotsquared.bukkit.util.task.SpigotTimeConverter;
-import com.plotsquared.bukkit.uuid.BungeePermsUUIDService;
 import com.plotsquared.bukkit.uuid.EssentialsUUIDService;
 import com.plotsquared.bukkit.uuid.LuckPermsUUIDService;
 import com.plotsquared.bukkit.uuid.OfflinePlayerUUIDService;
@@ -423,14 +422,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             luckPermsUUIDService = null;
         }
 
-        final BungeePermsUUIDService bungeePermsUUIDService;
-        if (Settings.UUID.SERVICE_BUNGEE_PERMS && Bukkit.getPluginManager().getPlugin("BungeePerms") != null) {
-            bungeePermsUUIDService = new BungeePermsUUIDService();
-            logger.info("(UUID) Using BungeePerms as a complementary UUID service");
-        } else {
-            bungeePermsUUIDService = null;
-        }
-
         final EssentialsUUIDService essentialsUUIDService;
         if (Settings.UUID.SERVICE_ESSENTIALSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
@@ -462,10 +453,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             if (luckPermsUUIDService != null) {
                 this.impromptuPipeline.registerService(luckPermsUUIDService);
                 this.backgroundPipeline.registerService(luckPermsUUIDService);
-            }
-            if (bungeePermsUUIDService != null) {
-                this.impromptuPipeline.registerService(bungeePermsUUIDService);
-                this.backgroundPipeline.registerService(bungeePermsUUIDService);
             }
             if (essentialsUUIDService != null) {
                 this.impromptuPipeline.registerService(essentialsUUIDService);
@@ -1047,13 +1034,21 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         return new BukkitPlotGenerator(world, generator, this.plotAreaManager);
     }
 
-    @Override public List<Map.Entry<Map.Entry<String, String>, Boolean>> getPluginIds() {
-        List<Map.Entry<Map.Entry<String, String>, Boolean>> names = new ArrayList<>();
-        for (final Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-            Map.Entry<String, String> id = new AbstractMap.SimpleEntry<>(plugin.getName(), plugin.getDescription().getVersion());
-            names.add(new AbstractMap.SimpleEntry<>(id, plugin.isEnabled()));
+    @Override public String getPluginList() {
+        StringBuilder msg = new StringBuilder();
+        Plugin[] plugins = Bukkit.getServer().getPluginManager().getPlugins();
+        msg.append("Plugins (").append(plugins.length).append("): \n");
+        for (Plugin p : plugins) {
+            msg.append(" - ").append(p.getName()).append(":").append("\n")
+                .append("  • Version: ").append(p.getDescription().getVersion()).append("\n")
+                .append("  • Enabled: ").append(p.isEnabled()).append("\n")
+                .append("  • Main: ").append(p.getDescription().getMain()).append("\n")
+                .append("  • Authors: ").append(p.getDescription().getAuthors()).append("\n")
+                .append("  • Load Before: ").append(p.getDescription().getLoadBefore()).append("\n")
+                .append("  • Dependencies: ").append(p.getDescription().getDepend()).append("\n")
+                .append("  • Soft Dependencies: ").append(p.getDescription().getSoftDepend()).append("\n");
         }
-        return names;
+        return msg.toString();
     }
 
     @Override @Nonnull public com.plotsquared.core.location.World<?> getPlatformWorld(@Nonnull final String worldName) {
@@ -1061,7 +1056,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override @Nonnull public Audience getConsoleAudience() {
-        return BukkitUtil.BUKKIT_AUDIENCES.audience(Bukkit.getConsoleSender());
+        return BukkitUtil.BUKKIT_AUDIENCES.console();
     }
 
     @Override public String getPluginName() {
