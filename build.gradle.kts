@@ -73,9 +73,6 @@ subprojects {
             exclude(group = "mockito-core")
             exclude(group = "dummypermscompat")
         }
-
-        // Tests
-        testImplementation("junit:junit:4.13")
     }
 
     tasks {
@@ -84,14 +81,15 @@ subprojects {
                 delete("../target")
             }
         }
-
-        withType<Test> {
-            useJUnitPlatform()
-        }
     }
 }
 
 allprojects {
+    dependencies {
+        // Tests
+        testImplementation("junit:junit:4.13")
+    }
+
     configure<JavaPluginConvention> {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = sourceCompatibility

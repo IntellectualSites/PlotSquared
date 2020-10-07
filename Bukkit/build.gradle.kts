@@ -63,7 +63,7 @@ dependencies {
     compileOnly("com.sk89q:squirrelid:1.0.0-SNAPSHOT") { isTransitive = false }
 
     // Adventure
-    implementation("net.kyori:text-adapter-bukkit:3.0.3")
+    implementation("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
 }
 
 tasks.named<Copy>("processResources") {
