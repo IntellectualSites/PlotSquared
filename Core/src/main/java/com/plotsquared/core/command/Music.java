@@ -72,7 +72,7 @@ public class Music extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
-        if (!plot.isAdded(player.getUUID()) &&!Permissions
+        if (!plot.isAdded(player.getUUID()) && !Permissions
             .hasPermission(player, "plots.admin.music.other")) {
             player.sendMessage(
                 TranslatableCaption.of("permission.no_permission"),
