@@ -7,7 +7,6 @@ dependencies {
     // Minecraft expectations
     compileOnlyApi("com.google.guava:guava:21.0") // Minecraft uses v21.0
     compileOnlyApi("com.google.code.gson:gson:2.8.0") // Minecraft uses v2.8.0
-    api("org.slf4j:slf4j-api:1.7.25") // Minecraft uses v1.7.25
 
     // Platform expectations
     compileOnlyApi("org.yaml:snakeyaml:1.26") // Some platforms provide this
@@ -34,10 +33,13 @@ dependencies {
     }
     testImplementation("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT")
 
-    // Other libraries
+    // Logging
+    api("org.slf4j:slf4j-api:1.7.25")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1") {
         exclude(group = "org.slf4j")
     }
+
+    // Other libraries
     api("org.khelekore:prtree:1.7.0-SNAPSHOT")
     api("aopalliance:aopalliance:1.0")
     api("com.intellectualsites:Pipeline:1.4.0-SNAPSHOT") {
