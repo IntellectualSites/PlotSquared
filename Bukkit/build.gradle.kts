@@ -102,6 +102,7 @@ tasks.named<ShadowJar>("shadowJar") {
         include(dependency("com.intellectualsites:Pipeline"))
 
         relocate("net.kyori.adventure", "com.plotsquared.core.configuration.adventure")
+        relocate("net.kyori.examination", "com.plotsquared.core.configuration.examination")
         relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
         relocate("org.bstats", "com.plotsquared.metrics")
         relocate("com.sk89q.squirrelid", "com.plotsquared.squirrelid")
@@ -110,6 +111,8 @@ tasks.named<ShadowJar>("shadowJar") {
         relocate("org.slf4j", "com.plotsquared.logging.slf4j")
         relocate("com.google.inject", "com.plotsquared.google")
         relocate("javax.inject", "com.plotsquared.core.inject.javax")
+        relocate("org.aopalliance", "com.plotsquared.core.aopalliance")
+        relocate("com.intellectualsites.services", "com.plotsquared.core.services")
         relocate("org.json", "com.plotsquared.json") {
             exclude("org/json/simple/**")
         }
