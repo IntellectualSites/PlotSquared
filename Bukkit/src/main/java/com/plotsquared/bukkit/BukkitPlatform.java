@@ -486,8 +486,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 ChatFormatter.formatters.add(getInjector().getInstance(PlaceholderFormatter.class));
             }
             logger.info("PlotSquared hooked into PlaceholderAPI");
-        } else {
-            logger.info("PlaceholderAPI is not in use. Hook deactivated");
         }
 
         this.startMetrics();
@@ -686,7 +684,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @SuppressWarnings("deprecation") private void runEntityTask() {
-        logger.info("KillAllEntities started");
         TaskManager.runTaskRepeat(() -> this.plotAreaManager.forEachPlotArea(plotArea -> {
             final World world = Bukkit.getWorld(plotArea.getWorldName());
             try {
