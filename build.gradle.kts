@@ -8,6 +8,7 @@ plugins {
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "6.0.0"
     id("net.minecrell.licenser") version "0.4.1"
+    id("org.ajoberstar.grgit") version "4.1.0"
 
     eclipse
     idea
@@ -61,14 +62,6 @@ subprojects {
 
         plugin<EclipsePlugin>()
         plugin<IdeaPlugin>()
-    }
-
-    dependencies {
-        api("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") {
-            exclude(group = "bukkit-classloader-check")
-            exclude(group = "mockito-core")
-            exclude(group = "dummypermscompat")
-        }
     }
 
     tasks {
@@ -175,8 +168,8 @@ allprojects {
     tasks {
         named<Delete>("clean") {
             doFirst {
-                delete(rootDir.resolve("target"))
-                delete(javadocDir)
+                rootDir.resolve("target").deleteRecursively()
+                javadocDir.deleteRecursively()
             }
         }
 
