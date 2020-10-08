@@ -45,10 +45,15 @@ import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.FileBytes;
 import com.plotsquared.core.util.FileUtils;
+import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SetupUtils;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
@@ -266,10 +271,22 @@ public class Template extends SubCommand {
         }
         return false;
     }
-    @Override public Collection<Command> tab(final PlotPlayer player, String[] args, boolean space) {
-        return Stream.of("import", "export")
-                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
-                }).collect(Collectors.toList());
+    @Override public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, "plots.template.export")) {
+                completions.add("export");
+            }
+            if (Permissions.hasPermission(player, "plots.template.import")) {
+                completions.add("import");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+                .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
+                }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, "plots.template") && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        } return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 }
