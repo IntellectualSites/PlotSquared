@@ -236,9 +236,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
 
         if (PlotSquared.platform().getServerVersion()[1] < 13) {
-            System.out.println("You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
-            System.out.println("Please check the download page for the link to the legacy versions.");
-            System.out.println("The server will now be shutdown to prevent any corruption.");
+            logger.info("You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
+            logger.info("Please check the download page for the link to the legacy versions.");
+            logger.info("The server will now be shutdown to prevent any corruption.");
             Bukkit.shutdown();
             return;
         }
