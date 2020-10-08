@@ -1,3 +1,4 @@
+
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import net.minecrell.gradle.licenser.LicenseExtension
 import net.minecrell.gradle.licenser.Licenser
@@ -76,10 +77,14 @@ subprojects {
     }
 
     tasks {
-        named<Delete>("clean") {
-            doFirst {
-                delete("../target")
-            }
+        // This is to create the target dir under the root project with all jars.
+        val assembleTargetDir = create<Copy>("assembleTargetDirectory") {
+            destinationDir = rootDir.resolve("target")
+            into(destinationDir)
+            from(withType<Jar>())
+        }
+        named("build") {
+            dependsOn(assembleTargetDir)
         }
     }
 }
@@ -106,7 +111,15 @@ allprojects {
         withJavadocJar()
     }
 
+    val javadocDir = rootDir.resolve("docs").resolve("javadoc").resolve(project.name)
     tasks {
+        named<Delete>("clean") {
+            doFirst {
+                delete(rootDir.resolve("target"))
+                delete(javadocDir)
+            }
+        }
+
         compileJava {
             options.compilerArgs.addAll(arrayOf("-Xmaxerrs", "1000"))
             options.compilerArgs.add("-Xlint:all")
@@ -124,6 +137,7 @@ allprojects {
                 "implSpec:a:Implementation Requirements:",
                 "implNote:a:Implementation Note:"
             )
+            opt.destinationDirectory = javadocDir
         }
 
         shadowJar {
