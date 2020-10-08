@@ -124,6 +124,10 @@ public class Grant extends Command {
                                         String key = "grantedPlots";
                                         byte[] rawData = Ints.toByteArray(amount);
                                         DBFunc.addPersistentMeta(uuid.getUuid(), key, rawData, replace);
+                                        player.sendMessage(
+                                            TranslatableCaption.of("grants.added"),
+                                            Template.of("grants", String.valueOf(amount))
+                                        );
                                     }
                                 }
                             });

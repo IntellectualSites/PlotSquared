@@ -322,7 +322,7 @@ public final class Backup extends Command {
                                                         Template.of("reason", error.getMessage())
                                                 );
                                             } else {
-                                                player.sendMessage(TranslatableCaption.of("backup_load_success"));
+                                                player.sendMessage(TranslatableCaption.of("backups.backup_load_success"));
                                             }
                                         }));
                             }

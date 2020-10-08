@@ -471,6 +471,7 @@
   "category.command_category_administration": "<gray>Admin</gray>",
   
   "grants.granted_plots": "<prefix><gold>Result: <gray><amount> </gray>grants left.</gold>",
+  "grants.added": "<prefix><gold><grants></gold> <gray>grant(s) have been added.</gray>",
   
   "events.event_denied": "<prefix><gold><value> </gold><gray>Cancelled by external plugin.</gray>",
   
