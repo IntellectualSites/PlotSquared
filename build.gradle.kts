@@ -120,10 +120,10 @@ allprojects {
                             id.set("Saulitired")
                             name.set("Alexander Söderberg")
                         }
-
-                        // TODO: Add developers
-                        // I don't know the rest of your names, so this is up to
-                        // you to fill in.
+                        developer {
+                            id.set("N0tMyFaultOG")
+                            name.set("NotMyFault")
+                        }
                     }
 
                     scm {
