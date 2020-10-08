@@ -1,16 +1,12 @@
-
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import net.minecrell.gradle.licenser.LicenseExtension
 import net.minecrell.gradle.licenser.Licenser
-import org.ajoberstar.grgit.Grgit
-import org.ajoberstar.grgit.gradle.GrgitPlugin
 
 plugins {
     java
     `java-library`
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "6.0.0"
-    id("org.ajoberstar.grgit") version "4.1.0"
     id("net.minecrell.licenser") version "0.4.1"
 
     eclipse
@@ -61,7 +57,6 @@ subprojects {
         plugin<JavaLibraryPlugin>()
         plugin<MavenPublishPlugin>()
         plugin<ShadowPlugin>()
-        plugin<GrgitPlugin>()
         plugin<Licenser>()
 
         plugin<EclipsePlugin>()
@@ -111,6 +106,71 @@ allprojects {
         withJavadocJar()
     }
 
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                // This includes not only the original jar (i.e. not shadowJar),
+                // but also sources & javadocs due to the above java block.
+                from(components["java"])
+
+                pom {
+                    licenses {
+                        license {
+                            name.set("GNU General Public License, Version 3.0")
+                            url.set("https://www.gnu.org/licenses/gpl-3.0.html")
+                            distribution.set("repo")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id.set("Saulitired")
+                            name.set("Alexander Söderberg")
+                        }
+
+                        // TODO: Add developers
+                        // I don't know the rest of your names, so this is up to
+                        // you to fill in.
+                    }
+
+                    scm {
+                        url.set("https://github.com/IntellectualSites/PlotSquared")
+                        connection.set("scm:https://IntellectualSites@github.com/IntellectualSites/PlotSquared.git")
+                        developerConnection.set("scm:git://github.com/IntellectualSites/PlotSquared.git")
+                    }
+                }
+            }
+        }
+
+        repositories {
+            mavenLocal() // Install to own local repository
+
+            // Accept String? to not err if they're not present.
+            // Check that they both exist before adding the repo, such that
+            // `credentials` doesn't err if one is null.
+            // It's not pretty, but this way it can compile.
+            val nexusUsername: String? by project
+            val nexusPassword: String? by project
+            if (nexusUsername != null && nexusPassword != null) {
+                maven {
+                    val repositoryUrl = "https://mvn.intellectualsites.com/content/repositories/releases/"
+                    val snapshotRepositoryUrl = "https://mvn.intellectualsites.com/content/repositories/snapshots/"
+                    url = uri(
+                        if (version.toString().endsWith("-SNAPSHOT")) snapshotRepositoryUrl
+                        else repositoryUrl
+                    )
+
+                    credentials {
+                        username = nexusUsername
+                        password = nexusPassword
+                    }
+                }
+            } else {
+                logger.warn("No nexus repository is added; nexusUsername or nexusPassword is null.")
+            }
+        }
+    }
+
     val javadocDir = rootDir.resolve("docs").resolve("javadoc").resolve(project.name)
     tasks {
         named<Delete>("clean") {
@@ -149,11 +209,5 @@ allprojects {
         named("build") {
             dependsOn(named("shadowJar"))
         }
-    }
-}
-
-extra {
-    val git: Grgit = Grgit.open {
-        dir = File("$rootDir/.git")
     }
 }
