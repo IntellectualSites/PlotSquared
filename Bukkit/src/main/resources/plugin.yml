@@ -214,6 +214,8 @@ permissions:
     default: false
   plots.admin.caps.other:
     default: false
+  plots.admin.music.other:
+    default: false
   plots.admin.destroy.unowned:
     default: false
   plots.admin.destroy.groundlevel:

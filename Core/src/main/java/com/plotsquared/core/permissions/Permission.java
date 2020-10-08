@@ -53,6 +53,7 @@ public enum Permission {
     PERMISSION_MERGE_OTHER("plots.merge.other"),
     PERMISSION_MERGE_KEEP_ROAD("plots.merge.keeproad"),
     PERMISSION_ADMIN_CAPS_OTHER("plots.admin.caps.other"),
+    PERMISSION_ADMIN_MUSIC_OTHER("plots.admin.music.other"),
     PERMISSION_ADMIN_DESTROY_UNOWNED("plots.admin.destroy.unowned"),
     PERMISSION_ADMIN_DESTROY_GROUNDLEVEL("plots.admin.destroy.groundlevel"),
     PERMISSION_ADMIN_DESTROY_OTHER("plots.admin.destroy.other"),

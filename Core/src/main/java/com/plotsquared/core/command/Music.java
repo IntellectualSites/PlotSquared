@@ -38,6 +38,7 @@ import com.plotsquared.core.plot.PlotItemStack;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.MusicFlag;
 import com.plotsquared.core.util.InventoryUtil;
+import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.Template;
 
@@ -71,8 +72,11 @@ public class Music extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
-        if (!plot.isAdded(player.getUUID())) {
-            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+        if (!plot.isAdded(player.getUUID()) &&!Permissions
+            .hasPermission(player, "plots.admin.music.other")) {
+            player.sendMessage(
+                TranslatableCaption.of("permission.no_permission"),
+                Template.of("node", "plots.admin.music.other"));
             return true;
         }
         PlotInventory inv = new PlotInventory(this.inventoryUtil, player, 2, "Plot Jukebox") {
