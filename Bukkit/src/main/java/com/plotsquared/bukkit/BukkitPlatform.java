@@ -140,7 +140,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -236,9 +235,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
 
         if (PlotSquared.platform().getServerVersion()[1] < 13) {
-            logger.info("You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
-            logger.info("Please check the download page for the link to the legacy versions.");
-            logger.info("The server will now be shutdown to prevent any corruption.");
+            logger.error("You can't use this version of PlotSquared on a server less than Minecraft 1.13.2.");
+            logger.error("Please check the download page for the link to the legacy versions.");
+            logger.error("The server will now be shutdown to prevent any corruption.");
             Bukkit.shutdown();
             return;
         }
