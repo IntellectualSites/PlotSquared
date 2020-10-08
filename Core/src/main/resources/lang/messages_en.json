@@ -220,6 +220,7 @@
   "commandconfig.not_valid_subcommand": "<prefix><gray>That is not a valid subcommand.</gray>",
   "commandconfig.did_you_mean": "<prefix><gray>Did you mean: <gold><value></gold></gray>",
   "commandconfig.subcommand_set_options_header": "<prefix><gray>Possible Values: <values>",
+  "commandconfig.subcommand_set_options_header_only": "<prefix><gray>Possible Values: ",
   "commandconfig.command_syntax": "<prefix><gold>Usage: </gold><gray><value></gray>",
   "commandconfig.command_syntax_extended": "<prefix><gold>Usage: </gold><gray><value1> <value2></gray>",
   "commandconfig.flag_tutorial_usage": "<prefix><gold>Have an admin set the flag: </gold><gray><flag></gray>",

@@ -180,7 +180,7 @@ public class Set extends SubCommand {
         if (plot != null) {
             newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
-        player.sendMessage(StaticCaption.of(TranslatableCaption.of("commandconfig.subcommand_set_options_header").getComponent(player) + StringMan
+        player.sendMessage(StaticCaption.of(TranslatableCaption.of("commandconfig.subcommand_set_options_header_only").getComponent(player) + StringMan
             .join(newValues, TranslatableCaption.of("blocklist.block_list_separator").getComponent(player))));
         return false;
     }
