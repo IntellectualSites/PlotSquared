@@ -84,7 +84,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.bstats", "com.plotsquared.metrics")
     relocate("com.sk89q.squirrelid", "com.plotsquared.squirrelid")
     relocate("org.khelekore.prtree", "com.plotsquared.prtree")
-    relocate("org.apache.logging.slf4j", "com.plotsquared.logging.apache")
+    relocate("org.apache.logging.log4j", "com.plotsquared.logging.apache.log4j")
     relocate("org.slf4j", "com.plotsquared.logging.slf4j")
     relocate("com.google.inject", "com.plotsquared.google")
     relocate("javax.inject", "com.plotsquared.core.inject.javax")
