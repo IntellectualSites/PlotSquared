@@ -29,7 +29,6 @@ import com.plotsquared.core.queue.ChunkCoordinator;
 
 import javax.annotation.Nonnull;
 
-@FunctionalInterface
 public interface ProgressSubscriber {
 
     /**
@@ -38,6 +37,10 @@ public interface ProgressSubscriber {
      * @param coordinator Coordinator instance that triggered the notification
      * @param progress    Progress in the range [0, 1]
      */
-    void notifyProgress(@Nonnull final ChunkCoordinator coordinator, final float progress);
+    void notifyProgress(@Nonnull final ChunkCoordinator coordinator, final double progress);
 
+    /**
+     * Notify the subscriber that its parent ChunkCoordinator has finished
+     */
+    void notifyEnd();
 }

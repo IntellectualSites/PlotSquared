@@ -26,10 +26,12 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -45,19 +47,18 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import java.util.Collections;
-import java.util.LinkedList;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @CommandDeclaration(command = "set",
     aliases = {"s"},
@@ -158,7 +159,14 @@ public class Set extends SubCommand {
                             for (final Plot current : plot.getConnectedPlots()) {
                                 current.getPlotModificationManager().setComponent(component, pattern, player, queue);
                             }
-                            queue.setCompleteTask(plot::removeRunning);
+                            queue.setCompleteTask(() -> {
+                                plot.removeRunning();
+                                player.sendMessage(TranslatableCaption.of("working.component_complete"));
+                            });
+                            if (Settings.QUEUE.NOTIFY_PROGRESS) {
+                                queue.addProgressSubscriber(
+                                    PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class).createWithActor(player));
+                            }
                             queue.enqueue();
                             player.sendMessage(TranslatableCaption.of("working.generating_component"));
                         });

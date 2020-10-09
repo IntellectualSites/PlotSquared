@@ -137,20 +137,23 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
 
         final int expected = this.expectedSize.addAndGet(-processedChunks);
 
-        final float progress = ((float) totalSize - (float) expected) / (float) totalSize;
-        for (final ProgressSubscriber subscriber : this.progressSubscribers) {
-            subscriber.notifyProgress(this, progress);
-        }
-
         if (expected <= 0) {
             try {
                 this.whenDone.run();
             } catch (final Throwable throwable) {
                 this.throwableConsumer.accept(throwable);
+            } finally {
+                for (final ProgressSubscriber subscriber : this.progressSubscribers) {
+                    subscriber.notifyEnd();
+                }
+                this.cancel();
             }
-            this.cancel();
         } else {
             if (this.availableChunks.size() < processedChunks) {
+                final double progress = ((double) totalSize - (double) expected) / (double) totalSize;
+                for (final ProgressSubscriber subscriber : this.progressSubscribers) {
+                    subscriber.notifyProgress(this, progress);
+                }
                 this.requestBatch();
             }
         }

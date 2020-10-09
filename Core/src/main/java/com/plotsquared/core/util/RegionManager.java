@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -247,22 +248,22 @@ public abstract class RegionManager {
         fromQueue1.setCompleteTask(fromQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             fromQueue1.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                StaticCaption.of("<prefix><gray>Current region 1 copy progress: </gray><gold><progress></gold><gray>%</gray>")));
+                TranslatableCaption.of("swap.progress_region1_copy")));
         }
         fromQueue2.setCompleteTask(toQueue1::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             fromQueue2.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                StaticCaption.of("<prefix><gray>Current region 2 copy progress: </gray><gold><progress></gold><gray>%</gray>")));
+                TranslatableCaption.of("swap.progress_region2_copy")));
         }
         toQueue1.setCompleteTask(toQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             toQueue1.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                StaticCaption.of("<prefix><gray>Current region 1 paste progress: </gray><gold><progress></gold><gray>%</gray>")));
+                TranslatableCaption.of("swap.progress_region1_paste")));
         }
         toQueue2.setCompleteTask(whenDone);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             toQueue2.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                StaticCaption.of("<prefix><gray>Current region 2 paste progress: </gray><gold><progress></gold><gray>%</gray>")));
+                TranslatableCaption.of("swap.progress_region2_paste")));
         }
         fromQueue1.enqueue();
     }

@@ -53,6 +53,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
 
     @Nonnull private final AtomicDouble progress = new AtomicDouble(0);
     @Nonnull private final AtomicBoolean started = new AtomicBoolean(false);
+    @Nonnull private final AtomicBoolean cancelled = new AtomicBoolean(false);
     @Nonnull private final TaskTime interval;
     @Nonnull private final TaskTime wait;
     @Nonnull private final PlotPlayer<?> actor;
@@ -91,7 +92,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
         }
     }
 
-    @Override public void notifyProgress(@Nonnull ChunkCoordinator coordinator, float progress) {
+    @Override public void notifyProgress(@Nonnull ChunkCoordinator coordinator, double progress) {
         this.progress.set(progress);
         if (coordinator.isCancelled() || progress >= 1) {
             if (task != null) {
@@ -99,11 +100,25 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
             }
         } else if (started.compareAndSet(false, true)) {
             TaskManager.getPlatformImplementation().taskLater(() -> task = TaskManager.getPlatformImplementation().taskRepeat(() -> {
-                if (!started.get()) {
-                    return;
-                }
-                actor.sendMessage(caption, Template.of("progress", String.valueOf((double) Math.round(this.progress.doubleValue() * 100) / 100)));
+                    if (!started.get()) {
+                        return;
+                    }
+                    if (cancelled.get()) {
+                        task.cancel();
+                    }
+                    actor.sendMessage(caption, Template.of("progress", String.valueOf((double) Math.round(this.progress.doubleValue() * 10000) / 100)));
             }, interval), wait);
+        }
+    }
+
+    public void notifyEnd() {
+        cancel();
+    }
+
+    public void cancel() {
+        this.cancelled.set(true);
+        if (this.task != null) {
+            task.cancel();
         }
     }
 }

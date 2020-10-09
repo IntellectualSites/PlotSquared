@@ -85,7 +85,6 @@ public final class PlotModificationManager {
         this.subscriberFactory = PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class);
     }
 
-
     /**
      * Copy a plot to a location, both physically and the settings
      *
@@ -239,13 +238,10 @@ public final class PlotModificationManager {
                             manager.claimPlot(current, queue);
                         }
                     }
-                    if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                        queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
-                    }
                     if (queue.size() > 0) {
+                        queue.setCompleteTask(run);
                         queue.enqueue();
                     }
-                    TaskManager.runTask(run);
                     return;
                 }
                 Plot current = queue.poll();
@@ -813,6 +809,7 @@ public final class PlotModificationManager {
         return true;
     }
 
+    /**
     /**
      * Sets components such as border, wall, floor.
      * (components are generator specific)

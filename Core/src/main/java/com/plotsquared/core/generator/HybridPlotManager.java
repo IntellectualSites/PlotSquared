@@ -29,6 +29,7 @@ import com.google.common.collect.Sets;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Template;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -62,11 +63,15 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     private final HybridPlotWorld hybridPlotWorld;
     private final RegionManager regionManager;
+    private final ProgressSubscriberFactory subscriberFactory;
 
-    public HybridPlotManager(@Nonnull final HybridPlotWorld hybridPlotWorld, @Nonnull final RegionManager regionManager) {
+    public HybridPlotManager(@Nonnull final HybridPlotWorld hybridPlotWorld,
+                             @Nonnull final RegionManager regionManager,
+                             @Nonnull ProgressSubscriberFactory subscriberFactory) {
         super(hybridPlotWorld, regionManager);
         this.hybridPlotWorld = hybridPlotWorld;
         this.regionManager = regionManager;
+        this.subscriberFactory = subscriberFactory;
     }
 
     @Override public void exportTemplate() throws IOException {
@@ -210,7 +215,6 @@ public class HybridPlotManager extends ClassicPlotManager {
                 return true;
             }
         }
-        final String world = hybridPlotWorld.getWorldName();
         final Location pos1 = plot.getBottomAbs();
         final Location pos2 = plot.getExtendedTopAbs();
         // If augmented
@@ -245,6 +249,9 @@ public class HybridPlotManager extends ClassicPlotManager {
             queue.setRegenRegion(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
         }
         pastePlotSchematic(queue, pos1, pos2);
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+        }
         if (whenDone != null) {
             queue.setCompleteTask(whenDone);
         }
