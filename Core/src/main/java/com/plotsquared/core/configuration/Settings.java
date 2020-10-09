@@ -546,11 +546,7 @@ public class Settings extends Config {
         "  - 1 - Only execute lighting where blocks with light values are placed",
         "  - 2 - Only execute lighting where blocks with light values are placed or removed/replaced",
         "  - 3 - Always execute lighting (slowest)"})
-        public static int LIGHTING_MODE = 0;
-        @Comment(
-            "For sake of allowing v5 -> v6"
-        )
-        public static int TARGET_TIME = 30;
+        public static int LIGHTING_MODE = 1;
     }
 
     @Comment("Settings related to tab completion")
