@@ -106,7 +106,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
                     if (cancelled.get()) {
                         task.cancel();
                     }
-                    actor.sendMessage(caption, Template.of("progress", String.valueOf((double) Math.round(this.progress.doubleValue() * 10000) / 100)));
+                    actor.sendMessage(caption, Template.of("progress", String.format("%.2f", this.progress.doubleValue() * 100)));
             }, interval), wait);
         }
     }
