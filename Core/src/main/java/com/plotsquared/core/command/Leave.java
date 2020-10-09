@@ -58,7 +58,7 @@ public class Leave extends Command {
         RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
-        checkTrue(plot.isAdded(player.getUUID()), TranslatableCaption.of("member.not_added_trusted"));
+        checkTrue(plot.isAdded(player.getUUID()), TranslatableCaption.of("members.not_added_trusted"));
         if (args.length == 0) {
             sendUsage(player);
             return CompletableFuture.completedFuture(false);
