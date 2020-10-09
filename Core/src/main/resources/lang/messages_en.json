@@ -78,6 +78,8 @@
   "swap.progress_region2_copy": "<prefix><gray>Current region 2 copy progress: </gray><gold><progress></gold><gray>%</gray",
   "swap.progress_region1_paste": "<prefix><gray>Current region 1 paste progress: </gray><gold><progress></gold><gray>%</gray>",
   "swap.progress_region2_paste": "<prefix><gray>Current region 2 paste progress: </gray><gold><progress></gold><gray>%</gray>",
+  "swap.progress_region_copy": "<prefix><gray>Current copy progress: </gray><gold><progress></gold><gray>%</gray>",
+  "swap.progress_region_paste": "<prefix><gray>Current paste progress: </gray><gold><progress></gold><gray>%</gray>",
 
   "comment.inbox_notification": "<prefix><dark_aqua><amount> </dark_aqua><gray>unread messages. Use <command>.</gray>",
   "comment.not_valid_inbox_index": "<prefix><gray>No comment at index <number>.</gray>",

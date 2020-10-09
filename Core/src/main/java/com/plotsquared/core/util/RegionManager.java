@@ -28,7 +28,6 @@ package com.plotsquared.core.util;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Location;
@@ -66,7 +65,8 @@ public abstract class RegionManager {
     private final GlobalBlockQueue blockQueue;
     private final ProgressSubscriberFactory subscriberFactory;
 
-    @Inject public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue, @Nonnull ProgressSubscriberFactory subscriberFactory) {
+    @Inject
+    public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue, @Nonnull ProgressSubscriberFactory subscriberFactory) {
         this.worldUtil = worldUtil;
         this.blockQueue = blockQueue;
         this.subscriberFactory = subscriberFactory;
@@ -189,15 +189,15 @@ public abstract class RegionManager {
         copyFromTo(pos1, pos2, relX, relZ, oldWorld, copyFrom, copyTo, false);
         copyFrom.setCompleteTask(copyTo::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            copyFrom.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                StaticCaption.of("<prefix><gray>Current copy progress: </gray><gold><progress></gold><gray>%</gray>")));
+            copyFrom.addProgressSubscriber(subscriberFactory
+                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region_copy")));
         }
         copyFrom
             .addReadChunks(new CuboidRegion(BlockVector3.at(pos1.getX(), 0, pos1.getZ()), BlockVector3.at(pos2.getX(), 0, pos2.getZ())).getChunks());
         copyTo.setCompleteTask(whenDone);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            copyTo.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                StaticCaption.of("<prefix><gray>Current paste progress: </gray><gold><progress></gold><gray>%</gray>")));
+            copyTo.addProgressSubscriber(subscriberFactory
+                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region_paste")));
         }
         return copyFrom.enqueue();
     }
@@ -247,13 +247,13 @@ public abstract class RegionManager {
         copyFromTo(pos1, pos2, relX, relZ, world1, fromQueue2, toQueue1, true);
         fromQueue1.setCompleteTask(fromQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            fromQueue1.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                TranslatableCaption.of("swap.progress_region1_copy")));
+            fromQueue1.addProgressSubscriber(subscriberFactory
+                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region1_copy")));
         }
         fromQueue2.setCompleteTask(toQueue1::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            fromQueue2.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                TranslatableCaption.of("swap.progress_region2_copy")));
+            fromQueue2.addProgressSubscriber(subscriberFactory
+                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region2_copy")));
         }
         toQueue1.setCompleteTask(toQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
