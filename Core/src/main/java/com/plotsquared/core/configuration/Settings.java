@@ -537,7 +537,7 @@ public class Settings extends Config {
         @Comment("Notify progress of the queue to the player or console.")
         public static boolean NOTIFY_PROGRESS = true;
         @Comment("Interval in ms to notify player or console of progress.")
-        public static int NOTIFY_INTERVAL = 1000;
+        public static int NOTIFY_INTERVAL = 5000;
         @Comment({"Time to wait in ms before beginning to notify player or console of progress.",
             "Prevent needless notification of progress for short queues."})
         public static int NOTIFY_WAIT = 5000;
