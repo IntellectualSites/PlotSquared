@@ -28,6 +28,7 @@ package com.plotsquared.bukkit.util;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.generator.AugmentedUtils;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.location.PlotLoc;
 import com.plotsquared.core.player.PlotPlayer;
@@ -74,8 +75,9 @@ public class BukkitRegionManager extends RegionManager {
 
     private final GlobalBlockQueue blockQueue;
 
-    @Inject public BukkitRegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue) {
-        super(worldUtil, blockQueue);
+    @Inject public BukkitRegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue, @Nonnull
+        ProgressSubscriberFactory subscriberFactory) {
+        super(worldUtil, blockQueue, subscriberFactory);
         this.blockQueue = blockQueue;
     }
 

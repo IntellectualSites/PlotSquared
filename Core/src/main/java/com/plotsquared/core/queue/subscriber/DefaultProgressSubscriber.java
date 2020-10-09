@@ -28,6 +28,8 @@ package com.plotsquared.core.queue.subscriber;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -55,10 +57,15 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
     @Nonnull private final TaskTime wait;
     @Nonnull private final PlotPlayer<?> actor;
     @Nonnull private final Caption caption;
-    @Inject @Nonnull private TaskManager taskManager;
     private PlotSquaredTask task;
 
-    @Inject public DefaultProgressSubscriber(@Nonnull final PlotPlayer<?> actor) {
+    @AssistedInject
+    public DefaultProgressSubscriber() {
+        throw new UnsupportedOperationException("DefaultProgressSubscriber cannot be used without an actor.");
+    }
+
+    @AssistedInject
+    public DefaultProgressSubscriber(@Nullable @Assisted("subscriber") final PlotPlayer<?> actor) {
         Preconditions.checkNotNull(actor,
             "Actor cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!");
         this.actor = actor;
@@ -67,17 +74,16 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
         this.caption = TranslatableCaption.of("working.progress");
     }
 
-    public DefaultProgressSubscriber(@Nonnull final PlotPlayer<?> actor,
-                                     @Nonnull final TaskManager taskManager,
-                                     final long interval,
-                                     final long wait,
-                                     @Nullable final Caption caption) {
+    @AssistedInject
+    public DefaultProgressSubscriber(@Nullable @Assisted("subscriber") final PlotPlayer<?> actor,
+                                     @Assisted("progressInterval") final long interval,
+                                     @Assisted("waitBeforeStarting") final long wait,
+                                     @Nullable @Assisted("caption") final Caption caption) {
         Preconditions.checkNotNull(actor,
             "Actor cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!");
         this.actor = actor;
         this.interval = TaskTime.ms(interval);
         this.wait = TaskTime.ms(wait);
-        this.taskManager = taskManager;
         if (caption == null) {
             this.caption = TranslatableCaption.of("working.progress");
         } else {
@@ -92,7 +98,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
                 task.cancel();
             }
         } else if (started.compareAndSet(false, true)) {
-            taskManager.taskLater(() -> task = taskManager.taskRepeat(() -> {
+            TaskManager.getPlatformImplementation().taskLater(() -> task = TaskManager.getPlatformImplementation().taskRepeat(() -> {
                 if (!started.get()) {
                     return;
                 }

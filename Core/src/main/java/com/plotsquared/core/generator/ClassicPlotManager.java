@@ -26,6 +26,7 @@
 package com.plotsquared.core.generator;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Direction;
@@ -56,12 +57,13 @@ public class ClassicPlotManager extends SquarePlotManager {
 
     private final ClassicPlotWorld classicPlotWorld;
     private final RegionManager regionManager;
-    @Inject private ProgressSubscriberFactory subscriberFactory;
+    private final ProgressSubscriberFactory subscriberFactory;
 
     @Inject public ClassicPlotManager(@Nonnull final ClassicPlotWorld classicPlotWorld, @Nonnull final RegionManager regionManager) {
         super(classicPlotWorld, regionManager);
         this.classicPlotWorld = classicPlotWorld;
         this.regionManager = regionManager;
+        this.subscriberFactory = PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class);
     }
 
     @Override public boolean setComponent(@Nonnull PlotId plotId,
@@ -232,7 +234,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             queue = classicPlotWorld.getQueue();
             enqueue = true;
             if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                queue.addProgressSubscriber(subscriberFactory.create(actor));
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
             }
         }
 
@@ -311,7 +313,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             queue = classicPlotWorld.getQueue();
             enqueue = true;
             if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                queue.addProgressSubscriber(subscriberFactory.create(actor));
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
             }
         }
 
@@ -381,7 +383,7 @@ public class ClassicPlotManager extends SquarePlotManager {
             enqueue = true;
             queue = classicPlotWorld.getQueue();
             if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                queue.addProgressSubscriber(subscriberFactory.create(actor));
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
             }
         }
 

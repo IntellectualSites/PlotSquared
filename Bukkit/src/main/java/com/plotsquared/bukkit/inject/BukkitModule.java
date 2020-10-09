@@ -29,6 +29,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.assistedinject.FactoryProvider;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitChunkCoordinator;
@@ -96,6 +97,7 @@ public class BukkitModule extends AbstractModule {
         bind(InventoryUtil.class).to(BukkitInventoryUtil.class);
         bind(SetupUtils.class).to(BukkitSetupUtils.class);
         bind(WorldUtil.class).to(BukkitUtil.class);
+        install(new FactoryModuleBuilder().implement(ProgressSubscriber.class, DefaultProgressSubscriber.class).build(ProgressSubscriberFactory.class));
         bind(GlobalBlockQueue.class).toInstance(new GlobalBlockQueue(QueueProvider.of(BukkitQueueCoordinator.class)));
         bind(ChunkManager.class).to(BukkitChunkManager.class);
         bind(RegionManager.class).to(BukkitRegionManager.class);
@@ -108,7 +110,6 @@ public class BukkitModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(HybridPlotWorldFactory.class));
         install(new FactoryModuleBuilder().implement(ChunkCoordinator.class, BukkitChunkCoordinator.class).build(ChunkCoordinatorFactory.class));
         install(new FactoryModuleBuilder().build(ChunkCoordinatorBuilderFactory.class));
-        install(new FactoryModuleBuilder().implement(ProgressSubscriber.class, DefaultProgressSubscriber.class).build(ProgressSubscriberFactory.class));
     }
 
     @Provides @Singleton @Nonnull EconHandler provideEconHandler() {

@@ -114,10 +114,11 @@ public abstract class SchematicHandler {
     public static SchematicHandler manager;
     private final WorldUtil worldUtil;
     private boolean exportAll = false;
-    @Inject private ProgressSubscriberFactory subscriberFactory;
+    private final ProgressSubscriberFactory subscriberFactory;
 
-    @Inject public SchematicHandler(@Nonnull final WorldUtil worldUtil) {
+    @Inject public SchematicHandler(@Nonnull final WorldUtil worldUtil, @Nonnull ProgressSubscriberFactory subscriberFactory) {
         this.worldUtil = worldUtil;
+        this.subscriberFactory = subscriberFactory;
     }
 
     public static void upload(@Nullable UUID uuid,
@@ -353,7 +354,7 @@ public abstract class SchematicHandler {
                     whenDone.value = true;
                 }
                 if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                    queue.addProgressSubscriber(subscriberFactory.create(actor));
+                    queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
                 }
                 queue.setCompleteTask(whenDone);
                 queue.enqueue();

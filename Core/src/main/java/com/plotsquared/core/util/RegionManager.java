@@ -63,12 +63,12 @@ public abstract class RegionManager {
     public static RegionManager manager = null;
     private final WorldUtil worldUtil;
     private final GlobalBlockQueue blockQueue;
-    @Inject private ProgressSubscriberFactory subscriberFactory;
-    @Inject private TaskManager taskManager;
+    private final ProgressSubscriberFactory subscriberFactory;
 
-    @Inject public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue) {
+    @Inject public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue, @Nonnull ProgressSubscriberFactory subscriberFactory) {
         this.worldUtil = worldUtil;
         this.blockQueue = blockQueue;
+        this.subscriberFactory = subscriberFactory;
     }
 
     public static BlockVector2 getRegion(Location location) {
@@ -129,7 +129,7 @@ public abstract class RegionManager {
             queue = area.getQueue();
             enqueue = true;
             if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                queue.addProgressSubscriber(subscriberFactory.create(actor));
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
             }
         }
         for (CuboidRegion region : regions) {
@@ -188,14 +188,14 @@ public abstract class RegionManager {
         copyFromTo(pos1, pos2, relX, relZ, oldWorld, copyFrom, copyTo, false);
         copyFrom.setCompleteTask(copyTo::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            copyFrom.addProgressSubscriber(subscriberFactory.create(actor, taskManager, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
+            copyFrom.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
                 StaticCaption.of("<prefix><gray>Current copy progress: </gray><gold><progress></gold><gray>%</gray>")));
         }
         copyFrom
             .addReadChunks(new CuboidRegion(BlockVector3.at(pos1.getX(), 0, pos1.getZ()), BlockVector3.at(pos2.getX(), 0, pos2.getZ())).getChunks());
         copyTo.setCompleteTask(whenDone);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            copyTo.addProgressSubscriber(subscriberFactory.create(actor, taskManager, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
+            copyTo.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
                 StaticCaption.of("<prefix><gray>Current paste progress: </gray><gold><progress></gold><gray>%</gray>")));
         }
         return copyFrom.enqueue();
@@ -246,22 +246,22 @@ public abstract class RegionManager {
         copyFromTo(pos1, pos2, relX, relZ, world1, fromQueue2, toQueue1, true);
         fromQueue1.setCompleteTask(fromQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            fromQueue1.addProgressSubscriber(subscriberFactory.create(actor, taskManager, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
+            fromQueue1.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
                 StaticCaption.of("<prefix><gray>Current region 1 copy progress: </gray><gold><progress></gold><gray>%</gray>")));
         }
         fromQueue2.setCompleteTask(toQueue1::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            fromQueue2.addProgressSubscriber(subscriberFactory.create(actor, taskManager, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
+            fromQueue2.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
                 StaticCaption.of("<prefix><gray>Current region 2 copy progress: </gray><gold><progress></gold><gray>%</gray>")));
         }
         toQueue1.setCompleteTask(toQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            toQueue1.addProgressSubscriber(subscriberFactory.create(actor, taskManager, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
+            toQueue1.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
                 StaticCaption.of("<prefix><gray>Current region 1 paste progress: </gray><gold><progress></gold><gray>%</gray>")));
         }
         toQueue2.setCompleteTask(whenDone);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            toQueue2.addProgressSubscriber(subscriberFactory.create(actor, taskManager, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
+            toQueue2.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
                 StaticCaption.of("<prefix><gray>Current region 2 paste progress: </gray><gold><progress></gold><gray>%</gray>")));
         }
         fromQueue1.enqueue();

@@ -78,10 +78,11 @@ public final class PlotModificationManager {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotModificationManager.class.getSimpleName());
 
     private final Plot plot;
-    @Inject private ProgressSubscriberFactory subscriberFactory;
+    private final ProgressSubscriberFactory subscriberFactory;
 
     @Inject PlotModificationManager(@Nonnull final Plot plot) {
         this.plot = plot;
+        this.subscriberFactory = PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class);
     }
 
 
@@ -239,7 +240,7 @@ public final class PlotModificationManager {
                         }
                     }
                     if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                        queue.addProgressSubscriber(subscriberFactory.create(actor));
+                        queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
                     }
                     if (queue.size() > 0) {
                         queue.enqueue();
@@ -597,7 +598,7 @@ public final class PlotModificationManager {
                 }
             }
             if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                queue.addProgressSubscriber(subscriberFactory.create(actor));
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
             }
             if (queue.size() > 0) {
                 queue.enqueue();
