@@ -34,9 +34,9 @@ import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
@@ -52,7 +52,7 @@ public final class PlaceholderRegistry {
     private final Map<String, Placeholder> placeholders;
     private final EventDispatcher eventDispatcher;
 
-    public PlaceholderRegistry(@NotNull final EventDispatcher eventDispatcher) {
+    public PlaceholderRegistry(@Nonnull final EventDispatcher eventDispatcher) {
         this.placeholders = Maps.newHashMap();
         this.eventDispatcher = eventDispatcher;
         this.registerDefault();
@@ -124,10 +124,10 @@ public final class PlaceholderRegistry {
      * @param key                 Placeholder key
      * @param placeholderFunction Placeholder generator. Cannot return null
      */
-    @SuppressWarnings("ALL") public void createPlaceholder(@NotNull final String key,
-        @NotNull final Function<PlotPlayer<?>, String> placeholderFunction) {
+    @SuppressWarnings("ALL") public void createPlaceholder(@Nonnull final String key,
+        @Nonnull final Function<PlotPlayer<?>, String> placeholderFunction) {
         this.registerPlaceholder(new Placeholder(key) {
-            @Override @NotNull public String getValue(@NotNull final PlotPlayer<?> player) {
+            @Override @Nonnull public String getValue(@Nonnull final PlotPlayer<?> player) {
                 return placeholderFunction.apply(player);
             }
         });
@@ -139,10 +139,10 @@ public final class PlaceholderRegistry {
      * @param key                 Placeholder key
      * @param placeholderFunction Placeholder generator. Cannot return null
      */
-    public void createPlaceholder(@NotNull final String key,
-        @NotNull final BiFunction<PlotPlayer<?>, Plot, String> placeholderFunction) {
+    public void createPlaceholder(@Nonnull final String key,
+        @Nonnull final BiFunction<PlotPlayer<?>, Plot, String> placeholderFunction) {
         this.registerPlaceholder(new PlotSpecificPlaceholder(key) {
-            @Override @NotNull public String getValue(@NotNull final PlotPlayer<?> player, @NotNull final Plot plot) {
+            @Override @Nonnull public String getValue(@Nonnull final PlotPlayer<?> player, @Nonnull final Plot plot) {
                 return placeholderFunction.apply(player, plot);
             }
         });
@@ -153,7 +153,7 @@ public final class PlaceholderRegistry {
      *
      * @param placeholder Placeholder instance
      */
-    public void registerPlaceholder(@NotNull final Placeholder placeholder) {
+    public void registerPlaceholder(@Nonnull final Placeholder placeholder) {
         final Placeholder previous = this.placeholders
             .put(placeholder.getKey().toLowerCase(Locale.ENGLISH),
                 Preconditions.checkNotNull(placeholder, "Placeholder may not be null"));
@@ -168,7 +168,7 @@ public final class PlaceholderRegistry {
      * @param key Placeholder key
      * @return Placeholder value
      */
-    @Nullable public Placeholder getPlaceholder(@NotNull final String key) {
+    @Nullable public Placeholder getPlaceholder(@Nonnull final String key) {
         return this.placeholders.get(
             Preconditions.checkNotNull(key, "Key may not be null").toLowerCase(Locale.ENGLISH));
     }
@@ -181,8 +181,8 @@ public final class PlaceholderRegistry {
      * @param player Player to evaluate for
      * @return Replacement value
      */
-    @NotNull public String getPlaceholderValue(@NotNull final String key,
-        @NotNull final PlotPlayer<?> player) {
+    @Nonnull public String getPlaceholderValue(@Nonnull final String key,
+        @Nonnull final PlotPlayer<?> player) {
         final Placeholder placeholder = getPlaceholder(key);
         if (placeholder == null) {
             return "";
@@ -209,7 +209,7 @@ public final class PlaceholderRegistry {
      *
      * @return Unmodifiable collection of placeholders
      */
-    @NotNull public Collection<Placeholder> getPlaceholders() {
+    @Nonnull public Collection<Placeholder> getPlaceholders() {
         return Collections.unmodifiableCollection(this.placeholders.values());
     }
 

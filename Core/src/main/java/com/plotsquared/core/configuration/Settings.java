@@ -267,8 +267,6 @@ public class Settings extends Config {
         public static boolean SERVICE_BUKKIT = true;
         @Comment("Whether the EssentialsX service is enabled")
         public static boolean SERVICE_ESSENTIALSX = true;
-        @Comment("Whether the BungeePerms service is enabled")
-        public static boolean SERVICE_BUNGEE_PERMS = true;
     }
 
 

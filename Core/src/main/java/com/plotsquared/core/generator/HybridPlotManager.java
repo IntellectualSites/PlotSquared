@@ -47,7 +47,6 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -265,7 +264,7 @@ public class HybridPlotManager extends ClassicPlotManager {
      * @param plot The plot
      * @return The location where a sign should be
      */
-    @Override public Location getSignLoc(@Nonnull final @NotNull Plot plot) {
+    @Override public Location getSignLoc(@Nonnull final Plot plot) {
         return hybridPlotWorld.getSignLocation(plot);
     }
 

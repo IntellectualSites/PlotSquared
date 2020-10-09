@@ -26,6 +26,9 @@
 package com.plotsquared.core.util;
 
 import com.google.inject.Inject;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParseException;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.ClassicPlotWorld;
@@ -63,8 +66,6 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +110,7 @@ import java.util.zip.GZIPOutputStream;
 public abstract class SchematicHandler {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + SchematicHandler.class.getSimpleName());
+    private static final Gson GSON = new Gson();
     public static SchematicHandler manager;
     private final WorldUtil worldUtil;
     private boolean exportAll = false;
@@ -462,7 +464,7 @@ public abstract class SchematicHandler {
     }
 
     public List<String> getSaves(UUID uuid) {
-        String rawJSON = "";
+        String rawJSON;
         try {
             String website = Settings.Web.URL + "list.php?" + uuid.toString();
             URL url = new URL(website);
@@ -471,14 +473,14 @@ public abstract class SchematicHandler {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 rawJSON = reader.lines().collect(Collectors.joining());
             }
-            JSONArray array = new JSONArray(rawJSON);
+            JsonArray array = GSON.fromJson(rawJSON, JsonArray.class);
             List<String> schematics = new ArrayList<>();
-            for (int i = 0; i < array.length(); i++) {
-                String schematic = array.getString(i);
+            for (int i = 0; i < array.size(); i++) {
+                String schematic = array.get(i).getAsString();
                 schematics.add(schematic);
             }
             return schematics;
-        } catch (JSONException | IOException e) {
+        } catch (JsonParseException | IOException e) {
             e.printStackTrace();
         }
         return null;

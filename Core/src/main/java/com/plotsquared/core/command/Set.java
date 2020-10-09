@@ -45,6 +45,8 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import java.util.Collections;
+import java.util.LinkedList;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
@@ -180,7 +182,7 @@ public class Set extends SubCommand {
         if (plot != null) {
             newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
-        player.sendMessage(StaticCaption.of(TranslatableCaption.of("commandconfig.subcommand_set_options_header").getComponent(player) + StringMan
+        player.sendMessage(StaticCaption.of(TranslatableCaption.of("commandconfig.subcommand_set_options_header_only").getComponent(player) + StringMan
             .join(newValues, TranslatableCaption.of("blocklist.block_list_separator").getComponent(player))));
         return false;
     }
@@ -213,15 +215,51 @@ public class Set extends SubCommand {
     }
 
     @Override
-    public Collection<Command> tab(final PlotPlayer player, final String[] args,
-        final boolean space) {
+    public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
         if (args.length == 1) {
-            return Stream
-                .of("biome", "alias", "home", "main", "floor", "air", "all", "border", "wall",
-                    "outline", "middle")
-                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
-                }).collect(Collectors.toList());
+            final List<String> completions = new LinkedList<>();
+
+            if (Permissions.hasPermission(player, "plots.set.biome")) {
+                completions.add("biome");
+            }
+            if (Permissions.hasPermission(player, "plots.set.alias")) {
+                completions.add("alias");
+            }
+            if (Permissions.hasPermission(player, "plots.set.home")) {
+                completions.add("home");
+            }
+            if (Permissions.hasPermission(player, "plots.set.main")) {
+                completions.add("main");
+            }
+            if (Permissions.hasPermission(player, "plots.set.floor")) {
+                completions.add("floor");
+            }
+            if (Permissions.hasPermission(player, "plots.set.air")) {
+                completions.add("air");
+            }
+            if (Permissions.hasPermission(player, "plots.set.all")) {
+                completions.add("all");
+            }
+            if (Permissions.hasPermission(player, "plots.set.border")) {
+                completions.add("border");
+            }
+            if (Permissions.hasPermission(player, "plots.set.wall")) {
+                completions.add("wall");
+            }
+            if (Permissions.hasPermission(player, "plots.set.outline")) {
+                completions.add("outline");
+            }
+            if (Permissions.hasPermission(player, "plots.set.middle")) {
+                completions.add("middle");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+                .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.APPEARANCE) {
+                }).collect(Collectors.toCollection(LinkedList::new));
+
+            if (Permissions.hasPermission(player, "plots.set") && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
         } else if (args.length > 1) {
             // Additional checks
             Plot plot = player.getCurrentPlot();

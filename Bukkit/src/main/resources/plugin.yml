@@ -1,4 +1,4 @@
-name: ${name}
+name: PlotSquared
 main: com.plotsquared.bukkit.BukkitPlatform
 api-version: "1.13"
 version: "${version}"
@@ -213,6 +213,8 @@ permissions:
   plots.admin.command.chatspy:
     default: false
   plots.admin.caps.other:
+    default: false
+  plots.admin.music.other:
     default: false
   plots.admin.destroy.unowned:
     default: false

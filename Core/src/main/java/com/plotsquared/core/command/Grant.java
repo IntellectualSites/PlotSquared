@@ -35,19 +35,21 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
-
 import java.util.Collection;
-import java.util.Locale;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import net.kyori.adventure.text.minimessage.Template;
+import com.plotsquared.core.uuid.UUIDMapping;
+
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @CommandDeclaration(command = "grant",
     category = CommandCategory.CLAIMING,
@@ -86,8 +88,8 @@ public class Grant extends Command {
                                 Template.of("value", String.valueOf(uuids))
                         );
                     } else {
-                        final UUID uuid = uuids.toArray(new UUID[0])[0];
-                        PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+                        final UUIDMapping uuid = uuids.toArray(new UUIDMapping[0])[0];
+                        PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid.getUuid());
                         if (pp != null) {
                             try (final MetaDataAccess<Integer> access = pp.accessPersistentMetaData(
                                 PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
@@ -99,7 +101,7 @@ public class Grant extends Command {
                                 }
                             }
                         } else {
-                            DBFunc.getPersistentMeta(uuid, new RunnableVal<Map<String, byte[]>>() {
+                            DBFunc.getPersistentMeta(uuid.getUuid(), new RunnableVal<Map<String, byte[]>>() {
                                 @Override public void run(Map<String, byte[]> value) {
                                     final byte[] array = value.get("grantedPlots");
                                     if (arg0.equals("check")) { // check
@@ -123,7 +125,11 @@ public class Grant extends Command {
                                         boolean replace = array != null;
                                         String key = "grantedPlots";
                                         byte[] rawData = Ints.toByteArray(amount);
-                                        DBFunc.addPersistentMeta(uuid, key, rawData, replace);
+                                        DBFunc.addPersistentMeta(uuid.getUuid(), key, rawData, replace);
+                                        player.sendMessage(
+                                            TranslatableCaption.of("grants.added"),
+                                            Template.of("grants", String.valueOf(amount))
+                                        );
                                     }
                                 }
                             });
@@ -135,10 +141,22 @@ public class Grant extends Command {
         sendUsage(player);
         return CompletableFuture.completedFuture(true);
     }
-    @Override public Collection<Command> tab(final PlotPlayer player, String[] args, boolean space) {
-        return Stream.of("check", "add")
-                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                .map(value -> new Command(null, false, value, "plots.grant", RequiredType.NONE, null) {
-                }).collect(Collectors.toList());
+    @Override public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, "plots.grant.add")) {
+                completions.add("add");
+            }
+            if (Permissions.hasPermission(player, "plots.grant.check")) {
+                completions.add("check");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+                .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
+                }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, "plots.grant") && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        } return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 }

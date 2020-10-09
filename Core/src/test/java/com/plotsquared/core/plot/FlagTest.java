@@ -32,10 +32,14 @@ import com.plotsquared.core.plot.flag.implementations.UseFlag;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
 public class FlagTest {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + FlagTest.class.getSimpleName());
 
     private ItemType testBlock;
 
@@ -50,11 +54,11 @@ public class FlagTest {
 //        //plot.setFlag(use, use.parseValue("33,33:1,6:4")); //TODO fix this so FlagTest will run during compile
 //        Optional<? extends Collection> flag = plot.getFlag(use);
 //        if (flag.isPresent()) {
-//            System.out.println(Flags.USE.valueToString(flag.get()));
+//            logger.info(Flags.USE.valueToString(flag.get()));
 //            testBlock = ItemTypes.BONE_BLOCK;
 //            flag.get().add(testBlock);
 //        }
-//        flag.ifPresent(collection -> System.out.println(Flags.USE.valueToString(collection)));
+//        flag.ifPresent(collection -> logger.info(Flags.USE.valueToString(collection)));
 //        Optional<Set<BlockType>> flag2 = plot.getFlag(Flags.USE);
 //        if (flag2.isPresent()) {
 //            //   assertThat(flag2.get(), (Matcher<? super Set<BlockType>>) IsCollectionContaining.hasItem(testBlock));

@@ -1300,7 +1300,6 @@ public class PlotSquared {
                 String commitString = br.readLine();
                 String dateString = br.readLine();
                 this.version = PlotVersion.tryParse(versionString, commitString, dateString);
-                System.out.println("Version is " + this.version);
             }
         } catch (IOException throwable) {
             throwable.printStackTrace();

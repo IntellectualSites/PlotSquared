@@ -220,6 +220,7 @@
   "commandconfig.not_valid_subcommand": "<prefix><gray>That is not a valid subcommand.</gray>",
   "commandconfig.did_you_mean": "<prefix><gray>Did you mean: <gold><value></gold></gray>",
   "commandconfig.subcommand_set_options_header": "<prefix><gray>Possible Values: <values>",
+  "commandconfig.subcommand_set_options_header_only": "<prefix><gray>Possible Values: ",
   "commandconfig.command_syntax": "<prefix><gold>Usage: </gold><gray><value></gray>",
   "commandconfig.command_syntax_extended": "<prefix><gold>Usage: </gold><gray><value1> <value2></gray>",
   "commandconfig.flag_tutorial_usage": "<prefix><gold>Have an admin set the flag: </gold><gray><flag></gray>",
@@ -472,6 +473,7 @@
   "category.command_category_administration": "<gray>Admin</gray>",
   
   "grants.granted_plots": "<prefix><gold>Result: <gray><amount> </gray>grants left.</gold>",
+  "grants.added": "<prefix><gold><grants></gold> <gray>grant(s) have been added.</gray>",
   
   "events.event_denied": "<prefix><gold><value> </gold><gray>Cancelled by external plugin.</gray>",
   
@@ -671,6 +673,7 @@
   "commands.description.comment": "<gray>Comment on a plot.</gray>",
   "commands.description.condense": "<gray>Condense a plotworld.</gray>",
   "commands.description.confirm": "<gray>Confirm an action.</gray>",
+  "commands.description.continue": "<gray>Continue a plot that was previously marked as done.</gray>",
   "commands.description.copy": "<gray>Copy a plot.</gray>",
   "commands.description.createroadschematic": "<gray>Add a road schematic to your world using the roads around your current plot.</gray>",
   "commands.description.database": "<gray>Convert/Backup Storage.</gray>",

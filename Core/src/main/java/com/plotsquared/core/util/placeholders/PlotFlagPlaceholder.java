@@ -29,20 +29,21 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public final class PlotFlagPlaceholder extends PlotSpecificPlaceholder {
 
     private final PlotFlag<?, ?> flag;
     private final boolean local;
 
-    public PlotFlagPlaceholder(@NotNull final PlotFlag<?, ?> flag, final boolean local) {
+    public PlotFlagPlaceholder(@Nonnull final PlotFlag<?, ?> flag, final boolean local) {
         super(String.format("currentplot_%sflag_%s", local ? "local": "", flag.getName()));
         this.flag = flag;
         this.local = local;
     }
 
-    @Override @NotNull public String getValue(@NotNull final PlotPlayer<?> player, @NotNull final Plot plot) {
+    @Override @Nonnull public String getValue(@Nonnull final PlotPlayer<?> player, @Nonnull final Plot plot) {
         return this.getFlagValue(plot, this.flag.getName(), !this.local);
     }
 
@@ -57,7 +58,7 @@ public final class PlotFlagPlaceholder extends PlotSpecificPlaceholder {
      * @param inherit  Define if it returns only the flag set on the current plot or also inherited flags
      * @return The value of flag serialized in string
      */
-    @NotNull private String getFlagValue(@NotNull final Plot plot, @NotNull final String flagName, final boolean inherit) {
+    @Nonnull private String getFlagValue(@Nonnull final Plot plot, @Nonnull final String flagName, final boolean inherit) {
         if (flagName.isEmpty()) {
             return "";
         }
