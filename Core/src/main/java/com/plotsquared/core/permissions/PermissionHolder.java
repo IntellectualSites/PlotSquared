@@ -47,7 +47,7 @@ public interface PermissionHolder {
     }
 
     /**
-     * Check the the highest permission a PlotPlayer has within a specified range.<br>
+     * Check the highest permission a PlotPlayer has within a specified range.<br>
      * - Excessively high values will lag<br>
      * - The default range that is checked is {@link Settings.Limit#MAX_PLOTS}<br>
      *

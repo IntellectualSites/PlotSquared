@@ -799,12 +799,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     /**
-     * Send a title to to the player
+     * Send a title to the player
      *
      * @param title        Title
      * @param subtitle     Subtitle
      * @param fadeIn       Fade in time (in ticks)
-     * @param stay         The the title stays for (in ticks)
+     * @param stay         The title stays for (in ticks)
      * @param fadeOut      Fade out time (in ticks)
      * @param replacements Variable replacements
      */
