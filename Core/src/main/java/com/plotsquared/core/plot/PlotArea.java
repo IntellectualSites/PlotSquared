@@ -388,17 +388,14 @@ public abstract class PlotArea {
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
 
-        List<String> roadflags = config.getStringList("flags.default");
+        List<String> roadflags = config.getStringList("road.flags");
         if (roadflags.isEmpty()) {
-            roadflags = config.getStringList("road.flags");
-            if (roadflags.isEmpty()) {
-                roadflags = new ArrayList<>();
-                ConfigurationSection section = config.getConfigurationSection("road.flags");
-                Set<String> keys = section.getKeys(false);
-                for (String key : keys) {
-                    if (!"default".equals(key)) {
-                        roadflags.add(key + ';' + section.get(key));
-                    }
+            roadflags = new ArrayList<>();
+            ConfigurationSection section = config.getConfigurationSection("road.flags");
+            Set<String> keys = section.getKeys(false);
+            for (String key : keys) {
+                if (!"default".equals(key)) {
+                    roadflags.add(key + ';' + section.get(key));
                 }
             }
         }
