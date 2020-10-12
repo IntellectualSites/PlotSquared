@@ -99,12 +99,12 @@ subprojects {
         testCompileOnly("org.projectlombok:lombok:1.18.12")
         annotationProcessor("org.projectlombok:lombok:1.18.8")
         testAnnotationProcessor("org.projectlombok:lombok:1.18.8")
-        testImplementation("junit:junit:4.13")
+        testImplementation("junit:junit:4.13.1")
     }
 
     configurations.all {
         resolutionStrategy {
-            force("junit:junit:4.12")
+            force("junit:junit:4.13.1")
             force("com.google.guava:guava:21.0")
             force("org.jetbrains:annotations:20.1.0")
             force("com.google.code.findbugs:jsr305:3.0.2")
