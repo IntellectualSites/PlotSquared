@@ -818,7 +818,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 Duration.of(stay * 50, ChronoUnit.MILLIS),
                 Duration.of(fadeOut * 50, ChronoUnit.MILLIS));
         getAudience().showTitle(Title
-            .of(titleComponent, subtitleComponent, times));
+            .title(titleComponent, subtitleComponent, times));
     }
 
     @Override public void sendMessage(@Nonnull final Caption caption,

@@ -147,7 +147,7 @@ public class Debug extends SubCommand {
             player.sendMessage(StaticCaption.of(msg.toString()));
             return true;
         }
-        TextComponent.Builder information = TextComponent.builder();
+        TextComponent.Builder information = Component.text();
         Component header = MINI_MESSAGE.parse(TranslatableCaption.of("debug.debug_header").getComponent(player) + "\n");
         String line = TranslatableCaption.of("debug.debug_line").getComponent(player) + "\n";
         String section = TranslatableCaption.of("debug.debug_section").getComponent(player) + "\n";

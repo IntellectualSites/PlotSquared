@@ -82,6 +82,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
@@ -685,7 +686,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 .of("msg", BukkitUtil.LEGACY_COMPONENT_SERIALIZER.deserialize(ChatColor.translateAlternateColorCodes('&', message)));
         } else {
             msgTemplate = Template.of("msg", BukkitUtil.MINI_MESSAGE.deserialize(
-                ChatColor.stripColor(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(TextComponent.builder(message).build()))));
+                ChatColor.stripColor(BukkitUtil.LEGACY_COMPONENT_SERIALIZER.serialize(Component.text(message)))));
         }
         for (PlotPlayer<?> receiver : plotRecipients) {
             receiver.sendMessage(msg, msgTemplate, plotTemplate, senderTemplate);
@@ -694,7 +695,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
             Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
             Template spysenderTemplate = Template.of("sender", sender);
-            Template spymessageTemplate = Template.of("msg", TextComponent.builder(message).build());
+            Template spymessageTemplate = Template.of("msg", Component.text(message));
             for (PlotPlayer<?> player : spies) {
                 player.sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
             }
