@@ -70,7 +70,7 @@ public class Inbox extends SubCommand {
         if (max > comments.length) {
             max = comments.length;
         }
-        TextComponent.Builder builder = TextComponent.builder();
+        TextComponent.Builder builder = Component.text();
         builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("list.comment_list_header_paged").getComponent(player) + '\n',
             Template.of("amount", String.valueOf(comments.length)), Template.of("cur", String.valueOf(page + 1)),
             Template.of("max", String.valueOf(totalPages + 1)), Template.of("word", "all")));
