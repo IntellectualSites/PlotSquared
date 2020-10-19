@@ -2,12 +2,12 @@
   "confirm.expired_confirm": "<prefix><red>Confirmation has expired, please run the command again!</red>",
   "confirm.failed_confirm": "<prefix><red>You have no pending actions to confirm!</red>",
   "confirm.requires_confirm": "<prefix><gray>Are you sure you wish to execute: </gray><gold><command></gold><gray>?</gray>\n<red>This cannot be undone! If you are sure: </red><gray><value></gray>",
-  
+
   "move.move_success": "<prefix><dark_aqua>Successfully moved plot.</dark_aqua>",
   "move.move_merged": "<prefix><red>Merged plots may not be moved. Please unmerge the plot before performing the move.</red>",
   "move.copy_success": "<prefix><dark_aqua>Successfully copied plot.</dark_aqua>",
   "move.requires_unowned": "<prefix><red>The location specified is already occupied.</red>",
-  
+
   "debug.requires_unmerged": "<prefix><red>The plot cannot be merged.</red>",
   "debug.debug_header": "<prefix> <gold>Debug Information</gold>\n",
   "debug.debug_section": "<gray>>></gray> <gold><bold>&l<val></bold></gold>",
@@ -18,11 +18,11 @@
   "debug.player_in_debugmode": "<prefix><gold>Player(s) in debug mode: </gold>",
   "debug.player_in_debugmode_list": "<gold>- </gold><gray><value></gray>\n",
   "debug.entity_categories": "<prefix><red>Entity categories:</red>",
-  
+
   "set.set_attribute": "<prefix><dark_aqua>Successfully set <attribute> to <value>.</dark_aqua>",
 
   "area.set_pos2": "You will now set pos2: <command>. Note: The chosen plot size may result in the created area not exactly matching your second position.",
-  
+
   "web.generating_link": "<prefix><gold>Processing plot...</gold>",
   "web.generating_link_failed": "<prefix><red>Failed to generate download link!</red>",
   "web.generation_link_success": "<click:open_url:<url>><url></click>",
@@ -31,9 +31,9 @@
   "web.load_failed": "<prefix><red>Failed to load schematic.</red>",
   "web.load_list": "<prefix><gray>To load a schematic, use </gray><gold><command></gold><gray>.</gray>",
   "web.save_success": "<prefix><gold>Successfully saved!</gold>",
-  
+
   "compass.compass_target": "<prefix><dark_aqua>Successfully targeted plot with your compass.</dark_aqua>",
-  
+
   "cluster.cluster_available_args": "<prefix><gold>The following sub commands are available: </gold><dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>",
   "cluster.cluster_list_heading": "<prefix><gray>There are </gray><gold><amount></gold><gray> clusters in this world.</gray>",
   "cluster.cluster_list_element": "<prefix><gray> - </gray><gold><cluster></gold>\n",
@@ -60,21 +60,21 @@
   "cluster.cluster_info": "<prefix><gold>Current cluster: </gold><gray><id></gray>\n<gold>Name: </gold><gray><name></gray>\n<gold>Owner: </gold><gray><owner></gray>\n<gold>Size: </gold><gray><size></gray>\n<gold>Rights: </gold><gray><rights></gray>",
 
   "border.border": "<prefix><gray>You are outside the current map border.</gray>",
-  
+
   "worldedit.worldedit_bypass": "<prefix><gray><italic>To bypass your restrictions use </gray><dark_aqua><command></dark_aqua></italic>",
   "worldedit.worldedit_bypassed": "<prefix><gray>Currently bypassing WorldEdit restriction.</gray>",
-  
+
   "gamemode.gamemode_was_bypassed": "<prefix><gold>You bypassed the gamemode (</gold><gray><gamemode></gray><gold>) <gold>set for </gold><gray><plot>.</gray>",
-  
+
   "height.height_limit": "<prefix><gold>This plot area has a height limit of </gold><gray><limit>.</gray>",
-  
+
   "notification.notify_enter": "<prefix><gray><player> entered your plot (</gray><gold><plot></gold><gray>).</gray>",
   "notification.notify_leave": "<prefix><gray><player> left your plot (</gray><gold><plot></gold><gray>).</gray>",
-  
+
   "swap.swap_overlap": "<prefix><red>The proposed areas are not allowed to overlap.</red>",
   "swap.swap_success": "<prefix><dark_aqua>Successfully swapped plots.</dark_aqua>",
   "swap.swap_merged": "<prefix><red>Merged plots may not be swapped. Please unmerge the plots before performing the swap.</red>",
-  
+
   "comment.inbox_notification": "<prefix><dark_aqua><amount> </dark_aqua><gray>unread messages. Use <command>.</gray>",
   "comment.not_valid_inbox_index": "<prefix><gray>No comment at index <number>.</gray>",
   "comment.inbox_item": "<gray> - </gray><dark_aqua><value></dark_aqua>",
@@ -87,23 +87,23 @@
   "comment.comment_removed_failure": "<prefix><red>Failed to delete comment!</red>",
   "comment.comment_added": "<prefix><dark_aqua>A comment has been left.</dark_aqua>",
   "comment.inbox_empty": "<prefix><gray>No comments.</gray>",
-  
+
   "console.not_console": "<prefix><red>For safety reasons, this command can only be executed by console.</red>",
   "console.is_console": "<prefix><red>This command can only be executed by a player.</red>",
-  
+
   "clipboard.paste_failed": "<prefix><red>Failed to paste the selection. Reason: </red><gray><reason></gray>",
-  
+
   "toggle.toggle_enabled": "<prefix><gray>Enabled setting: </gray><dark_aqua><setting></dark_aqua>",
   "toggle.toggle_disabled": "<prefix><gray>Disabled setting: </gray><dark_aqua><setting></dark_aqua>",
-  
+
   "blockedcmds.command_blocked": "<prefix><red>That command is not allowed in this plot.</red>",
-  
+
   "done.done_already_done": "<prefix><gray>This plot is already marked as done.</gray>",
   "done.done_not_done": "<prefix><gray>This plot is not marked as done.</gray>",
   "done.done_insufficient_complexity": "<prefix><red>This plot is too simple. Please add more detail before using this command.</red>",
   "done.done_success": "<prefix><gold>Successfully marked this plot as done.</gold>",
   "done.done_removed": "<prefix><gray>You may now continue building in this plot.</gray>",
-  
+
   "ratings.ratings_purged": "<prefix><gray>Purged ratings for this plot.</gray>",
   "ratings.rating_not_valid": "<prefix><red>You need to specify a number between 1 and 10.</red>",
   "ratings.rating_already_exists": "<prefix><gray>You have already rated plot <plot>.</gray>",
@@ -113,10 +113,10 @@
   "ratings.rating_not_your_own": "<prefix><red>You cannot rate your own plot.</red>",
   "ratings.rating_not_done": "<prefix><red>You can only rate finished plots.</red>",
   "ratings.rating_not_owned": "<prefix><red>You cannot rate a plot that is not claimed by anyone.</red>",
-  
+
   "tutorial.rate_this": "<prefix><gray>Rate this plot!</gray>",
   "tutorial.comment_this": "<prefix><gray>Leave some feedback on this plot: <plot>.</gray>",
-  
+
   "economy.econ_disabled": "<prefix><red>Economy is not enabled.</red>",
   "economy.cannot_afford_plot": "<prefix><red>You cannot afford to buy this plot. It costs <gold><money></gold>.</red>",
   "economy.not_for_sale": "<prefix><red>This plot is not for sale.</red>",
@@ -126,7 +126,7 @@
   "economy.added_balance": "<prefix><gold><money> </gold><gray>has been added to your balance.</gray>",
   "economy.removed_balance": "<prefix><gold><money> </gold><gray>has been taken from your balance.</gray>",
   "economy.removed_granted_plot": "<prefix><gray>You used <usedGrants> plot grant(s), you've got </gray><gold><remainingGrants></gold> <gray>left.</gray>",
-  
+
   "setup.setup_not_started": "<prefix><gold>No setup started.</gold>",
   "setup.setup_init": "<prefix><gold>Usage: </gold><gray>/plot setup <value></gray>",
   "setup.setup_step": "<gold><dark_gray>[</dark_gray>Step <step><dark_gray>]</dark_gray> <description> <gray>-</gray> Expecting: <gray><type></gray> Default: <gray><value></gray></gold>",
@@ -152,7 +152,7 @@
   "setup.setup_area_max_plot_id": "<prefix><gold>What should be the maximum Plot ID?</gold>",
   "setup.setup_area_max_plot_id_error": "<prefix><red>You must choose a valid maximum Plot ID!</red>",
   "setup.setup_area_plot_id_greater_than_minimum": "<prefix><red>The maximum Plot ID must be greater than the minimum!</red>",
-  
+
   "plotareatype.plot_area_type_normal": "<gray>Standard plot generation</gray>",
   "plotareatype.plot_area_type_augmented": "<gray>Plot generation with vanilla terrain</gray>",
   "plotareatype.plot_area_type_partial": "<gray>Vanilla with clusters of plots</gray>",
@@ -171,30 +171,30 @@
   "schematics.schematic_exportall_single_finished": "<prefix><gold>Finished export.</gold>",
   "schematic.schematic_exportall_world": "<prefix><red>Invalid world.</red>",
   "schematics.plot_to_schem": "<dark_aqua>Plot</dark_aqua><dark_gray>-></dark_gray><dark_aqua>Schematic</dark_aqua><dark_gray>: </dark_gray><gray>Found </gray><red><amount></red><gray> plots...</gray>",
-  
+
   "error.task_in_process": "<prefix><gold>Task is already running.</gold>",
-  
+
   "titles.title_entered_plot": "<gold>Plot: <world>;<x>;<z></gold>",
   "titles.title_entered_plot_sub": "<dark_aqua>Owned by <owner></dark_aqua>",
   "titles.prefix_greeting": "<gold><id></gold><gray>></gray>",
   "titles.prefix_farewell": "<gold><id></gold><gray>></gray>",
-  
+
   "core.prefix": "<dark_gray>[</dark_gray><gold>P2</gold><dark_gray>] </dark_gray>",
   "core.enabled": "<prefix><gold><value> is now enabled.</gold>",
 
   "placeholder.hooked": "<prefix><gold>PlotSquared hooked into MVdWPlaceholderAPI</gold>",
-  
+
   "reload.reloaded_configs": "<prefix><gold>Translations and world settings have been reloaded successfully.</gold>",
   "reload.reload_failed": "<prefix><red>Failed to reload file configurations.</red>",
-  
+
   "desc.desc_set": "<prefix><gray>Plot description set.</gray>",
   "desc.desc_unset": "<prefix><gray>Plot description unset.</gray>",
-  
+
   "alias.alias_set_to": "<prefix><gray>Plot alias set to </gray><gold><alias></gold><gray>.</gray>",
   "alias.alias_removed": "<prefix><gray>Plot alias removed.</gray>",
   "alias.alias_too_long": "<prefix><red>The alias must have less than 50 characters in length.</red>",
   "alias.alias_is_taken": "<prefix><red>That alias is already taken.</red>",
-  
+
   "position.position_set": "<prefix><gold>Home position set to your current location.</gold>",
   "position.position_unset": "<prefix><gold>Home position reset to the default location.</gold>",
 
@@ -206,7 +206,7 @@
   "permission.cant_claim_more_clusters": "<prefix><red>You can't claim more clusters.</red>",
   "permission.cant_transfer_more_plots": "<prefix><red>You can't send more plots to that user.</red>",
   "permission.cant_claim_more_plots_num": "<prefix><red>You can't claim more than <gold><amount> </gold>plots at once.</red>",
-  
+
   "merge.merge_request_confirm": "<prefix><gray>Merge request from </gray><gold><player></gold><gray>.</gray>",
   "merge.merge_not_valid": "<prefix><gray>This merge request is no longer valid.</gray>",
   "merge.merge_accepted": "<prefix><gray>The merge request has been accepted.</gray>",
@@ -216,7 +216,7 @@
   "merge.unlink_impossible": "<prefix><red>You can only unlink a mega-plot.</red>",
   "merge.unmerge_cancelled": "<prefix><red>Unlink has been cancelled.</red>",
   "merge.unlink_success": "<prefix><dark_aqua>Successfully unlinked plots.</dark_aqua>",
-  
+
   "commandconfig.not_valid_subcommand": "<prefix><gray>That is not a valid subcommand.</gray>",
   "commandconfig.did_you_mean": "<prefix><gray>Did you mean: <gold><value></gold></gray>",
   "commandconfig.subcommand_set_options_header": "<prefix><gray>Possible Values: <values>",
@@ -224,7 +224,7 @@
   "commandconfig.command_syntax": "<prefix><gold>Usage: </gold><gray><value></gray>",
   "commandconfig.command_syntax_extended": "<prefix><gold>Usage: </gold><gray><value1> <value2></gray>",
   "commandconfig.flag_tutorial_usage": "<prefix><gold>Have an admin set the flag: </gold><gray><flag></gray>",
-  
+
   "invalid.component_illegal_block": "<prefix><red>You are not allowed to generate a component containing the block <gray><value></gray></red>",
   "invalid.not_valid_block": "<prefix><red>That's not a valid block: </red><gray><value></gray>",
   "invalid.not_allowed_block": "<prefix><red>That block is not allowed: <gray><value></gray></red>",
@@ -287,7 +287,7 @@
   "debugexec.script_list_item": "<dark_gray>[</dark_gray><gold><number></gold><dark_gray>]</dark_gray><gold> <name></gold>",
   "debugexec.analyze_done": "<prefix><gold>Done. Use </gold><gray><command></gray><gold> for more information. ",
 
-  "expiry.expired_options_clicky": "<gold><num> <are_or_is> expired: </gold><click:run_command:<list_cmd>><hover:show_text:<list_cmd>><gray><plot></gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_del>><hover:show_text:<cmd_del>><gray>Delete this (<cmd_del>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_keep_1d>><hover:show_text:<cmd_keep_1d>><gray>Remind later (<cmd_keep_1d>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_keep>><hover:show_text:<cmd_keep>><gray>Keep this (<cmd_keep>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_no_show_expir>><hover:show_text:<cmd_no_show_expir>><gray>Don't show me this (<cmd_no_show_expir>)</gray></hover></click>",
+  "expiry.expired_options_clicky": "<gold><num> <are_or_is> expired: </gold><click:run_command:<list_cmd>><hover:show_text:\"<list_cmd>\"><gray><plot></gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_del>><hover:show_text:\"<cmd_del>\"><gray>Delete this (<cmd_del>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_keep_1d>><hover:show_text:\"<cmd_keep_1d>\"><gray>Remind later (<cmd_keep_1d>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_keep>><hover:show_text:\"<cmd_keep>\"><gray>Keep this (<cmd_keep>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_no_show_expir>><hover:show_text:\"<cmd_no_show_expir>\"><gray>Don't show me this (<cmd_no_show_expir>)</gray></hover></click>",
 
   "debugimportworlds.single_plot_area": "<prefix><red>Must be a single plot area.</red>",
   "debugimportworlds.world_container": "<prefix><red>World container must be configured to be a separate directory to your base files.</red>",
@@ -333,37 +333,37 @@
 
   "debugsavetest.starting": "<prefix><gold>Starting debugsavetest.</gold>",
   "debugsavetest.done": "<prefix><gold>Database sync finished.</gold>",
-  
+
   "purge.purge_success": "<prefix><dark_aqua>Successfully purged <amount> plots.</dark_aqua>",
-  
+
   "players.fetching_player": "<prefix><gold>PlotSquared is attempting to find the specified player from your argument(s). This may take a while.</gold>",
   "players.fetching_players_timeout": "<prefix><red>The specified users did not exist in the cache and will be fetched in the background. Please wait a couple of minutes.</red>",
-  
+
   "trim.trim_in_progress": "<prefix><red>A world trim task is already in progress!</red>",
   "trim.trim_done": "<prefix><gold>Trim done.</gold>",
   "trim.trim_starting": "<prefix><gold>Collecting region data...</gold>",
 
   "blocklist.block_list_separator": "</gray><gold>,</gold><gray> ",
-  
+
   "biome.need_biome": "<prefix><red>You need to specify a valid biome.</red>",
   "biome.biome_set_to": "<prefix><gold>Plot biome set to <gray><value></gray></gold>",
-  
+
   "teleport.teleported_to_plot": "<prefix><gold>You have been teleported.</gold>",
   "teleport.teleported_to_road": "<prefix><gold>You got teleported to the road.</gold>",
   "teleport.teleport_in_seconds": "<prefix><gold>Teleporting in <amount> seconds. Do not move...</gold>",
   "teleport.teleport_failed": "<prefix><red>Teleportation cancelled due to movement or damage.</red>",
-  
+
   "setblock.set_block_action_finished": "<prefix><gold>The last setblock action is now finished.</gold>",
-  
+
   "unsafe.debugallowunsafe_on": "<prefix><gray>Unsafe actions enabled.</gray>",
   "unsafe.debugallowunsafe_off": "<prefix><gray>Unsafe actions disabled.</gray>",
-  
+
   "need.need_block": "<prefix><red>You've got to specify a block.</red>",
-  
+
   "near.plot_near": "<prefix><gold>Players: <gray><list></gray></gold>",
 
   "scripts.script_list": "<dark_gray><strikethrough>--------- <reset><gold>SCRIPTS </gold><dark_gray><strikethrough>---------</dark_gray><reset>",
-  
+
   "info.none": "<gray>None</gray>",
   "info.now": "<gray>Now</gray>",
   "info.never": "<gray>Never</gray>",
@@ -374,16 +374,16 @@
   "info.plot_info_unclaimed": "<prefix><gray>Plot <gold><plot></gold> is not yet claimed.</gray>",
   "info.plot_info_header": "<dark_gray><strikethrough>--------- <reset><gold>INFO </gold><dark_gray><strikethrough>---------</dark_gray><reset>",
   "info.plot_info_hidden": "<prefix><red>You cannot view the information about this plot.</red>",
-  "info.plot_info_format": "<header>\n<gold>ID: <gray><id></gray>\nArea: <gray><area></gray>\nAlias:<gray><alias></gray>\nOwner:<gray><owner></gray>\nBiome: <gray><biome></gray>\nCan Build: <gray><build></gray>\nRating: <gray><rating></gray>\nSeen: <gray><seen></gray>\nTrusted:<gray><trusted></gray>\nMembers:<gray><members></gray>\nDenied:<gray><denied></gray>\nFlags:<gray><flags></gray>\nDescription: <gray><desc></gray></gold>\n<footer>",
+  "info.plot_info_format": "<header>\n<gold>ID: <gray><id></gray>\nArea: <gray><area></gray>\nAlias: <gray><alias></gray>\nOwner: <gray><owner></gray>\nBiome: <gray><biome></gray>\nCan Build: <gray><build></gray>\nRating: <gray><rating></gray>\nSeen: <gray><seen></gray>\nTrusted: <gray><trusted></gray>\nMembers: <gray><members></gray>\nDenied: <gray><denied></gray>\nFlags:<gray><flags></gray>\nDescription: <gray><desc></gray></gold>\n<footer>",
   "info.plot_info_footer": "<dark_gray><strikethrough>--------- <reset><gold>INFO </gold><dark_gray><strikethrough>---------<reset>",
-  "info.plot_info_trusted": "<gold>Trusted:</gold><gray><trusted></gray>",
-  "info.plot_info_members": "<gold>Members:</gold><gray><members></gray>",
-  "info.plot_info_denied": "<gold>Denied:</gold><gray><denied></gray>",
+  "info.plot_info_trusted": "<gold>Trusted:</gold> <gray><trusted></gray>",
+  "info.plot_info_members": "<gold>Members:</gold> <gray><members></gray>",
+  "info.plot_info_denied": "<gold>Denied:</gold> <gray><denied></gray>",
   "info.plot_info_flags": "<gold>Flags:</gold><gray> <flags></gray>",
   "info.plot_info_biome": "<gold>Biome:</gold><gray> <biome></gray>",
   "info.plot_info_rating": "<gold>Rating:</gold><gray> <rating></gray>",
   "info.plot_info_likes": "<gold>Like Ratio:</gold><gray> <likes></gray>",
-  "info.plot_info_owner": "<gold>Owner:</gold><gray><owner></gray>",
+  "info.plot_info_owner": "<gold>Owner:</gold> <gray><owner></gray>",
   "info.plot_info_id": "<gold>ID:</gold><gray> <id></gray>",
   "info.plot_info_alias": "<gold>Alias:</gold><gray> <alias></gray>",
   "info.plot_info_size": "<gold>Size:</gold><gray> <size></gray>",
@@ -393,17 +393,17 @@
   "info.plot_no_description": "<prefix><gray>No description set.</gray>",
   "info.plot_caps_header": "<dark_gray><strikethrough>--------- <reset><gold>CAPS </gold><dark_gray><strikethrough>---------<reset>",
   "info.plot_caps_format": "<prefix><gray>- Cap Type: </gray><gold><cap> </gold><gray>| Status: </gray><gold><current></gold><gray>/</gray><gold><limit> </gold><gray>(</gray><gold><percentage>%</gold><gray>)</gray>",
-  "info.plot_list_item": "<click:run_command:<command_tp>><hover:show_text:<command_tp>><dark_gray>[</dark_gray><gold><number></gold><dark_gray>]</dark_gray></hover></click><click:run_command:<command_info>><hover:show_text:<hover_info>><gold> <plot></gold></hover></click><gray> - </gray><players>",
+  "info.plot_list_item": "<click:run_command:<command_tp>><hover:show_text:\"<command_tp>\"><dark_gray>[</dark_gray><gold><number></gold><dark_gray>]</dark_gray></hover></click><click:run_command:<command_info>> <hover:show_text:\"<hover_info>\"><gold> <plot></gold></hover></click><gray> - </gray><players>",
   "info.plot_list_no_owner": "<dark_gray><plot></dark_gray>",
   "info.plot_list_owned_by": "<gold><plot></gold>",
-  "info.plot_list_added_to": "<cyan><plot></cyan>",
+  "info.plot_list_added_to": "<dark_aqua><plot></dark_aqua>",
   "info.plot_list_denied_on": "<gray><plot></gray>",
   "info.plot_list_default": "<gold><plot></gold>",
-  "info.plot_list_player_online": "<cyan><prefix></cyan><hover:show_text:<cyan>Online</cyan>><gold><player></gold></hover>",
-  "info.plot_list_player_offline": "<cyan><prefix></cyan><hover:show_text:<dark_gray>Offline</dark_gray>><gold><player></gold></hover>",
+  "info.plot_list_player_online": "<dark_aqua><prefix></dark_aqua><hover:show_text:\"<dark_aqua>Online</dark_aqua>\"><gold><player></gold></hover>",
+  "info.plot_list_player_offline": "<dark_aqua><prefix></dark_aqua><hover:show_text:\"<dark_gray>Offline</dark_gray>\"><gold><player></gold></hover>",
   "info.area_info_format": "<header>\n<reset><gold>NAME: </gold><gray><name></gray>\n<gold>Type: </gold><gray><type></gray>\n<gold>Terrain: </gold><gray><terrain></gray>\n<gold>Usage: </gold><gray><usage>%</gray>\n<gold>Claimed: </gold><gray><claimed></gray>\n<gold>Clusters: </gold><gray><clusters></gray>\n<gold>Region: </gold><gray><region></gray>\n<gold>Generator: </gold><gray><generator></gray>\n<footer>",
-  "info.area_list_tooltip": "<gold>Claimed=</gold><gray><claimed></gray>\n<gold>Usage=</gold><gray><usage></gray>\n<gold>Clusters=</gold><gray><clusters></gray>\n<gold>Region=</gold><gray><region></gray>\n<gold>Generator=</gold><gray><generator></gray>\n",
-  "info.area_list_item": "<click:run_command:<command_tp>><hover:show_text:<command_tp>><dark_gray>[</dark_gray><gold><number></gold><dark_gray>]</dark_gray></hover></click><click:run_command:<command_info>><hover:show_text:<hover_info>><gold> <area_name></gold></hover></click><gray> - </gray><dark_gray><area_type>:<area_terrain></dark_gray>",
+  "info.area_list_tooltip": "<gold>Claimed=</gold><gray><claimed></gray>\n<gold>Usage=</gold><gray><usage></gray>\n<gold>Clusters=</gold><gray><clusters></gray>\n<gold>Region=</gold><gray><region></gray>\n<gold>Generator=</gold><gray><generator></gray>",
+  "info.area_list_item": "<click:run_command:<command_tp>><hover:show_text:\"<command_tp>\"><dark_gray>[</dark_gray><gold><number></gold><dark_gray>]</dark_gray></hover></click> <click:run_command:<command_info>><hover:show_text:\"<hover_info>\"><gold><area_name></gold></hover></click><gray> - </gray><gray><area_type>:<area_terrain></gray>",
 
   "working.generating_component": "<prefix><gold>Started generating component from your settings.</gold>",
   "working.clearing_done": "<prefix><dark_aqua>Clear completed! Took <amount>ms.</dark_aqua>",
@@ -411,7 +411,7 @@
   "working.plot_not_claimed": "<prefix><gray>Plot not claimed.</gray>",
   "working.plot_is_claimed": "<prefix><gray>This plot is already claimed.</gray>",
   "working.claimed": "<prefix><dark_aqua>You successfully claimed the plot.</dark_aqua>",
-  
+
   "list.comment_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> comments</gold>",
   "list.comment_list_comment": "<dark_gray>[</dark_gray><gray>#<number></gray><dark_gray>[</dark_gray><gray><world>;<plot_id></gray><dark_gray>][</dark_gray><gold><commenter></gold><dark_gray>]</dark_gray><comment>\n",
   "list.comment_list_by_lister": "<green><comment></green>",
@@ -425,16 +425,16 @@
   "chat.plot_chat_spy_format": "<gray>[<gold>Plot Spy</gold>] [<gold><plot_id></gold>] <gold><sender></gold>: <gold><msg></gold></gray>",
   "chat.plot_chat_format": "<gray>[<gold>Plot Chat</gold>] [<gold><plot_id></gold>] <gold><sender></gold>: <gold><msg></gold></gray>",
   "chat.plot_chat_forced": "<prefix><gray>This world forces everyone to use plot chat.</gray>",
-  
+
   "deny.denied_added": "<prefix><dark_aqua>You successfully denied the player from this plot.</dark_aqua>",
   "deny.you_got_denied": "<prefix><dark_aqua>You are denied from the plot you were previously on, and got teleported to spawn.</dark_aqua>.",
   "deny.cant_remove_owner": "<prefix><red>You can't remove the plot owner.</red>",
-  
+
   "kick.you_got_kicked": "<prefix><dark_aqua>You got kicked from the plot!</dark_aqua>",
-  
+
   "trusted.trusted_added": "<prefix><dark_aqua>You successfully trusted a user to the plot.</dark_aqua>",
   "trusted.plot_removed_user": "<prefix><red>Plot <plot> of which you were added to has been deleted due to owner inactivity.</red>",
-  
+
   "member.removed_players": "<prefix><gray>Removed <amount> player(s) from this plot.</gray>",
   "member.plot_left": "<prefix><gray><player> left the plot.</gray>",
   "member.already_owner": "<prefix><gray><player></gray><gold> is already the plot owner.</gold>",
@@ -442,17 +442,17 @@
   "member.member_added": "<prefix><dark_aqua>That user can now build while the plot owner is online.</dark_aqua>",
   "members.plot_max_members": "<prefix><red>You are not allowed to add any more players to this plot.</red>",
   "members.not_added_trusted": "<prefix><red>You must be added or trusted to the plot to run that command.</red>",
-  
+
   "owner.set_owner": "<prefix><dark_aqua>You successfully set the plot owner.</dark_aqua>",
   "owner.set_owner_cancelled": "<prefix><red>The set owner action was cancelled.</red>",
   "owner.set_owner_missing_player": "<prefix><red>You need to specify a new owner.</red>",
   "owner.now_owner": "<prefix><dark_aqua>You are now the plot owner of plot <plot>.</dark_aqua>",
-  
+
   "signs.owner_sign_line_1": "<gold>ID: </gold><gray><id></gray>",
   "signs.owner_sign_line_2": "<gold>Owner:",
   "signs.owner_sign_line_3": "<gray><owner></gray>",
   "signs.owner_sign_line_4": "<dark_gray>Claimed</dark_gray>",
-  
+
   "help.help_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",
   "help.help_page_header": "\n<gold>Category: </gold><gray><category>,</gray><gold> Page: </gold><gray><current></gray><dark_gray>/</dark_gray><gray><max></gray>\n",
   "help.help_footer": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Help </gold><dark_gray><strikethrough>---------<reset>",
@@ -460,7 +460,7 @@
   "help.help_item": "<gold><usage> <gray>[<gold><alias></gold>]</gray>\n <dark_gray>- </dark_gray><gray><desc></gray>\n",
   "help.help_display_all_commands": "<prefix><gray>Display all commands.</gray>",
   "help.direction": "<prefix><gold>Current direction: </gold><gray><dir></gray>",
- 
+
   "category.command_category_claiming": "<gray>Claiming</gray>",
   "category.command_category_teleport": "<gray>Teleport</gray>",
   "category.command_category_settings": "<gray>Protection</gray>",
@@ -470,12 +470,12 @@
   "category.command_category_info": "<gray>Info</gray>",
   "category.command_category_debug": "<gray>Debug</gray>",
   "category.command_category_administration": "<gray>Admin</gray>",
-  
+
   "grants.granted_plots": "<prefix><gold>Result: <gray><amount> </gray>grants left.</gold>",
   "grants.added": "<prefix><gold><grants></gold> <gray>grant(s) have been added.</gray>",
-  
+
   "events.event_denied": "<prefix><gold><value> </gold><gray>Cancelled by external plugin.</gray>",
-  
+
   "backups.backup_impossible": "<prefix><gray>Backups are not enabled for this plot: <plot>.</gray>",
   "backups.backup_save_success": "<prefix><gold>The backup was created successfully.</gold>",
   "backups.backup_save_failed": "<prefix><red>The backup could not be created: </red><gray><reason></gray>",
@@ -487,17 +487,17 @@
   "backups.backup_automatic_started": "<prefix><gold>Backing up the plot...</gold>",
   "backups.backup_automatic_finished": "<prefix><gold>The automatic backup process finished successfully!</gold>",
   "backups.backup_automatic_failure": "<prefix><red>The automatic backup process failed. Your pending action has been canceled. Reason: </red><gray><reason></gray>",
-  
+
   "preset.preset_cannot_afford": "<prefix><red>You cannot afford that preset.</red>",
   "preset.preset_invalid": "<prefix><red>Could not generate a pattern from that preset.</red>",
   "preset.preset_lore_cost": "<prefix><gray>Cost: </gray><gold><cost></gold>",
   "preset.preset_lore_component": "<prefix><gray>Component: </gray><gold><component></gold>",
-  
+
   "generic.generic_other": "<prefix><gray>other</gray>",
   "generic.generic_merged": "<prefix><gray>merged</gray>",
   "generic.generic_unowned": "<prefix><gray>unowned</gray>",
   "generic.generic_invalid_choice": "<prefix><gray>invalid choice</gray>",
-  
+
   "single.single_area_missing_selection": "<prefix><red>Error! You need to select a square region.</red>",
   "single.single_area_not_square": "<prefix><red>Error! Your selection needs to be a square.</red>",
   "single.single_area_overlapping": "<prefix><red>Error! Your selection overlaps with an existing plot area.</red>",
@@ -510,7 +510,7 @@
   "single.delete_world_region": "<prefix><red>Stop the server and delete: <world>/region.</red>",
   "single.regeneration_complete": "<prefix><gold>Regeneration complete.</gold>",
   "single.worldcreation_location": "<prefix><gold>World creation settings may be stored in multiple locations:</gold>\n<dark_gray> - </dark_gray><gray>bukkit.yml in your server's root folder.</gray>\n<dark_gray> - </dark_gray><gray>PlotSquared's settings.yml</gray>\n<dark_gray> - </dark_gray><gray>Hyperverse's worlds.yml (or any world management plugin)</gray>\n<dark_gray> - </dark_gray><red>Stop the server and delete it from these locations.</red>",
- 
+
   "legacyconfig.legacy_config_found": "<prefix><green>A legacy configuration file was detected. Conversion will be attempted.</green>",
   "legacyconfig.legacy_config_backup": "<prefix><gold>A copy of worlds.yml has been saved in the file worlds.yml.old</gold>.",
   "legacyconfig.legacy_config_replaced": "<prefix><gray><value1> has been replaced with <value2></gray>",
@@ -522,7 +522,7 @@
   "update.internal_version": "<prefix><gold>You are running version </gold><dark_aqua><p2version></dark_aqua>",
   "update.spigot_version": "<prefix><gold>Latest version is </gold><dark_aqua><spigotversion></dark_aqua>",
   "update.download": "<prefix><gold>Download the update at: <click:open_url:<downloadurl>><downloadurl></click>",
- 
+
   "flag.flag_key": "<gray>Key: <key></gray>",
   "flag.flag_desc": "<gray>Desc: <value></gray>",
   "flag.not_valid_flag": "<red>That is not a valid flag.</red>",
@@ -538,7 +538,7 @@
   "flag.flag_info_header": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Flags </gold><dark_gray><strikethrough>---------<reset>",
   "flag.flag_info_footer": "<dark_gray><strikethrough>---------<reset> <gold>PlotSquared Flags </gold><dark_gray><strikethrough>---------<reset>",
   "flag.flag_list_categories": "<gold><category>: </gold>",
-  "flag.flag_list_flag": "<click:run_command:<command>><hover:show_text:<gray>Click to view information about the flag.</gray>><gray><flag></gray></hover></click><gray><suffix></gray>",
+  "flag.flag_list_flag": "<click:run_command:<command>><hover:show_text:\"<gray>Click to view information about the flag.</gray>\"><gray><flag></gray></hover></click><gray><suffix></gray>",
   "flag.flag_info_name": "<gray>Name: <gold><flag></gold></gray>",
   "flag.flag_info_category": "<gray>Category: </gray>",
   "flag.flag_info_description": "<gray>Description: </gray>",
@@ -638,7 +638,7 @@
   "flags.flag_description_keep": "<gray>Prevents the plot from expiring. Can be set to: true, false, the number of milliseconds to keep the plot for or a timestamp (3w 2d 5h).</gray>",
   "flags.flag_description_keep_inventory": "<gray>Prevents players from dropping their items when they die inside of the plot.</gray>",
   "flags.flag_description_prevent_creative_copy": "<gray>Prevents people from copying item NBT data in the plot unless they're added as members.</gray>",
-  
+
   "flags.flag_error_boolean": "<prefix><red>Flag value must be a boolean (true | false)</red>",
   "flags.flag_error_enum": "<prefix><red>Must be one of: <list></red>",
   "flags.flag_error_gamemode": "<prefix><red>Flag value must be a gamemode: 'survival', 'creative', 'adventure' or 'spectator.</red>",

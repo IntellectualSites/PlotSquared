@@ -29,9 +29,7 @@ import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
-import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
@@ -110,11 +108,13 @@ public class Area extends SubCommand {
     private final Map<UUID, Map<String, Object>> metaData = new HashMap<>();
 
     @Inject public Area(@Nonnull final PlotAreaManager plotAreaManager,
-        @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-        @WorldFile @Nonnull final File worldFile,
-        @Nonnull final HybridPlotWorldFactory hybridPlotWorldFactory,
-        @Nonnull final SetupUtils setupUtils, @Nonnull final WorldUtil worldUtil,
-        @Nonnull final RegionManager regionManager, @Nonnull final GlobalBlockQueue blockQueue) {
+                        @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
+                        @WorldFile @Nonnull final File worldFile,
+                        @Nonnull final HybridPlotWorldFactory hybridPlotWorldFactory,
+                        @Nonnull final SetupUtils setupUtils,
+                        @Nonnull final WorldUtil worldUtil,
+                        @Nonnull final RegionManager regionManager,
+                        @Nonnull final GlobalBlockQueue blockQueue) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;
@@ -137,31 +137,26 @@ public class Area extends SubCommand {
                     return false;
                 }
                 if (!Permissions.hasPermission(player, "plots.area.create")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.area.create"));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.create"));
                     return false;
                 }
                 if (args.length < 2) {
-                    player.sendMessage(TranslatableCaption.of("single.single_area_needs_name"),
-                            Template.of("command", "/plot area single <name>"));
+                    player.sendMessage(TranslatableCaption.of("single.single_area_needs_name"), Template.of("command", "/plot area single <name>"));
                     return false;
                 }
-                final PlotArea existingArea =
-                    this.plotAreaManager.getPlotArea(player.getLocation().getWorldName(), args[1]);
+                final PlotArea existingArea = this.plotAreaManager.getPlotArea(player.getLocation().getWorldName(), args[1]);
                 if (existingArea != null && existingArea.getId().equalsIgnoreCase(args[1])) {
                     player.sendMessage(TranslatableCaption.of("single.single_area_name_taken"));
                     return false;
                 }
-                final LocalSession localSession =
-                    WorldEdit.getInstance().getSessionManager().getIfPresent(player.toActor());
+                final LocalSession localSession = WorldEdit.getInstance().getSessionManager().getIfPresent(player.toActor());
                 if (localSession == null) {
                     player.sendMessage(TranslatableCaption.of("single.single_area_missing_selection"));
                     return false;
                 }
                 Region playerSelectedRegion = null;
                 try {
-                    playerSelectedRegion =
-                        localSession.getSelection(((Player) player.toActor()).getWorld());
+                    playerSelectedRegion = localSession.getSelection(((Player) player.toActor()).getWorld());
                 } catch (final Exception ignored) {
                 }
                 if (playerSelectedRegion == null) {
@@ -172,8 +167,8 @@ public class Area extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("single.single_area_not_square"));
                     return false;
                 }
-                if (this.plotAreaManager.getPlotAreas(
-                    Objects.requireNonNull(playerSelectedRegion.getWorld()).getName(), CuboidRegion.makeCuboid(playerSelectedRegion)).length != 0) {
+                if (this.plotAreaManager.getPlotAreas(Objects.requireNonNull(playerSelectedRegion.getWorld()).getName(),
+                    CuboidRegion.makeCuboid(playerSelectedRegion)).length != 0) {
                     player.sendMessage(TranslatableCaption.of("single.single_area_overlapping"));
                 }
                 // Alter the region
@@ -181,18 +176,15 @@ public class Area extends SubCommand {
                 final BlockVector3 playerSelectionMax = playerSelectedRegion.getMaximumPoint();
                 // Create a new selection that spans the entire vertical range of the world
                 final CuboidRegion selectedRegion =
-                    new CuboidRegion(playerSelectedRegion.getWorld(),
-                        BlockVector3.at(playerSelectionMin.getX(), 0, playerSelectionMin.getZ()),
+                    new CuboidRegion(playerSelectedRegion.getWorld(), BlockVector3.at(playerSelectionMin.getX(), 0, playerSelectionMin.getZ()),
                         BlockVector3.at(playerSelectionMax.getX(), 255, playerSelectionMax.getZ()));
                 // There's only one plot in the area...
                 final PlotId plotId = PlotId.of(1, 1);
                 final HybridPlotWorld hybridPlotWorld = this.hybridPlotWorldFactory
-                    .create(player.getLocation().getWorldName(), args[1],
-                        Objects.requireNonNull(PlotSquared.platform()).getDefaultGenerator(),
+                    .create(player.getLocation().getWorldName(), args[1], Objects.requireNonNull(PlotSquared.platform()).getDefaultGenerator(),
                         plotId, plotId);
                 // Plot size is the same as the region width
-                hybridPlotWorld.PLOT_WIDTH =
-                    hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
+                hybridPlotWorld.PLOT_WIDTH = hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
                 // We use a schematic generator
                 hybridPlotWorld.setTerrain(PlotAreaTerrainType.NONE);
                 // It is always a partial plot world
@@ -200,30 +192,24 @@ public class Area extends SubCommand {
                 // We save the schematic :D
                 hybridPlotWorld.PLOT_SCHEMATIC = true;
                 // Set the road width to 0
-                hybridPlotWorld.ROAD_WIDTH =
-                    hybridPlotWorld.ROAD_OFFSET_X = hybridPlotWorld.ROAD_OFFSET_Z = 0;
+                hybridPlotWorld.ROAD_WIDTH = hybridPlotWorld.ROAD_OFFSET_X = hybridPlotWorld.ROAD_OFFSET_Z = 0;
                 // Set the plot height to the selection height
-                hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT =
-                    hybridPlotWorld.WALL_HEIGHT = playerSelectionMin.getBlockY();
+                hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT = hybridPlotWorld.WALL_HEIGHT = playerSelectionMin.getBlockY();
                 // No sign plz
                 hybridPlotWorld.setAllowSigns(false);
                 final File parentFile = FileUtils.getFile(PlotSquared.platform().getDirectory(),
-                    "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator
-                        + hybridPlotWorld.getWorldName() + File.separator + hybridPlotWorld
-                        .getId());
+                    "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + hybridPlotWorld.getWorldName() + File.separator
+                        + hybridPlotWorld.getId());
                 if (!parentFile.exists() && !parentFile.mkdirs()) {
                     player.sendMessage(TranslatableCaption.of("single.single_area_could_not_make_directories"));
                     return false;
                 }
                 final File file = new File(parentFile, "plot.schem");
-                try (final ClipboardWriter clipboardWriter = BuiltInClipboardFormat.SPONGE_SCHEMATIC
-                    .getWriter(new FileOutputStream(file))) {
+                try (final ClipboardWriter clipboardWriter = BuiltInClipboardFormat.SPONGE_SCHEMATIC.getWriter(new FileOutputStream(file))) {
                     final BlockArrayClipboard clipboard = new BlockArrayClipboard(selectedRegion);
-                    final EditSession editSession = WorldEdit.getInstance().getEditSessionFactory()
-                        .getEditSession(selectedRegion.getWorld(), -1);
+                    final EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(selectedRegion.getWorld(), -1);
                     final ForwardExtentCopy forwardExtentCopy =
-                        new ForwardExtentCopy(editSession, selectedRegion, clipboard,
-                            selectedRegion.getMinimumPoint());
+                        new ForwardExtentCopy(editSession, selectedRegion, clipboard, selectedRegion.getMinimumPoint());
                     forwardExtentCopy.setCopyingBiomes(true);
                     forwardExtentCopy.setCopyingEntities(true);
                     Operations.complete(forwardExtentCopy);
@@ -245,15 +231,12 @@ public class Area extends SubCommand {
                 final BlockVector3 singlePos1 = selectedRegion.getMinimumPoint();
 
                 // Now the schematic is saved, which is wonderful!
-                PlotAreaBuilder singleBuilder = PlotAreaBuilder.ofPlotArea(hybridPlotWorld)
-                    .plotManager(PlotSquared.platform().getPluginName())
-                    .generatorName(PlotSquared.platform().getPluginName()).maximumId(plotId)
-                    .minimumId(plotId);
+                PlotAreaBuilder singleBuilder = PlotAreaBuilder.ofPlotArea(hybridPlotWorld).plotManager(PlotSquared.platform().getPluginName())
+                    .generatorName(PlotSquared.platform().getPluginName()).maximumId(plotId).minimumId(plotId);
                 Runnable singleRun = () -> {
                     final String path =
-                        "worlds." + hybridPlotWorld.getWorldName() + ".areas." + hybridPlotWorld
-                            .getId() + '-' + singleBuilder.minimumId() + '-' + singleBuilder
-                            .maximumId();
+                        "worlds." + hybridPlotWorld.getWorldName() + ".areas." + hybridPlotWorld.getId() + '-' + singleBuilder.minimumId() + '-'
+                            + singleBuilder.maximumId();
                     final int offsetX = singlePos1.getX();
                     final int offsetZ = singlePos1.getZ();
                     if (offsetX != 0) {
@@ -267,10 +250,7 @@ public class Area extends SubCommand {
                         PlotSquared.get().loadWorld(world, null);
                         player.sendMessage(TranslatableCaption.of("single.single_area_created"));
                     } else {
-                        player.sendMessage(
-                                TranslatableCaption.of("errors.error_create"),
-                                           Template.of("world", hybridPlotWorld.getWorldName())
-                        );
+                        player.sendMessage(TranslatableCaption.of("errors.error_create"), Template.of("world", hybridPlotWorld.getWorldName()));
                     }
                 };
                 singleRun.run();
@@ -279,8 +259,7 @@ public class Area extends SubCommand {
             case "setup":
             case "create":
                 if (!Permissions.hasPermission(player, "plots.area.create")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.area.create"));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.create"));
                     return false;
                 }
                 switch (args.length) {
@@ -291,103 +270,82 @@ public class Area extends SubCommand {
                     case 2:
                         switch (args[1].toLowerCase()) {
                             case "pos1": { // Set position 1
-                                HybridPlotWorld area = (HybridPlotWorld) metaData
-                                    .computeIfAbsent(player.getUUID(),
-                                        missingUUID -> new HashMap<>()).get("area_create_area");
+                                HybridPlotWorld area = (HybridPlotWorld) metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>())
+                                    .get("area_create_area");
                                 if (area == null) {
                                     player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
                                         Templates.of("value", "/plot area create [world[:id]] [<modifier>=<value>]..."));
                                     return false;
                                 }
                                 Location location = player.getLocation();
-                                metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>())
-                                    .put("area_pos1", location);
-                                player.sendMessage(TranslatableCaption.of("set.set_attribute"),
-                                        Template.of("attribute", "area_pos1"),
-                                        Template.of("value", location.getX() + "," + location.getZ()));
-                                player.sendMessage(TranslatableCaption.of("area.set_pos2"),
-                                        Template.of("command", "/plot area create pos2"));
+                                metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).put("area_pos1", location);
+                                player.sendMessage(TranslatableCaption.of("set.set_attribute"), Template.of("attribute", "area_pos1"),
+                                    Template.of("value", location.getX() + "," + location.getZ()));
+                                player.sendMessage(TranslatableCaption.of("area.set_pos2"), Template.of("command", "/plot area create pos2"));
                                 return true;
                             }
                             case "pos2":  // Set position 2 and finish creation for type=2 (partial)
-                                final HybridPlotWorld area = (HybridPlotWorld) metaData
-                                    .computeIfAbsent(player.getUUID(),
-                                        missingUUID -> new HashMap<>()).get("area_create_area");
+                                final HybridPlotWorld area =
+                                    (HybridPlotWorld) metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>())
+                                        .get("area_create_area");
                                 if (area == null) {
                                     player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
                                         Templates.of("value", "/plot area create [world[:id]] [<modifier>=<value>]..."));
                                     return false;
                                 }
                                 Location pos1 = player.getLocation();
-                                Location pos2 = (Location) metaData
-                                    .computeIfAbsent(player.getUUID(),
-                                        missingUUID -> new HashMap<>()).get("area_pos1");
+                                Location pos2 =
+                                    (Location) metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).get("area_pos1");
                                 int dx = Math.abs(pos1.getX() - pos2.getX());
                                 int dz = Math.abs(pos1.getZ() - pos2.getZ());
-                                int numX = Math.max(1,
-                                    (dx + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
-                                int numZ = Math.max(1,
-                                    (dz + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
+                                int numX = Math.max(1, (dx + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
+                                int numZ = Math.max(1, (dz + 1 + area.ROAD_WIDTH + area.SIZE / 2) / area.SIZE);
                                 int ddx = dx - (numX * area.SIZE - area.ROAD_WIDTH);
                                 int ddz = dz - (numZ * area.SIZE - area.ROAD_WIDTH);
                                 int bx = Math.min(pos1.getX(), pos2.getX()) + ddx;
                                 int bz = Math.min(pos1.getZ(), pos2.getZ()) + ddz;
                                 int tx = Math.max(pos1.getX(), pos2.getX()) - ddx;
                                 int tz = Math.max(pos1.getZ(), pos2.getZ()) - ddz;
-                                int lower = (area.ROAD_WIDTH & 1) == 0 ?
-                                    area.ROAD_WIDTH / 2 - 1 :
-                                    area.ROAD_WIDTH / 2;
+                                int lower = (area.ROAD_WIDTH & 1) == 0 ? area.ROAD_WIDTH / 2 - 1 : area.ROAD_WIDTH / 2;
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final CuboidRegion region = RegionUtil.createRegion(bx, tx, bz, tz);
-                                final Set<PlotArea> areas = this.plotAreaManager
-                                    .getPlotAreasSet(area.getWorldName(), region);
+                                final Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(area.getWorldName(), region);
                                 if (!areas.isEmpty()) {
                                     player.sendMessage(TranslatableCaption.of("cluster.cluster_intersection"),
-                                            Template.of("cluster", areas.iterator().next().toString()));
+                                        Template.of("cluster", areas.iterator().next().toString()));
                                     return false;
                                 }
-                                PlotAreaBuilder builder = PlotAreaBuilder.ofPlotArea(area)
-                                    .plotManager(PlotSquared.platform().getPluginName())
-                                    .generatorName(PlotSquared.platform().getPluginName())
-                                    .minimumId(PlotId.of(1, 1)).maximumId(PlotId.of(numX, numZ));
+                                PlotAreaBuilder builder = PlotAreaBuilder.ofPlotArea(area).plotManager(PlotSquared.platform().getPluginName())
+                                    .generatorName(PlotSquared.platform().getPluginName()).minimumId(PlotId.of(1, 1))
+                                    .maximumId(PlotId.of(numX, numZ));
                                 final String path =
-                                    "worlds." + area.getWorldName() + ".areas." + area.getId() + '-'
-                                        + builder.minimumId() + '-' + builder.maximumId();
+                                    "worlds." + area.getWorldName() + ".areas." + area.getId() + '-' + builder.minimumId() + '-' + builder
+                                        .maximumId();
                                 Runnable run = () -> {
                                     if (offsetX != 0) {
-                                        this.worldConfiguration
-                                            .set(path + ".road.offset.x", offsetX);
+                                        this.worldConfiguration.set(path + ".road.offset.x", offsetX);
                                     }
                                     if (offsetZ != 0) {
-                                        this.worldConfiguration
-                                            .set(path + ".road.offset.z", offsetZ);
+                                        this.worldConfiguration.set(path + ".road.offset.z", offsetZ);
                                     }
                                     final String world = this.setupUtils.setupWorld(builder);
                                     if (this.worldUtil.isWorld(world)) {
                                         PlotSquared.get().loadWorld(world, null);
                                         player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
-                                        player.teleport(this.worldUtil.getSpawn(world),
-                                            TeleportCause.COMMAND);
+                                        player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
                                         if (area.getTerrain() != PlotAreaTerrainType.ALL) {
-                                            QueueCoordinator queue =
-                                                blockQueue.getNewQueue(worldUtil.getWeWorld(world));
-                                            queue.setChunkConsumer(chunk -> AugmentedUtils
-                                                .generate(null, world, chunk.getX(), chunk.getZ(),
-                                                    null));
+                                            QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
+                                            queue.setChunkConsumer(chunk -> AugmentedUtils.generate(null, world, chunk.getX(), chunk.getZ(), null));
                                             queue.addReadChunks(region.getChunks());
                                             queue.enqueue();
                                         }
                                     } else {
-                                        player.sendMessage(
-                                                TranslatableCaption.of("errors.error_create"),
-                                                Template.of("world", area.getWorldName())
-                                        );
+                                        player.sendMessage(TranslatableCaption.of("errors.error_create"), Template.of("world", area.getWorldName()));
                                     }
                                 };
                                 if (hasConfirmation(player)) {
-                                    CmdConfirm.addPending(player,
-                                        getCommandString() + " create pos2 (Creates world)", run);
+                                    CmdConfirm.addPending(player, getCommandString() + " create pos2 (Creates world)", run);
                                 } else {
                                     run.run();
                                 }
@@ -403,17 +361,14 @@ public class Area extends SubCommand {
                         }
                         PlotAreaBuilder builder = PlotAreaBuilder.newBuilder();
                         builder.worldName(split[0]);
-                        final HybridPlotWorld pa = this.hybridPlotWorldFactory
-                            .create(builder.worldName(), id,
-                                PlotSquared.platform().getDefaultGenerator(), null, null);
+                        final HybridPlotWorld pa =
+                            this.hybridPlotWorldFactory.create(builder.worldName(), id, PlotSquared.platform().getDefaultGenerator(), null, null);
                         PlotArea other = this.plotAreaManager.getPlotArea(pa.getWorldName(), id);
                         if (other != null && Objects.equals(pa.getId(), other.getId())) {
-                            player.sendMessage(TranslatableCaption.of("setup.setup_world_taken"),
-                                    Template.of("value", pa.toString()));
+                            player.sendMessage(TranslatableCaption.of("setup.setup_world_taken"), Template.of("value", pa.toString()));
                             return false;
                         }
-                        Set<PlotArea> areas =
-                            this.plotAreaManager.getPlotAreasSet(pa.getWorldName());
+                        Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(pa.getWorldName());
                         if (!areas.isEmpty()) {
                             PlotArea area = areas.iterator().next();
                             pa.setType(area.getType());
@@ -422,11 +377,9 @@ public class Area extends SubCommand {
                         for (int i = 2; i < args.length; i++) {
                             String[] pair = args[i].split("=");
                             if (pair.length != 2) {
-                                player.sendMessage(
-                                        TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                        Template.of("value1,", getCommandString()),
-                                        Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
-                                );
+                                player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                                    Template.of("value1,", getCommandString()),
+                                    Template.of("value2", " create [world[:id]] [<modifier>=<value>]..."));
                                 return false;
                             }
                             switch (pair[0].toLowerCase()) {
@@ -449,49 +402,40 @@ public class Area extends SubCommand {
                                     break;
                                 case "f":
                                 case "floor":
-                                    pa.TOP_BLOCK =
-                                        ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.TOP_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "m":
                                 case "main":
-                                    pa.MAIN_BLOCK =
-                                        ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.MAIN_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "w":
                                 case "wall":
-                                    pa.WALL_FILLING =
-                                        ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.WALL_FILLING = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "b":
                                 case "border":
-                                    pa.WALL_BLOCK =
-                                        ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                    pa.WALL_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
                                     break;
                                 case "terrain":
                                     pa.setTerrain(PlotAreaTerrainType.fromString(pair[1])
-                                        .orElseThrow(() -> new IllegalArgumentException(
-                                            pair[1] + " is not a valid terrain.")));
+                                        .orElseThrow(() -> new IllegalArgumentException(pair[1] + " is not a valid terrain.")));
                                     builder.terrainType(pa.getTerrain());
                                     break;
                                 case "type":
-                                    pa.setType(PlotAreaType.fromString(pair[1]).orElseThrow(
-                                        () -> new IllegalArgumentException(
-                                            pair[1] + " is not a valid type.")));
+                                    pa.setType(PlotAreaType.fromString(pair[1])
+                                        .orElseThrow(() -> new IllegalArgumentException(pair[1] + " is not a valid type.")));
                                     builder.plotAreaType(pa.getType());
                                     break;
                                 default:
-                                    player.sendMessage(
-                                            TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                            Template.of("value1", getCommandString()),
-                                            Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
-                                    );
+                                    player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                                        Template.of("value1", getCommandString()),
+                                        Template.of("value2", " create [world[:id]] [<modifier>=<value>]..."));
                                     return false;
                             }
                         }
                         if (pa.getType() != PlotAreaType.PARTIAL) {
                             if (this.worldUtil.isWorld(pa.getWorldName())) {
-                                player.sendMessage(TranslatableCaption.of("setup.setup_world_taken"),
-                                        Template.of("value", pa.getWorldName()));
+                                player.sendMessage(TranslatableCaption.of("setup.setup_world_taken"), Template.of("value", pa.getWorldName()));
                                 return false;
                             }
                             Runnable run = () -> {
@@ -499,8 +443,7 @@ public class Area extends SubCommand {
                                 if (!this.worldConfiguration.contains(path)) {
                                     this.worldConfiguration.createSection(path);
                                 }
-                                ConfigurationSection section =
-                                    this.worldConfiguration.getConfigurationSection(path);
+                                ConfigurationSection section = this.worldConfiguration.getConfigurationSection(path);
                                 pa.saveConfiguration(section);
                                 pa.loadConfiguration(section);
                                 builder.plotManager(PlotSquared.platform().getPluginName());
@@ -508,13 +451,9 @@ public class Area extends SubCommand {
                                 String world = this.setupUtils.setupWorld(builder);
                                 if (this.worldUtil.isWorld(world)) {
                                     player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
-                                    player.teleport(this.worldUtil.getSpawn(world),
-                                        TeleportCause.COMMAND);
+                                    player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
                                 } else {
-                                    player.sendMessage(
-                                            TranslatableCaption.of("errors.error_create"),
-                                            Template.of("world", pa.getWorldName())
-                                    );
+                                    player.sendMessage(TranslatableCaption.of("errors.error_create"), Template.of("world", pa.getWorldName()));
                                 }
                                 try {
                                     this.worldConfiguration.save(this.worldFile);
@@ -523,49 +462,37 @@ public class Area extends SubCommand {
                                 }
                             };
                             if (hasConfirmation(player)) {
-                                CmdConfirm.addPending(player,
-                                    getCommandString() + ' ' + StringMan.join(args, " "), run);
+                                CmdConfirm.addPending(player, getCommandString() + ' ' + StringMan.join(args, " "), run);
                             } else {
                                 run.run();
                             }
                             return true;
                         }
                         if (pa.getId() == null) {
-                            player.sendMessage(
-                                    TranslatableCaption.of("commandconfig.command_syntax"),
-                                    Template.of("value", getUsage()));
-                            player.sendMessage(
-                                    TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                    Template.of("value1", getCommandString()),
-                                    Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
-                            );
+                            player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"), Template.of("value", getUsage()));
+                            player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                                Template.of("value1", getCommandString()), Template.of("value2", " create [world[:id]] [<modifier>=<value>]..."));
                             return false;
                         }
                         if (this.worldUtil.isWorld(pa.getWorldName())) {
                             if (!player.getLocation().getWorldName().equals(pa.getWorldName())) {
-                                player.teleport(this.worldUtil.getSpawn(pa.getWorldName()),
-                                    TeleportCause.COMMAND);
+                                player.teleport(this.worldUtil.getSpawn(pa.getWorldName()), TeleportCause.COMMAND);
                             }
                         } else {
                             builder.terrainType(PlotAreaTerrainType.NONE);
                             builder.plotAreaType(PlotAreaType.NORMAL);
                             this.setupUtils.setupWorld(builder);
-                            player.teleport(this.worldUtil.getSpawn(pa.getWorldName()),
-                                TeleportCause.COMMAND);
+                            player.teleport(this.worldUtil.getSpawn(pa.getWorldName()), TeleportCause.COMMAND);
                         }
                         metaData.computeIfAbsent(player.getUUID(), missingUUID -> new HashMap<>()).put("area_create_area", pa);
-                        player.sendMessage(
-                        TranslatableCaption.of("single.get_position"),
-                                Template.of("command", getCommandString())
-                                );
+                        player.sendMessage(TranslatableCaption.of("single.get_position"), Template.of("command", getCommandString()));
                         break;
                 }
                 return true;
             case "i":
             case "info": {
                 if (!Permissions.hasPermission(player, "plots.area.info")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.area.info"));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.info"));
                     return false;
                 }
                 PlotArea area;
@@ -577,17 +504,13 @@ public class Area extends SubCommand {
                         area = this.plotAreaManager.getPlotAreaByString(args[1]);
                         break;
                     default:
-                        player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                Template.of("value1", getCommandString()),
-                                Template.of("value2", " info [area]")
-                        );
+                        player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax_extended"), Template.of("value1", getCommandString()),
+                            Template.of("value2", " info [area]"));
                         return false;
                 }
                 if (area == null) {
                     if (args.length == 2) {
-                        player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"),
-                                Template.of("value", args[1]));
+                        player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"), Template.of("value", args[1]));
                     } else {
                         player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                     }
@@ -616,11 +539,11 @@ public class Area extends SubCommand {
                 Template typeTemplate = Template.of("type", area.getType().name());
                 Template terrainTemplate = Template.of("terrain", area.getTerrain().name());
                 Template usageTemplate = Template.of("usage", String.format("%.2f", percent));
-                Template claimedTemplate = Template.of("name", String.valueOf(claimed));
-                Template clustersTemplate = Template.of("name", String.valueOf(clusters));
-                Template regionTemplate = Template.of("name", region);
-                Template generatorTemplate = Template.of("name", generator);
-                Template footerTemplate = Template.of("name", TranslatableCaption.of("info.plot_info_footer").getComponent(player));
+                Template claimedTemplate = Template.of("claimed", String.valueOf(claimed));
+                Template clustersTemplate = Template.of("clusters", String.valueOf(clusters));
+                Template regionTemplate = Template.of("region", region);
+                Template generatorTemplate = Template.of("generator", generator);
+                Template footerTemplate = Template.of("footer", TranslatableCaption.of("info.plot_info_footer").getComponent(player));
                 player.sendMessage(TranslatableCaption.of("info.area_info_format"), headerTemplate, nameTemplate, typeTemplate, terrainTemplate,
                     usageTemplate, claimedTemplate, clustersTemplate, regionTemplate, generatorTemplate, footerTemplate);
                 return true;
@@ -628,8 +551,7 @@ public class Area extends SubCommand {
             case "l":
             case "list":
                 if (!Permissions.hasPermission(player, "plots.area.list")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.area.list"));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.list"));
                     return false;
                 }
                 int page;
@@ -643,86 +565,71 @@ public class Area extends SubCommand {
                             break;
                         }
                     default:
-                        player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax_extended"),
-                                Template.of("value1", getCommandString()),
-                                Template.of("value2", " list [#]")
-                        );
+                        player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax_extended"), Template.of("value1", getCommandString()),
+                            Template.of("value2", " list [#]"));
                         return false;
                 }
-                final List<PlotArea> areas =
-                    new ArrayList<>(Arrays.asList(this.plotAreaManager.getAllPlotAreas()));
-                paginate(player, areas, 8, page,
-                    new RunnableVal3<Integer, PlotArea, CaptionHolder>() {
-                        @Override public void run(Integer i, PlotArea area, CaptionHolder caption) {
-                            String name;
-                            double percent;
-                            int claimed = area.getPlotCount();
-                            int clusters = area.getClusters().size();
-                            String region;
-                            String generator = String.valueOf(area.getGenerator());
-                            if (area.getType() == PlotAreaType.PARTIAL) {
-                                PlotId min = area.getMin();
-                                PlotId max = area.getMax();
-                                name = area.getWorldName() + ';' + area.getId() + ';' + min + ';'
-                                    + max;
-                                int size =
-                                    (max.getX() - min.getX() + 1) * (max.getY() - min.getY() + 1);
-                                percent = claimed == 0 ? 0 : size / (double) claimed;
-                                region = area.getRegion().toString();
-                            } else {
-                                name = area.getWorldName();
-                                percent = claimed == 0 ? 0 : Short.MAX_VALUE * Short.MAX_VALUE / (double) claimed;
-                                region = "N/A";
-                            }
-                            Template claimedTemplate = Template.of("claimed", String.valueOf(claimed));
-                            Template usageTemplate = Template.of("usage", String.format("%.2f", percent) + "%");
-                            Template clustersTemplate = Template.of("clusters", String.valueOf(clusters));
-                            Template regionTemplate = Template.of("region", region);
-                            Template generatorTemplate = Template.of("generator", generator);
-                            String tooltip = MINI_MESSAGE.serialize(MINI_MESSAGE
-                                .parse(TranslatableCaption.of("info.area_list_tooltip").getComponent(player), claimedTemplate, usageTemplate,
-                                    clustersTemplate, regionTemplate, generatorTemplate));
-                            Template tooltipTemplate = Template.of("hover_info", tooltip);
-                            Template visitcmdTemplate = Template.of("command_tp", "/plot area tp " + area.toString());
-                            Template numberTemplate = Template.of("number", String.valueOf(i));
-                            Template nameTemplate = Template.of("area_name", name);
-                            Template typeTemplate = Template.of("area_type", area.getType().name());
-                            Template terrainTemplate = Template.of("area_terrain", area.getTerrain().name());
-                            Caption item = TranslatableCaption.of("info.area_list_item");
-                            caption.set(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                                .parse(item.getComponent(player), tooltipTemplate, visitcmdTemplate, numberTemplate, nameTemplate, typeTemplate,
-                                    terrainTemplate))));
+                final List<PlotArea> areas = new ArrayList<>(Arrays.asList(this.plotAreaManager.getAllPlotAreas()));
+                paginate(player, areas, 8, page, new RunnableVal3<Integer, PlotArea, CaptionHolder>() {
+                    @Override public void run(Integer i, PlotArea area, CaptionHolder caption) {
+                        String name;
+                        double percent;
+                        int claimed = area.getPlotCount();
+                        int clusters = area.getClusters().size();
+                        String region;
+                        String generator = String.valueOf(area.getGenerator());
+                        if (area.getType() == PlotAreaType.PARTIAL) {
+                            PlotId min = area.getMin();
+                            PlotId max = area.getMax();
+                            name = area.getWorldName() + ';' + area.getId() + ';' + min + ';' + max;
+                            int size = (max.getX() - min.getX() + 1) * (max.getY() - min.getY() + 1);
+                            percent = claimed == 0 ? 0 : claimed / (double) size;
+                            region = area.getRegion().toString();
+                        } else {
+                            name = area.getWorldName();
+                            percent = claimed == 0 ? 0 : (double) claimed / Short.MAX_VALUE * Short.MAX_VALUE;
+                            region = "N/A";
                         }
-                    }, "/plot area list", TranslatableCaption.of("list.area_list_header_paged"));
+                        Template claimedTemplate = Template.of("claimed", String.valueOf(claimed));
+                        Template usageTemplate = Template.of("usage", String.format("%.2f", percent) + "%");
+                        Template clustersTemplate = Template.of("clusters", String.valueOf(clusters));
+                        Template regionTemplate = Template.of("region", region);
+                        Template generatorTemplate = Template.of("generator", generator);
+                        String tooltip = MINI_MESSAGE.serialize(MINI_MESSAGE
+                            .parse(TranslatableCaption.of("info.area_list_tooltip").getComponent(player), claimedTemplate, usageTemplate,
+                                clustersTemplate, regionTemplate, generatorTemplate));
+                        Template tooltipTemplate = Template.of("hover_info", tooltip);
+                        Template visitcmdTemplate = Template.of("command_tp", "/plot area tp " + area.toString());
+                        Template infocmdTemplate = Template.of("command_info", "/plot area info " + area.toString());
+                        Template numberTemplate = Template.of("number", String.valueOf(i));
+                        Template nameTemplate = Template.of("area_name", name);
+                        Template typeTemplate = Template.of("area_type", area.getType().name());
+                        Template terrainTemplate = Template.of("area_terrain", area.getTerrain().name());
+                        caption.set(TranslatableCaption.of("info.area_list_item"));
+                        caption.setTemplates(tooltipTemplate, visitcmdTemplate, numberTemplate, nameTemplate, typeTemplate, terrainTemplate,
+                            infocmdTemplate);
+                    }
+                }, "/plot area list", TranslatableCaption.of("list.area_list_header_paged"));
                 return true;
             case "regen":
             case "clear":
             case "reset":
             case "regenerate": {
                 if (!Permissions.hasPermission(player, "plots.area.regen")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.area.regen"));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.regen"));
                     return false;
                 }
                 final PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
-                    player.sendMessage(
-                            TranslatableCaption.of("errors.not_in_plot_world")
-                    );
+                    player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
                     return false;
                 }
                 if (area.getType() != PlotAreaType.PARTIAL) {
-                    player.sendMessage(
-                            TranslatableCaption.of("single.delete_world_region"),
-                            Template.of("world", area.getWorldName())
-                    );
+                    player.sendMessage(TranslatableCaption.of("single.delete_world_region"), Template.of("world", area.getWorldName()));
                     return false;
                 }
-                QueueCoordinator queue =
-                    blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
-                queue.setChunkConsumer(chunk -> AugmentedUtils
-                    .generate(null, area.getWorldName(), chunk.getX(), chunk.getZ(), null));
+                QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(area.getWorldName()));
+                queue.setChunkConsumer(chunk -> AugmentedUtils.generate(null, area.getWorldName(), chunk.getX(), chunk.getZ(), null));
                 queue.addReadChunks(area.getRegion().getChunks());
                 queue.setCompleteTask(() -> player.sendMessage(TranslatableCaption.of("single.regeneration_complete")));
                 queue.enqueue();
@@ -734,21 +641,16 @@ public class Area extends SubCommand {
             case "visit":
             case "tp":
                 if (!Permissions.hasPermission(player, "plots.area.tp")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.area.tp"));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.tp"));
                     return false;
                 }
                 if (args.length != 2) {
-                    player.sendMessage(
-                            TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot visit [area]")
-                    );
+                    player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"), Template.of("value", "/plot visit [area]"));
                     return false;
                 }
                 PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
                 if (area == null) {
-                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"),
-                            Template.of("value", args[1]));
+                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"), Template.of("value", args[1]));
                     return false;
                 }
                 Location center;
@@ -757,14 +659,11 @@ public class Area extends SubCommand {
                     player.teleport(center, TeleportCause.COMMAND);
                 } else {
                     CuboidRegion region = area.getRegion();
-                    center = Location.at(area.getWorldName(), region.getMinimumPoint().getX()
-                            + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2,
-                        0, region.getMinimumPoint().getZ()
-                            + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ())
-                            / 2);
-                    this.worldUtil
-                        .getHighestBlock(area.getWorldName(), center.getX(), center.getZ(),
-                            y -> player.teleport(center.withY(1 + y), TeleportCause.COMMAND));
+                    center = Location.at(area.getWorldName(),
+                        region.getMinimumPoint().getX() + (region.getMaximumPoint().getX() - region.getMinimumPoint().getX()) / 2, 0,
+                        region.getMinimumPoint().getZ() + (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ()) / 2);
+                    this.worldUtil.getHighestBlock(area.getWorldName(), center.getX(), center.getZ(),
+                        y -> player.teleport(center.withY(1 + y), TeleportCause.COMMAND));
                 }
                 return true;
             case "delete":
