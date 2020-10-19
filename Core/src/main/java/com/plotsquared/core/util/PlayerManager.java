@@ -27,6 +27,7 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.ConsolePlayer;
@@ -34,6 +35,7 @@ import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
@@ -110,9 +112,9 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * - Uses the format {@link TranslatableCaption#of(String)} of "info.plot_user_list" for the returned string
      *
      * @param uuids UUIDs
-     * @return Name list
+     * @return Component of name list
      */
-    @Nonnull public static String getPlayerList(@Nonnull final Collection<UUID> uuids) {
+    @Nonnull public static Component getPlayerList(@Nonnull final Collection<UUID> uuids) {
         if (uuids.size() < 1) {
             TranslatableCaption.of("info.none");
         }
@@ -141,7 +143,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         }
 
         String c = TranslatableCaption.of("info.plot_user_list").getComponent(ConsolePlayer.getConsole());
-        Component list = MINI_MESSAGE.deserialize("");
+        TextComponent.Builder list = Component.text();
         for (int x = 0; x < users.size(); x++) {
             if (x + 1 == uuids.size()) {
                 list.append(MINI_MESSAGE.parse(c, Template.of("user", users.get(x))));
@@ -149,7 +151,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
                 list.append(MINI_MESSAGE.parse(c + ", ", Template.of("user", users.get(x))));
             }
         }
-        return list.toString();
+        return list.asComponent();
     }
 
     /**

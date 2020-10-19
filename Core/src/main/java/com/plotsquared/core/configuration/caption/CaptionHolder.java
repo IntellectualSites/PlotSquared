@@ -25,9 +25,12 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import net.kyori.adventure.text.minimessage.Template;
+
 public class CaptionHolder {
 
     private Caption caption = StaticCaption.of("");
+    private Template[] templates = new Template[0];
 
     public void set(Caption caption) {
         this.caption = caption;
@@ -35,6 +38,14 @@ public class CaptionHolder {
 
     public Caption get() {
         return this.caption;
+    }
+
+    public Template[] getTemplates() {
+        return this.templates;
+    }
+
+    public void setTemplates(Template... templates) {
+        this.templates = templates;
     }
 
 }
