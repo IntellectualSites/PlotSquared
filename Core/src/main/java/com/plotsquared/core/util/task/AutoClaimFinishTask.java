@@ -41,13 +41,13 @@ import java.util.concurrent.Callable;
 
 public final class AutoClaimFinishTask implements Callable<Boolean> {
 
-    private final PlotPlayer player;
+    private final PlotPlayer<?> player;
     private final Plot plot;
     private final PlotArea area;
     private final String schematic;
     private final EventDispatcher eventDispatcher;
 
-    public AutoClaimFinishTask(final PlotPlayer player, final Plot plot, final PlotArea area,
+    public AutoClaimFinishTask(final PlotPlayer<?>  player, final Plot plot, final PlotArea area,
         final String schematic, final EventDispatcher eventDispatcher) {
         this.player = player;
         this.plot = plot;
@@ -72,7 +72,7 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
                 player.sendMessage(TranslatableCaption.of("events.event_denied"),
                                    Templates.of("value", "Auto Merge"));
             } else {
-                plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), true);
+                plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), player, true);
             }
         }
         return true;

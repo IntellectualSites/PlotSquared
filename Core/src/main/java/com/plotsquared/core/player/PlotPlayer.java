@@ -575,7 +575,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         }
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
-                owned.getPlotModificationManager().deletePlot(null);
+                owned.getPlotModificationManager().deletePlot(null, null);
                 if (Settings.DEBUG) {
                     logger.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
                 }

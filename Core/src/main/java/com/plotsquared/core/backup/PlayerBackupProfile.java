@@ -29,6 +29,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.ConsolePlayer;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.schematic.Schematic;
 import com.plotsquared.core.util.SchematicHandler;
@@ -37,6 +38,7 @@ import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -166,7 +168,7 @@ public class PlayerBackupProfile implements BackupProfile {
         return future;
     }
 
-    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup) {
+    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup, @Nullable PlotPlayer<?> player) {
         final CompletableFuture<Void> future = new CompletableFuture<>();
         if (backup.getFile() == null || !Files.exists(backup.getFile())) {
             future.completeExceptionally(new IllegalArgumentException("The specific backup does not exist"));
@@ -181,7 +183,7 @@ public class PlayerBackupProfile implements BackupProfile {
                 if (schematic == null) {
                     future.completeExceptionally(new IllegalArgumentException("The backup is non-existent or not in the correct format"));
                 } else {
-                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
+                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, player, new RunnableVal<Boolean>() {
                         @Override public void run(Boolean value) {
                             if (value) {
                                 future.complete(null);

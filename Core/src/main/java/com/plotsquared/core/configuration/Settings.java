@@ -529,8 +529,24 @@ public class Settings extends Config {
     @Comment("Settings relating to PlotSquared's GlobalBlockQueue")
     public static final class QUEUE {
         @Comment({"Average time per tick spent completing chunk tasks in ms.",
-        "Waits (chunk task time / target_time) ticks before completely the next task."})
-        public static int TARGET_TIME = 65;
+            "Queue will adjust the batch size to match this."})
+        public static int MAX_ITERATION_TIME = 30;
+        @Comment({"Initial number of chunks to process by the queue. This can be increased or",
+            "decreased by the queue based on the actual iteration time compared to above."})
+        public static int INITIAL_BATCH_SIZE = 5;
+        @Comment("Notify progress of the queue to the player or console.")
+        public static boolean NOTIFY_PROGRESS = true;
+        @Comment("Interval in ms to notify player or console of progress.")
+        public static int NOTIFY_INTERVAL = 5000;
+        @Comment({"Time to wait in ms before beginning to notify player or console of progress.",
+            "Prevent needless notification of progress for short queues."})
+        public static int NOTIFY_WAIT = 5000;
+        @Comment({"How lighitng should be handled by the queue. Modes:",
+        "  - 0 - Do not do any lighting (fastest)",
+        "  - 1 - Only execute lighting where blocks with light values are placed",
+        "  - 2 - Only execute lighting where blocks with light values are placed or removed/replaced",
+        "  - 3 - Always execute lighting (slowest)"})
+        public static int LIGHTING_MODE = 1;
     }
 
     @Comment("Settings related to tab completion")

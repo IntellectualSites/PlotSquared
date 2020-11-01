@@ -26,6 +26,7 @@
 package com.plotsquared.core.inject.factory;
 
 import com.plotsquared.core.queue.ChunkCoordinator;
+import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 
@@ -42,6 +43,7 @@ public interface ChunkCoordinatorFactory {
                                      @Nonnull final Collection<BlockVector2> requestedChunks,
                                      @Nonnull final Runnable whenDone,
                                      @Nonnull final Consumer<Throwable> throwableConsumer,
-                                     final boolean unloadAfter);
+                                     final boolean unloadAfter,
+                                     @Nonnull final Collection<ProgressSubscriber> progressSubscribers);
 
 }

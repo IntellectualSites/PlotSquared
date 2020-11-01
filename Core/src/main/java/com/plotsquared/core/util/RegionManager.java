@@ -27,7 +27,11 @@ package com.plotsquared.core.util;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
@@ -59,10 +63,13 @@ public abstract class RegionManager {
     public static RegionManager manager = null;
     private final WorldUtil worldUtil;
     private final GlobalBlockQueue blockQueue;
+    private final ProgressSubscriberFactory subscriberFactory;
 
-    @Inject public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue) {
+    @Inject
+    public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue, @Nonnull ProgressSubscriberFactory subscriberFactory) {
         this.worldUtil = worldUtil;
         this.blockQueue = blockQueue;
+        this.subscriberFactory = subscriberFactory;
     }
 
     public static BlockVector2 getRegion(Location location) {
@@ -106,20 +113,25 @@ public abstract class RegionManager {
      * @param blocks  pattern
      * @param minY    y to set from
      * @param maxY    y to set to
+     * @param actor   the actor associated with the cuboid set
      * @param queue   Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *                otherwise writes to the queue but does not enqueue.
      * @return true if not enqueued, otherwise whether the created queue enqueued.
      */
-    public boolean setCuboids(final PlotArea area,
-                              final Set<CuboidRegion> regions,
-                              final Pattern blocks,
+    public boolean setCuboids(@Nonnull final PlotArea area,
+                              @Nonnull final Set<CuboidRegion> regions,
+                              @Nonnull final Pattern blocks,
                               int minY,
                               int maxY,
+                              @Nullable PlotPlayer<?> actor,
                               @Nullable QueueCoordinator queue) {
         boolean enqueue = false;
         if (queue == null) {
             queue = area.getQueue();
             enqueue = true;
+            if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+            }
         }
         for (CuboidRegion region : regions) {
             Location pos1 = Location.at(area.getWorldName(), region.getMinimumPoint().getX(), minY, region.getMinimumPoint().getZ());
@@ -145,9 +157,13 @@ public abstract class RegionManager {
      * @param plot     plot
      * @param whenDone task to run when complete
      * @param manager  plot manager
+     * @param actor    the player running the clear
      * @return true if the clear worked. False if someone went wrong so P2 can then handle the clear
      */
-    public abstract boolean handleClear(Plot plot, final Runnable whenDone, PlotManager manager);
+    public abstract boolean handleClear(@Nonnull Plot plot,
+                                        @Nullable final Runnable whenDone,
+                                        @Nonnull PlotManager manager,
+                                        @Nullable PlotPlayer<?> actor);
 
     /**
      * Copy a region to a new location (in the same world)
@@ -155,10 +171,15 @@ public abstract class RegionManager {
      * @param pos1     position 1
      * @param pos2     position 2
      * @param newPos   position to move pos1 to
+     * @param actor    the actor associated with the region copy
      * @param whenDone task to run when complete
      * @return success or not
      */
-    public boolean copyRegion(final Location pos1, final Location pos2, final Location newPos, final Runnable whenDone) {
+    public boolean copyRegion(@Nonnull final Location pos1,
+                              @Nonnull final Location pos2,
+                              @Nonnull final Location newPos,
+                              @Nullable final PlotPlayer<?> actor,
+                              @Nonnull final Runnable whenDone) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
         final com.sk89q.worldedit.world.World oldWorld = worldUtil.getWeWorld(pos1.getWorldName());
@@ -167,9 +188,17 @@ public abstract class RegionManager {
         final BasicQueueCoordinator copyTo = (BasicQueueCoordinator) blockQueue.getNewQueue(newWorld);
         copyFromTo(pos1, pos2, relX, relZ, oldWorld, copyFrom, copyTo, false);
         copyFrom.setCompleteTask(copyTo::enqueue);
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            copyFrom.addProgressSubscriber(subscriberFactory
+                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region_copy")));
+        }
         copyFrom
             .addReadChunks(new CuboidRegion(BlockVector3.at(pos1.getX(), 0, pos1.getZ()), BlockVector3.at(pos2.getX(), 0, pos2.getZ())).getChunks());
         copyTo.setCompleteTask(whenDone);
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            copyTo.addProgressSubscriber(subscriberFactory
+                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region_paste")));
+        }
         return copyFrom.enqueue();
     }
 
@@ -188,7 +217,16 @@ public abstract class RegionManager {
 
     public abstract void clearAllEntities(Location pos1, Location pos2);
 
-    public void swap(Location pos1, Location pos2, Location swapPos, final Runnable whenDone) {
+    /**
+     * Swap two regions withn the same world
+     *
+     * @param pos1     position 1
+     * @param pos2     position 2
+     * @param swapPos  position to swap with
+     * @param actor    the actor associated with the region copy
+     * @param whenDone task to run when complete
+     */
+    public void swap(Location pos1, Location pos2, Location swapPos, @Nullable final PlotPlayer<?> actor, final Runnable whenDone) {
         int relX = swapPos.getX() - pos1.getX();
         int relZ = swapPos.getZ() - pos1.getZ();
 
@@ -208,9 +246,26 @@ public abstract class RegionManager {
         copyFromTo(pos1, pos2, relX, relZ, world1, fromQueue1, toQueue2, true);
         copyFromTo(pos1, pos2, relX, relZ, world1, fromQueue2, toQueue1, true);
         fromQueue1.setCompleteTask(fromQueue2::enqueue);
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            fromQueue1.addProgressSubscriber(subscriberFactory
+                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region1_copy")));
+        }
         fromQueue2.setCompleteTask(toQueue1::enqueue);
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            fromQueue2.addProgressSubscriber(subscriberFactory
+                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region2_copy")));
+        }
         toQueue1.setCompleteTask(toQueue2::enqueue);
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            toQueue1.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
+                TranslatableCaption.of("swap.progress_region1_paste")));
+        }
         toQueue2.setCompleteTask(whenDone);
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            toQueue2.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
+                TranslatableCaption.of("swap.progress_region2_paste")));
+        }
+        fromQueue1.enqueue();
     }
 
     private void copyFromTo(Location pos1,

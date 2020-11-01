@@ -106,7 +106,7 @@ public class Move extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
 
-        return plot1.getPlotModificationManager().move(plot2, () -> {
+        return plot1.getPlotModificationManager().move(plot2, player, () -> {
         }, false).thenApply(result -> {
             if (result) {
                 player.sendMessage(TranslatableCaption.of("move.move_success"));

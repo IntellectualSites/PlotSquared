@@ -26,10 +26,10 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -137,17 +137,16 @@ public class Load extends SubCommand {
                             return;
                         }
                         PlotArea area = plot.getArea();
-                        this.schematicHandler
-                            .paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false, new RunnableVal<Boolean>() {
-                                @Override public void run(Boolean value) {
-                                    plot.removeRunning();
-                                    if (value) {
-                                        player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
-                                    } else {
-                                        player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
-                                    }
+                        this.schematicHandler.paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false, player, new RunnableVal<Boolean>() {
+                            @Override public void run(Boolean value) {
+                                plot.removeRunning();
+                                if (value) {
+                                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
+                                } else {
+                                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
                                 }
-                            });
+                            }
+                        });
                     });
                     return true;
                 }

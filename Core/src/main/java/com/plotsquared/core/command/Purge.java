@@ -214,7 +214,7 @@ public class Purge extends SubCommand {
                             try {
                                 ids.add(plot.temp);
                                 if (finalClear) {
-                                    plot.getPlotModificationManager().clear(false, true, () -> {
+                                    plot.getPlotModificationManager().clear(false, true, player, () -> {
                                         if (Settings.DEBUG) {
                                             logger.info("Plot {} cleared by purge", plot.getId());
                                         }

@@ -74,6 +74,12 @@
   "swap.swap_overlap": "<prefix><red>The proposed areas are not allowed to overlap.</red>",
   "swap.swap_success": "<prefix><dark_aqua>Successfully swapped plots.</dark_aqua>",
   "swap.swap_merged": "<prefix><red>Merged plots may not be swapped. Please unmerge the plots before performing the swap.</red>",
+  "swap.progress_region1_copy": "<prefix><gray>Current region 1 copy progress: </gray><gold><progress></gold><gray>%</gray>",
+  "swap.progress_region2_copy": "<prefix><gray>Current region 2 copy progress: </gray><gold><progress></gold><gray>%</gray",
+  "swap.progress_region1_paste": "<prefix><gray>Current region 1 paste progress: </gray><gold><progress></gold><gray>%</gray>",
+  "swap.progress_region2_paste": "<prefix><gray>Current region 2 paste progress: </gray><gold><progress></gold><gray>%</gray>",
+  "swap.progress_region_copy": "<prefix><gray>Current copy progress: </gray><gold><progress></gold><gray>%</gray>",
+  "swap.progress_region_paste": "<prefix><gray>Current paste progress: </gray><gold><progress></gold><gray>%</gray>",
 
   "comment.inbox_notification": "<prefix><dark_aqua><amount> </dark_aqua><gray>unread messages. Use <command>.</gray>",
   "comment.not_valid_inbox_index": "<prefix><gray>No comment at index <number>.</gray>",
@@ -411,6 +417,8 @@
   "working.plot_not_claimed": "<prefix><gray>Plot not claimed.</gray>",
   "working.plot_is_claimed": "<prefix><gray>This plot is already claimed.</gray>",
   "working.claimed": "<prefix><dark_aqua>You successfully claimed the plot.</dark_aqua>",
+  "working.progress": "<prefix><gray>Current progress: </gray><gold><progress></gold><gray>%</gray>",
+  "working.component_complete": "<prefix><gold>Component generation has finished.</gold>",
 
   "list.comment_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> comments</gold>",
   "list.comment_list_comment": "<dark_gray>[</dark_gray><gray>#<number></gray><dark_gray>[</dark_gray><gray><world>;<plot_id></gray><dark_gray>][</dark_gray><gold><commenter></gold><dark_gray>]</dark_gray><comment>\n",

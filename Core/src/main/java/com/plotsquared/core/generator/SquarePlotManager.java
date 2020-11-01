@@ -27,6 +27,7 @@ package com.plotsquared.core.generator;
 
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
@@ -58,7 +59,10 @@ public abstract class SquarePlotManager extends GridPlotManager {
         this.regionManager = regionManager;
     }
 
-    @Override public boolean clearPlot(final @Nonnull Plot plot, final @Nullable Runnable whenDone, @Nullable QueueCoordinator queue) {
+    @Override public boolean clearPlot(final @Nonnull Plot plot,
+                                       final @Nullable Runnable whenDone,
+                                       @Nullable PlotPlayer<?> actor,
+                                       @Nullable QueueCoordinator queue) {
         final Set<CuboidRegion> regions = plot.getRegions();
         Runnable run = new Runnable() {
             @Override public void run() {

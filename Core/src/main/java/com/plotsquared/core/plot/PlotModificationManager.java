@@ -25,8 +25,10 @@
  */
 package com.plotsquared.core.plot;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -35,6 +37,7 @@ import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.SquarePlotWorld;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -75,19 +78,21 @@ public final class PlotModificationManager {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotModificationManager.class.getSimpleName());
 
     private final Plot plot;
+    private final ProgressSubscriberFactory subscriberFactory;
 
-    PlotModificationManager(@Nonnull final Plot plot) {
+    @Inject PlotModificationManager(@Nonnull final Plot plot) {
         this.plot = plot;
+        this.subscriberFactory = PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class);
     }
-
 
     /**
      * Copy a plot to a location, both physically and the settings
      *
      * @param destination destination plot
+     * @param actor       the actor associated with the copy
      * @return Future that completes with {@code true} if the copy was successful, else {@code false}
      */
-    public CompletableFuture<Boolean> copy(@Nonnull final Plot destination) {
+    public CompletableFuture<Boolean> copy(@Nonnull final Plot destination, @Nullable PlotPlayer<?> actor) {
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         final PlotId offset = PlotId.of(destination.getId().getX() - this.plot.getId().getX(), destination.getId().getY() - this.plot.getId().getY());
         final Location db = destination.getBottomAbs();
@@ -169,7 +174,7 @@ public final class PlotModificationManager {
                 Location pos1 = corners[0];
                 Location pos2 = corners[1];
                 Location newPos = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
-                PlotSquared.platform().getRegionManager().copyRegion(pos1, pos2, newPos, this);
+                PlotSquared.platform().getRegionManager().copyRegion(pos1, pos2, newPos, actor, this);
             }
         };
         run.run();
@@ -180,22 +185,26 @@ public final class PlotModificationManager {
      * Clear the plot
      *
      * @param whenDone A runnable to execute when clearing finishes, or null
-     * @see #clear(boolean, boolean, Runnable)
-     * @see #deletePlot(Runnable) to clear and delete a plot
+     * @see #clear(boolean, boolean, PlotPlayer, Runnable)
+     * @see #deletePlot(PlotPlayer, Runnable) to clear and delete a plot
      */
     public void clear(@Nullable final Runnable whenDone) {
-        this.clear(false, false, whenDone);
+        this.clear(false, false, null, whenDone);
     }
 
     /**
      * Clear the plot
      *
      * @param checkRunning Whether or not already executing tasks should be checked
-     * @param isDelete Whether or not the plot is being deleted
-     * @param whenDone A runnable to execute when clearing finishes, or null
-     * @see #deletePlot(Runnable) to clear and delete a plot
+     * @param isDelete     Whether or not the plot is being deleted
+     * @param actor        The actor clearing the plot
+     * @param whenDone     A runnable to execute when clearing finishes, or null
+     * @see #deletePlot(PlotPlayer, Runnable) to clear and delete a plot
      */
-    public boolean clear(final boolean checkRunning, final boolean isDelete, @Nullable final Runnable whenDone) {
+    public boolean clear(final boolean checkRunning,
+                         final boolean isDelete,
+                         @Nullable final PlotPlayer<?> actor,
+                         @Nullable final Runnable whenDone) {
         if (checkRunning && this.plot.getRunning() != 0) {
             return false;
         }
@@ -230,9 +239,9 @@ public final class PlotModificationManager {
                         }
                     }
                     if (queue.size() > 0) {
+                        queue.setCompleteTask(run);
                         queue.enqueue();
                     }
-                    TaskManager.runTask(run);
                     return;
                 }
                 Plot current = queue.poll();
@@ -245,7 +254,7 @@ public final class PlotModificationManager {
                     }
                     return;
                 }
-                manager.clearPlot(current, this, null);
+                manager.clearPlot(current, this, actor, null);
             }
         };
         run.run();
@@ -352,11 +361,8 @@ public final class PlotModificationManager {
         if (this.plot.getArea().allowSigns()) {
             Location location = manager.getSignLoc(this.plot);
             String id = this.plot.getId().toString();
-            Caption[] lines =
-                new Caption[] {TranslatableCaption.of("signs.owner_sign_line_1"),
-                    TranslatableCaption.of("signs.owner_sign_line_2"),
-                    TranslatableCaption.of("signs.owner_sign_line_3"),
-                    TranslatableCaption.of("signs.owner_sign_line_4")};
+            Caption[] lines = new Caption[] {TranslatableCaption.of("signs.owner_sign_line_1"), TranslatableCaption.of("signs.owner_sign_line_2"),
+                TranslatableCaption.of("signs.owner_sign_line_3"), TranslatableCaption.of("signs.owner_sign_line_4")};
             PlotSquared.platform().getWorldUtil().setSign(location, lines, Template.of("id", id), Template.of("owner", name));
         }
     }
@@ -387,8 +393,8 @@ public final class PlotModificationManager {
             return;
         }
         Location location = manager.getSignLoc(this.plot);
-        QueueCoordinator queue = PlotSquared.platform().getGlobalBlockQueue()
-            .getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(this.plot.getWorldName()));
+        QueueCoordinator queue =
+            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(this.plot.getWorldName()));
         queue.setBlock(location.getX(), location.getY(), location.getZ(), BlockTypes.AIR.getDefaultState());
         queue.enqueue();
     }
@@ -450,17 +456,15 @@ public final class PlotModificationManager {
                 if (notify && plotworld.isAutoMerge()) {
                     final PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
 
-                    PlotMergeEvent
-                        event = PlotSquared.get().getEventDispatcher().callMerge(this.plot, Direction.ALL, Integer.MAX_VALUE, player);
+                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher().callMerge(this.plot, Direction.ALL, Integer.MAX_VALUE, player);
 
                     if (event.getEventResult() == Result.DENY) {
                         if (player != null) {
-                            player.sendMessage(TranslatableCaption.of("events.event_denied"),
-                                Template.of("value", "Auto merge on claim"));
+                            player.sendMessage(TranslatableCaption.of("events.event_denied"), Template.of("value", "Auto merge on claim"));
                         }
                         return;
                     }
-                    plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), uuid, true);
+                    plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), uuid, player, true);
                 }
             });
             return true;
@@ -495,10 +499,15 @@ public final class PlotModificationManager {
      * @param dir         the direction to merge
      * @param max         the max number of merges to do
      * @param uuid        the UUID it is allowed to merge with
+     * @param actor       The actor executing the task
      * @param removeRoads whether to remove roads
      * @return {@code true} if a merge takes place, else {@code false}
      */
-    public boolean autoMerge(@Nonnull final Direction dir, int max, @Nonnull final UUID uuid, final boolean removeRoads) {
+    public boolean autoMerge(@Nonnull final Direction dir,
+                             int max,
+                             @Nonnull final UUID uuid,
+                             @Nullable PlotPlayer<?> actor,
+                             final boolean removeRoads) {
         //Ignore merging if there is no owner for the plot
         if (!this.plot.hasOwner()) {
             return false;
@@ -584,6 +593,9 @@ public final class PlotModificationManager {
                     }
                 }
             }
+            if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+            }
             if (queue.size() > 0) {
                 queue.enqueue();
             }
@@ -595,11 +607,13 @@ public final class PlotModificationManager {
      * Moves a plot physically, as well as the corresponding settings.
      *
      * @param destination Plot moved to
+     * @param actor       The actor executing the task
      * @param whenDone    task when done
      * @param allowSwap   whether to swap plots
      * @return {@code true} if the move was successful, else {@code false}
      */
     @Nonnull public CompletableFuture<Boolean> move(@Nonnull final Plot destination,
+                                                    @Nullable final PlotPlayer<?> actor,
                                                     @Nonnull final Runnable whenDone,
                                                     final boolean allowSwap) {
         final PlotId offset = PlotId.of(destination.getId().getX() - this.plot.getId().getX(), destination.getId().getY() - this.plot.getId().getY());
@@ -669,7 +683,7 @@ public final class PlotModificationManager {
                             Location pos1 = corners[0];
                             Location pos2 = corners[1];
                             Location pos3 = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
-                            PlotSquared.platform().getRegionManager().swap(pos1, pos2, pos3, this);
+                            PlotSquared.platform().getRegionManager().swap(pos1, pos2, pos3, actor, this);
                         }
                     }
                 }.run();
@@ -678,7 +692,8 @@ public final class PlotModificationManager {
                     @Override public void run() {
                         if (regions.isEmpty()) {
                             Plot plot = destination.getRelative(0, 0);
-                            Plot originPlot = originArea.getPlotAbs(PlotId.of(plot.getId().getX() - offset.getX(), plot.getId().getY() - offset.getY()));
+                            Plot originPlot =
+                                originArea.getPlotAbs(PlotId.of(plot.getId().getX() - offset.getX(), plot.getId().getY() - offset.getY()));
                             final Runnable clearDone = () -> {
                                 QueueCoordinator queue = PlotModificationManager.this.plot.getArea().getQueue();
                                 for (final Plot current : plot.getConnectedPlots()) {
@@ -691,7 +706,7 @@ public final class PlotModificationManager {
                                 TaskManager.runTask(whenDone);
                             };
                             if (originPlot != null) {
-                                originPlot.getPlotModificationManager().clear(false, true, clearDone);
+                                originPlot.getPlotModificationManager().clear(false, true, actor, clearDone);
                             } else {
                                 clearDone.run();
                             }
@@ -703,7 +718,7 @@ public final class PlotModificationManager {
                         final Location pos1 = corners[0];
                         final Location pos2 = corners[1];
                         Location newPos = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
-                        PlotSquared.platform().getRegionManager().copyRegion(pos1, pos2, newPos, task);
+                        PlotSquared.platform().getRegionManager().copyRegion(pos1, pos2, newPos, actor, task);
                     }
                 }.run();
             }
@@ -726,11 +741,14 @@ public final class PlotModificationManager {
      * - The destination must correspond to a valid plot of equal dimensions
      *
      * @param destination The other plot to swap with
+     * @param actor       The actor executing the task
      * @param whenDone    A task to run when finished, or null
      * @return Future that completes with {@code true} if the swap was successful, else {@code false}
      */
-    @Nonnull public CompletableFuture<Boolean> swap(@Nonnull final Plot destination, @Nonnull final Runnable whenDone) {
-        return this.move(destination, whenDone, true);
+    @Nonnull public CompletableFuture<Boolean> swap(@Nonnull final Plot destination,
+                                                    @Nullable PlotPlayer<?> actor,
+                                                    @Nonnull final Runnable whenDone) {
+        return this.move(destination, actor, whenDone, true);
     }
 
     /**
@@ -738,11 +756,14 @@ public final class PlotModificationManager {
      * - The location must be empty
      *
      * @param destination Where to move the plot
+     * @param actor       The actor executing the task
      * @param whenDone    A task to run when done, or null
      * @return Future that completes with {@code true} if the move was successful, else {@code false}
      */
-    @Nonnull public CompletableFuture<Boolean> move(@Nonnull final Plot destination, @Nonnull final Runnable whenDone) {
-        return this.move(destination, whenDone, false);
+    @Nonnull public CompletableFuture<Boolean> move(@Nonnull final Plot destination,
+                                                    @Nullable PlotPlayer<?> actor,
+                                                    @Nonnull final Runnable whenDone) {
+        return this.move(destination, actor, whenDone, false);
     }
 
     /**
@@ -752,31 +773,34 @@ public final class PlotModificationManager {
      *
      * @param component Component to set
      * @param blocks    Pattern to use the generation
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
+     * @param actor     The actor executing the task
+     * @param queue     Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *                  otherwise writes to the queue but does not enqueue.
      * @return {@code true} if the component was set successfully, else {@code false}
      */
-    public boolean setComponent(@Nonnull final String component, @Nonnull final Pattern blocks, @Nullable final QueueCoordinator queue) {
+    public boolean setComponent(@Nonnull final String component,
+                                @Nonnull final Pattern blocks,
+                                @Nullable PlotPlayer<?> actor,
+                                @Nullable final QueueCoordinator queue) {
         final PlotComponentSetEvent event = PlotSquared.get().getEventDispatcher().callComponentSet(this.plot, component, blocks);
-        return this.plot.getManager().setComponent(this.plot.getId(), event.getComponent(), event.getPattern(), queue);
+        return this.plot.getManager().setComponent(this.plot.getId(), event.getComponent(), event.getPattern(), actor, queue);
     }
 
     /**
      * Delete a plot (use null for the runnable if you don't need to be notified on completion)
      *
-     * @see PlotSquared#removePlot(Plot, boolean)
-     * @see PlotModificationManager#clear(boolean, boolean, Runnable) to simply clear a plot
-     *
+     * @param actor    The actor executing the task
      * @param whenDone task to run when plot has been deleted. Nullable
-     *
      * @return {@code true} if the deletion was successful, {@code false} if not
+     * @see PlotSquared#removePlot(Plot, boolean)
+     * @see PlotModificationManager#clear(boolean, boolean, PlotPlayer, Runnable) to simply clear a plot
      */
-    public boolean deletePlot(final Runnable whenDone) {
+    public boolean deletePlot(@Nullable PlotPlayer<?> actor, final Runnable whenDone) {
         if (!this.plot.hasOwner()) {
             return false;
         }
         final Set<Plot> plots = this.plot.getConnectedPlots();
-        this.clear(false, true, () -> {
+        this.clear(false, true, actor, () -> {
             for (Plot current : plots) {
                 current.unclaim();
             }
@@ -786,22 +810,23 @@ public final class PlotModificationManager {
     }
 
     /**
+    /**
      * Sets components such as border, wall, floor.
      * (components are generator specific)
      *
      * @param component component to set
-     * @param blocks string of block(s) to set component to
-     * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
-     *              otherwise writes to the queue but does not enqueue.
-     *
+     * @param blocks    string of block(s) to set component to
+     * @param actor     The player executing the task
+     * @param queue     Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
+     *                  otherwise writes to the queue but does not enqueue.
      * @return {@code true} if the update was successful, {@code false} if not
      */
-    @Deprecated public boolean setComponent(String component, String blocks, QueueCoordinator queue) {
+    @Deprecated public boolean setComponent(String component, String blocks, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
         final BlockBucket parsed = ConfigurationUtil.BLOCK_BUCKET.parseString(blocks);
         if (parsed != null && parsed.isEmpty()) {
             return false;
         }
-        return this.setComponent(component, parsed.toPattern(), queue);
+        return this.setComponent(component, parsed.toPattern(), actor, queue);
     }
 
     /**

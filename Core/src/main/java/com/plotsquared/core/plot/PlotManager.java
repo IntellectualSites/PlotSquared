@@ -28,6 +28,7 @@ package com.plotsquared.core.plot;
 import com.plotsquared.core.command.Template;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.FileBytes;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -61,7 +62,10 @@ public abstract class PlotManager {
     // the same applies here
     public abstract Location getPlotTopLocAbs(@Nonnull PlotId plotId);
 
-    public abstract boolean clearPlot(@Nonnull Plot plot, @Nullable Runnable whenDone, @Nullable QueueCoordinator queue);
+    public abstract boolean clearPlot(@Nonnull Plot plot,
+                                      @Nullable Runnable whenDone,
+                                      @Nullable PlotPlayer<?> actor,
+                                      @Nullable QueueCoordinator queue);
 
     public abstract boolean claimPlot(@Nonnull Plot plot, @Nullable QueueCoordinator queue);
 
@@ -98,6 +102,7 @@ public abstract class PlotManager {
      * @param plotId    id of plot to set component to
      * @param component FLOOR, WALL, AIR, MAIN, MIDDLE, OUTLINE, BORDER, ALL (floor, air and main).
      * @param blocks    Pattern to set component to
+     * @param actor     The player executing the task
      * @param queue     Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *                  otherwise writes to the queue but does not enqueue.
      * @return success or not
@@ -105,6 +110,7 @@ public abstract class PlotManager {
     public abstract boolean setComponent(@Nonnull PlotId plotId,
                                          @Nonnull String component,
                                          @Nonnull Pattern blocks,
+                                         @Nullable PlotPlayer<?> actor,
                                          @Nullable QueueCoordinator queue);
 
     /**

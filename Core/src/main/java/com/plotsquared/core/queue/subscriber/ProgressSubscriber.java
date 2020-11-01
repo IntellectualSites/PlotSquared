@@ -23,41 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.backup;
+package com.plotsquared.core.queue.subscriber;
 
-import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.queue.ChunkCoordinator;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
-/**
- * Backup profile for a plot without an owner
- * {@inheritDoc}
- */
-public class NullBackupProfile implements BackupProfile {
+public interface ProgressSubscriber {
 
-    @Override @Nonnull public CompletableFuture<List<Backup>> listBackups() {
-        return CompletableFuture.completedFuture(Collections.emptyList());
-    }
+    /**
+     * Notify about a progress update in the coordinator
+     *
+     * @param coordinator Coordinator instance that triggered the notification
+     * @param progress    Progress in the range [0, 1]
+     */
+    void notifyProgress(@Nonnull final ChunkCoordinator coordinator, final double progress);
 
-    @Override public void destroy(){
-    }
-
-    @Override @Nonnull public Path getBackupDirectory() {
-        return new File(".").toPath();
-    }
-
-    @Override @Nonnull public CompletableFuture<Backup> createBackup() {
-        throw new UnsupportedOperationException("Cannot create backup of an unowned plot");
-    }
-
-    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup, @Nullable PlotPlayer<?> player) {
-        return CompletableFuture.completedFuture(null);
-    }
-
+    /**
+     * Notify the subscriber that its parent ChunkCoordinator has finished
+     */
+    void notifyEnd();
 }

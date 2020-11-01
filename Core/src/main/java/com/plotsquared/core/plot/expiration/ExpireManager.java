@@ -426,7 +426,7 @@ public class ExpireManager {
                     Templates.of("plot", plot.toString()));
             }
         }
-        plot.getPlotModificationManager().deletePlot(whenDone);
+        plot.getPlotModificationManager().deletePlot(null, whenDone);
     }
 
     public long getAge(UUID uuid) {

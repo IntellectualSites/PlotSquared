@@ -180,7 +180,7 @@ public class Merge extends SubCommand {
                     );
                 return true;
             }
-            if (plot.getPlotModificationManager().autoMerge(Direction.ALL, maxSize, uuid, terrain)) {
+            if (plot.getPlotModificationManager().autoMerge(Direction.ALL, maxSize, uuid, player, terrain)) {
                 if (this.econHandler.isEnabled(plotArea) && price > 0d) {
                     this.econHandler.withdrawMoney(player, price);
                     player.sendMessage(
@@ -224,7 +224,7 @@ public class Merge extends SubCommand {
             );
             return true;
         }
-        if (plot.getPlotModificationManager().autoMerge(direction, maxSize - size, uuid, terrain)) {
+        if (plot.getPlotModificationManager().autoMerge(direction, maxSize - size, uuid, player, terrain)) {
             if (this.econHandler.isEnabled(plotArea) && price > 0d) {
                 this.econHandler.withdrawMoney(player, price);
                 player.sendMessage(
@@ -259,7 +259,7 @@ public class Merge extends SubCommand {
             final Direction dir = direction;
             Runnable run = () -> {
                 accepter.sendMessage(TranslatableCaption.of("merge.merge_accepted"));
-                plot.getPlotModificationManager().autoMerge(dir, maxSize - size, owner, terrain);
+                plot.getPlotModificationManager().autoMerge(dir, maxSize - size, owner, player, terrain);
                 PlotPlayer<?> plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(player.getUUID());
                 if (plotPlayer == null) {
                     accepter.sendMessage(TranslatableCaption.of("merge.merge_not_valid"));

@@ -63,7 +63,8 @@ import java.util.function.Consumer;
 
 public class BukkitQueueCoordinator extends BasicQueueCoordinator {
 
-    private final SideEffectSet sideEffectSet;
+    private final SideEffectSet noSideEffectSet;
+    private final SideEffectSet lightingSideEffectSet;
     private org.bukkit.World bukkitWorld;
     @Inject private ChunkCoordinatorBuilderFactory chunkCoordinatorBuilderFactory;
     @Inject private ChunkCoordinatorFactory chunkCoordinatorFactory;
@@ -71,7 +72,8 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
 
     @Inject public BukkitQueueCoordinator(@Nonnull World world) {
         super(world);
-        sideEffectSet = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF).with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
+        noSideEffectSet = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF).with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
+        lightingSideEffectSet = SideEffectSet.none().with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
     }
 
     @Override public BlockState getBlock(int x, int y, int z) {
@@ -177,7 +179,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                     localChunk.getTiles().forEach(((blockVector3, tag) -> {
                         try {
                             BaseBlock block = getWorld().getBlock(blockVector3).toBaseBlock(tag);
-                            getWorld().setBlock(blockVector3, block, sideEffectSet);
+                            getWorld().setBlock(blockVector3, block, noSideEffectSet);
                         } catch (WorldEditException ignored) {
                             StateWrapper sw = new StateWrapper(tag);
                             sw.restoreTag(getWorld().getName(), blockVector3.getX(), blockVector3.getY(), blockVector3.getZ());
@@ -185,9 +187,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                     }));
                 }
                 if (localChunk.getEntities().size() > 0) {
-                    localChunk.getEntities().forEach((location, entity) -> {
-                        getWorld().createEntity(location, entity);
-                    });
+                    localChunk.getEntities().forEach((location, entity) -> getWorld().createEntity(location, entity));
                 }
             };
         }
@@ -198,7 +198,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         chunkCoordinator =
             chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(getWorld()).withChunks(getBlockChunks().keySet()).withChunks(read)
                 .withInitialBatchSize(3).withMaxIterationTime(40).withThrowableConsumer(Throwable::printStackTrace).withFinalAction(getCompleteTask())
-                .withConsumer(consumer).unloadAfter(isUnloadAfter()).build();
+                .withConsumer(consumer).unloadAfter(isUnloadAfter()).withProgressSubscribers(getProgressSubscribers()).build();
         return super.enqueue();
     }
 
@@ -207,7 +207,23 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
      */
     private void setWorldBlock(int x, int y, int z, @Nonnull BaseBlock block, @Nonnull BlockVector2 blockVector2) {
         try {
-            getWorld().setBlock(BlockVector3.at(x, y, z), block, sideEffectSet);
+            BlockVector3 loc = BlockVector3.at(x, y, z);
+            boolean lighting = false;
+            switch (getLightingMode()) {
+                case NONE:
+                    break;
+                case PLACEMENT:
+                    lighting = block.getBlockType().getMaterial().getLightValue() > 0;
+                    break;
+                case REPLACEMENT:
+                    lighting = block.getBlockType().getMaterial().getLightValue() > 0
+                        || getWorld().getBlock(loc).getBlockType().getMaterial().getLightValue() > 0;
+                    break;
+                default:
+                    // Can only be "all"
+                    lighting = true;
+            }
+            getWorld().setBlock(loc, block, lighting ? lightingSideEffectSet : noSideEffectSet);
         } catch (WorldEditException ignored) {
             // Fallback to not so nice method
             BlockData blockData = BukkitAdapter.adapt(block);

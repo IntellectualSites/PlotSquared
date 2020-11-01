@@ -194,7 +194,7 @@ public class ComponentPresetManager {
                     plot.addRunning();
                     QueueCoordinator queue = plot.getArea().getQueue();
                     for (Plot current : plot.getConnectedPlots()) {
-                        current.getPlotModificationManager().setComponent(componentPreset.getComponent().name(), pattern, queue);
+                        current.getPlotModificationManager().setComponent(componentPreset.getComponent().name(), pattern, player, queue);
                     }
                     queue.setCompleteTask(plot::removeRunning);
                     queue.enqueue();

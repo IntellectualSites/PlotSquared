@@ -26,6 +26,7 @@
 package com.plotsquared.core.inject.modules;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.intellectualsites.services.ServicePipeline;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
@@ -34,7 +35,10 @@ import com.plotsquared.core.inject.annotations.ConfigFile;
 import com.plotsquared.core.inject.annotations.ImpromptuPipeline;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.listener.PlotListener;
+import com.plotsquared.core.queue.subscriber.DefaultProgressSubscriber;
+import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;

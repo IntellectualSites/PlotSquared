@@ -29,7 +29,9 @@ import com.google.common.collect.Sets;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Template;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
@@ -61,11 +63,15 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     private final HybridPlotWorld hybridPlotWorld;
     private final RegionManager regionManager;
+    private final ProgressSubscriberFactory subscriberFactory;
 
-    public HybridPlotManager(@Nonnull final HybridPlotWorld hybridPlotWorld, @Nonnull final RegionManager regionManager) {
+    public HybridPlotManager(@Nonnull final HybridPlotWorld hybridPlotWorld,
+                             @Nonnull final RegionManager regionManager,
+                             @Nonnull ProgressSubscriberFactory subscriberFactory) {
         super(hybridPlotWorld, regionManager);
         this.hybridPlotWorld = hybridPlotWorld;
         this.regionManager = regionManager;
+        this.subscriberFactory = subscriberFactory;
     }
 
     @Override public void exportTemplate() throws IOException {
@@ -199,21 +205,16 @@ public class HybridPlotManager extends ClassicPlotManager {
         return !enqueue || queue.enqueue();
     }
 
-    /**
-     * <p>Clearing the plot needs to only consider removing the blocks - This implementation has
-     * used the setCuboidAsync function, as it is fast, and uses NMS code - It also makes use of the
-     * fact that deleting chunks is a lot faster than block updates This code is very messy, but you
-     * don't need to do something quite as complex unless you happen to have 512x512 sized plots.
-     * </p>
-     */
-    @Override public boolean clearPlot(@Nonnull final Plot plot, @Nullable final Runnable whenDone, @Nullable QueueCoordinator queue) {
+    @Override public boolean clearPlot(@Nonnull final Plot plot,
+                                       @Nullable final Runnable whenDone,
+                                       @Nullable PlotPlayer<?> actor,
+                                       @Nullable QueueCoordinator queue) {
         if (this.regionManager.notifyClear(this)) {
             //If this returns false, the clear didn't work
-            if (this.regionManager.handleClear(plot, whenDone, this)) {
+            if (this.regionManager.handleClear(plot, whenDone, this, actor)) {
                 return true;
             }
         }
-        final String world = hybridPlotWorld.getWorldName();
         final Location pos1 = plot.getBottomAbs();
         final Location pos2 = plot.getExtendedTopAbs();
         // If augmented
@@ -248,6 +249,9 @@ public class HybridPlotManager extends ClassicPlotManager {
             queue.setRegenRegion(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
         }
         pastePlotSchematic(queue, pos1, pos2);
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+        }
         if (whenDone != null) {
             queue.setCompleteTask(whenDone);
         }

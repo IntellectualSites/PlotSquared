@@ -25,9 +25,13 @@
  */
 package com.plotsquared.core.generator;
 
+import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
@@ -53,44 +57,49 @@ public class ClassicPlotManager extends SquarePlotManager {
 
     private final ClassicPlotWorld classicPlotWorld;
     private final RegionManager regionManager;
+    private final ProgressSubscriberFactory subscriberFactory;
 
-    public ClassicPlotManager(@Nonnull final ClassicPlotWorld classicPlotWorld, @Nonnull final RegionManager regionManager) {
+    @Inject public ClassicPlotManager(@Nonnull final ClassicPlotWorld classicPlotWorld, @Nonnull final RegionManager regionManager) {
         super(classicPlotWorld, regionManager);
         this.classicPlotWorld = classicPlotWorld;
         this.regionManager = regionManager;
+        this.subscriberFactory = PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class);
     }
 
-    @Override
-    public boolean setComponent(@Nonnull PlotId plotId, @Nonnull String component, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
+    @Override public boolean setComponent(@Nonnull PlotId plotId,
+                                          @Nonnull String component,
+                                          @Nonnull Pattern blocks,
+                                          @Nullable PlotPlayer<?> actor,
+                                          @Nullable QueueCoordinator queue) {
         final Optional<ClassicPlotManagerComponent> componentOptional = ClassicPlotManagerComponent.fromString(component);
         if (componentOptional.isPresent()) {
             switch (componentOptional.get()) {
                 case FLOOR:
-                    return setFloor(plotId, blocks, queue);
+                    return setFloor(plotId, blocks, actor, queue);
                 case WALL:
-                    return setWallFilling(plotId, blocks, queue);
+                    return setWallFilling(plotId, blocks, actor, queue);
                 case AIR:
-                    return setAir(plotId, blocks, queue);
+                    return setAir(plotId, blocks, actor, queue);
                 case MAIN:
-                    return setMain(plotId, blocks, queue);
+                    return setMain(plotId, blocks, actor, queue);
                 case MIDDLE:
                     return setMiddle(plotId, blocks, queue);
                 case OUTLINE:
-                    return setOutline(plotId, blocks, queue);
+                    return setOutline(plotId, blocks, actor, queue);
                 case BORDER:
-                    return setWall(plotId, blocks, queue);
+                    return setWall(plotId, blocks, actor, queue);
                 case ALL:
-                    return setAll(plotId, blocks, queue);
+                    return setAll(plotId, blocks, actor, queue);
             }
         }
         return false;
     }
 
     @Override public boolean unClaimPlot(@Nonnull Plot plot, @Nullable Runnable whenDone, @Nullable QueueCoordinator queue) {
-        setWallFilling(plot.getId(), classicPlotWorld.WALL_FILLING.toPattern(), queue);
+        setWallFilling(plot.getId(), classicPlotWorld.WALL_FILLING.toPattern(), null, queue);
         if (classicPlotWorld.PLACE_TOP_BLOCK && (!classicPlotWorld.WALL_BLOCK.isAir() || !classicPlotWorld.WALL_BLOCK
             .equals(classicPlotWorld.CLAIMED_WALL_BLOCK))) {
-            setWall(plot.getId(), classicPlotWorld.WALL_BLOCK.toPattern(), queue);
+            setWall(plot.getId(), classicPlotWorld.WALL_BLOCK.toPattern(), null, queue);
         }
         TaskManager.runTask(whenDone);
         return true;
@@ -105,11 +114,11 @@ public class ClassicPlotManager extends SquarePlotManager {
      *               otherwise writes to the queue but does not enqueue.
      * @return success or not
      */
-    public boolean setFloor(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
+    public boolean setFloor(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot != null && plot.isBasePlot()) {
             return this.regionManager
-                .setCuboids(classicPlotWorld, plot.getRegions(), blocks, classicPlotWorld.PLOT_HEIGHT, classicPlotWorld.PLOT_HEIGHT, queue);
+                .setCuboids(classicPlotWorld, plot.getRegions(), blocks, classicPlotWorld.PLOT_HEIGHT, classicPlotWorld.PLOT_HEIGHT, actor, queue);
         }
         return false;
     }
@@ -123,10 +132,10 @@ public class ClassicPlotManager extends SquarePlotManager {
      *               otherwise writes to the queue but does not enqueue.
      * @return success or not
      */
-    public boolean setAll(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
+    public boolean setAll(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot != null && plot.isBasePlot()) {
-            return this.regionManager.setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1, getWorldHeight(), queue);
+            return this.regionManager.setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1, getWorldHeight(), actor, queue);
         }
         return false;
     }
@@ -140,11 +149,11 @@ public class ClassicPlotManager extends SquarePlotManager {
      *               otherwise writes to the queue but does not enqueue.
      * @return success or not
      */
-    public boolean setAir(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
+    public boolean setAir(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot != null && plot.isBasePlot()) {
             return this.regionManager
-                .setCuboids(classicPlotWorld, plot.getRegions(), blocks, classicPlotWorld.PLOT_HEIGHT + 1, getWorldHeight(), queue);
+                .setCuboids(classicPlotWorld, plot.getRegions(), blocks, classicPlotWorld.PLOT_HEIGHT + 1, getWorldHeight(), actor, queue);
         }
         return false;
     }
@@ -158,10 +167,10 @@ public class ClassicPlotManager extends SquarePlotManager {
      *               otherwise writes to the queue but does not enqueue.
      * @return success or not
      */
-    public boolean setMain(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
+    public boolean setMain(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
         Plot plot = classicPlotWorld.getPlotAbs(plotId);
         if (plot == null || plot.isBasePlot()) {
-            return this.regionManager.setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1, classicPlotWorld.PLOT_HEIGHT - 1, queue);
+            return this.regionManager.setCuboids(classicPlotWorld, plot.getRegions(), blocks, 1, classicPlotWorld.PLOT_HEIGHT - 1, actor, queue);
         }
         return false;
     }
@@ -203,7 +212,7 @@ public class ClassicPlotManager extends SquarePlotManager {
      *               otherwise writes to the queue but does not enqueue.
      * @return success or not
      */
-    public boolean setOutline(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
+    public boolean setOutline(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
             return false;
         }
@@ -224,6 +233,9 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (queue == null) {
             queue = classicPlotWorld.getQueue();
             enqueue = true;
+            if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+            }
         }
 
         int maxY = classicPlotWorld.getPlotManager().getWorldHeight();
@@ -279,7 +291,7 @@ public class ClassicPlotManager extends SquarePlotManager {
      *               otherwise writes to the queue but does not enqueue.
      * @return success or not
      */
-    public boolean setWallFilling(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
+    public boolean setWallFilling(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
             return false;
         }
@@ -300,6 +312,9 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (queue == null) {
             queue = classicPlotWorld.getQueue();
             enqueue = true;
+            if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+            }
         }
 
         if (!plot.isMerged(Direction.NORTH)) {
@@ -346,7 +361,7 @@ public class ClassicPlotManager extends SquarePlotManager {
      *               otherwise writes to the queue but does not enqueue.
      * @return success or not
      */
-    public boolean setWall(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable QueueCoordinator queue) {
+    public boolean setWall(@Nonnull PlotId plotId, @Nonnull Pattern blocks, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
         if (classicPlotWorld.ROAD_WIDTH == 0) {
             return false;
         }
@@ -367,6 +382,9 @@ public class ClassicPlotManager extends SquarePlotManager {
         if (queue == null) {
             enqueue = true;
             queue = classicPlotWorld.getQueue();
+            if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+            }
         }
 
         int y = classicPlotWorld.WALL_HEIGHT + 1;
@@ -578,13 +596,13 @@ public class ClassicPlotManager extends SquarePlotManager {
         final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
         if (classicPlotWorld.PLACE_TOP_BLOCK && (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK))) {
             for (PlotId plotId : plotIds) {
-                setWall(plotId, claim.toPattern(), queue);
+                setWall(plotId, claim.toPattern(), null, queue);
             }
         }
         if (Settings.General.MERGE_REPLACE_WALL) {
             final BlockBucket wallBlock = classicPlotWorld.WALL_FILLING;
             for (PlotId id : plotIds) {
-                setWallFilling(id, wallBlock.toPattern(), queue);
+                setWallFilling(id, wallBlock.toPattern(), null, queue);
             }
         }
         return true;
@@ -594,7 +612,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
         if (classicPlotWorld.PLACE_TOP_BLOCK && (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK))) {
             for (PlotId id : plotIds) {
-                setWall(id, claim.toPattern(), queue);
+                setWall(id, claim.toPattern(), null, queue);
             }
         }
         return true; // return false if unlink has been denied
@@ -611,7 +629,7 @@ public class ClassicPlotManager extends SquarePlotManager {
     @Override public boolean claimPlot(@Nonnull Plot plot, @Nullable QueueCoordinator queue) {
         final BlockBucket claim = classicPlotWorld.CLAIMED_WALL_BLOCK;
         if (classicPlotWorld.PLACE_TOP_BLOCK && (!claim.isAir() || !claim.equals(classicPlotWorld.WALL_BLOCK))) {
-            return setWall(plot.getId(), claim.toPattern(), queue);
+            return setWall(plot.getId(), claim.toPattern(), null, queue);
         }
         return true;
     }

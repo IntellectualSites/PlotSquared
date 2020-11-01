@@ -23,41 +23,25 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.backup;
+package com.plotsquared.core.inject.factory;
 
+import com.google.inject.assistedinject.Assisted;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
-/**
- * Backup profile for a plot without an owner
- * {@inheritDoc}
- */
-public class NullBackupProfile implements BackupProfile {
+public interface ProgressSubscriberFactory {
 
-    @Override @Nonnull public CompletableFuture<List<Backup>> listBackups() {
-        return CompletableFuture.completedFuture(Collections.emptyList());
-    }
+    @Nonnull ProgressSubscriber create();
 
-    @Override public void destroy(){
-    }
+    @Nonnull ProgressSubscriber createWithActor(@Nullable @Assisted("subscriber") PlotPlayer<?> actor);
 
-    @Override @Nonnull public Path getBackupDirectory() {
-        return new File(".").toPath();
-    }
-
-    @Override @Nonnull public CompletableFuture<Backup> createBackup() {
-        throw new UnsupportedOperationException("Cannot create backup of an unowned plot");
-    }
-
-    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup, @Nullable PlotPlayer<?> player) {
-        return CompletableFuture.completedFuture(null);
-    }
+    @Nonnull ProgressSubscriber createFull(@Nullable @Assisted("subscriber") PlotPlayer<?> actor,
+                                       @Assisted("progressInterval") final long interval,
+                                       @Assisted("waitBeforeStarting") final long wait,
+                                       @Nullable @Assisted("caption") Caption caption);
 
 }

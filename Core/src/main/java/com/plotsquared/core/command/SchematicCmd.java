@@ -27,10 +27,10 @@ package com.plotsquared.core.command;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -149,16 +149,16 @@ public class SchematicCmd extends SubCommand {
                         );
                         return;
                     }
-                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, new RunnableVal<Boolean>() {
-                            @Override public void run(Boolean value) {
-                                SchematicCmd.this.running = false;
-                                if (value) {
-                                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
-                                } else {
-                                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
-                                }
+                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, player, new RunnableVal<Boolean>() {
+                        @Override public void run(Boolean value) {
+                            SchematicCmd.this.running = false;
+                            if (value) {
+                                player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
+                            } else {
+                                player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
                             }
-                        });
+                        }
+                    });
                 });
                 break;
             }

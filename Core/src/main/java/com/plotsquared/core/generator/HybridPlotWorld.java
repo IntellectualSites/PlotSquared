@@ -31,6 +31,7 @@ import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -138,7 +139,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     @Nonnull @Override protected PlotManager createManager() {
-        return new HybridPlotManager(this, PlotSquared.platform().getRegionManager());
+        return new HybridPlotManager(this, PlotSquared.platform().getRegionManager(),
+            PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class));
     }
 
     public Location getSignLocation(@Nonnull Plot plot) {

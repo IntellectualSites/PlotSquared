@@ -23,41 +23,34 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.backup;
+package com.plotsquared.core.queue;
 
-import com.plotsquared.core.player.PlotPlayer;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+public enum LightingMode {
 
-/**
- * Backup profile for a plot without an owner
- * {@inheritDoc}
- */
-public class NullBackupProfile implements BackupProfile {
+    NONE(0), PLACEMENT(1), REPLACEMENT(2), ALL(3);
 
-    @Override @Nonnull public CompletableFuture<List<Backup>> listBackups() {
-        return CompletableFuture.completedFuture(Collections.emptyList());
+    private static final Map<Integer, LightingMode> map = new HashMap<>();
+
+    static {
+        for (LightingMode mode : LightingMode.values()) {
+            map.put(mode.mode, mode);
+        }
     }
 
-    @Override public void destroy(){
+    private final int mode;
+
+    LightingMode(int mode) {
+        this.mode = mode;
     }
 
-    @Override @Nonnull public Path getBackupDirectory() {
-        return new File(".").toPath();
+    public static LightingMode valueOf(int mode) {
+        return map.get(mode);
     }
 
-    @Override @Nonnull public CompletableFuture<Backup> createBackup() {
-        throw new UnsupportedOperationException("Cannot create backup of an unowned plot");
+    public int getMode() {
+        return mode;
     }
-
-    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup, @Nullable PlotPlayer<?> player) {
-        return CompletableFuture.completedFuture(null);
-    }
-
 }

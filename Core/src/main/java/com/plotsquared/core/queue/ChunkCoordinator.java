@@ -29,14 +29,16 @@ import com.plotsquared.core.util.task.PlotSquaredTask;
 
 public abstract class ChunkCoordinator implements PlotSquaredTask {
 
+    private boolean cancelled = false;
+
     @Override public abstract void runTask();
 
     @Override public boolean isCancelled() {
-        return false;
+        return cancelled;
     }
 
     @Override public void cancel() {
-        // Do nothing
+        this.cancelled = true;
     }
 
     /**

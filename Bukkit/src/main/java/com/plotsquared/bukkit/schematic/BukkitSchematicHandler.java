@@ -27,6 +27,7 @@ package com.plotsquared.bukkit.schematic;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.WorldUtil;
@@ -39,8 +40,8 @@ import javax.annotation.Nonnull;
  */
 @Singleton public class BukkitSchematicHandler extends SchematicHandler {
 
-    @Inject public BukkitSchematicHandler(@Nonnull final WorldUtil worldUtil) {
-        super(worldUtil);
+    @Inject public BukkitSchematicHandler(@Nonnull final WorldUtil worldUtil, @Nonnull ProgressSubscriberFactory subscriberFactory) {
+        super(worldUtil, subscriberFactory);
     }
 
     @Override

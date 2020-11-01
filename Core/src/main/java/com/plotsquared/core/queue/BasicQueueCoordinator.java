@@ -25,6 +25,8 @@
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.plotsquared.core.util.PatternUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.entity.Entity;
@@ -54,6 +56,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private final World world;
     private final ConcurrentHashMap<BlockVector2, LocalChunk> blockChunks = new ConcurrentHashMap<>();
     private final List<BlockVector2> readRegion = new ArrayList<>();
+    private final List<ProgressSubscriber> progressSubscribers = new ArrayList<>();
     private long modified;
     private LocalChunk lastWrappedChunk;
     private int lastX = Integer.MIN_VALUE;
@@ -67,6 +70,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private Consumer<BlockVector2> consumer = null;
     private boolean unloadAfter = true;
     private Runnable whenDone;
+    @Nullable private LightingMode lightingMode = LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
 
     public BasicQueueCoordinator(@Nonnull World world) {
         super(world);
@@ -250,6 +254,28 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
 
     @Override public final void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer) {
         this.consumer = consumer;
+    }
+
+    /**
+     * Get the list of progress subscribers currently added to the queue to be added to the Chunk Coordinator
+     */
+    public final List<ProgressSubscriber> getProgressSubscribers() {
+        return this.progressSubscribers;
+    }
+
+    @Override public final void addProgressSubscriber(@Nonnull ProgressSubscriber progressSubscriber) {
+        this.progressSubscribers.add(progressSubscriber);
+    }
+
+    @Override @Nonnull public final LightingMode getLightingMode() {
+        if (lightingMode == null) {
+            return LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
+        }
+        return this.lightingMode;
+    }
+
+    @Override public final void setLightingMode(@Nullable LightingMode mode) {
+        this.lightingMode = mode;
     }
 
     @Override public Runnable getCompleteTask() {
