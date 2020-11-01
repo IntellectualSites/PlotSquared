@@ -411,7 +411,7 @@ public abstract class PlotArea {
 
     private Component getFlagsComponent(Component flagsComponent, Collection<PlotFlag<?, ?>> flagCollection) {
         if (flagCollection.isEmpty()) {
-            flagsComponent = MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(LocaleHolder.console()));
+            flagsComponent = MINI_MESSAGE.parse(TranslatableCaption.of("flag.no_flags").getComponent(LocaleHolder.console()));
         } else {
             String prefix = " ";
             for (final PlotFlag<?, ?> flag : flagCollection) {

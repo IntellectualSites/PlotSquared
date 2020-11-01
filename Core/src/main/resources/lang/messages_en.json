@@ -536,6 +536,7 @@
   "flag.not_valid_flag": "<red>That is not a valid flag.</red>",
   "flag.not_valid_flag_suggested": "<prefix><gray>That is not a valid flag. Did you mean: </gray><gold><value></gold>",
   "flag.not_valid_value": "<prefix><red>Flag values must be alphanumerical.</red>",
+  "flag.no_flags": "Global flags: None",
   "flag.flag_not_removed": "<prefix><red>The flag could not be removed.</red>",
   "flag.flag_not_added": "<prefix><red>The flag could not be added.</red>",
   "flag.flag_removed": "<prefix><dark_aqua>The flag has been removed successfully.</dark_aqua>",
