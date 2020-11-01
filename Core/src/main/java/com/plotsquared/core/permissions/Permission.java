@@ -147,6 +147,7 @@ public enum Permission {
     PERMISSION_VISIT_UNOWNED("plots.visit.unowned"),
     PERMISSION_VISIT_OWNED("plots.visit.owned"),
     PERMISSION_SHARED("plots.visit.shared"),
+    PERMISSION_VISIT_DENIED("plots.visit.denied"),
     PERMISSION_VISIT_OTHER("plots.visit.other"),
     PERMISSION_HOME("plots.home"),
     PERMISSION_ALIAS_SET("plots.alias.set"),

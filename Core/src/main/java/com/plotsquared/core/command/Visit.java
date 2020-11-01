@@ -135,6 +135,13 @@ public class Visit extends Command {
                     Templates.of("node", "plots.admin.visit.untrusted"));
                 return;
             }
+            if (plot.isDenied(player.getUUID())) {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_DENIED)) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", "plots.visit.denied"));
+                return;
+                }
+            }
         }
 
         confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
