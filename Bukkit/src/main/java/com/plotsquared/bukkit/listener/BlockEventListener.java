@@ -303,7 +303,7 @@ public class BlockEventListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.build.other")
+                        Template.of("node", Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
                     );
                     event.setCancelled(true);
                     return;
@@ -320,7 +320,7 @@ public class BlockEventListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.build.other")
+                        Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
                     );
                     event.setCancelled(true);
                     plot.debug(player.getName() + " could not place " + event.getBlock().getType()
@@ -331,7 +331,7 @@ public class BlockEventListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.build.other")
+                        Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
                     );
                     event.setCancelled(true);
                     return;
@@ -348,7 +348,7 @@ public class BlockEventListener implements Listener {
         } else if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
             pp.sendMessage(
                 TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", "plots.admin.build.other")
+                Template.of("node", Permission.PERMISSION_ADMIN_BUILD_ROAD)
             );
             event.setCancelled(true);
         }
@@ -369,7 +369,7 @@ public class BlockEventListener implements Listener {
                     .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
                     plotPlayer.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.destroy.groundlevel")
+                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)
                     );
                     event.setCancelled(true);
                     return;
@@ -405,14 +405,14 @@ public class BlockEventListener implements Listener {
                 }
                 plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", "plots.admin.destroy.other")
+                    Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_OTHER)
                 );
                 event.setCancelled(true);
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     plotPlayer.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.build.other")
+                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_OTHER)
                     );
                     event.setCancelled(true);
                     return;
@@ -432,7 +432,7 @@ public class BlockEventListener implements Listener {
         }
         pp.sendMessage(
             TranslatableCaption.of("permission.no_permission_event"),
-            Template.of("node", "plots.admin.destroy.road")
+            Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_ROAD)
         );
         event.setCancelled(true);
     }
@@ -1012,7 +1012,7 @@ public class BlockEventListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.build.road")
+                        Template.of("node", Permission.PERMISSION_ADMIN_BUILD_ROAD)
                     );
                     event.setCancelled(true);
                 }
@@ -1020,7 +1020,7 @@ public class BlockEventListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.build.unowned")
+                        Template.of("node", Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
                     );
                     event.setCancelled(true);
                 }
@@ -1028,7 +1028,7 @@ public class BlockEventListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.build.other")
+                        Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
                     );
                     event.setCancelled(true);
                 }

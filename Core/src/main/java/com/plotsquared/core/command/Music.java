@@ -31,6 +31,7 @@ import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotInventory;
@@ -73,10 +74,10 @@ public class Music extends SubCommand {
             return false;
         }
         if (!plot.isAdded(player.getUUID()) && !Permissions
-            .hasPermission(player, "plots.admin.music.other")) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_MUSIC_OTHER)) {
             player.sendMessage(
                 TranslatableCaption.of("permission.no_permission"),
-                Template.of("node", "plots.admin.music.other"));
+                Template.of("node", Permission.PERMISSION_ADMIN_MUSIC_OTHER));
             return true;
         }
         PlotInventory inv = new PlotInventory(this.inventoryUtil, player, 2, "Plot Jukebox") {

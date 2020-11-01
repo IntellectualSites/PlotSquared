@@ -101,7 +101,7 @@ public class Info extends SubCommand {
                         .hasPermission(Permission.PERMISSION_AREA_INFO_FORCE.toString())) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", "plots.area.info.force")
+                                Template.of("node", Permission.PERMISSION_AREA_INFO_FORCE.toString())
                         );
                         return true;
                     }

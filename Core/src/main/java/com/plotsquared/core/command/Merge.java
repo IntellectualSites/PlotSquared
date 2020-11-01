@@ -176,7 +176,7 @@ public class Merge extends SubCommand {
                 .hasPermission(player, Permission.PERMISSION_MERGE_KEEP_ROAD)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.merge.keeproad")
+                            Template.of("node", Permission.PERMISSION_MERGE_KEEP_ROAD)
                     );
                 return true;
             }
@@ -220,7 +220,7 @@ public class Merge extends SubCommand {
             .hasPermission(player, Permission.PERMISSION_MERGE_KEEP_ROAD)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", "plots.merge.keeproad")
+                    Template.of("node", Permission.PERMISSION_MERGE_KEEP_ROAD)
             );
             return true;
         }
@@ -244,7 +244,7 @@ public class Merge extends SubCommand {
         if (!force && !Permissions.hasPermission(player, Permission.PERMISSION_MERGE_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", "plots.merge.other")
+                    Template.of("node", Permission.PERMISSION_MERGE_OTHER)
             );
             return false;
         }

@@ -163,7 +163,7 @@ public final class FlagCommand extends Command {
             .hasPermission(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", "plots.set.flag.other")
+                    Template.of("node", Permission.PERMISSION_SET_FLAG_OTHER)
             );
             return false;
         }

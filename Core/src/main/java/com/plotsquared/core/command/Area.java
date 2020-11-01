@@ -40,6 +40,7 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.inject.factory.HybridPlotWorldFactory;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
@@ -136,8 +137,8 @@ public class Area extends SubCommand {
                     player.sendMessage(RequiredType.CONSOLE.getErrorMessage());
                     return false;
                 }
-                if (!Permissions.hasPermission(player, "plots.area.create")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.create"));
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_CREATE)) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_CREATE));
                     return false;
                 }
                 if (args.length < 2) {
@@ -258,8 +259,8 @@ public class Area extends SubCommand {
             case "c":
             case "setup":
             case "create":
-                if (!Permissions.hasPermission(player, "plots.area.create")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.create"));
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_CREATE)) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_CREATE));
                     return false;
                 }
                 switch (args.length) {
@@ -491,8 +492,8 @@ public class Area extends SubCommand {
                 return true;
             case "i":
             case "info": {
-                if (!Permissions.hasPermission(player, "plots.area.info")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.info"));
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_INFO)) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_INFO));
                     return false;
                 }
                 PlotArea area;
@@ -550,8 +551,8 @@ public class Area extends SubCommand {
             }
             case "l":
             case "list":
-                if (!Permissions.hasPermission(player, "plots.area.list")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.list"));
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_LIST)) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_LIST));
                     return false;
                 }
                 int page;
@@ -615,8 +616,8 @@ public class Area extends SubCommand {
             case "clear":
             case "reset":
             case "regenerate": {
-                if (!Permissions.hasPermission(player, "plots.area.regen")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.regen"));
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_REGEN)) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_REGEN));
                     return false;
                 }
                 final PlotArea area = player.getApplicablePlotArea();
@@ -640,8 +641,8 @@ public class Area extends SubCommand {
             case "teleport":
             case "visit":
             case "tp":
-                if (!Permissions.hasPermission(player, "plots.area.tp")) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", "plots.area.tp"));
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_TP)) {
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_TP));
                     return false;
                 }
                 if (args.length != 2) {

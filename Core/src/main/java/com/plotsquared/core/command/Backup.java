@@ -31,6 +31,7 @@ import com.plotsquared.core.backup.BackupProfile;
 import com.plotsquared.core.backup.NullBackupProfile;
 import com.plotsquared.core.backup.PlayerBackupProfile;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
@@ -142,10 +143,10 @@ public final class Backup extends Command {
                     Template.of("plot", "generic.generic_merged")
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, "plots.admin.backup.other")) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", "plots.admin.backup.other")
+                    Template.of("node", Permission.PERMISSION_ADMIN_BACKUP_OTHER)
             );
         } else {
             final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
@@ -192,10 +193,10 @@ public final class Backup extends Command {
                     Template.of("plot", "generic.generic_merged")
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, "plots.admin.backup.other")) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", "plots.admin.backup.other")
+                    Template.of("node", Permission.PERMISSION_ADMIN_BACKUP_OTHER)
             );
         } else {
             final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
@@ -262,10 +263,10 @@ public final class Backup extends Command {
                     Template.of("plot", "generic.generic_merged")
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, "plots.admin.backup.other")) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", "plots.admin.backup.other")
+                    Template.of("node", Permission.PERMISSION_ADMIN_BACKUP_OTHER)
             );
         } else if (args.length == 0) {
             player.sendMessage(

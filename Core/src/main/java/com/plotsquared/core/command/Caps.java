@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
@@ -57,10 +58,10 @@ public class Caps extends SubCommand {
             return false;
         }
         if (!plot.isAdded(player.getUUID()) && !Permissions
-            .hasPermission(player, "plots.admin.caps.other")) {
+            .hasPermission(player, Permission.PERMISSION_ADMIN_CAPS_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", "plots.admin.caps.other"));
+                    Template.of("node", Permission.PERMISSION_ADMIN_CAPS_OTHER));
             return false;
         }
         player.sendMessage(TranslatableCaption.of("info.plot_caps_header"));

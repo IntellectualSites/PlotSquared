@@ -68,10 +68,10 @@ public class Cluster extends SubCommand {
         switch (sub) {
             case "l":
             case "list": {
-                if (!Permissions.hasPermission(player, "plots.cluster.list")) {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.cluster.list")
+                            Template.of("node", Permission.PERMISSION_CLUSTER_LIST)
                     );
                     return false;
                 }
@@ -121,10 +121,10 @@ public class Cluster extends SubCommand {
             }
             case "c":
             case "create": {
-                if (!Permissions.hasPermission(player, "plots.cluster.create")) {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_CREATE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.cluster.create")
+                            Template.of("node", Permission.PERMISSION_CLUSTER_CREATE)
                     );
                     return false;
                 }
@@ -187,13 +187,13 @@ public class Cluster extends SubCommand {
                 Set<Plot> plots = area.getPlotSelectionOwned(pos1, pos2);
                 if (!plots.isEmpty()) {
                     if (!Permissions
-                        .hasPermission(player, "plots.cluster.create.other")) {
+                        .hasPermission(player, Permission.PERMISSION_CLUSTER_CREATE_OTHER)) {
                         UUID uuid = player.getUUID();
                         for (Plot plot : plots) {
                             if (!plot.isOwner(uuid)) {
                                 player.sendMessage(
                                         TranslatableCaption.of("permission.no_permission"),
-                                        Template.of("node", "plots.cluster.create.other")
+                                        Template.of("node", Permission.PERMISSION_CLUSTER_CREATE_OTHER)
                                 );
                                 return false;
                             }
@@ -240,7 +240,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_DELETE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.cluster.delete")
+                            Template.of("node", Permission.PERMISSION_CLUSTER_DELETE)
                     );
                     return false;
                 }
@@ -278,7 +278,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Permission.PERMISSION_CLUSTER_DELETE_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", "plots.cluster.delete.other"));
+                                Template.of("node", Permission.PERMISSION_CLUSTER_DELETE_OTHER));
                         return false;
                     }
                 }
@@ -291,7 +291,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.cluster.resize"));
+                            Template.of("node", Permission.PERMISSION_CLUSTER_RESIZE));
                     return false;
                 }
                 if (args.length != 3) {
@@ -331,7 +331,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", "plots.cluster.resize.other"));
+                                Template.of("node", Permission.PERMISSION_CLUSTER_RESIZE_OTHER));
                         return false;
                     }
                 }
@@ -356,7 +356,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE_SHRINK)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", "plots.cluster.resize.shrink")
+                                Template.of("node", Permission.PERMISSION_CLUSTER_RESIZE_SHRINK)
                         );
                         return false;
                     }
@@ -367,7 +367,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE_EXPAND)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", "plots.cluster.resize.expand")
+                                Template.of("node", Permission.PERMISSION_CLUSTER_RESIZE_EXPAND)
                         );
                         return false;
                     }
@@ -397,10 +397,10 @@ public class Cluster extends SubCommand {
             case "add":
             case "inv":
             case "invite": {
-                if (!Permissions.hasPermission(player, "plots.cluster.invite")) {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_INVITE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.cluster.invite")
+                            Template.of("node", Permission.PERMISSION_CLUSTER_INVITE)
                     );
                     return false;
                 }

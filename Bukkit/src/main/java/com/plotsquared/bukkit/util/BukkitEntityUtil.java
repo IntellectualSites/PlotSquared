@@ -180,7 +180,7 @@ public class BukkitEntityUtil {
                             .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                             plotPlayer.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", "plots.admin.build.other")
+                                Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
                             );
                             return false;
                         }

@@ -81,7 +81,7 @@ public class SchematicCmd extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_PASTE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.schematic.paste")
+                            Template.of("node", Permission.PERMISSION_SCHEMATIC_PASTE)
                     );
                     return false;
                 }
@@ -212,7 +212,7 @@ public class SchematicCmd extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_SAVE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.schematic.save")
+                            Template.of("node", Permission.PERMISSION_SCHEMATIC_SAVE)
                     );
                     return false;
                 }
@@ -251,7 +251,7 @@ public class SchematicCmd extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.schematic.list")
+                            Template.of("node", Permission.PERMISSION_SCHEMATIC_LIST)
                     );
                     return false;
                 }
