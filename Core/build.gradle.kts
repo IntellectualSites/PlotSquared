@@ -12,7 +12,7 @@ dependencies {
     compileOnlyApi("org.yaml:snakeyaml:1.26") // Some platforms provide this
 
     // Adventure stuff
-    api("net.kyori:adventure-api:4.0.0-SNAPSHOT")
+    api("net.kyori:adventure-api:4.1.1")
     api("net.kyori:adventure-text-minimessage:4.0.0-SNAPSHOT")
 
     // Guice

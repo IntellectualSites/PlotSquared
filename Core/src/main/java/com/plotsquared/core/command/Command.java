@@ -248,7 +248,7 @@ public abstract class Command {
         if (page < 0) {
             page = 0;
         }
-        int totalPages = (int) Math.ceil((double) c.size() / size);
+        int totalPages = (int) Math.floor((double) c.size() / size);
         if (page > totalPages) {
             page = totalPages;
         }
@@ -266,9 +266,9 @@ public abstract class Command {
         int i = page * size;
         for (T obj : subList) {
             i++;
-            CaptionHolder msg = new CaptionHolder();
+            final CaptionHolder msg = new CaptionHolder();
             add.run(i, obj, msg);
-            player.sendMessage(msg.get());
+            player.sendMessage(msg.get(), msg.getTemplates());
         }
         // Send the footer
         if (page < totalPages && page > 0) { // Back | Next

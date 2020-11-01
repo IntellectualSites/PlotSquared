@@ -33,6 +33,7 @@ import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.helpmenu.HelpMenu;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
 
@@ -105,17 +106,17 @@ public class Help extends Command {
                 }
             }
             if (cat == null && page == 0) {
-                TextComponent.Builder builder = TextComponent.builder();
+                TextComponent.Builder builder = Component.text();
                 builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_header").getComponent(player)));
                 for (CommandCategory c : CommandCategory.values()) {
-                    builder.append("\n").append(MINI_MESSAGE
+                    builder.append(Component.newline()).append(MINI_MESSAGE
                         .parse(TranslatableCaption.of("help.help_info_item").getComponent(player), Template.of("category", c.name().toLowerCase()),
                             Template.of("category_desc", c.getComponent(player))));
                 }
-                builder.append("\n").append(MINI_MESSAGE
+                builder.append(Component.newline()).append(MINI_MESSAGE
                     .parse(TranslatableCaption.of("help.help_info_item").getComponent(player), Template.of("category", "all"),
                         Template.of("category_desc", "Display all commands")));
-                builder.append("\n").append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_footer").getComponent(player)));
+                builder.append(Component.newline()).append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_footer").getComponent(player)));
                 player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.asComponent())));
                 return true;
             }

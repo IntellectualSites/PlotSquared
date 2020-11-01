@@ -76,6 +76,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
@@ -2663,9 +2664,9 @@ public class Plot {
         String alias = !this.getAlias().isEmpty() ? this.getAlias() : TranslatableCaption.of("info.none").getComponent(player);
         Location bot = this.getCorners()[0];
         PlotSquared.platform().getWorldUtil().getBiome(Objects.requireNonNull(this.getWorldName()), bot.getX(), bot.getZ(), biome -> {
-            String trusted = PlayerManager.getPlayerList(this.getTrusted());
-            String members = PlayerManager.getPlayerList(this.getMembers());
-            String denied = PlayerManager.getPlayerList(this.getDenied());
+            Component trusted = PlayerManager.getPlayerList(this.getTrusted());
+            Component members = PlayerManager.getPlayerList(this.getMembers());
+            Component denied = PlayerManager.getPlayerList(this.getDenied());
             String seen;
             if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
                 if (this.isOnline()) {
@@ -2712,7 +2713,7 @@ public class Plot {
                 }
             }
             boolean build = this.isAdded(player.getUUID());
-            String owner = this.getOwners().isEmpty() ? "unowned" : PlayerManager.getPlayerList(this.getOwners());
+            Component owner = this.getOwners().isEmpty() ? Component.text("unowned") : PlayerManager.getPlayerList(this.getOwners());
             Template headerTemplate = Template.of("header", TranslatableCaption.of("info.plot_info_header").getComponent(player));
             Template footerTemplate = Template.of("footer", TranslatableCaption.of("info.plot_info_footer").getComponent(player));
             Template areaTemplate;
@@ -2748,13 +2749,14 @@ public class Plot {
                         }
                         if (full && Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
                             double[] ratings = this.getAverageRatings();
-                            String rating = "";
+                            StringBuilder rating = new StringBuilder();
                             String prefix = "";
                             for (int i = 0; i < ratings.length; i++) {
-                                rating += prefix + Settings.Ratings.CATEGORIES.get(i) + '=' + String.format("%.1f", ratings[i]);
+                                rating.append(prefix).append(Settings.Ratings.CATEGORIES.get(i)).append('=')
+                                    .append(String.format("%.1f", ratings[i]));
                                 prefix = ",";
                             }
-                            ratingTemplate = Template.of("rating", rating);
+                            ratingTemplate = Template.of("rating", rating.toString());
                         } else {
                             ratingTemplate = Template.of("rating", String.format("%.1f", this.getAverageRating()) + '/' + max);
                         }

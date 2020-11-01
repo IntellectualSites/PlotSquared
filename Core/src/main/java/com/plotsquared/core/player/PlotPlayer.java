@@ -799,12 +799,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     /**
-     * Send a title to to the player
+     * Send a title to the player
      *
      * @param title        Title
      * @param subtitle     Subtitle
      * @param fadeIn       Fade in time (in ticks)
-     * @param stay         The the title stays for (in ticks)
+     * @param stay         The title stays for (in ticks)
      * @param fadeOut      Fade out time (in ticks)
      * @param replacements Variable replacements
      */
@@ -818,7 +818,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 Duration.of(stay * 50, ChronoUnit.MILLIS),
                 Duration.of(fadeOut * 50, ChronoUnit.MILLIS));
         getAudience().showTitle(Title
-            .of(titleComponent, subtitleComponent, times));
+            .title(titleComponent, subtitleComponent, times));
     }
 
     @Override public void sendMessage(@Nonnull final Caption caption,
