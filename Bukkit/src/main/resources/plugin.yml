@@ -141,6 +141,8 @@ permissions:
     default: false
   plots.visit.other:
     default: false
+  plots.visit.denied:
+    default: false
   plots.home:
     default: false
   plots.alias.remove:
