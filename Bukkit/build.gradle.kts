@@ -39,12 +39,12 @@ dependencies {
     // Implementation details
     //
 
-    // ~~Spyware~~ Metrics
+    // Metrics
     implementation("org.bstats:bstats-bukkit:1.7")
 
     // Minecraft
     compileOnlyApi("com.destroystokyo.paper:paper-api:1.16.3-R0.1-SNAPSHOT")
-    implementation("io.papermc:paperlib:1.0.4")
+    implementation("io.papermc:paperlib:1.0.5")
 
     // Plugins
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT") {
