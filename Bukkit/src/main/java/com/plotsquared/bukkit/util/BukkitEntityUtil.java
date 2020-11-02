@@ -187,10 +187,10 @@ public class BukkitEntityUtil {
                     }
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, "plots.admin.destroy." + stub)) {
+                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
                     plotPlayer.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.destroy." + stub)
+                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
                     );
                     return false;
                 }
@@ -199,10 +199,10 @@ public class BukkitEntityUtil {
                     .isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, "plots.admin.destroy." + stub)) {
+                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
                     plotPlayer.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.destroy." + stub)
+                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
                     );
                     if (plot != null) {
                         plot.debug(player.getName()
@@ -220,10 +220,10 @@ public class BukkitEntityUtil {
                     .getFlag(PveFlag.class))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.pve." + stub)
+                        Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
@@ -241,10 +241,10 @@ public class BukkitEntityUtil {
                     .getFlag(PveFlag.class))) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.pve." + stub)
+                        Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
@@ -255,10 +255,10 @@ public class BukkitEntityUtil {
             } else if (EntityCategories.PLAYER.contains(entityType)) {
                 if (isPlot) {
                     if (!plot.getFlag(PvpFlag.class) && !Permissions
-                        .hasPermission(plotPlayer, "plots.admin.pvp." + stub)) {
+                        .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
                         plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", "plots.admin.pvp." + stub)
+                            Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
                         );
                         plot.debug(player.getName() + " could not attack " + entityType
                             + " because pve = false");
@@ -269,10 +269,10 @@ public class BukkitEntityUtil {
                 } else if (roadFlags && area.getRoadFlag(PvpFlag.class)) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pvp." + stub)) {
+                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
                     plotPlayer.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.pvp." + stub)
+                        Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
                     );
                     return false;
                 }
@@ -286,10 +286,10 @@ public class BukkitEntityUtil {
                     }
                 } else if (roadFlags && (area.getRoadFlag(AnimalAttackFlag.class) || area
                     .getFlag(PveFlag.class))) {
-                    if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                    if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                         plotPlayer.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", "plots.admin.pve." + stub)
+                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
                         );
                         return false;
                     }
@@ -305,10 +305,10 @@ public class BukkitEntityUtil {
                 } else if (roadFlags && area.getRoadFlag(PveFlag.class)) {
                     return true;
                 }
-                if (!Permissions.hasPermission(plotPlayer, "plots.admin.pve." + stub)) {
+                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", "plots.admin.pve." + stub)
+                        Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType

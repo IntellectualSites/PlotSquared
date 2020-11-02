@@ -158,7 +158,7 @@ public class Merge extends SubCommand {
         if (!force && size - 1 > maxSize) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", "plots.merge." + (size + 1))
+                    Template.of("node", Permission.PERMISSION_MERGE + "." + (size + 1))
             );
             return false;
         }

@@ -214,7 +214,7 @@ public class Cluster extends SubCommand {
                 if (current + cluster.getArea() > allowed) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.cluster.size" + "." + (current + cluster.getArea()))
+                            Template.of("node", Permission.PERMISSION_CLUSTER_SIZE + "." + (current + cluster.getArea()))
                     );
                     return false;
                 }
@@ -385,7 +385,7 @@ public class Cluster extends SubCommand {
                 if (current + cluster.getArea() > allowed) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", "plots.cluster" + "." + (current + cluster.getArea()))
+                            Template.of("node", Permission.PERMISSION_CLUSTER + "." + (current + cluster.getArea()))
                     );
                     return false;
                 }
