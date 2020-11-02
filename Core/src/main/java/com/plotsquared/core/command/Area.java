@@ -138,7 +138,7 @@ public class Area extends SubCommand {
                     return false;
                 }
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_CREATE)) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_CREATE));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", String.valueOf(Permission.PERMISSION_AREA_CREATE)));
                     return false;
                 }
                 if (args.length < 2) {
@@ -260,7 +260,7 @@ public class Area extends SubCommand {
             case "setup":
             case "create":
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_CREATE)) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_CREATE));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", String.valueOf(Permission.PERMISSION_AREA_CREATE)));
                     return false;
                 }
                 switch (args.length) {
@@ -493,7 +493,7 @@ public class Area extends SubCommand {
             case "i":
             case "info": {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_INFO)) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_INFO));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", String.valueOf(Permission.PERMISSION_AREA_INFO)));
                     return false;
                 }
                 PlotArea area;
@@ -552,7 +552,7 @@ public class Area extends SubCommand {
             case "l":
             case "list":
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_LIST)) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_LIST));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", String.valueOf(Permission.PERMISSION_AREA_LIST)));
                     return false;
                 }
                 int page;
@@ -617,7 +617,7 @@ public class Area extends SubCommand {
             case "reset":
             case "regenerate": {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_REGEN)) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_REGEN));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", String.valueOf(Permission.PERMISSION_AREA_REGEN)));
                     return false;
                 }
                 final PlotArea area = player.getApplicablePlotArea();
@@ -642,7 +642,7 @@ public class Area extends SubCommand {
             case "visit":
             case "tp":
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_TP)) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", Permission.PERMISSION_AREA_TP));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", String.valueOf(Permission.PERMISSION_AREA_TP)));
                     return false;
                 }
                 if (args.length != 2) {

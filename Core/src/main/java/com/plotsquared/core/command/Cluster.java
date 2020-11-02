@@ -71,7 +71,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_CLUSTER_LIST)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_LIST))
                     );
                     return false;
                 }
@@ -124,7 +124,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_CREATE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_CLUSTER_CREATE)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_CREATE))
                     );
                     return false;
                 }
@@ -193,7 +193,7 @@ public class Cluster extends SubCommand {
                             if (!plot.isOwner(uuid)) {
                                 player.sendMessage(
                                         TranslatableCaption.of("permission.no_permission"),
-                                        Template.of("node", Permission.PERMISSION_CLUSTER_CREATE_OTHER)
+                                        Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_CREATE_OTHER))
                                 );
                                 return false;
                             }
@@ -240,7 +240,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_DELETE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_CLUSTER_DELETE)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_DELETE))
                     );
                     return false;
                 }
@@ -278,7 +278,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Permission.PERMISSION_CLUSTER_DELETE_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Permission.PERMISSION_CLUSTER_DELETE_OTHER));
+                                Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_DELETE_OTHER)));
                         return false;
                     }
                 }
@@ -291,7 +291,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_CLUSTER_RESIZE));
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE)));
                     return false;
                 }
                 if (args.length != 3) {
@@ -331,7 +331,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE_OTHER)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Permission.PERMISSION_CLUSTER_RESIZE_OTHER));
+                                Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE_OTHER)));
                         return false;
                     }
                 }
@@ -356,7 +356,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE_SHRINK)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Permission.PERMISSION_CLUSTER_RESIZE_SHRINK)
+                                Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE_SHRINK))
                         );
                         return false;
                     }
@@ -367,7 +367,7 @@ public class Cluster extends SubCommand {
                         .hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE_EXPAND)) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Permission.PERMISSION_CLUSTER_RESIZE_EXPAND)
+                                Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_RESIZE_EXPAND))
                         );
                         return false;
                     }
@@ -400,7 +400,7 @@ public class Cluster extends SubCommand {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_INVITE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_CLUSTER_INVITE)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_CLUSTER_INVITE))
                     );
                     return false;
                 }

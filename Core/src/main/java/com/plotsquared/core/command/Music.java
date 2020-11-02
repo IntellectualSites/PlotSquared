@@ -77,7 +77,7 @@ public class Music extends SubCommand {
             .hasPermission(player, Permission.PERMISSION_ADMIN_MUSIC_OTHER)) {
             player.sendMessage(
                 TranslatableCaption.of("permission.no_permission"),
-                Template.of("node", Permission.PERMISSION_ADMIN_MUSIC_OTHER));
+                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_MUSIC_OTHER)));
             return true;
         }
         PlotInventory inv = new PlotInventory(this.inventoryUtil, player, 2, "Plot Jukebox") {

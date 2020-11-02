@@ -95,7 +95,7 @@ public class Alias extends SubCommand {
                     return true;
                 } else {
                     player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_ALIAS_SET));
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_SET)));
                 }
 
                 break;
@@ -110,7 +110,7 @@ public class Alias extends SubCommand {
                     result = removeAlias(player, plot);
                 } else {
                     player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_ALIAS_REMOVE));
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE)));
                 }
                 break;
             default:
@@ -172,7 +172,7 @@ public class Alias extends SubCommand {
     private boolean removeAlias(PlotPlayer<?> player, Plot plot) {
         plot.setAlias(null);
         player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                Template.of("node", Permission.PERMISSION_ALIAS_REMOVE));
+                Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE)));
         return true;
     }
 

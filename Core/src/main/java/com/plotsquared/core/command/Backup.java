@@ -146,7 +146,7 @@ public final class Backup extends Command {
             .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_BACKUP_OTHER)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BACKUP_OTHER))
             );
         } else {
             final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
@@ -196,7 +196,7 @@ public final class Backup extends Command {
             .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_BACKUP_OTHER)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BACKUP_OTHER))
             );
         } else {
             final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
@@ -266,7 +266,7 @@ public final class Backup extends Command {
             .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_BACKUP_OTHER)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BACKUP_OTHER))
             );
         } else if (args.length == 0) {
             player.sendMessage(

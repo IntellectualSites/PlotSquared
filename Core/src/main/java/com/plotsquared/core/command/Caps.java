@@ -61,7 +61,7 @@ public class Caps extends SubCommand {
             .hasPermission(player, Permission.PERMISSION_ADMIN_CAPS_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_CAPS_OTHER));
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_CAPS_OTHER)));
             return false;
         }
         player.sendMessage(TranslatableCaption.of("info.plot_caps_header"));

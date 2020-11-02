@@ -238,7 +238,7 @@ public class Auto extends SubCommand {
         schematic = event.getSchematic();
         if (!force && mega && !Permissions.hasPermission(player, Permission.PERMISSION_AUTO_MEGA)) {
             player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_AUTO_MEGA));
+                    Template.of("node", String.valueOf(Permission.PERMISSION_AUTO_MEGA)));
         }
         if (!force && size_x * size_z > Settings.Claim.MAX_AUTO_AREA) {
             player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots_num"),

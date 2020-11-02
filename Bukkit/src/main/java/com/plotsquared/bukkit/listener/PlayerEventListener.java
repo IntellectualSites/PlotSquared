@@ -397,7 +397,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (!result && !(plot.getFlag(UntrustedVisitFlag.class) && plot.getHomeSynchronous().equals(BukkitUtil.adaptComplete(to)))) {
                         pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_ENTRY_DENIED)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_ENTRY_DENIED))
                         );
                         event.setCancelled(true);}
                 }
@@ -510,7 +510,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_EXIT_DENIED)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
                         );
                         this.tmpTeleport = false;
                         if (lastPlot.equals(BukkitUtil.adapt(from).getPlot())) {
@@ -527,7 +527,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_ENTRY_DENIED)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_ENTRY_DENIED))
                 );
                 this.tmpTeleport = false;
                 to.setX(from.getBlockX());
@@ -587,7 +587,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (lastPlot != null && !plotExit(pp, lastPlot) && this.tmpTeleport && !kickAccess.get().orElse(false)) {
                         pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_EXIT_DENIED)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_EXIT_DENIED))
                         );
                         this.tmpTeleport = false;
                         if (lastPlot.equals(BukkitUtil.adapt(from).getPlot())) {
@@ -604,7 +604,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             } else if (!plotEntry(pp, now) && this.tmpTeleport) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_ENTRY_DENIED)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_ENTRY_DENIED))
                 );
                 this.tmpTeleport = false;
                 player.teleport(from);
@@ -853,7 +853,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_INTERACT_ROAD)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
                 );
                 cancelled = true;
             }
@@ -861,7 +861,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED))
                 );
                 cancelled = true;
             }
@@ -871,7 +871,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_INTERACT_OTHER)
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_OTHER))
                     );
                     cancelled = true;
                 }
@@ -909,7 +909,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 .hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_INTERACT_ROAD)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
                 );
                 e.setCancelled(true);
             }
@@ -918,7 +918,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                     );
                     e.setCancelled(true);
                     return;
@@ -928,7 +928,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, "plots.admin.interact.unowned")) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED))
                     );
                     e.setCancelled(true);
                 }
@@ -943,7 +943,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_INTERACT_OTHER)
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_OTHER))
                     );
                     e.setCancelled(true);
                     plot.debug(pp.getName() + " could not interact with " + entity.getType()
@@ -1143,7 +1143,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             pp.sendMessage(
                 TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", Permission.PERMISSION_ADMIN_BUILD_ROAD)
+                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
             );
             event.setCancelled(true);
         } else if (!plot.hasOwner()) {
@@ -1152,7 +1152,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             pp.sendMessage(
                 TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(pp.getUUID())) {
@@ -1168,14 +1168,14 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             pp.sendMessage(
                 TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
             );
             event.setCancelled(true);
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                 );
                 event.setCancelled(true);
             }
@@ -1215,7 +1215,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             plotPlayer.sendMessage(
                 TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", Permission.PERMISSION_ADMIN_BUILD_ROAD)
+                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
             );
             event.setCancelled(true);
         } else if (!plot.hasOwner()) {
@@ -1224,7 +1224,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             plotPlayer.sendMessage(
                 TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
             );
             event.setCancelled(true);
         } else if (!plot.isAdded(plotPlayer.getUUID())) {
@@ -1241,14 +1241,14 @@ public class PlayerEventListener extends PlotListener implements Listener {
             }
             plotPlayer.sendMessage(
                 TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
             );
             event.setCancelled(true);
         } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
             if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                 plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                 );
                 event.setCancelled(true);
             }
@@ -1274,7 +1274,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_BUILD_ROAD)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
                 );
                 event.setCancelled(true);
             }
@@ -1283,7 +1283,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_BUILD_UNOWNED)
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
                     );
                     event.setCancelled(true);
                 }
@@ -1294,7 +1294,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                         pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_BUILD_OTHER)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                         );
                         event.setCancelled(true);
                     }
@@ -1324,7 +1324,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_ROAD)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_ROAD)
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_ROAD))
                     );
                     event.setCancelled(true);
                 }
@@ -1332,7 +1332,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED))
                     );
                     event.setCancelled(true);
                 }
@@ -1343,7 +1343,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_OTHER)
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
                     );
                     event.setCancelled(true);
                     plot.debug(p.getName()
@@ -1367,7 +1367,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                             .hasPermission(player, Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                             player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)
+                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_UNOWNED))
                             );
                             event.setCancelled(true);
                         }
@@ -1377,7 +1377,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                                 .hasPermission(player, Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
                                 player.sendMessage(
                                     TranslatableCaption.of("permission.no_permission_event"),
-                                    Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_OTHER)
+                                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
                                 );
                                 event.setCancelled(true);
                                 plot.debug(player.getName()
@@ -1406,7 +1406,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_INTERACT_ROAD)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_ROAD))
                 );
                 event.setCancelled(true);
             }
@@ -1414,7 +1414,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_UNOWNED))
                 );
                 event.setCancelled(true);
             }
@@ -1472,7 +1472,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                 pp.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_INTERACT_OTHER)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_INTERACT_OTHER))
                 );
                 event.setCancelled(true);
             }
@@ -1495,7 +1495,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)) {
                     pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD)
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_ROAD))
                     );
                     event.setCancelled(true);
                 }
@@ -1504,7 +1504,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)) {
                         pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_UNOWNED))
                         );
                         event.setCancelled(true);
                         return;
@@ -1518,7 +1518,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)) {
                         pp.sendMessage(
                             TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER)
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_VEHICLE_OTHER))
                         );
                         event.setCancelled(true);
                         plot.debug(pp.getName()
@@ -1543,7 +1543,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)) {
                 plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_PROJECTILE_ROAD)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_ROAD))
                 );
                 event.setHatching(false);
             }
@@ -1551,7 +1551,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)) {
                 plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_UNOWNED))
                 );
                 event.setHatching(false);
             }
@@ -1559,7 +1559,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)) {
                 plotPlayer.sendMessage(
                     TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_PROJECTILE_OTHER)
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_PROJECTILE_OTHER))
                 );
                 event.setHatching(false);
             }
