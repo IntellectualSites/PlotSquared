@@ -138,7 +138,7 @@ public class Visit extends Command {
             if (plot.isDenied(player.getUUID())) {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_DENIED)) {
                     player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", "plots.visit.denied"));
+                    Template.of("node", String.valueOf(Permission.PERMISSION_VISIT_DENIED)));
                 return;
                 }
             }
