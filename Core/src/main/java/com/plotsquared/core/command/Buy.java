@@ -87,7 +87,8 @@ public class Buy extends Command {
         checkTrue(!plot.isOwner(player.getUUID()), TranslatableCaption.of("economy.cannot_buy_own"));
         Set<Plot> plots = plot.getConnectedPlots();
         checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
-            TranslatableCaption.of("permission.cant_claim_more_plots"));
+            TranslatableCaption.of("permission.cant_claim_more_plots"),
+                Template.of("amount", String.valueOf(player.getAllowedPlots())));
         double price = plot.getFlag(PriceFlag.class);
         if (price <= 0) {
             throw new CommandException(TranslatableCaption.of("economy.not_for_sale"));

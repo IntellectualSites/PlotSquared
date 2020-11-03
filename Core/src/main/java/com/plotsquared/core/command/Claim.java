@@ -104,10 +104,12 @@ public class Claim extends SubCommand {
                     grants = metaDataAccess.get().orElse(0);
                     if (grants <= 0) {
                         metaDataAccess.remove();
-                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
+                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"),
+                                Template.of("amount", String.valueOf(grants)));
                     }
                 } else {
-                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
+                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"),
+                            Template.of("amount", String.valueOf(grants)));
                 }
             }
 
