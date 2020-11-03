@@ -27,13 +27,13 @@
     <dependency>
       <groupId>com.destroystokyo.paper</groupId>
       <artifactId>paper-api</artifactId>
-      <version>1.16.2-R0.1-SNAPSHOT</version>
+      <version>1.16.4-R0.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-bukkit</artifactId>
-      <version>7.2.0-SNAPSHOT</version>
+      <version>7.2.0</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -99,7 +99,7 @@
     <dependency>
       <groupId>com.sk89q.worldedit</groupId>
       <artifactId>worldedit-core</artifactId>
-      <version>7.0.0</version>
+      <version>7.2.0</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
@@ -149,7 +149,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.16.2-R0.1-SNAPSHOT</version>
+      <version>1.16.4-R0.1-SNAPSHOT</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
