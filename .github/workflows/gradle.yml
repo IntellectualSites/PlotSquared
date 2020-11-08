@@ -13,6 +13,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        java: [1.8, 1.11]
 
     steps:
     - name: Checkout
