@@ -101,7 +101,7 @@ shadowJar {
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
-    relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")
+    relocate("io.papermc.paperlib", "com.plotsquared.bukkit.paperlib")
     relocate("org.bstats", "com.plotsquared.metrics")
     relocate('com.sk89q.squirrelid', 'com.plotsquared.squirrelid')
     relocate('org.khelekore.prtree', 'com.plotsquared.prtree')
