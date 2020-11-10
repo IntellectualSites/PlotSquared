@@ -146,15 +146,7 @@ public class Owner extends SetCommand {
             } catch (Exception ignored) {
             }
         } else {
-            PlotSquared.get().getImpromptuUUIDPipeline().getSingle(value, (uuid, throwable) -> {
-               if (throwable instanceof TimeoutException) {
-                   MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
-               } else if (throwable != null) {
-                   MainUtil.sendMessage(player, Captions.INVALID_PLAYER, value);
-               } else {
-                   uuidConsumer.accept(uuid);
-               }
-            });
+            PlotSquared.get().getImpromptuUUIDPipeline().getSingle(value, (uuid, throwable) -> uuidConsumer.accept(uuid));
         }
         return true;
     }
