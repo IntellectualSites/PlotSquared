@@ -108,10 +108,12 @@ public class Auto extends SubCommand {
                 if (metaDataAccess.isPresent()) {
                     int grantedPlots = metaDataAccess.get().orElse(0);
                     if (diff < 0 && grantedPlots < sizeX * sizeZ) {
-                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
+                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"),
+                                Template.of("amount", String.valueOf(diff + grantedPlots)));
                         return false;
                     } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
-                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
+                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"),
+                                Template.of("amount", String.valueOf(diff + grantedPlots)));
                         return false;
                     } else {
                         int left = grantedPlots + diff < 0 ? 0 : diff - sizeX * sizeZ;
@@ -125,7 +127,8 @@ public class Auto extends SubCommand {
                             Template.of("remainingGrants", String.valueOf(left)));
                     }
                 } else {
-                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"));
+                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"),
+                            Template.of("amount", "0"));
                     return false;
                 }
             }

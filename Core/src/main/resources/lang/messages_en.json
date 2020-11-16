@@ -208,7 +208,7 @@
   "permission.no_permission": "<prefix><red>You are lacking the permission node: <gold><node></gold>.</red>",
   "permission.no_permission_event": "<prefix><red>You are lacking the permission node: <gold><node></gold>.</red>",
   "permission.no_plot_perms": "<prefix><red>You must be the plot owner to perform this action.</red>",
-  "permission.cant_claim_more_plots": "<prefix><red>You can't claim more plots.</red>",
+  "permission.cant_claim_more_plots": "<prefix><red>You can't claim more than <gold><amount> </gold>plots.</red>",
   "permission.cant_claim_more_clusters": "<prefix><red>You can't claim more clusters.</red>",
   "permission.cant_transfer_more_plots": "<prefix><red>You can't send more plots to that user.</red>",
   "permission.cant_claim_more_plots_num": "<prefix><red>You can't claim more than <gold><amount> </gold>plots at once.</red>",

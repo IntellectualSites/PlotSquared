@@ -43,11 +43,11 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:1.7")
 
     // Minecraft
-    compileOnlyApi("com.destroystokyo.paper:paper-api:1.16.3-R0.1-SNAPSHOT")
+    compileOnlyApi("com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.5")
 
     // Plugins
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT") {
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.0") {
         exclude(group = "org.bukkit")
         exclude(group = "org.spigotmc")
     }

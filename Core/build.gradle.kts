@@ -26,12 +26,12 @@ dependencies {
     compileOnlyApi("javax.inject:javax.inject:1")
 
     // Plugins
-    compileOnlyApi("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT") {
+    compileOnlyApi("com.sk89q.worldedit:worldedit-core:7.2.0") {
         exclude(group = "bukkit-classloader-check")
         exclude(group = "mockito-core")
         exclude(group = "dummypermscompat")
     }
-    testImplementation("com.sk89q.worldedit:worldedit-core:7.2.0-SNAPSHOT")
+    testImplementation("com.sk89q.worldedit:worldedit-core:7.2.0")
 
     // Logging
     api("org.slf4j:slf4j-api:1.7.25")
