@@ -59,6 +59,7 @@ import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.sk89q.worldedit.EditSession;
@@ -81,12 +82,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "area",
     permission = "plots.area",
@@ -646,7 +651,7 @@ public class Area extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"), Template.of("value", "/plot visit [area]"));
+                    player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"), Template.of("value", "/plot area tp [area]"));
                     return false;
                 }
                 PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
@@ -675,5 +680,33 @@ public class Area extends SubCommand {
         sendUsage(player);
         return false;
     }
-
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, "plots.area.create")) {
+                completions.add("create");
+            }
+            if (Permissions.hasPermission(player, "plots.area.create")) {
+                completions.add("single");
+            }
+            if (Permissions.hasPermission(player, "plots.area.list")) {
+                completions.add("list");
+            }
+            if (Permissions.hasPermission(player, "plots.area.info")) {
+                completions.add("info");
+            }
+            if (Permissions.hasPermission(player, "plots.area.tp")) {
+                completions.add("tp");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, "plots.area") && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+    }
 }
