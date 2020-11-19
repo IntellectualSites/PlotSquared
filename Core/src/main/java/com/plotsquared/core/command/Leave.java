@@ -59,10 +59,6 @@ public class Leave extends Command {
         final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(plot.isAdded(player.getUUID()), TranslatableCaption.of("members.not_added_trusted"));
-        if (args.length == 0) {
-            sendUsage(player);
-            return CompletableFuture.completedFuture(false);
-        }
         if (plot.isOwner(player.getUUID())) {
             checkTrue(plot.hasOwner(), TranslatableCaption.of("member.already_owner"));
             // TODO setowner, other
