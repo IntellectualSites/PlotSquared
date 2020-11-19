@@ -60,7 +60,7 @@ public class Leave extends Command {
         checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(plot.isAdded(player.getUUID()), TranslatableCaption.of("members.not_added_trusted"));
         if (plot.isOwner(player.getUUID())) {
-            checkTrue(plot.hasOwner(), TranslatableCaption.of("member.already_owner"));
+            player.sendMessage(TranslatableCaption.of("member.plot_cant_leave_owner"));
             // TODO setowner, other
         } else {
             UUID uuid = player.getUUID();

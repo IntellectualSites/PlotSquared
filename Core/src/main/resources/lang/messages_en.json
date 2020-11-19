@@ -445,6 +445,7 @@
 
   "member.removed_players": "<prefix><gray>Removed <amount> player(s) from this plot.</gray>",
   "member.plot_left": "<prefix><gray><player> left the plot.</gray>",
+  "member.plot_cant_leave_owner": "<prefix><red>You are this plot owner. You cannot leave the plot.</red>",
   "member.already_owner": "<prefix><gray><player></gray><gold> is already the plot owner.</gold>",
   "member.already_added": "<prefix><gray>That user is already added to that category: <player></gray>",
   "member.member_added": "<prefix><dark_aqua>That user can now build while the plot owner is online.</dark_aqua>",
