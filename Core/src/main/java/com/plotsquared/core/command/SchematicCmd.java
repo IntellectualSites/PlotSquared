@@ -40,15 +40,15 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "schematic",
     permission = "plots.schematic",
@@ -270,5 +270,28 @@ public class SchematicCmd extends SubCommand {
                 break;
         }
         return true;
+    }
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, "plots.schematic.save")) {
+                completions.add("save");
+            }
+            if (Permissions.hasPermission(player, "plots.schematic.list")) {
+                completions.add("list");
+            }
+            if (Permissions.hasPermission(player, "plots.schematic.paste")) {
+                completions.add("paste");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, "plots.schematic") && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 }
