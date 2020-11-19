@@ -147,7 +147,8 @@ public class Claim extends SubCommand {
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
-                        Template.of("money", String.valueOf(cost))
+                        Template.of("money", String.valueOf(cost)),
+                        Template.of("balance", String.valueOf(this.econHandler.getMoney(player)))
                 );
             }
         }

@@ -285,7 +285,8 @@ public class Auto extends SubCommand {
                 if (!force && this.econHandler.getMoney(player) < cost) {
                     player.sendMessage(
                             TranslatableCaption.of("economy.cannot_afford_plot"),
-                            Template.of("money", String.valueOf(cost))
+                            Template.of("money", String.valueOf(cost)),
+                            Template.of("balance", String.valueOf(this.econHandler.getMoney(player)))
                     );
                     return true;
                 }
