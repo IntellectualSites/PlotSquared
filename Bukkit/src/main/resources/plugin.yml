@@ -95,6 +95,30 @@ permissions:
     default: false
   plots.set.flag.other:
     default: false
+  plots.set:
+    default: false
+  plots.set.biome:
+    default: false
+  plots.set.alias:
+    default: false
+  plots.set.home:
+    default: false
+  plots.set.main:
+    default: false
+  plots.set.floor:
+    default: false
+  plots.set.air:
+    default: false
+  plots.set.all:
+    default: false
+  plots.set.border:
+    default: false
+  plots.set.wall:
+    default: false
+  plots.set.outline:
+    default: false
+  plots.set.middle:
+    default: false
   plots.set.flag:
     default: false
   plots.flag.remove:
@@ -106,6 +130,8 @@ permissions:
   plots.list.mine:
     default: false
   plots.list.shared:
+    default: false
+  plots.target:
     default: false
   plots.list.world:
     default: false
@@ -156,6 +182,12 @@ permissions:
   plots.backup.load:
     default: false
   plots.rate:
+    default: false
+  plots.template.export:
+    default: false
+  plots.template.import:
+    default: false
+  plots.template:
     default: false
 
   plots.admin:

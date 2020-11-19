@@ -85,10 +85,10 @@ public class Target extends SubCommand {
         player.sendMessage(TranslatableCaption.of("compass.compass_target"));
         return true;
     }
-    @Override public Collection<Command> tab(final PlotPlayer player, String[] args, boolean space) {
+    @Override public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
         return Stream.of("<X;Z>", "nearest")
                 .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                .map(value -> new Command(null, false, value, "plots.target", RequiredType.NONE, null) {
+                .map(value -> new Command(null, false, value, "plots.target", RequiredType.PLAYER, null) {
                 }).collect(Collectors.toList());
     }
 }

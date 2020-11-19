@@ -684,25 +684,25 @@ public class Area extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, "plots.area.create")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_AREA_CREATE)) {
                 completions.add("create");
             }
-            if (Permissions.hasPermission(player, "plots.area.create")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_AREA_CREATE)) {
                 completions.add("single");
             }
-            if (Permissions.hasPermission(player, "plots.area.list")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_AREA_LIST)) {
                 completions.add("list");
             }
-            if (Permissions.hasPermission(player, "plots.area.info")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_AREA_INFO)) {
                 completions.add("info");
             }
-            if (Permissions.hasPermission(player, "plots.area.tp")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_AREA_TP)) {
                 completions.add("tp");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, "plots.area") && args[0].length() > 0) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_AREA) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;

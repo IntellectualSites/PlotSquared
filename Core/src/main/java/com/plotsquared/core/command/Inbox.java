@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.inject.TypeLiteral;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.MetaDataKey;
 import com.plotsquared.core.player.PlotPlayer;
@@ -274,19 +275,19 @@ public class Inbox extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, "plots.inbox.read.owner")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX_READ_OWNER)) {
                 completions.add("owner");
             }
-            if (Permissions.hasPermission(player, "plots.inbox.read.public")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX_READ_PUBLIC)) {
                 completions.add("public");
             }
-            if (Permissions.hasPermission(player, "plots.inbox.read.report")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX_READ_REPORT)) {
                 completions.add("report");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.CHAT) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, "plots.inbox") && args[0].length() > 0) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;

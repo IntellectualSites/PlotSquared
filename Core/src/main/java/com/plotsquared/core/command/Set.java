@@ -227,44 +227,44 @@ public class Set extends SubCommand {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
 
-            if (Permissions.hasPermission(player, "plots.set.biome")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_BIOME)) {
                 completions.add("biome");
             }
-            if (Permissions.hasPermission(player, "plots.set.alias")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_ALIAS)) {
                 completions.add("alias");
             }
-            if (Permissions.hasPermission(player, "plots.set.home")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_HOME)) {
                 completions.add("home");
             }
-            if (Permissions.hasPermission(player, "plots.set.main")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_MAIN)) {
                 completions.add("main");
             }
-            if (Permissions.hasPermission(player, "plots.set.floor")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_FLOOR)) {
                 completions.add("floor");
             }
-            if (Permissions.hasPermission(player, "plots.set.air")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_AIR)) {
                 completions.add("air");
             }
-            if (Permissions.hasPermission(player, "plots.set.all")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_ALL)) {
                 completions.add("all");
             }
-            if (Permissions.hasPermission(player, "plots.set.border")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_BORDER)) {
                 completions.add("border");
             }
-            if (Permissions.hasPermission(player, "plots.set.wall")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_WALL)) {
                 completions.add("wall");
             }
-            if (Permissions.hasPermission(player, "plots.set.outline")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_OUTLINE)) {
                 completions.add("outline");
             }
-            if (Permissions.hasPermission(player, "plots.set.middle")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET_MIDDLE)) {
                 completions.add("middle");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
                 .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.APPEARANCE) {
                 }).collect(Collectors.toCollection(LinkedList::new));
 
-            if (Permissions.hasPermission(player, "plots.set") && args[0].length() > 0) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SET) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;

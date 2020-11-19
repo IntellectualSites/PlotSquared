@@ -293,16 +293,16 @@ public class Rate extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, "plots.rate")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_RATE)) {
                 completions.add("1 - 10");
             }
-            if (Permissions.hasPermission(player, "plots.admin.command.purge.ratings")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS)) {
                 completions.add("purge");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, "plots.rate") && args[0].length() > 0) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_RATE) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;

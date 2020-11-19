@@ -37,6 +37,7 @@ import com.plotsquared.core.configuration.InvalidConfigurationException;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
@@ -272,16 +273,16 @@ public class Template extends SubCommand {
     @Override public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, "plots.template.export")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE_EXPORT)) {
                 completions.add("export");
             }
-            if (Permissions.hasPermission(player, "plots.template.import")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE_IMPORT)) {
                 completions.add("import");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
                 .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
                 }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, "plots.template") && args[0].length() > 0) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;

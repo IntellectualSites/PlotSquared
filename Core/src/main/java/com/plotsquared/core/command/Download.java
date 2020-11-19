@@ -157,16 +157,16 @@ public class Download extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, "plots.download")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD)) {
                 completions.add("schem");
             }
-            if (Permissions.hasPermission(player, "plots.download.world")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
                 completions.add("world");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, "plots.download") && args[0].length() > 0) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;

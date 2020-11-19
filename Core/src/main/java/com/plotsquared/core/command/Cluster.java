@@ -823,43 +823,43 @@ public class Cluster extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, "plots.cluster.list")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_LIST)) {
                 completions.add("list");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.create")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_CREATE)) {
                 completions.add("create");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.delete")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_DELETE)) {
                 completions.add("delete");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.resize")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_RESIZE)) {
                 completions.add("resize");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.invite")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_INVITE)) {
                 completions.add("invite");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.kick")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_KICK)) {
                 completions.add("kick");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.leave")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_KICK)) {
                 completions.add("leave");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.members")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_HELPERS)) {
                 completions.add("members");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.info")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_INFO)) {
                 completions.add("info");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.tp")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_TP)) {
                 completions.add("tp");
             }
-            if (Permissions.hasPermission(player, "plots.cluster.sethome")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_SETHOME)) {
                 completions.add("sethome");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, "plots.cluster") && args[0].length() > 0) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;

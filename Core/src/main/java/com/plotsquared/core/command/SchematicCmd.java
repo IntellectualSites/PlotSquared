@@ -280,19 +280,19 @@ public class SchematicCmd extends SubCommand {
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, "plots.schematic.save")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_SAVE)) {
                 completions.add("save");
             }
-            if (Permissions.hasPermission(player, "plots.schematic.list")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_LIST)) {
                 completions.add("list");
             }
-            if (Permissions.hasPermission(player, "plots.schematic.paste")) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_PASTE)) {
                 completions.add("paste");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
                     }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, "plots.schematic") && args[0].length() > 0) {
+            if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;
