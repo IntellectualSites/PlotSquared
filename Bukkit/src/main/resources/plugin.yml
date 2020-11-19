@@ -155,6 +155,8 @@ permissions:
     default: false
   plots.backup.load:
     default: false
+  plots.rate:
+    default: false
 
   plots.admin:
     default: false
@@ -240,7 +242,7 @@ permissions:
     default: false
   plots.admin.build.heightlimit:
     default: false
-  plots.admin.command.rate:
+  plots.admin.command.purge.ratings:
     default: false
   plots.admin.command.trust:
     default: false

@@ -42,15 +42,21 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "rate",
     permission = "plots.rate",
@@ -113,7 +119,7 @@ public class Rate extends SubCommand {
                         return false;
                     }
                     if (!Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_RATE, true)) {
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS, true)) {
                         return false;
                     }
                     plot.clearRatings();
@@ -281,5 +287,26 @@ public class Rate extends SubCommand {
         void add(Number v) {
             this.value += v.intValue();
         }
+    }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, "plots.rate")) {
+                completions.add("1 - 10");
+            }
+            if (Permissions.hasPermission(player, "plots.admin.command.purge.ratings")) {
+                completions.add("purge");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, "plots.rate") && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 }

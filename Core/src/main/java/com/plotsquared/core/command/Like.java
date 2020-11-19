@@ -95,7 +95,7 @@ public class Like extends SubCommand {
                         return false;
                     }
                     if (!Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_RATE, true)) {
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS, true)) {
                         return false;
                     }
                     plot.clearRatings();

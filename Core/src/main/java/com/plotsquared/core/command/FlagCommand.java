@@ -227,18 +227,18 @@ public final class FlagCommand extends Command {
         final boolean space) {
         if (args.length == 1) {
             return Stream
-                .of("s", "set", "add", "a", "remove", "r", "delete", "info", "i", "list", "l")
+                .of("set", "add", "remove", "delete", "info", "list")
                 .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
                 .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
-        } else if (Arrays.asList("s", "set", "add", "a", "remove", "r", "delete", "info", "i")
+        } else if (Arrays.asList("set", "add", "remove", "delete", "info")
             .contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 2) {
             return GlobalFlagContainer.getInstance().getRecognizedPlotFlags().stream()
                 .filter(flag -> !(flag instanceof InternalFlag))
                 .filter(flag -> flag.getName().startsWith(args[1].toLowerCase(Locale.ENGLISH)))
                 .map(flag -> new Command(null, false, flag.getName(), "", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
-        } else if (Arrays.asList("s", "set", "add", "a", "remove", "r", "delete")
+        } else if (Arrays.asList("set", "add", "remove", "delete")
             .contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 3) {
             try {
                 final PlotFlag<?, ?> flag =
