@@ -29,7 +29,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.TeleportCause;
@@ -41,13 +40,14 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.minimessage.Template;
 
-import java.util.HashSet;
+import java.util.*;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "cluster",
     aliases = "clusters",
@@ -813,5 +813,52 @@ public class Cluster extends SubCommand {
         }
         player.sendMessage(TranslatableCaption.of("cluster.cluster_available_args"));
         return false;
+    }
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, "plots.cluster.list")) {
+                completions.add("list");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.create")) {
+                completions.add("create");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.delete")) {
+                completions.add("delete");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.resize")) {
+                completions.add("resize");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.invite")) {
+                completions.add("invite");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.kick")) {
+                completions.add("kick");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.leave")) {
+                completions.add("leave");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.members")) {
+                completions.add("members");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.info")) {
+                completions.add("info");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.tp")) {
+                completions.add("tp");
+            }
+            if (Permissions.hasPermission(player, "plots.cluster.sethome")) {
+                completions.add("sethome");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, "plots.cluster") && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 }
