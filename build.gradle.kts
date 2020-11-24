@@ -124,6 +124,10 @@ allprojects {
                             id.set("N0tMyFaultOG")
                             name.set("NotMyFault")
                         }
+                        developer {
+                            id.set("SirYwell")
+                            name.set("Hannes Greule")
+                        }
                     }
 
                     scm {

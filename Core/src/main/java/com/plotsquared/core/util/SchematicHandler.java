@@ -66,11 +66,6 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
-<<<<<<< HEAD
-=======
-import org.json.JSONArray;
-import org.json.JSONException;
->>>>>>> Some QoL and javadocs
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,6 +90,8 @@ import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
