@@ -85,6 +85,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
@@ -100,6 +101,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -1065,6 +1067,34 @@ public class PlayerEventListener extends PlotListener implements Listener {
             .checkPlayerBlockEvent(pp, eventType, location, blocktype1, true)) {
             event.setCancelled(true);
             event.setUseInteractedBlock(Event.Result.DENY);
+        }
+    }
+
+    // Boats can sometimes be placed on interactable blocks such as levers,
+    // see PS-175. Armor stands, minecarts and end crystals (the other entities
+    // supported by this event) don't have this issue.
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onBoatPlace(EntityPlaceEvent event) {
+        Player player = event.getPlayer();
+        if (player == null) {
+            return;
+        }
+        Entity placed = event.getEntity();
+        if (!(placed instanceof Boat)) {
+            return;
+        }
+        BukkitPlayer pp = BukkitUtil.getPlayer(player);
+        PlotArea area = pp.getPlotAreaAbs();
+        if (area == null) {
+            return;
+        }
+        PlayerBlockEventType eventType = PlayerBlockEventType.PLACE_VEHICLE;
+        Block block = event.getBlock();
+        BlockType blockType = BukkitAdapter.asBlockType(block.getType());
+        Location location = BukkitUtil.getLocation(block.getLocation());
+        if (!PlotSquared.get().getEventDispatcher()
+            .checkPlayerBlockEvent(pp, eventType, location, blockType, true)) {
+            event.setCancelled(true);
         }
     }
 
