@@ -21,7 +21,7 @@
     <dependency>
       <groupId>com.plotsquared</groupId>
       <artifactId>PlotSquared-Core</artifactId>
-      <version>5.13.8</version>
+      <version>5.13.9</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>io.papermc</groupId>
       <artifactId>paperlib</artifactId>
-      <version>1.0.4</version>
+      <version>1.0.5</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

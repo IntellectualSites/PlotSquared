@@ -62,7 +62,7 @@ public class BukkitWorldManager implements PlatformWorldManager<World> {
     }
 
     protected void setGenerator(@Nullable final String worldName, @Nullable final String generator) {
-        if (generator == null) {
+        if (generator == null || worldName != null && worldName.contains(".")) {
             return;
         }
         File file = new File("bukkit.yml").getAbsoluteFile();
