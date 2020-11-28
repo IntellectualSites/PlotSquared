@@ -527,7 +527,7 @@ public final class FlagCommand extends Command {
             final Iterator<String> flagIterator = entry.getValue().iterator();
             while (flagIterator.hasNext()) {
                 final String flag = flagIterator.next();
-                category.append(MINI_MESSAGE
+                category = category.append(MINI_MESSAGE
                     .parse(TranslatableCaption.of("flag.flag_list_flag").getComponent(player), Template.of("command", "/plot flag info " + flag),
                         Template.of("flag", flag), Template.of("suffix", flagIterator.hasNext() ? ", " : "")));
             }

@@ -13,7 +13,7 @@ dependencies {
 
     // Adventure stuff
     api("net.kyori:adventure-api:4.2.0")
-    api("net.kyori:adventure-text-minimessage:4.0.0-SNAPSHOT")
+    api("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
 
     // Guice
     api("com.google.inject:guice:4.2.3") {

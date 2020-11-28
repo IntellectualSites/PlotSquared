@@ -151,16 +151,16 @@ public class Debug extends SubCommand {
         Component header = MINI_MESSAGE.parse(TranslatableCaption.of("debug.debug_header").getComponent(player) + "\n");
         String line = TranslatableCaption.of("debug.debug_line").getComponent(player) + "\n";
         String section = TranslatableCaption.of("debug.debug_section").getComponent(player) + "\n";
-        information.append(header);
-        information.append(MINI_MESSAGE.parse(section, Template.of("val", "PlotArea")));
-        information.append(MINI_MESSAGE
+        information = information.append(header);
+        information = information.append(MINI_MESSAGE.parse(section, Template.of("val", "PlotArea")));
+        information = information.append(MINI_MESSAGE
             .parse(line, Template.of("var", "Plot Worlds"), Template.of("val", StringMan.join(this.plotAreaManager.getAllPlotAreas(), ", "))));
-        information.append(
+        information = information.append(
             MINI_MESSAGE.parse(line, Template.of("var", "Owned Plots"), Template.of("val", String.valueOf(PlotQuery.newQuery().allPlots().count()))));
-        information.append(MINI_MESSAGE.parse(section, Template.of("val", "Messages")));
-        information.append(MINI_MESSAGE.parse(line, Template.of("var", "Total Messages"), Template.of("val", String.valueOf(captions.size()))));
-        information.append(MINI_MESSAGE.parse(line, Template.of("var", "View all captions"), Template.of("val", "/plot debug msg")));
-        player.sendMessage(StaticCaption.of(information.toString()));
+        information = information.append(MINI_MESSAGE.parse(section, Template.of("val", "Messages")));
+        information = information.append(MINI_MESSAGE.parse(line, Template.of("var", "Total Messages"), Template.of("val", String.valueOf(captions.size()))));
+        information = information.append(MINI_MESSAGE.parse(line, Template.of("var", "View all captions"), Template.of("val", "/plot debug msg")));
+        player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
         return true;
     }
 }
