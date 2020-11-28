@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.MainUtil;
 
 @CommandDeclaration(command = "chat",
@@ -37,11 +38,19 @@ import com.plotsquared.core.util.MainUtil;
     requiredType = RequiredType.PLAYER)
 public class Chat extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        if (player.getPlotAreaAbs().isForcingPlotChat()) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        PlotArea plotAreaAbs = player.getPlotAreaAbs();
+        if (plotAreaAbs == null) {
+            MainUtil.sendMessage(player, Captions.NO_PLOTS);
+            return true;
+        }
+
+        if (plotAreaAbs.isForcingPlotChat()) {
             MainUtil.sendMessage(player, Captions.PLOT_CHAT_FORCED);
             return true;
         }
+
         MainCommand.getInstance().toggle.chat(this, player, args, null, null);
         return true;
     }
