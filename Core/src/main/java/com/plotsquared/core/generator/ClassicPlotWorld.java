@@ -45,17 +45,11 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public int PLOT_HEIGHT = 62;
     public int WALL_HEIGHT = 62;
     public BlockBucket MAIN_BLOCK = new BlockBucket(BlockTypes.STONE);
-    // new BlockState[] {BlockUtil.get("stone")};
     public BlockBucket TOP_BLOCK = new BlockBucket(BlockTypes.GRASS_BLOCK);
-    //new BlockState[] {BlockUtil.get("grass")};
     public BlockBucket WALL_BLOCK = new BlockBucket(BlockTypes.STONE_SLAB);
-    // BlockUtil.get((short) 44, (byte) 0);
     public BlockBucket CLAIMED_WALL_BLOCK = new BlockBucket(BlockTypes.SANDSTONE_SLAB);
-    // BlockUtil.get((short) 44, (byte) 1);
     public BlockBucket WALL_FILLING = new BlockBucket(BlockTypes.STONE);
-    //BlockUtil.get((short) 1, (byte) 0);
     public BlockBucket ROAD_BLOCK = new BlockBucket(BlockTypes.QUARTZ_BLOCK);
-    // BlockUtil.get((short) 155, (byte) 0);
     public boolean PLOT_BEDROCK = true;
     public boolean PLACE_TOP_BLOCK = true;
 
@@ -91,7 +85,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK,
                 "Wall block (claimed)", ConfigurationUtil.BLOCK_BUCKET),
             new ConfigurationNode("wall.place_top_block", this.PLACE_TOP_BLOCK,
-                "Place or not the top block", ConfigurationUtil.BOOLEAN),
+                "Whether to top block should be placed or not", ConfigurationUtil.BOOLEAN),
             new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width",
                 ConfigurationUtil.INTEGER),
             new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height",
