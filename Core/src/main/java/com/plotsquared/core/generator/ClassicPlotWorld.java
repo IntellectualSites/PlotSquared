@@ -85,7 +85,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
             new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK,
                 "Wall block (claimed)", ConfigurationUtil.BLOCK_BUCKET),
             new ConfigurationNode("wall.place_top_block", this.PLACE_TOP_BLOCK,
-                "Whether to top block should be placed or not", ConfigurationUtil.BOOLEAN),
+                "Whether a top block should be placed or not", ConfigurationUtil.BOOLEAN),
             new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width",
                 ConfigurationUtil.INTEGER),
             new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height",
