@@ -28,11 +28,16 @@ package com.plotsquared.bukkit.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class JavaVersionCheck {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + JavaVersionCheck.class.getSimpleName());
+    private final static Pattern NUM_PATTERN = Pattern.compile("\\d+");
 
-    public JavaVersionCheck() {}
+    private JavaVersionCheck() {
+    }
 
     public static void checkJavaVersion() {
         final String javaVersion = System.getProperty("java.version");
@@ -48,7 +53,12 @@ public class JavaVersionCheck {
 
         final int javaVersionNumber;
         try {
-            javaVersionNumber = Integer.parseInt(version);
+            Matcher versionMatcher = NUM_PATTERN.matcher(version);
+            if (!versionMatcher.find()) {
+                JavaVersionCheck.notify(javaVersion, logger);
+                return;
+            }
+            javaVersionNumber = Integer.parseInt(versionMatcher.group());
         } catch (final NumberFormatException e) {
             logger.error("Failed to determine Java version. Could not parse {}", version, e);
             JavaVersionCheck.notify(javaVersion, logger);
@@ -59,7 +69,7 @@ public class JavaVersionCheck {
             JavaVersionCheck.notify(javaVersion, logger);
         }
     }
-    
+
     public static void notify(final String version, final Logger logger) {
         logger.error("************************************************************");
         logger.error("* WARNING - YOU ARE RUNNING AN OUTDATED VERSION OF JAVA.");
