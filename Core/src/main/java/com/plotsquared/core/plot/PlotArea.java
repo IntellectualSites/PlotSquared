@@ -466,7 +466,6 @@ public abstract class PlotArea {
         options.put("event.spawn.custom", this.isSpawnCustom());
         options.put("event.spawn.breeding", this.isSpawnBreeding());
         options.put("world.border", this.hasWorldBorder());
-        options.put("limits.max-members", this.getMaxPlotMembers());
         options.put("home.default", "side");
         String position = config.getString("home.nonmembers",
             config.getBoolean("home.allow-nonmembers", false) ?
@@ -1230,10 +1229,6 @@ public abstract class PlotArea {
 
     @Nonnull public IndependentPlotGenerator getGenerator() {
         return this.generator;
-    }
-
-    public int getMaxPlotMembers() {
-        return this.maxPlotMembers;
     }
 
     public boolean isAutoMerge() {
