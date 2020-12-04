@@ -156,6 +156,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import static com.plotsquared.bukkit.util.JavaVersionCheck.checkJavaVersion;
 import static com.plotsquared.core.util.PremiumVerification.getDownloadID;
 import static com.plotsquared.core.util.PremiumVerification.getResourceID;
 import static com.plotsquared.core.util.PremiumVerification.getUserID;
@@ -241,6 +242,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             Bukkit.shutdown();
             return;
         }
+
+        // Check whether the server runs on 11 or greater
+        checkJavaVersion();
 
         // We create the injector after PlotSquared has been initialized, so that we have access
         // to generated instances and settings
