@@ -51,7 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CommandDeclaration(usage = "/plot download [schematic | world]",
+@CommandDeclaration(usage = "/plot download [schem | world]",
     command = "download",
     aliases = {"dl"},
     category = CommandCategory.SCHEMATIC,

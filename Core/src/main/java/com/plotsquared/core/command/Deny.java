@@ -72,6 +72,8 @@ public class Deny extends SubCommand {
 
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
+        final Plot currentPlot = player.getCurrentPlot();
+        int size = currentPlot.getDenied().size();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
@@ -85,6 +87,9 @@ public class Deny extends SubCommand {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
+
+        if (!(player.hasPermission("plots.deny." + size) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY)))
+            player.sendMessage(TranslatableCaption.of("members.plot_max_members_denied"), Template.of("amount", String.valueOf(size)));
 
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {

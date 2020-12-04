@@ -128,9 +128,8 @@ public class Trust extends Command {
                     size += currentPlot.getMembers().contains(uuid) ? 0 : 1;
                 }
                 checkTrue(!uuids.isEmpty(), null);
-                checkTrue(size <= currentPlot.getArea().getMaxPlotMembers() || Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
-                        TranslatableCaption.of("member.plot_max_members"));
+                if (!(player.hasPermission("plots.trust." + size) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST)))
+                    player.sendMessage(TranslatableCaption.of("members.plot_max_members"), Template.of("amount", String.valueOf(size - 1)));
                 // Success
                 confirm.run(this, () -> {
                     for (UUID uuid : uuids) {

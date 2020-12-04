@@ -352,7 +352,7 @@
   "blocklist.block_list_separator": "</gray><gold>,</gold><gray> ",
 
   "biome.need_biome": "<prefix><red>You need to specify a valid biome.</red>",
-  "biome.biome_set_to": "<prefix><gold>Plot biome set to <gray><value></gray></gold>",
+  "biome.biome_set_to": "<prefix><gold>Plot biome set to <gray><value></gray>. You may have to rejoin your game to see a change.</gold>",
 
   "teleport.teleported_to_plot": "<prefix><gold>You have been teleported.</gold>",
   "teleport.teleported_to_road": "<prefix><gold>You got teleported to the road.</gold>",
@@ -380,7 +380,7 @@
   "info.plot_info_unclaimed": "<prefix><gray>Plot <gold><plot></gold> is not yet claimed.</gray>",
   "info.plot_info_header": "<dark_gray><strikethrough>--------- <reset><gold>INFO </gold><dark_gray><strikethrough>---------</dark_gray><reset>",
   "info.plot_info_hidden": "<prefix><red>You cannot view the information about this plot.</red>",
-  "info.plot_info_format": "<header>\n<gold>ID: <gray><id></gray>\nArea: <gray><area></gray>\nAlias: <gray><alias></gray>\nOwner: <gray><owner></gray>\nBiome: <gray><biome></gray>\nCan Build: <gray><build></gray>\nRating: <gray><rating></gray>\nSeen: <gray><seen></gray>\nTrusted: <gray><trusted></gray>\nMembers: <gray><members></gray>\nDenied: <gray><denied></gray>\nFlags:<gray><flags></gray>\nDescription: <gray><desc></gray></gold>\n<footer>",
+  "info.plot_info_format": "<header>\n<gold>ID: <gray><id></gray>\nArea: <gray><area></gray>\nAlias: <gray><alias></gray>\nOwner: <gray><owner></gray>\nBiome: <gray><biome></gray>\nCan Build: <gray><build></gray>\nRating: <gray><rating></gray>\nSeen: <gray><seen></gray>\nTrusted: <gray><trusted></gray>\nMembers: <gray><members></gray>\nDenied: <gray><denied></gray>\nFlags: <gray><flags></gray>\nDescription: <gray><desc></gray></gold>\n<footer>",
   "info.plot_info_footer": "<dark_gray><strikethrough>--------- <reset><gold>INFO </gold><dark_gray><strikethrough>---------<reset>",
   "info.plot_info_trusted": "<gold>Trusted:</gold> <gray><trusted></gray>",
   "info.plot_info_members": "<gold>Members:</gold> <gray><members></gray>",
@@ -445,11 +445,12 @@
 
   "member.removed_players": "<prefix><gray>Removed <amount> player(s) from this plot.</gray>",
   "member.plot_left": "<prefix><gray><player> left the plot.</gray>",
-  "member.plot_cant_leave_owner": "<prefix><red>You are this plot owner. You cannot leave the plot.</red>",
+  "member.plot_cant_leave_owner": "<prefix><red>You are the plot owner. You cannot leave this plot.</red>",
   "member.already_owner": "<prefix><gray><player></gray><gold> is already the plot owner.</gold>",
   "member.already_added": "<prefix><gray>That user is already added to that category: <player></gray>",
   "member.member_added": "<prefix><dark_aqua>That user can now build while the plot owner is online.</dark_aqua>",
-  "members.plot_max_members": "<prefix><red>You are not allowed to add any more players to this plot.</red>",
+  "members.plot_max_members": "<prefix><red>You are not allowed to add more than </red><gold><amount></gold><red> players to this plot.</red>",
+  "members.plot_max_members_denied": "<prefix><red>You are not allowed to deny more than </red><gold><amount></gold><red> players from this plot.</red>",
   "members.not_added_trusted": "<prefix><red>You must be added or trusted to the plot to run that command.</red>",
 
   "owner.set_owner": "<prefix><dark_aqua>You successfully set the plot owner.</dark_aqua>",

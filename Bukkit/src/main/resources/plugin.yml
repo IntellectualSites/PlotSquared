@@ -278,6 +278,8 @@ permissions:
     default: false
   plots.admin.command.trust:
     default: false
+  plots.admin.command.add:
+    default: false
   plots.admin.info.force:
     default: false
   plots.admin.command.schematic:

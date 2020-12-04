@@ -114,8 +114,8 @@ public class Add extends Command {
                         size += plot.getTrusted().contains(uuid) ? 0 : 1;
                     }
                     checkTrue(!uuids.isEmpty(), null);
-                    checkTrue(size <= plot.getArea().getMaxPlotMembers() || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
-                        TranslatableCaption.of("members.plot_max_members"));
+                    if (!(player.hasPermission("plots.add." + size) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_ADD)))
+                        player.sendMessage(TranslatableCaption.of("members.plot_max_members"), Template.of("amount", String.valueOf(size - 1)));
                     // Success
                     confirm.run(this, () -> {
                         for (UUID uuid : uuids) {

@@ -76,6 +76,7 @@ public enum Permission {
     PERMISSION_ADMIN_INTERACT_OTHER("plots.admin.interact.other"),
     PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT("plots.admin.build.heightlimit"),
     PERMISSION_ADMIN_COMMAND_PURGE_RATINGS("plots.admin.command.purge.ratings"),
+    PERMISSION_ADMIN_COMMAND_ADD("plots.admin.command.trust"),
     PERMISSION_ADMIN_COMMAND_TRUST("plots.admin.command.trust"),
     PERMISSION_TRUST_EVERYONE("plots.trust.everyone"),
     PERMISSION_AREA_CREATE("plots.area.create"),
