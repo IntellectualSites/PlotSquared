@@ -243,9 +243,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             return;
         }
 
-        // Check whether the server runs on 11 or greater
-        checkJavaVersion();
-
         // We create the injector after PlotSquared has been initialized, so that we have access
         // to generated instances and settings
         this.injector = Guice
@@ -515,6 +512,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 getLogger().warning("Failed to clean up players: " + e.getMessage());
             }
         }, 100L, 100L);
+
+        // Check whether the server runs on 11 or greater
+        checkJavaVersion();
     }
 
     private void unload() {
