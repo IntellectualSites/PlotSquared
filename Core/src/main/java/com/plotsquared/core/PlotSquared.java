@@ -209,6 +209,8 @@ public class PlotSquared {
             this.eventDispatcher = new EventDispatcher(this.worldedit);
             // Create plot listener
             this.plotListener = new PlotListener(this.eventDispatcher);
+            // Create placeholder registry
+            placeholderRegistry = new PlaceholderRegistry(eventDispatcher);
 
             // Copy files
             copyFile("addplots.js", Settings.Paths.SCRIPTS);
