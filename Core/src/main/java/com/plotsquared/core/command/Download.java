@@ -99,6 +99,10 @@ public class Download extends SubCommand {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
+        if (plot.isMerged()) {
+            player.sendMessage(TranslatableCaption.of("web.plot_merged"));
+            return false;
+        }
         if (plot.getRunning() > 0) {
             player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
@@ -140,6 +144,7 @@ public class Download extends SubCommand {
         player.sendMessage(TranslatableCaption.of("web.generating_link"));
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
