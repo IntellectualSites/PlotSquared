@@ -109,6 +109,24 @@ public final class PlaceholderRegistry {
             }
             return String.valueOf(plot.getDenied().size());
         });
+        this.createPlaceholder("currentplot_members_trusted_list", (player, plot) -> {
+            if (plot.getTrusted() == null) {
+                return "0";
+            }
+            return String.valueOf(PlayerManager.getPlayerList(plot.getTrusted()));
+        });
+        this.createPlaceholder("currentplot_members_added_list", (player, plot) -> {
+            if (plot.getMembers() == null) {
+                return "0";
+            }
+            return String.valueOf(PlayerManager.getPlayerList(plot.getMembers()));
+        });
+        this.createPlaceholder("currentplot_members_denied_list", (player, plot) -> {
+            if (plot.getDenied() == null) {
+                return "0";
+            }
+            return String.valueOf(PlayerManager.getPlayerList(plot.getDenied()));
+        });
         this.createPlaceholder("has_build_rights", (player, plot) ->
             plot.isAdded(player.getUUID()) ? "true" : "false");
         this.createPlaceholder("currentplot_x", (player, plot) -> Integer.toString(plot.getId().getX()));
