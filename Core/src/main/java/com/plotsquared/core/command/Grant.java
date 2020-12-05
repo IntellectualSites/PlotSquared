@@ -89,7 +89,7 @@ public class Grant extends Command {
                         );
                     } else {
                         final UUIDMapping uuid = uuids.toArray(new UUIDMapping[0])[0];
-                        PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid.getUuid());
+                        PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuid.getUuid());
                         if (pp != null) {
                             try (final MetaDataAccess<Integer> access = pp.accessPersistentMetaData(
                                 PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {

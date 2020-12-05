@@ -95,7 +95,7 @@ public abstract class RegionManager {
         TaskManager.runTaskAsync(() -> {
             for (BlockVector2 loc : chunks) {
                 String directory = world + File.separator + "region" + File.separator + "r." + loc.getX() + "." + loc.getZ() + ".mca";
-                File file = new File(PlotSquared.platform().getWorldContainer(), directory);
+                File file = new File(PlotSquared.platform().worldContainer(), directory);
                 logger.info("- Deleting file: {} (max 1024 chunks)", file.getName());
                 if (file.exists()) {
                     file.delete();

@@ -224,7 +224,7 @@ public final class TabCompletions {
                 cachedCompletionValues.put(cacheIdentifier, players);
             }
         } else {
-            final Collection<? extends PlotPlayer<?>> onlinePlayers = PlotSquared.platform().getPlayerManager().getPlayers();
+            final Collection<? extends PlotPlayer<?>> onlinePlayers = PlotSquared.platform().playerManager().getPlayers();
             players = new ArrayList<>(onlinePlayers.size());
             for (final PlotPlayer<?> player : onlinePlayers) {
                 if (uuidFilter.test(player.getUUID())) {

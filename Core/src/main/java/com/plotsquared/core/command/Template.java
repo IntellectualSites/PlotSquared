@@ -137,7 +137,7 @@ public class Template extends SubCommand {
     public static byte[] getBytes(PlotArea plotArea) {
         ConfigurationSection section = PlotSquared.get().getWorldConfiguration().getConfigurationSection("worlds." + plotArea.getWorldName());
         YamlConfiguration config = new YamlConfiguration();
-        String generator = PlotSquared.platform().getSetupUtils().getGenerator(plotArea);
+        String generator = PlotSquared.platform().setupUtils().getGenerator(plotArea);
         if (generator != null) {
             config.set("generator.plugin", generator);
         }
@@ -219,7 +219,7 @@ public class Template extends SubCommand {
                     e.printStackTrace();
                 }
                 String manager =
-                    worldConfig.getString("generator.plugin", PlotSquared.platform().getPluginName());
+                    worldConfig.getString("generator.plugin", PlotSquared.platform().pluginName());
                 String generator = worldConfig.getString("generator.init", manager);
                 PlotAreaBuilder builder = PlotAreaBuilder.newBuilder()
                         .plotAreaType(ConfigurationUtil.getType(worldConfig))

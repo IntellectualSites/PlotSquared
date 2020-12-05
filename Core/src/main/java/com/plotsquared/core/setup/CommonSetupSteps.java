@@ -65,7 +65,7 @@ public enum CommonSetupSteps implements SetupStep {
         }
 
         @Nullable @Override public String getDefaultValue() {
-            return PlotSquared.platform().getPluginName();
+            return PlotSquared.platform().pluginName();
         }
     },
     CHOOSE_PLOT_AREA_TYPE(PlotAreaType.class, TranslatableCaption.of("setup.setup_world_type")) {
@@ -94,7 +94,7 @@ public enum CommonSetupSteps implements SetupStep {
                     SetupUtils.generators.get(builder.plotManager()).getPlotGenerator()
                             .processAreaSetup(builder);
                 } else {
-                    builder.plotManager(PlotSquared.platform().getPluginName());
+                    builder.plotManager(PlotSquared.platform().pluginName());
                     plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_generator_error"));
                     builder.settingsNodesWrapper(CommonSetupSteps.wrap(builder.plotManager()));
                     // TODO why is processSetup not called here?
@@ -198,7 +198,7 @@ public enum CommonSetupSteps implements SetupStep {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_name_format"));
                 return this;
             }
-            if (PlotSquared.platform().getWorldUtil().isWorld(argument)) {
+            if (PlotSquared.platform().worldUtil().isWorld(argument)) {
                 if (PlotSquared.get().getPlotAreaManager().hasPlotArea(argument)) {
                     plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_taken"));
                     return this;
@@ -212,12 +212,12 @@ public enum CommonSetupSteps implements SetupStep {
             }
             String world;
             if (builder.setupManager() == null) {
-                world = PlotSquared.platform().getInjector().getInstance(SetupUtils.class).setupWorld(builder);
+                world = PlotSquared.platform().injector().getInstance(SetupUtils.class).setupWorld(builder);
             } else {
                 world = builder.setupManager().setupWorld(builder);
             }
             try {
-                plotPlayer.teleport(PlotSquared.platform().getWorldUtil().getSpawn(world), TeleportCause.COMMAND);
+                plotPlayer.teleport(PlotSquared.platform().worldUtil().getSpawn(world), TeleportCause.COMMAND);
             } catch (Exception e) {
                 plotPlayer.sendMessage(TranslatableCaption.of("errors.error_console"));
                 e.printStackTrace();

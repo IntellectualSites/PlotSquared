@@ -70,7 +70,6 @@ import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PremiumVerification;
@@ -83,7 +82,6 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockType;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -324,7 +322,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onConnect(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        PlotSquared.platform().getPlayerManager().removePlayer(player.getUniqueId());
+        PlotSquared.platform().playerManager().removePlayer(player.getUniqueId());
         final PlotPlayer<Player> pp = BukkitUtil.adapt(player);
 
         Location location = pp.getLocation();
@@ -660,7 +658,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         recipients.clear();
         Set<PlotPlayer<?>> spies = new HashSet<>();
         Set<PlotPlayer<?>> plotRecipients = new HashSet<>();
-        for (final PlotPlayer<?> pp : PlotSquared.platform().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer<?> pp : PlotSquared.platform().playerManager().getPlayers()) {
             if (pp.getAttribute("chatspy")) {
                 spies.add(pp);
             } else {

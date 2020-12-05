@@ -57,7 +57,7 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
     }
 
     @Override public String onPlaceholderRequest(Player p, String identifier) {
-        final PlotPlayer<?> pl = PlotSquared.platform().getPlayerManager().getPlayerIfExists(p.getUniqueId());
+        final PlotPlayer<?> pl = PlotSquared.platform().playerManager().getPlayerIfExists(p.getUniqueId());
 
         if (pl == null) {
             return "";
@@ -83,7 +83,7 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
         }
 
         // PlotSquared placeholders
-        return PlotSquared.get().getPlaceholderRegistry().getPlaceholderValue(identifier, pl);
+        return PlotSquared.platform().placeholderRegistry().getPlaceholderValue(identifier, pl);
     }
 
 }

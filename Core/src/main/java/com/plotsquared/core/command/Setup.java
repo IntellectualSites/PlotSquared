@@ -62,7 +62,7 @@ public class Setup extends SubCommand {
         StringBuilder message = new StringBuilder();
         message.append("<gold>What generator do you want?</gold>");
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
-            if (entry.getKey().equals(PlotSquared.platform().getPluginName())) {
+            if (entry.getKey().equals(PlotSquared.platform().pluginName())) {
                 message.append("\n<dark_gray> - </dark_gray><dark_green>").append(entry.getKey()).append(" (Default Generator)</dark_green>");
             } else if (entry.getValue().isFull()) {
                 message.append("\n<dark_gray> - </dark_gray><gray>").append(entry.getKey()).append(" (Plot Generator)</gray>");

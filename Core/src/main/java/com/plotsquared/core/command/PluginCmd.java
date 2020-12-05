@@ -42,7 +42,7 @@ public class PluginCmd extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.getPlatformImplementation().taskAsync(() -> {
             player.sendMessage(
-                    StaticCaption.of("<gray>>> </gray><gold><bold>" + PlotSquared.platform().getPluginName() + " <reset><gray>(<gold>Version</gold><gray>: </gray><gold><version></gold><gray>)</gray>"),
+                    StaticCaption.of("<gray>>> </gray><gold><bold>" + PlotSquared.platform().pluginName() + " <reset><gray>(<gold>Version</gold><gray>: </gray><gold><version></gold><gray>)</gray>"),
                     Template.of("version", String.valueOf(PlotSquared.get().getVersion()))
             );
             player.sendMessage(StaticCaption.of("<gray>>> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray><gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray><gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));

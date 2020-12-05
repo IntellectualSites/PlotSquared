@@ -65,8 +65,8 @@ public class SinglePlotManager extends PlotManager {
     }
 
     @Override public boolean clearPlot(@Nonnull Plot plot, final Runnable whenDone, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
-        PlotSquared.platform().getSetupUtils().unload(plot.getWorldName(), false);
-        final File worldFolder = new File(PlotSquared.platform().getWorldContainer(), plot.getWorldName());
+        PlotSquared.platform().setupUtils().unload(plot.getWorldName(), false);
+        final File worldFolder = new File(PlotSquared.platform().worldContainer(), plot.getWorldName());
         TaskManager.getPlatformImplementation().taskAsync(() -> {
             FileUtils.deleteDirectory(worldFolder);
             if (whenDone != null) {

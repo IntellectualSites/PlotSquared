@@ -50,7 +50,7 @@ public class HybridGen extends IndependentPlotGenerator {
     }
 
     @Override public String getName() {
-        return PlotSquared.platform().getPluginName();
+        return PlotSquared.platform().pluginName();
     }
 
     private void placeSchem(HybridPlotWorld world, ScopedQueueCoordinator result, short relativeX,

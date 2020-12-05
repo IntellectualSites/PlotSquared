@@ -128,7 +128,7 @@ public class BukkitUtil extends WorldUtil {
      * @return PlotSquared player
      */
     @Nonnull public static BukkitPlayer adapt(@Nonnull final Player player) {
-        final PlayerManager<?, ?> playerManager = PlotSquared.platform().getPlayerManager();
+        final PlayerManager<?, ?> playerManager = PlotSquared.platform().playerManager();
         return ((BukkitPlayerManager) playerManager).getPlayer(player);
     }
 
@@ -317,7 +317,7 @@ public class BukkitUtil extends WorldUtil {
                 } else if (world.getBlockAt(location.getX(), location.getY(), location.getZ() - 1).getType().isSolid()) {
                     facing = BlockFace.SOUTH;
                 }
-                if (PlotSquared.platform().getServerVersion()[1] == 13) {
+                if (PlotSquared.platform().serverVersion()[1] == 13) {
                     block.setType(Material.valueOf("WALL_SIGN"), false);
                 } else {
                     block.setType(Material.valueOf("OAK_WALL_SIGN"), false);

@@ -220,7 +220,7 @@ import java.util.Objects;
             e.printStackTrace();
         }
 
-        Objects.requireNonNull(PlotSquared.platform()).getWorldManager()
+        Objects.requireNonNull(PlotSquared.platform()).worldManager()
                 .handleWorldCreation(builder.worldName(), builder.generatorName());
 
         if (Bukkit.getWorld(world) != null) {

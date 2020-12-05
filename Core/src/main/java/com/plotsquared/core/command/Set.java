@@ -165,7 +165,7 @@ public class Set extends SubCommand {
                             });
                             if (Settings.QUEUE.NOTIFY_PROGRESS) {
                                 queue.addProgressSubscriber(
-                                    PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class).createWithActor(player));
+                                    PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class).createWithActor(player));
                             }
                             queue.enqueue();
                             player.sendMessage(TranslatableCaption.of("working.generating_component"));

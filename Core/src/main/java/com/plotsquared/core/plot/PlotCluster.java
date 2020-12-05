@@ -158,7 +158,7 @@ public class PlotCluster {
     public void getHome(@Nonnull final Consumer<Location> result) {
         final BlockLoc home = this.settings.getPosition();
         Consumer<Location> locationConsumer = toReturn ->
-            PlotSquared.platform().getWorldUtil().getHighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(),
+            PlotSquared.platform().worldUtil().getHighestBlock(this.area.getWorldName(), toReturn.getX(), toReturn.getZ(),
                 highest -> {
                 if (highest == 0) {
                     highest = 63;

@@ -73,7 +73,7 @@ public class WESubscriber {
         Actor actor = event.getActor();
         if (actor != null && actor.isPlayer()) {
             String name = actor.getName();
-            final PlotPlayer<?> plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(name);
+            final PlotPlayer<?> plotPlayer = PlotSquared.platform().playerManager().getPlayerIfExists(name);
             Set<CuboidRegion> mask;
             if (plotPlayer == null) {
                 Player player = (Player) actor;

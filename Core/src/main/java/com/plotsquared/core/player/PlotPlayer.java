@@ -584,7 +584,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         if (ExpireManager.IMP != null) {
             ExpireManager.IMP.storeDate(getUUID(), System.currentTimeMillis());
         }
-        PlotSquared.platform().getPlayerManager().removePlayer(this);
+        PlotSquared.platform().playerManager().removePlayer(this);
         PlotSquared.platform().unregister(this);
 
         debugModeEnabled.remove(this);

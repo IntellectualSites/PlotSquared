@@ -28,6 +28,7 @@ package com.plotsquared.core.util.placeholders;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.inject.Singleton;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
@@ -37,6 +38,7 @@ import com.plotsquared.core.util.PlayerManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
@@ -47,12 +49,13 @@ import java.util.function.BiFunction;
 /**
  * Registry that contains {@link Placeholder placeholders}
  */
+@Singleton
 public final class PlaceholderRegistry {
 
     private final Map<String, Placeholder> placeholders;
     private final EventDispatcher eventDispatcher;
 
-    public PlaceholderRegistry(@Nonnull final EventDispatcher eventDispatcher) {
+    @Inject public PlaceholderRegistry(@Nonnull final EventDispatcher eventDispatcher) {
         this.placeholders = Maps.newHashMap();
         this.eventDispatcher = eventDispatcher;
         this.registerDefault();

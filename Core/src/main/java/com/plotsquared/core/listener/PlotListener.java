@@ -98,14 +98,14 @@ public class PlotListener {
                     ++value.count;
                     if (value.count == value.interval) {
                         value.count = 0;
-                        final PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(entry.getKey());
+                        final PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(entry.getKey());
                         if (player == null) {
                             iterator.remove();
                             continue;
                         }
-                        double level = PlotSquared.platform().getWorldUtil().getHealth(player);
+                        double level = PlotSquared.platform().worldUtil().getHealth(player);
                         if (level != value.max) {
-                            PlotSquared.platform().getWorldUtil().setHealth(player, Math.min(level + value.amount, value.max));
+                            PlotSquared.platform().worldUtil().setHealth(player, Math.min(level + value.amount, value.max));
                         }
                     }
                 }
@@ -118,14 +118,14 @@ public class PlotListener {
                     ++value.count;
                     if (value.count == value.interval) {
                         value.count = 0;
-                        final PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(entry.getKey());
+                        final PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(entry.getKey());
                         if (player == null) {
                             iterator.remove();
                             continue;
                         }
-                        int level = PlotSquared.platform().getWorldUtil().getFoodLevel(player);
+                        int level = PlotSquared.platform().worldUtil().getFoodLevel(player);
                         if (level != value.max) {
-                            PlotSquared.platform().getWorldUtil().setFoodLevel(player, Math.min(level + value.amount, value.max));
+                            PlotSquared.platform().worldUtil().setFoodLevel(player, Math.min(level + value.amount, value.max));
                         }
                     }
                 }
@@ -167,7 +167,7 @@ public class PlotListener {
             if (plot.getFlag(NotifyEnterFlag.class)) {
                 if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                     for (UUID uuid : plot.getOwners()) {
-                        final PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+                        final PlotPlayer owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
                             player.sendMessage(
                                     TranslatableCaption.of("notification.notify_enter"),
@@ -354,7 +354,7 @@ public class PlotListener {
                 if (plot.getFlag(NotifyLeaveFlag.class)) {
                     if (!Permissions.hasPermission(player, "plots.flag.notify-enter.bypass")) {
                         for (UUID uuid : plot.getOwners()) {
-                            final PlotPlayer owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+                            final PlotPlayer owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                             if ((owner != null) && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
                                 player.sendMessage(
                                     TranslatableCaption.of("notification.notify_leave"),

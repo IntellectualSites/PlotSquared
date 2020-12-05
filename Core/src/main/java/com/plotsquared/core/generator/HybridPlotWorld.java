@@ -90,7 +90,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                                    @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
                                    @Nonnull final GlobalBlockQueue blockQueue) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
-        PlotSquared.platform().getInjector().injectMembers(this);
+        PlotSquared.platform().injector().injectMembers(this);
     }
 
     public static byte wrap(byte data, int start) {
@@ -139,8 +139,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     }
 
     @Nonnull @Override protected PlotManager createManager() {
-        return new HybridPlotManager(this, PlotSquared.platform().getRegionManager(),
-            PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class));
+        return new HybridPlotManager(this, PlotSquared.platform().regionManager(),
+            PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class));
     }
 
     public Location getSignLocation(@Nonnull Plot plot) {

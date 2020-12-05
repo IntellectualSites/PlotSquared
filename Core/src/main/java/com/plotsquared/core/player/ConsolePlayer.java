@@ -91,7 +91,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
 
     public static ConsolePlayer getConsole() {
         if (instance == null) {
-            instance = PlotSquared.platform().getInjector().getInstance(ConsolePlayer.class);
+            instance = PlotSquared.platform().injector().getInstance(ConsolePlayer.class);
             instance.teleport(instance.getLocation());
         }
         return instance;
@@ -144,7 +144,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
             .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
             .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
-        PlotSquared.platform().getConsoleAudience().sendMessage(MINI_MESSAGE.parse(message, replacements));
+        PlotSquared.platform().consoleAudience().sendMessage(MINI_MESSAGE.parse(message, replacements));
     }
 
     @Override public void teleport(Location location, TeleportCause cause) {
@@ -215,7 +215,7 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
     }
 
     @Override @Nonnull public Audience getAudience() {
-        return PlotSquared.platform().getConsoleAudience();
+        return PlotSquared.platform().consoleAudience();
     }
 
     @Override public boolean canSee(final PlotPlayer<?> other) {

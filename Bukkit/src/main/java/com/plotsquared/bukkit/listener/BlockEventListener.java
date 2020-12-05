@@ -58,7 +58,6 @@ import com.plotsquared.core.plot.flag.implementations.SoilDryFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
@@ -126,7 +125,7 @@ public class BlockEventListener implements Listener {
             int z = bloc.getBlockZ();
             int distance = Bukkit.getViewDistance() * 16;
 
-            for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager().getPlayers()) {
+            for (final PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
                 Location location = player.getLocation();
                 if (location.getWorldName().equals(world)) {
                     if (16 * Math.abs(location.getX() - x) / 16 > distance || 16 * Math.abs(location.getZ() - z) / 16 > distance) {
@@ -163,18 +162,18 @@ public class BlockEventListener implements Listener {
                 if (plot.isMerged()) {
                     disable = true;
                     for (UUID owner : plot.getOwners()) {
-                        if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(owner) != null) {
+                        if (PlotSquared.platform().playerManager().getPlayerIfExists(owner) != null) {
                             disable = false;
                             break;
                         }
                     }
                 } else {
-                    disable = PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs()) == null;
+                    disable = PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwnerAbs()) == null;
                 }
             }
             if (disable) {
                 for (UUID trusted : plot.getTrusted()) {
-                    if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(trusted) != null) {
+                    if (PlotSquared.platform().playerManager().getPlayerIfExists(trusted) != null) {
                         disable = false;
                         break;
                     }
@@ -187,7 +186,7 @@ public class BlockEventListener implements Listener {
             }
         }
         if (Settings.Redstone.DISABLE_UNOCCUPIED) {
-            for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager().getPlayers()) {
+            for (final PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
                 if (plot.equals(player.getCurrentPlot())) {
                     return;
                 }

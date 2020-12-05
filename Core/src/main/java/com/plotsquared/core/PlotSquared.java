@@ -68,7 +68,6 @@ import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.LegacyConverter;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.ReflectionUtils;
-import com.plotsquared.core.util.placeholders.PlaceholderRegistry;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
@@ -148,7 +147,7 @@ public class PlotSquared {
     private File storageFile;
     private EventDispatcher eventDispatcher;
     private PlotListener plotListener;
-    private PlaceholderRegistry placeholderRegistry;
+
     /**
      * Initialize PlotSquared with the desired Implementation class.
      *
@@ -184,7 +183,7 @@ public class PlotSquared {
         GlobalFlagContainer.setup();
 
         try {
-            new ReflectionUtils(this.platform.getNMSPackage());
+            new ReflectionUtils(this.platform.serverNativePackage());
             try {
                 URL logurl = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
                 this.jarFile = new File(
@@ -209,8 +208,6 @@ public class PlotSquared {
             this.eventDispatcher = new EventDispatcher(this.worldedit);
             // Create plot listener
             this.plotListener = new PlotListener(this.eventDispatcher);
-            // Create placeholder registry
-            placeholderRegistry = new PlaceholderRegistry(eventDispatcher);
 
             // Copy files
             copyFile("addplots.js", Settings.Paths.SCRIPTS);
@@ -251,7 +248,7 @@ public class PlotSquared {
      * @return Plot area manager
      */
     @Nonnull public PlotAreaManager getPlotAreaManager() {
-        return this.platform.getInjector().getInstance(PlotAreaManager.class);
+        return this.platform.injector().getInstance(PlotAreaManager.class);
     }
 
     /**
@@ -397,7 +394,7 @@ public class PlotSquared {
                 logger.info(" - Regions: {}", regions.size());
                 logger.info(" - Chunks: {}", chunks.size());
                 HybridUtils.UPDATE = true;
-                PlotSquared.platform().getHybridUtils().scheduleRoadUpdate(plotArea, regions, height, chunks);
+                PlotSquared.platform().hybridUtils().scheduleRoadUpdate(plotArea, regions, height, chunks);
             } catch (IOException | ClassNotFoundException e) {
                 logger.error("Error restarting road regeneration", e);
             } finally {
@@ -833,7 +830,7 @@ public class PlotSquared {
                     return;
                 }
                 logger.info("Detected world load for '{}'", world);
-                String gen_string = worldSection.getString("generator.plugin", platform.getPluginName());
+                String gen_string = worldSection.getString("generator.plugin", platform.pluginName());
                 if (type == PlotAreaType.PARTIAL) {
                     Set<PlotCluster> clusters =
                         this.clustersTmp != null ? this.clustersTmp.get(world) : new HashSet<>();
@@ -936,7 +933,7 @@ public class PlotSquared {
                         clone.set(key, worldSection.get(key));
                     }
                 }
-                String gen_string = clone.getString("generator.plugin", platform.getPluginName());
+                String gen_string = clone.getString("generator.plugin", platform.pluginName());
                 GeneratorWrapper<?> areaGen = this.platform.getGenerator(world, gen_string);
                 if (areaGen == null) {
                     throw new IllegalArgumentException("Invalid Generator: " + gen_string);
@@ -1031,7 +1028,7 @@ public class PlotSquared {
                 split = combinedArgs;
             }
 
-            final HybridPlotWorldFactory hybridPlotWorldFactory = this.platform.getInjector().getInstance(HybridPlotWorldFactory.class);
+            final HybridPlotWorldFactory hybridPlotWorldFactory = this.platform.injector().getInstance(HybridPlotWorldFactory.class);
             final HybridPlotWorld plotWorld = hybridPlotWorldFactory.create(world, null, generator, null, null);
 
             for (String element : split) {
@@ -1262,7 +1259,7 @@ public class PlotSquared {
             e.printStackTrace();
             logger.error("==== End of stacktrace ====");
             logger.error("Please go to the {} 'storage.yml' and configure the database correctly",
-                platform.getPluginName());
+                platform.pluginName());
             this.platform.shutdown(); //shutdown used instead of disable because of database error
         }
     }
@@ -1454,7 +1451,7 @@ public class PlotSquared {
         return this.backgroundUUIDPipeline;
     }
 
-    public WorldEdit getWorldedit() {
+    public WorldEdit getWorldEdit() {
         return this.worldedit;
     }
 
@@ -1496,20 +1493,12 @@ public class PlotSquared {
         this.captionMaps.put(namespace.toLowerCase(Locale.ENGLISH), captionMap);
     }
 
-    public File getJarFile() {
-        return this.jarFile;
-    }
-
     public EventDispatcher getEventDispatcher() {
         return this.eventDispatcher;
     }
 
     public PlotListener getPlotListener() {
         return this.plotListener;
-    }
-
-    public PlaceholderRegistry getPlaceholderRegistry() {
-        return this.placeholderRegistry;
     }
 
     public enum SortType {

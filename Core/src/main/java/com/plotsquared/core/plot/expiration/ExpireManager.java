@@ -356,7 +356,7 @@ public class ExpireManager {
                             }
                         };
                     final Runnable doAnalysis =
-                        () -> PlotSquared.platform().getHybridUtils().analyzePlot(newPlot, handleAnalysis);
+                        () -> PlotSquared.platform().hybridUtils().analyzePlot(newPlot, handleAnalysis);
 
                     PlotAnalysis analysis = newPlot.getComplexity(null);
                     if (analysis != null) {
@@ -413,14 +413,14 @@ public class ExpireManager {
             }
         }
         for (UUID helper : plot.getTrusted()) {
-            PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(helper);
             if (player != null) {
                 player.sendMessage(TranslatableCaption.of("trusted.plot_removed_user"),
                     Templates.of("plot", plot.toString()));
             }
         }
         for (UUID helper : plot.getMembers()) {
-            PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(helper);
+            PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(helper);
             if (player != null) {
                 player.sendMessage(TranslatableCaption.of("trusted.plot_removed_user"),
                     Templates.of("plot", plot.toString()));
@@ -430,12 +430,12 @@ public class ExpireManager {
     }
 
     public long getAge(UUID uuid) {
-        if (PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid) != null) {
+        if (PlotSquared.platform().playerManager().getPlayerIfExists(uuid) != null) {
             return 0;
         }
         Long last = this.dates_cache.get(uuid);
         if (last == null) {
-            OfflinePlotPlayer opp = PlotSquared.platform().getPlayerManager().getOfflinePlayer(uuid);
+            OfflinePlotPlayer opp = PlotSquared.platform().playerManager().getOfflinePlayer(uuid);
             if (opp != null && (last = opp.getLastPlayed()) != 0) {
                 this.dates_cache.put(uuid, last);
             } else {
@@ -450,7 +450,7 @@ public class ExpireManager {
 
     public long getAge(Plot plot) {
         if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
-            || PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
+            || PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
             return 0;
         }
 

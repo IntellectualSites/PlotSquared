@@ -120,7 +120,7 @@ public class HybridPlotManager extends ClassicPlotManager {
 
     private void resetBiome(@Nonnull final HybridPlotWorld hybridPlotWorld, @Nonnull final Location pos1, @Nonnull final Location pos2) {
         BiomeType biome = hybridPlotWorld.getPlotBiome();
-        if (!Objects.equals(PlotSquared.platform().getWorldUtil()
+        if (!Objects.equals(PlotSquared.platform().worldUtil()
             .getBiomeSynchronous(hybridPlotWorld.getWorldName(), (pos1.getX() + pos2.getX()) / 2, (pos1.getZ() + pos2.getZ()) / 2), biome)) {
             WorldUtil.setBiome(hybridPlotWorld.getWorldName(), pos1.getX(), pos1.getZ(), pos2.getX(), pos2.getZ(), biome);
         }

@@ -45,7 +45,6 @@ import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 @CommandDeclaration(command = "merge",
@@ -251,7 +250,7 @@ public class Merge extends SubCommand {
         java.util.Set<UUID> uuids = adjacent.getOwners();
         boolean isOnline = false;
         for (final UUID owner : uuids) {
-            final PlotPlayer accepter = PlotSquared.platform().getPlayerManager().getPlayerIfExists(owner);
+            final PlotPlayer accepter = PlotSquared.platform().playerManager().getPlayerIfExists(owner);
             if (!force && accepter == null) {
                 continue;
             }
@@ -260,7 +259,7 @@ public class Merge extends SubCommand {
             Runnable run = () -> {
                 accepter.sendMessage(TranslatableCaption.of("merge.merge_accepted"));
                 plot.getPlotModificationManager().autoMerge(dir, maxSize - size, owner, player, terrain);
-                PlotPlayer<?> plotPlayer = PlotSquared.platform().getPlayerManager().getPlayerIfExists(player.getUUID());
+                PlotPlayer<?> plotPlayer = PlotSquared.platform().playerManager().getPlayerIfExists(player.getUUID());
                 if (plotPlayer == null) {
                     accepter.sendMessage(TranslatableCaption.of("merge.merge_not_valid"));
                     return;

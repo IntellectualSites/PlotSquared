@@ -60,7 +60,7 @@ public class PlotAreaBuilder {
                 .plotAreaType(area.getType())
                 .terrainType(area.getTerrain())
                 .generatorName(area.getGenerator().getName())
-                .plotManager(PlotSquared.platform().getPluginName())
+                .plotManager(PlotSquared.platform().pluginName())
                 .minimumId(area.getMin())
                 .maximumId(area.getMax())
                 .settingsNodesWrapper(new SettingsNodesWrapper(area.getSettingNodes(), null));

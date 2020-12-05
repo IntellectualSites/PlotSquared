@@ -371,7 +371,7 @@ public class ListCmd extends SubCommand {
                     final List<UUIDMapping> names = PlotSquared.get().getImpromptuUUIDPipeline().getNames(plot.getOwners())
                         .get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS);
                     for (final UUIDMapping uuidMapping : names) {
-                        PlotPlayer<?> pp = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid());
+                        PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuidMapping.getUuid());
                         Template prefixTemplate = Template.of("prefix", prefix);
                         Template playerTemplate = Template.of("player", uuidMapping.getUsername());
                         if (pp != null) {
@@ -414,7 +414,7 @@ public class ListCmd extends SubCommand {
             completions.add("shared");
         }
         if (Permissions.hasPermission(player, Permission.PERMISSION_LIST_WORLD)) {
-            completions.addAll(PlotSquared.platform().getWorldManager().getWorlds());
+            completions.addAll(PlotSquared.platform().worldManager().getWorlds());
         }
         if (Permissions.hasPermission(player, Permission.PERMISSION_LIST_TOP)) {
             completions.add("top");

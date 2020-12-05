@@ -82,7 +82,7 @@ public final class PlotModificationManager {
 
     @Inject PlotModificationManager(@Nonnull final Plot plot) {
         this.plot = plot;
-        this.subscriberFactory = PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class);
+        this.subscriberFactory = PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class);
     }
 
     /**
@@ -174,7 +174,7 @@ public final class PlotModificationManager {
                 Location pos1 = corners[0];
                 Location pos2 = corners[1];
                 Location newPos = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
-                PlotSquared.platform().getRegionManager().copyRegion(pos1, pos2, newPos, actor, this);
+                PlotSquared.platform().regionManager().copyRegion(pos1, pos2, newPos, actor, this);
             }
         };
         run.run();
@@ -226,7 +226,7 @@ public final class PlotModificationManager {
                     Runnable run = () -> {
                         for (CuboidRegion region : regions) {
                             Location[] corners = plot.getCorners(plot.getWorldName(), region);
-                            PlotSquared.platform().getRegionManager().clearAllEntities(corners[0], corners[1]);
+                            PlotSquared.platform().regionManager().clearAllEntities(corners[0], corners[1]);
                         }
                         TaskManager.runTask(whenDone);
                     };
@@ -247,7 +247,7 @@ public final class PlotModificationManager {
                 Plot current = queue.poll();
                 if (plot.getArea().getTerrain() != PlotAreaTerrainType.NONE) {
                     try {
-                        PlotSquared.platform().getRegionManager().regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false, this);
+                        PlotSquared.platform().regionManager().regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false, this);
                     } catch (UnsupportedOperationException exception) {
                         exception.printStackTrace();
                         return;
@@ -282,7 +282,7 @@ public final class PlotModificationManager {
                     return;
                 }
                 CuboidRegion region = regions.poll();
-                PlotSquared.platform().getRegionManager().setBiome(region, extendBiome, biome, plot.getWorldName(), this);
+                PlotSquared.platform().regionManager().setBiome(region, extendBiome, biome, plot.getWorldName(), this);
             }
         };
         run.run();
@@ -363,7 +363,7 @@ public final class PlotModificationManager {
             String id = this.plot.getId().toString();
             Caption[] lines = new Caption[] {TranslatableCaption.of("signs.owner_sign_line_1"), TranslatableCaption.of("signs.owner_sign_line_2"),
                 TranslatableCaption.of("signs.owner_sign_line_3"), TranslatableCaption.of("signs.owner_sign_line_4")};
-            PlotSquared.platform().getWorldUtil().setSign(location, lines, Template.of("id", id), Template.of("owner", name));
+            PlotSquared.platform().worldUtil().setSign(location, lines, Template.of("id", id), Template.of("owner", name));
         }
     }
 
@@ -377,7 +377,7 @@ public final class PlotModificationManager {
             for (int x = region.getMinimumPoint().getX() >> 4; x <= region.getMaximumPoint().getX() >> 4; x++) {
                 for (int z = region.getMinimumPoint().getZ() >> 4; z <= region.getMaximumPoint().getZ() >> 4; z++) {
                     if (chunks.add(BlockVector2.at(x, z))) {
-                        PlotSquared.platform().getWorldUtil().refreshChunk(x, z, this.plot.getWorldName());
+                        PlotSquared.platform().worldUtil().refreshChunk(x, z, this.plot.getWorldName());
                     }
                 }
             }
@@ -394,7 +394,7 @@ public final class PlotModificationManager {
         }
         Location location = manager.getSignLoc(this.plot);
         QueueCoordinator queue =
-            PlotSquared.platform().getGlobalBlockQueue().getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(this.plot.getWorldName()));
+            PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared.platform().worldUtil().getWeWorld(this.plot.getWorldName()));
         queue.setBlock(location.getX(), location.getY(), location.getZ(), BlockTypes.AIR.getDefaultState());
         queue.enqueue();
     }
@@ -454,7 +454,7 @@ public final class PlotModificationManager {
             DBFunc.createPlotAndSettings(this.plot, () -> {
                 PlotArea plotworld = plot.getArea();
                 if (notify && plotworld.isAutoMerge()) {
-                    final PlotPlayer<?> player = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+                    final PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
 
                     PlotMergeEvent event = PlotSquared.get().getEventDispatcher().callMerge(this.plot, Direction.ALL, Integer.MAX_VALUE, player);
 
@@ -487,7 +487,7 @@ public final class PlotModificationManager {
             Location top = this.plot.getTopAbs();
             Location pos1 = Location.at(this.plot.getWorldName(), bot.getX(), 0, top.getZ());
             Location pos2 = Location.at(this.plot.getWorldName(), top.getX(), MAX_HEIGHT, bot.getZ());
-            PlotSquared.platform().getRegionManager().regenerateRegion(pos1, pos2, true, null);
+            PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
         } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getManager().removeRoadSouth(this.plot, queue);
         }
@@ -683,7 +683,7 @@ public final class PlotModificationManager {
                             Location pos1 = corners[0];
                             Location pos2 = corners[1];
                             Location pos3 = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
-                            PlotSquared.platform().getRegionManager().swap(pos1, pos2, pos3, actor, this);
+                            PlotSquared.platform().regionManager().swap(pos1, pos2, pos3, actor, this);
                         }
                     }
                 }.run();
@@ -718,7 +718,7 @@ public final class PlotModificationManager {
                         final Location pos1 = corners[0];
                         final Location pos2 = corners[1];
                         Location newPos = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
-                        PlotSquared.platform().getRegionManager().copyRegion(pos1, pos2, newPos, actor, task);
+                        PlotSquared.platform().regionManager().copyRegion(pos1, pos2, newPos, actor, task);
                     }
                 }.run();
             }
@@ -843,7 +843,7 @@ public final class PlotModificationManager {
             Location top = this.plot.getTopAbs();
             Location pos1 = Location.at(this.plot.getWorldName(), top.getX(), 0, bot.getZ());
             Location pos2 = Location.at(this.plot.getWorldName(), bot.getX(), MAX_HEIGHT, top.getZ());
-            PlotSquared.platform().getRegionManager().regenerateRegion(pos1, pos2, true, null);
+            PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
         } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getArea().getPlotManager().removeRoadEast(this.plot, queue);
         }
@@ -860,7 +860,7 @@ public final class PlotModificationManager {
             Plot other = this.plot.getRelative(1, 1);
             Location pos1 = this.plot.getTopAbs().add(1, 0, 1).withY(0);
             Location pos2 = other.getBottomAbs().subtract(1, 0, 1).withY(MAX_HEIGHT);
-            PlotSquared.platform().getRegionManager().regenerateRegion(pos1, pos2, true, null);
+            PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
         } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getArea().getPlotManager().removeRoadSouthEast(this.plot, queue);
         }

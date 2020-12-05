@@ -30,7 +30,6 @@ import com.google.gson.JsonParser;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.annotations.ConfigFile;
 import com.plotsquared.core.inject.annotations.WorldFile;
@@ -49,7 +48,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -99,11 +97,11 @@ public class DebugPaste extends SubCommand {
                 b.append("This PlotSquared version is licensed to the spigot user ")
                     .append(PremiumVerification.getUserID()).append("\n\n");
                 b.append("# Server Information\n");
-                b.append("Server Version: ").append(PlotSquared.platform().getServerImplementation())
+                b.append("Server Version: ").append(PlotSquared.platform().serverImplementation())
                     .append("\n");
                 b.append("online_mode: ").append(!Settings.UUID.OFFLINE).append(';')
                     .append(!Settings.UUID.OFFLINE).append('\n');
-                b.append(PlotSquared.platform().getPluginList());
+                b.append(PlotSquared.platform().pluginsFormatted());
                 b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
                 Runtime runtime = Runtime.getRuntime();
                 RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();

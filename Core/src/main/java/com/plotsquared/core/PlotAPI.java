@@ -107,7 +107,7 @@ import java.util.UUID;
      * @see ChunkManager
      */
     public ChunkManager getChunkManager() {
-        return PlotSquared.platform().getInjector().getInstance(ChunkManager.class);
+        return PlotSquared.platform().injector().getInstance(ChunkManager.class);
     }
 
     /**
@@ -116,7 +116,7 @@ import java.util.UUID;
      * @return GlobalBlockQueue.IMP
      */
     public GlobalBlockQueue getBlockQueue() {
-        return PlotSquared.platform().getGlobalBlockQueue();
+        return PlotSquared.platform().globalBlockQueue();
     }
 
     /**
@@ -127,7 +127,7 @@ import java.util.UUID;
      * @see SchematicHandler
      */
     public SchematicHandler getSchematicHandler() {
-        return PlotSquared.platform().getInjector().getInstance(SchematicHandler.class);
+        return PlotSquared.platform().injector().getInstance(SchematicHandler.class);
     }
 
     /**
@@ -185,7 +185,7 @@ import java.util.UUID;
      * @return a {@code PlotPlayer}
      */
     @Nullable public PlotPlayer<?> wrapPlayer(@Nonnull final UUID uuid) {
-        return PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+        return PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
     }
 
     /**
@@ -195,7 +195,7 @@ import java.util.UUID;
      * @return a {@code PlotPlayer}
      */
     @Nullable public PlotPlayer<?> wrapPlayer(@Nonnull final String player) {
-        return PlotSquared.platform().getPlayerManager().getPlayerIfExists(player);
+        return PlotSquared.platform().playerManager().getPlayerIfExists(player);
     }
 
     /**

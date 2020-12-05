@@ -46,7 +46,7 @@ public interface BackupManager {
      * @param whenDone Action that runs when the automatic backup has been completed
      */
     static void backup(@Nullable PlotPlayer player, @Nonnull final Plot plot, @Nonnull Runnable whenDone) {
-        Objects.requireNonNull(PlotSquared.platform()).getBackupManager().automaticBackup(player, plot, whenDone);
+        Objects.requireNonNull(PlotSquared.platform()).backupManager().automaticBackup(player, plot, whenDone);
     }
 
     /**

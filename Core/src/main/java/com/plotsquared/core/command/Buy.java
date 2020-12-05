@@ -35,8 +35,6 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
-import com.plotsquared.core.synchronization.LockKey;
-import com.plotsquared.core.synchronization.LockRepository;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
@@ -44,7 +42,6 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -106,9 +103,9 @@ public class Buy extends Command {
                     Template.of("money", String.valueOf(price))
             );
 
-            this.econHandler.depositMoney(PlotSquared.platform().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
+            this.econHandler.depositMoney(PlotSquared.platform().playerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
 
-            PlotPlayer<?> owner = PlotSquared.platform().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
+            PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {
                 owner.sendMessage(
                         TranslatableCaption.of("economy.plot_sold"),

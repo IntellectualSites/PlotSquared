@@ -50,7 +50,7 @@ public class EntityCategories {
     public static final EntityCategory PLAYER = register("player");
 
     public static EntityCategory register(final String id) {
-        final EntityCategory entityCategory = new EntityCategory(PlotSquared.platform().getWorldUtil(), id);
+        final EntityCategory entityCategory = new EntityCategory(PlotSquared.platform().worldUtil(), id);
         EntityCategory.REGISTRY.register(entityCategory.getId(), entityCategory);
         return entityCategory;
     }

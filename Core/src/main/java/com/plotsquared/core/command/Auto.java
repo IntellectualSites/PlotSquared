@@ -167,7 +167,7 @@ public class Auto extends SubCommand {
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
-            final PermissionHandler permissionHandler = PlotSquared.platform().getPermissionHandler();
+            final PermissionHandler permissionHandler = PlotSquared.platform().permissionHandler();
             if (permissionHandler.hasCapability(
                 PermissionHandler.PermissionHandlerCapability.PER_WORLD_PERMISSIONS)) {
                 for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {

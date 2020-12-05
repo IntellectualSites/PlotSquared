@@ -63,7 +63,7 @@ public class ClassicPlotManager extends SquarePlotManager {
         super(classicPlotWorld, regionManager);
         this.classicPlotWorld = classicPlotWorld;
         this.regionManager = regionManager;
-        this.subscriberFactory = PlotSquared.platform().getInjector().getInstance(ProgressSubscriberFactory.class);
+        this.subscriberFactory = PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class);
     }
 
     @Override public boolean setComponent(@Nonnull PlotId plotId,

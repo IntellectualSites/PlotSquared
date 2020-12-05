@@ -59,7 +59,7 @@ public abstract class QueueCoordinator {
      * @param world world as all queues should have this constructor
      */
     public QueueCoordinator(@Nullable World world) {
-        PlotSquared.platform().getInjector().injectMembers(this);
+        PlotSquared.platform().injector().injectMembers(this);
     }
 
     /**

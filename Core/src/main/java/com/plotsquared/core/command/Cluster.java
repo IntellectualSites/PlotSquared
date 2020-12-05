@@ -452,7 +452,7 @@ public class Cluster extends SubCommand {
                                 cluster.invited.add(uuid);
                                 DBFunc.setInvited(cluster, uuid);
                                 final PlotPlayer otherPlayer =
-                                    PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+                                    PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                                 if (otherPlayer != null) {
                                     player.sendMessage(
                                             TranslatableCaption.of("cluster.cluster_invited"),
@@ -528,7 +528,7 @@ public class Cluster extends SubCommand {
                                 DBFunc.removeInvited(cluster, uuid);
 
                                 final PlotPlayer player2 =
-                                    PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+                                    PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                                 if (player2 != null) {
                                     player.sendMessage(
                                             TranslatableCaption.of("cluster.cluster_removed"),

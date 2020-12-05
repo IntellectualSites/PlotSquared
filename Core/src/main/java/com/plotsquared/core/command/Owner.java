@@ -117,7 +117,7 @@ public class Owner extends SetCommand {
                 player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                 return;
             }
-            final PlotPlayer<?> other = PlotSquared.platform().getPlayerManager().getPlayerIfExists(uuid);
+            final PlotPlayer<?> other = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
             if (plot.isOwner(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("member.already_owner"),

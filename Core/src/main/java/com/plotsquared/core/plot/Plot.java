@@ -76,7 +76,6 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
@@ -242,7 +241,7 @@ public class Plot {
         this.owner = owner;
         this.temp = temp;
         this.flagContainer.setParentContainer(area.getFlagContainer());
-        PlotSquared.platform().getInjector().injectMembers(this);
+        PlotSquared.platform().injector().injectMembers(this);
     }
 
     /**
@@ -294,7 +293,7 @@ public class Plot {
                 }
             }
         }
-        PlotSquared.platform().getInjector().injectMembers(this);
+        PlotSquared.platform().injector().injectMembers(this);
     }
 
     /**
@@ -515,7 +514,7 @@ public class Plot {
      */
     @Nonnull public List<PlotPlayer<?>> getPlayersInPlot() {
         final List<PlotPlayer<?>> players = new ArrayList<>();
-        for (final PlotPlayer<?> player : PlotSquared.platform().getPlayerManager().getPlayers()) {
+        for (final PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
             if (this.equals(player.getCurrentPlot())) {
                 players.add(player);
             }
@@ -1263,7 +1262,7 @@ public class Plot {
 
             if (Settings.Backup.DELETE_ON_UNCLAIM) {
                 // Destroy all backups when the plot is unclaimed
-                Objects.requireNonNull(PlotSquared.platform()).getBackupManager().getProfile(current).destroy();
+                Objects.requireNonNull(PlotSquared.platform()).backupManager().getProfile(current).destroy();
             }
 
             getArea().removePlot(getId());
@@ -2528,11 +2527,11 @@ public class Plot {
             return false;
         }
         if (!isMerged()) {
-            return PlotSquared.platform().getPlayerManager().getPlayerIfExists(Objects.requireNonNull(this.getOwnerAbs())) != null;
+            return PlotSquared.platform().playerManager().getPlayerIfExists(Objects.requireNonNull(this.getOwnerAbs())) != null;
         }
         for (final Plot current : getConnectedPlots()) {
             if (current.hasOwner()
-                && PlotSquared.platform().getPlayerManager().getPlayerIfExists(Objects.requireNonNull(current.getOwnerAbs())) != null) {
+                && PlotSquared.platform().playerManager().getPlayerIfExists(Objects.requireNonNull(current.getOwnerAbs())) != null) {
                 return true;
             }
         }
@@ -2667,7 +2666,7 @@ public class Plot {
         int num = this.getConnectedPlots().size();
         String alias = !this.getAlias().isEmpty() ? this.getAlias() : TranslatableCaption.of("info.none").getComponent(player);
         Location bot = this.getCorners()[0];
-        PlotSquared.platform().getWorldUtil().getBiome(Objects.requireNonNull(this.getWorldName()), bot.getX(), bot.getZ(), biome -> {
+        PlotSquared.platform().worldUtil().getBiome(Objects.requireNonNull(this.getWorldName()), bot.getX(), bot.getZ(), biome -> {
             Component trusted = PlayerManager.getPlayerList(this.getTrusted());
             Component members = PlayerManager.getPlayerList(this.getMembers());
             Component denied = PlayerManager.getPlayerList(this.getDenied());

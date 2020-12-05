@@ -187,7 +187,7 @@ public class Area extends SubCommand {
                 // There's only one plot in the area...
                 final PlotId plotId = PlotId.of(1, 1);
                 final HybridPlotWorld hybridPlotWorld = this.hybridPlotWorldFactory
-                    .create(player.getLocation().getWorldName(), args[1], Objects.requireNonNull(PlotSquared.platform()).getDefaultGenerator(),
+                    .create(player.getLocation().getWorldName(), args[1], Objects.requireNonNull(PlotSquared.platform()).defaultGenerator(),
                         plotId, plotId);
                 // Plot size is the same as the region width
                 hybridPlotWorld.PLOT_WIDTH = hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
@@ -237,8 +237,8 @@ public class Area extends SubCommand {
                 final BlockVector3 singlePos1 = selectedRegion.getMinimumPoint();
 
                 // Now the schematic is saved, which is wonderful!
-                PlotAreaBuilder singleBuilder = PlotAreaBuilder.ofPlotArea(hybridPlotWorld).plotManager(PlotSquared.platform().getPluginName())
-                    .generatorName(PlotSquared.platform().getPluginName()).maximumId(plotId).minimumId(plotId);
+                PlotAreaBuilder singleBuilder = PlotAreaBuilder.ofPlotArea(hybridPlotWorld).plotManager(PlotSquared.platform().pluginName())
+                    .generatorName(PlotSquared.platform().pluginName()).maximumId(plotId).minimumId(plotId);
                 Runnable singleRun = () -> {
                     final String path =
                         "worlds." + hybridPlotWorld.getWorldName() + ".areas." + hybridPlotWorld.getId() + '-' + singleBuilder.minimumId() + '-'
@@ -322,8 +322,8 @@ public class Area extends SubCommand {
                                         Template.of("cluster", areas.iterator().next().toString()));
                                     return false;
                                 }
-                                PlotAreaBuilder builder = PlotAreaBuilder.ofPlotArea(area).plotManager(PlotSquared.platform().getPluginName())
-                                    .generatorName(PlotSquared.platform().getPluginName()).minimumId(PlotId.of(1, 1))
+                                PlotAreaBuilder builder = PlotAreaBuilder.ofPlotArea(area).plotManager(PlotSquared.platform().pluginName())
+                                    .generatorName(PlotSquared.platform().pluginName()).minimumId(PlotId.of(1, 1))
                                     .maximumId(PlotId.of(numX, numZ));
                                 final String path =
                                     "worlds." + area.getWorldName() + ".areas." + area.getId() + '-' + builder.minimumId() + '-' + builder
@@ -368,7 +368,7 @@ public class Area extends SubCommand {
                         PlotAreaBuilder builder = PlotAreaBuilder.newBuilder();
                         builder.worldName(split[0]);
                         final HybridPlotWorld pa =
-                            this.hybridPlotWorldFactory.create(builder.worldName(), id, PlotSquared.platform().getDefaultGenerator(), null, null);
+                            this.hybridPlotWorldFactory.create(builder.worldName(), id, PlotSquared.platform().defaultGenerator(), null, null);
                         PlotArea other = this.plotAreaManager.getPlotArea(pa.getWorldName(), id);
                         if (other != null && Objects.equals(pa.getId(), other.getId())) {
                             player.sendMessage(TranslatableCaption.of("setup.setup_world_taken"), Template.of("value", pa.toString()));
@@ -452,8 +452,8 @@ public class Area extends SubCommand {
                                 ConfigurationSection section = this.worldConfiguration.getConfigurationSection(path);
                                 pa.saveConfiguration(section);
                                 pa.loadConfiguration(section);
-                                builder.plotManager(PlotSquared.platform().getPluginName());
-                                builder.generatorName(PlotSquared.platform().getPluginName());
+                                builder.plotManager(PlotSquared.platform().pluginName());
+                                builder.generatorName(PlotSquared.platform().pluginName());
                                 String world = this.setupUtils.setupWorld(builder);
                                 if (this.worldUtil.isWorld(world)) {
                                     player.sendMessage(TranslatableCaption.of("setup.setup_finished"));

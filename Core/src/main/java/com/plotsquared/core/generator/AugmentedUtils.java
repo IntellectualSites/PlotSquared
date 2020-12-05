@@ -91,7 +91,7 @@ public class AugmentedUtils {
             // Mask
             if (queue == null) {
                 enqueue = true;
-                queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(PlotSquared.platform().getWorldUtil().getWeWorld(world));
+                queue = PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared.platform().worldUtil().getWeWorld(world));
                 if (chunkObject != null) {
                     queue.setChunkObject(chunkObject);
                 }

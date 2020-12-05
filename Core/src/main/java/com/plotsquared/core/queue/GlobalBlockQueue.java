@@ -52,7 +52,7 @@ public class GlobalBlockQueue {
     @Nonnull public QueueCoordinator getNewQueue(@Nonnull World world) {
         QueueCoordinator queue = provider.getNewQueue(world);
         // Auto-inject into the queue
-        PlotSquared.platform().getInjector().injectMembers(queue);
+        PlotSquared.platform().injector().injectMembers(queue);
         return queue;
     }
 

@@ -83,7 +83,7 @@ public abstract class WorldUtil {
         BlockVector3 pos1 = BlockVector2.at(p1x, p1z).toBlockVector3();
         BlockVector3 pos2 = BlockVector2.at(p2x, p2z).toBlockVector3(Plot.MAX_HEIGHT - 1);
         CuboidRegion region = new CuboidRegion(pos1, pos2);
-        PlotSquared.platform().getWorldUtil().setBiomes(world, region, biome);
+        PlotSquared.platform().worldUtil().setBiomes(world, region, biome);
     }
 
     /**
@@ -293,7 +293,7 @@ public abstract class WorldUtil {
     }
 
     @Nullable final File getDat(@Nonnull final String world) {
-        File file = new File(PlotSquared.platform().getWorldContainer() + File.separator + world + File.separator + "level.dat");
+        File file = new File(PlotSquared.platform().worldContainer() + File.separator + world + File.separator + "level.dat");
         if (file.exists()) {
             return file;
         }
@@ -302,7 +302,7 @@ public abstract class WorldUtil {
 
     @Nullable private File getMcr(@Nonnull final String world, final int x, final int z) {
         final File file =
-            new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
+            new File(PlotSquared.platform().worldContainer(), world + File.separator + "region" + File.separator + "r." + x + '.' + z + ".mca");
         if (file.exists()) {
             return file;
         }
@@ -311,7 +311,7 @@ public abstract class WorldUtil {
 
 
     public Set<BlockVector2> getChunkChunks(String world) {
-        File folder = new File(PlotSquared.platform().getWorldContainer(), world + File.separator + "region");
+        File folder = new File(PlotSquared.platform().worldContainer(), world + File.separator + "region");
         File[] regionFiles = folder.listFiles();
         if (regionFiles == null) {
             throw new RuntimeException("Could not find worlds folder: " + folder + " ? (no read access?)");

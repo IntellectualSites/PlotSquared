@@ -70,7 +70,7 @@ public class DebugImportWorlds extends Command {
         }
         SinglePlotArea area = ((SinglePlotAreaManager) this.plotAreaManager).getArea();
         PlotId id = PlotId.of(0, 0);
-        File container = PlotSquared.platform().getWorldContainer();
+        File container = PlotSquared.platform().worldContainer();
         if (container.equals(new File("."))) {
             player.sendMessage(TranslatableCaption.of("debugimportworlds.world_container"));
             return CompletableFuture.completedFuture(false);

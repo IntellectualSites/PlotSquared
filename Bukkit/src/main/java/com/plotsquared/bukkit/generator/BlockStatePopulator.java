@@ -54,7 +54,7 @@ final class BlockStatePopulator extends BlockPopulator {
 
     @Override public void populate(@Nonnull final World world, @Nonnull final Random random, @Nonnull final Chunk source) {
         if (this.queue == null) {
-            this.queue = PlotSquared.platform().getGlobalBlockQueue().getNewQueue(new BukkitWorld(world));
+            this.queue = PlotSquared.platform().globalBlockQueue().getNewQueue(new BukkitWorld(world));
         }
         final PlotArea area = this.plotAreaManager.getPlotArea(world.getName(), null);
         if (area == null) {

@@ -60,7 +60,7 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
     }
 
     @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-        return PlotSquared.platform().getDefaultGenerator().getNewPlotArea(world, id, min, max);
+        return PlotSquared.platform().defaultGenerator().getNewPlotArea(world, id, min, max);
     }
 
     @Override public void generateChunk(final ScopedQueueCoordinator result, PlotArea settings) {

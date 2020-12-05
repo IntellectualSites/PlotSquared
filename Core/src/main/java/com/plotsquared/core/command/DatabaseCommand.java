@@ -162,11 +162,11 @@ public class DatabaseCommand extends SubCommand {
                                             PlotId newId = newPlot.getId();
                                             PlotId id = plot.getId();
                                             File worldFile =
-                                                new File(PlotSquared.platform().getWorldContainer(),
+                                                new File(PlotSquared.platform().worldContainer(),
                                                     id.toCommaSeparatedString());
                                             if (worldFile.exists()) {
                                                 File newFile =
-                                                    new File(PlotSquared.platform().getWorldContainer(),
+                                                    new File(PlotSquared.platform().worldContainer(),
                                                         newId.toCommaSeparatedString());
                                                 worldFile.renameTo(newFile);
                                             }
