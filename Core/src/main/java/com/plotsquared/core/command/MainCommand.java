@@ -76,7 +76,10 @@ public class MainCommand extends Command {
             final List<Class<? extends Command>> commands = new LinkedList<>();
             commands.add(Caps.class);
             commands.add(Buy.class);
-            commands.add(Save.class);
+            if (Settings.Web.LEGACY_WEBINTERFACE) {
+                logger.warn("Legacy webinterface is used. Please note that it will be removed in future.");
+                commands.add(Save.class);
+            }
             commands.add(Load.class);
             commands.add(Confirm.class);
             commands.add(Template.class);

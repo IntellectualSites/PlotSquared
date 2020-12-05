@@ -45,6 +45,7 @@ dependencies {
     api("com.intellectualsites:Pipeline:1.4.0-SNAPSHOT") {
         exclude(group = "com.google.guava")
     }
+    api("com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT")
 }
 
 tasks.processResources {

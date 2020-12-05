@@ -24,8 +24,9 @@
   "area.set_pos2": "You will now set pos2: <command>. Note: The chosen plot size may result in the created area not exactly matching your second position.",
 
   "web.generating_link": "<prefix><gold>Processing plot...</gold>",
+  "web.plot_merged": "<prefix><red>This plot is merged and therefore cannot be downloaded</red>",
   "web.generating_link_failed": "<prefix><red>Failed to generate download link!</red>",
-  "web.generation_link_success": "<click:open_url:<url>><url></click>",
+  "web.generation_link_success": "<prefix><gold>Download: <gray><click:open_url:<download>><download></click></gray> \n Deletion: <gray><click:open_url:<delete>><delete></click></gray>\n<red>Attention: Opening the deletion link will delete the file immediately.</red></gold>",
   "web.save_failed": "<prefix><red>Failed to save.</red>",
   "web.load_null": "<prefix><gray>Please use </gray><dark_aqua><command> </dark_aqua><gray>to get a list of schematics.</gray>",
   "web.load_failed": "<prefix><red>Failed to load schematic.</red>",

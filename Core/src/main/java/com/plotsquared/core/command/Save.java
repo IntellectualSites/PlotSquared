@@ -86,36 +86,36 @@ public class Save extends SubCommand {
             return false;
         }
         plot.addRunning();
-        this.schematicHandler.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
-            @Override public void run(final CompoundTag value) {
-                TaskManager.runTaskAsync(() -> {
-                    String time = (System.currentTimeMillis() / 1000) + "";
-                    Location[] corners = plot.getCorners();
-                    corners[0] = corners[0].withY(0);
-                    corners[1] = corners[1].withY(255);
-                    int size = (corners[1].getX() - corners[0].getX()) + 1;
-                    PlotId id = plot.getId();
-                    String world1 = plot.getArea().toString().replaceAll(";", "-")
-                        .replaceAll("[^A-Za-z0-9]", "");
-                    final String file = time + '_' + world1 + '_' + id.getX() + '_' + id.getY() + '_' + size;
-                    UUID uuid = player.getUUID();
-                    schematicHandler.upload(value, uuid, file, new RunnableVal<URL>() {
-                        @Override public void run(URL url) {
-                            plot.removeRunning();
-                            if (url == null) {
-                                player.sendMessage(TranslatableCaption.of("backups.backup_save_failed"));
-                                return;
+        this.schematicHandler.getCompoundTag(plot)
+                .whenComplete((compoundTag, throwable) -> {
+                    TaskManager.runTaskAsync(() -> {
+                        String time = (System.currentTimeMillis() / 1000) + "";
+                        Location[] corners = plot.getCorners();
+                        corners[0] = corners[0].withY(0);
+                        corners[1] = corners[1].withY(255);
+                        int size = (corners[1].getX() - corners[0].getX()) + 1;
+                        PlotId id = plot.getId();
+                        String world1 = plot.getArea().toString().replaceAll(";", "-")
+                                .replaceAll("[^A-Za-z0-9]", "");
+                        final String file = time + '_' + world1 + '_' + id.getX() + '_' + id.getY() + '_' + size;
+                        UUID uuid = player.getUUID();
+                        schematicHandler.upload(compoundTag, uuid, file, new RunnableVal<URL>() {
+                            @Override
+                            public void run(URL url) {
+                                plot.removeRunning();
+                                if (url == null) {
+                                    player.sendMessage(TranslatableCaption.of("backups.backup_save_failed"));
+                                    return;
+                                }
+                                player.sendMessage(TranslatableCaption.of("web.save_success"));
+                                try (final MetaDataAccess<List<String>> schematicAccess =
+                                             player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
+                                    schematicAccess.get().ifPresent(schematics -> schematics.add(file + ".schem"));
+                                }
                             }
-                            player.sendMessage(TranslatableCaption.of("web.save_success"));
-                            try (final MetaDataAccess<List<String>> schematicAccess =
-                                player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
-                                schematicAccess.get().ifPresent(schematics -> schematics.add(file + ".schem"));
-                            }
-                        }
+                        });
                     });
                 });
-            }
-        });
         return true;
     }
 }

@@ -42,7 +42,7 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.net.AbstractDelegateOutputStream;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.plotsquared.core.util.task.TaskTime;
+import com.plotsquared.core.util.task.YieldRunnable;
 import com.sk89q.jnbt.ByteArrayTag;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.IntArrayTag;
@@ -90,6 +90,8 @@ import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,11 +101,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -111,6 +114,7 @@ public abstract class SchematicHandler {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + SchematicHandler.class.getSimpleName());
     private static final Gson GSON = new Gson();
+    private static final Path TEMP_DIR = Paths.get("TODO-PATH");
     public static SchematicHandler manager;
     private final WorldUtil worldUtil;
     private boolean exportAll = false;
@@ -121,6 +125,7 @@ public abstract class SchematicHandler {
         this.subscriberFactory = subscriberFactory;
     }
 
+    @Deprecated
     public static void upload(@Nullable UUID uuid,
                               @Nullable final String file,
                               @Nonnull final String extension,
@@ -237,19 +242,18 @@ public abstract class SchematicHandler {
                 }
 
                 final Runnable THIS = this;
-                getCompoundTag(plot, new RunnableVal<CompoundTag>() {
-                    @Override public void run(final CompoundTag value) {
-                        if (value != null) {
-                            TaskManager.runTaskAsync(() -> {
-                                boolean result = save(value, directory + File.separator + name + ".schem");
-                                if (!result) {
-                                    logger.error("Failed to save {}", plot.getId());
-                                }
-                                TaskManager.runTask(THIS);
-                            });
-                        }
-                    }
-                });
+                getCompoundTag(plot)
+                        .whenComplete((compoundTag, throwable) -> {
+                            if (compoundTag != null) {
+                                TaskManager.runTaskAsync(() -> {
+                                    boolean result = save(compoundTag, directory + File.separator + name + ".schem");
+                                    if (!result) {
+                                        logger.error("Failed to save {}", plot.getId());
+                                    }
+                                    TaskManager.runTask(THIS);
+                                });
+                            }
+                        });
             }
         });
         return true;
@@ -487,6 +491,7 @@ public abstract class SchematicHandler {
         return null;
     }
 
+    @Deprecated
     public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (tag == null) {
             TaskManager.runTask(whenDone);
@@ -529,37 +534,85 @@ public abstract class SchematicHandler {
         return true;
     }
 
-    public void getCompoundTag(final String world, final Set<CuboidRegion> regions, final RunnableVal<CompoundTag> whenDone) {
-        // async
+    private void writeSchematicData(@Nonnull final Map<String, Tag> schematic,
+                                    @Nonnull final Map<String, Integer> palette,
+                                    @Nonnull final Map<String, Integer> biomePalette,
+                                    @Nonnull final List<CompoundTag> tileEntities,
+                                    @Nonnull final ByteArrayOutputStream buffer,
+                                    @Nonnull final ByteArrayOutputStream biomeBuffer) {
+        schematic.put("PaletteMax", new IntTag(palette.size()));
+
+        Map<String, Tag> paletteTag = new HashMap<>();
+        palette.forEach((key, value) -> paletteTag.put(key, new IntTag(value)));
+
+        schematic.put("Palette", new CompoundTag(paletteTag));
+        schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
+        schematic.put("TileEntities", new ListTag(CompoundTag.class, tileEntities));
+
+        schematic.put("BiomePaletteMax", new IntTag(biomePalette.size()));
+
+        Map<String, Tag> biomePaletteTag = new HashMap<>();
+        biomePalette.forEach((key, value) -> biomePaletteTag.put(key, new IntTag(value)));
+
+        schematic.put("BiomePalette", new CompoundTag(biomePaletteTag));
+        schematic.put("BiomeData", new ByteArrayTag(biomeBuffer.toByteArray()));
+    }
+
+    @Nonnull
+    private Map<String, Tag> initSchematic(short width, short height, short length) {
+        Map<String, Tag> schematic = new HashMap<>();
+        schematic.put("Version", new IntTag(2));
+        schematic.put("DataVersion",
+            new IntTag(WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.WORLD_EDITING).getDataVersion()));
+
+        Map<String, Tag> metadata = new HashMap<>();
+        metadata.put("WEOffsetX", new IntTag(0));
+        metadata.put("WEOffsetY", new IntTag(0));
+        metadata.put("WEOffsetZ", new IntTag(0));
+
+        schematic.put("Metadata", new CompoundTag(metadata));
+
+        schematic.put("Width", new ShortTag(width));
+        schematic.put("Height", new ShortTag(height));
+        schematic.put("Length", new ShortTag(length));
+
+        // The Sponge format Offset refers to the 'min' points location in the world. That's our 'Origin'
+        schematic.put("Offset", new IntArrayTag(new int[] {0, 0, 0,}));
+        return schematic;
+    }
+
+    /**
+     * Get the given plot as {@link CompoundTag} matching the Sponge schematic format.
+     *
+     * @param plot The plot to get the contents from.
+     * @return a {@link CompletableFuture} that provides the created {@link CompoundTag}.
+     */
+    public CompletableFuture<CompoundTag> getCompoundTag(@Nonnull final Plot plot) {
+        return getCompoundTag(Objects.requireNonNull(plot.getWorldName()), plot.getRegions());
+    }
+
+    /**
+     * Get the contents of the given regions in the given world as {@link CompoundTag}
+     * matching the Sponge schematic format.
+     *
+     * @param worldName The world to get the contents from.
+     * @param regions The regions to get the contents from.
+     * @return a {@link CompletableFuture} that provides the created {@link CompoundTag}.
+     */
+    @Nonnull
+    public CompletableFuture<CompoundTag> getCompoundTag(@Nonnull final String worldName,
+                                                         @Nonnull final Set<CuboidRegion> regions) {
+        CompletableFuture<CompoundTag> completableFuture = new CompletableFuture<>();
         TaskManager.runTaskAsync(() -> {
             // Main positions
-            Location[] corners = RegionUtil.getCorners(world, regions);
-            final Location bot = corners[0];
-            final Location top = corners[1];
+            CuboidRegion aabb = RegionUtil.getAxisAlignedBoundingBox(regions);
+            aabb.setWorld(this.worldUtil.getWeWorld(worldName));
 
-            CuboidRegion cuboidRegion = new CuboidRegion(this.worldUtil.getWeWorld(world), bot.getBlockVector3(), top.getBlockVector3());
+            final int width = aabb.getWidth();
+            int height = aabb.getHeight();
+            final int length = aabb.getLength();
 
-            final int width = cuboidRegion.getWidth();
-            int height = cuboidRegion.getHeight();
-            final int length = cuboidRegion.getLength();
-            Map<String, Tag> schematic = new HashMap<>();
-            schematic.put("Version", new IntTag(2));
-            schematic.put("DataVersion",
-                new IntTag(WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.WORLD_EDITING).getDataVersion()));
-
-            Map<String, Tag> metadata = new HashMap<>();
-            metadata.put("WEOffsetX", new IntTag(0));
-            metadata.put("WEOffsetY", new IntTag(0));
-            metadata.put("WEOffsetZ", new IntTag(0));
-
-            schematic.put("Metadata", new CompoundTag(metadata));
-
-            schematic.put("Width", new ShortTag((short) width));
-            schematic.put("Height", new ShortTag((short) height));
-            schematic.put("Length", new ShortTag((short) length));
-
-            // The Sponge format Offset refers to the 'min' points location in the world. That's our 'Origin'
-            schematic.put("Offset", new IntArrayTag(new int[] {0, 0, 0,}));
+            Map<String, Tag> schematic = initSchematic((short) width, (short) height, (short) length);
 
             Map<String, Integer> palette = new HashMap<>();
             Map<String, Integer> biomePalette = new HashMap<>();
@@ -573,147 +626,110 @@ public abstract class SchematicHandler {
                 @Override public void run() {
                     if (queue.isEmpty()) {
                         TaskManager.runTaskAsync(() -> {
-                            schematic.put("PaletteMax", new IntTag(palette.size()));
-
-                            Map<String, Tag> paletteTag = new HashMap<>();
-                            palette.forEach((key, value) -> paletteTag.put(key, new IntTag(value)));
-
-                            schematic.put("Palette", new CompoundTag(paletteTag));
-                            schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
-                            schematic.put("TileEntities", new ListTag(CompoundTag.class, tileEntities));
-
-                            schematic.put("BiomePaletteMax", new IntTag(biomePalette.size()));
-
-                            Map<String, Tag> biomePaletteTag = new HashMap<>();
-                            biomePalette.forEach((key, value) -> biomePaletteTag.put(key, new IntTag(value)));
-
-                            schematic.put("BiomePalette", new CompoundTag(biomePaletteTag));
-                            schematic.put("BiomeData", new ByteArrayTag(biomeBuffer.toByteArray()));
-                            whenDone.value = new CompoundTag(schematic);
-                            TaskManager.runTask(whenDone);
+                            writeSchematicData(schematic, palette, biomePalette, tileEntities, buffer, biomeBuffer);
+                            completableFuture.complete(new CompoundTag(schematic));
                         });
                         return;
                     }
                     final Runnable regionTask = this;
                     CuboidRegion region = queue.poll();
 
-                    final Location pos1 = Location.at(world, region.getMinimumPoint());
-                    final Location pos2 = Location.at(world, region.getMaximumPoint());
+                    final BlockVector3 minimum = region.getMinimumPoint();
+                    final BlockVector3 maximum = region.getMaximumPoint();
 
-                    final int p1x = pos1.getX();
-                    final int sy = pos1.getY();
-                    final int p1z = pos1.getZ();
-                    final int p2x = pos2.getX();
-                    final int p2z = pos2.getZ();
-                    final int ey = pos2.getY();
-                    Iterator<Integer> yiter = IntStream.range(sy, ey + 1).iterator();
-                    final Runnable yTask = new Runnable() {
+                    final int minX = minimum.getX();
+                    final int minZ = minimum.getZ();
+                    final int minY = minimum.getY();
+
+                    final int maxX = maximum.getX();
+                    final int maxZ = maximum.getZ();
+                    final int maxY = maximum.getY();
+
+                    final Runnable yTask = new YieldRunnable() {
+                        int currentY = minY;
+                        int currentX = minX;
+                        int currentZ = minZ;
                         @Override public void run() {
-                            long ystart = System.currentTimeMillis();
-                            while (yiter.hasNext() && System.currentTimeMillis() - ystart < 20) {
-                                final int y = yiter.next();
-                                Iterator<Integer> ziter = IntStream.range(p1z, p2z + 1).iterator();
-                                final Runnable zTask = new Runnable() {
-                                    @Override public void run() {
-                                        long zstart = System.currentTimeMillis();
-                                        while (ziter.hasNext() && System.currentTimeMillis() - zstart < 20) {
-                                            final int z = ziter.next();
-                                            Iterator<Integer> xiter = IntStream.range(p1x, p2x + 1).iterator();
-                                            final Runnable xTask = new Runnable() {
-                                                @Override public void run() {
-                                                    long xstart = System.currentTimeMillis();
-                                                    final int ry = y - sy;
-                                                    final int rz = z - p1z;
-                                                    while (xiter.hasNext() && System.currentTimeMillis() - xstart < 20) {
-                                                        final int x = xiter.next();
-                                                        final int rx = x - p1x;
-                                                        BlockVector3 point = BlockVector3.at(x, y, z);
-                                                        BaseBlock block = cuboidRegion.getWorld().getFullBlock(point);
-                                                        if (block.getNbtData() != null) {
-                                                            Map<String, Tag> values = new HashMap<>();
-                                                            for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
-                                                                values.put(entry.getKey(), entry.getValue());
-                                                            }
-                                                            // Remove 'id' if it exists. We want 'Id'
-                                                            values.remove("id");
-
-                                                            // Positions are kept in NBT, we don't want that.
-                                                            values.remove("x");
-                                                            values.remove("y");
-                                                            values.remove("z");
-
-                                                            values.put("Id", new StringTag(block.getNbtId()));
-                                                            values.put("Pos", new IntArrayTag(new int[] {rx, ry, rz}));
-
-                                                            tileEntities.add(new CompoundTag(values));
-                                                        }
-                                                        String blockKey = block.toImmutableState().getAsString();
-                                                        int blockId;
-                                                        if (palette.containsKey(blockKey)) {
-                                                            blockId = palette.get(blockKey);
-                                                        } else {
-                                                            blockId = palette.size();
-                                                            palette.put(blockKey, palette.size());
-                                                        }
-
-                                                        while ((blockId & -128) != 0) {
-                                                            buffer.write(blockId & 127 | 128);
-                                                            blockId >>>= 7;
-                                                        }
-                                                        buffer.write(blockId);
-
-                                                        if (ry > 0) {
-                                                            continue;
-                                                        }
-                                                        BlockVector2 pt = BlockVector2.at(x, z);
-                                                        BiomeType biome = cuboidRegion.getWorld().getBiome(pt);
-                                                        String biomeStr = biome.getId();
-                                                        int biomeId;
-                                                        if (biomePalette.containsKey(biomeStr)) {
-                                                            biomeId = biomePalette.get(biomeStr);
-                                                        } else {
-                                                            biomeId = biomePalette.size();
-                                                            biomePalette.put(biomeStr, biomeId);
-                                                        }
-                                                        while ((biomeId & -128) != 0) {
-                                                            biomeBuffer.write(biomeId & 127 | 128);
-                                                            biomeId >>>= 7;
-                                                        }
-                                                        biomeBuffer.write(biomeId);
-                                                    }
-                                                    if (xiter.hasNext()) {
-                                                        this.run();
-                                                    }
-                                                }
-                                            };
-                                            xTask.run();
+                            long start = System.currentTimeMillis();
+                            for (; currentY <= maxY; currentY++) {
+                                int relativeY = currentY - minY;
+                                for (; currentZ <= maxZ; currentZ++) {
+                                    int relativeZ = currentZ - minZ;
+                                    for (; currentX <= maxX; currentX++) {
+                                        // if too much time was spent here, we yield this task
+                                        // note that current(X/Y/Z) aren't incremented, so the same position
+                                        // as *right now* will be visited again
+                                        if (System.currentTimeMillis() - start > 40) {
+                                            this.yield();
+                                            return;
                                         }
-                                        if (ziter.hasNext()) {
-                                            this.run();
+                                        int relativeX = currentX - minX;
+                                        BlockVector3 point = BlockVector3.at(currentX, currentY, currentZ);
+                                        BaseBlock block = aabb.getWorld().getFullBlock(point);
+                                        if (block.getNbtData() != null) {
+                                            Map<String, Tag> values = new HashMap<>();
+                                            for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
+                                                values.put(entry.getKey(), entry.getValue());
+                                            }
+                                            // Remove 'id' if it exists. We want 'Id'
+                                            values.remove("id");
+
+                                            // Positions are kept in NBT, we don't want that.
+                                            values.remove("x");
+                                            values.remove("y");
+                                            values.remove("z");
+
+                                            values.put("Id", new StringTag(block.getNbtId()));
+                                            values.put("Pos", new IntArrayTag(new int[] {relativeX, relativeY, relativeZ}));
+
+                                            tileEntities.add(new CompoundTag(values));
                                         }
+                                        String blockKey = block.toImmutableState().getAsString();
+                                        int blockId;
+                                        if (palette.containsKey(blockKey)) {
+                                            blockId = palette.get(blockKey);
+                                        } else {
+                                            blockId = palette.size();
+                                            palette.put(blockKey, palette.size());
+                                        }
+
+                                        while ((blockId & -128) != 0) {
+                                            buffer.write(blockId & 127 | 128);
+                                            blockId >>>= 7;
+                                        }
+                                        buffer.write(blockId);
+
+                                        if (relativeY > 0) {
+                                            continue;
+                                        }
+                                        BlockVector2 pt = BlockVector2.at(currentX, currentZ);
+                                        BiomeType biome = aabb.getWorld().getBiome(pt);
+                                        String biomeStr = biome.getId();
+                                        int biomeId;
+                                        if (biomePalette.containsKey(biomeStr)) {
+                                            biomeId = biomePalette.get(biomeStr);
+                                        } else {
+                                            biomeId = biomePalette.size();
+                                            biomePalette.put(biomeStr, biomeId);
+                                        }
+                                        while ((biomeId & -128) != 0) {
+                                            biomeBuffer.write(biomeId & 127 | 128);
+                                            biomeId >>>= 7;
+                                        }
+                                        biomeBuffer.write(biomeId);
                                     }
-                                };
-                                zTask.run();
+                                    currentX = minX; // reset manually as not using local variable
+                                }
+                                currentZ = minZ; // reset manually as not using local variable
                             }
-                            if (yiter.hasNext()) {
-                                TaskManager.runTaskLater(this, TaskTime.ticks(1L));
-                            } else {
-                                regionTask.run();
-                            }
+                            regionTask.run();
                         }
                     };
                     yTask.run();
                 }
             });
         });
-    }
-
-    public void getCompoundTag(final Plot plot, final RunnableVal<CompoundTag> whenDone) {
-        getCompoundTag(plot.getWorldName(), plot.getRegions(), new RunnableVal<CompoundTag>() {
-            @Override public void run(CompoundTag value) {
-                whenDone.run(value);
-            }
-        });
+        return completableFuture;
     }
 
 

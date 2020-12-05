@@ -26,21 +26,21 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotUploader;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
-import com.sk89q.jnbt.CompoundTag;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
@@ -60,13 +60,16 @@ import java.util.stream.Collectors;
 public class Download extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
-    private final SchematicHandler schematicHandler;
+    private final PlotUploader plotUploader;
+    @Nonnull private final SchematicHandler schematicHandler;
     private final WorldUtil worldUtil;
 
     @Inject public Download(@Nonnull final PlotAreaManager plotAreaManager,
+                            @Nonnull final PlotUploader plotUploader,
                             @Nonnull final SchematicHandler schematicHandler,
                             @Nonnull final WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
+        this.plotUploader = plotUploader;
         this.schematicHandler = schematicHandler;
         this.worldUtil = worldUtil;
     }
@@ -96,6 +99,10 @@ public class Download extends SubCommand {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
+        if (plot.isMerged()) {
+            player.sendMessage(TranslatableCaption.of("web.plot_merged"));
+            return false;
+        }
         if (plot.getRunning() > 0) {
             player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
@@ -103,27 +110,11 @@ public class Download extends SubCommand {
         if (args.length == 0 || (args.length == 1 && StringMan
             .isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
             if (plot.getVolume() > Integer.MAX_VALUE) {
-            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+                player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
                 return false;
             }
             plot.addRunning();
-            this.schematicHandler.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
-                @Override public void run(CompoundTag value) {
-                    plot.removeRunning();
-                    schematicHandler.upload(value, null, null, new RunnableVal<URL>() {
-                        @Override public void run(URL url) {
-                            if (url == null) {
-                                player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
-                                return;
-                            }
-                            player.sendMessage(
-                                    TranslatableCaption.of("web.generation_link_success"),
-                                    Template.of("url", url.toString())
-                            );
-                        }
-                    });
-                }
-            });
+            upload(player, plot);
         } else if (args.length == 1 && StringMan
             .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
@@ -153,6 +144,7 @@ public class Download extends SubCommand {
         player.sendMessage(TranslatableCaption.of("web.generating_link"));
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -172,5 +164,37 @@ public class Download extends SubCommand {
             return commands;
         }
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+    }
+
+    private void upload(PlotPlayer<?> player, Plot plot) {
+        if (Settings.Web.LEGACY_WEBINTERFACE) {
+            schematicHandler
+                    .getCompoundTag(plot)
+                    .whenComplete((compoundTag, throwable) -> {
+                        schematicHandler.upload(compoundTag, null, null, new RunnableVal<URL>() {
+                            @Override
+                            public void run(URL value) {
+                                player.sendMessage(
+                                        TranslatableCaption.of("web.generation_link_success"),
+                                        Template.of("download", value.toString()),
+                                        Template.of("delete", "Not available"));
+                                player.sendMessage(StaticCaption.of(value.toString()));
+                            }
+                        });
+                    });
+            return;
+        }
+        // TODO legacy support
+        this.plotUploader.upload(plot)
+                .whenComplete((result, throwable) -> {
+                    if (throwable != null || !result.isSuccess()) {
+                        player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
+                    } else {
+                        player.sendMessage(
+                                TranslatableCaption.of("web.generation_link_success"),
+                                Template.of("download", result.getDownloadUrl()),
+                                Template.of("delete", result.getDeletionUrl()));
+                    }
+                });
     }
 }

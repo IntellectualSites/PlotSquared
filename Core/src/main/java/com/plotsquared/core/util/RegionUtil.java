@@ -34,6 +34,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import javax.annotation.Nonnull;
 import java.awt.geom.Rectangle2D;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class RegionUtil {
 
@@ -45,31 +46,33 @@ public class RegionUtil {
     }
 
     @Nonnull public static Location[] getCorners(String world, Collection<CuboidRegion> regions) {
-        Location min = null;
-        Location max = null;
-        for (CuboidRegion region : regions) {
-            Location[] corners = getCorners(world, region);
-            if (min == null) {
-                min = corners[0];
-                max = corners[1];
-                continue;
-            }
-            Location pos1 = corners[0];
-            Location pos2 = corners[1];
-            if (pos2.getX() > max.getX()) {
-                max = max.withX(pos2.getX());
-            }
-            if (pos1.getX() < min.getX()) {
-                min = min.withX(pos1.getX());
-            }
-            if (pos2.getZ() > max.getZ()) {
-                max = max.withZ(pos2.getZ());
-            }
-            if (pos1.getZ() < min.getZ()) {
-                min = min.withZ(pos1.getZ());
-            }
+        CuboidRegion aabb = getAxisAlignedBoundingBox(regions);
+        return getCorners(world, aabb);
+    }
+
+    /**
+     * Create a minimum {@link CuboidRegion} containing all given regions.
+     *
+     * @param regions The regions the bounding box should contain.
+     * @return a CuboidRegion that contains all given regions.
+     */
+    @Nonnull
+    public static CuboidRegion getAxisAlignedBoundingBox(Iterable<CuboidRegion> regions) {
+        Iterator<CuboidRegion> iterator = regions.iterator();
+        if (!iterator.hasNext()) {
+            throw new IllegalArgumentException("No regions given");
         }
-        return new Location[] {min, max};
+        CuboidRegion next = iterator.next();
+        BlockVector3 min = next.getMinimumPoint();
+        BlockVector3 max = next.getMaximumPoint();
+
+        while (iterator.hasNext()) {
+            next = iterator.next();
+            // as max >= min, this is enough to check
+            min = min.getMinimum(next.getMinimumPoint());
+            max = max.getMaximum(next.getMaximumPoint());
+        }
+        return new CuboidRegion(min, max);
     }
 
     public static CuboidRegion createRegion(int pos1x, int pos2x, int pos1z, int pos2z) {
