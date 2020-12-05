@@ -30,6 +30,7 @@ import com.plotsquared.core.location.Direction;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Plot (X,Y) tuples for plot locations
@@ -265,26 +266,25 @@ public final class PlotId {
         }
 
         @Override public boolean hasNext() {
-            if (this.x < this.end.getX()) {
-                return true;
-            } else if (this.x == this.end.getX()) {
-                return this.y < this.end.getY();
-            } else {
-                return false;
-            }
+            // end is fully included
+            return this.x <= this.end.getX() && this.y <= this.end.getY();
         }
 
         @Override public PlotId next() {
             if (!hasNext()) {
-                throw new IndexOutOfBoundsException("The iterator has no more entries");
+                throw new NoSuchElementException("The iterator has no more entries");
             }
+            // increment *after* getting the result to include the minimum
+            // the id to return
+            PlotId result = PlotId.of(this.x, this.y);
+            // first increase y, then x
             if (this.y == this.end.getY()) {
                 this.x++;
                 this.y = 0;
             } else {
                 this.y++;
             }
-            return PlotId.of(this.start.getX() + this.x, this.start.getY() + this.y);
+            return result;
         }
 
         @Nonnull @Override public Iterator<PlotId> iterator() {

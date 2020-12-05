@@ -2299,12 +2299,13 @@ public class Plot {
                 continue;
             }
             boolean merge = true;
-            PlotId bot = PlotId.of(current.getId().getX(), current.getId().getY());
-            PlotId top = PlotId.of(current.getId().getX(), current.getId().getY());
+            PlotId bot = current.getId();
+            PlotId top = current.getId();
             while (merge) {
                 merge = false;
-                List<PlotId> ids = Lists.newArrayList((Iterable<? extends PlotId>) PlotId.PlotRangeIterator
-                    .range(PlotId.of(bot.getX(), bot.getY() - 1), PlotId.of(top.getX(), bot.getY() - 1)));
+                Iterable<PlotId> ids = PlotId.PlotRangeIterator.range(
+                        PlotId.of(bot.getX(), bot.getY() - 1),
+                        PlotId.of(top.getX(), bot.getY() - 1));
                 boolean tmp = true;
                 for (PlotId id : ids) {
                     Plot plot = this.area.getPlotAbs(id);
@@ -2316,8 +2317,9 @@ public class Plot {
                     merge = true;
                     bot = PlotId.of(bot.getX(), bot.getY() - 1);
                 }
-                ids = Lists.newArrayList((Iterable<? extends PlotId>) PlotId.PlotRangeIterator
-                    .range(PlotId.of(top.getX() + 1, bot.getY()), PlotId.of(top.getX() + 1, top.getY())));
+                ids = PlotId.PlotRangeIterator.range(
+                        PlotId.of(top.getX() + 1, bot.getY()),
+                        PlotId.of(top.getX() + 1, top.getY()));
                 tmp = true;
                 for (PlotId id : ids) {
                     Plot plot = this.area.getPlotAbs(id);
@@ -2329,8 +2331,9 @@ public class Plot {
                     merge = true;
                     top = PlotId.of(top.getX() + 1, top.getY());
                 }
-                ids = Lists.newArrayList((Iterable<? extends PlotId>) PlotId.PlotRangeIterator
-                    .range(PlotId.of(bot.getX(), top.getY() + 1), PlotId.of(top.getX(), top.getY() + 1)));
+                ids = PlotId.PlotRangeIterator.range(
+                        PlotId.of(bot.getX(), top.getY() + 1),
+                        PlotId.of(top.getX(), top.getY() + 1));
                 tmp = true;
                 for (PlotId id : ids) {
                     Plot plot = this.area.getPlotAbs(id);
@@ -2342,8 +2345,9 @@ public class Plot {
                     merge = true;
                     top = PlotId.of(top.getX(), top.getY() + 1);
                 }
-                ids = Lists.newArrayList((Iterable<? extends PlotId>) PlotId.PlotRangeIterator
-                    .range(PlotId.of(bot.getX() - 1, bot.getY()), PlotId.of(bot.getX() - 1, top.getY())));
+                ids = PlotId.PlotRangeIterator.range(
+                        PlotId.of(bot.getX() - 1, bot.getY()),
+                        PlotId.of(bot.getX() - 1, top.getY()));
                 tmp = true;
                 for (PlotId id : ids) {
                     Plot plot = this.area.getPlotAbs(id);
