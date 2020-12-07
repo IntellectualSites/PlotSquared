@@ -57,6 +57,7 @@ public class Info extends SubCommand {
                 case "id":
                 case "size":
                 case "members":
+                case "creationdate":
                 case "seen":
                 case "owner":
                 case "rating":
@@ -175,6 +176,8 @@ public class Info extends SubCommand {
                 return TranslatableCaption.of("info.plot_info_likes");
             case "seen":
                 return TranslatableCaption.of("info.plot_info_seen");
+            case "creationdate":
+                return TranslatableCaption.of("info.plot_info_creationdate");
             default:
                 return null;
         }

@@ -84,10 +84,12 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -95,6 +97,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -2726,6 +2729,11 @@ public class Plot {
             } else {
                 areaTemplate = Template.of("area", TranslatableCaption.of("info.none").getComponent(player));
             }
+            long creationDate = Long.parseLong(String.valueOf(timestamp));
+            SimpleDateFormat sdf = new SimpleDateFormat(Settings.Timeformat.DATE_FORMAT);
+            sdf.setTimeZone(TimeZone.getTimeZone(Settings.Timeformat.TIME_ZONE));
+            String newDate = sdf.format(creationDate);
+
             Template idTemplate = Template.of("id", this.getId().toString());
             Template aliasTemplate = Template.of("alias", alias);
             Template numTemplate = Template.of("num", String.valueOf(num));
@@ -2739,6 +2747,7 @@ public class Plot {
             Template deniedTemplate = Template.of("denied", denied);
             Template seenTemplate = Template.of("seen", seen);
             Template flagsTemplate = Template.of("flags", flags);
+            Template creationTemplate = Template.of("creationdate", newDate);
             Template buildTemplate = Template.of("build", String.valueOf(build));
             if (iInfo.getComponent(player).contains("<rating>")) {
                 TaskManager.runTaskAsync(() -> {
@@ -2767,7 +2776,7 @@ public class Plot {
                     future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
                         .parse(iInfo.getComponent(player), headerTemplate, areaTemplate, idTemplate, aliasTemplate, numTemplate, descTemplate,
                             biomeTemplate, ownerTemplate, membersTemplate, playerTemplate, trustedTemplate, helpersTemplate, deniedTemplate,
-                            seenTemplate, flagsTemplate, buildTemplate, ratingTemplate, footerTemplate))));
+                            seenTemplate, flagsTemplate, buildTemplate, ratingTemplate, creationTemplate, footerTemplate))));
                 });
                 return;
             }

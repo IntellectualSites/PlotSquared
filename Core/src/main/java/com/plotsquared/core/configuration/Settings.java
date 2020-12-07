@@ -438,6 +438,16 @@ public class Settings extends Config {
         public static String DELETE_URL = "https://sw.jacobandersen.dev/delete/{key}";
     }
 
+    @Comment("Used to format the plot creation date placeholder. Modifying the format does not affect the storage time.")
+    public static class Timeformat {
+
+        @Comment("The date used formatted in ISO 8601")
+        public static String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss z";
+
+        @Comment("The time zone used")
+        public static String TIME_ZONE = "GMT";
+    }
+
 
     @Comment("Miscellaneous settings")
     public static final class Done {

@@ -29,6 +29,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
@@ -39,10 +40,12 @@ import com.plotsquared.core.util.PlayerManager;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
@@ -54,6 +57,7 @@ public final class PlaceholderRegistry {
 
     private final Map<String, Placeholder> placeholders;
     private final EventDispatcher eventDispatcher;
+    private final long timestamp = 0;
 
     @Inject public PlaceholderRegistry(@Nonnull final EventDispatcher eventDispatcher) {
         this.placeholders = Maps.newHashMap();
@@ -129,6 +133,15 @@ public final class PlaceholderRegistry {
                 return "0";
             }
             return String.valueOf(PlayerManager.getPlayerList(plot.getDenied()));
+        });
+        this.createPlaceholder("currentplot_creationdate", (player, plot) -> {
+            if (plot.getTimestamp() == 0) {
+                return "0";
+            }
+            long creationDate = plot.getTimestamp();
+            SimpleDateFormat sdf = new SimpleDateFormat(Settings.Timeformat.DATE_FORMAT);
+            sdf.setTimeZone(TimeZone.getTimeZone(Settings.Timeformat.TIME_ZONE));
+            return sdf.format(creationDate);
         });
         this.createPlaceholder("has_build_rights", (player, plot) ->
             plot.isAdded(player.getUUID()) ? "true" : "false");
