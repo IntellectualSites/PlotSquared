@@ -31,6 +31,7 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
@@ -89,6 +90,10 @@ public class Clear extends Command {
         checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
             .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
         confirm.run(this, () -> {
+            if (Settings.Teleport.ON_CLEAR) {
+                plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+                });
+            }
             BackupManager.backup(player, plot, () -> {
                 final long start = System.currentTimeMillis();
                 boolean result = plot.getPlotModificationManager().clear(true, false, player, () -> {

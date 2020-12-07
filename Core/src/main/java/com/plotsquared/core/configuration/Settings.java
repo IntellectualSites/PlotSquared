@@ -159,6 +159,8 @@ public class Settings extends Config {
         Teleport.DELAY = config.getInt("teleport.delay", Teleport.DELAY);
         Teleport.ON_LOGIN = config.getBoolean("teleport.on_login", Teleport.ON_LOGIN);
         Teleport.ON_DEATH = config.getBoolean("teleport.on_death", Teleport.ON_DEATH);
+        Teleport.ON_CLEAR = config.getBoolean("teleport.on_clear", Teleport.ON_CLEAR);
+        Teleport.ON_DELETE = config.getBoolean("teleport.on_delete", Teleport.ON_DELETE);
 
         // WorldEdit
         //WE_ALLOW_HELPER = config.getBoolean("worldedit.enable-for-helpers");
@@ -494,6 +496,8 @@ public class Settings extends Config {
         @Comment({"Add a delay to all teleport commands (in seconds)",
             "Assign `plots.teleport.delay.bypass` to bypass the cooldown"})
         public static int DELAY = 0;
+        @Comment("Teleport outside of the plot before clearing") public static boolean ON_CLEAR = false;
+        @Comment("Teleport outside of the plot before deleting") public static boolean ON_DELETE = false;
         @Comment("The visit command is ordered by world instead of globally") public static boolean
             PER_WORLD_VISIT = false;
     }
