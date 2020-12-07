@@ -48,7 +48,6 @@ import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -236,7 +235,7 @@ public class Rate extends SubCommand {
             if (plot.getRatings().containsKey(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("ratings.rating_already_exists"),
-                        Template.of("value", plot.getId().toString())
+                        Template.of("plot", plot.getId().toString())
                 );
                 return;
             }
