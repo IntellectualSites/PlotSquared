@@ -34,41 +34,39 @@ import java.util.regex.Pattern;
 public class JavaVersionCheck {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + JavaVersionCheck.class.getSimpleName());
-    private final static Pattern NUM_PATTERN = Pattern.compile("\\d+");
 
-    private JavaVersionCheck() {
+    private static int checkJavaVersion() {
+        String javaVersion = System.getProperty("java.version");
+        final Matcher matcher = Pattern.compile("(?:1\\.)?(\\d+)").matcher(javaVersion);
+        if (!matcher.find()) {
+            logger.error("Failed to determine Java version; Could not parse: {}", javaVersion);
+            return -1;
+        }
+
+        final String version = matcher.group(1);
+        try {
+            return Integer.parseInt(version);
+        } catch (final NumberFormatException e) {
+            logger.error("Failed to determine Java version; Could not parse {} from {}", version, javaVersion, e);
+            return -1;
+        }
     }
 
-    public static void checkJavaVersion() {
-        final String javaVersion = System.getProperty("java.version");
-        final int dotIndex = javaVersion.indexOf('.');
-
-        if (javaVersion.startsWith("1.")) {
-            JavaVersionCheck.notify(javaVersion, logger);
-            return;
+    public static void checkJvm() {
+        if (checkJavaVersion() < 11) {
+            logger.error("************************************************************");
+            logger.error("* WARNING - YOU ARE RUNNING AN OUTDATED VERSION OF JAVA.");
+            logger.error("* PLOTSQUARED WILL STOP BEING COMPATIBLE WITH THIS VERSION OF");
+            logger.error("* JAVA WHEN MINECRAFT 1.17 IS RELEASED.");
+            logger.error("*");
+            logger.error("* Please update the version of Java to 11. When Minecraft 1.17");
+            logger.error("* is released, support for versions of Java prior to 11 will");
+            logger.error("* be dropped.");
+            logger.error("*");
+            logger.error("* Current Java version: {}", System.getProperty("java.version"));
+            logger.error("************************************************************");
         }
-
-        final int endIndex = dotIndex == -1 ? javaVersion.length() : dotIndex;
-        final String version = javaVersion.substring(0, endIndex);
-
-        final int javaVersionNumber;
-        try {
-            Matcher versionMatcher = NUM_PATTERN.matcher(version);
-            if (!versionMatcher.find()) {
-                JavaVersionCheck.notify(javaVersion, logger);
-                return;
-            }
-            javaVersionNumber = Integer.parseInt(versionMatcher.group());
-        } catch (final NumberFormatException e) {
-            logger.error("Failed to determine Java version. Could not parse {}", version, e);
-            JavaVersionCheck.notify(javaVersion, logger);
-            return;
-        }
-
-        if (javaVersionNumber < 11) {
-            JavaVersionCheck.notify(javaVersion, logger);
-        }
-        if (javaVersionNumber >= 11) {
+        if (checkJavaVersion() >= 15) {
             logger.error("************************************************************");
             logger.error("* PlotSquared uses Nashorn for the internal scripting engine.");
             logger.error("* Within Java 15, Nashorn has been removed from Java.");
@@ -76,17 +74,5 @@ public class JavaVersionCheck {
             logger.error("* to use all features of PlotSquared.");
             logger.error("************************************************************");
         }
-    }
-
-    public static void notify(final String version, final Logger logger) {
-        logger.error("************************************************************");
-        logger.error("* WARNING - YOU ARE RUNNING AN OUTDATED VERSION OF JAVA.");
-        logger.error("* PLOTSQUARED WILL STOP BEING COMPATIBLE WITH THIS VERSION OF");
-        logger.error("* JAVA WHEN MINECRAFT 1.17 IS RELEASED.");
-        logger.error("*");
-        logger.error("* Please update the version of Java to 11.");
-        logger.error("*");
-        logger.error("* Current Java version: " + version);
-        logger.error("************************************************************");
     }
 }
