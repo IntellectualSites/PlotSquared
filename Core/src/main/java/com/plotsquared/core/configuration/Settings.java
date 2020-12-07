@@ -49,6 +49,9 @@ public class Settings extends Config {
         "For a single plot set `/plot flag set titles false` to disable it.", "For just you run `/plot toggle titles` to disable it.",
         "For all plots: Add `titles: false` in the worlds.yml flags block to disable it."}) public static boolean
         TITLES = true;
+    @Comment("Plot titles fading in (duration in ticks)") public static int TITLES_FADE_IN = 10;
+    @Comment("Plot titles being staying visible (duration in ticks)") public static int TITLES_STAY = 50;
+    @Comment("Plot titles fading out (duration in ticks)") public static int TITLES_FADE_OUT = 20;
 
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;

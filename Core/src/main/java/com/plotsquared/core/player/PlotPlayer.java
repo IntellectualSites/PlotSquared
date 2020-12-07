@@ -795,7 +795,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
      */
     public void sendTitle(@Nonnull final Caption title, @Nonnull final Caption subtitle,
         @Nonnull final Template... replacements) {
-        sendTitle(title, subtitle, 10, 50, 20, replacements);
+        sendTitle(title, subtitle, Settings.TITLES_FADE_IN, Settings.TITLES_STAY, Settings.TITLES_FADE_OUT, replacements);
     }
 
     /**
@@ -814,9 +814,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         final Component titleComponent = MiniMessage.get().parse(title.getComponent(this), replacements);
         final Component subtitleComponent =
             MiniMessage.get().parse(subtitle.getComponent(this), replacements);
-        final Title.Times times = Title.Times.of(Duration.of(fadeIn * 50, ChronoUnit.MILLIS),
-                Duration.of(stay * 50, ChronoUnit.MILLIS),
-                Duration.of(fadeOut * 50, ChronoUnit.MILLIS));
+        final Title.Times times = Title.Times.of(Duration.of(Settings.TITLES_FADE_IN * 50L, ChronoUnit.MILLIS),
+                Duration.of(Settings.TITLES_STAY * 50L, ChronoUnit.MILLIS),
+                Duration.of(Settings.TITLES_FADE_OUT * 50L, ChronoUnit.MILLIS));
         getAudience().showTitle(Title
             .title(titleComponent, subtitleComponent, times));
     }
