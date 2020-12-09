@@ -401,9 +401,9 @@ public abstract class Command {
 
     public int getMatch(String[] args, Command cmd, PlotPlayer<?> player) {
         String perm = cmd.getPermission();
-        HashSet<String> desc = new HashSet<>();
         int count = cmd.getAliases().stream().filter(alias -> alias.startsWith(args[0]))
             .mapToInt(alias -> 5).sum();
+        HashSet<String> desc = new HashSet<>();
         Collections.addAll(desc, cmd.getDescription().getComponent(player).split(" "));
         for (String arg : args) {
             if (perm.startsWith(arg)) {

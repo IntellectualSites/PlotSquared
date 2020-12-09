@@ -42,7 +42,11 @@ public class LocalizedCaptionMap implements CaptionMap {
     }
 
     @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption) {
-        return this.captions.get(caption);
+        String message = this.captions.get(caption);
+        if (message == null) {
+            throw new NoSuchCaptionException(caption);
+        }
+        return message;
     }
 
     @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption,

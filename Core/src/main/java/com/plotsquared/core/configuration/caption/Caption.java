@@ -25,8 +25,6 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import com.plotsquared.core.configuration.caption.LocaleHolder;
-
 import javax.annotation.Nonnull;
 
 /**
