@@ -708,6 +708,7 @@ public class Cluster extends SubCommand {
                 }
                 cluster.getHome(home -> player.teleport(home, TeleportCause.COMMAND));
                 player.sendMessage(TranslatableCaption.of("cluster.cluster_teleporting"));
+                return true;
             }
             case "i":
             case "info":
@@ -729,14 +730,18 @@ public class Cluster extends SubCommand {
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
                     player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+                    return false;
                 }
                 PlotCluster cluster;
                 if (args.length == 2) {
                     cluster = area.getCluster(args[1]);
-                    player.sendMessage(
-                            TranslatableCaption.of("cluster.invalid_cluster_name"),
-                            Template.of("cluster", args[1])
-                    );
+                    if (cluster == null) {
+                        player.sendMessage(
+                                TranslatableCaption.of("cluster.invalid_cluster_name"),
+                                Template.of("cluster", args[1])
+                        );
+                        return false;
+                    }
                 } else {
                     cluster = area.getCluster(player.getLocation());
                     if (cluster == null) {
