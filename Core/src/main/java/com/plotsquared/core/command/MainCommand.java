@@ -111,7 +111,6 @@ public class MainCommand extends Command {
             commands.add(PluginCmd.class);
             commands.add(Purge.class);
             commands.add(Reload.class);
-            commands.add(Relight.class);
             commands.add(Merge.class);
             commands.add(DebugPaste.class);
             commands.add(Unlink.class);
