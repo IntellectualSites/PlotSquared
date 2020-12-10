@@ -47,7 +47,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 @CommandDeclaration(command = "setowner",
@@ -176,18 +175,7 @@ public class Owner extends SetCommand {
             } catch (Exception ignored) {
             }
         } else {
-            PlotSquared.get().getImpromptuUUIDPipeline().getSingle(value, (uuid, throwable) -> {
-               if (throwable instanceof TimeoutException) {
-                   player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
-               } else if (throwable != null) {
-                   player.sendMessage(
-                           TranslatableCaption.of("errors.invalid_player"),
-                           Template.of("value", value)
-                   );
-               } else {
-                   uuidConsumer.accept(uuid);
-               }
-            });
+            PlotSquared.get().getImpromptuUUIDPipeline().getSingle(value, (uuid, throwable) -> uuidConsumer.accept(uuid));
         }
         return true;
     }
