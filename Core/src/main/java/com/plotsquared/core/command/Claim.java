@@ -115,6 +115,7 @@ public class Claim extends SubCommand {
 
             if (!plot.canClaim(player)) {
                 player.sendMessage(TranslatableCaption.of("working.plot_is_claimed"));
+                return false;
             }
             if (schematic != null && !schematic.isEmpty()) {
                 if (area.isSchematicClaimSpecify()) {
