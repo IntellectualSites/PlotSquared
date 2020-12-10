@@ -89,7 +89,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -2707,9 +2706,8 @@ public class Plot {
                     } else {
                         value = flag.toString();
                     }
-                    Component snip = MINI_MESSAGE
-                        .parse(prefix + CaptionUtility.format(player, TranslatableCaption.of("info.plot_flag_list").getComponent(player)),
-                            Template.of("flag", flag.getName()), Template.of("value", CaptionUtility.formatRaw(player, value.toString())));
+                    Component snip = MINI_MESSAGE.parse(prefix + CaptionUtility.format(player, TranslatableCaption.of("info.plot_flag_list").getComponent(player)),
+                        Template.of("flag", flag.getName()), Template.of("value", CaptionUtility.formatRaw(player, value.toString())));
                     if (flags != null) {
                         flags.append(snip);
                     } else {
@@ -2719,7 +2717,14 @@ public class Plot {
                 }
             }
             boolean build = this.isAdded(player.getUUID());
-            Component owner = this.getOwners().isEmpty() ? Component.text("unowned") : PlayerManager.getPlayerList(this.getOwners());
+            Component owner;
+            if (this.getOwner() == null) {
+                owner = Component.text("unowned");
+            } else if (this.getOwner().equals(DBFunc.SERVER)) {
+                owner = Component.text(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.server").getComponent(player)));
+            } else {
+                owner = PlayerManager.getPlayerList(this.getOwners());
+            }
             Template headerTemplate = Template.of("header", TranslatableCaption.of("info.plot_info_header").getComponent(player));
             Template footerTemplate = Template.of("footer", TranslatableCaption.of("info.plot_info_footer").getComponent(player));
             Template areaTemplate;

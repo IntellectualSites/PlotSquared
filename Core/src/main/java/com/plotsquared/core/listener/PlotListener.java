@@ -27,9 +27,11 @@ package com.plotsquared.core.listener;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
@@ -68,6 +70,8 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nullable;
@@ -80,6 +84,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 public class PlotListener {
+
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final HashMap<UUID, Interval> feedRunnable = new HashMap<>();
     private final HashMap<UUID, Interval> healRunnable = new HashMap<>();
@@ -293,6 +299,8 @@ public class PlotListener {
                             UUID uuid = plot.getOwner();
                             if (uuid == null) {
                                 userConsumer.accept("Unknown");
+                            } else if (uuid.equals(DBFunc.SERVER)) {
+                                userConsumer.accept(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.server").getComponent(player)));
                             } else {
                                 PlotSquared.get().getImpromptuUUIDPipeline().getSingle(plot.getOwner(), (user, throwable) -> {
                                     if (throwable == null) {
