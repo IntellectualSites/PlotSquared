@@ -56,6 +56,7 @@ import com.plotsquared.core.plot.flag.implementations.HealFlag;
 import com.plotsquared.core.plot.flag.implementations.MusicFlag;
 import com.plotsquared.core.plot.flag.implementations.NotifyEnterFlag;
 import com.plotsquared.core.plot.flag.implementations.NotifyLeaveFlag;
+import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.flag.implementations.TimeFlag;
 import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
@@ -292,7 +293,11 @@ public class PlotListener {
                                     Templates.of("owner", user));
                             UUID uuid = plot.getOwner();
                             if (uuid == null) {
-                                userConsumer.accept("Unknown");
+                                if (plot.getFlag(ServerPlotFlag.class)) {
+                                    userConsumer.accept("Server");
+                                } else {
+                                    userConsumer.accept("Unknown");
+                                }
                             } else {
                                 PlotSquared.get().getImpromptuUUIDPipeline().getSingle(plot.getOwner(), (user, throwable) -> {
                                     if (throwable == null) {
