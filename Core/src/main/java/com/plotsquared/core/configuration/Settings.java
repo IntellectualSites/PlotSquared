@@ -615,6 +615,8 @@ public class Settings extends Config {
         @Comment("Processes chunks (trimming, or entity/tile limits) ") public static boolean
             CHUNK_PROCESSOR = false;
         @Comment("Kill mobs on roads (Chicken, Cow, etc.)") public static boolean KILL_ROAD_MOBS = false;
+        @Comment("Also kill any road mobs that are being ridden, or are leashed") public static boolean
+            KILL_OWNED_ROAD_MOBS = false;
         @Comment("Kill items on roads (Stick, Paper, etc.)") public static boolean KILL_ROAD_ITEMS = false;
         @Comment("Kill vehicles on roads (Boat, Minecart, etc.)") public static boolean KILL_ROAD_VEHICLES = false;
         @Comment("Notify a player of any missed plot comments upon plot entry") public static boolean

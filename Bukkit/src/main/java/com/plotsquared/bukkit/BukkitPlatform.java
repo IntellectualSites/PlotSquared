@@ -898,9 +898,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                 if (BukkitUtil.adapt(location).isPlotRoad()) {
                                     if (entity instanceof LivingEntity) {
                                         LivingEntity livingEntity = (LivingEntity) entity;
-                                        if (!livingEntity.isLeashed() || !entity.hasMetadata("keep")) {
+                                        if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS || !livingEntity.isLeashed())
+                                            || !entity.hasMetadata("keep")) {
                                             Entity passenger = entity.getPassenger();
-                                            if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
+                                            if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS
+                                                || !(passenger instanceof Player)) && entity.getMetadata("keep").isEmpty()) {
                                                 if (entity.hasMetadata("ps-tmp-teleport")) {
                                                     continue;
                                                 }
@@ -911,7 +913,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         }
                                     } else {
                                         Entity passenger = entity.getPassenger();
-                                        if (!(passenger instanceof Player) && entity.getMetadata("keep").isEmpty()) {
+                                        if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS
+                                            || !(passenger instanceof Player)) && entity.getMetadata("keep").isEmpty()) {
                                             if (entity.hasMetadata("ps-tmp-teleport")) {
                                                 continue;
                                             }
