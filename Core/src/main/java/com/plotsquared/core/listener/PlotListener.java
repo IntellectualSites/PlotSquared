@@ -26,7 +26,6 @@
 package com.plotsquared.core.listener;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
@@ -34,6 +33,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
@@ -74,8 +74,10 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class PlotListener {
 
@@ -275,34 +277,43 @@ public class PlotListener {
                 if (!TranslatableCaption.of("titles.title_entered_plot").getComponent(ConsolePlayer.getConsole()).isEmpty()
                     || !TranslatableCaption.of("titles.title_entered_plot_sub").getComponent(ConsolePlayer.getConsole()).isEmpty()) {
                     TaskManager.runTaskLaterAsync(() -> {
-                        Plot lastPlot = null;
+                        Plot lastPlot;
                         try (final MetaDataAccess<Plot> lastPlotAccess =
                             player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
                             lastPlot = lastPlotAccess.get().orElse(null);
                         }
-                        if ((lastPlot != null) && plot.getId().equals(lastPlot.getId())) {
-                            player.sendTitle(
-                                TranslatableCaption.of("titles.title_entered_plot"),
-                                TranslatableCaption.of("titles.title_entered_plot_sub"),
-                                Templates.of("x", lastPlot.getId().getX()),
-                                Templates.of("z", lastPlot.getId().getY()),
-                                Templates.of("world", plot.getArea()),
-                                Templates.of("greeting", greeting),
-                                Templates.of("alias", plot.getAlias()),
-                                Templates.of("owner", plot.getOwner())
-                            );
+                        if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
+                            final Consumer<String> userConsumer = user -> player
+                                .sendTitle(TranslatableCaption.of("titles.title_entered_plot"),
+                                    TranslatableCaption.of("titles.title_entered_plot_sub"),
+                                    Templates.of("x", lastPlot.getId().getX()), Templates.of("z", lastPlot.getId().getY()),
+                                    Templates.of("world", Objects.requireNonNull(plot.getWorldName(), "Unknown")),
+                                    Templates.of("greeting", greeting), Templates.of("alias", plot.getAlias()),
+                                    Templates.of("owner", user));
+                            UUID uuid = plot.getOwner();
+                            if (uuid == null) {
+                                userConsumer.accept("Unknown");
+                            } else {
+                                PlotSquared.get().getImpromptuUUIDPipeline().getSingle(plot.getOwner(), (user, throwable) -> {
+                                    if (throwable == null) {
+                                        userConsumer.accept("Unknown");
+                                    } else {
+                                        userConsumer.accept(user);
+                                    }
+                                });
+                            }
                         }
                     }, TaskTime.seconds(1L));
                 }
             }
 
             TimedFlag.Timed<Integer> feed = plot.getFlag(FeedFlag.class);
-            if (feed != null && feed.getInterval() != 0 && feed.getValue() != 0) {
+            if (feed.getInterval() != 0 && feed.getValue() != 0) {
                 feedRunnable
                     .put(player.getUUID(), new Interval(feed.getInterval(), feed.getValue(), 20));
             }
             TimedFlag.Timed<Integer> heal = plot.getFlag(HealFlag.class);
-            if (heal != null && heal.getInterval() != 0 && heal.getValue() != 0) {
+            if (heal.getInterval() != 0 && heal.getValue() != 0) {
                 healRunnable
                     .put(player.getUUID(), new Interval(heal.getInterval(), heal.getValue(), 20));
             }
