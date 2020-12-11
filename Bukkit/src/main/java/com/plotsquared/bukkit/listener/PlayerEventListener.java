@@ -1130,7 +1130,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (!(placed instanceof Boat)) {
             return;
         }
-        BukkitPlayer pp = BukkitUtil.getPlayer(player);
+        BukkitPlayer pp = BukkitUtil.adapt(event.getPlayer());
         PlotArea area = pp.getPlotAreaAbs();
         if (area == null) {
             return;
@@ -1138,7 +1138,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         PlayerBlockEventType eventType = PlayerBlockEventType.PLACE_VEHICLE;
         Block block = event.getBlock();
         BlockType blockType = BukkitAdapter.asBlockType(block.getType());
-        Location location = BukkitUtil.getLocation(block.getLocation());
+        Location location = BukkitUtil.adapt(block.getLocation());
         if (!PlotSquared.get().getEventDispatcher()
             .checkPlayerBlockEvent(pp, eventType, location, blockType, true)) {
             event.setCancelled(true);
