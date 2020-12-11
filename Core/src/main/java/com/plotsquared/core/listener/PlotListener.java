@@ -303,7 +303,7 @@ public class PlotListener {
                                 userConsumer.accept(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.server").getComponent(player)));
                             } else {
                                 PlotSquared.get().getImpromptuUUIDPipeline().getSingle(plot.getOwner(), (user, throwable) -> {
-                                    if (throwable == null) {
+                                    if (throwable != null) {
                                         userConsumer.accept("Unknown");
                                     } else {
                                         userConsumer.accept(user);
