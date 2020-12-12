@@ -353,9 +353,9 @@ public class ListCmd extends SubCommand {
                     color = TranslatableCaption.of("info.plot_list_default");
                 }
                 Component trusted = MINI_MESSAGE.parse(TranslatableCaption.of("info.plot_info_trusted").getComponent(player),
-                    Template.of("trusted", PlayerManager.getPlayerList(plot.getTrusted())));
+                    Template.of("trusted", PlayerManager.getPlayerList(plot.getTrusted(), player)));
                 Component members = MINI_MESSAGE.parse(TranslatableCaption.of("info.plot_info_members").getComponent(player),
-                    Template.of("members", PlayerManager.getPlayerList(plot.getMembers())));
+                    Template.of("members", PlayerManager.getPlayerList(plot.getMembers(), player)));
                 Template command_tp = Template.of("command_tp", "/plot visit " + plot.getArea() + ";" + plot.getId());
                 Template command_info = Template.of("command_info", "/plot info " + plot.getArea() + ";" + plot.getId());
                 Template hover_info =

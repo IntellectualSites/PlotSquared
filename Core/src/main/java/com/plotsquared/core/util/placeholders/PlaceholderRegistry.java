@@ -120,19 +120,19 @@ public final class PlaceholderRegistry {
             if (plot.getTrusted() == null) {
                 return "0";
             }
-            return String.valueOf(PlayerManager.getPlayerList(plot.getTrusted()));
+            return String.valueOf(PlayerManager.getPlayerList(plot.getTrusted(), player));
         });
         this.createPlaceholder("currentplot_members_added_list", (player, plot) -> {
             if (plot.getMembers() == null) {
                 return "0";
             }
-            return String.valueOf(PlayerManager.getPlayerList(plot.getMembers()));
+            return String.valueOf(PlayerManager.getPlayerList(plot.getMembers(), player));
         });
         this.createPlaceholder("currentplot_members_denied_list", (player, plot) -> {
             if (plot.getDenied() == null) {
                 return "0";
             }
-            return String.valueOf(PlayerManager.getPlayerList(plot.getDenied()));
+            return String.valueOf(PlayerManager.getPlayerList(plot.getDenied(), player));
         });
         this.createPlaceholder("currentplot_creationdate", (player, plot) -> {
             if (plot.getTimestamp() == 0) {

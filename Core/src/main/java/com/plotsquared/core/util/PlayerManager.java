@@ -27,7 +27,7 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.ConsolePlayer;
@@ -112,22 +112,23 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * - Uses the format {@link TranslatableCaption#of(String)} of "info.plot_user_list" for the returned string
      *
      * @param uuids UUIDs
+     * @param localeHolder the localeHolder to localize the component for
      * @return Component of name list
      */
-    @Nonnull public static Component getPlayerList(@Nonnull final Collection<UUID> uuids) {
-        if (uuids.size() < 1) {
-            TranslatableCaption.of("info.none");
+    @Nonnull public static Component getPlayerList(@Nonnull final Collection<UUID> uuids, LocaleHolder localeHolder) {
+        if (uuids.isEmpty()) {
+            return MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(localeHolder));
         }
 
         final List<UUID> players = new LinkedList<>();
         final List<String> users = new LinkedList<>();
         for (final UUID uuid : uuids) {
             if (uuid == null) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.none").getComponent(ConsolePlayer.getConsole())));
+                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.none").getComponent(localeHolder)));
             } else if (DBFunc.EVERYONE.equals(uuid)) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.everyone").getComponent(ConsolePlayer.getConsole())));
+                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.everyone").getComponent(localeHolder)));
             } else if (DBFunc.SERVER.equals(uuid)) {
-                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.console").getComponent(ConsolePlayer.getConsole())));
+                users.add(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.console").getComponent(localeHolder)));
             } else {
                 players.add(uuid);
             }

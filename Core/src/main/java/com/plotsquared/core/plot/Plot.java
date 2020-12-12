@@ -1514,7 +1514,7 @@ public class Plot {
     /**
      * Gets the average rating of the plot. This is the value displayed in /plot info
      *
-     * @return average rating as double
+     * @return average rating as double, {@link Double#NaN} of no ratings exist
      */
     public double getAverageRating() {
         Collection<Rating> ratings = this.getRatings().values();
@@ -2669,9 +2669,9 @@ public class Plot {
         String alias = !this.getAlias().isEmpty() ? this.getAlias() : TranslatableCaption.of("info.none").getComponent(player);
         Location bot = this.getCorners()[0];
         PlotSquared.platform().worldUtil().getBiome(Objects.requireNonNull(this.getWorldName()), bot.getX(), bot.getZ(), biome -> {
-            Component trusted = PlayerManager.getPlayerList(this.getTrusted());
-            Component members = PlayerManager.getPlayerList(this.getMembers());
-            Component denied = PlayerManager.getPlayerList(this.getDenied());
+            Component trusted = PlayerManager.getPlayerList(this.getTrusted(), player);
+            Component members = PlayerManager.getPlayerList(this.getMembers(), player);
+            Component denied = PlayerManager.getPlayerList(this.getDenied(), player);
             String seen;
             if (Settings.Enabled_Components.PLOT_EXPIRY && ExpireManager.IMP != null) {
                 if (this.isOnline()) {
@@ -2723,7 +2723,7 @@ public class Plot {
             } else if (this.getOwner().equals(DBFunc.SERVER)) {
                 owner = Component.text(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.server").getComponent(player)));
             } else {
-                owner = PlayerManager.getPlayerList(this.getOwners());
+                owner = PlayerManager.getPlayerList(this.getOwners(), player);
             }
             Template headerTemplate = Template.of("header", TranslatableCaption.of("info.plot_info_header").getComponent(player));
             Template footerTemplate = Template.of("footer", TranslatableCaption.of("info.plot_info_footer").getComponent(player));
@@ -2775,7 +2775,13 @@ public class Plot {
                             }
                             ratingTemplate = Template.of("rating", rating.toString());
                         } else {
-                            ratingTemplate = Template.of("rating", String.format("%.1f", this.getAverageRating()) + '/' + max);
+                            double rating = this.getAverageRating();
+                            if (Double.isFinite(rating)) {
+                                ratingTemplate = Template.of("rating", String.format("%.1f", rating) + '/' + max);
+                            } else {
+                                ratingTemplate = Template.of("rating",
+                                        TranslatableCaption.of("info.none").getComponent(player));
+                            }
                         }
                     }
                     future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
