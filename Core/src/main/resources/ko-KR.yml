@@ -1,377 +1,544 @@
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# Translate by Protocodyne Korean Translate team 
-# First Author <bmr02039@protocodyne.com>, 2015.
+# This is V5 translation. Also planning to translate new format of PlotSquared V6
+# Translated by I_Phone (iphone#1562) yhd429@naver.com
+# Latest update 13/12/2020
+
 confirm:
-  failed_confirm: $2이 작업이 완료되기 위한 행동이 당신에게 존재하지 않습니다!
-  requires_confirm: '$2정말로 실행되길 원하나요: $1%s$2?&-$2이 작업은 되돌릴 수 없습니다! 확실하다면 다음 명령어를 입력하세요:
-    $1/plot confirm'
-  expired_confirm: $2확인이 만료되었습니다. 명령을 다시 실행하십시오.!
+  expired_confirm: $2확인이 만료 됨, 명령어를 다시 입력해주세요.
+  failed_confirm: $2보류 중인 작업이 없습니다.
+  requires_confirm: $1%s$2?&-$2 명령어를 실행 하시겠습니까? 복구가 불가능한 명령어입니다. 실행하려면 $1/plot confirm
+    $2를 입력하세요.
 move:
-  move_success: $4성공적으로 땅이 옮겨졌습니다.
-  copy_success: $4성공적으로 땅이 복사되었습니다.
-  requires_unowned: $2이 지역은 이미 사용되고 있습니다.
+  move_success: $4성공적으로 땅을 옮겼습니다.
+  move_merged: $2병합된 땅은 이동할 수 없습니다. 땅을 삭제하여 이동이 가능합니다.
+  copy_success: $4성공적으로 땅을 복사했습니다.
+  requires_unowned: $2이미 사용 중인 땅입니다.
+debug:
+  requires_unmerged: $2땅을 병합할 수 없습니다.
+  debug_header: $1디버그 정보&-
+  debug_section: $2>> $1&l%val%
+  debug_line: $2>> $1%var%$2:$1 %val%&-
+set:
+  set_attribute: $4%s0 을 %s1 으로 설정하였습니다.
 web:
-  generating_link: $1땅을 생성중입니다...
-  generating_link_failed: $2다운로드 링크 생성에 실패하였습니다!
+  generating_link: $1처리 중입니다.
+  generating_link_failed: $2다운로드 링크를 생성하지 못 하였습니다.
   save_failed: $2저장에 실패하였습니다.
-  load_null: $2/plot load $4명령어를 사용하여 $2schematics 리스트를 가져오십시오
-  load_failed: $2schematic 로드를 실패하였습니다.
-  load_list: '$2schematic로드를 원한다면, 다음명령어를 사용하세요 $1/plot load #'
-  save_success: $1성공적으로 저장되었습니다!
+  load_null: $4/plot load $2명령어를 이용하여 스키메틱 목록을 불러옵니다.
+  load_failed: $2스키메틱을 가져오는데 실패하였습니다.
+  load_list: '$2스키메틱을 로드하려면 $1/plot load # $2명령어를 사용하세요.'
+  save_success: $1성공적으로 저장하였습니다.
 compass:
-  compass_target: $4나침반과 함께 음모를 성공적으로 지정했습니다.
+  compass_target: $4나침반으로 땅 지정을 하였습니다.
 cluster:
-  cluster_available_args: '$1다음 하위명령어가 사용 가능합니다.: $4list$2, $4create$2, $4delete$2,
-    $4resize$2, $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2, $4tp$2, $4sethome'
-  cluster_list_heading: $2이 월드에 $1%s$2 cluster가 있습니다
+  cluster_available_args: '$1사용 가능한 명령어 : $4list$2, $4create$2, $4delete$2, $4resize$2,
+    $4invite$2, $4kick$2, $4leave$2, $4members$2, $4info$2, $4tp$2, $4sethome'
+  cluster_list_heading: $2이 월드엔 $1%s$2개의 영역이 있습니다.
   cluster_list_element: $2 - $1%s&-
-  cluster_intersection: $2제안 된 영역이 겹칩니다 와 $1%s$2 기존의 cluster
-  cluster_added: $4cluster가 성공적으로 생성되었습니다.
-  cluster_deleted: $4cluster가 성공적으로 삭제되었습니다.
-  cluster_resized: $4cluster가 성공적으로 재조정 되었습니다.
-  cluster_added_user: $4cluster에 성공적으로 유저가 추가되었습니다.
-  cannot_kick_player: $2당신은 해당 플레이어를 추방 할 수 없습니다.
-  cluster_invited: '$1당신은 다음 cluster으로 초대받았습니다: $2%s'
-  cluster_removed: '$1당신은 다음cluster에서 삭제되었습니다: $2%s'
-  cluster_kicked_user: $4성공적으로 해당 유저를 추방 하였습니다
-  invalid_cluster: '$1올바르지 않은 cluster 이름입니다: $2%s'
-  cluster_not_added: $2해당 플레이어는  plot cluster 추가되지 않았습니다
-  cluster_cannot_leave: $1당신은 떠나기전에 cluster를 반드시 삭제하거나 소유권을 이전해야합니다
-  cluster_added_helper: $4helper가 성공적으로 cluster에 추가되었습니다
-  cluster_removed_helper: $4helper가 성공적으로 cluster에서 제거되었습니다
-  cluster_regenerated: $4성공적으로 cluster가 재생성 되었습니다
-  cluster_teleporting: $4이동중...
-  cluster_info: '$1현재 cluster: $2%id%&-$1이름: $2%name%&-$1소유자: $2%owner%&-$1크기: $2%size%&-$1Rights:
-    $2%rights%'
-  cluster_outside: '$2제안 된 영역이 플롯 영역 밖에 있습니다: %s0'
+  cluster_intersection: $2설정하실 영역이 &4%s0$2개의 구역과 겹칩니다.
+  cluster_outside: '$2설정하실 영역이 땅 외부에 있습니다 : %s0'
+  cluster_added: $4성공적으로 영역을 추가하였습니다.
+  cluster_deleted: $4성공적으로 영역을 제거하였습니다.
+  cluster_resized: $4성공적으로 영억 크기를 조정하였습니다.
+  cluster_added_user: $4성공적으로 영역에 플레이어를 추가하였습니다.
+  cannot_kick_player: $2그 플레이어는 추방할 수 없습니다.
+  cluster_invited: $1당신은 $2%s$1영역에 초대 받았습니다.
+  cluster_removed: $1당신은 $2%s$1영역에서 삭제 되었습니다.
+  cluster_kicked_user: $4성공적으로 해당 플레이어를 삭제하였습니다.
+  invalid_cluster: $2%s$1은 잘못된 영역 이름입니다.
+  cluster_not_added: $2해당 플레이어는 영역에 초대 받지 않았습니다.
+  cluster_cannot_leave: $1영역에서 떠나려면 땅을 삭제하거나 소유권을 양도해야합니다.
+  cluster_added_helper: $4영역 크루원을 추가하였습니다.
+  cluster_removed_helper: $4영역 크루원을 삭제하였습니다.
+  cluster_regenerated: $4성공적으로 영역을 다시 생성하였습니다.
+  cluster_teleporting: $4이동 중입니다.
+  cluster_info: '$1현재 영역: $2%id%, $1이름: $2%name%, $1소유자: $2%owner%, $1영역 크기:$2%size%,
+    $1권한: $2%rights%'
 border:
-  border: $2당신은 현재 지도의 경계 밖에 있습니다
-unclaim:
-  unclaim_success: $4성공적으로 땅을 판매하였습니다.
-  unclaim_failed: $2땅을 판매할 수 없습니다
+  border: $2월드를 벗어나셨습니다.
 worldedit masks:
-  worldedit_delayed: $2당신의 WorldEdit 행동을 처리중이니 기다려주시기 바랍니다...
-  worldedit_run: '$2처리가 지연되어 죄송합니다. 해당 명령어를 실행합니다: %s'
-  require_selection_in_mask: $2%s 선택한 마스크가 플롯 마스크 안에 있지 않습니다..
-    플롯 내에서만 편집 할 수 있습니다..
-  worldedit_volume: $2당신은 a volume of %current%를 선택 할 수 없습니다. 당신이  수정할 수 있는 최대부피는 %max% 입니다.
-  worldedit_iterations: $2당신은 %current%번 반복 적용시킬 수 없습니다. 당신이 수정가능한 최대 부피는 %max% 입니다.
-  worldedit_unsafe: $2해당 명령어는 실행 될 수 없습니다.
-  worldedit_bypass: $2&o당신의 제한을 우회하고 싶다면 $4/plot wea를 사용하십시오
-  worldedit_bypassed: $2현재 WorldEdit의 제한을 수정하는 중입니다.
-  worldedit_unmasked: $1당신의  WorldEdit 제한이 제거되었습니다.
-  worldedit_restricted: $1당신의 WorldEdit은 제한됩니다.
+  worldedit_bypass: $2&o권한을 무시하려면 $4/plot wea $2명령어를 입력해주세요.
+  worldedit_bypassed: $2월드에딧 제한을 무시합니다.
 gamemode:
-  gamemode_was_bypassed: $1당신은 gamemode를 무시합니다 ($2{gamemode}$1) $1set for $2{plot}
+  gamemode_was_bypassed: $2{plot}$1의 게임모드($2{gamemode}$1)를 무시합니다.
 height limit:
-  height_limit: $1이 Plot World는 $2{limit}만큼 제한이 있습니다
+  height_limit: $1이 영역의 높이 제한은 $2{limit}$1입니다.
 records:
-  record_play: $2%player가 $2플레이 기록을 시작합니다 $1%name
-  notify_enter: $2%player가 $2당신의 plot에 입장합니다 ($1%plot$2)
-  notify_leave: $2%player가 $2당신의 plot를 떠납니다 ($1%plot$2)
+  notify_enter: $2%player님이 $1%plot$2에 들어왔습니다.
+  notify_leave: $2%player님이 $1%plot$2을(를) 떠났습니다.
 swap:
-  swap_overlap: $2해당 구역은 덮어쓰기가 허용되지 않습니다.
-  swap_success: $4성공적으로 땅이 교환되었습니다
-  started_swap: $2땅 교환이 시작되었습니다. 작업 완료시 장신에게 통보 될 예정입니다.
+  swap_overlap: $2설정하실 영역은 중복이 불가능합니다.
+  swap_success: $4성공적으로 영역을 변경하였습니다.
+  swap_merged: $2병합된 영역은 바꿀 수 없습니다. 병합을 해제하고 다시 시도해주세요.
 comment:
-  inbox_notification: '%s 읽지않은 메세지가 있습니다. 다음 명령어를 사용해주세요 /plot inbox'
-  not_valid_inbox_index: $2메일함에 comment가 존재하지 않습니다 %s
+  inbox_notification: '%s 읽지 않은 메시지가 있습니다. /plot inbox 를 사용해주세요.'
+  not_valid_inbox_index: $2메일에 메시지가 없습니다. %s
   inbox_item: $2 - $4%s
-  comment_syntax: $2다음 명령어를 사용해주세요 /plot comment [X;Z] <%s> <comment>
-  invalid_inbox: '$2올바르지 않은 메일함 입니다..&-$1Accepted values: %s'
-  no_perm_inbox: $2당신은 해당 메일함에 권한이 없습니다
-  no_perm_inbox_modify: $2당신은 해당 메일함을 수정할 권한이 없습니다
-  no_plot_inbox: $2당신은 서 있거나 줄거리를 제공해야합니다
-  comment_removed: $4comment가 성공적으로 삭제되었습니다/s:n$2 - '$3%s$2'
-  comment_added: $4A comment가 남아있습니다
-  inbox_empty: $2comment가 없습니다
+  comment_syntax: $2메시지를 작성하려면 /plot comment [X;Z] <%s> <내용> 을 입력해주세요.
+  invalid_inbox: '$2유효하지 않은 메일입니다.&-$1가능한 값: %s'
+  no_perm_inbox: $2해당 메일에 권한이 없습니다.
+  no_perm_inbox_modify: $2해당 메일을 수정할 권한이 없습니다.
+  no_plot_inbox: $2명령어를 입력하는 도중 움직이지 않거나 해당 영역에 권한이 있어야합니다.
+  comment_removed_success: $4메일을 비웠습니다./s:n$2 - '$3%s$2'
+  comment_removed_failure: $4메일을 비우지 못 하였습니다.
+  comment_added: $4메시지가 도착했습니다.
+  inbox_empty: $2메시지가 없습니다.
 console:
-  not_console: $2보안상의 이유로, 이 명령어는 Console에서만 입력 가능합니다.
-  is_console: $2해당 명령어는 Player만 사용 가능합니다.
-inventory:
-  inventory_usage: '&c시용: &6{usage}'
-  inventory_desc: '&c설명: &6{desc}'
-  inventory_category: '&c카테고리: &6{category}'
+  not_console: $2해당 명령어는 콘솔에서만 사용이 가능합니다.
+  is_console: $2해당 명령어는 플레이어만 사용이 가능합니다.
 clipboard:
-  clipboard_set: $2현재 땅은 당신의 클리보드로 복사되었습니다, 다음명령어를 사용하여 $1/plot paste$2 붙여넣으세요.
-  pasted: $4해당 땅은 성공적으로 붙여넣어졌습니다. 해당 땅은 클립보드로부터 제거됩니다.
-  paste_failed: '$2선택된 땅의 복사가 실패했습니다. 사유: $2%s'
-  no_clipboard: $2클립보드에 복사된 땅이 존재하지 않습니다
-  clipboard_info: '$2현재 선택 - Plot ID: $1%id$2, Width: $1%width$2, Total Blocks: $1%total$2'
+  paste_failed: $2%2으로(로) 인해 붙여넣을 수 없습니다.
 toggle:
-  toggle_enabled: '$2가능한 세팅: %s'
-  toggle_disabled: '$2불가능한 세팅: %s'
+  toggle_enabled: '$2활성화됨: %s'
+  toggle_disabled: '$2비활성화됨: %s'
 blocked command:
-  command_blocked: $2해당 명령어는 이 plot에서 허가되지 않았습니다
+  command_blocked: $2해당 명령어는 이 영역에서 사용이 불가능합니다.
 done:
-  done_already_done: $2이 땅은 이미 완료로 표기 되어 있습니다.
-  done_not_done: $2이 땅은 완료로 표기되어 있지 않습니다.
-  done_insufficient_complexity: $2이 땅은 너무 간단합니다. 이 명령어를 사용하기전 더 많은 정보를 입력해주시기 바랍니다.
-  done_success: $1성공적으로 이 땅에 완료표시를 하였습니다.
-  done_removed: $1이 땅에 건축을 진행해도 좋습니다.
+  done_already_done: $2이미 완료된 작업입니다.
+  done_not_done: $2완료된 작업이 아닙니다.
+  done_insufficient_complexity: $2영역의 정보가 없습니다. 명령어를 통해 세부 설정을 진행해주세요.
+  done_success: $1성공적으로 완료하였습니다.
+  done_removed: $1이제 해당 영역에서 건축이 가능합니다.
 ratings:
-  rating_not_valid: $2당신은 1 과 10 사이의 숫자를 입력해야 합니다
-  rating_already_exists: $2당신은 이미 이 땅에 투표하였습니다 $2%s
-  rating_applied: $4성공적으로 투표되었습니다 $2%s
-  rating_not_your_own: $2당신은 자신의 땅에 투표 할 수 없습니다
-  rating_not_done: $2당신은 완료된 땅에만 투표 할 수 있습니다.
-  rating_not_owned: $2당신은 소유자가 없는 땅에 투표 할 수 없습니다
-  ratings_purged: $2Purged ratings for this plot
+  ratings_purged: $2해당 영역의 평가를 삭제하였습니다.
+  rating_not_valid: $21부터 10사이 숫자를 지정해야합니다.
+  rating_already_exists: $2이미 이 영역에 대한 평가를 남겼습니다. $2%s
+  rating_applied: $4성공적으로 평가를 남겼습니다. $2%s
+  rating_disliked: $4해당 영역에 싫어요를 표시했습니다. $2%s
+  rating_liked: $4해당 영역에 좋아요를 표시했습니다. $2%s
+  rating_not_your_own: $2본인 영역에는 평가를 할 수 없습니다.
+  rating_not_done: $2모든 작업이 완료된 영역에만 평가를 할 수 있습니다.
+  rating_not_owned: $2해당 영역은 아직 주인이 존재하지 않습니다.
 tutorial:
-  rate_this: $2이 땅에 투표해보세요!
-  comment_this: '$2이땅에 피드백을 남겨보세요: %s'
+  rate_this: $2이 영역을 평가 할 수 있습니다.
+  comment_this: $2영역에 대한 피드백을 남겨주세요. %s
 economy:
-  econ_disabled: $2Economy 가 활성화 되있지 않습니다
-  cannot_afford_plot: $2당신은 이 땅을 구입 할 수 없습니다. 이 땅의 가격은 $1%s 입니다
-  not_for_sale: $2이 땅은 판매 불가능합니다
-  cannot_buy_own: $2당신은 본인의 땅을 구입 불가능 합니다
-  plot_sold: $4당신의 땅; $1%s0$4, 판매 된 $1%s1$4 에 대한 $1$%s2
-  cannot_afford_merge: $2당신은 이 땅을 함칠 수 없습니다. 이 땅의 가격은 $1%s 입니다
-  added_balance: $1%s $2이 당신의 통장에 추가되었습니다
-  removed_balance: $1%s $2이 당신의 통장에서 빠져나갔습니다
-  removed_granted_plot: $2너는 사용했다 %s 계획 교부금 (들), 당신이있어 $1%s $2왼쪽
+  econ_disabled: $2경제가 활성화되지 않았습니다.
+  cannot_afford_plot: $2이 땅을 구매하기엔 돈이 부족합니다. 땅 가격은 $1%s$2원 입니다.
+  not_for_sale: $2이 땅은 판매용이 아닙니다.
+  cannot_buy_own: $2이미 당신이 소유 중인 땅은 살 수 없습니다.
+  plot_sold: $4당신이 소유 중인 $1%s0$4 영역은 $1%s1$4님이 $1$%s2$4원에 구매했습니다.
+  cannot_afford_merge: $2이 땅을 병합하기엔 돈이 부족합니다. 병합 비용은 $1%s$2원 입니다.
+  added_balance: $1%s$2원이 당신의 지갑에 추가되었습니다.
+  removed_balance: $1%s$2원이 당신의 지갑에서 빠져나갔습니다.
+  removed_granted_plot: $2%s0(을)를 구매하여 $1%s1$2원이 남았습니다.
 setup:
-  setup_init: '$1용법: $2/plot setup <value>'
-  setup_step: '$3[$1Step %s0$3] $1%s1 $2- $1기대: $2%s2 $1태만: $2%s3'
-  setup_invalid_arg: '$2%s0 는 올바르지 않은 값입니다  %s1. 설정 취소를 원하시면 다음 명령어를 사용하십시오: $1/plot
-    setup cancel'
-  setup_valid_arg: $2Value $1%s0 $2set to %s1
-  setup_finished: $4당신은 만들어진 World로 이동되있어야 합니다. 그렇지 않으면 당신은 bukkit.yml를 통하여 워드를 설정하거나
-    다중월드 플러그인을 사용하여 월드를 생성하여야 합니다.
-  setup_world_taken: $2%s 는 이미 등록된 Plot World 입니다
+  setup_not_started: $1작업이 실행되지 않았습니다. $2/plot setup $1을 통해 작업을 시작합니다.
+  setup_init: '$1사용법: $2/plot setup <값>'
+  setup_step: '$3[$1%s0단계$3] $1%s1 $2- $1설정할 항목: $2%s2 $1기본 값: $2%s3'
+  setup_invalid_arg: $2%s0 은 %s1단계에서 유효한 설정 값이 아닙니다. $1/plot setup cancel $2을 통해 작업을
+    취소합니다.
+  setup_valid_arg: $1%s0$2값은 $1%s1$2으로 설정되었습니다.
+  setup_finished: $4작업이 완료되었습니다. 만약 새로 만들어진 월드로 이동이 안 되었다면 bukkit.yml 또는 Multiverse
+    플러그인에서 Generator 항목을 수동으로 설정하셔야합니다.
+  setup_world_taken: $2%s은 이미 등록된 월드입니다.
+  setup_cancelled: $7작업을 취소하였습니다.
+  setup_world_name: $1새로운 세계 이름을 뭐라고 짓고 싶으신가요?
+  setup_world_name_error: $7새로운 세계 이름을 설정해야합니다.
+  setup_world_name_taken: $7이미 등록된 월드 이름입니다.
+  setup_world_generator_error: $7생성기를 선택해야합니다.
+  setup_world_type: $1어느 종류의 월드를 생성할까요?&-$3 - $6normal$3 - $2Standard plot generation&-$3
+    - $6augmented$3 - $2Plot generation with terrain&-$3 - $6partial$3 - $2Vanilla
+    with clusters of plots
+  setup_world_type_error: $7월드 형식을 설정하셔야 합니다.
+  setup_wrong_generator: $7BukkitPlotGenerator가 식별되지 않았습니다.$3 - $6다른 플러그인의 콘피그를 수정이
+    필요할 수 있습니다.
+  setup_world_name_format: '$7월드 이름 $1에는 [a-z], [0-9], [_.-]를 제외한 다른 문자열은 사용할 수 없습니다. '
+  setup_world_apply_plotsquared: $7지정하신 월드는 이미 존재합니다. 다시 시작하면 새 지형이 PlotSquared를 사용하지만
+    올바르게 생성하기 위해 월드 초기화를 권장합니다.
+  setup_partial_area: $1땅에서 어떤 지형을 원하시나요?&-$3 - $6NONE$3 - $2No terrain at all&-$3
+    - $6ORE$3 - $2Just some ore veins and trees&-$3 - $6ROAD$3 - $2Terrain separated
+    by roads&-$3 - $6ALL$3 - $2Entirely vanilla generation
+  setup_partial_area_error: $7지형을 선택하셔야 합니다.
+  setup_area_name: $1이 영역을 뭐라고 부르고 싶으신가요?
+  setup_area_non_alphanumerical: $7영역 ID는 영어나 숫자로 구성 되어야 합니다.
+  setup_area_invalid_id: $7사용하지 않는 영역 ID를 선택해주세요.
+  setup_area_min_plot_id: $1영역 ID가 최소 몇 글자인가요?
+  setup_area_min_plot_id_error: $7영역 ID에 최소 글자수를 설정하셔야 합니다.
+  setup_area_max_plot_id: $1영역 ID가 최대 몇 글자인가요?
+  setup_area_max_plot_id_error: $7영역 ID에 최대 글자수를 설정하셔야 합니다.
+  setup_area_plot_id_greater_than_minimum: $7영역 ID은 최솟값보다 커야합니다.
+plotareatype:
+  plot_area_type_normal: 기본 땅 생성
+  plot_area_type_augmented: 바닐라 지형을 사용한 땅 생성
+  plot_area_type_partial: 구분이 된 바닐라 지형을 사용한 땅 생성
 schematics:
-  schematic_missing_arg: '$2당신은 인수를 지정해야 합니다. 가능한 값: $1save$2, $1paste $2, $1exportall'
-  schematic_invalid: '$2이것은 올바르지 않은 schematic파일 입니다. 사유: $2%s'
-  schematic_paste_failed: $2schematic 적용에 실패하엿습니다
-  schematic_paste_success: $4schematic이 성공적으로 적용되었습니다
-  schematic_too_large: $2플롯이 너무 커서이 작업을 수행 할 수 없습니다!
+  schematic_too_large: $2스키메틱 파일의 이름이 너무 깁니다.
+  schematic_missing_arg: '$2명령어를 구분해주세요. 사용 가능한 명령어: $1save$2, $1paste $2, $1exportall$2,
+    $1list'
+  schematic_invalid: $2%s 이유로 유효한 스키메틱 파일이 아닙니다.
+  schematic_paste_merged: $2병합된 영역에는 스키메틱 파일을 붙여넣을 수 없습니다. 병합을 해제하고 다시 시도해주세요.
+  schematic_paste_failed: $2스키메틱 파일을 불러오는데 실패하였습니다.
+  schematic_paste_success: $4성공적으로 스키메틱 파일을 불러왔습니다.
+  schematic_list: '$4저장된 스키메틱 목록: $1%s'
+  schematic_road_created: $1새로운 스키메틱 파일을 저장했습니다. 잘 저장되었는지 테스트하려면 다른 땅에서 /plot debugroadregen
+    를 입력해보세요.
+  mca_file_size: '$1알림: `.mca` 파일은 512x512 형식입니다.'
+  schematic_exportall_started: $1내보내기 중입니다...
+  schematic_exportall_world_args: $3/plot sch exportall <영역> $1명령어를 이용해주세요.
+  schematic_exportall_finished: $1모든 추출이 완료되었습니다.
+  schematic_exportall_single_finished: $1추출이 완료되었습니다.
+schematic:
+  schematic_exportall_world: $1잘못 된 월드입니다. &3/plot sch exportall <영역> $1명령어를 이용해주세요.
+error:
+  task_in_process: $1이미 실행 중인 작업입니다.
 titles:
-  title_entered_plot: '$1Plot: %world%;%x%;%z%'
-  title_entered_plot_sub: $4에게 소유 된 %s
+  title_entered_plot: '$1영역: %world%;%x%;%z%'
+  title_entered_plot_sub: 소유자:%s
   prefix_greeting: '$1%id%$2> '
   prefix_farewell: '$1%id%$2> '
 core:
-  task_start: 작업을 시작합니다...
   prefix: $3[$1P2$3] $2
-  enabled: $1PlotSquared 가 실행됩니다
+  enabled: $1%s0 이 활성화 되었습니다.
 reload:
-  reloaded_configs: $1번역 파일 및 월드 설정 파일이 성공적으로 리로드 되었습니다
-  reload_failed: $2설정파일의 리로드에 실패하였습니다
+  reloaded_configs: $1번역과 월드 설정이 리로드 되었습니다.
+  reload_failed: $2콘피그 설정을 리로드하지 못 했습니다.
 desc:
-  desc_set: $2Plot 설명 설정
-  desc_unset: $2Plot 설명 설정취소
-  missing_desc: $2당신은 설명을 지정해야 합니다
+  desc_set: $2입력하신 내용으로 영역 설명을 설정했습니다.
+  desc_unset: $2영역 설명을 삭제했습니다.
 alias:
-  alias_set_to: $2땅의 별명을 $1%alias%로 성정합니다
-  missing_alias: $2당신은 별명을 설정해야 합니다
-  alias_too_long: $2별명은 50자 이내여야 합니다
-  alias_is_taken: $2이 별명은 이미 존재합니다
-  alias_removed: $2플롯 별칭이 제거되었습니다
+  alias_set_to: $2영역 별명이 $1%alias%$2으로(로) 설정 되었습니다.
+  alias_removed: $2영역 별명이 제거되었습니다.
+  alias_too_long: $2영역 별명은 영어나 숫자로 50글자 이내여야 합니다.
+  alias_is_taken: $2이미 사용된 별명입니다.
 position:
-  missing_position: '$2당신은 위치를 지정해야합니다. 가능한 값: $1none'
-  position_set: $1Home 위치를 현재 위치로 지정합니다
-  position_unset: $1Home 위치를 기본위치로 초기화 합니다
-  home_argument: $2다음 명령어를 사용하십시오 /plot set home [none]
-  invalid_position: $2해당 위치는 유효하지 않습니다
-time:
-  time_format: $1%시간%, %분%, %초%
+  position_set: $1현재 위치로 홈을 설정하였습니다.
+  position_unset: $1홈 위치가 기본으로 설정되었습니다.
+  home_argument: $2/plot set home [none] 을 사용해주세요.
 permission:
-  no_schematic_permission: $2당신은 schematic을 이용하기 위한 권한이 없습니다 $1%s
-  no_permission: '$2당신은 해당 퍼미션 노드가 존재하지 않습니다: $1%s'
-  no_permission_event: '$2당신은 해당 퍼미션 노드가 존재하지 않습니다: $1%s'
-  no_plot_perms: $2이 행동을 하기 위해선 반드시 땅의 소유자여야 합니다
-  cant_claim_more_plots: $2당신은 더 많은 땅들을 소유할 수 없습니다
-  cant_transfer_more_plots: $2당신은 해당 유저에게 더 많은 땅을 보낼 수 없습니다
-  cant_claim_more_plots_num: $2당신은 한번에 $1%s $2plots보다 더 많이 소유할 수 없습니다
-  you_be_denied: $2당신은 이 땅에 들어갈 수 없습니다
-  merge_request_confirm: 병합요청이 들어왔습니다 %s
-  cant_claim_more_clusters: $2더 많은 클러스터를 청구 할 수 없습니다.
+  no_schematic_permission: $1%s $2스키메틱 파일에 접근할 권한이 없습니다.
+  no_permission: $1%s $2권한이 부족합니다.
+  no_permission_event: $1%s $2권한이 부족합니다.
+  no_plot_perms: $2당신은 해당 영역의 소유자가 아닙니다.
+  cant_claim_more_plots: $2더 이상 땅을 소유할 수 없습니다.
+  cant_claim_more_clusters: $2더 이상 영역을 소유할 수 없습니다.
+  cant_transfer_more_plots: $2해당 플레이어에게 땅을 선물 할 수 없습니다.
+  cant_claim_more_plots_num: $2한번에 $1%s$2개 이상의 땅을 설정할 수 없습니다.
+  merge_request_confirm: $2%s 으로(로)부터 병합 요청이 들어왔습니다.
 merge:
-  merge_not_valid: $2이 병합 요청은 더이상 유효하지 않습니다
-  merge_accepted: $2병합 요청이 수락되었습니다
-  success_merge: $2땅이 병합되었습니다
-  merge_requested: $2병합요청이 성공적으로 전송되었습니다
-  no_available_automerge: $2당신은 지정한 방향으로 인접한 plots를 소유하지 않았거나 plots를 필요한 크기로 합병 할
-    수 없습니다.
-  unlink_required: $2An unlink는 이것을 하는데 요구 됩니다.
-  unlink_impossible: $2당신은 오직 mega-plot만 unlink 할 수 있습니다
-  unlink_success: $2성공적으로 plots을 unlink 하였습니다.
-errors:
-  invalid_player_wait: '$2플레이어를 찾지 못했습니다: $1%s$2, fetching it. 잠시 후 시도해주세요.'
-  invalid_player_offline: '$2플레이어는 반드시 접속 중이어야 합니다: $1%s.'
-  invalid_player: '$2플레이어를 찾지 못했습니다: $1%s.'
-  command_went_wrong: $2해당 명령어를 실행 중 오류가 발생 하였습니다...
-  no_free_plots: $2그곳에는 사용가능한 Free Plot이 없습니다
-  not_in_plot: $2당신은 땅에 있지 않습니다
-  not_in_cluster: $2당신은 그 행동을 하기 위해서 plot cluster 내부에 있어야만 합니다.
-  not_in_plot_world: $2당신은 plot world에 있지 않습니다.
-  plotworld_incompatible: $2해당 월드는 호환되지 않습니다
-  not_valid_world: $2옳바르지 않은 World 입니다
-  not_valid_plot_world: $2올바르지 않은 plot world 입니다 (case sensitive)
-  no_plots: $2당신은 어떤 땅도 가지고 있지 않습니다
-  wait_for_timer: $2A setblock 타이머는 현재의 땅 또는 당신에게 묶여있습니다. 완료까지 잠시 기다려주시기 바랍니다
-  invalid_command_flag: '$2잘못된 명령 플래그: %s0'
-  error: '$2오류가 발생했습니다: %s'
-paste:
-  debug_report_created: '$1전체 디버그를에 업로드했습니다.: $1%url%'
-purge:
-  purge_success: $4%s 땅들을 성공적으로 제거하였습니다
-trim:
-  trim_in_progress: 최적화 작업이 이미 진행중입니다!
-  not_valid_hybrid_plot_world: 이 행동을 위하여 hybrid plot manager가 필요합니다.
-block list:
-  block_list_separater: '$1,$2 '
-biome:
-  need_biome: $2당신은 유효한 생태계를 지정해야 합니다.
-  biome_set_to: $2플롯 생물 설정 $2
-teleport:
-  teleported_to_plot: $1당신은 이동 되었습니다.
-  teleported_to_road: $2당신은 길로 이동 되었습니다.
-  teleport_in_seconds: $1%s초 후 이동됩니다. 움직이지 마세요...
-  teleport_failed: $2이동이 움직임 또는 데미지 때문에 취소되었습니다.
-set block:
-  set_block_action_finished: $1마지막 setblock 행동이 이제 끝났습니다.
-unsafe:
-  debugallowunsafe_on: $2안전하지 않은 행동을 허가합니다
-  debugallowunsafe_off: $2안전하지 않은 행동을 차단합니다
-debug:
-  debug_header: $1Debug Information&-
-  debug_section: $2>> $1&l%val%
-  debug_line: $2>> $1%var%$2:$1 %val%&-
+  merge_not_valid: $2해당 병합 요청은 더 이상 유효하지 않습니다.
+  merge_accepted: $2병합 요청이 수락되었습니다.
+  success_merge: $2땅이 병합되었습니다.
+  merge_requested: $2성공적으로 병합 요청을 보냈습니다.
+  no_available_automerge: $2바라보고 있는 방향으로 땅을 소유하지 않았거나 필요한 크기로 병합할 수 없습니다.
+  unlink_impossible: $2병합된 영역은 연결 해제만 할 수 있습니다.
+  unmerge_cancelled: $1링크 해제가 취소 되었습니다.
+  unlink_success: $2성공적으로 영역 병합을 해제했습니다.
+commandconfig:
+  not_valid_subcommand: $2유효한 하위 명령어가 아닙니다.
+  did_you_mean: $2Hoxy.. $1%s $2명령어를 찾으시나요?
+  subcommand_set_options_header: '$2설정 가능한 값: '
+  command_syntax: '$1사용법: $2%s'
+  flag_tutorial_usage: '$1관리자가 세부 사항을 설정: $2%s'
 invalid:
-  not_valid_data: $2그것은 유효한 데이터 ID가 아닙니다.
-  not_valid_block: '$2그것은 유효한 블록이 아닙니다.: %s 그것은 유효한 블록이 아닙니다.'
-  not_allowed_block: '$2그 블록은 허락되지 않았습니다 : %s'
-  not_valid_number: $2그것은 %s범위내에서 유효하지 않은 숫자입니다.
-  not_valid_plot_id: $2그 땅의 ID는 유효하지 않습니다.
-  plot_id_form: '$2땅의 ID는 반드시 형식에 있어야 합니다: $1X;Y $2e.g. $1-5;7'
-  not_your_plot: $2그것은 당신의 땅이 아닙니다.
-  no_such_plot: $2거기엔 어떤 땅도 없습니다.
-  player_has_not_been_on: $2해당 플레이어는 plotworld에 없습니다.
-  found_no_plots: $2당신의 검색에서 아무 땅도 발견하지 못했습니다
-  found_no_plots_for_player: '$2No plots found for player: %s'
-camera:
-  camera_started: $2당신은 땅을 위한 카메라 모드에 입장했습니다 $1%s
-  camera_stopped: $2카메라 모드를 종료합니다
+  component_illegal_block: 블록 %s 와(과) 관련된 구성 요소들을 설정할 수 없습니다.
+  not_valid_block: $2%s은(는) 유효한 블럭이 아닙니다.
+  not_allowed_block: $2%s은(는) 금지된 블럭입니다.
+  not_valid_number: '$2유효하지 않은 범위입니다.: %s'
+  not_valid_plot_id: $2유효한 영역 ID가 아닙니다.
+  found_no_plots: $2해당 검색 결과가 없습니다.
+  number_not_in_range: '유효한 범위의 숫자가 아닙니다.: (%s, %s)'
+  number_not_positive: '양수가 아닙니다.: %s'
+  not_a_number: '%s은 유효한 숫자가 아닙니다.'
+errors:
+  invalid_player: $2플레이어 $1%s$2을(를) 찾지 못 했습니다.
+  invalid_player_offline: $2플레이어 $1%s$2은(는) 오프라인 상태입니다.
+  invalid_command_flag: '$2잘못된 플래그입니다: %s0'
+  error: '$2에러가 발생했습니다. Error Cord : %s'
+  command_went_wrong: $2해당 명령어를 실행할 때 문제가 발생합니다...
+  no_free_plots: $2사용 가능한 땅이 없습니다.
+  not_in_plot: $2당신은 영역 내에 속해있지 않습니다.
+  not_in_cluster: $2해당 작업을 실행하려면 영역 내에 있어야합니다.
+  not_in_plot_world: $2당신은 건축 월드에 있지 않습니다.
+  plotworld_incompatible: $2두 월드는 호환이 되어야합니다.
+  not_valid_world: $2해당 월드는 유효하지 않습니다. (대소문자를 구별해주세요.)
+  not_valid_plot_world: $2해당 월드는 유효한 건축 월드가 아닙니다. (대소문자를 구별해주세요.)
+  no_plots: $2당신은 땅이 없습니다.
+  player_no_plots: $2해당 플레이어는 땅을 가지고 있지 않습니다.
+  wait_for_timer: $2현재 월드는 다른 작업을 진행 중입니다. 끝날 때까지 기다려주세요.
+  tile_entity_cap_reached: $2이 청크의 타일과 엔티티는 $1%s$2을(를) 초과할 수 없습니다.
+paste:
+  debug_report_created: '$1디버그를 업로드했습니다.: $1%url%'
+purge:
+  purge_success: $4%s 땅을 기록을 삭제했습니다.
+players:
+  fetching_player: $1PlotSquared가 해당 플레이어를 찾는 중입니다. 어느정도 시간이 걸릴 수 있습니다.
+  fetching_players_timeout: $2해당 플레이어는 캐시에 저장되어있지 않습니다. 백그라운드 작업을 통해 가져오는 중입니다. 몇
+    분만 기다려주세요.
+trim:
+  trim_in_progress: 이미 월드를 다듬고 있습니다.
+block list:
+  block_list_separator: '$1,$2 '
+biome:
+  need_biome: $2유효한 바이옴을 입력해야합니다.
+  biome_set_to: $2영역 바이옴 지정
+teleport:
+  teleported_to_plot: $1당신은 텔레포트 되었습니다.
+  teleported_to_road: $2당신은 영역 외부로 텔레포트 되었습니다.
+  teleport_in_seconds: $1움직이지 마세요. %s초 안에 텔레포트 됩니다...
+  teleport_failed: $2공격을 받거나 움직여서 텔레포트가 취소되었습니다.
+set block:
+  set_block_action_finished: $1마지막 블록 설정이 끝났습니다.
+unsafe:
+  debugallowunsafe_on: $2안전하지 않은 작업을 활성화합니다.
+  debugallowunsafe_off: $2안전하지 않은 작업을 비활성화합니다.
 need:
-  need_plot_number: $2당신은 땅의 번호 또는 별칭을 지정해야합니다.
-  need_block: $2당신은 블록을 지정해야합니다
-  need_plot_id: $2당신은 Plot ID를 지정할 수 있습니다
-  need_plot_world: $2당신은 Plot world를 지정할 수 있습니다
-  need_user: $2당신은 유저이름을 지정할 필요가 있습니다
+  need_block: $2블럭을 지정해야 합니다.
+near:
+  plot_near: '$1플레이어 목록: %s0'
 info:
-  none: None
+  none: ' None'
+  now: Now
+  never: Never
   unknown: Unknown
+  server: Server
   everyone: Everyone
-  plot_unowned: $2이 행동을 실행하기 위해선 현재 plot에 소유자가 있어야 합니다
-  plot_info_unclaimed: $2땅 $1%s$2 이 아직 판매되지 않았습니다
-  plot_info_header: $3&m---------&r $1INFO $3&m---------
-  plot_info: '$1ID: $2%id%$1&-$1Alias: $2%alias%$1&-$1Owner: $2%owner%$1&-$1Biome:
-    $2%biome%$1&-$1Can Build: $2%build%$1&-$1Rating: $2%rating%&-$1Trusted: $2%trusted%$1&-$1Members:
-    $2%members%$1&-$1Denied: $2%denied%$1&-$1Flags: $2%flags%'
-  plot_info_footer: $3&m---------&r $1INFO $3&m---------
-  plot_info_trusted: $1Trusted:$2 %trusted%
-  plot_info_members: $1Members:$2 %members%
-  plot_info_denied: $1Denied:$2 %denied%
-  plot_info_flags: $1Flags:$2 %flags%
-  plot_info_biome: $1Biome:$2 %biome%
-  plot_info_rating: $1Rating:$2 %rating%
-  plot_info_owner: $1Owner:$2 %owner%
+  plot_unowned: $2이 작업을 실행하려면 현재 영역에 소유자가 있어야합니다.
+  plot_info_unclaimed: $1%s$2영역은 아직 소유권이 없습니다.
+  plot_info_header: $3&m---------&r $1정보 $3&m---------
+  plot_info_hidden: $2해당 영역에 대한 정보를 볼 수 없습니다.
+  plot_info_format: '$1ID: $2%id%$1&-$1영역: $2%area%$1&-$1이름:$2%alias%$1&-$1소유자:$2%owner%$1&-$1바이옴:$2%biome%$1&-$1건축가:
+    $2%build%$1&-$1순위: $2%rating%&-$1마지막 접속: $2%seen%&-$1공유:$2%trusted%$1&-$1멤버:$2%members%$1&-$1차단됨:$2%denied%$1&-$1세부
+    설정:$2%flags%&-$1설명:$2%desc%$1'
+  plot_info_footer: $3&m---------&r $1정보 $3&m---------
+  plot_info_trusted: $1공유:$2%trusted%
+  plot_info_members: $1멤버:$2%members%
+  plot_info_denied: $1차단됨:$2%denied%
+  plot_info_flags: $1플래그:$2 %flags%
+  plot_info_biome: $1바이옴:$2 %biome%
+  plot_info_rating: $1순위:$2 %rating%
+  plot_info_likes: $1좋아요 수:$2 %likes%%
+  plot_info_owner: $1소유권:$2%owner%
   plot_info_id: $1ID:$2 %id%
-  plot_info_alias: $1Alias:$2 %alias%
-  plot_info_size: $1Size:$2 %size%
+  plot_info_alias: $1이름:$2 %alias%
+  plot_info_size: $1영역 크기:$2 %size%
+  plot_info_seen: $1마지막 접속:$2 %seen%
   plot_user_list: ' $1%user%$2,'
-  info_syntax_console: $2/plot info X;Y
-  now: 지금
-  never: 못
-  plot_info_seen: $1Seen:$2 %seen%
-  plot_flag_list: $1%s0:%s1$2
+  plot_flag_list: $2%s0:%s1$3
+  plot_no_description: 아직 설명이 없습니다.
+  info_syntax_console: $2/plot info X;Z
+  plot_caps_header: $3&m---------&r $1CAPS $3&m---------
+  plot_caps_format: '$2- Cap 종류: $1%cap% $2| 현재 상태: $1%current%$2/$1%limit% $2($1%percentage%%$2)'
 working:
-  generating_component: $1당신의 설정값으로부터 component 생성을 시작합니다
-  clearing_plot: $2플롯 비동기 지우기.
-  clearing_done: $4명확한 완료. 했다 %sms.
-  plot_not_claimed: $2땅이 판매되지 않았습니다
-  plot_is_claimed: $2이 땅은 이미 판매되었습니다
-  claimed: $4성공적으로 땅을 판매하였습니다
-  deleting_done: $4삭제가 완료되었습니다! 가져왔다 %sms.
+  generating_component: $1설정하신 대로 생성을 시작합니다.
+  clearing_done: $4영역을 청소했습니다. 걸린 시간 %sms
+  deleting_done: $4영역을 삭제했습니다. 걸린 시간 %sms.
+  plot_not_claimed: $2현재 계신 곳은 소유권이 없는 땅입니다. 작업을 진행하려면 본인 땅에 있어야 합니다.
+  plot_is_claimed: $2이 땅은 이미 소유권이 있습니다.
+  claimed: $4성공적으로 이 땅에 대한 소유권을 지정하였습니다.
 list:
-  comment_list_header_paged: $2(페이지 $1%cur$2/$1%max$2) $1목록 %amount% 코멘트
-  clickable: ' (상호 작용하는)'
-  plot_list_header_paged: $2(페이지 $1%cur$2/$1%max$2) $1목록 %amount% plots
-  plot_list_header: $1목록 %word% plots
-  area_list_header_paged: $2(페이지 $1%cur$2/$1%max$2) $1목록f %amount% areas
-left:
-  left_plot: $2당신은 땅을 떠났습니다.
+  comment_list_header_paged: $2(페이지 $1%cur$2/$1%max$2) $1%amount%개의 평가 목록
+  clickable: ' (상호 작용이 가능)'
+  area_list_header_paged: $2(페이지 $1%cur$2/$1%max$2) $1%amount%개의 영역 목록
+  plot_list_header_paged: $2(페이지 $1%cur$2/$1%max$2) $1%amount%개의 땅 목록
+  plot_list_header: $1%word%개의 목록
 chat:
-  plot_chat_format: '$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
-  plot_chat_forced: $이 월드는 모두가 plot chat을 쓰도록 강제합니다
   plot_chat_spy_format: '$2[$1Plot Spy$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
+  plot_chat_format: '$2[$1Plot Chat$2][$1%plot_id%$2] $1%sender%$2: $1%msg%'
+  plot_chat_forced: $2해당 월드는 모든 플레이어가 영역 전용 채팅을 칩니다.
 deny:
-  denied_removed: $4당신은 이 땅으로부터 플레이어를 차단 해제 했습니다.
-  denied_added: $4당신은 이 땅으로부터 플레이어를 성공적으로 차단 했습니다.
-  you_got_denied: $4당신은 해당 땅으로부터 차단되었습니다 따라서 spawn으로 자동 이동 되었습니다.
-rain:
-  need_on_off: '$2당신은 올바른 값을 선택하여야 합니다. 가능한 값: $1on$2, $1off'
-  setting_updated: $4당신은 설정을 성공적으로 업데이트 했습니다
-flag:
-  flag_key: '$2Key: %s'
-  flag_desc: '$2Desc: %s'
-  not_valid_flag: $2그것은 유효한 깃발이 아닙니다
-  not_valid_value: $2깃발 값은 무조건 문자 숫자여야만 한다
-  flag_not_in_plot: $2그땅은 그 깃발을 가지고 있지 않습니다
-  flag_not_removed: $2그 깃발은 제거될 수 없습니다
-  flag_not_added: $2그 깃발은 추가될 수 없습니다
-  flag_removed: $4깃발이 성공적으로 제거되었습니다
-  flag_added: $4깃발이 성공적으로 추가되었습니다
-  not_valid_flag_suggested: '$2That is not a valid flag. Did you mean: $1%s'
+  denied_added: $4해당 플레이어를 성공적으로 차단했습니다.
+  you_got_denied: $4당신은 해당 영역으로부터 차단되어 스폰으로 이동됩니다.
+  cant_remove_owner: $2영역 소유자는 추방할 수 없습니다.
+kick:
+  you_got_kicked: $4추방되었습니다.
+flags:
+  flag_category_string: String Flags
+  flag_category_integers: Integer Flags
+  flag_category_doubles: Decimal Flags
+  flag_category_teleport_deny: Teleport Deny Flag
+  flag_category_string_list: String List Flags
+  flag_category_weather: Weather Flags
+  flag_category_music: Music Flags
+  flag_category_block_list: Material Flags
+  flag_category_intervals: Interval Flags
+  flag_category_integer_list: Integer List Flags
+  flag_category_gamemode: Game Mode Flags
+  flag_category_enum: Generic Enum Flags
+  flag_category_decimal: Decimal Flags
+  flag_category_boolean: Boolean Flags
+  flag_category_fly: Flight Flags
+  flag_category_mixed: Mixed Value Flags
+  flag_description_entity_cap: 영역에 엔티티 양을 제한하려면 정수 값을 입력하세요.
+  flag_description_explosion: true로 폭발을 허용하며, false로 비허용합니다.
+  flag_description_music: 음악 디스크 ID (아이템 이름)로 영역에 음악을 재생합니다.
+  flag_description_flight: true로 영역 내에서 모험, 서바이벌 모드일 때 날 수 있게 합니다. `default` 는 기본
+    값을 사용합니다. false는 플라이를 비활성화합니다.
+  flag_description_untrusted: false로 신뢰 권한이 없는 플레이어들은 방문이 불가능하게 합니다.
+  flag_description_deny_exit: true로 플레이어가 영역에서 나갈 수 없게 합니다.
+  flag_description_chat: false로 영역 채팅을 비활성화합니다.
+  flag_description_description: 영역 설명을 지정합니다. '&' 컬러코드를 지원합니다.
+  flag_description_greeting: 영역에 입장 시 환영 메시지를 설정합니다. '&' 컬러코드를 지원합니다.
+  flag_description_farewell: 영역에 퇴장 시 굿바이 메시지를 설정합니다. '&' 컬러코드를 지원합니다.
+  flag_description_weather: 영역의 날씨를 지정합니다.
+  flag_description_animal_attack: true로 동물들이 영역 내에서 공격 받는 것을 허용합니다.
+  flag_description_animal_cap: 동물의 수를 제한합니다. 정수 값을 입력해주세요.
+  flag_description_animal_interact: true로 영역 내에서 동물들이 상호작용 할 수 있게합니다.
+  flag_description_block_burn: true로 영역 내에서 블럭이 불에 타도록 설정합니다.
+  flag_description_block_ignition: true로 영역 내에서 불이 번질 수 있도록 허용합니다.
+  flag_description_break: 플레이어가 영역에 추가되지 않은 경우에도 부술 수 있는 블럭을 설정합니다.
+  flag_description_device_interact: true로 레드스톤 장치가 상호 작용 할 수 있게 허용합니다.
+  flag_description_disable_physics: true로 영역 내에서 물리 엔진을 비활성화합니다.
+  flag_description_drop_protection: true로 멤버가 아닌 인원이 영역 내에서 떨어진 물건을 줍는 것을 막습니다.
+  flag_description_feed: 플레이어의 허기 딜레이와 양을 설정합니다. (기본 값은 1입니다.)
+  flag_description_forcefield: true로 멤버가 땅을 강제적으로 사용할 수 있게 합니다.
+  flag_description_grass_grow: false로 영역 내에서 풀이 자라는 것을 막습니다.
+  flag_description_hanging_break: true로 초대로 온 손님이 물건을 걸 수 있는 오브젝트 블럭을 부술 수 있게 합니다.
+  flag_description_hanging_place: true로 초대로 온 손님이 오브젝트 블럭에 물건을 걸어 놓을 수 있게 합니다.
+  flag_description_heal: 플레이어의 체력 딜레이와 양을 설정합니다. (기본 값은 1입니다.)
+  flag_description_hide_info: true로 영역 정보를 숨깁니다.
+  flag_description_hostile_attack: true로 영역 내에서 멤버들이 몹을 공격할 수 있게 합니다.
+  flag_description_hostile_cap: 영역 내에 소환 될 수 있는 몹의 숫자를 제한합니다.
+  flag_description_hostile_interact: true로 영역 내에서 플레이어가 몹과 상호작용 할 수 있게 합니다.
+  flag_description_ice_form: true로 영역 내에서 얼음이 얼 수 있게 합니다.
+  flag_description_ice_melt: false로 영역 내에서 얼음이 녹지 않게 합니다.
+  flag_description_instabreak: true로 영역 내에서 서바이벌 모드에서 블럭을 한번에 부술 수 있게 합니다.
+  flag_description_invincible: true로 영역 내에서 플레이어가 무적이 되게 합니다.
+  flag_description_item_drop: false로 영역 내에서 아이템이 떨어지는 것을 막습니다.
+  flag_description_kelp_grow: false로 영역 내에서 다시마가 자라는 것을 막습니다.
+  flag_description_liquid_flow: false로 영역 내에서 액체가 흐르는 것을 막습니다.
+  flag_description_misc_break: true로 영역 내에서 손님이 아이템을 부수는 걸 허용합니다.
+  flag_description_misc_cap: 잡다한 엔티티 타일 갯수를 정수 값으로 입력하여 제한합니다.
+  flag_description_misc_interact: true로 영역 내에서 손님이 아이템과 상호작용 하는 것을 허용합니다.
+  flag_description_misc_place: true로 손님들이 아이템을 놓을 수 있게 합니다.
+  flag_description_mob_break: true로 영역 내에서 몹이 블럭을 부수는 걸 허용합니다.
+  flag_description_mob_cap: 몹 숫자를 정수 값으로 입력하여 제한합니다.
+  flag_description_mob_place: true로 영역 내에서 몹이 블럭을 설치할 수 있게 합니다.
+  flag_description_mycel_grow: false로 영역 내에서 균사체가 자라지 않게 합니다.
+  flag_description_notify_enter: true로 누군가 입장했을 때 소유자에게 알림이 가게 합니다.
+  flag_description_notify_leave: true로 누군가 퇴장했을 때 소유자에게 알림이 가게 합니다.
+  flag_description_no_worldedit: true로 영역 내에서 월드에딧을 비활성화합니다.
+  flag_description_place: 영역 내에서 플레이어가 설치할 수 있는 블럭을 설정합니다.
+  flag_description_player_interact: true로 영역 내에서 손님이 상호 작용을 할 수 있게 합니다.
+  flag_description_price: 해당 영역의 가격을 정합니다.
+  flag_description_pve: true로 영역 내에 PVE를 활성화합니다.
+  flag_description_pvp: true로 영역 내에 PVP를 활성화합니다.
+  flag_description_redstone: false로 레드스톤을 비활성화합니다.
+  flag_description_server_plot: true로 서버 영역으로 바꿉니다. 이 플래그는 서버의 영역으로 바꾸는 겁니다.
+  flag_description_snow_form: true로 영역 내에 눈이 쌓일 수 있습니다.
+  flag_description_snow_melt: true로 영역 내에 눈이 녹을 수 있습니다.
+  flag_description_soil_dry: true로 영역 내에 흙이 마를 수 있습니다.
+  flag_description_coral_dry: true로 영역 내에 산호 블록이 건조 될 수 있습니다.
+  flag_description_tamed_attack: true로 손님이 길들여진 동물들을 공격할 수 있도록 합니다.
+  flag_description_tamed_interact: true로 손님이 길들여진 동물들과 상호작용 할 수 있도록 합니다.
+  flag_description_time: 영역의 시간을 고정합니다.
+  flag_description_titles: false로 입퇴장 타이틀을 비활성화합니다. `none`으로 설정할 수 있습니다.
+  flag_description_use: 플레이어가 상호작용 할 수 있는 아이템 목록을 작성합니다.
+  flag_description_vehicle_break: true로 손님이 이동수단을 파괴할 수 있도록 합니다.
+  flag_description_vehicle_cap: 이동수단의 수를 제한합니다. 정수 값을 입력해주세요.
+  flag_description_vehicle_place: true로 손님이 이동수단을 설치할 수 있게 합니다.
+  flag_description_vehicle_use: true로 손님이 이동수단을 사용할 수 있게 합니다.
+  flag_description_villager_interact: true로  주민과 거래할 수 있게 합니다.
+  flag_description_vine_grow: false로 영역에서 덩굴이 자라지 않게 합니다.
+  flag_description_deny_teleport: 특정 그룹이 영역으로 순간이동하는 것을 거부합니다.
+  flag_description_gamemode: 영역 내 게임모드를 설정합니다.
+  flag_description_guest_gamemode: 영역에 초대로 온 손님의 게임모드를 지정합니다.
+  flag_description_blocked_cmds: 영역 내에서 금지할 명령어를 지정합니다.
+  flag_description_keep: 영역이 만료되는 것을 방지합니다. true 또는 false 로 설정 가능하며 유지되는 시간은 3달 2일
+    5시간입니다.
+  flag_description_keep_inventory: 플레이어가 영역 내에서 사망할 때 아이템을 떨어뜨리는 걸 방지합니다.
+  flag_description_prevent_creative_copy: 멤버로 추가되지 않는 한, 플레이어가 영역에 NBT 데이터를 복사하지 못
+    하게 합니다.
+  flag_error_boolean: 플래그 값은 둘 중 하나여야 합니다. (true|false)
+  flag_error_enum: '여기 중 하나여야 합니다. : %s'
+  flag_error_gamemode: 플래그 값은 게임모드여야 합니다. 'survival', 'creative', 'adventure' 또는 'spectator.
+  flag_error_integer: 플래그 값은 정수여야 합니다.
+  flag_error_integer_list: 플래그 값은 정수 목록이여야 합니다.
+  flag_error_interval: 값은 숫자여야 합니다. /plot set flag <flag> <interval> [amount]
+  flag_error_keep: 플래그 값은 타임스탬프 또는 2진수여야 합니다.
+  flag_error_long: 플래그 값은 정수여야 합니다. (큰 숫자 허용)
+  flag_error_plotblocklist: 플래그 값은 차단된 블럭 목록이여야 합니다.
+  flag_error_invalid_block: 올바른 블록 또는 블록 범위가 아닙니다.
+  flag_error_double: 플래그 값은 10진수여야 합니다.
+  flag_error_string: 플래그 값은 영어와 숫자여야 합니다. 일부 특수 문자는 허용됩니다.
+  flag_error_stringlist: 플래그 값은 문자열이여야 합니다.
+  flag_error_weather: 플래그는 rain 또는 sun 이여야 합니다.
+  flag_error_music: 플래그 값은 유효한 음악 ID여야 합니다.
 trusted:
-  trusted_added: $4당신은 그 땅에 유저를 성공적으로 위탁했습니다
-  trusted_removed: $4당신은 그 땅으로부터 신용(위탁)받은 유저를 성공적으로 제거했습니다.
-  plot_removed_user: $1당신이 추가되었던 땅 %s가 소유자의 비활성의 이유로 삭제되었습니다.
+  trusted_added: $4권한을 플레이어에게 성공적으로 부여했습니다.
+  plot_removed_user: $1플레이어가 추가된 %s은(는) 소유자의 비활성화 상태로 삭제된 영역입니다.
 member:
-  removed_players: $2이 땅으로부터 %s 플레이어가 제거되었습니다
-  already_owner: $2해당 유저는 이미 땅의 주인입니다
-  already_added: $2그 유저는 그 카테고리에 이미 추가되었습니다.
-  member_added: $4그 유저는 이제 그 땅의 소유자가 온라인에 있는 동안 지을 수 있습니다.
-  member_removed: $1당신은 땅으로부터 유저를 성공적으로 제거되었습니다.
-  member_was_not_added: $2그 플레이어는 이 땅에 유저로서 추가되지 않았습니다
-  plot_max_members: $2당신은 이 땅에 어떤 플레이어를 더 추가 할 수 없습니다
+  removed_players: $2해당 영역에서 %s명의 권한을 제거했습니다.
+  plot_left: $2%s님이 영역을 나갔습니다.
+  already_owner: '$2해당 플레이어가 이미 영역 소유자입니다: %s0'
+  already_added: $2%s님은 이미 영역에 권한을 가지고 있습니다.
+  member_added: $4소유자가 온라인일 때 플레이어가 건축이 가능합니다.
+  plot_max_members: $2해당 영역에 더이상 플레이어를 추가할 수 없습니다.
+  not_added_trusted: $2해당 명령어를 실행하려면 해당 플레이어가 영역의 멤버여야 합니다.
 owner:
-  set_owner: $4당신은 땅의 소유자를 성공적으로 설정했습니다
-  now_owner: $4당신은 이제 %s땅의 소유자입니다
-  set_owner_cancelled: $2The setowner action was cancelled
+  set_owner: $4성공적으로 해당 영역의 소유자를 지정했습니다.
+  set_owner_cancelled: $2소유자 전환이 취소되었습니다.
+  set_owner_missing_player: $1새로운 소유자를 지정해야 합니다. 지정 방법:$2/plot setowner <owner>
+  now_owner: $4당신은 이제 %s의 소유자입니다.
 signs:
   owner_sign_line_1: '$1ID: $1%id%'
   owner_sign_line_2: '$1소유자:'
   owner_sign_line_3: $2%plr%
-  owner_sign_line_4: $3Claimed
+  owner_sign_line_4: $3소유권이 있음
 help:
-  help_header: $3&m---------&r $1Plot² 도움말 $3&m---------
-  help_page_header: '$1범주: $2%category%$2,$1 페이지: $2%current%$3/$2%max%$2'
-  help_footer: $3&m---------&r $1Plot² 도움말 $3&m---------
+  help_header: $3&m---------&r $1Plot² Help $3&m---------
+  help_page_header: '$1카테고리: $2%category%$2,$1 Page: $2%current%$3/$2%max%$2'
+  help_footer: $3&m---------&r $1Plot² Help $3&m---------
   help_info_item: $1/plot help %category% $3- $2%category_desc%
   help_item: $1%usage% [%alias%]&- $3- $2%desc%&-
-  direction: '$1현재 방향: %dir%'
+  help_display_all_commands: 모든 명령어를 봅니다.
+  direction: '$1현재 경로: %dir%'
+category:
+  command_category_claiming: Claiming
+  command_category_teleport: Teleport
+  command_category_settings: Protection
+  command_category_chat: Chat
+  command_category_schematic: Web
+  command_category_appearance: Cosmetic
+  command_category_info: Info
+  command_category_debug: Debug
+  command_category_administration: Admin
+grants:
+  granted_plots: '$1결과: $2%s$1이 나갔습니다.'
+  granted_plot: $2%s1$1에게 %s0을 허락했습니다.
+events:
+  event_denied: $1%s $2외부 플러그인에 의해 취소되었습니다.
+backups:
+  backup_usage: '$1사용법: $2/plot backup save/list/load'
+  backup_impossible: '$2이 영역에 대한 백업이 실행되지 않았습니다.: %s'
+  backup_save_success: $1백업이 성공적으로 생성되었습니다.
+  backup_save_failed: '$2백업을 생성할 수 없습니다.: %s'
+  backup_load_success: $1백업이 성공적으로 복원되었습니다.
+  backup_load_failure: '$2백업을 복원할 수 없습니다.: %s'
+  backup_load_usage: '$1사용법: $2/plot backup load [#]'
+  backup_list_header: '$1백업 가능한 목록: $2%s'
+  backup_list_entry: $3- $1#%s0 $2%s1
+  backup_list_failed: '$2실패한 백업 목록: $2%s'
+  backup_automatic_started: $1영역을 백업 중입니다...
+  backup_automatic_finished: $1자동 백업이 성공적으로 완료되었습니다.
+  backup_automatic_failure: '$2자동 백업이 실패하였습니다. 보류 중인 작업입니다. 이유:%s'
+preset:
+  preset_cannot_afford: $2설정 값을 감당할 수 없습니다.
+  preset_invalid: $2해당 사전 설정에서 패턴을 생성할 수 없습니다.
+  preset_lore_cost: '$비용: $1%cost%'
+  preset_lore_component: '$2구성 요소: $1%component%'
+generic:
+  generic_other: other
+  generic_merged: merged
+  generic_unowned: unowned
+  generic_invalid_choice: invalid choice
+single:
+  single_area_missing_selection: $2오류! 정사각형 영역을 선택해야 합니다.
+  single_area_not_square: $2오류! 정사각형 모양으로 선택해야 합니다.
+  single_area_overlapping: $2오류! 선택 영역이 기존 영역과 겹칩니다.
+  single_area_needs_name: $2오류! 영역의 이름을 지정해주세요. /plot area single <이름>
+  single_area_name_taken: $2오류! 이미 사용된 영역 이름입니다.
+  single_area_failed_to_save: $2오류! 스키메틱 저장을 실패하였습니다.
+  single_area_could_not_make_directories: $2오류! 스키메틱 파일 저장 경로를 만들 지 못 했습니다.
+  single_area_created: $1영역이 성공적으로 생성되었습니다.
+plot-debug:
+  plot_debug: '$2Plot 디버그 ($1%plot%$2): %message%'
+legacyconfig:
+  legacy_config_found: 구 버전의 콘피그가 감지 되었습니다. 변환을 시도합니다.
+  legacy_config_backup: worlds.yml의 복사본 파일이 worlds.yml.old으로 저장되었습니다.
+  legacy_config_replaced: '> %s 이 %s으로(로) 대체되었습니다.'
+  legacy_config_done: 콘피그 변환이 완료되었습니다. PlotSquared은 이제 비활성화되며 다음 시작 시 새 파일로 사용될 겁니다.
+    새로 생긴 world.yml 파일을 검토해주세요. 월드에딧을 통해 스키메틱을 처리하므로 스키메틱이 변환되지 않음을 기억해 주세요. 다시 스키메틱을
+    생성해야 하므로 따로 백업해 주시면 감사하겠습니다.
+  legacy_config_conversion_failed: 콘피그를 변환하는데 실패했습니다. 자세한 내용은 이전 콘피그의 주석 메세지를 참고해주세요.
 '-':
   custom_string: '-'
-commandconfig:
-  not_valid_subcommand: $2이것은 유효하지 않은 하위 명령어 입니다
-  did_you_mean: '$2이것을 명령어를 의미하나요: $1%s'
-  name_little: $2%s0 아름이 너무 짧습니다, $1%s1$2<$1%s3
-  no_commands: $2죄송합니다 당신은 하위명령어 사용을 허가받지 못했습니다.
-  subcommand_set_options_header: '$2Possible Values: '
-  command_syntax: '$1Usage: $2%s'
-  flag_tutorial_usage: '$1관리자에게 국기를 설정하게하십시오: $2%s'
-bar api: {}
-set:
-  set_attribute: $4설정 완료 %s0 로 설정 %s1
-cap:
-  entity_cap: $2더 많은 몹을 스폰하는 것은 허용되지 않습니다.
-near:
-  plot_near: '$1선수: %s0'
-kick:
-  you_got_kicked: $4너는 쫓겨났다
-grants:
-  granted_plots: '$1결과: $2%s $1grants left'
-  granted_plot: $1You granted %s0 plot to $2%s1
