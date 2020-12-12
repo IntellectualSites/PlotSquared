@@ -51,6 +51,7 @@ import com.plotsquared.core.util.helpmenu.HelpMenu;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
@@ -523,15 +524,17 @@ public final class FlagCommand extends Command {
         for (final Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
             Collections.sort(entry.getValue());
             Component category =
-                MINI_MESSAGE.parse(TranslatableCaption.of("flag.flag_list_categories").getComponent(player), Template.of("category", entry.getKey()));
+                MINI_MESSAGE.parse(TranslatableCaption.of("flag.flag_list_categories").getComponent(player),
+                        Template.of("category", entry.getKey()));
+            TextComponent.Builder builder = Component.text().append(category);
             final Iterator<String> flagIterator = entry.getValue().iterator();
             while (flagIterator.hasNext()) {
                 final String flag = flagIterator.next();
-                category.append(MINI_MESSAGE
+                builder.append(MINI_MESSAGE
                     .parse(TranslatableCaption.of("flag.flag_list_flag").getComponent(player), Template.of("command", "/plot flag info " + flag),
                         Template.of("flag", flag), Template.of("suffix", flagIterator.hasNext() ? ", " : "")));
             }
-            player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(category)));
+            player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
         }
     }
 
