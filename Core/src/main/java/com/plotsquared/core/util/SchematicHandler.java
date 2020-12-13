@@ -537,7 +537,7 @@ public abstract class SchematicHandler {
                             schematic.put("Palette", new CompoundTag(paletteTag));
                             schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
                             schematic
-                                .put("TileEntities", new ListTag(CompoundTag.class, tileEntities));
+                                .put("BlockEntities", new ListTag(CompoundTag.class, tileEntities));
 
                             schematic.put("BiomePaletteMax", new IntTag(biomePalette.size()));
 
@@ -602,8 +602,6 @@ public abstract class SchematicHandler {
                                                                 values.put(entry.getKey(),
                                                                     entry.getValue());
                                                             }
-                                                            // Remove 'id' if it exists. We want 'Id'
-                                                            values.remove("id");
 
                                                             // Positions are kept in NBT, we don't want that.
                                                             values.remove("x");
@@ -612,6 +610,11 @@ public abstract class SchematicHandler {
 
                                                             values.put("Id",
                                                                 new StringTag(block.getNbtId()));
+
+                                                            // Remove 'id' if it exists. We want 'Id'.
+                                                            // Do this after we get "getNbtId" cos otherwise "getNbtId" doesn't work.
+                                                            // Dum.
+                                                            values.remove("id");
                                                             values.put("Pos", new IntArrayTag(
                                                                 new int[] {rx, ry, rz}));
 
