@@ -201,6 +201,9 @@ public class EntityEventListener implements Listener {
         if (plot == null || plot.getFlag(DisablePhysicsFlag.class)) {
             event.setCancelled(true);
             if (plot != null) {
+                if (block.getType().hasGravity()) {
+                    BlockEventListener.sendBlockChange(block.getLocation(), block.getBlockData());
+                }
                 plot.debug("Falling block event was cancelled because disable-physics = true");
             }
             return;
