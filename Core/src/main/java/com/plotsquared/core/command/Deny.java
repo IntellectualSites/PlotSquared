@@ -95,7 +95,7 @@ public class Deny extends SubCommand {
                         }
                         plot.addDenied(uuidMapping.getUuid());
                         PlotSquared.get().getEventDispatcher().callDenied(player, plot, uuidMapping.getUuid(), true);
-                        if (!uuidMapping.equals(DBFunc.EVERYONE)) {
+                        if (!uuidMapping.getUuid().equals(DBFunc.EVERYONE)) {
                             handleKick(PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid()), plot);
                         } else {
                             for (PlotPlayer plotPlayer : plot.getPlayersInPlot()) {
