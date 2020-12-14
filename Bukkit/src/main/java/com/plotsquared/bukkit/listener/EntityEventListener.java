@@ -203,7 +203,12 @@ public class EntityEventListener implements Listener {
         Plot plot = area.getOwnedPlotAbs(location);
         if (plot == null || plot.getFlag(DisablePhysicsFlag.class)) {
             event.setCancelled(true);
-            plot.debug("Falling block event was cancelled because disable-physics = true");
+            if (plot != null) {
+                if (block.getType().hasGravity()) {
+                    BlockEventListener.sendBlockChange(block.getLocation(), block.getBlockData());
+                }
+                plot.debug("Falling block event was cancelled because disable-physics = true");
+            }
             return;
         }
         if (event.getTo().hasGravity()) {

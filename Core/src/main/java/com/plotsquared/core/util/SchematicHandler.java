@@ -162,14 +162,15 @@ public abstract class SchematicHandler {
                 try (OutputStream output = con.getOutputStream();
                     PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
                     String CRLF = "\r\n";
-                    writer.append("--" + boundary).append(CRLF);
+                    writer.append("--").append(boundary).append(CRLF);
                     writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
-                    writer.append("Content-Type: text/plain; charset=" + StandardCharsets.UTF_8.displayName()).append(CRLF);
+                    writer.append("Content-Type: text/plain; charset=").append(StandardCharsets.UTF_8.displayName()).append(CRLF);
                     String param = "value";
                     writer.append(CRLF).append(param).append(CRLF).flush();
-                    writer.append("--" + boundary).append(CRLF);
-                    writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"" + filename + '"').append(CRLF);
-                    writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(filename)).append(CRLF);
+                    writer.append("--").append(boundary).append(CRLF);
+                    writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"").append(filename)
+                        .append(String.valueOf('"')).append(CRLF);
+                    writer.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(filename)).append(CRLF);
                     writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                     writer.append(CRLF).flush();
                     writeTask.value = new AbstractDelegateOutputStream(output) {
@@ -179,7 +180,7 @@ public abstract class SchematicHandler {
                     writeTask.run();
                     output.flush();
                     writer.append(CRLF).flush();
-                    writer.append("--" + boundary + "--").append(CRLF).flush();
+                    writer.append("--").append(boundary).append("--").append(CRLF).flush();
                 }
                 String content;
                 try (Scanner scanner = new Scanner(con.getInputStream()).useDelimiter("\\A")) {
@@ -323,16 +324,9 @@ public abstract class SchematicHandler {
 
                 final Location pos1 = Location
                     .at(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual, region.getMinimumPoint().getZ() + zOffset);
-                final Location pos2 = pos1.add(WIDTH - 1, HEIGHT - 1, LENGTH - 1);
 
                 final int p1x = pos1.getX();
                 final int p1z = pos1.getZ();
-                final int p2x = pos2.getX();
-                final int p2z = pos2.getZ();
-                final int bcx = p1x >> 4;
-                final int bcz = p1z >> 4;
-                final int tcx = p2x >> 4;
-                final int tcz = p2z >> 4;
                 // Paste schematic here
                 final QueueCoordinator queue = plot.getArea().getQueue();
 
@@ -547,7 +541,7 @@ public abstract class SchematicHandler {
 
         schematic.put("Palette", new CompoundTag(paletteTag));
         schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
-        schematic.put("TileEntities", new ListTag(CompoundTag.class, tileEntities));
+        schematic.put("BlockEntities", new ListTag(CompoundTag.class, tileEntities));
 
         schematic.put("BiomePaletteMax", new IntTag(biomePalette.size()));
 
@@ -671,8 +665,6 @@ public abstract class SchematicHandler {
                                             for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
                                                 values.put(entry.getKey(), entry.getValue());
                                             }
-                                            // Remove 'id' if it exists. We want 'Id'
-                                            values.remove("id");
 
                                             // Positions are kept in NBT, we don't want that.
                                             values.remove("x");
@@ -680,6 +672,11 @@ public abstract class SchematicHandler {
                                             values.remove("z");
 
                                             values.put("Id", new StringTag(block.getNbtId()));
+
+                                            // Remove 'id' if it exists. We want 'Id'.
+                                            // Do this after we get "getNbtId" cos otherwise "getNbtId" doesn't work.
+                                            // Dum.
+                                            values.remove("id");
                                             values.put("Pos", new IntArrayTag(new int[] {relativeX, relativeY, relativeZ}));
 
                                             tileEntities.add(new CompoundTag(values));

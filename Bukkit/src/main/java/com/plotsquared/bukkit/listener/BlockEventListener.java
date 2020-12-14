@@ -195,18 +195,26 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST) public void onPhysicsEvent(BlockPhysicsEvent event) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPhysicsEvent(BlockPhysicsEvent event) {
+        Block block = event.getBlock();
+        Location location = BukkitUtil.getLocation(block.getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getOwnedPlotAbs(location);
+        if (plot == null) {
+            return;
+        }
+        if (event.getChangedType().hasGravity() && plot.getFlag(DisablePhysicsFlag.class)) {
+            event.setCancelled(true);
+            sendBlockChange(event.getBlock().getLocation(), event.getBlock().getBlockData());
+            plot.debug("Prevented block physics and resent block change because disable-physics = true");
+            return;
+        }
         switch (event.getChangedType()) {
             case COMPARATOR: {
-                Block block = event.getBlock();
-                Location location = BukkitUtil.adapt(block.getLocation());
-                if (location.isPlotArea()) {
-                    return;
-                }
-                Plot plot = location.getOwnedPlotAbs();
-                if (plot == null) {
-                    return;
-                }
                 if (!plot.getFlag(RedstoneFlag.class)) {
                     event.setCancelled(true);
                     plot.debug("Prevented comparator update because redstone = false");
@@ -220,16 +228,6 @@ public class BlockEventListener implements Listener {
             case TURTLE_EGG:
             case TURTLE_HELMET:
             case TURTLE_SPAWN_EGG: {
-                Block block = event.getBlock();
-                Location location = BukkitUtil.adapt(block.getLocation());
-                PlotArea area = location.getPlotArea();
-                if (area == null) {
-                    return;
-                }
-                Plot plot = area.getOwnedPlotAbs(location);
-                if (plot == null) {
-                    return;
-                }
                 if (plot.getFlag(DisablePhysicsFlag.class)) {
                     event.setCancelled(true);
                     plot.debug("Prevented block physics because disable-physics = true");
@@ -238,20 +236,10 @@ public class BlockEventListener implements Listener {
             }
             default:
                 if (Settings.Redstone.DETECT_INVALID_EDGE_PISTONS) {
-                    Block block = event.getBlock();
                     switch (block.getType()) {
                         case PISTON:
                         case STICKY_PISTON:
                             org.bukkit.block.data.Directional piston = (org.bukkit.block.data.Directional) block.getBlockData();
-                            Location location = BukkitUtil.adapt(block.getLocation());
-                            PlotArea area = location.getPlotArea();
-                            if (area == null) {
-                                return;
-                            }
-                            Plot plot = area.getOwnedPlotAbs(location);
-                            if (plot == null) {
-                                return;
-                            }
                             switch (piston.getFacing()) {
                                 case EAST:
                                     location = location.add(1, 0, 0);
