@@ -198,7 +198,7 @@ public class BlockEventListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPhysicsEvent(BlockPhysicsEvent event) {
         Block block = event.getBlock();
-        Location location = BukkitUtil.getLocation(block.getLocation());
+        Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
