@@ -128,6 +128,10 @@ allprojects {
                             id.set("SirYwell")
                             name.set("Hannes Greule")
                         }
+                        developer {
+                            id.set("dordsor21")
+                            name.set("dordsor21")
+                        }
                     }
 
                     scm {
@@ -195,6 +199,10 @@ allprojects {
                 "implNote:a:Implementation Note:"
             )
             opt.destinationDirectory = javadocDir
+        }
+
+        jar {
+            this.archiveClassifier.set("jar")
         }
 
         shadowJar {
