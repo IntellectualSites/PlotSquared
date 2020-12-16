@@ -275,8 +275,8 @@ public abstract class SchematicHandler {
                             }
                             for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
                                 for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
-                                    int xx = p1x + xOffset + rx;
-                                    int zz = p1z + zOffset + rz;
+                                    int xx = p1x + rx;
+                                    int zz = p1z + rz;
                                     BaseBlock id = blockArrayClipboard
                                         .getFullBlock(BlockVector3.at(rx, ry, rz));
                                     queue.setBlock(xx, yy, zz, id);
