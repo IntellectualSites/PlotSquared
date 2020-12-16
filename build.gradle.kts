@@ -117,7 +117,7 @@ allprojects {
 
                     developers {
                         developer {
-                            id.set("Saulitired")
+                            id.set("Sauilitired")
                             name.set("Alexander Söderberg")
                         }
                         developer {
