@@ -74,6 +74,7 @@ import com.plotsquared.core.configuration.ChatFormatter;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.generator.GeneratorWrapper;
 import com.plotsquared.core.generator.HybridGen;
@@ -1018,6 +1019,10 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         }));
         metrics.addCustomChart(new Metrics.SimplePie("premium",
             () -> PremiumVerification.isPremium() ? "Premium" : "Non-Premium"));
+        metrics.addCustomChart(new Metrics.SimplePie("worlds", () -> Settings.Enabled_Components.WORLDS ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("economy", () -> Settings.Enabled_Components.ECONOMY ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("plot_expiry", () -> Settings.Enabled_Components.PLOT_EXPIRY ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("mysql", () -> Storage.MySQL.USE ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("worldedit_implementation",
             () -> Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null ?
                 "FastAsyncWorldEdit" :
