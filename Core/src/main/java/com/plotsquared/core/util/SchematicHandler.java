@@ -337,8 +337,8 @@ public abstract class SchematicHandler {
                     }
                     for (int rz = 0; rz <= blockArrayClipboard.getDimensions().getZ(); rz++) {
                         for (int rx = 0; rx < blockArrayClipboard.getDimensions().getX(); rx++) {
-                            int xx = p1x + xOffset + rx;
-                            int zz = p1z + zOffset + rz;
+                            int xx = p1x + rx;
+                            int zz = p1z + rz;
                             BaseBlock id = blockArrayClipboard.getFullBlock(BlockVector3.at(rx, ry, rz));
                             queue.setBlock(xx, yy, zz, id);
                             if (ry == 0) {
@@ -347,9 +347,6 @@ public abstract class SchematicHandler {
                             }
                         }
                     }
-                }
-                if (whenDone != null) {
-                    whenDone.value = true;
                 }
                 if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
                     queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
