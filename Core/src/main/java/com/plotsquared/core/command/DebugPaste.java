@@ -27,13 +27,13 @@ package com.plotsquared.core.command;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.intellectualsites.paster.IncendoPaster;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PremiumVerification;
-import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.task.TaskManager;
 import lombok.NonNull;
 
@@ -59,22 +59,9 @@ import java.util.stream.Collectors;
     requiredType = RequiredType.NONE)
 public class DebugPaste extends SubCommand {
 
-    private static String readFile(@NonNull final File file) throws IOException {
-        final List<String> lines;
-        try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            lines = reader.lines().collect(Collectors.toList());
-        }
-        final StringBuilder content = new StringBuilder();
-        for (int i = Math.max(0, lines.size() - 1000); i < lines.size(); i++) {
-            content.append(lines.get(i)).append("\n");
-        }
-        return content.toString();
-    }
-
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.runTaskAsync(() -> {
             try {
-
                 StringBuilder b = new StringBuilder();
                 b.append(
                     "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
@@ -128,28 +115,24 @@ public class DebugPaste extends SubCommand {
                     if (Files.size(logFile.toPath()) > 14_000_000) {
                         throw new IOException("Too big...");
                     }
-                    incendoPaster
-                        .addFile(new IncendoPaster.PasteFile("latest.log", readFile(logFile)));
+                    incendoPaster.addFile(logFile);
                 } catch (IOException ignored) {
                     MainUtil
                         .sendMessage(player, "&clatest.log is too big to be pasted, will ignore");
                 }
 
                 try {
-                    incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml",
-                        readFile(PlotSquared.get().configFile)));
+                    incendoPaster.addFile(PlotSquared.get().configFile);
                 } catch (final IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, "&cSkipping settings.yml because it's empty");
                 }
                 try {
-                    incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml",
-                        readFile(PlotSquared.get().worldsFile)));
+                    incendoPaster.addFile(PlotSquared.get().worldsFile);
                 } catch (final IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player, "&cSkipping worlds.yml because it's empty");
                 }
                 try {
-                    incendoPaster.addFile(new IncendoPaster.PasteFile("PlotSquared.use_THIS.yml",
-                        readFile(PlotSquared.get().translationFile)));
+                    incendoPaster.addFile(PlotSquared.get().translationFile);
                 } catch (final IllegalArgumentException ignored) {
                     MainUtil.sendMessage(player,
                         "&cSkipping PlotSquared.use_THIS.yml because it's empty");
@@ -158,8 +141,7 @@ public class DebugPaste extends SubCommand {
                 try {
                     final File MultiverseWorlds = new File(PlotSquared.get().IMP.getDirectory(),
                         "../Multiverse-Core/worlds.yml");
-                    incendoPaster.addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml",
-                        readFile(MultiverseWorlds)));
+                    incendoPaster.addFile(MultiverseWorlds);
                 } catch (final IOException ignored) {
                     MainUtil.sendMessage(player,
                         "&cSkipping Multiverse worlds.yml because the plugin is not in use");
