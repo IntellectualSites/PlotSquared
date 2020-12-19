@@ -66,6 +66,7 @@ dependencies {
     // Our libraries
     implementation("com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT")
     implementation("com.intellectualsites.http:HTTP4J:1.1-SNAPSHOT")
+    implementation("com.intellectualsites.paster:Paster:1.0-SNAPSHOT")
 
     // Adventure
     implementation("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
@@ -97,6 +98,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("com.intellectualsites.services", "com.plotsquared.core.services")
     relocate("com.intellectualsites.arkitektonika", "com.plotsquared.core.arkitektonika")
     relocate("com.intellectualsites.http", "com.plotsquared.core.http")
+    relocate("com.intellectualsites.paster", "com.plotsquared.core.paster")
 
     // Get rid of all the libs which are 100% unused.
     minimize()

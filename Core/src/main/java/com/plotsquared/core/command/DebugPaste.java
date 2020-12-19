@@ -28,6 +28,7 @@ package com.plotsquared.core.command;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
+import com.intellectualsites.paster.IncendoPaster;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -35,21 +36,16 @@ import com.plotsquared.core.inject.annotations.ConfigFile;
 import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.PremiumVerification;
-import com.plotsquared.core.util.net.IncendoPaster;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "debugpaste",
     aliases = "dp",
@@ -69,22 +65,9 @@ public class DebugPaste extends SubCommand {
         this.worldfile = worldFile;
     }
 
-    private static String readFile(@Nonnull final File file) throws IOException {
-        final List<String> lines;
-        try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            lines = reader.lines().collect(Collectors.toList());
-        }
-        final StringBuilder content = new StringBuilder();
-        for (int i = Math.max(0, lines.size() - 1000); i < lines.size(); i++) {
-            content.append(lines.get(i)).append("\n");
-        }
-        return content.toString();
-    }
-
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.runTaskAsync(() -> {
             try {
-
                 StringBuilder b = new StringBuilder();
                 b.append(
                     "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
@@ -139,7 +122,7 @@ public class DebugPaste extends SubCommand {
                         throw new IOException("The latest.log is larger than 14MB. Please reboot your server and submit a new paste.");
                     }
                     incendoPaster
-                        .addFile(new IncendoPaster.PasteFile("latest.log", readFile(logFile)));
+                        .addFile(logFile);
                 } catch (IOException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.latest_log"),
@@ -148,15 +131,13 @@ public class DebugPaste extends SubCommand {
                 }
 
                 try {
-                    incendoPaster.addFile(new IncendoPaster.PasteFile("settings.yml",
-                        readFile(this.configFile)));
+                    incendoPaster.addFile(this.configFile);
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
                             Template.of("file", "settings.yml"));
                 }
                 try {
-                    incendoPaster.addFile(new IncendoPaster.PasteFile("worlds.yml",
-                        readFile(this.worldfile)));
+                    incendoPaster.addFile(this.worldfile);
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
                             Template.of("file", "worlds.yml"));
@@ -165,8 +146,7 @@ public class DebugPaste extends SubCommand {
                 try {
                     final File MultiverseWorlds = new File(PlotSquared.platform().getDirectory(),
                         "../Multiverse-Core/worlds.yml");
-                    incendoPaster.addFile(new IncendoPaster.PasteFile("MultiverseCore/worlds.yml",
-                        readFile(MultiverseWorlds)));
+                    incendoPaster.addFile(MultiverseWorlds);
                 } catch (final IOException ignored) {
                     player.sendMessage(TranslatableCaption.of("debugpaste.skip_multiverse"),
                             Template.of("file", "worlds.yml"));

@@ -41,7 +41,7 @@ allprojects {
         }
 
         maven {
-            name = "IntellectualSites Repository"
+            name = "IntellectualSites Snapshots Repository"
             url = uri("https://mvn.intellectualsites.com/content/repositories/snapshots")
         }
 
