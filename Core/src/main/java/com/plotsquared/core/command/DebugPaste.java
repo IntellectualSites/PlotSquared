@@ -27,7 +27,6 @@ package com.plotsquared.core.command;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.inject.Inject;
 import com.intellectualsites.paster.IncendoPaster;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -55,15 +54,6 @@ import java.util.concurrent.TimeUnit;
     confirmation = true,
     requiredType = RequiredType.NONE)
 public class DebugPaste extends SubCommand {
-
-    private final File configFile;
-    private final File worldfile;
-
-    @Inject public DebugPaste(@ConfigFile @Nonnull final File configFile,
-                              @WorldFile @Nonnull final File worldFile) {
-        this.configFile = configFile;
-        this.worldfile = worldFile;
-    }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.runTaskAsync(() -> {
@@ -121,8 +111,7 @@ public class DebugPaste extends SubCommand {
                     if (Files.size(logFile.toPath()) > 14_000_000) {
                         throw new IOException("The latest.log is larger than 14MB. Please reboot your server and submit a new paste.");
                     }
-                    incendoPaster
-                        .addFile(logFile);
+                    incendoPaster.addFile(logFile);
                 } catch (IOException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.latest_log"),
@@ -131,13 +120,14 @@ public class DebugPaste extends SubCommand {
                 }
 
                 try {
-                    incendoPaster.addFile(this.configFile);
+                    incendoPaster.addFile(PlotSquared.get().configFile);
+                } catch (final IllegalArgumentException ignored) {
+                    incendoPaster.addFile(PlotSquared.get().worldsFile);
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
                             Template.of("file", "settings.yml"));
                 }
-                try {
-                    incendoPaster.addFile(this.worldfile);
+                    incendoPaster.addFile(PlotSquared.get().translationFile);
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
                             Template.of("file", "worlds.yml"));

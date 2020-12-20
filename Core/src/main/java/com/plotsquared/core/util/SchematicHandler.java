@@ -330,20 +330,24 @@ public abstract class SchematicHandler {
                 // Paste schematic here
                 final QueueCoordinator queue = plot.getArea().getQueue();
 
-                for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
-                    int yy = y_offset_actual + ry;
-                    if (yy > 255) {
-                        continue;
-                    }
-                    for (int rz = 0; rz <= blockArrayClipboard.getDimensions().getZ(); rz++) {
-                        for (int rx = 0; rx < blockArrayClipboard.getDimensions().getX(); rx++) {
-                            int xx = p1x + rx;
-                            int zz = p1z + rz;
-                            BaseBlock id = blockArrayClipboard.getFullBlock(BlockVector3.at(rx, ry, rz));
-                            queue.setBlock(xx, yy, zz, id);
-                            if (ry == 0) {
-                                BiomeType biome = blockArrayClipboard.getBiome(BlockVector3.at(rx, ry, rz));
-                                queue.setBiome(xx, yy, zz, biome);
+                        for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
+                            int yy = y_offset_actual + ry;
+                            if (yy > 255) {
+                                continue;
+                            }
+                            for (int rz = zzb - p1z; rz <= (zzt - p1z); rz++) {
+                                for (int rx = xxb - p1x; rx <= (xxt - p1x); rx++) {
+                                    int xx = p1x + rx;
+                                    int zz = p1z + rz;
+                                    BaseBlock id = blockArrayClipboard
+                                        .getFullBlock(BlockVector3.at(rx, ry, rz));
+                                    queue.setBlock(xx, yy, zz, id);
+                                    if (ry == 0) {
+                                        BiomeType biome =
+                                            blockArrayClipboard.getBiome(BlockVector2.at(rx, rz));
+                                        queue.setBiome(xx, zz, biome);
+                                    }
+                                }
                             }
                         }
                     }
