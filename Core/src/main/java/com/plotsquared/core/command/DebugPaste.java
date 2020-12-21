@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.inject.Inject;
 import com.intellectualsites.paster.IncendoPaster;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -47,59 +48,68 @@ import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
 @CommandDeclaration(command = "debugpaste",
-    aliases = "dp",
-    usage = "/plot debugpaste",
-    permission = "plots.debugpaste",
-    category = CommandCategory.DEBUG,
-    confirmation = true,
-    requiredType = RequiredType.NONE)
+        aliases = "dp",
+        usage = "/plot debugpaste",
+        permission = "plots.debugpaste",
+        category = CommandCategory.DEBUG,
+        confirmation = true,
+        requiredType = RequiredType.NONE)
 public class DebugPaste extends SubCommand {
+
+    private final File configFile;
+    private final File worldfile;
+
+    @Inject public DebugPaste(@ConfigFile @Nonnull final File configFile,
+                              @WorldFile @Nonnull final File worldFile) {
+        this.configFile = configFile;
+        this.worldfile = worldFile;
+    }
 
     @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.runTaskAsync(() -> {
             try {
                 StringBuilder b = new StringBuilder();
                 b.append(
-                    "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
-                        + "problem\n\n");
+                        "# Welcome to this paste\n# It is meant to provide us at IntellectualSites with better information about your "
+                                + "problem\n\n");
                 b.append("# PlotSquared Information\n");
                 b.append("PlotSquared Version: ").append(PlotSquared.get().getVersion())
-                    .append("\n");
+                        .append("\n");
                 b.append("Resource ID: ").append(PremiumVerification.getResourceID()).append("\n");
                 b.append("Download ID: ").append(PremiumVerification.getDownloadID()).append("\n");
                 b.append("This PlotSquared version is licensed to the spigot user ")
-                    .append(PremiumVerification.getUserID()).append("\n\n");
+                        .append(PremiumVerification.getUserID()).append("\n\n");
                 b.append("# Server Information\n");
                 b.append("Server Version: ").append(PlotSquared.platform().serverImplementation())
-                    .append("\n");
+                        .append("\n");
                 b.append("online_mode: ").append(!Settings.UUID.OFFLINE).append(';')
-                    .append(!Settings.UUID.OFFLINE).append('\n');
+                        .append(!Settings.UUID.OFFLINE).append('\n');
                 b.append(PlotSquared.platform().pluginsFormatted());
                 b.append("\n\n# YAY! Now, let's see what we can find in your JVM\n");
                 Runtime runtime = Runtime.getRuntime();
                 RuntimeMXBean rb = ManagementFactory.getRuntimeMXBean();
                 b.append("Uptime: ")
-                    .append(TimeUnit.MINUTES.convert(rb.getUptime(), TimeUnit.MILLISECONDS))
-                    .append(" minutes")
-                    .append('\n');
+                        .append(TimeUnit.MINUTES.convert(rb.getUptime(), TimeUnit.MILLISECONDS))
+                        .append(" minutes")
+                        .append('\n');
                 b.append("JVM Flags: ").append(rb.getInputArguments()).append('\n');
                 b.append("Free Memory: ").append(runtime.freeMemory() / 1024 / 1024).append(" MB")
-                    .append('\n');
+                        .append('\n');
                 b.append("Max Memory: ").append(runtime.maxMemory() / 1024 / 1024).append(" MB")
-                    .append('\n');
+                        .append('\n');
                 b.append("Total Memory: ").append(runtime.totalMemory() / 1024 / 1024).append(" MB")
-                    .append('\n');
+                        .append('\n');
                 b.append("Available Processors: ").append(runtime.availableProcessors()).append('\n');
                 b.append("Java Name: ").append(rb.getVmName()).append('\n');
                 b.append("Java Version: '").append(System.getProperty("java.version"))
-                    .append("'\n");
+                        .append("'\n");
                 b.append("Java Vendor: '").append(System.getProperty("java.vendor")).append("'\n");
                 b.append("Operating System: '").append(System.getProperty("os.name")).append("'\n");
                 b.append("OS Version: ").append(System.getProperty("os.version")).append('\n');
                 b.append("OS Arch: ").append(System.getProperty("os.arch")).append('\n');
                 b.append("# Okay :D Great. You are now ready to create your bug report!");
                 b.append(
-                    "\n# You can do so at https://issues.intellectualsites.com/projects/ps");
+                        "\n# You can do so at https://issues.intellectualsites.com/projects/ps");
                 b.append("\n# or via our Discord at https://discord.gg/KxkjDVg");
 
                 final IncendoPaster incendoPaster = new IncendoPaster("plotsquared");
@@ -107,11 +117,12 @@ public class DebugPaste extends SubCommand {
 
                 try {
                     final File logFile =
-                        new File(PlotSquared.platform().getDirectory(), "../../logs/latest.log");
+                            new File(PlotSquared.platform().getDirectory(), "../../logs/latest.log");
                     if (Files.size(logFile.toPath()) > 14_000_000) {
                         throw new IOException("The latest.log is larger than 14MB. Please reboot your server and submit a new paste.");
                     }
-                    incendoPaster.addFile(logFile);
+                    incendoPaster
+                            .addFile(logFile);
                 } catch (IOException ignored) {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.latest_log"),
@@ -120,14 +131,13 @@ public class DebugPaste extends SubCommand {
                 }
 
                 try {
-                    incendoPaster.addFile(PlotSquared.get().configFile);
-                } catch (final IllegalArgumentException ignored) {
-                    incendoPaster.addFile(PlotSquared.get().worldsFile);
+                    incendoPaster.addFile(this.configFile);
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
                             Template.of("file", "settings.yml"));
                 }
-                    incendoPaster.addFile(PlotSquared.get().translationFile);
+                try {
+                    incendoPaster.addFile(this.worldfile);
                 } catch (final IllegalArgumentException ignored) {
                     player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
                             Template.of("file", "worlds.yml"));
@@ -135,7 +145,7 @@ public class DebugPaste extends SubCommand {
 
                 try {
                     final File MultiverseWorlds = new File(PlotSquared.platform().getDirectory(),
-                        "../Multiverse-Core/worlds.yml");
+                            "../Multiverse-Core/worlds.yml");
                     incendoPaster.addFile(MultiverseWorlds);
                 } catch (final IOException ignored) {
                     player.sendMessage(TranslatableCaption.of("debugpaste.skip_multiverse"),
@@ -145,12 +155,12 @@ public class DebugPaste extends SubCommand {
                 try {
                     final String rawResponse = incendoPaster.upload();
                     final JsonObject jsonObject =
-                        new JsonParser().parse(rawResponse).getAsJsonObject();
+                            new JsonParser().parse(rawResponse).getAsJsonObject();
 
                     if (jsonObject.has("created")) {
                         final String pasteId = jsonObject.get("paste_id").getAsString();
                         final String link =
-                            String.format("https://athion.net/ISPaster/paste/view/%s", pasteId);
+                                String.format("https://athion.net/ISPaster/paste/view/%s", pasteId);
                         player.sendMessage(
                                 TranslatableCaption.of("debugpaste.debug_report_created"),
                                 Template.of("url", link)
