@@ -66,7 +66,7 @@ dependencies {
     // Our libraries
     implementation("com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT")
     implementation("com.intellectualsites.http:HTTP4J:1.1-SNAPSHOT")
-    implementation("com.intellectualsites.paster:Paster:1.0-SNAPSHOT")
+    implementation("com.intellectualsites.paster:Paster:1.0.1-SNAPSHOT")
 
     // Adventure
     implementation("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
