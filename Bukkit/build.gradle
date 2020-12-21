@@ -99,7 +99,7 @@ shadowJar {
         include(dependency("org.bstats:bstats-bukkit:1.7"))
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))
-        include(dependency("com.intellectualsites.paster:Paster:1.0-SNAPSHOT"))
+        include(dependency("com.intellectualsites.paster:Paster:1.0.1-SNAPSHOT"))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")

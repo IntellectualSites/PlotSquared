@@ -101,7 +101,7 @@
     <dependency>
       <groupId>com.intellectualsites.paster</groupId>
       <artifactId>Paster</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.1-SNAPSHOT</version>
       <scope>runtime</scope>
       <exclusions>
         <exclusion>
