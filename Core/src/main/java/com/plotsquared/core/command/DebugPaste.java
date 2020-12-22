@@ -31,6 +31,7 @@ import com.google.inject.Inject;
 import com.intellectualsites.paster.IncendoPaster;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.Storage;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.inject.annotations.ConfigFile;
 import com.plotsquared.core.inject.annotations.WorldFile;
@@ -75,6 +76,7 @@ public class DebugPaste extends SubCommand {
                 b.append("# PlotSquared Information\n");
                 b.append("PlotSquared Version: ").append(PlotSquared.get().getVersion())
                         .append("\n");
+                b.append("Database Type: ").append(Storage.MySQL.USE ? "MySQL" : "SQLite").append("\n");
                 b.append("Resource ID: ").append(PremiumVerification.getResourceID()).append("\n");
                 b.append("Download ID: ").append(PremiumVerification.getDownloadID()).append("\n");
                 b.append("This PlotSquared version is licensed to the spigot user ")
