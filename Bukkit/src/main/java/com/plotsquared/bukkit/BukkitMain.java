@@ -1022,7 +1022,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
         metrics.addCustomChart(new Metrics.SimplePie("worlds", () -> Settings.Enabled_Components.WORLDS ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("economy", () -> Settings.Enabled_Components.ECONOMY ? "true" : "false"));
         metrics.addCustomChart(new Metrics.SimplePie("plot_expiry", () -> Settings.Enabled_Components.PLOT_EXPIRY ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("mysql", () -> Storage.MySQL.USE ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("database_type", () -> Storage.MySQL.USE ? "MySQL" : "SQLite"));
         metrics.addCustomChart(new Metrics.SimplePie("worldedit_implementation",
             () -> Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null ?
                 "FastAsyncWorldEdit" :
