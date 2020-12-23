@@ -39,6 +39,7 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,25 +119,27 @@ public class Purge extends SubCommand {
                     break;
                 case "owner":
                 case "o":
-                    owner = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(split[1], Settings.UUID.BLOCKING_TIMEOUT);
-                    if (owner == null) {
+                    UUIDMapping ownerMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
+                    if (ownerMapping == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
                                 Template.of("value", split[1])
                         );
                         return false;
                     }
+                    owner = ownerMapping.getUuid();
                     break;
                 case "shared":
                 case "s":
-                    added = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(split[1], Settings.UUID.BLOCKING_TIMEOUT);
-                    if (added == null) {
+                    UUIDMapping addedMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
+                    if (addedMapping == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
                                 Template.of("value", split[1])
                         );
                         return false;
                     }
+                    owner = addedMapping.getUuid();
                     break;
                 case "clear":
                 case "c":
