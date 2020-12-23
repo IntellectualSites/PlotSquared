@@ -36,6 +36,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.uuid.UUIDMapping;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,19 +96,21 @@ public class Purge extends SubCommand {
                     break;
                 case "owner":
                 case "o":
-                    owner = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(split[1], Settings.UUID.BLOCKING_TIMEOUT);
-                    if (owner == null) {
+                    UUIDMapping ownerMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
+                    if (ownerMapping == null) {
                         Captions.INVALID_PLAYER.send(player, split[1]);
                         return false;
                     }
+                    owner = ownerMapping.getUuid();
                     break;
                 case "shared":
                 case "s":
-                    added = PlotSquared.get().getImpromptuUUIDPipeline().getSingle(split[1], Settings.UUID.BLOCKING_TIMEOUT);
-                    if (added == null) {
+                    UUIDMapping addedMapping = PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(split[1]);
+                    if (addedMapping == null) {
                         Captions.INVALID_PLAYER.send(player, split[1]);
                         return false;
                     }
+                    added = addedMapping.getUuid();
                     break;
                 case "clear":
                 case "c":
