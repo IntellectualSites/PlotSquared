@@ -30,6 +30,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
@@ -79,64 +80,69 @@ public final class PlaceholderRegistry {
         this.createPlaceholder("has_plot", player -> player.getPlotCount() > 0 ? "true" : "false");
         this.createPlaceholder("allowed_plot_count", player -> Integer.toString(player.getAllowedPlots()));
         this.createPlaceholder("plot_count", player -> Integer.toString(player.getPlotCount()));
-        this.createPlaceholder("currentplot_alias", (player, plot) -> plot.getAlias());
+        this.createPlaceholder("currentplot_alias", (player, plot) -> {
+            if (plot.getAlias() == null) {
+                return String.valueOf(TranslatableCaption.of("info.none"));
+            }
+            return plot.getAlias();
+        });
         this.createPlaceholder("currentplot_owner", (player, plot) -> {
             final UUID plotOwner = plot.getOwnerAbs();
             if (plotOwner == null) {
-                return "";
+                return String.valueOf(TranslatableCaption.of("generic.generic_unowned"));
             }
 
             try {
                 return PlayerManager.getName(plotOwner, false);
             } catch (final Exception ignored) {}
 
-            return "unknown";
+            return String.valueOf(TranslatableCaption.of("info.unknown"));
         });
         this.createPlaceholder("currentplot_members", (player, plot) -> {
             if (plot.getMembers() == null && plot.getTrusted() == null) {
-                return "0";
+                return String.valueOf(TranslatableCaption.of("info.none"));
             }
             return String.valueOf(plot.getMembers().size() + plot.getTrusted().size());
         });
         this.createPlaceholder("currentplot_members_added", (player, plot) -> {
             if (plot.getMembers() == null) {
-                return "0";
+                return String.valueOf(TranslatableCaption.of("info.none"));
             }
             return String.valueOf(plot.getMembers().size());
         });
         this.createPlaceholder("currentplot_members_trusted", (player, plot) -> {
             if (plot.getTrusted() == null) {
-                return "0";
+                return String.valueOf(TranslatableCaption.of("info.none"));
             }
             return String.valueOf(plot.getTrusted().size());
         });
         this.createPlaceholder("currentplot_members_denied", (player, plot) -> {
             if (plot.getDenied() == null) {
-                return "0";
+                return String.valueOf(TranslatableCaption.of("info.none"));
             }
             return String.valueOf(plot.getDenied().size());
         });
         this.createPlaceholder("currentplot_members_trusted_list", (player, plot) -> {
             if (plot.getTrusted() == null) {
-                return "0";
+                return String.valueOf(TranslatableCaption.of("info.none"));
             }
             return String.valueOf(PlayerManager.getPlayerList(plot.getTrusted(), player));
         });
         this.createPlaceholder("currentplot_members_added_list", (player, plot) -> {
             if (plot.getMembers() == null) {
-                return "0";
+                return String.valueOf(TranslatableCaption.of("info.none"));
             }
             return String.valueOf(PlayerManager.getPlayerList(plot.getMembers(), player));
         });
         this.createPlaceholder("currentplot_members_denied_list", (player, plot) -> {
             if (plot.getDenied() == null) {
-                return "0";
+                return String.valueOf(TranslatableCaption.of("info.none"));
             }
             return String.valueOf(PlayerManager.getPlayerList(plot.getDenied(), player));
         });
         this.createPlaceholder("currentplot_creationdate", (player, plot) -> {
             if (plot.getTimestamp() == 0) {
-                return "0";
+                return String.valueOf(TranslatableCaption.of("info.unknown"));
             }
             long creationDate = plot.getTimestamp();
             SimpleDateFormat sdf = new SimpleDateFormat(Settings.Timeformat.DATE_FORMAT);
