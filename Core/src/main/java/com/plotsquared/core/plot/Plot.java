@@ -76,6 +76,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
@@ -2693,11 +2694,12 @@ public class Plot {
                 description = TranslatableCaption.of("info.plot_no_description").getComponent(player);
             }
 
-            Component flags = null;
+            Component flags;
             Collection<PlotFlag<?, ?>> flagCollection = this.getApplicableFlags(true);
             if (flagCollection.isEmpty()) {
                 flags = MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(player));
             } else {
+                TextComponent.Builder flagBuilder = Component.text();
                 String prefix = " ";
                 for (final PlotFlag<?, ?> flag : flagCollection) {
                     Object value;
@@ -2707,14 +2709,11 @@ public class Plot {
                         value = flag.toString();
                     }
                     Component snip = MINI_MESSAGE.parse(prefix + CaptionUtility.format(player, TranslatableCaption.of("info.plot_flag_list").getComponent(player)),
-                        Template.of("flag", flag.getName()), Template.of("value", CaptionUtility.formatRaw(player, value.toString())));
-                    if (flags != null) {
-                        flags.append(snip);
-                    } else {
-                        flags = snip;
-                    }
+                            Template.of("flag", flag.getName()), Template.of("value", CaptionUtility.formatRaw(player, value.toString())));
+                    flagBuilder.append(snip);
                     prefix = ", ";
                 }
+                flags = flagBuilder.build();
             }
             boolean build = this.isAdded(player.getUUID());
             Component owner;
