@@ -76,7 +76,7 @@ public final class PlaceholderRegistry {
             this.registerPlaceholder(new PlotFlagPlaceholder(flag, true));
             this.registerPlaceholder(new PlotFlagPlaceholder(flag, false));
         });
-        this.createPlaceholder("currentplot_world", player -> player.getLocation().getWorldName());
+        this.createPlaceholder("world_name", player -> player.getLocation().getWorldName());
         this.createPlaceholder("has_plot", player -> player.getPlotCount() > 0 ? "true" : "false");
         this.createPlaceholder("allowed_plot_count", (player) -> {
             if (player.getAllowedPlots() >= Integer.MAX_VALUE) { // Beautifies cases with '*' permission
@@ -101,7 +101,6 @@ public final class PlaceholderRegistry {
                 return PlayerManager.getName(plotOwner, false);
             } catch (final Exception ignored) {
             }
-
             return String.valueOf(TranslatableCaption.of("info.unknown"));
         });
         this.createPlaceholder("currentplot_members", (player, plot) -> {
@@ -155,7 +154,7 @@ public final class PlaceholderRegistry {
             sdf.setTimeZone(TimeZone.getTimeZone(Settings.Timeformat.TIME_ZONE));
             return sdf.format(creationDate);
         });
-        this.createPlaceholder("has_build_rights", (player, plot) ->
+        this.createPlaceholder("currentplot_can_build", (player, plot) ->
             plot.isAdded(player.getUUID()) ? "true" : "false");
         this.createPlaceholder("currentplot_x", (player, plot) -> Integer.toString(plot.getId().getX()));
         this.createPlaceholder("currentplot_y", (player, plot) -> Integer.toString(plot.getId().getY()));
