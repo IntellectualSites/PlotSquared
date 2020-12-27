@@ -78,7 +78,12 @@ public final class PlaceholderRegistry {
         });
         this.createPlaceholder("currentplot_world", player -> player.getLocation().getWorldName());
         this.createPlaceholder("has_plot", player -> player.getPlotCount() > 0 ? "true" : "false");
-        this.createPlaceholder("allowed_plot_count", player -> Integer.toString(player.getAllowedPlots()));
+        this.createPlaceholder("allowed_plot_count", (player) -> {
+            if (player.getAllowedPlots() >= Integer.MAX_VALUE) { // Beautifies cases with '*' permission
+                return String.valueOf(TranslatableCaption.of("info.infinite"));
+            }
+            return Integer.toString(player.getAllowedPlots());
+        });
         this.createPlaceholder("plot_count", player -> Integer.toString(player.getPlotCount()));
         this.createPlaceholder("currentplot_alias", (player, plot) -> {
             if (plot.getAlias() == null) {
@@ -94,7 +99,8 @@ public final class PlaceholderRegistry {
 
             try {
                 return PlayerManager.getName(plotOwner, false);
-            } catch (final Exception ignored) {}
+            } catch (final Exception ignored) {
+            }
 
             return String.valueOf(TranslatableCaption.of("info.unknown"));
         });
