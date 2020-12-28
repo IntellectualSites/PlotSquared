@@ -33,7 +33,6 @@ import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.queue.BasicQueueCoordinator;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.queue.LocalChunk;
-import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.ChunkUtil;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.WorldEditException;
@@ -77,13 +76,8 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     }
 
     @Override public BlockState getBlock(int x, int y, int z) {
-        org.bukkit.World worldObj = BukkitAdapter.adapt(getWorld());
-        if (worldObj != null) {
-            Block block = worldObj.getBlockAt(x, y, z);
-            return BukkitBlockUtil.get(block);
-        } else {
-            return BlockUtil.get(0, 0);
-        }
+        Block block = getBukkitWorld().getBlockAt(x, y, z);
+        return BukkitBlockUtil.get(block);
     }
 
     @Override public void start() {
@@ -227,11 +221,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         } catch (WorldEditException ignored) {
             // Fallback to not so nice method
             BlockData blockData = BukkitAdapter.adapt(block);
-
-            if (bukkitWorld == null) {
-                bukkitWorld = Bukkit.getWorld(getWorld().getName());
-            }
-            Chunk chunk = bukkitWorld.getChunkAt(blockVector2.getX(), blockVector2.getZ());
+            Chunk chunk = getBukkitWorld().getChunkAt(blockVector2.getX(), blockVector2.getZ());
 
             Block existing = chunk.getBlock(x, y, z);
             final BlockState existingBaseBlock = BukkitAdapter.adapt(existing.getBlockData());
@@ -252,6 +242,13 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 sw.restoreTag(getWorld().getName(), existing.getX(), existing.getY(), existing.getZ());
             }
         }
+    }
+
+    private org.bukkit.World getBukkitWorld() {
+        if (bukkitWorld == null) {
+            bukkitWorld = Bukkit.getWorld(getWorld().getName());
+        }
+        return bukkitWorld;
     }
 
 }
