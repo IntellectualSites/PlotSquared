@@ -57,8 +57,8 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.MathMan;
+import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.math.BlockVector2;
@@ -134,7 +134,7 @@ public abstract class PlotArea {
     private int maxBuildHeight = 256;
     private int minBuildHeight = 1;
     private GameMode gameMode = GameModes.CREATIVE;
-    private Map<String, Expression<Double>> prices = new HashMap<>();
+    private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
     private boolean roadFlags = false;
     private boolean worldBorder = false;
@@ -306,7 +306,7 @@ public abstract class PlotArea {
         if (this.useEconomy) {
             this.prices = new HashMap<>();
             for (String key : priceSection.getKeys(false)) {
-                this.prices.put(key, Expression.doubleExpression(priceSection.getString(key)));
+                this.prices.put(key, PlotExpression.compile(priceSection.getString(key), "plots"));
             }
         }
         this.plotChat = config.getBoolean("chat.enabled");
@@ -1315,7 +1315,7 @@ public abstract class PlotArea {
         return this.gameMode;
     }
 
-    public Map<String, Expression<Double>> getPrices() {
+    public Map<String, PlotExpression> getPrices() {
         return this.prices;
     }
 

@@ -26,24 +26,23 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.events.TeleportCause;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 
 @CommandDeclaration(command = "delete",
@@ -106,8 +105,8 @@ public class Delete extends SubCommand {
             boolean result = plot.getPlotModificationManager().deletePlot(player, () -> {
                 plot.removeRunning();
                 if (this.econHandler.isEnabled(plotArea)) {
-                    Expression<Double> valueExr = plotArea.getPrices().get("sell");
-                    double value = plots.size() * valueExr.evaluate((double) currentPlots);
+                    PlotExpression valueExr = plotArea.getPrices().get("sell");
+                    double value = plots.size() * valueExr.evaluate(currentPlots);
                     if (value > 0d) {
                         this.econHandler.depositMoney(player, value);
                         player.sendMessage(

@@ -29,7 +29,7 @@ import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
-import com.sk89q.worldedit.EditSession;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class EconHandler {
 
@@ -76,6 +76,14 @@ public abstract class EconHandler {
     public abstract boolean isEnabled(PlotArea plotArea);
 
     /**
+     * Formats the given balance into a human-readable number.
+     *
+     * @param balance the balance to format.
+     * @return the balance as formatted string.
+     */
+    public abstract @NonNull String format(double balance);
+
+    /**
      * Returns whether economy is supported by the server or not.
      *
      * @return {@code true} if economy is supported, {@code false} otherwise.
@@ -112,6 +120,11 @@ public abstract class EconHandler {
         @Override
         public boolean isEnabled(PlotArea plotArea) {
             return false;
+        }
+
+        @Override
+        public @NonNull String format(double balance) {
+            return "";
         }
 
         @Override
