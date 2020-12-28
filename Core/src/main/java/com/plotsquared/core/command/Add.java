@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -114,8 +115,11 @@ public class Add extends Command {
                         size += plot.getTrusted().contains(uuid) ? 0 : 1;
                     }
                     checkTrue(!uuids.isEmpty(), null);
-                    if (!(player.hasPermission("plots.add." + size) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_ADD)))
-                        player.sendMessage(TranslatableCaption.of("members.plot_max_members"), Template.of("amount", String.valueOf(size - 1)));
+                    int maxAddSize = Permissions.hasPermissionRange(player, Permission.PERMISSION_ADD, Settings.Limit.MAX_PLOTS);
+                    if (size > maxAddSize) {
+                        player.sendMessage(TranslatableCaption.of("members.plot_max_members_added"), Template.of("amount", String.valueOf(size - 1)));
+                        return;
+                    }
                     // Success
                     confirm.run(this, () -> {
                         for (UUID uuid : uuids) {

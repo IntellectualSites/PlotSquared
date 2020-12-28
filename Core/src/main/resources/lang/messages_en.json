@@ -452,7 +452,8 @@
   "member.already_owner": "<prefix><gray><player></gray><gold> is already the plot owner.</gold>",
   "member.already_added": "<prefix><gray>That user is already added to that category: <player></gray>",
   "member.member_added": "<prefix><dark_aqua>That user can now build while the plot owner is online.</dark_aqua>",
-  "members.plot_max_members": "<prefix><red>You are not allowed to add more than </red><gold><amount></gold><red> players to this plot.</red>",
+  "members.plot_max_members_added": "<prefix><red>You are not allowed to add more than </red><gold><amount></gold><red> players to this plot.</red>",
+  "members.plot_max_members_trusted": "<prefix><red>You are not allowed to trust more than </red><gold><amount></gold><red> players to this plot.</red>",
   "members.plot_max_members_denied": "<prefix><red>You are not allowed to deny more than </red><gold><amount></gold><red> players from this plot.</red>",
   "members.not_added_trusted": "<prefix><red>You must be added or trusted to the plot to run that command.</red>",
 

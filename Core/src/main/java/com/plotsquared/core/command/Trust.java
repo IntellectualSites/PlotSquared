@@ -26,6 +26,7 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -128,8 +129,11 @@ public class Trust extends Command {
                     size += currentPlot.getMembers().contains(uuid) ? 0 : 1;
                 }
                 checkTrue(!uuids.isEmpty(), null);
-                if (!(player.hasPermission("plots.trust." + size) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST)))
-                    player.sendMessage(TranslatableCaption.of("members.plot_max_members"), Template.of("amount", String.valueOf(size - 1)));
+                int maxTrustSize = Permissions.hasPermissionRange(player, Permission.PERMISSION_TRUST, Settings.Limit.MAX_PLOTS);
+                if (size > maxTrustSize) {
+                    player.sendMessage(TranslatableCaption.of("members.plot_max_members_trusted"), Template.of("amount", String.valueOf(size - 1)));
+                    return;
+                }
                 // Success
                 confirm.run(this, () -> {
                     for (UUID uuid : uuids) {
