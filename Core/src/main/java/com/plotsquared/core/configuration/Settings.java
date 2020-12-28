@@ -475,8 +475,8 @@ public class Settings extends Config {
     public static final class Limit {
         @Comment("Should the limit be global (over multiple worlds)") public static boolean GLOBAL =
             false;
-        @Comment({"The max. range of permissions to check e.g. plots.plot.127",
-            "The value covers the range to check only, you need to assign the permission to players/groups still",
+        @Comment({"The max range of permissions to check for, e.g. plots.plot.127",
+            "The value covers the permission range to check, you need to assign the permission to players/groups still",
             "Modifying the value does NOT change the amount of plots players can claim"})
         public static int MAX_PLOTS = 127;
     }
@@ -609,7 +609,7 @@ public class Settings extends Config {
             true;
         @Comment("Allow WorldEdit to be restricted to plots") public static boolean
             WORLDEDIT_RESTRICTIONS = true;
-        @Comment("Allow economy to be used to sell, claim or buy plots.") public static boolean ECONOMY = true;
+        @Comment("Allow economy to be used to sell, claim or buy plots.") public static boolean ECONOMY = false;
         @Comment("Expiry will clear old or simplistic plots") public static boolean PLOT_EXPIRY =
             false;
         @Comment("Processes chunks (trimming, or entity/tile limits) ") public static boolean
