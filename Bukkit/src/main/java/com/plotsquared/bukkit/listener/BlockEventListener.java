@@ -57,6 +57,7 @@ import com.plotsquared.core.plot.flag.implementations.SnowMeltFlag;
 import com.plotsquared.core.plot.flag.implementations.SoilDryFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.TaskManager;
@@ -469,7 +470,9 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onBlockForm(BlockFormEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockForm(BlockFormEvent event) {
+        if (event instanceof EntityBlockFormEvent) return; // handled below
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         if (location.isPlotRoad()) {
@@ -502,7 +505,8 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onEntityBlockForm(EntityBlockFormEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityBlockForm(EntityBlockFormEvent event) {
         String world = event.getBlock().getWorld().getName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
             return;
@@ -517,32 +521,44 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
+        Class<? extends BooleanFlag<?>> flag;
+        switch (event.getNewState().getType()) {
+            case SNOW:
+            case SNOW_BLOCK:
+                flag = SnowFormFlag.class;
+                break;
+            case ICE:
+            case FROSTED_ICE:
+            case PACKED_ICE:
+                flag = IceFormFlag.class;
+                break;
+            default:
+                return; // other blocks are ignored by this event
+        }
+        boolean allowed = plot.getFlag(flag);
         Entity entity = event.getEntity();
         if (entity instanceof Player) {
             Player player = (Player) entity;
-            if (!plot.hasOwner()) {
-                BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-                if (plot.getFlag(IceFormFlag.class)) {
-                    plot.debug("Ice could not be formed because ice-form = false");
-                    return;
-                }
-                event.setCancelled(true);
-                return;
-            }
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
-                if (plot.getFlag(IceFormFlag.class)) {
-                    plot.debug("Ice could not be formed because ice-form = false");
-                    return;
+                if (allowed) {
+                    return; // player is not added but forming <flag> is allowed
                 }
-                event.setCancelled(true);
+                plot.debug(String.format("%s could not be formed because %s = false (entity is player)",
+                        event.getNewState().getType(),
+                        flag == SnowFormFlag.class ? "snow-form" : "ice-form"));
+                event.setCancelled(true); // player is not added and forming <flag> isn't allowed
+            }
+            return; // event is cancelled if not added and not allowed, otherwise forming <flag> is allowed
+        }
+        if (plot.hasOwner()) {
+            if (allowed) {
                 return;
             }
-            return;
-        }
-        if (!plot.getFlag(IceFormFlag.class)) {
+            plot.debug(String.format("%s could not be formed because %s = false (entity is not player)",
+                    event.getNewState().getType(),
+                    flag == SnowFormFlag.class ? "snow-form" : "ice-form"));
             event.setCancelled(true);
-            plot.debug("Ice could not form because ice-form = false");
         }
     }
 
