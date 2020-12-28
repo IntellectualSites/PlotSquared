@@ -119,6 +119,8 @@ import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -1105,6 +1107,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 logger.info("Copied language file 'messages_{}.json'", language);
             }
         }
+    }
+
+    @Nonnull
+    @Override
+    public String toLegacyPlatformString(Component component) {
+        return LegacyComponentSerializer.legacyAmpersand().serialize(component);
     }
 
 }
