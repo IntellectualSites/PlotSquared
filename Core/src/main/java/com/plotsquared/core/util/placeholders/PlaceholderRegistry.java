@@ -142,13 +142,15 @@ public final class PlaceholderRegistry {
             if (plot.getMembers().isEmpty()) {
                 return legacyComponent(TranslatableCaption.of("info.none"), player);
             }
-            return String.valueOf(PlayerManager.getPlayerList(plot.getMembers(), player));
+            return PlotSquared.platform().toLegacyPlatformString(
+                    PlayerManager.getPlayerList(plot.getMembers(), player));
         });
         this.createPlaceholder("currentplot_members_denied_list", (player, plot) -> {
             if (plot.getDenied().isEmpty()) {
                 return legacyComponent(TranslatableCaption.of("info.none"), player);
             }
-            return String.valueOf(PlayerManager.getPlayerList(plot.getDenied(), player));
+            return PlotSquared.platform().toLegacyPlatformString(
+                    PlayerManager.getPlayerList(plot.getDenied(), player));
         });
         this.createPlaceholder("currentplot_creationdate", (player, plot) -> {
             if (plot.getTimestamp() == 0) {
