@@ -148,7 +148,7 @@ public class DebugPaste extends SubCommand {
                 try {
                     final File MultiverseWorlds = new File(PlotSquared.platform().getDirectory(),
                             "../Multiverse-Core/worlds.yml");
-                    incendoPaster.addFile(MultiverseWorlds);
+                    incendoPaster.addFile(MultiverseWorlds, "Multiverse-Core/worlds.yml");
                 } catch (final IOException ignored) {
                     player.sendMessage(TranslatableCaption.of("debugpaste.skip_multiverse"),
                             Template.of("file", "worlds.yml"));

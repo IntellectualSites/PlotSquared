@@ -48,6 +48,7 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.placeholders.PlaceholderRegistry;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -306,5 +307,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
     @Nonnull default PlaceholderRegistry placeholderRegistry() {
         return injector().getInstance(PlaceholderRegistry.class);
     }
+
+    @Nonnull String toLegacyPlatformString(Component component);
 
 }
