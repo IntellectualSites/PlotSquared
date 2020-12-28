@@ -46,7 +46,7 @@ dependencies {
         exclude(group = "com.google.guava")
     }
     api("com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT")
-    api("com.intellectualsites.paster:Paster:1.0.1-SNAPSHOT")
+    api("com.intellectualsites.paster:Paster:1.0.2-SNAPSHOT")
 }
 
 tasks.processResources {
