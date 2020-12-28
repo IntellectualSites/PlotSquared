@@ -33,7 +33,7 @@ import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "toggle",
     aliases = {"attribute"},
-    permission = "plots.use",
+    permission = "plots.toggle",
     usage = "/plot toggle <chat | chatspy | clear-confirmation | time | titles | worldedit>",
     requiredType = RequiredType.NONE,
     category = CommandCategory.SETTINGS)
