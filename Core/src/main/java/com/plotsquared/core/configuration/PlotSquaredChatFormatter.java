@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2020 IntellectualSites
+ *                  Copyright (C) 2021 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ public class PlotSquaredChatFormatter implements ChatFormatter {
     @Override public void format(final ChatContext context) {
         if (context.isRawOutput()) {
             context.setMessage(
-                context.getMessage().replace('&', '\u2020').replace('\u00A7', '\u2030'));
+                context.getMessage().replace('&', '\u2021').replace('\u00A7', '\u2030'));
         }
         if (context.getArgs().length == 0) {
             return;

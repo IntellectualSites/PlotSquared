@@ -8,7 +8,7 @@
  *                                    | |
  *                                    |_|
  *            PlotSquared plot management system for Minecraft
- *                  Copyright (C) 2020 IntellectualSites
+ *                  Copyright (C) 2021 IntellectualSites
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -227,7 +227,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     }
 
     @Override public void sendMessage(String message) {
-        message = message.replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&');
+        message = message.replace('\u2010', '%').replace('\u2021', '&').replace('\u2030', '&');
         if (!StringMan.isEqual(this.getMeta("lastMessage"), message) || (
             System.currentTimeMillis() - this.<Long>getMeta("lastMessageTime") > 5000)) {
             setMeta("lastMessage", message);
