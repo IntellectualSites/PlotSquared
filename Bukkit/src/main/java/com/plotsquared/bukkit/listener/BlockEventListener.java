@@ -1097,7 +1097,7 @@ public class BlockEventListener implements Listener {
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(LeafDecayFlag.class)) {
             if (plot != null) {
-                plot.debug("Leaf decaying was cancelled because leaf-decay = true");
+                plot.debug("Leaf decaying was cancelled because leaf-decay = false");
             }
             event.setCancelled(true);
         }
