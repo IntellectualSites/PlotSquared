@@ -48,6 +48,7 @@ import com.plotsquared.core.plot.flag.implementations.IceFormFlag;
 import com.plotsquared.core.plot.flag.implementations.IceMeltFlag;
 import com.plotsquared.core.plot.flag.implementations.InstabreakFlag;
 import com.plotsquared.core.plot.flag.implementations.KelpGrowFlag;
+import com.plotsquared.core.plot.flag.implementations.LeafDecayFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
 import com.plotsquared.core.plot.flag.implementations.MycelGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
@@ -96,6 +97,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.material.Directional;
 import org.bukkit.projectiles.BlockProjectileSource;
@@ -1081,5 +1083,24 @@ public class BlockEventListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onLeavesDecay(LeavesDecayEvent event) {
+        Block block = event.getBlock();
+        Location location = BukkitUtil.adapt(block.getLocation());
+
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+
+        Plot plot = location.getOwnedPlot();
+        if (plot == null || !plot.getFlag(LeafDecayFlag.class)) {
+            if (plot != null) {
+                plot.debug("Leaf decaying was cancelled because leaf-decay = true");
+            }
+            event.setCancelled(true);
+        }
+
     }
 }
