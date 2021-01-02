@@ -30,10 +30,11 @@ import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
-import com.plotsquared.core.configuration.caption.CaptionLoader;
+import com.plotsquared.core.configuration.caption.load.CaptionLoader;
 import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.DummyCaptionMap;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.configuration.caption.load.DefaultCaptionProvider;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
 import com.plotsquared.core.database.DBFunc;
@@ -108,6 +109,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -139,6 +141,7 @@ public class PlotSquared {
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     private YamlConfiguration config;
     // Localization
+    private final CaptionLoader captionLoader;
     private final Map<String, CaptionMap> captionMaps = new HashMap<>();
     // Platform / Version / Update URL
     private PlotVersion version;
@@ -172,6 +175,10 @@ public class PlotSquared {
         //
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
+        this.captionLoader = CaptionLoader.of(Locale.ENGLISH,
+                CaptionLoader.patternExtractor(Pattern.compile("messages_(.*)\\.json")),
+                DefaultCaptionProvider.forClassLoaderFormatString(this.getClass().getClassLoader(),
+                        "lang/messages_%s.json")); // the path in our jar file
         // Load caption map
         try {
             this.loadCaptionMap();
@@ -232,10 +239,10 @@ public class PlotSquared {
         // Setup localization
         CaptionMap captionMap;
         if (Settings.Enabled_Components.PER_USER_LOCALE) {
-            captionMap = CaptionLoader.loadAll(new File(this.platform.getDirectory(), "lang").toPath());
+            captionMap = this.captionLoader.loadAll(this.platform.getDirectory().toPath().resolve("lang"));
         } else {
             String fileName = "messages_" + Settings.Enabled_Components.DEFAULT_LOCALE + ".json";
-            captionMap = CaptionLoader.loadSingle(new File(new File(this.platform.getDirectory(), "lang"), fileName).toPath());
+            captionMap = this.captionLoader.loadSingle(this.platform.getDirectory().toPath().resolve("lang").resolve(fileName));
         }
         this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
         logger.info("Loaded caption map for namespace 'plotsquared': {}",
