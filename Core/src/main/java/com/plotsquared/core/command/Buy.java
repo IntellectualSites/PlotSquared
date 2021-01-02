@@ -92,15 +92,15 @@ public class Buy extends Command {
         }
         checkTrue(this.econHandler.getMoney(player) >= price,
                 TranslatableCaption.of("economy.cannot_afford_plot"),
-                Template.of("money", String.valueOf(price)),
-                Template.of("balance", String.valueOf(this.econHandler.getMoney(player))));
+                Template.of("money", this.econHandler.format(price)),
+                Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player))));
         this.econHandler.withdrawMoney(player, price);
         // Failure
         // Success
         confirm.run(this, () -> {
             player.sendMessage(
                     TranslatableCaption.of("economy.removed_balance"),
-                    Template.of("money", String.valueOf(price))
+                    Template.of("money", this.econHandler.format(price))
             );
 
             this.econHandler.depositMoney(PlotSquared.platform().playerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
@@ -111,7 +111,7 @@ public class Buy extends Command {
                         TranslatableCaption.of("economy.plot_sold"),
                         Template.of("plot", plot.getId().toString()),
                         Template.of("player", player.getName()),
-                        Template.of("price", String.valueOf(price))
+                        Template.of("price", this.econHandler.format(price))
                 );
             }
             PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(PriceFlag.class);

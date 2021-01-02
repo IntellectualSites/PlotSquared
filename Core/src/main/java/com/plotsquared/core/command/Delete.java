@@ -111,7 +111,7 @@ public class Delete extends SubCommand {
                         this.econHandler.depositMoney(player, value);
                         player.sendMessage(
                                 TranslatableCaption.of("economy.added_balance"),
-                                Template.of("money", String.valueOf(value))
+                                Template.of("money", this.econHandler.format(value))
                         );
                     }
                 }
