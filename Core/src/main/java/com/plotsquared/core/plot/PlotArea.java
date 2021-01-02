@@ -306,7 +306,12 @@ public abstract class PlotArea {
         if (this.useEconomy) {
             this.prices = new HashMap<>();
             for (String key : priceSection.getKeys(false)) {
-                this.prices.put(key, PlotExpression.compile(priceSection.getString(key), "plots"));
+                String raw = priceSection.getString(key);
+                if (raw.contains("{args}")) {
+                    raw = raw.replace("{args}", "plots");
+                    priceSection.set(key, raw); // update if replaced
+                }
+                this.prices.put(key, PlotExpression.compile(raw, "plots"));
             }
         }
         this.plotChat = config.getBoolean("chat.enabled");
