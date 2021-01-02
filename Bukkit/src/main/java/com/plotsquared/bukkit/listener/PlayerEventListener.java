@@ -657,6 +657,8 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 player.sendMessage(spyMessage);
             }
         }
+        PlotSquared.log(Captions.PREFIX + full);
+
         PlotSquared.debug(full);
     }
 
