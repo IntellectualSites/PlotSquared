@@ -39,8 +39,8 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.minimessage.Template;
 
@@ -162,8 +162,8 @@ public class Merge extends SubCommand {
             return false;
         }
         final PlotArea plotArea = plot.getArea();
-        Expression<Double> priceExr = plotArea.getPrices().getOrDefault("merge", null);
-        final double price = priceExr == null ? 0d : priceExr.evaluate((double) size);
+        PlotExpression priceExr = plotArea.getPrices().getOrDefault("merge", null);
+        final double price = priceExr == null ? 0d : priceExr.evaluate(size);
 
         UUID uuid = player.getUUID();
         if (direction == Direction.ALL) {
@@ -184,7 +184,8 @@ public class Merge extends SubCommand {
                     this.econHandler.withdrawMoney(player, price);
                     player.sendMessage(
                             TranslatableCaption.of("economy.removed_balance"),
-                            Template.of("money", String.valueOf(price))
+                            Template.of("money", this.econHandler.format(price)),
+                            Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
                 }
                 player.sendMessage(TranslatableCaption.of("merge.success_merge"));
@@ -205,7 +206,7 @@ public class Merge extends SubCommand {
             && this.econHandler.getMoney(player) < price) {
             player.sendMessage(
                     TranslatableCaption.of("economy.cannot_afford_merge"),
-                    Template.of("money", String.valueOf(price))
+                    Template.of("money", this.econHandler.format(price))
             );
             return false;
         }
@@ -228,7 +229,7 @@ public class Merge extends SubCommand {
                 this.econHandler.withdrawMoney(player, price);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
-                        Template.of("money", String.valueOf(price))
+                        Template.of("money", this.econHandler.format(price))
                 );
             }
             player.sendMessage(TranslatableCaption.of("merge.success_merge"));
@@ -268,14 +269,14 @@ public class Merge extends SubCommand {
                     if (!force && this.econHandler.getMoney(player) < price) {
                         player.sendMessage(
                                 TranslatableCaption.of("economy.cannot_afford_merge"),
-                                Template.of("money", String.valueOf(price))
+                                Template.of("money", this.econHandler.format(price))
                         );
                         return;
                     }
                     this.econHandler.withdrawMoney(player, price);
                     player.sendMessage(
                             TranslatableCaption.of("economy.removed_balance"),
-                            Template.of("money", String.valueOf(price))
+                            Template.of("money", this.econHandler.format(price))
                     );
                 }
                 player.sendMessage(TranslatableCaption.of("merge.success_merge"));

@@ -36,6 +36,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @Singleton public class BukkitEconHandler extends EconHandler {
 
@@ -82,6 +83,11 @@ import org.bukkit.plugin.RegisteredServiceProvider;
     @Override
     public boolean isEnabled(PlotArea plotArea) {
         return plotArea.useEconomy();
+    }
+
+    @Override
+    public @NonNull String format(double balance) {
+        return this.econ.format(balance);
     }
 
     @Override
