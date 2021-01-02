@@ -42,7 +42,9 @@ public interface DefaultCaptionProvider {
      * @param urlProvider the function to get an url from a locale.
      * @return a caption provider using a function to determine resource urls.
      */
-    static DefaultCaptionProvider forClassLoader(ClassLoader classLoader, Function<Locale, String> urlProvider) {
+    static @NonNull DefaultCaptionProvider forClassLoader(
+            final @NonNull ClassLoader classLoader,
+            final @NonNull Function<@NonNull Locale, @NonNull String> urlProvider) {
         return new ClassLoaderCaptionProvider(classLoader, urlProvider);
     }
 
@@ -56,7 +58,9 @@ public interface DefaultCaptionProvider {
      *                    {@code String.format(toFormat, Locale#toString)}
      * @return a caption provider using string formatting to determine resource urls.
      */
-    static DefaultCaptionProvider forClassLoaderFormatString(ClassLoader classLoader, String toFormat) {
+    static @NonNull DefaultCaptionProvider forClassLoaderFormatString(
+            final @NonNull ClassLoader classLoader,
+            final @NonNull String toFormat) {
         return forClassLoader(classLoader, locale -> String.format(toFormat, locale.toString()));
     }
 
@@ -67,5 +71,5 @@ public interface DefaultCaptionProvider {
      * @param locale the locale to load the values for.
      * @return a map of default values for the given locale.
      */
-    @Nullable Map<String, String> loadDefaults(final @NonNull Locale locale);
+    @Nullable Map<@NonNull String, @NonNull String> loadDefaults(final @NonNull Locale locale);
 }
