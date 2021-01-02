@@ -66,7 +66,7 @@ public interface DefaultCaptionProvider {
 
     /**
      * Loads default translation values for a specific language and returns it as a map.
-     * If no default translation exists, {@link null} is returned. A returned map might be empty.
+     * If no default translation exists, {@code null} is returned. A returned map might be empty.
      *
      * @param locale the locale to load the values for.
      * @return a map of default values for the given locale.
