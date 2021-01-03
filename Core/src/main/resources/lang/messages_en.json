@@ -654,6 +654,7 @@
   "flags.flag_description_keep": "<gray>Prevents the plot from expiring. Can be set to: true, false, the number of milliseconds to keep the plot for or a timestamp (3w 2d 5h).</gray>",
   "flags.flag_description_keep_inventory": "<gray>Prevents players from dropping their items when they die inside of the plot.</gray>",
   "flags.flag_description_prevent_creative_copy": "<gray>Prevents people from copying item NBT data in the plot unless they're added as members.</gray>",
+  "flags.flag_description_leaf_decay": "<gray>Set to `false` to prevent leaves from decaying.",
 
   "flags.flag_error_boolean": "<prefix>Flag value must be a boolean (true | false).",
   "flags.flag_error_enum": "<prefix>Must be one of: <list>",

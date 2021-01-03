@@ -23,20 +23,22 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.configuration.caption;
+package com.plotsquared.core.configuration.caption.load;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.plotsquared.core.configuration.caption.CaptionMap;
+import com.plotsquared.core.configuration.caption.LocalizedCaptionMap;
+import com.plotsquared.core.configuration.caption.PerUserLocaleCaptionMap;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +50,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -59,29 +62,103 @@ import java.util.stream.Stream;
 public final class CaptionLoader {
     private static final Logger logger = LoggerFactory.getLogger("P2/" + CaptionLoader.class.getSimpleName());
 
-    private static final Map<String, String> DEFAULT_MESSAGES;
-    private static final Locale DEFAULT_LOCALE;
     private static final Gson GSON;
-    private static final Pattern FILE_NAME_PATTERN;
 
     static {
-        FILE_NAME_PATTERN = Pattern.compile("messages_(.*)\\.json");
         GSON = new GsonBuilder()
                 .setPrettyPrinting()
                 .disableHtmlEscaping()
                 .create();
-        DEFAULT_LOCALE = Locale.ENGLISH;
+    }
+
+    private final Map<String, String> defaultMessages;
+    private final Locale defaultLocale;
+    private final Function<Path, Locale> localeExtractor;
+    private final DefaultCaptionProvider captionProvider;
+
+    private CaptionLoader(
+            final @NonNull Locale internalLocale,
+            final @NonNull Function<@NonNull Path, @NonNull Locale> localeExtractor,
+            final @NonNull DefaultCaptionProvider captionProvider) {
+        this.defaultLocale = internalLocale;
+        this.localeExtractor = localeExtractor;
+        this.captionProvider = captionProvider;
         Map<String, String> temp;
         try {
-            temp = loadResource(DEFAULT_LOCALE);
+            temp = this.captionProvider.loadDefaults(internalLocale);
         } catch (Exception e) {
             logger.error("Failed to load default messages", e);
             temp = Collections.emptyMap();
         }
-        DEFAULT_MESSAGES = temp;
+        this.defaultMessages = temp;
     }
 
-    private CaptionLoader() {
+    /**
+     * Returns a new CaptionLoader instance. That instance will use the internalLocale to extract default values
+     * from the captionProvider
+     *
+     * @param internalLocale  the locale used internally to resolve default messages from the caption provider.
+     * @param localeExtractor a function to extract a locale from a path, e.g. by its name.
+     * @param captionProvider the provider for default captions.
+     * @return a CaptionLoader instance that can load and patch message files.
+     */
+    public static @NonNull CaptionLoader of(
+            final @NonNull Locale internalLocale,
+            final @NonNull Function<@NonNull Path, @NonNull Locale> localeExtractor,
+            final @NonNull DefaultCaptionProvider captionProvider) {
+        return new CaptionLoader(internalLocale, localeExtractor, captionProvider);
+    }
+
+    /**
+     * Returns a function that extracts a locale from a path using the given pattern.
+     * The pattern is required to have (at least) one capturing group, as this is used to access the locale
+     * tag.The function will throw an {@link IllegalArgumentException} if the matcher doesn't match the file name
+     * of the input path. The language tag is loaded using {@link Locale#forLanguageTag(String)}.
+     *
+     * @param pattern the pattern to match and extract the language tag with.
+     * @return a function to extract a locale from a path using a pattern.
+     * @see Matcher#group(int)
+     * @see Path#getFileName()
+     */
+    public static @NonNull Function<@NonNull Path, @NonNull Locale> patternExtractor(final @NonNull Pattern pattern) {
+        return path -> {
+            final String fileName = path.getFileName().toString();
+            final Matcher matcher = pattern.matcher(fileName);
+            if (matcher.matches()) {
+                return Locale.forLanguageTag(matcher.group(1));
+            } else {
+                throw new IllegalArgumentException(fileName + " is an invalid message file (cannot extract locale)");
+            }
+        };
+    }
+
+    /**
+     * Loads a map of translation keys mapping to their translations from a reader.
+     * The format is expected to be a json object:
+     * <pre>{@code
+     * {
+     *     "key1": "value a",
+     *     "key2": "value b",
+     *     ...
+     * }
+     * }</pre>
+     *
+     * @param reader the reader to read the map from.
+     * @return the translation map.
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    static @NonNull Map<@NonNull String, @NonNull String> loadFromReader(final @NonNull Reader reader) {
+        final Type type = new TypeToken<Map<String, String>>() {}.getType();
+        return new LinkedHashMap<>(GSON.fromJson(reader, type));
+    }
+
+    private static void save(final Path file, final Map<String, String> content) {
+        try (final BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
+            GSON.toJson(content, writer);
+            logger.info("Saved {} with new content", file.getFileName());
+        } catch (final IOException e) {
+            logger.error("Failed to save caption file '{}'", file.getFileName().toString(), e);
+        }
     }
 
     /**
@@ -93,7 +170,7 @@ public final class CaptionLoader {
      * @see Files#list(Path)
      * @see #loadSingle(Path)
      */
-    @Nonnull public static CaptionMap loadAll(@Nonnull final Path directory) throws IOException {
+    public @NonNull CaptionMap loadAll(final @NonNull Path directory) throws IOException {
         final Map<Locale, CaptionMap> localeMaps = new HashMap<>();
         try (final Stream<Path> files = Files.list(directory)) {
             final List<Path> captionFiles = files.filter(Files::isRegularFile).collect(Collectors.toList());
@@ -117,18 +194,11 @@ public final class CaptionLoader {
      *
      * @param file The file to load
      * @return A new CaptionMap containing the loaded messages
-     * @throws IOException if the file couldn't be accessed or read successfully.
+     * @throws IOException              if the file couldn't be accessed or read successfully.
      * @throws IllegalArgumentException if the file name doesn't match the specified format.
      */
-    @Nonnull public static CaptionMap loadSingle(@Nonnull final Path file) throws IOException {
-        final String fileName = file.getFileName().toString();
-        final Matcher matcher = FILE_NAME_PATTERN.matcher(fileName);
-        final Locale locale;
-        if (matcher.matches()) {
-            locale = Locale.forLanguageTag(matcher.group(1));
-        } else {
-            throw new IllegalArgumentException(fileName + " is an invalid message file (cannot extract locale)");
-        }
+    public @NonNull CaptionMap loadSingle(final @NonNull Path file) throws IOException {
+        final Locale locale = this.localeExtractor.apply(file);
         try (final BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             Map<String, String> map = loadFromReader(reader);
             if (patch(map, locale)) {
@@ -139,61 +209,29 @@ public final class CaptionLoader {
         }
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    private static Map<String, String> loadFromReader(final Reader reader) {
-        final Type type = new TypeToken<Map<String, String>>() {}.getType();
-        return new LinkedHashMap<>(GSON.fromJson(reader, type));
-    }
-
-    private static Map<String, String> loadResource(final Locale locale) {
-        final String url = String.format("lang/messages_%s.json", locale.toString());
-        try {
-            final InputStream stream = CaptionLoader.class.getClassLoader().getResourceAsStream(url);
-            if (stream == null) {
-                logger.warn("No resource for locale '{}' found", locale);
-                return null;
-            }
-            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-                return loadFromReader(reader);
-            }
-        } catch (final IOException e) {
-            logger.error("Unable to load language resource", e);
-            return null;
-        }
-    }
-
-    private static void save(final Path file, final Map<String, String> content) {
-        try (final BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
-            GSON.toJson(content, writer);
-            logger.info("Saved {} with new content", file.getFileName());
-        } catch (final IOException e) {
-            logger.error("Failed to save caption file '{}'", file.getFileName().toString(), e);
-        }
-    }
-
     /**
      * Add missing entries to the given map.
-     * Entries are missing if the key exists in {@link #DEFAULT_MESSAGES} but isn't present
+     * Entries are missing if the key exists in {@link #defaultLocale} but isn't present
      * in the given map. For a missing key, a value will be loaded either from
-     * the resource matching the given locale or from {@link #DEFAULT_MESSAGES} if
+     * the resource matching the given locale or from {@link #defaultLocale} if
      * no matching resource was found or the key isn't present in the resource.
      *
      * @param map    the map to patch
      * @param locale the locale to get the resource from
      * @return {@code true} if the map was patched.
      */
-    private static boolean patch(final Map<String, String> map, final Locale locale) {
+    private boolean patch(final Map<String, String> map, final Locale locale) {
         boolean modified = false;
         Map<String, String> languageSpecific;
-        if (locale.equals(DEFAULT_LOCALE)) {
-            languageSpecific = DEFAULT_MESSAGES;
+        if (locale.equals(this.defaultLocale)) {
+            languageSpecific = this.defaultMessages;
         } else {
-            languageSpecific = loadResource(locale);
-            if (languageSpecific == null) { // fallback for languages not provided by PlotSquared
-                languageSpecific = DEFAULT_MESSAGES;
+            languageSpecific = this.captionProvider.loadDefaults(locale);
+            if (languageSpecific == null) { // fallback for languages not provided
+                languageSpecific = this.defaultMessages;
             }
         }
-        for (Map.Entry<String, String> entry : DEFAULT_MESSAGES.entrySet()) {
+        for (Map.Entry<String, String> entry : this.defaultMessages.entrySet()) {
             if (!map.containsKey(entry.getKey())) {
                 final String value = languageSpecific.getOrDefault(entry.getKey(), entry.getValue());
                 map.put(entry.getKey(), value);

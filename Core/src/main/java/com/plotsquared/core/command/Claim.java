@@ -42,8 +42,8 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 import org.slf4j.Logger;
@@ -136,20 +136,22 @@ public class Claim extends SubCommand {
             }
         }
         if (this.econHandler.isEnabled(area) && !force) {
-            Expression<Double> costExr = area.getPrices().get("claim");
-            double cost = costExr.evaluate((double) currentPlots);
+            PlotExpression costExr = area.getPrices().get("claim");
+            double cost = costExr.evaluate(currentPlots);
             if (cost > 0d) {
                 if (this.econHandler.getMoney(player) < cost) {
                     player.sendMessage(
                             TranslatableCaption.of("economy.cannot_afford_plot"),
-                            Template.of("money", String.valueOf(cost))
+                            Template.of("money", this.econHandler.format(cost)),
+                            Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
-                    }
+                    return false;
+                }
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
-                        Template.of("money", String.valueOf(cost)),
-                        Template.of("balance", String.valueOf(this.econHandler.getMoney(player)))
+                        Template.of("money", this.econHandler.format(cost)),
+                        Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                 );
             }
         }
