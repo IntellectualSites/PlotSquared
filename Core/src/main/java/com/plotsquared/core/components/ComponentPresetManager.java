@@ -186,7 +186,7 @@ public class ComponentPresetManager {
                     } else {
                         econHandler.withdrawMoney(getPlayer(), componentPreset.getCost());
                         getPlayer().sendMessage(TranslatableCaption.of("economy.removed_balance"),
-                                Template.of("money", componentPreset.getCost() + ""));
+                                Template.of("money", econHandler.format(componentPreset.getCost())));
                     }
                 }
 

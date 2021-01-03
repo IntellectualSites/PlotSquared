@@ -27,10 +27,10 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Injector;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
@@ -38,8 +38,8 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import org.slf4j.Logger;
@@ -190,11 +190,10 @@ public class MainCommand extends Command {
                         CmdConfirm.addPending(player, cmd.getUsage(), () -> {
                             PlotArea area = player.getApplicablePlotArea();
                             if (area != null && econHandler.isEnabled(area)) {
-                                Expression<Double> priceEval =
+                                PlotExpression priceEval =
                                     area.getPrices().get(cmd.getFullId());
-                                Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                                if (price != null
-                                    && econHandler.getMoney(player) < price) {
+                                double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                if (econHandler.getMoney(player) < price) {
                                     if (failure != null) {
                                         failure.run();
                                     }
@@ -207,17 +206,15 @@ public class MainCommand extends Command {
                         });
                         return;
                     }
-                    if (econHandler != null) {
-                        PlotArea area = player.getApplicablePlotArea();
-                        if (area != null) {
-                            Expression<Double> priceEval = area.getPrices().get(cmd.getFullId());
-                            Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                            if (price != 0d && econHandler.getMoney(player) < price) {
-                                if (failure != null) {
-                                    failure.run();
-                                }
-                                return;
+                    PlotArea area = player.getApplicablePlotArea();
+                    if (area != null && econHandler.isEnabled(area)) {
+                        PlotExpression priceEval = area.getPrices().get(cmd.getFullId());
+                        double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
+                        if (price != 0d && econHandler.getMoney(player) < price) {
+                            if (failure != null) {
+                                failure.run();
                             }
+                            return;
                         }
                     }
                     if (success != null) {
@@ -277,19 +274,16 @@ public class MainCommand extends Command {
                 if ("f".equals(args[0].substring(1))) {
                     confirm = new RunnableVal3<Command, Runnable, Runnable>() {
                         @Override public void run(Command cmd, Runnable success, Runnable failure) {
-                            if (PlotSquared.platform().econHandler() != null) {
-                                PlotArea area = player.getApplicablePlotArea();
-                                if (area != null) {
-                                    Expression<Double> priceEval =
-                                        area.getPrices().get(cmd.getFullId());
-                                    Double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
-                                    if (price != 0d
-                                        && PlotSquared.platform().econHandler().getMoney(player) < price) {
-                                        if (failure != null) {
-                                            failure.run();
-                                        }
-                                        return;
+                            if (area != null && PlotSquared.platform().econHandler().isEnabled(area)) {
+                                PlotExpression priceEval =
+                                    area.getPrices().get(cmd.getFullId());
+                                double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
+                                if (price != 0d
+                                    && PlotSquared.platform().econHandler().getMoney(player) < price) {
+                                    if (failure != null) {
+                                        failure.run();
                                     }
+                                    return;
                                 }
                             }
                             if (success != null) {

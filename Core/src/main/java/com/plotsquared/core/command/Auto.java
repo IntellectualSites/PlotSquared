@@ -46,8 +46,8 @@ import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.services.plots.AutoService;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.Expression;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
@@ -276,24 +276,24 @@ public class Auto extends SubCommand {
             }
         }
         if (this.econHandler != null && plotarea.useEconomy()) {
-            Expression<Double> costExp = plotarea.getPrices().get("claim");
-            double cost = costExp.evaluate((double) (Settings.Limit.GLOBAL ?
+            PlotExpression costExp = plotarea.getPrices().get("claim");
+            double cost = costExp.evaluate(Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
-                player.getPlotCount(plotarea.getWorldName())));
+                player.getPlotCount(plotarea.getWorldName()));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 if (!force && this.econHandler.getMoney(player) < cost) {
                     player.sendMessage(
                             TranslatableCaption.of("economy.cannot_afford_plot"),
-                            Template.of("money", String.valueOf(cost)),
-                            Template.of("balance", String.valueOf(this.econHandler.getMoney(player)))
+                            Template.of("money", this.econHandler.format(cost)),
+                            Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
                     return true;
                 }
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(
                         TranslatableCaption.of("economy.removed_balance"),
-                        Template.of("money", String.valueOf(cost))
+                        Template.of("money", this.econHandler.format(cost))
                 );
             }
         }
