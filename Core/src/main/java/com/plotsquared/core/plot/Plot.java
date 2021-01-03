@@ -1735,7 +1735,7 @@ public class Plot {
 
     /**
      * Gets the top loc of a plot (if mega, returns top loc of that mega plot) - If you would like each plot treated as
-     * a small plot use getPlotTopLocAbs(...)
+     * a small plot use {@link #getTopAbs()}
      *
      * @return Location top of mega plot
      */
@@ -1754,9 +1754,8 @@ public class Plot {
     }
 
     /**
-     * Gets the bottom location for a plot.<br>
-     * - Does not respect mega plots<br>
-     * - Merged plots, only the road will be considered part of the plot<br>
+     * Gets the bot loc of a plot (if mega, returns bot loc of that mega plot) - If you would like each plot treated as
+     * a small plot use {@link #getBottomAbs()}
      *
      * @return Location bottom of mega plot
      */
@@ -2362,6 +2361,8 @@ public class Plot {
                     bot = PlotId.of(bot.getX() - 1, bot.getX());
                 }
             }
+            int minHeight = getArea().getMinBuildHeight();
+            int maxHeight = getArea().getMaxBuildHeight();
             Location gtopabs = this.area.getPlotAbs(top).getTopAbs();
             Location gbotabs = this.area.getPlotAbs(bot).getBottomAbs();
             visited.addAll(Lists.newArrayList((Iterable<? extends PlotId>) PlotId.PlotRangeIterator.range(bot, top)));
@@ -2372,12 +2373,12 @@ public class Plot {
                     Location toploc = plot.getExtendedTopAbs();
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
-                    BlockVector3 pos1 = BlockVector3.at(botabs.getX(), 0, topabs.getZ() + 1);
-                    BlockVector3 pos2 = BlockVector3.at(topabs.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
+                    BlockVector3 pos1 = BlockVector3.at(botabs.getX(), minHeight, topabs.getZ() + 1);
+                    BlockVector3 pos2 = BlockVector3.at(topabs.getX(), maxHeight, toploc.getZ());
                     regions.add(new CuboidRegion(pos1, pos2));
                     if (plot.isMerged(Direction.SOUTHEAST)) {
-                        pos1 = BlockVector3.at(topabs.getX() + 1, 0, topabs.getZ() + 1);
-                        pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
+                        pos1 = BlockVector3.at(topabs.getX() + 1, minHeight, topabs.getZ() + 1);
+                        pos2 = BlockVector3.at(toploc.getX(), maxHeight, toploc.getZ());
                         regions.add(new CuboidRegion(pos1, pos2));
                         // intersection
                     }
@@ -2391,19 +2392,19 @@ public class Plot {
                     Location toploc = plot.getExtendedTopAbs();
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
-                    BlockVector3 pos1 = BlockVector3.at(topabs.getX() + 1, 0, botabs.getZ());
-                    BlockVector3 pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, topabs.getZ());
+                    BlockVector3 pos1 = BlockVector3.at(topabs.getX() + 1, minHeight, botabs.getZ());
+                    BlockVector3 pos2 = BlockVector3.at(toploc.getX(), maxHeight, topabs.getZ());
                     regions.add(new CuboidRegion(pos1, pos2));
                     if (plot.isMerged(Direction.SOUTHEAST)) {
-                        pos1 = BlockVector3.at(topabs.getX() + 1, 0, topabs.getZ() + 1);
-                        pos2 = BlockVector3.at(toploc.getX(), Plot.MAX_HEIGHT - 1, toploc.getZ());
+                        pos1 = BlockVector3.at(topabs.getX() + 1, minHeight, topabs.getZ() + 1);
+                        pos2 = BlockVector3.at(toploc.getX(), maxHeight, toploc.getZ());
                         regions.add(new CuboidRegion(pos1, pos2));
                         // intersection
                     }
                 }
             }
-            BlockVector3 pos1 = BlockVector3.at(gbotabs.getX(), 0, gbotabs.getZ());
-            BlockVector3 pos2 = BlockVector3.at(gtopabs.getX(), Plot.MAX_HEIGHT - 1, gtopabs.getZ());
+            BlockVector3 pos1 = BlockVector3.at(gbotabs.getX(), minHeight, gbotabs.getZ());
+            BlockVector3 pos2 = BlockVector3.at(gtopabs.getX(), maxHeight, gtopabs.getZ());
             regions.add(new CuboidRegion(pos1, pos2));
         }
         return regions;

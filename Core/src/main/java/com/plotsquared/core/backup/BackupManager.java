@@ -38,7 +38,7 @@ public interface BackupManager {
 
     /**
      * This will perform an automatic backup of the plot iff the plot has an owner,
-     * automatic backups are enabled and the plot is not merged.
+     * automatic backups are enabled.
      * Otherwise it will complete immediately.
      *
      * @param player   Player that triggered the backup
@@ -60,7 +60,7 @@ public interface BackupManager {
 
     /**
      * This will perform an automatic backup of the plot iff the plot has an owner,
-     * automatic backups are enabled and the plot is not merged.
+     * automatic backups are enabled.
      * Otherwise it will complete immediately.
      *
      * @param player   Player that triggered the backup

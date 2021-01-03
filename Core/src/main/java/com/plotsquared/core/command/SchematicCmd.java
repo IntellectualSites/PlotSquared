@@ -116,10 +116,6 @@ public class SchematicCmd extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("error.task_in_process"));
                     return false;
                 }
-                if (plot.isMerged()) {
-                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_merged"));
-                    return false;
-                }
                 final String location = args[1];
                 this.running = true;
                 TaskManager.runTaskAsync(() -> {
@@ -154,7 +150,7 @@ public class SchematicCmd extends SubCommand {
                         );
                         return;
                     }
-                    this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, player, new RunnableVal<Boolean>() {
+                    this.schematicHandler.paste(schematic, plot, 0, plot.getArea().getMinBuildHeight(), 0, false, player, new RunnableVal<Boolean>() {
                         @Override public void run(Boolean value) {
                             SchematicCmd.this.running = false;
                             if (value) {

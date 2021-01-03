@@ -25,12 +25,13 @@
  */
 package com.plotsquared.core.util;
 
-import com.google.inject.Inject;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParseException;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.ClassicPlotWorld;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.location.Location;
@@ -64,8 +65,12 @@ import com.sk89q.worldedit.extent.clipboard.io.SpongeSchematicReader;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.regions.RegionIntersection;
+import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,9 +95,6 @@ import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -114,7 +116,6 @@ public abstract class SchematicHandler {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + SchematicHandler.class.getSimpleName());
     private static final Gson GSON = new Gson();
-    private static final Path TEMP_DIR = Paths.get("TODO-PATH");
     public static SchematicHandler manager;
     private final WorldUtil worldUtil;
     private boolean exportAll = false;
@@ -280,84 +281,104 @@ public abstract class SchematicHandler {
                       final boolean autoHeight,
                       final PlotPlayer<?> actor,
                       final RunnableVal<Boolean> whenDone) {
-
-        TaskManager.runTask(() -> {
-            if (whenDone != null) {
-                whenDone.value = false;
-            }
-            if (schematic == null) {
+        if (whenDone != null) {
+            whenDone.value = false;
+        }
+        if (schematic == null) {
+            TaskManager.runTask(whenDone);
+            return;
+        }
+        try {
+            BlockVector3 dimension = schematic.getClipboard().getDimensions();
+            final int WIDTH = dimension.getX();
+            final int LENGTH = dimension.getZ();
+            final int HEIGHT = dimension.getY();
+            // Validate dimensions
+            CuboidRegion region = plot.getLargestRegion();
+            boolean sizeMismatch =
+                ((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
+                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT
+                    > 256);
+            if (!Settings.Schematics.PASTE_MISMATCHES && sizeMismatch) {
+                actor.sendMessage(TranslatableCaption.of("schematics.schematic_size_mismatch"));
                 TaskManager.runTask(whenDone);
                 return;
             }
-            try {
-                BlockVector3 dimension = schematic.getClipboard().getDimensions();
-                final int WIDTH = dimension.getX();
-                final int LENGTH = dimension.getZ();
-                final int HEIGHT = dimension.getY();
-                // Validate dimensions
-                CuboidRegion region = plot.getLargestRegion();
-                if (((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
-                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT > 256)) {
-                    TaskManager.runTask(whenDone);
-                    return;
-                }
-                // block type and data arrays
-                final Clipboard blockArrayClipboard = schematic.getClipboard();
-                // Calculate the optimal height to paste the schematic at
-                final int y_offset_actual;
-                if (autoHeight) {
-                    if (HEIGHT >= 256) {
-                        y_offset_actual = yOffset;
-                    } else {
-                        PlotArea pw = plot.getArea();
-                        if (pw instanceof ClassicPlotWorld) {
-                            y_offset_actual = yOffset + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
-                        } else {
-                            y_offset_actual = yOffset + 1 + this.worldUtil
-                                .getHighestBlockSynchronous(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
-                                    region.getMinimumPoint().getZ() + 1);
-                        }
-                    }
-                } else {
+            // block type and data arrays
+            final Clipboard blockArrayClipboard = schematic.getClipboard();
+            // Calculate the optimal height to paste the schematic at
+            final int y_offset_actual;
+            if (autoHeight) {
+                if (HEIGHT >= 256) {
                     y_offset_actual = yOffset;
-                }
-
-                final Location pos1 = Location
-                    .at(plot.getWorldName(), region.getMinimumPoint().getX() + xOffset, y_offset_actual, region.getMinimumPoint().getZ() + zOffset);
-
-                final int p1x = pos1.getX();
-                final int p1z = pos1.getZ();
-                // Paste schematic here
-                final QueueCoordinator queue = plot.getArea().getQueue();
-
-                for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
-                    int yy = y_offset_actual + ry;
-                    if (yy > 255) {
-                        continue;
+                } else {
+                    PlotArea pw = plot.getArea();
+                    if (pw instanceof ClassicPlotWorld) {
+                        y_offset_actual = yOffset + pw.getMinBuildHeight() + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
+                    } else {
+                        y_offset_actual = yOffset + 1 + this.worldUtil
+                            .getHighestBlockSynchronous(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
+                                region.getMinimumPoint().getZ() + 1);
                     }
-                    for (int rz = 0; rz <= blockArrayClipboard.getDimensions().getZ(); rz++) {
-                        for (int rx = 0; rx < blockArrayClipboard.getDimensions().getX(); rx++) {
-                            int xx = p1x + rx;
-                            int zz = p1z + rz;
-                            BaseBlock id = blockArrayClipboard.getFullBlock(BlockVector3.at(rx, ry, rz));
-                            queue.setBlock(xx, yy, zz, id);
-                            if (ry == 0) {
-                                BiomeType biome = blockArrayClipboard.getBiome(BlockVector3.at(rx, ry, rz));
-                                queue.setBiome(xx, yy, zz, biome);
-                            }
+                }
+            } else {
+                y_offset_actual = yOffset;
+            }
+
+            final int p1x;
+            final int p1z;
+            final int p2x;
+            final int p2z;
+            final Region allRegion;
+            if (!sizeMismatch || plot.getRegions().size() == 1) {
+                p1x = region.getMinimumPoint().getX() + xOffset;
+                p1z = region.getMinimumPoint().getZ() + zOffset;
+                p2x = region.getMaximumPoint().getX() + xOffset;
+                p2z = region.getMaximumPoint().getZ() + zOffset;
+                allRegion = region;
+            } else {
+                Location[] corners = plot.getCorners();
+                p1x = corners[0].getX() + xOffset;
+                p1z = corners[0].getZ() + zOffset;
+                p2x = corners[1].getX() + xOffset;
+                p2z = corners[1].getZ() + zOffset;
+                allRegion = new RegionIntersection(null, plot.getRegions().toArray(new CuboidRegion[] {}));
+            }
+            // Paste schematic here
+            final QueueCoordinator queue = plot.getArea().getQueue();
+
+            for (int ry = 0; ry < Math.min(256, HEIGHT); ry++) {
+                int yy = y_offset_actual + ry;
+                if (yy > 255 || yy < 0) {
+                    continue;
+                }
+                for (int rz = 0; rz <= blockArrayClipboard.getDimensions().getZ(); rz++) {
+                    for (int rx = 0; rx < blockArrayClipboard.getDimensions().getX(); rx++) {
+                        int xx = p1x + rx;
+                        int zz = p1z + rz;
+                        if (sizeMismatch && (xx < p1x || xx > p2x || zz < p1z || zz > p2z || !allRegion.contains(BlockVector3.at(xx, ry, zz)))) {
+                            continue;
+                        }
+                        BlockVector3 loc = BlockVector3.at(rx, ry, rz);
+                        BaseBlock id = blockArrayClipboard.getFullBlock(loc);
+                        queue.setBlock(xx, yy, zz, id);
+                        if (ry == 0) {
+                            BiomeType biome = blockArrayClipboard.getBiome(loc);
+                            queue.setBiome(xx, yy, zz, biome);
                         }
                     }
                 }
-                if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                    queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
-                }
-                queue.setCompleteTask(whenDone);
-                queue.enqueue();
-            } catch (Exception e) {
-                e.printStackTrace();
-                TaskManager.runTask(whenDone);
             }
-        });
+            if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+            }
+            whenDone.value = true;
+            queue.setCompleteTask(whenDone);
+            queue.enqueue();
+        } catch (Exception e) {
+            e.printStackTrace();
+            TaskManager.runTask(whenDone);
+        }
     }
 
     public abstract boolean restoreTile(QueueCoordinator queue, CompoundTag tag, int x, int y, int z);
@@ -595,13 +616,17 @@ public abstract class SchematicHandler {
                                                          @Nonnull final Set<CuboidRegion> regions) {
         CompletableFuture<CompoundTag> completableFuture = new CompletableFuture<>();
         TaskManager.runTaskAsync(() -> {
-            // Main positions
+            World world = this.worldUtil.getWeWorld(worldName);
+            // All positions
             CuboidRegion aabb = RegionUtil.getAxisAlignedBoundingBox(regions);
-            aabb.setWorld(this.worldUtil.getWeWorld(worldName));
+            aabb.setWorld(world);
+
+            RegionIntersection intersection = new RegionIntersection(new ArrayList<>(regions));
 
             final int width = aabb.getWidth();
             int height = aabb.getHeight();
             final int length = aabb.getLength();
+            final boolean multipleRegions = regions.size() > 1;
 
             Map<String, Tag> schematic = initSchematic((short) width, (short) height, (short) length);
 
@@ -612,73 +637,43 @@ public abstract class SchematicHandler {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream(width * height * length);
             ByteArrayOutputStream biomeBuffer = new ByteArrayOutputStream(width * length);
             // Queue
-            final ArrayDeque<CuboidRegion> queue = new ArrayDeque<>(regions);
-            TaskManager.runTask(new Runnable() {
-                @Override public void run() {
-                    if (queue.isEmpty()) {
-                        TaskManager.runTaskAsync(() -> {
-                            writeSchematicData(schematic, palette, biomePalette, tileEntities, buffer, biomeBuffer);
-                            completableFuture.complete(new CompoundTag(schematic));
-                        });
-                        return;
-                    }
-                    final Runnable regionTask = this;
-                    CuboidRegion region = queue.poll();
+            TaskManager.runTask(() -> {
+                final BlockVector3 minimum = aabb.getMinimumPoint();
+                final BlockVector3 maximum = aabb.getMaximumPoint();
 
-                    final BlockVector3 minimum = region.getMinimumPoint();
-                    final BlockVector3 maximum = region.getMaximumPoint();
+                final int minX = minimum.getX();
+                final int minZ = minimum.getZ();
+                final int minY = minimum.getY();
 
-                    final int minX = minimum.getX();
-                    final int minZ = minimum.getZ();
-                    final int minY = minimum.getY();
+                final int maxX = maximum.getX();
+                final int maxZ = maximum.getZ();
+                final int maxY = maximum.getY();
 
-                    final int maxX = maximum.getX();
-                    final int maxZ = maximum.getZ();
-                    final int maxY = maximum.getY();
+                final Runnable yTask = new YieldRunnable() {
+                    int currentY = minY;
+                    int currentX = minX;
+                    int currentZ = minZ;
 
-                    final Runnable yTask = new YieldRunnable() {
-                        int currentY = minY;
-                        int currentX = minX;
-                        int currentZ = minZ;
-                        @Override public void run() {
-                            long start = System.currentTimeMillis();
-                            for (; currentY <= maxY; currentY++) {
-                                int relativeY = currentY - minY;
-                                for (; currentZ <= maxZ; currentZ++) {
-                                    int relativeZ = currentZ - minZ;
-                                    for (; currentX <= maxX; currentX++) {
-                                        // if too much time was spent here, we yield this task
-                                        // note that current(X/Y/Z) aren't incremented, so the same position
-                                        // as *right now* will be visited again
-                                        if (System.currentTimeMillis() - start > 40) {
-                                            this.yield();
-                                            return;
-                                        }
-                                        int relativeX = currentX - minX;
-                                        BlockVector3 point = BlockVector3.at(currentX, currentY, currentZ);
-                                        BaseBlock block = aabb.getWorld().getFullBlock(point);
-                                        if (block.getNbtData() != null) {
-                                            Map<String, Tag> values = new HashMap<>();
-                                            for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
-                                                values.put(entry.getKey(), entry.getValue());
-                                            }
-
-                                            // Positions are kept in NBT, we don't want that.
-                                            values.remove("x");
-                                            values.remove("y");
-                                            values.remove("z");
-
-                                            values.put("Id", new StringTag(block.getNbtId()));
-
-                                            // Remove 'id' if it exists. We want 'Id'.
-                                            // Do this after we get "getNbtId" cos otherwise "getNbtId" doesn't work.
-                                            // Dum.
-                                            values.remove("id");
-                                            values.put("Pos", new IntArrayTag(new int[] {relativeX, relativeY, relativeZ}));
-
-                                            tileEntities.add(new CompoundTag(values));
-                                        }
-                                        String blockKey = block.toImmutableState().getAsString();
+                    @Override
+                    public void run() {
+                        long start = System.currentTimeMillis();
+                        int lastBiome = 0;
+                        for (; currentY <= maxY; currentY++) {
+                            int relativeY = currentY - minY;
+                            for (; currentZ <= maxZ; currentZ++) {
+                                int relativeZ = currentZ - minZ;
+                                for (; currentX <= maxX; currentX++) {
+                                    // if too much time was spent here, we yield this task
+                                    // note that current(X/Y/Z) aren't incremented, so the same position
+                                    // as *right now* will be visited again
+                                    if (System.currentTimeMillis() - start > 40) {
+                                        this.yield();
+                                        return;
+                                    }
+                                    int relativeX = currentX - minX;
+                                    BlockVector3 point = BlockVector3.at(currentX, currentY, currentZ);
+                                    if (multipleRegions && !intersection.contains(point)) {
+                                        String blockKey = BlockTypes.AIR.getDefaultState().getAsString();
                                         int blockId;
                                         if (palette.containsKey(blockKey)) {
                                             blockId = palette.get(blockKey);
@@ -686,7 +681,6 @@ public abstract class SchematicHandler {
                                             blockId = palette.size();
                                             palette.put(blockKey, palette.size());
                                         }
-
                                         while ((blockId & -128) != 0) {
                                             buffer.write(blockId & 127 | 128);
                                             blockId >>>= 7;
@@ -696,31 +690,83 @@ public abstract class SchematicHandler {
                                         if (relativeY > 0) {
                                             continue;
                                         }
-                                        BlockVector2 pt = BlockVector2.at(currentX, currentZ);
-                                        BiomeType biome = aabb.getWorld().getBiome(pt);
-                                        String biomeStr = biome.getId();
-                                        int biomeId;
-                                        if (biomePalette.containsKey(biomeStr)) {
-                                            biomeId = biomePalette.get(biomeStr);
-                                        } else {
-                                            biomeId = biomePalette.size();
-                                            biomePalette.put(biomeStr, biomeId);
-                                        }
+
+                                        // Write the last biome if we're not getting it from the plot;
+                                        int biomeId = lastBiome;
                                         while ((biomeId & -128) != 0) {
                                             biomeBuffer.write(biomeId & 127 | 128);
                                             biomeId >>>= 7;
                                         }
                                         biomeBuffer.write(biomeId);
+                                        continue;
                                     }
-                                    currentX = minX; // reset manually as not using local variable
+                                    BaseBlock block = aabb.getWorld().getFullBlock(point);
+                                    if (block.getNbtData() != null) {
+                                        Map<String, Tag> values = new HashMap<>();
+                                        for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
+                                            values.put(entry.getKey(), entry.getValue());
+                                        }
+
+                                        // Positions are kept in NBT, we don't want that.
+                                        values.remove("x");
+                                        values.remove("y");
+                                        values.remove("z");
+
+                                        values.put("Id", new StringTag(block.getNbtId()));
+
+                                        // Remove 'id' if it exists. We want 'Id'.
+                                        // Do this after we get "getNbtId" cos otherwise "getNbtId" doesn't work.
+                                        // Dum.
+                                        values.remove("id");
+                                        values.put("Pos", new IntArrayTag(new int[] {relativeX, relativeY, relativeZ}));
+
+                                        tileEntities.add(new CompoundTag(values));
+                                    }
+                                    String blockKey = block.toImmutableState().getAsString();
+                                    int blockId;
+                                    if (palette.containsKey(blockKey)) {
+                                        blockId = palette.get(blockKey);
+                                    } else {
+                                        blockId = palette.size();
+                                        palette.put(blockKey, palette.size());
+                                    }
+
+                                    while ((blockId & -128) != 0) {
+                                        buffer.write(blockId & 127 | 128);
+                                        blockId >>>= 7;
+                                    }
+                                    buffer.write(blockId);
+
+                                    if (relativeY > 0) {
+                                        continue;
+                                    }
+                                    BlockVector2 pt = BlockVector2.at(currentX, currentZ);
+                                    BiomeType biome = aabb.getWorld().getBiome(pt);
+                                    String biomeStr = biome.getId();
+                                    int biomeId;
+                                    if (biomePalette.containsKey(biomeStr)) {
+                                        biomeId = lastBiome = biomePalette.get(biomeStr);
+                                    } else {
+                                        biomeId = lastBiome = biomePalette.size();
+                                        biomePalette.put(biomeStr, biomeId);
+                                    }
+                                    while ((biomeId & -128) != 0) {
+                                        biomeBuffer.write(biomeId & 127 | 128);
+                                        biomeId >>>= 7;
+                                    }
+                                    biomeBuffer.write(biomeId);
                                 }
-                                currentZ = minZ; // reset manually as not using local variable
+                                currentX = minX; // reset manually as not using local variable
                             }
-                            regionTask.run();
+                            currentZ = minZ; // reset manually as not using local variable
                         }
-                    };
-                    yTask.run();
-                }
+                        TaskManager.runTaskAsync(() -> {
+                            writeSchematicData(schematic, palette, biomePalette, tileEntities, buffer, biomeBuffer);
+                            completableFuture.complete(new CompoundTag(schematic));
+                        });
+                    }
+                };
+                yTask.run();
             });
         });
         return completableFuture;

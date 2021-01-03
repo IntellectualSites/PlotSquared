@@ -99,10 +99,6 @@ public class Download extends SubCommand {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
-        if (plot.isMerged()) {
-            player.sendMessage(TranslatableCaption.of("web.plot_merged"));
-            return false;
-        }
         if (plot.getRunning() > 0) {
             player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
