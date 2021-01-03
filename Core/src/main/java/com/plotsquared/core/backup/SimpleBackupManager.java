@@ -77,7 +77,7 @@ import java.util.concurrent.TimeUnit;
     }
 
     @Override @Nonnull public BackupProfile getProfile(@Nonnull final Plot plot) {
-        if (plot.hasOwner() && !plot.isMerged()) {
+        if (plot.hasOwner()) {
             try {
                 return backupProfileCache.get(new PlotCacheKey(plot), () -> this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot));
             } catch (ExecutionException e) {

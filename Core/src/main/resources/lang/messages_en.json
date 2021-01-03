@@ -165,6 +165,7 @@
   "plotareatype.plot_area_type_partial": "<gray>Vanilla with clusters of plots</gray>",
 
   "schematics.schematic_too_large": "<prefix><red>The plot is too large for this action!</red>",
+  "schematics.schematic_size_mismatch": "<prefix><red>The schematic's size does not match the plot's. If you want to paste anyway, enable schematics.paste-mismatches in settings.yml</red>",
   "schematics.schematic_invalid": "<prefix><red>That is not a valid schematic. Reason: </red><gray><reason>.</gray>",
   "schematics.schematic_invalid_named": "<prefix><red><schemname> is not a valid schematic. Reason: </red><gray><reason>.</gray>",
   "schematics.schematic_paste_merged": "<prefix><red>Schematics cannot be pasted onto merged plots. Please unmerge the plot before performing the paste.</red>",

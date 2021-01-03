@@ -403,6 +403,10 @@ public class Settings extends Config {
         @Comment(
             "Whether schematic based road generation should paste schematic on top of roads, or from Y=1")
         public static boolean PASTE_ROAD_ON_TOP = true;
+        @Comment({"If schematics that do not match a plot's size should be pasted anyway",
+            " - This will still only paste a schematic with a plot's bounds.",
+            " - If a schematic is too big, it will cut off, and if too small, will not full the plot."})
+        public static boolean PASTE_MISMATCHES = true;
     }
 
 
