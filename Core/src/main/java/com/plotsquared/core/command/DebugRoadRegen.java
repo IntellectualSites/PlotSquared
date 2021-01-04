@@ -95,14 +95,14 @@ public class DebugRoadRegen extends SubCommand {
             manager.createRoadEast(plot, queue);
             manager.createRoadSouth(plot, queue);
             manager.createRoadSouthEast(plot, queue);
-            player.sendMessage(
-                    TranslatableCaption.of("debugroadregen.regen_done"),
-                    Template.of("value", String.valueOf(plot.getId()))
-            );
-            player.sendMessage(
-                    TranslatableCaption.of("debugroadregen.regen_all"),
-                    Template.of("value", "/plot regenallroads")
-            );
+            queue.setCompleteTask(() -> {
+                ;
+                player.sendMessage(TranslatableCaption.of("debugroadregen.regen_done"),
+                    Template.of("value", String.valueOf(plot.getId())));
+                player.sendMessage(TranslatableCaption.of("debugroadregen.regen_all"),
+                    Template.of("value", "/plot regenallroads"));
+            });
+            queue.enqueue();
         }
         return true;
     }
