@@ -27,7 +27,6 @@ package com.plotsquared.core.queue.subscriber;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AtomicDouble;
-import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.plotsquared.core.configuration.Settings;
@@ -105,6 +104,7 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
                     }
                     if (cancelled.get()) {
                         task.cancel();
+                        return;
                     }
                     actor.sendMessage(caption, Template.of("progress", String.format("%.2f", this.progress.doubleValue() * 100)));
             }, interval), wait);
