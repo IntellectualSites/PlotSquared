@@ -39,6 +39,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
@@ -58,6 +59,8 @@ import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.flag.implementations.ServerPlotFlag;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
 import com.plotsquared.core.plot.schematic.Schematic;
+import com.plotsquared.core.plot.world.SinglePlot;
+import com.plotsquared.core.plot.world.SinglePlotManager;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
@@ -1285,10 +1288,6 @@ public class Plot {
         Location bot = corners[1];
         Location location = Location.at(this.getWorldName(), MathMan.average(bot.getX(), top.getX()), MathMan.average(bot.getY(), top.getY()),
             MathMan.average(bot.getZ(), top.getZ()));
-        if (!isLoaded()) {
-            result.accept(location);
-            return;
-        }
         this.worldUtil.getHighestBlock(getWorldName(), location.getX(), location.getZ(), y -> {
             int height = y;
             if (area.allowSigns()) {
@@ -1307,11 +1306,11 @@ public class Plot {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
+        if (!isLoaded()) {
+            return Location.at("", 0, this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld)this.getArea()).PLOT_HEIGHT + 1 : 4, 0);
+        }
         Location location = Location.at(this.getWorldName(), MathMan.average(bot.getX(), top.getX()), MathMan.average(bot.getY(), top.getY()),
             MathMan.average(bot.getZ(), top.getZ()));
-        if (!isLoaded()) {
-            return location;
-        }
         int y = this.worldUtil.getHighestBlockSynchronous(getWorldName(), location.getX(), location.getZ());
         if (area.allowSigns()) {
             y = Math.max(y, getManager().getSignLoc(this).getY());
@@ -1369,12 +1368,12 @@ public class Plot {
             return this.getDefaultHomeSynchronous(true);
         } else {
             Location bottom = this.getBottomAbs();
+            if (!isLoaded()) {
+                return Location.at("", 0, this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld)this.getArea()).PLOT_HEIGHT + 1 : 4, 0);
+            }
             Location location = Location
                 .at(bottom.getWorldName(), bottom.getX() + home.getX(), bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
                     home.getPitch());
-            if (!isLoaded()) {
-                return location;
-            }
             if (!this.worldUtil.getBlockSynchronous(location).getBlockType().getMaterial().isAir()) {
                 location = location.withY(
                     Math.max(1 + this.worldUtil.getHighestBlockSynchronous(this.getWorldName(), location.getX(), location.getZ()), bottom.getY()));
@@ -1393,14 +1392,14 @@ public class Plot {
         if (home == null || home.getX() == 0 && home.getZ() == 0) {
             this.getDefaultHome(result);
         } else {
+            if (!isLoaded()) {
+                result.accept(Location.at("", 0, this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld)this.getArea()).PLOT_HEIGHT + 1 : 4, 0));
+                return;
+            }
             Location bottom = this.getBottomAbs();
             Location location = Location
                 .at(bottom.getWorldName(), bottom.getX() + home.getX(), bottom.getY() + home.getY(), bottom.getZ() + home.getZ(), home.getYaw(),
                     home.getPitch());
-            if (!isLoaded()) {
-                result.accept(location);
-                return;
-            }
             this.worldUtil.getBlock(location, block -> {
                 if (!block.getBlockType().getMaterial().isAir()) {
                     this.worldUtil.getHighestBlock(this.getWorldName(), location.getX(), location.getZ(),
@@ -1473,6 +1472,10 @@ public class Plot {
 
     public void getDefaultHome(boolean member, Consumer<Location> result) {
         Plot plot = this.getBasePlot(false);
+        if (!isLoaded()) {
+            result.accept(Location.at("", 0, this.getArea() instanceof HybridPlotWorld ? ((HybridPlotWorld)this.getArea()).PLOT_HEIGHT + 1 : 4, 0));
+            return;
+        }
         PlotLoc loc = member ? area.getDefaultHome() : area.getNonmemberHome();
         if (loc != null) {
             int x;

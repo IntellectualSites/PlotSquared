@@ -293,7 +293,7 @@ public class PlotListener {
                                 .sendTitle(TranslatableCaption.of("titles.title_entered_plot"),
                                     TranslatableCaption.of("titles.title_entered_plot_sub"),
                                     Templates.of("x", lastPlot.getId().getX()), Templates.of("z", lastPlot.getId().getY()),
-                                    Templates.of("world", Objects.requireNonNull(plot.getWorldName(), "Unknown")),
+                                    Templates.of("world", Objects.requireNonNull(plot.getArea().getId(), "Unknown")),
                                     Templates.of("greeting", greeting), Templates.of("alias", plot.getAlias()),
                                     Templates.of("owner", user));
                             UUID uuid = plot.getOwner();

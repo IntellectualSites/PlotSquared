@@ -31,6 +31,7 @@ import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.assistedinject.FactoryProvider;
 import com.plotsquared.bukkit.BukkitPlatform;
+import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.queue.BukkitChunkCoordinator;
 import com.plotsquared.bukkit.queue.BukkitQueueCoordinator;
@@ -104,6 +105,11 @@ public class BukkitModule extends AbstractModule {
         bind(SchematicHandler.class).to(BukkitSchematicHandler.class);
         if (Settings.Enabled_Components.WORLDS) {
             bind(PlotAreaManager.class).to(SinglePlotAreaManager.class);
+            try {
+                bind(SingleWorldListener.class).toInstance(new SingleWorldListener());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             bind(PlotAreaManager.class).to(DefaultPlotAreaManager.class);
         }

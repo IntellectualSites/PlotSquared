@@ -87,7 +87,7 @@ public class SinglePlotArea extends GridPlotWorld {
     }
 
     public void loadWorld(final PlotId id) {
-        String worldName = id.getX() + "." + id.getY();
+        String worldName = id.toSeparatedString("_");
         if (PlotSquared.platform().worldUtil().isWorld(worldName)) {
             return;
         }
@@ -106,12 +106,17 @@ public class SinglePlotArea extends GridPlotWorld {
             File oldFile = new File(container, id.toCommaSeparatedString());
             if (oldFile.exists()) {
                 oldFile.renameTo(destination);
+            } else {
+                oldFile = new File(container, id.toSeparatedString("."));
+                if (oldFile.exists()) {
+                    oldFile.renameTo(destination);
+                }
             }
         }
         // Duplicate 0;0
         if (builder.plotAreaType() != PlotAreaType.NORMAL) {
             if (!destination.exists()) {
-                File src = new File(container, "0.0");
+                File src = new File(container, "0_0");
                 if (src.exists()) {
                     if (!destination.exists()) {
                         destination.mkdirs();
@@ -140,7 +145,7 @@ public class SinglePlotArea extends GridPlotWorld {
 
         try {
             TaskManager.getPlatformImplementation().sync(() -> {
-                final String name = id.getX() + "." + id.getY();
+                final String name = id.toSeparatedString("_");
                 if (!PlotSquared.platform().worldUtil().isWorld(name)) {
                     PlotSquared.platform().setupUtils().setupWorld(builder);
                 }

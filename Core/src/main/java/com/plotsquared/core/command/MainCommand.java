@@ -37,6 +37,8 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.world.SinglePlot;
+import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
@@ -250,7 +252,12 @@ public class MainCommand extends Command {
                 .equals(area) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN)
                 || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_AREA_SUDO))
                 && !newPlot.isDenied(player.getUUID())) {
-                Location newLoc = newPlot.getCenterSynchronous();
+                final Location newLoc;
+                if (newPlot.getArea() instanceof SinglePlotArea) {
+                    newLoc = newPlot.isLoaded() ? newPlot.getCenterSynchronous() : Location.at("", 0, 0, 0);
+                } else {
+                    newLoc = newPlot.getCenterSynchronous();
+                }
                 if (player.canTeleport(newLoc)) {
                     // Save meta
                     try (final MetaDataAccess<Location> locationMetaDataAccess
