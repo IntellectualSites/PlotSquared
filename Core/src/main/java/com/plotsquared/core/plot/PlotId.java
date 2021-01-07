@@ -87,7 +87,7 @@ public final class PlotId {
      * @return Plot ID, or {@code null} if none could be parsed
      */
     @Nullable public static PlotId fromStringOrNull(@Nonnull final String string) {
-        final String[] parts = string.split("[;,.]");
+        final String[] parts = string.split("[;_,.]");
         if (parts.length < 2) {
             return null;
         }
@@ -219,6 +219,17 @@ public final class PlotId {
      */
     @Override @Nonnull public String toString() {
         return this.getX() + ";" + this.getY();
+    }
+
+    /**
+     * Get a String representation of the plot ID where the
+     * components are separated by a specified string
+     *
+     * @param separator Separator
+     * @return {@code x + separator + y}
+     */
+    @Nonnull public String toSeparatedString(String separator) {
+        return this.getX() + separator + this.getY();
     }
 
     /**

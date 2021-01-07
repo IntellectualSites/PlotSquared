@@ -85,7 +85,7 @@ import javax.inject.Inject;
                     }
                 case 1:
                     if ((c <= '/') || (c >= ':')) {
-                        if (c == '.') {
+                        if (c == '_') {
                             mode = 2;
                             continue;
                         }

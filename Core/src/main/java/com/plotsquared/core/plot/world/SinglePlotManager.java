@@ -57,11 +57,11 @@ public class SinglePlotManager extends PlotManager {
     }
 
     @Override public Location getPlotBottomLocAbs(@Nonnull final PlotId plotId) {
-        return Location.at(plotId.toCommaSeparatedString(), -30000000, 0, -30000000);
+        return Location.at(plotId.toSeparatedString("_"), -30000000, 0, -30000000);
     }
 
     @Override public Location getPlotTopLocAbs(@Nonnull final PlotId plotId) {
-        return Location.at(plotId.toCommaSeparatedString(), 30000000, 0, 30000000);
+        return Location.at(plotId.toSeparatedString("_"), 30000000, 0, 30000000);
     }
 
     @Override public boolean clearPlot(@Nonnull Plot plot, final Runnable whenDone, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {

@@ -32,6 +32,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,7 +64,7 @@ import java.util.List;
     }
 
     protected void setGenerator(@Nullable final String worldName, @Nullable final String generator) {
-        if (generator == null || worldName != null && worldName.contains(".")) {
+        if (generator == null) {
             return;
         }
         File file = new File("bukkit.yml").getAbsoluteFile();
