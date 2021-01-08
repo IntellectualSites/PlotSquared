@@ -40,9 +40,10 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.util.SetupUtils;
-import io.papermc.lib.PaperLib;
+import com.plotsquared.core.util.task.TaskManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
@@ -97,24 +98,26 @@ import java.util.Objects;
     }
 
     @Override public void unload(String worldName, boolean save) {
-        World world = Bukkit.getWorld(worldName);
-        if (world == null) {
-            return;
-        }
-        World dw = Bukkit.getWorlds().get(0);
-        for (Player player : world.getPlayers()) {
-            PaperLib.teleportAsync(player, dw.getSpawnLocation());
-        }
-        if (save) {
-            for (Chunk chunk : world.getLoadedChunks()) {
-                chunk.unload(true);
+        TaskManager.runTask(() -> {
+            World world = Bukkit.getWorld(worldName);
+            if (world == null) {
+                return;
             }
-        } else {
-            for (Chunk chunk : world.getLoadedChunks()) {
-                chunk.unload(false);
+            Location location = Bukkit.getWorlds().get(0).getSpawnLocation();
+            for (Player player : world.getPlayers()) {
+                player.teleport(location);
             }
-        }
-        Bukkit.unloadWorld(world, false);
+            if (save) {
+                for (Chunk chunk : world.getLoadedChunks()) {
+                    chunk.unload(true);
+                }
+            } else {
+                for (Chunk chunk : world.getLoadedChunks()) {
+                    chunk.unload(false);
+                }
+            }
+            Bukkit.unloadWorld(world, false);
+        });
     }
 
     @Override public String setupWorld(PlotAreaBuilder builder) {
