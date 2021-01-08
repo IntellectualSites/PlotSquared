@@ -333,7 +333,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         // Economy
         if (Settings.Enabled_Components.ECONOMY) {
-            TaskManager.runTask(() -> {
+            TaskManager.runTaskAsync(() -> {
                 this.permissionHandler().initialize();
                 final EconHandler econHandler = injector().getInstance(EconHandler.class);
                 econHandler.init();

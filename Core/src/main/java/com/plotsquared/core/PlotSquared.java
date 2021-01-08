@@ -387,7 +387,7 @@ public class PlotSquared {
         if (!file.exists()) {
             return;
         }
-        TaskManager.runTask(() -> {
+        TaskManager.runTaskAsync(() -> {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 List<Object> list = (List<Object>) ois.readObject();
                 ArrayList<int[]> regionInts = (ArrayList<int[]>) list.get(0);
