@@ -48,6 +48,7 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
@@ -660,7 +661,11 @@ public class Area extends SubCommand {
                     return false;
                 }
                 Location center;
-                if (area.getType() != PlotAreaType.PARTIAL) {
+                if (area instanceof SinglePlotArea) {
+                    ((SinglePlotArea) area).loadWorld(PlotId.of(0, 0));
+                    center = this.worldUtil.getSpawn(PlotId.of(0, 0).toSeparatedString("_"));
+                    player.teleport(center, TeleportCause.COMMAND);
+                } else if (area.getType() != PlotAreaType.PARTIAL) {
                     center = this.worldUtil.getSpawn(area.getWorldName());
                     player.teleport(center, TeleportCause.COMMAND);
                 } else {
