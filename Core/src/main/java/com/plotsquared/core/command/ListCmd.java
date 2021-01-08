@@ -204,7 +204,7 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 if (!Permissions.hasPermission(player, "plots.list.world." + world)) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Templates.of("node", "plots.list.world" + world));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Templates.of("node", "plots.list.world." + world));
                     return false;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().inWorld(world));
@@ -226,7 +226,7 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 if (!Permissions.hasPermission(player, "plots.list.world." + world)) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Templates.of("node", "plots.list.world" + world));
+                    player.sendMessage(TranslatableCaption.of("permission.no_permission"), Templates.of("node", "plots.list.world." + world));
                     return false;
                 }
                 if (area == null) {

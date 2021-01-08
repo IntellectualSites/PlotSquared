@@ -1605,7 +1605,7 @@ public class Plot {
             updateWorldBorder();
         }
         this.getPlotModificationManager().setSign(player.getName());
-        player.sendMessage(TranslatableCaption.of("working.claimed"));
+        player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", String.valueOf(this.getId())));
         if (teleport && Settings.Teleport.ON_CLAIM) {
             teleportPlayer(player, TeleportCause.COMMAND, result -> {
             });
