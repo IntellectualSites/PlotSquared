@@ -92,7 +92,7 @@ import java.util.concurrent.TimeUnit;
     }
 
     @Override public void task(@Nonnull final Runnable runnable) {
-        new BukkitPlotSquaredTask(runnable).runTaskAsynchronously(this.bukkitMain);
+        new BukkitPlotSquaredTask(runnable).runTask(this.bukkitMain);
     }
 
     @Override public void taskLater(@Nonnull final Runnable runnable,

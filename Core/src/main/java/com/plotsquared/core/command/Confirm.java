@@ -47,7 +47,7 @@ public class Confirm extends SubCommand {
             player.sendMessage(TranslatableCaption.of("confirm.expired_confirm"));
             return false;
         }
-        TaskManager.runTask(command.command);
+        TaskManager.runTaskAsync(command.command);
         return true;
     }
 }

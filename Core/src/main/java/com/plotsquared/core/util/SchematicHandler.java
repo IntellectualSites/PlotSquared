@@ -210,7 +210,7 @@ public abstract class SchematicHandler {
         }
         this.exportAll = true;
         final ArrayList<Plot> plots = new ArrayList<>(collection);
-        TaskManager.runTask(new Runnable() {
+        TaskManager.runTaskAsync(new Runnable() {
             @Override public void run() {
                 if (plots.isEmpty()) {
                     SchematicHandler.this.exportAll = false;
@@ -637,7 +637,7 @@ public abstract class SchematicHandler {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream(width * height * length);
             ByteArrayOutputStream biomeBuffer = new ByteArrayOutputStream(width * length);
             // Queue
-            TaskManager.runTask(() -> {
+            TaskManager.runTaskAsync(() -> {
                 final BlockVector3 minimum = aabb.getMinimumPoint();
                 final BlockVector3 maximum = aabb.getMaximumPoint();
 
