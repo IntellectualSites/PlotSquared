@@ -121,7 +121,8 @@ public class Delete extends SubCommand {
                 }
                 player.sendMessage(
                         TranslatableCaption.of("working.deleting_done"),
-                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start))
+                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
+                        Template.of("plot", String.valueOf(plot.getId()))
                 );
             });
             if (result) {

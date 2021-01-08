@@ -23,9 +23,9 @@
 
   "area.set_pos2": "You will now set pos2: <command>. Note: The chosen plot size may result in the created area not exactly matching your second position.",
 
-  "web.generating_link": "<prefix><gold>Processing plot...</gold>",
+  "web.generating_link": "<prefix><gold>Processing plot <plot>...</gold>",
   "web.plot_merged": "<prefix><red>This plot is merged and therefore cannot be downloaded</red>",
-  "web.generating_link_failed": "<prefix><red>Failed to generate download link!</red>",
+  "web.generating_link_failed": "<prefix><red>Failed to generate download link for plot <plot>!</red>",
   "web.generation_link_success": "<prefix><gold>Download: <gray><click:open_url:<download>><download></click></gray> \n Deletion: <gray><click:open_url:<delete>><delete></click></gray>\n<red>Attention: Opening the deletion link will delete the file immediately.</red></gold>",
   "web.save_failed": "<prefix><red>Failed to save.</red>",
   "web.load_null": "<prefix><gray>Please use </gray><dark_aqua><command> </dark_aqua><gray>to get a list of schematics.</gray>",
@@ -416,13 +416,13 @@
   "info.area_list_item": "<click:run_command:<command_tp>><hover:show_text:\"<command_tp>\"><dark_gray>[</dark_gray><gold><number></gold><dark_gray>]</dark_gray></hover></click> <click:run_command:<command_info>><hover:show_text:\"<hover_info>\"><gold><area_name></gold></hover></click><gray> - </gray><gray><area_type>:<area_terrain></gray>",
 
   "working.generating_component": "<prefix><gold>Started generating component from your settings.</gold>",
-  "working.clearing_done": "<prefix><dark_aqua>Clear completed! Took <amount>ms.</dark_aqua>",
-  "working.deleting_done": "<prefix><dark_aqua>Delete completed! Took <amount>ms.</dark_aqua>",
+  "working.clearing_done": "<prefix><dark_aqua>Plot <plot> has been cleared! Took <amount>ms.</dark_aqua>",
+  "working.deleting_done": "<prefix><dark_aqua>Plot <plot> has been deleted! Took <amount>ms.</dark_aqua>",
   "working.plot_not_claimed": "<prefix><gray>Plot not claimed.</gray>",
   "working.plot_is_claimed": "<prefix><gray>This plot is already claimed.</gray>",
-  "working.claimed": "<prefix><dark_aqua>You successfully claimed the plot.</dark_aqua>",
+  "working.claimed": "<prefix><dark_aqua>You successfully claimed the plot <plot>.</dark_aqua>",
   "working.progress": "<prefix><gray>Current progress: </gray><gold><progress></gold><gray>%</gray>",
-  "working.component_complete": "<prefix><gold>Component generation has finished.</gold>",
+  "working.component_complete": "<prefix><gold>Component generation has finished for plot <plot>.</gold>",
 
   "list.comment_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> comments</gold>",
   "list.comment_list_comment": "<dark_gray>[</dark_gray><gray>#<number></gray><dark_gray>[</dark_gray><gray><world>;<plot_id></gray><dark_gray>][</dark_gray><gold><commenter></gold><dark_gray>]</dark_gray><comment>\n",
@@ -499,7 +499,7 @@
   "backups.backup_list_header": "<prefix><gold>Available backups for plot <gray><plot></gray></gold>",
   "backups.backup_list_entry": "<prefix><dark_gray>- </dark_gray><gold>#<number> </gold><gray><value></gray>",
   "backups.backup_list_failed": "<prefix><red>Backup listing failed: </red><gray><reason></gray>",
-  "backups.backup_automatic_started": "<prefix><gold>Backing up the plot...</gold>",
+  "backups.backup_automatic_started": "<prefix><gold>Backing up the plot <plot>...</gold>",
   "backups.backup_automatic_finished": "<prefix><gold>The automatic backup process finished successfully!</gold>",
   "backups.backup_automatic_failure": "<prefix><red>The automatic backup process failed. Your pending action has been canceled. Reason: </red><gray><reason></gray>",
 
