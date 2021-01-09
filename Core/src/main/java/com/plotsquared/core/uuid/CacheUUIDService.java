@@ -58,21 +58,21 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
     }
 
     @Override
-    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<@NonNull UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
         mappings.addAll(this.uuidCache.getAllPresent(uuids).values());
         return mappings;
     }
 
     @Override
-    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<@NonNull String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         mappings.addAll(this.usernameCache.getAllPresent(usernames).values());
         return mappings;
     }
 
     @Override
-    public void accept(final List<UUIDMapping> uuidMappings) {
+    public void accept(final @NonNull List<@NonNull UUIDMapping> uuidMappings) {
         for (final UUIDMapping mapping : uuidMappings) {
             this.uuidCache.put(mapping.getUuid(), mapping);
             this.usernameCache.put(mapping.getUsername(), mapping);
@@ -80,7 +80,7 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
     }
 
     @Override
-    public @NonNull Collection<UUIDMapping> getImmediately() {
+    public @NonNull Collection<@NonNull UUIDMapping> getImmediately() {
         return this.usernameCache.asMap().values();
     }
 

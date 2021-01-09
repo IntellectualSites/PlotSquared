@@ -36,7 +36,10 @@ public class ServiceError extends RuntimeException {
         super(message);
     }
 
-    public ServiceError(final @NonNull String message, final @NonNull Throwable cause) {
+    public ServiceError(
+            final @NonNull String message,
+            final @NonNull Throwable cause
+    ) {
         super(message, cause);
     }
 

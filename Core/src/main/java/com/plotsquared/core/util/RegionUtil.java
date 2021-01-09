@@ -38,7 +38,7 @@ import java.util.Iterator;
 
 public class RegionUtil {
 
-    public @NonNull static Location[] getCorners(
+    public static @NonNull Location[] getCorners(
             final @NonNull String world,
             final @NonNull CuboidRegion region
     ) {
@@ -47,7 +47,7 @@ public class RegionUtil {
         return new Location[]{Location.at(world, min), Location.at(world, max)};
     }
 
-    public @NonNull static Location[] getCorners(String world, Collection<CuboidRegion> regions) {
+    public static @NonNull Location[] getCorners(String world, Collection<CuboidRegion> regions) {
         CuboidRegion aabb = getAxisAlignedBoundingBox(regions);
         return getCorners(world, aabb);
     }
@@ -58,7 +58,7 @@ public class RegionUtil {
      * @param regions The regions the bounding box should contain.
      * @return a CuboidRegion that contains all given regions.
      */
-    public @NonNull static CuboidRegion getAxisAlignedBoundingBox(Iterable<CuboidRegion> regions) {
+    public static @NonNull CuboidRegion getAxisAlignedBoundingBox(Iterable<CuboidRegion> regions) {
         Iterator<CuboidRegion> iterator = regions.iterator();
         if (!iterator.hasNext()) {
             throw new IllegalArgumentException("No regions given");
@@ -102,7 +102,7 @@ public class RegionUtil {
                 .getY() && y <= max.getY();
     }
 
-    public @NonNull static Rectangle2D toRectangle(final @NonNull CuboidRegion region) {
+    public static @NonNull Rectangle2D toRectangle(final @NonNull CuboidRegion region) {
         final BlockVector2 min = region.getMinimumPoint().toBlockVector2();
         final BlockVector2 max = region.getMaximumPoint().toBlockVector2();
         return new Rectangle2D.Double(min.getX(), min.getZ(), max.getX(), max.getZ());

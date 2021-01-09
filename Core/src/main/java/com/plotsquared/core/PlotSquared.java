@@ -1583,10 +1583,25 @@ public class PlotSquared {
         return this.plotListener;
     }
 
+    /**
+     * Different ways of sorting {@link Plot plots}
+     */
     public enum SortType {
+        /**
+         * Sort plots by their creation, using their index in the database
+         */
         CREATION_DATE,
+        /**
+         * Sort plots by their creation timestamp
+         */
         CREATION_DATE_TIMESTAMP,
+        /**
+         * Sort plots by when they were last modified
+         */
         LAST_MODIFIED,
+        /**
+         * Sort plots based on their distance from the origin of the world
+         */
         DISTANCE_FROM_ORIGIN
     }
 

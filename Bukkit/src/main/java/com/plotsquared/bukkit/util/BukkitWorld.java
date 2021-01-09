@@ -49,7 +49,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
      * @param worldName World name
      * @return World instance
      */
-    public @NonNull static BukkitWorld of(final @NonNull String worldName) {
+    public static @NonNull BukkitWorld of(final @NonNull String worldName) {
         final org.bukkit.World bukkitWorld = Bukkit.getWorld(worldName);
         if (bukkitWorld == null) {
             throw new IllegalArgumentException(String.format("There is no world with the name '%s'", worldName));
@@ -63,7 +63,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
      * @param world Bukkit world
      * @return World instance
      */
-    public @NonNull static BukkitWorld of(final org.bukkit.World world) {
+    public static @NonNull BukkitWorld of(final org.bukkit.World world) {
         BukkitWorld bukkitWorld = worldMap.get(world.getName());
         if (bukkitWorld != null && bukkitWorld.getPlatformWorld().equals(world)) {
             return bukkitWorld;

@@ -58,7 +58,7 @@ public final class FileUtils {
         }
     }
 
-    public @NonNull static File getFile(final @NonNull File base, final @NonNull String path) {
+    public static @NonNull File getFile(final @NonNull File base, final @NonNull String path) {
         if (Paths.get(path).isAbsolute()) {
             return new File(path);
         }

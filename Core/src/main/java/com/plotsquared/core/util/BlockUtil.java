@@ -64,7 +64,7 @@ public final class BlockUtil {
      * @param id Legacy ID
      * @return Block state, or {@code null}
      */
-    public @Nullable static BlockState get(final int id) {
+    public static @Nullable BlockState get(final int id) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id);
     }
 
@@ -75,7 +75,7 @@ public final class BlockUtil {
      * @param data Legacy data
      * @return Block state, or {@code null}
      */
-    public @Nullable static BlockState get(final int id, final int data) {
+    public static @Nullable BlockState get(final int id, final int data) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id, data);
     }
 
@@ -83,20 +83,21 @@ public final class BlockUtil {
      * Get a {@link BlockState} from its ID
      *
      * @param id String or integer ID
-     * @return Parsed block state, or {@code null} if none
+     * @return Parsed block state, or {@code null} if none
      *         could be parsed
      */
-    public @Nullable static BlockState get(@NonNull String id) {
+    public static @Nullable BlockState get(final @NonNull String id) {
         if (id.length() == 1 && id.charAt(0) == '*') {
             return FuzzyBlockState.builder().type(BlockTypes.AIR).build();
         }
-        id = id.toLowerCase();
-        BlockType type = BlockTypes.get(id);
+        String mutableId = id;
+        mutableId  = id.toLowerCase();
+        BlockType type = BlockTypes.get(mutableId );
         if (type != null) {
             return type.getDefaultState();
         }
-        if (Character.isDigit(id.charAt(0))) {
-            String[] split = id.split(":");
+        if (Character.isDigit(mutableId .charAt(0))) {
+            String[] split = mutableId .split(":");
             if (MathMan.isInteger(split[0])) {
                 if (split.length == 2) {
                     if (MathMan.isInteger(split[1])) {
@@ -108,7 +109,7 @@ public final class BlockUtil {
             }
         }
         try {
-            BaseBlock block = PARSER.parseFromInput(id, PARSER_CONTEXT);
+            BaseBlock block = PARSER.parseFromInput(mutableId, PARSER_CONTEXT);
             return block.toImmutableState();
         } catch (InputParseException e) {
             return null;
@@ -121,7 +122,7 @@ public final class BlockUtil {
      * @param commaDelimited List of block states
      * @return Parsed block states
      */
-    public @NonNull static BlockState[] parse(final @NonNull String commaDelimited) {
+    public static @NonNull BlockState[] parse(final @NonNull String commaDelimited) {
         final String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
         final BlockState[] result = new BlockState[split.length];
         for (int i = 0; i < split.length; i++) {
@@ -137,7 +138,7 @@ public final class BlockUtil {
      * @return Deserialized block state, or {@code null} if the map is
      *         not a properly serialized block state
      */
-    public @Nullable static BlockState deserialize(final @NonNull Map<String, Object> map) {
+    public static @Nullable BlockState deserialize(final @NonNull Map<String, Object> map) {
         if (map.containsKey("material")) {
             final Object object = map.get("material");
             return get(object.toString());

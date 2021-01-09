@@ -98,7 +98,7 @@ public class TitlesFlag extends PlotFlag<TitlesFlag.TitlesFlagValue, TitlesFlag>
         TRUE,
         FALSE;
 
-        public @Nullable static TitlesFlagValue fromString(final String value) {
+        public static @Nullable TitlesFlagValue fromString(final String value) {
             if (value.equalsIgnoreCase("true")) {
                 return TRUE;
             } else if (value.equalsIgnoreCase("false")) {

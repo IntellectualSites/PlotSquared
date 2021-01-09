@@ -84,7 +84,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param pitch        pitch
      * @return New location
      */
-    public @NonNull static Location at(
+    public static @NonNull Location at(
             final @NonNull String world,
             final @NonNull BlockVector3 blockVector3, final float yaw, final float pitch
     ) {
@@ -98,7 +98,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param blockVector3 (x,y,z) vector
      * @return New location
      */
-    public @NonNull static Location at(
+    public static @NonNull Location at(
             final @NonNull String world,
             final @NonNull BlockVector3 blockVector3
     ) {
@@ -116,7 +116,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param pitch Pitch
      * @return New location
      */
-    public @NonNull static Location at(
+    public static @NonNull Location at(
             final @NonNull String world, final int x, final int y,
             final int z, final float yaw, final float pitch
     ) {
@@ -132,7 +132,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param z     Z coordinate
      * @return New location
      */
-    public @NonNull static Location at(
+    public static @NonNull Location at(
             final @NonNull String world, final int x, final int y,
             final int z
     ) {
@@ -148,7 +148,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param pitch        pitch
      * @return New location
      */
-    public @NonNull static Location at(
+    public static @NonNull Location at(
             final @NonNull World<?> world,
             final @NonNull BlockVector3 blockVector3, final float yaw, final float pitch
     ) {
@@ -162,7 +162,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param blockVector3 (x,y,z) vector
      * @return New location
      */
-    public @NonNull static Location at(
+    public static @NonNull Location at(
             final @NonNull World<?> world,
             final @NonNull BlockVector3 blockVector3
     ) {
@@ -180,7 +180,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param pitch Pitch
      * @return New location
      */
-    public @NonNull static Location at(
+    public static @NonNull Location at(
             final @NonNull World<?> world, final int x, final int y,
             final int z, final float yaw, final float pitch
     ) {
@@ -196,7 +196,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param z     Z coordinate
      * @return New location
      */
-    public @NonNull static Location at(
+    public static @NonNull Location at(
             final @NonNull World<?> world, final int x, final int y,
             final int z
     ) {

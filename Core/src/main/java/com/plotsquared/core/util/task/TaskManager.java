@@ -92,7 +92,7 @@ public abstract class TaskManager {
      * @param id Task ID
      * @return Task if stored, or {@code null}
      */
-    public @Nullable static PlotSquaredTask removeTask(final int id) {
+    public static @Nullable PlotSquaredTask removeTask(final int id) {
         return tasks.remove(id);
     }
 
@@ -104,7 +104,7 @@ public abstract class TaskManager {
      * @param taskTime Task interval
      * @return Created task object, can be used to cancel the task
      */
-    public @NonNull static PlotSquaredTask runTaskRepeat(
+    public static @NonNull PlotSquaredTask runTaskRepeat(
             final @Nullable Runnable runnable,
             final @NonNull TaskTime taskTime
     ) {
@@ -188,7 +188,7 @@ public abstract class TaskManager {
         }
     }
 
-    public @Nullable static TaskManager getPlatformImplementation() {
+    public static @Nullable TaskManager getPlatformImplementation() {
         return platformImplementation;
     }
 

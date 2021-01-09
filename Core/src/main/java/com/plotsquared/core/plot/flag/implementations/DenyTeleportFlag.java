@@ -131,7 +131,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         NONTRUSTED,
         NONOWNERS;
 
-        public @Nullable static DeniedGroup fromString(final @NonNull String string) {
+        public static @Nullable DeniedGroup fromString(final @NonNull String string) {
             for (final DeniedGroup group : values()) {
                 if (group.name().equalsIgnoreCase(string)) {
                     return group;

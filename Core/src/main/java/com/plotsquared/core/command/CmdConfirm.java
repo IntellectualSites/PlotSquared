@@ -36,7 +36,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class CmdConfirm {
 
-    public @Nullable static CmdInstance getPending(PlotPlayer<?> player) {
+    public static @Nullable CmdInstance getPending(PlotPlayer<?> player) {
         try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
                 PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
             return metaDataAccess.get().orElse(null);

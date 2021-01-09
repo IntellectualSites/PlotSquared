@@ -53,7 +53,7 @@ public final class PlotLoc {
         this.z = z;
     }
 
-    public @Nullable static PlotLoc fromString(final String input) {
+    public static @Nullable PlotLoc fromString(final String input) {
         if (input == null || "side".equalsIgnoreCase(input)) {
             return null;
         } else if (StringMan.isEqualIgnoreCaseToAny(input, "center", "middle")) {

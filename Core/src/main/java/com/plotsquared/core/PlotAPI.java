@@ -154,8 +154,6 @@ public class PlotAPI {
             final @NonNull String message,
             final @NonNull Template @NonNull... replacements) {
         ConsolePlayer.getConsole().sendMessage(StaticCaption.of(message), replacements);
-        // TODO: Re-implement
-        // PlotSquared.log(message);
     }
 
     /**

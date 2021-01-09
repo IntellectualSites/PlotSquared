@@ -135,8 +135,7 @@ public interface PlotAreaManager {
      * @param region Optional region
      * @return All areas in the world (and region)
      */
-    @NonNull
-    default Set<PlotArea> getPlotAreasSet(
+    default @NonNull Set<@NonNull PlotArea> getPlotAreasSet(
             final @NonNull String world,
             final @Nullable CuboidRegion region
     ) {
@@ -153,8 +152,7 @@ public interface PlotAreaManager {
      * @param world World name
      * @return Modifiable set containing all plot areas in the specified world
      */
-    @NonNull
-    default Set<PlotArea> getPlotAreasSet(final @NonNull String world) {
+    default @NonNull Set<@NonNull PlotArea> getPlotAreasSet(final @NonNull String world) {
         final Set<PlotArea> set = new HashSet<>();
         Collections.addAll(set, this.getPlotAreas(world, null));
         return set;
@@ -167,8 +165,7 @@ public interface PlotAreaManager {
      * @param search Search string
      * @return An area that matches the search string, or {@code null}
      */
-    @Nullable
-    default PlotArea getPlotAreaByString(final @NonNull String search) {
+    default @Nullable PlotArea getPlotAreaByString(final @NonNull String search) {
         String[] split = search.split("[;,]");
         PlotArea[] areas = this.getPlotAreas(split[0], null);
         if (areas == null) {

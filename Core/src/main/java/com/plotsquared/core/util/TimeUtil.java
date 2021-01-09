@@ -40,7 +40,7 @@ public final class TimeUtil {
      * @param time Time to format
      * @return Formatted string
      */
-    public @NonNull static String secToTime(@NonNegative long time) {
+    public static @NonNull String secToTime(@NonNegative long time) {
         StringBuilder toReturn = new StringBuilder();
         if (time >= 33868800) {
             int years = (int) (time / 33868800);

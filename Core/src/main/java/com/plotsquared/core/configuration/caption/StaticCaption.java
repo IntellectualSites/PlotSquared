@@ -42,7 +42,7 @@ public final class StaticCaption implements Caption {
      * @param text Text
      * @return Created caption
      */
-    public @NonNull static StaticCaption of(final @NonNull String text) {
+    public static @NonNull StaticCaption of(final @NonNull String text) {
         return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
     }
 

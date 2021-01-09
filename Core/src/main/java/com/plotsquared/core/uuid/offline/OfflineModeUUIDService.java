@@ -51,12 +51,12 @@ public class OfflineModeUUIDService implements UUIDService {
     }
 
     @Override
-    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
+    public @NonNull List<@NonNull UUIDMapping> getNames(final @NonNull List<@NonNull UUID> uuids) {
         return Collections.emptyList();
     }
 
     @Override
-    public @NonNull List<UUIDMapping> getUUIDs(@NonNull List<String> usernames) {
+    public @NonNull List<@NonNull UUIDMapping> getUUIDs(@NonNull List<@NonNull String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
             mappings.add(new UUIDMapping(getFromUsername(username), username));

@@ -54,7 +54,7 @@ public final class Templates {
      * @param replacements Replacements
      * @return Generated template
      */
-    public @NonNull static Template of(
+    public static @NonNull Template of(
             final @NonNull LocaleHolder localeHolder,
             final @NonNull String key, final @NonNull Caption caption,
             final @NonNull Template... replacements
@@ -69,7 +69,7 @@ public final class Templates {
      * @param uuid Player UUID
      * @return Generated template
      */
-    public @NonNull static Template of(final @NonNull String key, final @NonNull UUID uuid) {
+    public static @NonNull Template of(final @NonNull String key, final @NonNull UUID uuid) {
         final String username = PlayerManager.getName(uuid);
         return Template.of(key, username);
     }
@@ -81,7 +81,7 @@ public final class Templates {
      * @param value Template value
      * @return Generated template
      */
-    public @NonNull static Template of(final @NonNull String key, final @NonNull String value) {
+    public static @NonNull Template of(final @NonNull String key, final @NonNull String value) {
         return Template.of(key, value);
     }
 
@@ -92,7 +92,7 @@ public final class Templates {
      * @param area Plot area
      * @return Generated template
      */
-    public @NonNull static Template of(final @NonNull String key, final @NonNull PlotArea area) {
+    public static @NonNull Template of(final @NonNull String key, final @NonNull PlotArea area) {
         return Template.of(key, area.toString());
     }
 
@@ -103,7 +103,7 @@ public final class Templates {
      * @param number Number
      * @return Generated template
      */
-    public @NonNull static Template of(final @NonNull String key, final @NonNull Number number) {
+    public static @NonNull Template of(final @NonNull String key, final @NonNull Number number) {
         return Template.of(key, number.toString());
     }
 

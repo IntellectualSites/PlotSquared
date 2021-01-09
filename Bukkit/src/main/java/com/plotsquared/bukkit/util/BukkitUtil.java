@@ -125,7 +125,7 @@ public class BukkitUtil extends WorldUtil {
      * @param player Bukkit player
      * @return PlotSquared player
      */
-    public @NonNull static BukkitPlayer adapt(final @NonNull Player player) {
+    public static @NonNull BukkitPlayer adapt(final @NonNull Player player) {
         final PlayerManager<?, ?> playerManager = PlotSquared.platform().playerManager();
         return ((BukkitPlayerManager) playerManager).getPlayer(player);
     }
@@ -137,7 +137,7 @@ public class BukkitUtil extends WorldUtil {
      * @param location Bukkit location
      * @return PlotSquared location
      */
-    public @NonNull static Location adapt(final org.bukkit.@NonNull Location location) {
+    public static @NonNull Location adapt(final org.bukkit.@NonNull Location location) {
         return Location
                 .at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
                         MathMan.roundInt(location.getX()),
@@ -153,7 +153,7 @@ public class BukkitUtil extends WorldUtil {
      * @param location Bukkit location
      * @return PlotSquared location
      */
-    public @NonNull static Location adaptComplete(final org.bukkit.@NonNull Location location) {
+    public static @NonNull Location adaptComplete(final org.bukkit.@NonNull Location location) {
         return Location
                 .at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
                         MathMan.roundInt(location.getX()),
@@ -186,7 +186,7 @@ public class BukkitUtil extends WorldUtil {
      * @param string World name
      * @return World if it exists, or {@code null}
      */
-    public @Nullable static World getWorld(final @NonNull String string) {
+    public static @Nullable World getWorld(final @NonNull String string) {
         return Bukkit.getWorld(string);
     }
 

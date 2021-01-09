@@ -981,7 +981,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override
-    public @Nullable final ChunkGenerator getDefaultWorldGenerator(final @NonNull String worldName, final String id) {
+    public @Nullable final ChunkGenerator getDefaultWorldGenerator(
+            final @NonNull String worldName,
+            final @Nullable String id)
+    {
         final IndependentPlotGenerator result;
         if (id != null && id.equalsIgnoreCase("single")) {
             result = injector().getInstance(SingleWorldGenerator.class);
@@ -995,7 +998,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     }
 
     @Override
-    public @Nullable GeneratorWrapper<?> getGenerator(final @NonNull String world, final @Nullable String name) {
+    public @Nullable GeneratorWrapper<?> getGenerator(
+            final @NonNull String world,
+            final @Nullable String name
+    ) {
         if (name == null) {
             return null;
         }
@@ -1108,7 +1114,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @Override
     public @NonNull GeneratorWrapper<?> wrapPlotGenerator(
-            final @Nullable String world,
+            final @NonNull String world,
             final @NonNull IndependentPlotGenerator generator
     ) {
         return new BukkitPlotGenerator(world, generator, this.plotAreaManager);
@@ -1194,7 +1200,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     @NonNull
     @Override
-    public String toLegacyPlatformString(Component component) {
+    public String toLegacyPlatformString(final @NonNull Component component) {
         return LegacyComponentSerializer.legacyAmpersand().serialize(component);
     }
 

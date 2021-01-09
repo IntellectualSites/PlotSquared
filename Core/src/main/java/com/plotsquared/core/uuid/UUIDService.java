@@ -45,7 +45,7 @@ public interface UUIDService {
      * @param uuids Requests
      * @return Completed requests
      */
-    @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids);
+    @NonNull List<@NonNull UUIDMapping> getNames(final @NonNull List<@NonNull UUID> uuids);
 
     /**
      * Attempt to complete the given requests. Returns the mappings
@@ -54,7 +54,7 @@ public interface UUIDService {
      * @param usernames Requests
      * @return Completed requests
      */
-    @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames);
+    @NonNull List<@NonNull UUIDMapping> getUUIDs(final @NonNull List<@NonNull String> usernames);
 
     /**
      * Get as many UUID mappings as possible under the condition
@@ -62,7 +62,7 @@ public interface UUIDService {
      *
      * @return All mappings that could be provided immediately
      */
-    default @NonNull Collection<UUIDMapping> getImmediately() {
+    default @NonNull Collection<@NonNull UUIDMapping> getImmediately() {
         return Collections.emptyList();
     }
 

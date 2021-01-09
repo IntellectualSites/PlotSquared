@@ -81,7 +81,7 @@ public final class TabCompletions {
      * @param existing Players that should not be included in completions
      * @return List of completions
      */
-    public @NonNull static List<Command> completePlayers(
+    public static @NonNull List<Command> completePlayers(
             final @NonNull String input,
             final @NonNull List<String> existing
     ) {
@@ -96,7 +96,7 @@ public final class TabCompletions {
      * @param existing Players that should not be included in completions
      * @return List of completions
      */
-    public @NonNull static List<Command> completeAddedPlayers(
+    public static @NonNull List<Command> completeAddedPlayers(
             final @NonNull Plot plot,
             final @NonNull String input, final @NonNull List<String> existing
     ) {
@@ -107,7 +107,7 @@ public final class TabCompletions {
         );
     }
 
-    public @NonNull static List<Command> completePlayersInPlot(
+    public static @NonNull List<Command> completePlayersInPlot(
             final @NonNull Plot plot,
             final @NonNull String input, final @NonNull List<String> existing
     ) {
@@ -130,7 +130,7 @@ public final class TabCompletions {
      * @param input Command input
      * @return List of completions
      */
-    public @NonNull static List<Command> completePatterns(final @NonNull String input) {
+    public static @NonNull List<Command> completePatterns(final @NonNull String input) {
         return PatternUtil.getSuggestions(input.trim()).stream()
                 .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
                 .filter(value -> value.startsWith(input.toLowerCase(Locale.ENGLISH)))
@@ -138,7 +138,7 @@ public final class TabCompletions {
                 }).collect(Collectors.toList());
     }
 
-    public @NonNull static List<Command> completeBoolean(final @NonNull String input) {
+    public static @NonNull List<Command> completeBoolean(final @NonNull String input) {
         if (input.isEmpty()) {
             return Arrays.asList(booleanTrueCompletion, booleanFalseCompletion);
         }
@@ -160,7 +160,7 @@ public final class TabCompletions {
      * @param highestLimit Highest number to include
      * @return Unmodifiable list of number completions
      */
-    public @NonNull static List<Command> completeNumbers(
+    public static @NonNull List<Command> completeNumbers(
             final @NonNull String input,
             final int amountLimit, final int highestLimit
     ) {
@@ -187,7 +187,7 @@ public final class TabCompletions {
      * @param input Input to filter with
      * @return Unmodifiable list of area completions
      */
-    public @NonNull static List<Command> completeAreas(final @NonNull String input) {
+    public static @NonNull List<Command> completeAreas(final @NonNull String input) {
         final List<Command> completions = new ArrayList<>();
         for (final PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
             String areaName = area.getWorldName();
@@ -205,7 +205,7 @@ public final class TabCompletions {
         return Collections.unmodifiableList(completions);
     }
 
-    public @NonNull static List<Command> asCompletions(String... toFilter) {
+    public static @NonNull List<Command> asCompletions(String... toFilter) {
         final List<Command> completions = new ArrayList<>();
         for (String completion : toFilter) {
             completions.add(new Command(null, false, completion, "",

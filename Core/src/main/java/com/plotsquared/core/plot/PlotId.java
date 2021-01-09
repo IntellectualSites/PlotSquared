@@ -61,7 +61,7 @@ public final class PlotId {
      * @param y The plot y coordinate
      * @return a new PlotId at x,y
      */
-    public @NonNull static PlotId of(final int x, final int y) {
+    public static @NonNull PlotId of(final int x, final int y) {
         return new PlotId(x, y);
     }
 
@@ -72,7 +72,7 @@ public final class PlotId {
      * @return the PlotId representation of the argument
      * @throws IllegalArgumentException if the string does not contain a valid PlotId
      */
-    public @NonNull static PlotId fromString(final @NonNull String string) {
+    public static @NonNull PlotId fromString(final @NonNull String string) {
         final PlotId plot = fromStringOrNull(string);
         if (plot == null) {
             throw new IllegalArgumentException("Cannot create PlotID. String invalid.");
@@ -86,7 +86,7 @@ public final class PlotId {
      * @param string ID string
      * @return Plot ID, or {@code null} if none could be parsed
      */
-    public @Nullable static PlotId fromStringOrNull(final @NonNull String string) {
+    public static @Nullable PlotId fromStringOrNull(final @NonNull String string) {
         final String[] parts = string.split("[;_,.]");
         if (parts.length < 2) {
             return null;
@@ -109,7 +109,7 @@ public final class PlotId {
      * @param hash ID hash
      * @return Plot ID
      */
-    public @NonNull static PlotId unpair(final int hash) {
+    public static @NonNull PlotId unpair(final int hash) {
         return PlotId.of(hash >> 16, hash & 0xFFFF);
     }
 

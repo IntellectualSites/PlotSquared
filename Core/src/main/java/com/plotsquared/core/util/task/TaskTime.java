@@ -48,7 +48,7 @@ public final class TaskTime {
      * @param seconds Seconds
      * @return Created task time instance
      */
-    public @NonNull static TaskTime seconds(@NonNegative final long seconds) {
+    public static @NonNull TaskTime seconds(@NonNegative final long seconds) {
         return new TaskTime(seconds * 1000L, TaskUnit.MILLISECONDS);
     }
 
@@ -58,7 +58,7 @@ public final class TaskTime {
      * @param ticks Server ticks
      * @return Created task time instance
      */
-    public @NonNull static TaskTime ticks(@NonNegative final long ticks) {
+    public static @NonNull TaskTime ticks(@NonNegative final long ticks) {
         return new TaskTime(ticks, TaskUnit.TICKS);
     }
 
@@ -68,7 +68,7 @@ public final class TaskTime {
      * @param ms Milliseconds
      * @return Created task time instance
      */
-    public @NonNull static TaskTime ms(@NonNegative final long ms) {
+    public static @NonNull TaskTime ms(@NonNegative final long ms) {
         return new TaskTime(ms, TaskUnit.MILLISECONDS);
     }
 

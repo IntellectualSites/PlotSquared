@@ -60,7 +60,7 @@ public enum CommonSetupSteps implements SetupStep {
             return CommonSetupSteps.CHOOSE_PLOT_AREA_TYPE; // proceed with next step
         }
 
-        @NonNull
+
         @Override
         public Collection<String> getSuggestions() {
             return Collections.unmodifiableSet(SetupUtils.generators.keySet());

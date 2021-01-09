@@ -55,7 +55,7 @@ public final class LockKey {
      * @param key Key name
      * @return Lock key instance
      */
-    public @NonNull static LockKey of(final @NonNull String key) {
+    public static @NonNull LockKey of(final @NonNull String key) {
         synchronized (keyLock) {
             return keyMap.computeIfAbsent(key, LockKey::new);
         }

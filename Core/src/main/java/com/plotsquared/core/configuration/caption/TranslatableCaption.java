@@ -57,7 +57,7 @@ public final class TranslatableCaption implements NamespacedCaption {
      *               included, {@link #DEFAULT_NAMESPACE} will be used.
      * @return Caption instance
      */
-    public @NonNull static TranslatableCaption of(final @NonNull String rawKey) {
+    public static @NonNull TranslatableCaption of(final @NonNull String rawKey) {
         final String namespace;
         final String key;
         if (rawKey.contains(":")) {
@@ -81,7 +81,7 @@ public final class TranslatableCaption implements NamespacedCaption {
      * @param key       Caption key
      * @return Caption instance
      */
-    public @NonNull static TranslatableCaption of(
+    public static @NonNull TranslatableCaption of(
             final @NonNull String namespace,
             final @NonNull String key
     ) {

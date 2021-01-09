@@ -319,7 +319,7 @@ public class Plot {
      * @param message If a message should be sent to the player if a plot cannot be found
      * @return The plot if only 1 result is found, or null
      */
-    public @Nullable static Plot getPlotFromString(
+    public static @Nullable Plot getPlotFromString(
             final @Nullable PlotPlayer<?> player,
             final @Nullable String arg,
             final boolean message
@@ -386,7 +386,7 @@ public class Plot {
      * @param string      plot id/area + id
      * @return New or existing plot object
      */
-    public @Nullable static Plot fromString(final @Nullable PlotArea defaultArea, final @NonNull String string) {
+    public static @Nullable Plot fromString(final @Nullable PlotArea defaultArea, final @NonNull String string) {
         final String[] split = string.split("[;,]");
         if (split.length == 2) {
             if (defaultArea != null) {
@@ -416,7 +416,7 @@ public class Plot {
      * @return plot at location or null
      * @see PlotPlayer#getCurrentPlot() if a player is expected here.
      */
-    public @Nullable static Plot getPlot(final @NonNull Location location) {
+    public static @Nullable Plot getPlot(final @NonNull Location location) {
         final PlotArea pa = location.getPlotArea();
         if (pa != null) {
             return pa.getPlot(location);

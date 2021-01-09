@@ -101,7 +101,7 @@ public class UUIDPipeline {
      *
      * @param mappingConsumer Consumer to register
      */
-    public void registerConsumer(final @NonNull Consumer<List<UUIDMapping>> mappingConsumer) {
+    public void registerConsumer(final @NonNull Consumer<@NonNull List<@NonNull UUIDMapping>> mappingConsumer) {
         this.consumerList.add(mappingConsumer);
     }
 
@@ -110,7 +110,7 @@ public class UUIDPipeline {
      *
      * @return Copy of service list
      */
-    public List<UUIDService> getServiceListInstance() {
+    public @NonNull List<@NonNull UUIDService> getServiceListInstance() {
         return Collections.unmodifiableList(this.serviceList);
     }
 
@@ -119,7 +119,7 @@ public class UUIDPipeline {
      *
      * @param mappings Mappings
      */
-    public void consume(final @NonNull List<UUIDMapping> mappings) {
+    public void consume(final @NonNull List<@NonNull UUIDMapping> mappings) {
         final Runnable runnable = () -> {
             for (final Consumer<List<UUIDMapping>> consumer : this.consumerList) {
                 consumer.accept(mappings);
@@ -213,7 +213,7 @@ public class UUIDPipeline {
      * @param username Username
      * @param uuid     UUID consumer
      */
-    public void getSingle(final @NonNull String username, final @NonNull BiConsumer<UUID, Throwable> uuid) {
+    public void getSingle(final @NonNull String username, final @NonNull BiConsumer<@Nullable UUID, @Nullable Throwable> uuid) {
         this.getUUIDs(Collections.singletonList(username)).applyToEither(
                 timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT),
                 Function.identity()
@@ -237,7 +237,7 @@ public class UUIDPipeline {
      * @param uuid     UUID
      * @param username Username consumer
      */
-    public void getSingle(final @NonNull UUID uuid, final @NonNull BiConsumer<String, Throwable> username) {
+    public void getSingle(final @NonNull UUID uuid, final @NonNull BiConsumer<@Nullable String, @Nullable Throwable> username) {
         this.getNames(Collections.singletonList(uuid)).applyToEither(
                 timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT),
                 Function.identity()
@@ -265,7 +265,10 @@ public class UUIDPipeline {
      * @param timeout  Timeout in milliseconds
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getNames(final @NonNull Collection<UUID> requests, final long timeout) {
+    public @NonNull CompletableFuture<@NonNull List<@NonNull UUIDMapping>> getNames(
+            final @NonNull Collection<@NonNull UUID> requests,
+            final long timeout
+    ) {
         return this.getNames(requests).applyToEither(timeoutAfter(timeout), Function.identity());
     }
 
@@ -279,11 +282,14 @@ public class UUIDPipeline {
      * @param timeout  Timeout in milliseconds
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getUUIDs(final @NonNull Collection<String> requests, final long timeout) {
+    public @NonNull CompletableFuture<List<UUIDMapping>> getUUIDs(
+            final @NonNull Collection<String> requests,
+            final long timeout
+    ) {
         return this.getUUIDs(requests).applyToEither(timeoutAfter(timeout), Function.identity());
     }
 
-    private CompletableFuture<List<UUIDMapping>> timeoutAfter(final long timeout) {
+    private @NonNull CompletableFuture<@NonNull List<@NonNull UUIDMapping>> timeoutAfter(final long timeout) {
         final CompletableFuture<List<UUIDMapping>> result = new CompletableFuture<>();
         this.timeoutExecutor.schedule(() -> result.completeExceptionally(new TimeoutException()), timeout, TimeUnit.MILLISECONDS);
         return result;
@@ -295,7 +301,9 @@ public class UUIDPipeline {
      * @param requests UUIDs
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getNames(final @NonNull Collection<UUID> requests) {
+    public @NonNull CompletableFuture<@NonNull List<@NonNull UUIDMapping>> getNames(
+            final @NonNull Collection<@NonNull UUID> requests
+    ) {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
@@ -362,7 +370,9 @@ public class UUIDPipeline {
      * @param requests Names
      * @return Mappings
      */
-    public CompletableFuture<List<UUIDMapping>> getUUIDs(final @NonNull Collection<String> requests) {
+    public @NonNull CompletableFuture<@NonNull List<@NonNull UUIDMapping>> getUUIDs(
+            final @NonNull Collection<@NonNull String> requests
+    ) {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
@@ -417,7 +427,7 @@ public class UUIDPipeline {
      *
      * @return All mappings that could be provided immediately
      */
-    public @NonNull final Collection<UUIDMapping> getAllImmediately() {
+    public @NonNull final Collection<@NonNull UUIDMapping> getAllImmediately() {
         final Set<UUIDMapping> mappings = new LinkedHashSet<>();
         for (final UUIDService service : this.getServiceListInstance()) {
             mappings.addAll(service.getImmediately());

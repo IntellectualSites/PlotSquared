@@ -117,7 +117,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param localeHolder the localeHolder to localize the component for
      * @return Component of name list
      */
-    public @NonNull static Component getPlayerList(final @NonNull Collection<UUID> uuids, LocaleHolder localeHolder) {
+    public static @NonNull Component getPlayerList(final @NonNull Collection<UUID> uuids, LocaleHolder localeHolder) {
         if (uuids.isEmpty()) {
             return MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(localeHolder));
         }
@@ -163,7 +163,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param owner Owner UUID
      * @return The player's name, None, Everyone or Unknown
      */
-    public @NonNull static String getName(final @Nullable UUID owner) {
+    public static @NonNull String getName(final @Nullable UUID owner) {
         return getName(owner, true);
     }
 
@@ -174,7 +174,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param blocking Whether or not the operation can be blocking
      * @return The player's name, None, Everyone or Unknown
      */
-    public @NonNull static String getName(final @Nullable UUID owner, final boolean blocking) {
+    public static @NonNull String getName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
             TranslatableCaption.of("info.none");
         }

@@ -30,6 +30,7 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * This class allows for implementation independent world generation.
@@ -94,7 +95,7 @@ public abstract class IndependentPlotGenerator {
      * @param world ChunkGenerator Implementation
      * @return Chunk generator
      */
-    public <T> GeneratorWrapper<T> specify(String world) {
+    public <T> GeneratorWrapper<T> specify(final @NonNull String world) {
         return (GeneratorWrapper<T>) PlotSquared.platform().wrapPlotGenerator(world, this);
     }
 

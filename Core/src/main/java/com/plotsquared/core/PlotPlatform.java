@@ -85,8 +85,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Plugin name
      */
-    @NonNull
-    default String pluginName() {
+    default @NonNull String pluginName() {
         return "PlotSquared";
     }
 
@@ -316,6 +315,12 @@ public interface PlotPlatform<P> extends LocaleHolder {
         return injector().getInstance(PlaceholderRegistry.class);
     }
 
-    @NonNull String toLegacyPlatformString(Component component);
+    /**
+     * Convert a component to a legacy string
+     *
+     * @param component Component to convert
+     * @return Converted string
+     */
+    @NonNull String toLegacyPlatformString(@NonNull Component component);
 
 }

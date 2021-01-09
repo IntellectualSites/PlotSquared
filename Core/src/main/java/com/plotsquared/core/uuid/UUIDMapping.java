@@ -38,7 +38,7 @@ public class UUIDMapping {
     private final UUID uuid;
     private final String username;
 
-    public UUIDMapping(final @NonNull UUID uuid, final String username) {
+    public UUIDMapping(final @NonNull UUID uuid, final @NonNull String username) {
         this.uuid = uuid;
         this.username = username;
     }
