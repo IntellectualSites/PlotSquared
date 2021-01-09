@@ -161,7 +161,7 @@ public class Set extends SubCommand {
                             }
                             queue.setCompleteTask(() -> {
                                 plot.removeRunning();
-                                player.sendMessage(TranslatableCaption.of("working.component_complete"));
+                                player.sendMessage(TranslatableCaption.of("working.component_complete"), Template.of("plot", String.valueOf(plot.getId())));
                             });
                             if (Settings.QUEUE.NOTIFY_PROGRESS) {
                                 queue.addProgressSubscriber(

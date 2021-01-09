@@ -37,6 +37,7 @@ import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -95,7 +96,7 @@ import java.util.concurrent.TimeUnit;
             whenDone.run();
         } else {
             if (player != null) {
-                player.sendMessage(TranslatableCaption.of("backups.backup_automatic_started"));
+                player.sendMessage(TranslatableCaption.of("backups.backup_automatic_started"), Template.of("plot", String.valueOf(plot.getId())));
             }
             profile.createBackup().whenComplete((backup, throwable) -> {
                if (throwable != null) {

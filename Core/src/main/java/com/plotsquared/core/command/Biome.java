@@ -65,6 +65,10 @@ public class Biome extends SetCommand {
             player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            return false;
+        }
         plot.addRunning();
         plot.getPlotModificationManager().setBiome(biome, () -> {
             plot.removeRunning();

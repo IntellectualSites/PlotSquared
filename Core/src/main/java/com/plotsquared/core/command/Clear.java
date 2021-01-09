@@ -82,6 +82,10 @@ public class Clear extends Command {
                     Template.of("value", "Clear"));
             return CompletableFuture.completedFuture(true);
         }
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            return CompletableFuture.completedFuture(true);
+        }
         boolean force = eventResult == Result.FORCE;
         checkTrue(force || plot.isOwner(player.getUUID()) || Permissions
                 .hasPermission(player, "plots.admin.command.clear"),
@@ -121,7 +125,8 @@ public class Clear extends Command {
                         }
                         player.sendMessage(
                                 TranslatableCaption.of("working.clearing_done"),
-                                Template.of("amount", String.valueOf(System.currentTimeMillis() - start))
+                                Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
+                                Template.of("plot", String.valueOf(plot.getId()))
                         );
                     });
                 });

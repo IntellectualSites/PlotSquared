@@ -74,6 +74,10 @@ public class Delete extends SubCommand {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            return false;
+        }
         Result eventResult = this.eventDispatcher.callDelete(plot).getEventResult();
         if (eventResult == Result.DENY) {
             player.sendMessage(
@@ -117,7 +121,8 @@ public class Delete extends SubCommand {
                 }
                 player.sendMessage(
                         TranslatableCaption.of("working.deleting_done"),
-                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start))
+                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
+                        Template.of("plot", String.valueOf(plot.getId()))
                 );
             });
             if (result) {
