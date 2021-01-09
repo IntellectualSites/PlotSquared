@@ -60,7 +60,7 @@ public class SinglePlot extends Plot {
     }
 
     @Override public String getWorldName() {
-        return getId().toSeparatedString("_");
+        return getId().toUnderscoreSeparatedString();
     }
 
     @Override public SinglePlotArea getArea() {

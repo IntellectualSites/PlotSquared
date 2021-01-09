@@ -244,6 +244,16 @@ public final class PlotId {
 
     /**
      * Get a String representation of the plot ID where the
+     * components are separated by "_"
+     *
+     * @return {@code x + "_" + y}
+     */
+    @Nonnull public String toUnderscoreSeparatedString() {
+        return this.getX() + "_" + this.getY();
+    }
+
+    /**
+     * Get a String representation of the plot ID where the
      * components are separated by "-"
      *
      * @return {@code x + "-" + y}

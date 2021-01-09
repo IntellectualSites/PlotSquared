@@ -663,7 +663,7 @@ public class Area extends SubCommand {
                 Location center;
                 if (area instanceof SinglePlotArea) {
                     ((SinglePlotArea) area).loadWorld(PlotId.of(0, 0));
-                    center = this.worldUtil.getSpawn(PlotId.of(0, 0).toSeparatedString("_"));
+                    center = this.worldUtil.getSpawn(PlotId.of(0, 0).toUnderscoreSeparatedString());
                     player.teleport(center, TeleportCause.COMMAND);
                 } else if (area.getType() != PlotAreaType.PARTIAL) {
                     center = this.worldUtil.getSpawn(area.getWorldName());
