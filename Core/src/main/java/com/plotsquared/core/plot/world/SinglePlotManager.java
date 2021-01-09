@@ -44,6 +44,8 @@ import java.util.List;
 
 public class SinglePlotManager extends PlotManager {
 
+    private static final int MAX_COORDINATE = 30000000;
+
     public SinglePlotManager(@Nonnull final PlotArea plotArea) {
         super(plotArea);
     }
@@ -57,11 +59,11 @@ public class SinglePlotManager extends PlotManager {
     }
 
     @Override public Location getPlotBottomLocAbs(@Nonnull final PlotId plotId) {
-        return Location.at(plotId.toSeparatedString("_"), -30000000, 0, -30000000);
+        return Location.at(plotId.toUnderscoreSeparatedString(), -MAX_COORDINATE, 0, -MAX_COORDINATE);
     }
 
     @Override public Location getPlotTopLocAbs(@Nonnull final PlotId plotId) {
-        return Location.at(plotId.toSeparatedString("_"), 30000000, 0, 30000000);
+        return Location.at(plotId.toUnderscoreSeparatedString(), MAX_COORDINATE, 0, MAX_COORDINATE);
     }
 
     @Override public boolean clearPlot(@Nonnull Plot plot, final Runnable whenDone, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {

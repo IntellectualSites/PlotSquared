@@ -87,7 +87,7 @@ public class SinglePlotArea extends GridPlotWorld {
     }
 
     public void loadWorld(final PlotId id) {
-        String worldName = id.toSeparatedString("_");
+        String worldName = id.toUnderscoreSeparatedString();
         if (PlotSquared.platform().worldUtil().isWorld(worldName)) {
             return;
         }
@@ -145,7 +145,7 @@ public class SinglePlotArea extends GridPlotWorld {
 
         try {
             TaskManager.getPlatformImplementation().sync(() -> {
-                final String name = id.toSeparatedString("_");
+                final String name = id.toUnderscoreSeparatedString();
                 if (!PlotSquared.platform().worldUtil().isWorld(name)) {
                     PlotSquared.platform().setupUtils().setupWorld(builder);
                 }
