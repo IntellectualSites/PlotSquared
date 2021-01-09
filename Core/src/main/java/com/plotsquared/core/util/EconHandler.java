@@ -42,6 +42,7 @@ public abstract class EconHandler {
      *          {@link #depositMoney(OfflinePlotPlayer, double)}
      *          {@link #depositMoney(PlotPlayer, double)}</li>
      * </ul>
+     *
      * @return A null econ handler
      */
     public static EconHandler nullEconHandler() {
@@ -131,6 +132,7 @@ public abstract class EconHandler {
         public boolean isSupported() {
             return false;
         }
+
     }
 
 }

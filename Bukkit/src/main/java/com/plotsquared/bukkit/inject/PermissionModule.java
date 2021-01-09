@@ -35,7 +35,9 @@ import org.bukkit.Bukkit;
 
 public class PermissionModule extends AbstractModule {
 
-    @Provides @Singleton PermissionHandler providePermissionHandler() {
+    @Provides
+    @Singleton
+    PermissionHandler providePermissionHandler() {
         try {
             if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
                 return new VaultPermissionHandler();

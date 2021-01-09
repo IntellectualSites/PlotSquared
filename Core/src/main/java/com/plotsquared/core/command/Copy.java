@@ -25,23 +25,24 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
 import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "copy",
-    permission = "plots.copy",
-    aliases = {"copypaste"},
-    category = CommandCategory.CLAIMING,
-    usage = "/plot copy <X;Z>",
-    requiredType = RequiredType.NONE)
+        permission = "plots.copy",
+        aliases = {"copypaste"},
+        category = CommandCategory.CLAIMING,
+        usage = "/plot copy <X;Z>",
+        requiredType = RequiredType.NONE)
 public class Copy extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
@@ -49,7 +50,7 @@ public class Copy extends SubCommand {
             return false;
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
@@ -87,4 +88,5 @@ public class Copy extends SubCommand {
 
         return true;
     }
+
 }

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Any message that can be sent to a player, the console, etc.
@@ -38,6 +38,6 @@ public interface Caption {
      * @param localeHolder Locale holder
      * @return Message
      */
-    @Nonnull String getComponent(@Nonnull LocaleHolder localeHolder);
+    @NonNull String getComponent(@NonNull LocaleHolder localeHolder);
 
 }

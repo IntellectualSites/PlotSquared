@@ -42,8 +42,8 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -52,29 +52,34 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(usage = "/plot download [schem | world]",
-    command = "download",
-    aliases = {"dl"},
-    category = CommandCategory.SCHEMATIC,
-    requiredType = RequiredType.NONE,
-    permission = "plots.download")
+        command = "download",
+        aliases = {"dl"},
+        category = CommandCategory.SCHEMATIC,
+        requiredType = RequiredType.NONE,
+        permission = "plots.download")
 public class Download extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final PlotUploader plotUploader;
-    @Nonnull private final SchematicHandler schematicHandler;
+    @NonNull
+    private final SchematicHandler schematicHandler;
     private final WorldUtil worldUtil;
 
-    @Inject public Download(@Nonnull final PlotAreaManager plotAreaManager,
-                            @Nonnull final PlotUploader plotUploader,
-                            @Nonnull final SchematicHandler schematicHandler,
-                            @Nonnull final WorldUtil worldUtil) {
+    @Inject
+    public Download(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull PlotUploader plotUploader,
+            final @NonNull SchematicHandler schematicHandler,
+            final @NonNull WorldUtil worldUtil
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.plotUploader = plotUploader;
         this.schematicHandler = schematicHandler;
         this.worldUtil = worldUtil;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String world = player.getLocation().getWorldName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
@@ -90,12 +95,12 @@ public class Download extends SubCommand {
             return false;
         }
         if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!DoneFlag.isDone(plot))) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
             player.sendMessage(TranslatableCaption.of("done.done_not_done"));
             return false;
         }
         if ((!plot.isOwner(player.getUUID())) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
@@ -104,7 +109,7 @@ public class Download extends SubCommand {
             return false;
         }
         if (args.length == 0 || (args.length == 1 && StringMan
-            .isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
+                .isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
             if (plot.getVolume() > Integer.MAX_VALUE) {
                 player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
                 return false;
@@ -112,7 +117,7 @@ public class Download extends SubCommand {
             plot.addRunning();
             upload(player, plot);
         } else if (args.length == 1 && StringMan
-            .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
+                .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
@@ -124,10 +129,14 @@ public class Download extends SubCommand {
             plot.addRunning();
             this.worldUtil.saveWorld(world);
             this.worldUtil.upload(plot, null, null, new RunnableVal<URL>() {
-                @Override public void run(URL url) {
+                @Override
+                public void run(URL url) {
                     plot.removeRunning();
                     if (url == null) {
-                        player.sendMessage(TranslatableCaption.of("web.generating_link_failed"), Template.of("plot", String.valueOf(plot.getId())));
+                        player.sendMessage(
+                                TranslatableCaption.of("web.generating_link_failed"),
+                                Template.of("plot", String.valueOf(plot.getId()))
+                        );
                         return;
                     }
                     player.sendMessage(TranslatableCaption.of("web.generation_link_success"), Template.of("url", url.toString()));
@@ -151,8 +160,17 @@ public class Download extends SubCommand {
             if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
                 completions.add("world");
             }
-            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
-                    .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(
+                            null,
+                            true,
+                            completion,
+                            "",
+                            RequiredType.NONE,
+                            CommandCategory.ADMINISTRATION
+                    ) {
                     }).collect(Collectors.toCollection(LinkedList::new));
             if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
@@ -173,7 +191,8 @@ public class Download extends SubCommand {
                                 player.sendMessage(
                                         TranslatableCaption.of("web.generation_link_success"),
                                         Template.of("download", value.toString()),
-                                        Template.of("delete", "Not available"));
+                                        Template.of("delete", "Not available")
+                                );
                                 player.sendMessage(StaticCaption.of(value.toString()));
                             }
                         });
@@ -184,13 +203,18 @@ public class Download extends SubCommand {
         this.plotUploader.upload(plot)
                 .whenComplete((result, throwable) -> {
                     if (throwable != null || !result.isSuccess()) {
-                        player.sendMessage(TranslatableCaption.of("web.generating_link_failed"), Template.of("plot", String.valueOf(plot.getId())));
+                        player.sendMessage(
+                                TranslatableCaption.of("web.generating_link_failed"),
+                                Template.of("plot", String.valueOf(plot.getId()))
+                        );
                     } else {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generation_link_success"),
                                 Template.of("download", result.getDownloadUrl()),
-                                Template.of("delete", result.getDeletionUrl()));
+                                Template.of("delete", result.getDeletionUrl())
+                        );
                     }
                 });
     }
+
 }

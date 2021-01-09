@@ -27,8 +27,7 @@ package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Event called when several merged plots are unlinked
@@ -51,8 +50,10 @@ public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotE
      * @param createSign Whether to regenerate signs
      * @param reason     The {@link REASON} for the unlink
      */
-    public PlotUnlinkEvent(@Nonnull final PlotArea area, Plot plot, boolean createRoad,
-        boolean createSign, REASON reason) {
+    public PlotUnlinkEvent(
+            final @NonNull PlotArea area, Plot plot, boolean createRoad,
+            boolean createSign, REASON reason
+    ) {
         super(plot);
         this.area = area;
         this.createRoad = createRoad;
@@ -60,11 +61,13 @@ public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotE
         this.reason = reason;
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
 
@@ -76,23 +79,28 @@ public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotE
         return this.createRoad;
     }
 
-    public boolean isCreateSign() {
-        return this.createSign;
-    }
-
-    public REASON getReason() {
-        return this.reason;
-    }
-
     public void setCreateRoad(boolean createRoad) {
         this.createRoad = createRoad;
+    }
+
+    public boolean isCreateSign() {
+        return this.createSign;
     }
 
     public void setCreateSign(boolean createSign) {
         this.createSign = createSign;
     }
 
-    public enum REASON {
-        NEW_OWNER, PLAYER_COMMAND, CLEAR, DELETE, EXPIRE_DELETE
+    public REASON getReason() {
+        return this.reason;
     }
+
+    public enum REASON {
+        NEW_OWNER,
+        PLAYER_COMMAND,
+        CLEAR,
+        DELETE,
+        EXPIRE_DELETE
+    }
+
 }

@@ -26,10 +26,10 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
@@ -37,29 +37,31 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "remove",
-    aliases = {"r", "untrust", "ut", "undeny", "unban", "ud"},
-    usage = "/plot remove <player | *>",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.NONE,
-    permission = "plots.remove")
+        aliases = {"r", "untrust", "ut", "undeny", "unban", "ud"},
+        usage = "/plot remove <player | *>",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE,
+        permission = "plots.remove")
 public class Remove extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
 
-    @Inject public Remove(@Nonnull final EventDispatcher eventDispatcher) {
+    @Inject
+    public Remove(final @NonNull EventDispatcher eventDispatcher) {
         super(Argument.PlayerName);
         this.eventDispatcher = eventDispatcher;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -71,7 +73,7 @@ public class Remove extends SubCommand {
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_REMOVE)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_REMOVE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
@@ -133,14 +135,16 @@ public class Remove extends SubCommand {
         return true;
     }
 
-    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+    @Override
+    public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
             return Collections.emptyList();
         }
         return TabCompletions.completeAddedPlayers(plot, String.join(",", args).trim(),
-                Collections.singletonList(player.getName()));
+                Collections.singletonList(player.getName())
+        );
     }
 
 }

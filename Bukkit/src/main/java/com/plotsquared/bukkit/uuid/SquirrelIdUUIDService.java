@@ -32,10 +32,10 @@ import com.plotsquared.core.uuid.UUIDService;
 import com.sk89q.squirrelid.Profile;
 import com.sk89q.squirrelid.resolver.HttpRepositoryService;
 import com.sk89q.squirrelid.resolver.ProfileService;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,7 +67,8 @@ public class SquirrelIdUUIDService implements UUIDService {
         this.rateLimiter = RateLimiter.create(rateLimit / 600.0D);
     }
 
-    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> results = new ArrayList<>(uuids.size());
         this.rateLimiter.acquire(uuids.size());
         try {
@@ -101,7 +102,8 @@ public class SquirrelIdUUIDService implements UUIDService {
         return results;
     }
 
-    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> results = new ArrayList<>(usernames.size());
         this.rateLimiter.acquire(usernames.size());
         try {

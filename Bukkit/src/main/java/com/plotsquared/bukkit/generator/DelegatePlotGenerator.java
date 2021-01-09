@@ -38,8 +38,8 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Random;
 
 final class DelegatePlotGenerator extends IndependentPlotGenerator {
@@ -52,18 +52,22 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
         this.world = world;
     }
 
-    @Override public void initialize(PlotArea area) {
+    @Override
+    public void initialize(PlotArea area) {
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return this.chunkGenerator.getClass().getName();
     }
 
-    @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
+    @Override
+    public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return PlotSquared.platform().defaultGenerator().getNewPlotArea(world, id, min, max);
     }
 
-    @Override public void generateChunk(final ScopedQueueCoordinator result, PlotArea settings) {
+    @Override
+    public void generateChunk(final ScopedQueueCoordinator result, PlotArea settings) {
         World world = BukkitUtil.getWorld(this.world);
         Location min = result.getMin();
         int chunkX = min.getX() >> 4;
@@ -71,21 +75,24 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
         Random random = new Random(MathMan.pair((short) chunkX, (short) chunkZ));
         try {
             ChunkGenerator.BiomeGrid grid = new ChunkGenerator.BiomeGrid() {
-                @Override public void setBiome(int x, int z, @Nonnull Biome biome) {
+                @Override
+                public void setBiome(int x, int z, @NonNull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
                 }
 
                 //do not annotate with Override until we discontinue support for 1.4.4
-                public void setBiome(int x, int y, int z, @Nonnull Biome biome) {
+                public void setBiome(int x, int y, int z, @NonNull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
 
                 }
 
-                @Override @Nonnull public Biome getBiome(int x, int z) {
+                @Override
+                public @NonNull Biome getBiome(int x, int z) {
                     return Biome.FOREST;
                 }
 
-                @Override public @Nonnull Biome getBiome(int x, int y, int z) {
+                @Override
+                public @NonNull Biome getBiome(int x, int y, int z) {
                     return Biome.FOREST;
                 }
             };

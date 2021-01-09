@@ -28,37 +28,44 @@ package com.plotsquared.core.plot.flag.types;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends NumberFlag<Double, F> {
 
-    protected DoubleFlag(@Nonnull Double value, Double minimum, Double maximum,
-        @Nonnull Caption flagDescription) {
+    protected DoubleFlag(
+            @NonNull Double value, Double minimum, Double maximum,
+            @NonNull Caption flagDescription
+    ) {
         super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_doubles"), flagDescription);
     }
 
-    protected DoubleFlag(@Nonnull Double value, @Nonnull Caption flagDescription) {
+    protected DoubleFlag(@NonNull Double value, @NonNull Caption flagDescription) {
         this(value, Double.MIN_VALUE, Double.MAX_VALUE, flagDescription);
     }
 
-    @Override public F merge(@Nonnull Double newValue) {
+    @Override
+    public F merge(@NonNull Double newValue) {
         return flagOf(getValue() + newValue);
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "12.175";
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().toString();
     }
 
-    @Nonnull @Override protected Double parseNumber(String input) throws FlagParseException {
+    @NonNull
+    @Override
+    protected Double parseNumber(String input) throws FlagParseException {
         try {
             return Double.parseDouble(input);
         } catch (Throwable throwable) {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_double"));
         }
     }
+
 }

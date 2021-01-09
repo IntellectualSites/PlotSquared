@@ -157,8 +157,8 @@ allprojects {
                     val repositoryUrl = "https://mvn.intellectualsites.com/content/repositories/releases/"
                     val snapshotRepositoryUrl = "https://mvn.intellectualsites.com/content/repositories/snapshots/"
                     url = uri(
-                        if (version.toString().endsWith("-SNAPSHOT")) snapshotRepositoryUrl
-                        else repositoryUrl
+                            if (version.toString().endsWith("-SNAPSHOT")) snapshotRepositoryUrl
+                            else repositoryUrl
                     )
 
                     credentials {
@@ -194,9 +194,9 @@ allprojects {
             val opt = options as StandardJavadocDocletOptions
             opt.addStringOption("Xdoclint:none", "-quiet")
             opt.tags(
-                "apiNote:a:API Note:",
-                "implSpec:a:Implementation Requirements:",
-                "implNote:a:Implementation Note:"
+                    "apiNote:a:API Note:",
+                    "implSpec:a:Implementation Requirements:",
+                    "implNote:a:Implementation Note:"
             )
             opt.destinationDirectory = javadocDir
         }

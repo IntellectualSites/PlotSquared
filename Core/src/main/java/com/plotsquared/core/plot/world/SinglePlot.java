@@ -33,8 +33,8 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -45,38 +45,49 @@ import java.util.function.Consumer;
 public class SinglePlot extends Plot {
 
     private Set<CuboidRegion> regions = Collections.singleton(
-        new CuboidRegion(BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
-            BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)));
+            new CuboidRegion(
+                    BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
+                    BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)
+            ));
 
-    public SinglePlot(@Nonnull final PlotArea area, @Nonnull final PlotId id) {
+    public SinglePlot(final @NonNull PlotArea area, final @NonNull PlotId id) {
         super(area, id);
     }
 
-    public SinglePlot(PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
-        HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
-        PlotArea area, boolean[] merged, long timestamp, int temp) {
+    public SinglePlot(
+            PlotId id, UUID owner, HashSet<UUID> trusted, HashSet<UUID> members,
+            HashSet<UUID> denied, String alias, BlockLoc position, Collection<PlotFlag<?, ?>> flags,
+            PlotArea area, boolean[] merged, long timestamp, int temp
+    ) {
         super(id, owner, trusted, members, denied, alias, position, flags, area, merged, timestamp,
-            temp);
+                temp
+        );
     }
 
-    @Override public String getWorldName() {
+    @Override
+    public String getWorldName() {
         return getId().toUnderscoreSeparatedString();
     }
 
-    @Override public SinglePlotArea getArea() {
+    @Override
+    public SinglePlotArea getArea() {
         return (SinglePlotArea) super.getArea();
     }
 
-    @Override public void getSide(Consumer<Location> result) {
+    @Override
+    public void getSide(Consumer<Location> result) {
         getCenter(result);
     }
 
-    @Override public boolean isLoaded() {
+    @Override
+    public boolean isLoaded() {
         getArea().loadWorld(getId());
         return super.isLoaded();
     }
 
-    @Nonnull @Override public Set<CuboidRegion> getRegions() {
+    @NonNull
+    @Override
+    public Set<CuboidRegion> getRegions() {
         return regions;
     }
 

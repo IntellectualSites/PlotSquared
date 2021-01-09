@@ -41,13 +41,15 @@ import java.util.function.Function;
 import static com.plotsquared.core.configuration.caption.load.CaptionLoader.loadFromReader;
 
 final class ClassLoaderCaptionProvider implements DefaultCaptionProvider {
+
     private static final Logger logger = LoggerFactory.getLogger("P2/" + ClassLoaderCaptionProvider.class.getSimpleName());
     private final ClassLoader classLoader;
     private final Function<@NonNull Locale, @NonNull String> urlProvider;
 
     ClassLoaderCaptionProvider(
             final @NonNull ClassLoader classLoader,
-            final @NonNull Function<@NonNull Locale, @NonNull String> urlProvider) {
+            final @NonNull Function<@NonNull Locale, @NonNull String> urlProvider
+    ) {
         this.classLoader = classLoader;
         this.urlProvider = urlProvider;
     }
@@ -69,4 +71,5 @@ final class ClassLoaderCaptionProvider implements DefaultCaptionProvider {
             return null;
         }
     }
+
 }

@@ -26,9 +26,9 @@
 package com.plotsquared.core.configuration.caption;
 
 import com.plotsquared.core.player.PlotPlayer;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,14 +43,14 @@ public interface ChatFormatter {
      *
      * @param context Message to format
      */
-    void format(@Nonnull ChatContext context);
+    void format(@NonNull ChatContext context);
 
     final class ChatContext {
 
         private final PlotPlayer<?> recipient;
-        private String message;
-        ;
         private final boolean rawOutput;
+        ;
+        private String message;
 
         /**
          * Create a new chat context
@@ -60,8 +60,10 @@ public interface ChatFormatter {
          * @param rawOutput Whether or not formatting keys should be included in the
          *                  final message
          */
-        public ChatContext(@Nullable final PlotPlayer<?> recipient, @Nonnull final String message,
-            final boolean rawOutput) {
+        public ChatContext(
+                final @Nullable PlotPlayer<?> recipient, final @NonNull String message,
+                final boolean rawOutput
+        ) {
             this.recipient = recipient;
             this.message = message;
             this.rawOutput = rawOutput;
@@ -72,7 +74,7 @@ public interface ChatFormatter {
          *
          * @return Recipient
          */
-        @Nullable public PlotPlayer<?> getRecipient() {
+        public @Nullable PlotPlayer<?> getRecipient() {
             return this.recipient;
         }
 
@@ -81,8 +83,17 @@ public interface ChatFormatter {
          *
          * @return Stored message
          */
-        @Nonnull public String getMessage() {
+        public @NonNull String getMessage() {
             return this.message;
+        }
+
+        /**
+         * Set the new message
+         *
+         * @param message Message
+         */
+        public void setMessage(final @NonNull String message) {
+            this.message = message;
         }
 
         /**
@@ -95,14 +106,6 @@ public interface ChatFormatter {
             return this.rawOutput;
         }
 
-        /**
-         * Set the new message
-         *
-         * @param message Message
-         */
-        public void setMessage(@Nonnull final String message) {
-            this.message = message;
-        }
     }
 
 }

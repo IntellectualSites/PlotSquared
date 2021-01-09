@@ -47,8 +47,10 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
     private final String schematic;
     private final EventDispatcher eventDispatcher;
 
-    public AutoClaimFinishTask(final PlotPlayer<?>  player, final Plot plot, final PlotArea area,
-        final String schematic, final EventDispatcher eventDispatcher) {
+    public AutoClaimFinishTask(
+            final PlotPlayer<?> player, final Plot plot, final PlotArea area,
+            final String schematic, final EventDispatcher eventDispatcher
+    ) {
         this.player = player;
         this.plot = plot;
         this.area = area;
@@ -56,9 +58,10 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
         this.eventDispatcher = eventDispatcher;
     }
 
-    @Override public Boolean call() {
+    @Override
+    public Boolean call() {
         try (final MetaDataAccess<Boolean> autoAccess
-            = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
+                     = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
             autoAccess.remove();
         }
         if (plot == null) {
@@ -69,8 +72,10 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
         if (area.isAutoMerge()) {
             PlotMergeEvent event = this.eventDispatcher.callMerge(plot, Direction.ALL, Integer.MAX_VALUE, player);
             if (event.getEventResult() == Result.DENY) {
-                player.sendMessage(TranslatableCaption.of("events.event_denied"),
-                                   Templates.of("value", "Auto Merge"));
+                player.sendMessage(
+                        TranslatableCaption.of("events.event_denied"),
+                        Templates.of("value", "Auto Merge")
+                );
             } else {
                 plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), player, true);
             }

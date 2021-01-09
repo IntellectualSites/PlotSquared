@@ -27,8 +27,8 @@ package com.plotsquared.core.synchronization;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public final class LockKey {
 
     private final String key;
 
-    private LockKey(@Nonnull final String key) {
+    private LockKey(final @NonNull String key) {
         this.key = Preconditions.checkNotNull(key, "Key may not be null");
     }
 
@@ -55,7 +55,7 @@ public final class LockKey {
      * @param key Key name
      * @return Lock key instance
      */
-    @Nonnull public static LockKey of(@Nonnull final String key) {
+    public @NonNull static LockKey of(final @NonNull String key) {
         synchronized (keyLock) {
             return keyMap.computeIfAbsent(key, LockKey::new);
         }
@@ -66,15 +66,18 @@ public final class LockKey {
      *
      * @return Currently recognized lock keys
      */
-    @Nonnull static Collection<LockKey> recognizedKeys() {
+    @NonNull
+    static Collection<LockKey> recognizedKeys() {
         return Collections.unmodifiableCollection(keyMap.values());
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "LockKey{" + "key='" + key + '\'' + '}';
     }
 
-    @Override public boolean equals(final Object o) {
+    @Override
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -85,7 +88,8 @@ public final class LockKey {
         return Objects.equal(this.key, lockKey.key);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hashCode(this.key);
     }
 

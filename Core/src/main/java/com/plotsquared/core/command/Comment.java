@@ -40,13 +40,14 @@ import java.util.Arrays;
 import java.util.Locale;
 
 @CommandDeclaration(command = "comment",
-    aliases = {"msg"},
-    category = CommandCategory.CHAT,
-    requiredType = RequiredType.PLAYER,
-    permission = "plots.comment")
+        aliases = {"msg"},
+        category = CommandCategory.CHAT,
+        requiredType = RequiredType.PLAYER,
+        permission = "plots.comment")
 public class Comment extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 2) {
             player.sendMessage(
                     TranslatableCaption.of("comment.comment_syntax"),
@@ -95,8 +96,9 @@ public class Comment extends SubCommand {
 
         String message = StringMan.join(Arrays.copyOfRange(args, index, args.length), " ");
         PlotComment comment =
-            new PlotComment(player.getLocation().getWorldName(), plot.getId(), message,
-                player.getName(), inbox.toString(), System.currentTimeMillis());
+                new PlotComment(player.getLocation().getWorldName(), plot.getId(), message,
+                        player.getName(), inbox.toString(), System.currentTimeMillis()
+                );
         boolean result = inbox.addComment(plot, comment);
         if (!result) {
             player.sendMessage(TranslatableCaption.of("comment.no_plot_inbox"));
@@ -117,4 +119,5 @@ public class Comment extends SubCommand {
         player.sendMessage(TranslatableCaption.of("comment.comment_added"));
         return true;
     }
+
 }

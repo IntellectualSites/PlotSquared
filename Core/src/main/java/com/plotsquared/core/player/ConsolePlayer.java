@@ -50,10 +50,10 @@ import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer<Actor> {
@@ -64,10 +64,13 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
 
     private final Actor actor;
 
-    @Inject private ConsolePlayer(@Nonnull final PlotAreaManager plotAreaManager,
-                                  @Nonnull final EventDispatcher eventDispatcher,
-                                  @ConsoleActor @Nonnull final Actor actor,
-                                  @Nonnull final PermissionHandler permissionHandler) {
+    @Inject
+    private ConsolePlayer(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher,
+            @ConsoleActor final @NonNull Actor actor,
+            final @NonNull PermissionHandler permissionHandler
+    ) {
         super(plotAreaManager, eventDispatcher, permissionHandler);
         this.actor = actor;
         this.setupPermissionProfile();
@@ -82,8 +85,9 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         if (area != null && !(plotAreaManager instanceof SinglePlotAreaManager)) {
             CuboidRegion region = area.getRegion();
             location = Location.at(area.getWorldName(),
-                region.getMinimumPoint().getX() + region.getMaximumPoint().getX() / 2, 0,
-                region.getMinimumPoint().getZ() + region.getMaximumPoint().getZ() / 2);
+                    region.getMinimumPoint().getX() + region.getMaximumPoint().getX() / 2, 0,
+                    region.getMinimumPoint().getZ() + region.getMaximumPoint().getZ() / 2
+            );
         } else {
             location = Location.at("", 0, 0, 0);
         }
@@ -98,57 +102,73 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         return instance;
     }
 
-    @Override public Actor toActor() {
+    @Override
+    public Actor toActor() {
         return this.actor;
     }
 
-    @Override public Actor getPlatformPlayer() {
+    @Override
+    public Actor getPlatformPlayer() {
         return this.toActor();
     }
 
-    @Override public boolean canTeleport(@Nonnull Location location) {
+    @Override
+    public boolean canTeleport(@NonNull Location location) {
         return true;
     }
 
     @Override
-    public void sendTitle(@Nonnull final Caption title, @Nonnull final Caption subtitle,
-        final int fadeIn, final int stay, final int fadeOut, @Nonnull final Template... replacements) {
+    public void sendTitle(
+            final @NonNull Caption title, final @NonNull Caption subtitle,
+            final int fadeIn, final int stay, final int fadeOut, final @NonNull Template... replacements
+    ) {
     }
 
-    @Nonnull @Override public Location getLocation() {
+    @NonNull
+    @Override
+    public Location getLocation() {
         return this.getMeta("location");
     }
 
-    @Override public Location getLocationFull() {
+    @Override
+    public Location getLocationFull() {
         return getLocation();
     }
 
-    @Nonnull @Override public UUID getUUID() {
+    @NonNull
+    @Override
+    public UUID getUUID() {
         return DBFunc.EVERYONE;
     }
 
-    @Override public long getLastPlayed() {
+    @Override
+    public long getLastPlayed() {
         return System.currentTimeMillis();
     }
 
-    @Override public boolean hasPermission(@Nonnull String permission) {
+    @Override
+    public boolean hasPermission(@NonNull String permission) {
         return true;
     }
 
-    @Override public void sendMessage(@Nonnull final Caption caption,
-                                     @Nonnull final Template... replacements) {
+    @Override
+    public void sendMessage(
+            final @NonNull Caption caption,
+            final @NonNull Template... replacements
+    ) {
         String message = caption.getComponent(this);
         if (message.isEmpty()) {
             return;
         }
         message = CaptionUtility.format(this, message)
-            .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
-            .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
+                .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
+                .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
         // Parse the message
         PlotSquared.platform().consoleAudience().sendMessage(MINI_MESSAGE.parse(message, replacements));
     }
 
-    @Override public void teleport(Location location, TeleportCause cause) {
+    @Override
+    public void teleport(Location location, TeleportCause cause) {
         try (final MetaDataAccess<Plot> lastPlot = accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
             if (location.getPlot() == null) {
                 lastPlot.remove();
@@ -161,65 +181,83 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         }
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return "*";
     }
 
-    @Override public void setCompassTarget(Location location) {
+    @Override
+    public void setCompassTarget(Location location) {
     }
 
-    @Override public void setAttribute(String key) {
+    @Override
+    public void setAttribute(String key) {
     }
 
-    @Override public boolean getAttribute(String key) {
+    @Override
+    public boolean getAttribute(String key) {
         return false;
     }
 
-    @Override public void removeAttribute(String key) {
+    @Override
+    public void removeAttribute(String key) {
     }
 
-    @Override @Nonnull public RequiredType getSuperCaller() {
+    @Override
+    public @NonNull RequiredType getSuperCaller() {
         return RequiredType.CONSOLE;
     }
 
-    @Override public void setWeather(@Nonnull PlotWeather weather) {
+    @Override
+    public void setWeather(@NonNull PlotWeather weather) {
     }
 
-    @Override public @Nonnull GameMode getGameMode() {
+    @Override
+    public @NonNull GameMode getGameMode() {
         return GameModes.SPECTATOR;
     }
 
-    @Override public void setGameMode(@Nonnull GameMode gameMode) {
+    @Override
+    public void setGameMode(@NonNull GameMode gameMode) {
     }
 
-    @Override public void setTime(long time) {
+    @Override
+    public void setTime(long time) {
     }
 
-    @Override public boolean getFlight() {
+    @Override
+    public boolean getFlight() {
         return true;
     }
 
-    @Override public void setFlight(boolean fly) {
+    @Override
+    public void setFlight(boolean fly) {
     }
 
-    @Override public void playMusic(@Nonnull Location location, @Nonnull ItemType id) {
+    @Override
+    public void playMusic(@NonNull Location location, @NonNull ItemType id) {
     }
 
-    @Override public void kick(String message) {
+    @Override
+    public void kick(String message) {
     }
 
-    @Override public void stopSpectating() {
+    @Override
+    public void stopSpectating() {
     }
 
-    @Override public boolean isBanned() {
+    @Override
+    public boolean isBanned() {
         return false;
     }
 
-    @Override @Nonnull public Audience getAudience() {
+    @Override
+    public @NonNull Audience getAudience() {
         return PlotSquared.platform().consoleAudience();
     }
 
-    @Override public boolean canSee(final PlotPlayer<?> other) {
+    @Override
+    public boolean canSee(final PlotPlayer<?> other) {
         return true;
     }
 

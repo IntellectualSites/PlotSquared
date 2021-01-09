@@ -38,9 +38,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -64,8 +64,10 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
     private final Map<UUID, P> playerMap = new HashMap<>();
     private final Object playerLock = new Object();
 
-    public static void getUUIDsFromString(@Nonnull final String list,
-        @Nonnull final BiConsumer<Collection<UUID>, Throwable> consumer) {
+    public static void getUUIDsFromString(
+            final @NonNull String list,
+            final @NonNull BiConsumer<Collection<UUID>, Throwable> consumer
+    ) {
         String[] split = list.split(",");
 
         final Set<UUID> result = new HashSet<>();
@@ -93,17 +95,17 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             consumer.accept(result, null);
         } else {
             PlotSquared.get().getImpromptuUUIDPipeline()
-                .getUUIDs(request, Settings.UUID.NON_BLOCKING_TIMEOUT)
-                .whenComplete((uuids, throwable) -> {
-                    if (throwable != null) {
-                        consumer.accept(null, throwable);
-                    } else {
-                        for (final UUIDMapping uuid : uuids) {
-                            result.add(uuid.getUuid());
+                    .getUUIDs(request, Settings.UUID.NON_BLOCKING_TIMEOUT)
+                    .whenComplete((uuids, throwable) -> {
+                        if (throwable != null) {
+                            consumer.accept(null, throwable);
+                        } else {
+                            for (final UUIDMapping uuid : uuids) {
+                                result.add(uuid.getUuid());
+                            }
+                            consumer.accept(result, null);
                         }
-                        consumer.accept(result, null);
-                    }
-                });
+                    });
         }
     }
 
@@ -111,11 +113,11 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * Get a list of names given a list of UUIDs.
      * - Uses the format {@link TranslatableCaption#of(String)} of "info.plot_user_list" for the returned string
      *
-     * @param uuids UUIDs
+     * @param uuids        UUIDs
      * @param localeHolder the localeHolder to localize the component for
      * @return Component of name list
      */
-    @Nonnull public static Component getPlayerList(@Nonnull final Collection<UUID> uuids, LocaleHolder localeHolder) {
+    public @NonNull static Component getPlayerList(final @NonNull Collection<UUID> uuids, LocaleHolder localeHolder) {
         if (uuids.isEmpty()) {
             return MINI_MESSAGE.parse(TranslatableCaption.of("info.none").getComponent(localeHolder));
         }
@@ -136,7 +138,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
 
         try {
             for (final UUIDMapping mapping : PlotSquared.get().getImpromptuUUIDPipeline()
-                .getNames(players).get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS)) {
+                    .getNames(players).get(Settings.UUID.BLOCKING_TIMEOUT, TimeUnit.MILLISECONDS)) {
                 users.add(mapping.getUsername());
             }
         } catch (final Exception e) {
@@ -161,7 +163,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param owner Owner UUID
      * @return The player's name, None, Everyone or Unknown
      */
-    @Nonnull public static String getName(@Nullable final UUID owner) {
+    public @NonNull static String getName(final @Nullable UUID owner) {
         return getName(owner, true);
     }
 
@@ -172,7 +174,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param blocking Whether or not the operation can be blocking
      * @return The player's name, None, Everyone or Unknown
      */
-    @Nonnull public static String getName(@Nullable final UUID owner, final boolean blocking) {
+    public @NonNull static String getName(final @Nullable UUID owner, final boolean blocking) {
         if (owner == null) {
             TranslatableCaption.of("info.none");
         }
@@ -185,10 +187,10 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         final String name;
         if (blocking) {
             name = PlotSquared.get().getImpromptuUUIDPipeline()
-                .getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
+                    .getSingle(owner, Settings.UUID.BLOCKING_TIMEOUT);
         } else {
             final UUIDMapping uuidMapping =
-                PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(owner);
+                    PlotSquared.get().getImpromptuUUIDPipeline().getImmediately(owner);
             if (uuidMapping != null) {
                 name = uuidMapping.getUsername();
             } else {
@@ -206,7 +208,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      *
      * @param plotPlayer Player to remove
      */
-    public void removePlayer(@Nonnull final PlotPlayer<?> plotPlayer) {
+    public void removePlayer(final @NonNull PlotPlayer<?> plotPlayer) {
         synchronized (playerLock) {
             this.playerMap.remove(plotPlayer.getUUID());
         }
@@ -217,7 +219,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      *
      * @param uuid Player to remove
      */
-    public void removePlayer(@Nonnull final UUID uuid) {
+    public void removePlayer(final @NonNull UUID uuid) {
         synchronized (playerLock) {
             this.playerMap.remove(uuid);
         }
@@ -229,14 +231,14 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param uuid Player UUID
      * @return Player, or null
      */
-    @Nullable public P getPlayerIfExists(@Nullable final UUID uuid) {
+    public @Nullable P getPlayerIfExists(final @Nullable UUID uuid) {
         if (uuid == null) {
             return null;
         }
         return this.playerMap.get(uuid);
     }
 
-    @Nullable public P getPlayerIfExists(@Nullable final String name) {
+    public @Nullable P getPlayerIfExists(final @Nullable String name) {
         for (final P plotPlayer : this.playerMap.values()) {
             if (plotPlayer.getName().equalsIgnoreCase(name)) {
                 return plotPlayer;
@@ -255,7 +257,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param object Platform player object
      * @return Player object
      */
-    @Nonnull public abstract P getPlayer(@Nonnull final T object);
+    public @NonNull abstract P getPlayer(final @NonNull T object);
 
     /**
      * Get a plot player from a UUID. This method requires
@@ -267,7 +269,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param uuid Player UUID
      * @return Player object
      */
-    @Nonnull public P getPlayer(@Nonnull final UUID uuid) {
+    public @NonNull P getPlayer(final @NonNull UUID uuid) {
         synchronized (playerLock) {
             P player = this.playerMap.get(uuid);
             if (player == null) {
@@ -278,7 +280,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
         }
     }
 
-    @Nonnull public abstract P createPlayer(@Nonnull final UUID uuid);
+    public @NonNull abstract P createPlayer(final @NonNull UUID uuid);
 
     /**
      * Get an an offline player object from the player's UUID
@@ -286,7 +288,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param uuid Player UUID
      * @return Offline player object
      */
-    @Nullable public abstract OfflinePlotPlayer getOfflinePlayer(@Nullable final UUID uuid);
+    public @Nullable abstract OfflinePlotPlayer getOfflinePlayer(final @Nullable UUID uuid);
 
     /**
      * Get an offline player object from the player's username
@@ -294,7 +296,7 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
      * @param username Player name
      * @return Offline player object
      */
-    @Nullable public abstract OfflinePlotPlayer getOfflinePlayer(@Nonnull final String username);
+    public @Nullable abstract OfflinePlotPlayer getOfflinePlayer(final @NonNull String username);
 
     /**
      * Get all online players
@@ -308,13 +310,15 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
 
     public static final class NoSuchPlayerException extends IllegalArgumentException {
 
-        public NoSuchPlayerException(@Nonnull final UUID uuid) {
+        public NoSuchPlayerException(final @NonNull UUID uuid) {
             super(String.format("There is no online player with UUID '%s'", uuid.toString()));
         }
 
-        @Override public synchronized Throwable fillInStackTrace() {
+        @Override
+        public synchronized Throwable fillInStackTrace() {
             return this;
         }
+
     }
 
 }

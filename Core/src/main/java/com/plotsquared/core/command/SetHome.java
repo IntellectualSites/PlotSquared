@@ -33,14 +33,15 @@ import com.plotsquared.core.plot.Plot;
 import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "sethome",
-    permission = "plots.set.home",
-    usage = "/plot sethome [none]",
-    aliases = {"sh", "seth"},
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.set.home",
+        usage = "/plot sethome [none]",
+        aliases = {"sh", "seth"},
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER)
 public class SetHome extends SetCommand {
 
-    @Override public boolean set(PlotPlayer player, Plot plot, String value) {
+    @Override
+    public boolean set(PlotPlayer player, Plot plot, String value) {
         switch (value.toLowerCase()) {
             case "unset":
             case "reset":
@@ -55,7 +56,8 @@ public class SetHome extends SetCommand {
                 Location bottom = base.getBottomAbs();
                 Location location = player.getLocationFull();
                 BlockLoc rel = new BlockLoc(location.getX() - bottom.getX(), location.getY(),
-                    location.getZ() - bottom.getZ(), location.getYaw(), location.getPitch());
+                        location.getZ() - bottom.getZ(), location.getYaw(), location.getPitch()
+                );
                 base.setHome(rel);
                 player.sendMessage(TranslatableCaption.of("position.position_set"));
             default:
@@ -66,4 +68,5 @@ public class SetHome extends SetCommand {
                 return false;
         }
     }
+
 }

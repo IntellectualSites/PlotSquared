@@ -241,9 +241,9 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
             case "ARMOR_STAND":
                 ArmorStand stand = (ArmorStand) entity;
                 this.inventory =
-                    new ItemStack[] {stand.getItemInHand().clone(), stand.getHelmet().clone(),
-                        stand.getChestplate().clone(), stand.getLeggings().clone(),
-                        stand.getBoots().clone()};
+                        new ItemStack[]{stand.getItemInHand().clone(), stand.getHelmet().clone(),
+                                stand.getChestplate().clone(), stand.getLeggings().clone(),
+                                stand.getBoots().clone()};
                 storeLiving(stand);
                 this.stand = new ArmorStandStats();
 
@@ -336,15 +336,17 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                     this.dataByte = (byte) 0;
                 }
                 storeLiving((LivingEntity) entity);
-            // END LIVING //
+                // END LIVING //
         }
     }
 
-    @Override public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         return this.hash == obj.hashCode();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return this.hash;
     }
 
@@ -460,7 +462,8 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         this.tamed.tamed = tamed.isTamed();
     }
 
-    @Override public Entity spawn(World world, int xOffset, int zOffset) {
+    @Override
+    public Entity spawn(World world, int xOffset, int zOffset) {
         Location location = new Location(world, this.getX() + xOffset, this.getY(), this.z + zOffset);
         location.setYaw(this.yaw);
         location.setPitch(this.pitch);
@@ -647,36 +650,40 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 }
                 if (this.stand.head[0] != 0 || this.stand.head[1] != 0 || this.stand.head[2] != 0) {
                     EulerAngle pose =
-                        new EulerAngle(this.stand.head[0], this.stand.head[1], this.stand.head[2]);
+                            new EulerAngle(this.stand.head[0], this.stand.head[1], this.stand.head[2]);
                     stand.setHeadPose(pose);
                 }
                 if (this.stand.body[0] != 0 || this.stand.body[1] != 0 || this.stand.body[2] != 0) {
                     EulerAngle pose =
-                        new EulerAngle(this.stand.body[0], this.stand.body[1], this.stand.body[2]);
+                            new EulerAngle(this.stand.body[0], this.stand.body[1], this.stand.body[2]);
                     stand.setBodyPose(pose);
                 }
                 if (this.stand.leftLeg[0] != 0 || this.stand.leftLeg[1] != 0
-                    || this.stand.leftLeg[2] != 0) {
+                        || this.stand.leftLeg[2] != 0) {
                     EulerAngle pose = new EulerAngle(this.stand.leftLeg[0], this.stand.leftLeg[1],
-                        this.stand.leftLeg[2]);
+                            this.stand.leftLeg[2]
+                    );
                     stand.setLeftLegPose(pose);
                 }
                 if (this.stand.rightLeg[0] != 0 || this.stand.rightLeg[1] != 0
-                    || this.stand.rightLeg[2] != 0) {
+                        || this.stand.rightLeg[2] != 0) {
                     EulerAngle pose = new EulerAngle(this.stand.rightLeg[0], this.stand.rightLeg[1],
-                        this.stand.rightLeg[2]);
+                            this.stand.rightLeg[2]
+                    );
                     stand.setRightLegPose(pose);
                 }
                 if (this.stand.leftArm[0] != 0 || this.stand.leftArm[1] != 0
-                    || this.stand.leftArm[2] != 0) {
+                        || this.stand.leftArm[2] != 0) {
                     EulerAngle pose = new EulerAngle(this.stand.leftArm[0], this.stand.leftArm[1],
-                        this.stand.leftArm[2]);
+                            this.stand.leftArm[2]
+                    );
                     stand.setLeftArmPose(pose);
                 }
                 if (this.stand.rightArm[0] != 0 || this.stand.rightArm[1] != 0
-                    || this.stand.rightArm[2] != 0) {
+                        || this.stand.rightArm[2] != 0) {
                     EulerAngle pose = new EulerAngle(this.stand.rightArm[0], this.stand.rightArm[1],
-                        this.stand.rightArm[2]);
+                            this.stand.rightArm[2]
+                    );
                     stand.setRightArmPose(pose);
                 }
                 if (this.stand.invisible) {

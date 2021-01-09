@@ -26,8 +26,8 @@
 package com.plotsquared.core.synchronization;
 
 import com.google.common.util.concurrent.Striped;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Consumer;
 
@@ -48,7 +48,7 @@ public final class LockRepository {
      * @param key Lock key
      * @return Lock
      */
-    @Nonnull public Lock getLock(@Nonnull final LockKey key) {
+    public @NonNull Lock getLock(final @NonNull LockKey key) {
         return this.striped.get(key);
     }
 
@@ -58,7 +58,7 @@ public final class LockRepository {
      * @param key      Lock key
      * @param consumer Lock consumer
      */
-    public void useLock(@Nonnull final LockKey key, @Nonnull final Consumer<Lock> consumer) {
+    public void useLock(final @NonNull LockKey key, final @NonNull Consumer<Lock> consumer) {
         consumer.accept(this.getLock(key));
     }
 
@@ -70,7 +70,7 @@ public final class LockRepository {
      * @param key      Lock key
      * @param runnable Action to run when the lock is available
      */
-    public void useLock(@Nonnull final LockKey key, @Nonnull final Runnable runnable) {
+    public void useLock(final @NonNull LockKey key, final @NonNull Runnable runnable) {
         this.useLock(key, lock -> {
             lock.lock();
             runnable.run();
@@ -92,7 +92,7 @@ public final class LockRepository {
      * @param key Lock key
      * @return Lock access. Must be closed.
      */
-    @Nonnull public LockAccess lock(@Nonnull final LockKey key) {
+    public @NonNull LockAccess lock(final @NonNull LockKey key) {
         final Lock lock = this.getLock(key);
         lock.lock();
         return new LockAccess(lock);
@@ -103,11 +103,12 @@ public final class LockRepository {
 
         private final Lock lock;
 
-        private LockAccess(@Nonnull final Lock lock) {
+        private LockAccess(final @NonNull Lock lock) {
             this.lock = lock;
         }
 
-        @Override public void close() {
+        @Override
+        public void close() {
             this.lock.unlock();
         }
 

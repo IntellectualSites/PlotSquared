@@ -32,10 +32,10 @@ import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -47,8 +47,8 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public final class LegacyConverter {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + LegacyConverter.class.getSimpleName());
     public static final String CONFIGURATION_VERSION = "post_flattening";
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + LegacyConverter.class.getSimpleName());
     private static final HashMap<String, ConfigurationType> TYPE_MAP = new HashMap<>();
 
     static {
@@ -62,24 +62,26 @@ public final class LegacyConverter {
 
     private final ConfigurationSection configuration;
 
-    public LegacyConverter(@Nonnull final ConfigurationSection configuration) {
+    public LegacyConverter(final @NonNull ConfigurationSection configuration) {
         this.configuration = configuration;
     }
 
-    private BlockBucket blockToBucket(@Nonnull final String block) {
+    private BlockBucket blockToBucket(final @NonNull String block) {
         final BlockState plotBlock = PlotSquared.platform().worldUtil().getClosestBlock(block).best;
         return BlockBucket.withSingle(plotBlock);
     }
 
-    private void setString(@Nonnull final ConfigurationSection section,
-        @Nonnull final String string, @Nonnull final BlockBucket blocks) {
+    private void setString(
+            final @NonNull ConfigurationSection section,
+            final @NonNull String string, final @NonNull BlockBucket blocks
+    ) {
         if (!section.contains(string)) {
             throw new IllegalArgumentException(String.format("No such key: %s", string));
         }
         section.set(string, blocks.toString());
     }
 
-    private BlockBucket blockListToBucket(@Nonnull final BlockState[] blocks) {
+    private BlockBucket blockListToBucket(final @NonNull BlockState[] blocks) {
         final Map<BlockState, Integer> counts = new HashMap<>();
         for (final BlockState block : blocks) {
             counts.putIfAbsent(block, 0);
@@ -103,28 +105,40 @@ public final class LegacyConverter {
         return bucket;
     }
 
-    private BlockState[] splitBlockList(@Nonnull final List<String> list) {
+    private BlockState[] splitBlockList(final @NonNull List<String> list) {
         return list.stream().map(s -> PlotSquared.platform().worldUtil().getClosestBlock(s).best)
-            .toArray(BlockState[]::new);
+                .toArray(BlockState[]::new);
     }
 
-    private void convertBlock(@Nonnull final ConfigurationSection section, @Nonnull final String key, @Nonnull final String block) {
+    private void convertBlock(
+            final @NonNull ConfigurationSection section,
+            final @NonNull String key,
+            final @NonNull String block
+    ) {
         final BlockBucket bucket = this.blockToBucket(block);
         this.setString(section, key, bucket);
-        ConsolePlayer.getConsole().sendMessage(TranslatableCaption.of("legacyconfig.legacy_config_replaced"), Template.of("value1", block),
-            Template.of("value2", bucket.toString()));
+        ConsolePlayer.getConsole().sendMessage(TranslatableCaption.of("legacyconfig.legacy_config_replaced"),
+                Template.of("value1", block),
+                Template.of("value2", bucket.toString())
+        );
     }
 
-    private void convertBlockList(@Nonnull final ConfigurationSection section, @Nonnull final String key, @Nonnull final List<String> blockList) {
+    private void convertBlockList(
+            final @NonNull ConfigurationSection section,
+            final @NonNull String key,
+            final @NonNull List<String> blockList
+    ) {
         final BlockState[] blocks = this.splitBlockList(blockList);
         final BlockBucket bucket = this.blockListToBucket(blocks);
         this.setString(section, key, bucket);
         ConsolePlayer.getConsole()
-            .sendMessage(TranslatableCaption.of("legacyconfig.legacy_config_replaced"), Template.of("value1", plotBlockArrayString(blocks)),
-                Template.of("value2", bucket.toString()));
+                .sendMessage(TranslatableCaption.of("legacyconfig.legacy_config_replaced"),
+                        Template.of("value1", plotBlockArrayString(blocks)),
+                        Template.of("value2", bucket.toString())
+                );
     }
 
-    private String plotBlockArrayString(@Nonnull final BlockState[] blocks) {
+    private String plotBlockArrayString(final @NonNull BlockState[] blocks) {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < blocks.length; i++) {
             builder.append(blocks[i].toString());
@@ -144,10 +158,12 @@ public final class LegacyConverter {
                 if (worldSection.contains(entry.getKey())) {
                     if (entry.getValue() == ConfigurationType.BLOCK) {
                         this.convertBlock(worldSection, entry.getKey(),
-                            worldSection.getString(entry.getKey()));
+                                worldSection.getString(entry.getKey())
+                        );
                     } else {
                         this.convertBlockList(worldSection, entry.getKey(),
-                            worldSection.getStringList(entry.getKey()));
+                                worldSection.getStringList(entry.getKey())
+                        );
                     }
                 }
             }
@@ -155,7 +171,8 @@ public final class LegacyConverter {
     }
 
     private enum ConfigurationType {
-        BLOCK, BLOCK_LIST
+        BLOCK,
+        BLOCK_LIST
     }
 
 }

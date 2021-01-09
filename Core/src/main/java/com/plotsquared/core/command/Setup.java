@@ -37,8 +37,8 @@ import com.plotsquared.core.setup.SetupProcess;
 import com.plotsquared.core.setup.SetupStep;
 import com.plotsquared.core.util.SetupUtils;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,15 +46,16 @@ import java.util.List;
 import java.util.Map.Entry;
 
 @CommandDeclaration(command = "setup",
-    permission = "plots.admin.command.setup",
-    usage = "/plot setup",
-    aliases = {"create"},
-    category = CommandCategory.ADMINISTRATION)
+        permission = "plots.admin.command.setup",
+        usage = "/plot setup",
+        aliases = {"create"},
+        category = CommandCategory.ADMINISTRATION)
 public class Setup extends SubCommand {
 
     private final SetupUtils setupUtils;
 
-    @Inject public Setup(@Nonnull final SetupUtils setupUtils) {
+    @Inject
+    public Setup(final @NonNull SetupUtils setupUtils) {
         this.setupUtils = setupUtils;
     }
 
@@ -63,7 +64,8 @@ public class Setup extends SubCommand {
         message.append("<gold>What generator do you want?</gold>");
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
             if (entry.getKey().equals(PlotSquared.platform().pluginName())) {
-                message.append("\n<dark_gray> - </dark_gray><dark_green>").append(entry.getKey()).append(" (Default Generator)</dark_green>");
+                message.append("\n<dark_gray> - </dark_gray><dark_green>").append(entry.getKey()).append(
+                        " (Default Generator)</dark_green>");
             } else if (entry.getValue().isFull()) {
                 message.append("\n<dark_gray> - </dark_gray><gray>").append(entry.getKey()).append(" (Plot Generator)</gray>");
             } else {
@@ -73,21 +75,22 @@ public class Setup extends SubCommand {
         player.sendMessage(StaticCaption.of(message.toString()));
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         try (final MetaDataAccess<SetupProcess> metaDataAccess =
-            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SETUP)) {
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SETUP)) {
             SetupProcess process = metaDataAccess.get().orElse(null);
             if (process == null) {
                 if (args.length > 0) {
                     player.sendMessage(TranslatableCaption.of("setup.setup_not_started"));
-                player.sendMessage(
-                        TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "Use /plot setup to start a setup process.")
-                );
-                return true;
-            }
-            process = new SetupProcess();
-            metaDataAccess.set(process);
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "Use /plot setup to start a setup process.")
+                    );
+                    return true;
+                }
+                process = new SetupProcess();
+                metaDataAccess.set(process);
                 this.setupUtils.updateGenerators();
                 SetupStep step = process.getCurrentStep();
                 step.announce(player);
@@ -114,10 +117,11 @@ public class Setup extends SubCommand {
         }
     }
 
-    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    @Override
+    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
         SetupProcess process;
         try (final MetaDataAccess<SetupProcess> metaDataAccess =
-            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SETUP)) {
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SETUP)) {
             process = metaDataAccess.get().orElse(null);
         }
         if (process == null) {
@@ -136,7 +140,9 @@ public class Setup extends SubCommand {
 
     private void tryAddSubCommand(String subCommand, String argument, List<Command> suggestions) {
         if (!argument.isEmpty() && subCommand.startsWith(argument)) {
-            suggestions.add(new Command(null, false, subCommand, "", RequiredType.NONE, null) {});
+            suggestions.add(new Command(null, false, subCommand, "", RequiredType.NONE, null) {
+            });
         }
     }
+
 }

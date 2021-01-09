@@ -26,9 +26,8 @@
 package com.plotsquared.core.util.task;
 
 import com.google.common.base.Objects;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Task timings
@@ -38,28 +37,28 @@ public final class TaskTime {
     private final long time;
     private final TaskUnit unit;
 
-    private TaskTime(@Nonnegative final long time, @Nonnull final TaskUnit unit) {
+    private TaskTime(@NonNegative final long time, final @NonNull TaskUnit unit) {
         this.time = time;
         this.unit = unit;
     }
 
     /**
      * Create a new task time in seconds
-     * 
+     *
      * @param seconds Seconds
      * @return Created task time instance
      */
-    @Nonnull public static TaskTime seconds(@Nonnegative final long seconds) {
+    public @NonNull static TaskTime seconds(@NonNegative final long seconds) {
         return new TaskTime(seconds * 1000L, TaskUnit.MILLISECONDS);
     }
-    
+
     /**
      * Create a new task time in server ticks
      *
      * @param ticks Server ticks
      * @return Created task time instance
      */
-    @Nonnull public static TaskTime ticks(@Nonnegative final long ticks) {
+    public @NonNull static TaskTime ticks(@NonNegative final long ticks) {
         return new TaskTime(ticks, TaskUnit.TICKS);
     }
 
@@ -69,7 +68,7 @@ public final class TaskTime {
      * @param ms Milliseconds
      * @return Created task time instance
      */
-    @Nonnull public static TaskTime ms(@Nonnegative final long ms) {
+    public @NonNull static TaskTime ms(@NonNegative final long ms) {
         return new TaskTime(ms, TaskUnit.MILLISECONDS);
     }
 
@@ -78,7 +77,8 @@ public final class TaskTime {
      *
      * @return Task time
      */
-    @Nonnegative public long getTime() {
+    @NonNegative
+    public long getTime() {
         return this.time;
     }
 
@@ -87,11 +87,12 @@ public final class TaskTime {
      *
      * @return Time unit
      */
-    @Nonnull public TaskUnit getUnit() {
+    public @NonNull TaskUnit getUnit() {
         return this.unit;
     }
 
-    @Override public boolean equals(final Object o) {
+    @Override
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -102,41 +103,46 @@ public final class TaskTime {
         return getTime() == taskTime.getTime() && getUnit() == taskTime.getUnit();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hashCode(getTime(), getUnit());
     }
 
 
     public enum TaskUnit {
-        TICKS, MILLISECONDS
+        TICKS,
+        MILLISECONDS
     }
-    
-    
+
+
     public interface TimeConverter {
 
         /**
          * Convert from milliseconds to server ticks
-         * 
+         *
          * @param ms Milliseconds
          * @return Server ticks
          */
-        @Nonnegative long msToTicks(@Nonnegative final long ms);
+        @NonNegative
+        long msToTicks(@NonNegative final long ms);
 
         /**
          * Convert from server ticks to milliseconds
-         * 
+         *
          * @param ticks Server ticks
          * @return Milliseconds
          */
-        @Nonnegative long ticksToMs(@Nonnegative final long ticks);
+        @NonNegative
+        long ticksToMs(@NonNegative final long ticks);
 
         /**
          * Convert the task time to server ticks
-         * 
+         *
          * @param taskTime Task time
          * @return Server ticks
          */
-        @Nonnegative default long toTicks(@Nonnull final TaskTime taskTime) {
+        @NonNegative
+        default long toTicks(final @NonNull TaskTime taskTime) {
             if (taskTime.getUnit() == TaskUnit.TICKS) {
                 return taskTime.getTime();
             } else {
@@ -146,18 +152,19 @@ public final class TaskTime {
 
         /**
          * Convert the task time to milliseconds
-         * 
+         *
          * @param taskTime Task time
          * @return Milliseconds
          */
-        @Nonnegative default long toMs(@Nonnull final TaskTime taskTime) {
+        @NonNegative
+        default long toMs(final @NonNull TaskTime taskTime) {
             if (taskTime.getUnit() == TaskUnit.MILLISECONDS) {
                 return taskTime.getTime();
             } else {
                 return this.ticksToMs(taskTime.getTime());
             }
         }
-        
+
     }
 
 }

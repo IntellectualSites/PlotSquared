@@ -38,9 +38,9 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -59,7 +59,8 @@ import java.util.UUID;
  *
  * @version 5
  */
-@SuppressWarnings({"unused", "WeakerAccess"}) public class PlotAPI {
+@SuppressWarnings({"unused", "WeakerAccess"})
+public class PlotAPI {
 
     public PlotAPI() {
     }
@@ -69,7 +70,7 @@ import java.util.UUID;
      *
      * @return all plots
      */
-    public Set<Plot> getAllPlots() {
+    public @NonNull Set<@NonNull Plot> getAllPlots() {
         return PlotQuery.newQuery().allPlots().asSet();
     }
 
@@ -79,7 +80,7 @@ import java.util.UUID;
      * @param player Player, whose plots to search for
      * @return all plots that a player owns
      */
-    public Set<Plot> getPlayerPlots(PlotPlayer<?> player) {
+    public @NonNull Set<@NonNull Plot> getPlayerPlots(final @NonNull PlotPlayer<?> player) {
         return PlotQuery.newQuery().ownedBy(player).asSet();
     }
 
@@ -89,7 +90,7 @@ import java.util.UUID;
      * @param plotArea Plot World Object
      * @see PlotSquared#addPlotArea(PlotArea)
      */
-    public void addPlotArea(PlotArea plotArea) {
+    public void addPlotArea(final @NonNull PlotArea plotArea) {
         PlotSquared.get().addPlotArea(plotArea);
     }
 
@@ -106,7 +107,7 @@ import java.util.UUID;
      * @return ChunkManager
      * @see ChunkManager
      */
-    public ChunkManager getChunkManager() {
+    public @NonNull ChunkManager getChunkManager() {
         return PlotSquared.platform().injector().getInstance(ChunkManager.class);
     }
 
@@ -115,7 +116,7 @@ import java.util.UUID;
      *
      * @return GlobalBlockQueue.IMP
      */
-    public GlobalBlockQueue getBlockQueue() {
+    public @NonNull GlobalBlockQueue getBlockQueue() {
         return PlotSquared.platform().globalBlockQueue();
     }
 
@@ -126,7 +127,7 @@ import java.util.UUID;
      * @return SchematicHandler
      * @see SchematicHandler
      */
-    public SchematicHandler getSchematicHandler() {
+    public @NonNull SchematicHandler getSchematicHandler() {
         return PlotSquared.platform().injector().getInstance(SchematicHandler.class);
     }
 
@@ -136,7 +137,7 @@ import java.util.UUID;
      * @param world The world to check for plot areas
      * @return A set of PlotAreas
      */
-    public Set<PlotArea> getPlotAreas(String world) {
+    public @NonNull Set<@NonNull PlotArea> getPlotAreas(final @Nullable String world) {
         if (world == null) {
             return Collections.emptySet();
         }
@@ -149,7 +150,9 @@ import java.util.UUID;
      * @param message      the message
      * @param replacements Variable replacements
      */
-    public void sendConsoleMessage(@Nonnull final String message, final Template... replacements) {
+    public void sendConsoleMessage(
+            final @NonNull String message,
+            final @NonNull Template @NonNull... replacements) {
         ConsolePlayer.getConsole().sendMessage(StaticCaption.of(message), replacements);
         // TODO: Re-implement
         // PlotSquared.log(message);
@@ -161,7 +164,10 @@ import java.util.UUID;
      * @param caption      the message
      * @param replacements Variable replacements
      */
-    public void sendConsoleMessage(@Nonnull final Caption caption, final Template... replacements) {
+    public void sendConsoleMessage(
+            final @NonNull Caption caption,
+            final @NonNull Template @NonNull... replacements
+    ) {
         ConsolePlayer.getConsole().sendMessage(caption, replacements);
     }
 
@@ -171,7 +177,7 @@ import java.util.UUID;
      * @return PlotSquared Class
      * @see PlotSquared
      */
-    public PlotSquared getPlotSquared() {
+    public @NonNull PlotSquared getPlotSquared() {
         return PlotSquared.get();
     }
 
@@ -179,12 +185,12 @@ import java.util.UUID;
      * Gets the PlotPlayer for a UUID.
      *
      * <p><i>Please note that PlotSquared can be configured to provide
-     * different UUIDs than bukkit</i>
+     * different UUIDs than Bukkit</i>
      *
      * @param uuid the uuid of the player to wrap
      * @return a {@code PlotPlayer}
      */
-    @Nullable public PlotPlayer<?> wrapPlayer(@Nonnull final UUID uuid) {
+    public @Nullable PlotPlayer<?> wrapPlayer(final @NonNull UUID uuid) {
         return PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
     }
 
@@ -194,7 +200,7 @@ import java.util.UUID;
      * @param player the player to wrap
      * @return a {@code PlotPlayer}
      */
-    @Nullable public PlotPlayer<?> wrapPlayer(@Nonnull final String player) {
+    public @Nullable PlotPlayer<?> wrapPlayer(final @NonNull String player) {
         return PlotSquared.platform().playerManager().getPlayerIfExists(player);
     }
 
@@ -204,7 +210,8 @@ import java.util.UUID;
      * @param listener the listener class to register
      * @see EventDispatcher#registerListener(Object)
      */
-    public void registerListener(Object listener) {
+    public void registerListener(final @NonNull Object listener) {
         PlotSquared.get().getEventDispatcher().registerListener(listener);
     }
+
 }

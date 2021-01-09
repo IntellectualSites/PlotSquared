@@ -28,8 +28,7 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * CommandCategory.
@@ -85,13 +84,15 @@ public enum CommandCategory implements Caption {
     }
 
     // TODO this method shouldn't be invoked
-    @Deprecated @Override public String toString() {
+    @Deprecated
+    @Override
+    public String toString() {
         return this.caption.getComponent(LocaleHolder.console());
     }
 
-    @Nonnull
+    @NonNull
     @Override
-    public String getComponent(@Nonnull LocaleHolder localeHolder) {
+    public String getComponent(@NonNull LocaleHolder localeHolder) {
         return this.caption.getComponent(localeHolder);
     }
 }

@@ -39,23 +39,23 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.uuid.UUIDMapping;
+import net.kyori.adventure.text.minimessage.Template;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import net.kyori.adventure.text.minimessage.Template;
-import com.plotsquared.core.uuid.UUIDMapping;
-
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "grant",
-    category = CommandCategory.CLAIMING,
-    usage = "/plot grant <check | add> [player]",
-    permission = "plots.grant",
-    requiredType = RequiredType.NONE)
+        category = CommandCategory.CLAIMING,
+        usage = "/plot grant <check | add> [player]",
+        permission = "plots.grant",
+        requiredType = RequiredType.NONE)
 public class Grant extends Command {
 
     public Grant() {
@@ -63,17 +63,25 @@ public class Grant extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        checkTrue(args.length >= 1 && args.length <= 2, TranslatableCaption.of("commandconfig.command_syntax"), Template.of("value", "/plot grant <check | add> [player]"));
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
+        checkTrue(
+                args.length >= 1 && args.length <= 2,
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                Template.of("value", "/plot grant <check | add> [player]")
+        );
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
             case "add":
             case "check":
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_GRANT.format(arg0))) {
-                    player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", Permission.PERMISSION_GRANT.format(arg0)));
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Permission.PERMISSION_GRANT.format(arg0))
+                    );
                     return CompletableFuture.completedFuture(false);
                 }
                 if (args.length > 2) {
@@ -92,17 +100,20 @@ public class Grant extends Command {
                         PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuid.getUuid());
                         if (pp != null) {
                             try (final MetaDataAccess<Integer> access = pp.accessPersistentMetaData(
-                                PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                                    PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
                                 if (args[0].equalsIgnoreCase("check")) {
-                                    player.sendMessage(TranslatableCaption.of("grants.granted_plots"),
-                                    Template.of("amount", String.valueOf(access.get().orElse(0))));
+                                    player.sendMessage(
+                                            TranslatableCaption.of("grants.granted_plots"),
+                                            Template.of("amount", String.valueOf(access.get().orElse(0)))
+                                    );
                                 } else {
                                     access.set(access.get().orElse(0) + 1);
                                 }
                             }
                         } else {
                             DBFunc.getPersistentMeta(uuid.getUuid(), new RunnableVal<Map<String, byte[]>>() {
-                                @Override public void run(Map<String, byte[]> value) {
+                                @Override
+                                public void run(Map<String, byte[]> value) {
                                     final byte[] array = value.get("grantedPlots");
                                     if (arg0.equals("check")) { // check
                                         int granted;
@@ -112,9 +123,9 @@ public class Grant extends Command {
                                             granted = Ints.fromByteArray(array);
                                         }
                                         player.sendMessage(
-                                        TranslatableCaption.of("grants.granted_plots"),
-                                        Template.of("amount", String.valueOf(granted))
-                                );
+                                                TranslatableCaption.of("grants.granted_plots"),
+                                                Template.of("amount", String.valueOf(granted))
+                                        );
                                     } else { // add
                                         int amount;
                                         if (array == null) {
@@ -127,8 +138,8 @@ public class Grant extends Command {
                                         byte[] rawData = Ints.toByteArray(amount);
                                         DBFunc.addPersistentMeta(uuid.getUuid(), key, rawData, replace);
                                         player.sendMessage(
-                                            TranslatableCaption.of("grants.added"),
-                                            Template.of("grants", String.valueOf(amount))
+                                                TranslatableCaption.of("grants.added"),
+                                                Template.of("grants", String.valueOf(amount))
                                         );
                                     }
                                 }
@@ -141,7 +152,9 @@ public class Grant extends Command {
         sendUsage(player);
         return CompletableFuture.completedFuture(true);
     }
-    @Override public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
             if (Permissions.hasPermission(player, Permission.PERMISSION_GRANT_ADD)) {
@@ -150,13 +163,24 @@ public class Grant extends Command {
             if (Permissions.hasPermission(player, Permission.PERMISSION_GRANT_CHECK)) {
                 completions.add("check");
             }
-            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
-                .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
-                }).collect(Collectors.toCollection(LinkedList::new));
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(
+                            null,
+                            true,
+                            completion,
+                            "",
+                            RequiredType.NONE,
+                            CommandCategory.ADMINISTRATION
+                    ) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
             if (Permissions.hasPermission(player, Permission.PERMISSION_GRANT_SINGLE) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;
-        } return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

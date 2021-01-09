@@ -33,9 +33,9 @@ import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.EnumSet;
 import java.util.Optional;
@@ -43,11 +43,15 @@ import java.util.Set;
 
 public class BukkitPermissionHandler implements PermissionHandler {
 
-    @Override public void initialize() {
+    @Override
+    public void initialize() {
     }
 
-    @Nonnull @Override public Optional<PermissionProfile> getPermissionProfile(
-        @Nonnull PlotPlayer<?> playerPlotPlayer) {
+    @NonNull
+    @Override
+    public Optional<PermissionProfile> getPermissionProfile(
+            @NonNull PlotPlayer<?> playerPlotPlayer
+    ) {
         if (playerPlotPlayer instanceof BukkitPlayer) {
             final BukkitPlayer bukkitPlayer = (BukkitPlayer) playerPlotPlayer;
             return Optional.of(new BukkitPermissionProfile(bukkitPlayer.getPlatformPlayer()));
@@ -57,12 +61,17 @@ public class BukkitPermissionHandler implements PermissionHandler {
         return Optional.empty();
     }
 
-    @Nonnull @Override public Optional<PermissionProfile> getPermissionProfile(
-        @Nonnull OfflinePlotPlayer offlinePlotPlayer) {
+    @NonNull
+    @Override
+    public Optional<PermissionProfile> getPermissionProfile(
+            @NonNull OfflinePlotPlayer offlinePlotPlayer
+    ) {
         return Optional.empty();
     }
 
-    @Nonnull @Override public Set<PermissionHandlerCapability> getCapabilities() {
+    @NonNull
+    @Override
+    public Set<PermissionHandlerCapability> getCapabilities() {
         return EnumSet.of(PermissionHandlerCapability.ONLINE_PERMISSIONS);
     }
 
@@ -71,12 +80,15 @@ public class BukkitPermissionHandler implements PermissionHandler {
 
         private final WeakReference<Player> playerReference;
 
-        private BukkitPermissionProfile(@Nonnull final Player player) {
+        private BukkitPermissionProfile(final @NonNull Player player) {
             this.playerReference = new WeakReference<>(player);
         }
 
-        @Override public boolean hasPermission(@Nullable final String world,
-                                               @Nonnull final String permission) {
+        @Override
+        public boolean hasPermission(
+                final @Nullable String world,
+                final @NonNull String permission
+        ) {
             final Player player = this.playerReference.get();
             return player != null && player.hasPermission(permission);
         }

@@ -27,8 +27,8 @@ package com.plotsquared.core.queue;
 
 import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -38,7 +38,7 @@ public class GlobalBlockQueue {
     private final ConcurrentLinkedDeque<QueueCoordinator> activeQueues;
     private QueueProvider provider;
 
-    public GlobalBlockQueue(@Nonnull QueueProvider provider) {
+    public GlobalBlockQueue(@NonNull QueueProvider provider) {
         this.provider = provider;
         this.activeQueues = new ConcurrentLinkedDeque<>();
     }
@@ -49,7 +49,7 @@ public class GlobalBlockQueue {
      * @param world world to get new queue for
      * @return new QueueCoordinator for world
      */
-    @Nonnull public QueueCoordinator getNewQueue(@Nonnull World world) {
+    public @NonNull QueueCoordinator getNewQueue(@NonNull World world) {
         QueueCoordinator queue = provider.getNewQueue(world);
         // Auto-inject into the queue
         PlotSquared.platform().injector().injectMembers(queue);
@@ -60,7 +60,7 @@ public class GlobalBlockQueue {
         return this.provider;
     }
 
-    public void setQueueProvider(@Nonnull QueueProvider provider) {
+    public void setQueueProvider(@NonNull QueueProvider provider) {
         this.provider = provider;
     }
 
@@ -71,7 +71,7 @@ public class GlobalBlockQueue {
      * @param queue {@link QueueCoordinator} instance to start.
      * @return true if added to queue, false otherwise
      */
-    public boolean enqueue(@Nonnull QueueCoordinator queue) {
+    public boolean enqueue(@NonNull QueueCoordinator queue) {
         boolean success = false;
         if (queue.size() > 0 && !activeQueues.contains(queue)) {
             success = activeQueues.add(queue);
@@ -80,16 +80,17 @@ public class GlobalBlockQueue {
         return success;
     }
 
-    public void dequeue(@Nonnull QueueCoordinator queue) {
+    public void dequeue(@NonNull QueueCoordinator queue) {
         queue.cancel();
         activeQueues.remove(queue);
     }
 
-    @Nonnull public List<QueueCoordinator> getActiveQueues() {
+    public @NonNull List<QueueCoordinator> getActiveQueues() {
         return new ArrayList<>(activeQueues);
     }
 
     public boolean isDone() {
         return activeQueues.size() == 0;
     }
+
 }

@@ -96,7 +96,8 @@ public class YamlConfiguration extends FileConfiguration {
         return config;
     }
 
-    @Override public String saveToString() {
+    @Override
+    public String saveToString() {
         yamlOptions.setIndent(options().indent());
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -111,7 +112,8 @@ public class YamlConfiguration extends FileConfiguration {
         return header + dump;
     }
 
-    @Override public void loadFromString(String contents) throws InvalidConfigurationException {
+    @Override
+    public void loadFromString(String contents) throws InvalidConfigurationException {
 
         Map<?, ?> input;
         try {
@@ -174,7 +176,8 @@ public class YamlConfiguration extends FileConfiguration {
         return result.toString();
     }
 
-    @Override protected String buildHeader() {
+    @Override
+    protected String buildHeader() {
         String header = options().header();
 
         if (options().copyHeader()) {
@@ -211,11 +214,13 @@ public class YamlConfiguration extends FileConfiguration {
         return builder.toString();
     }
 
-    @Override public YamlConfigurationOptions options() {
+    @Override
+    public YamlConfigurationOptions options() {
         if (options == null) {
             options = new YamlConfigurationOptions(this);
         }
 
         return (YamlConfigurationOptions) options;
     }
+
 }

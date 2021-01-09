@@ -42,31 +42,34 @@ import com.plotsquared.core.util.InventoryUtil;
 import com.plotsquared.core.util.Permissions;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
 @CommandDeclaration(command = "music",
-    permission = "plots.music",
-    usage = "/plot music",
-    category = CommandCategory.APPEARANCE,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.music",
+        usage = "/plot music",
+        category = CommandCategory.APPEARANCE,
+        requiredType = RequiredType.PLAYER)
 public class Music extends SubCommand {
 
     private static final Collection<String> DISCS = Arrays
-        .asList("music_disc_13", "music_disc_cat", "music_disc_blocks", "music_disc_chirp",
-            "music_disc_far", "music_disc_mall", "music_disc_mellohi", "music_disc_stal",
-            "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait", "music_disc_pigstep");
+            .asList("music_disc_13", "music_disc_cat", "music_disc_blocks", "music_disc_chirp",
+                    "music_disc_far", "music_disc_mall", "music_disc_mellohi", "music_disc_stal",
+                    "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait", "music_disc_pigstep"
+            );
 
     private final InventoryUtil inventoryUtil;
 
-    @Inject public Music(@Nullable final InventoryUtil inventoryUtil) {
+    @Inject
+    public Music(final @Nullable InventoryUtil inventoryUtil) {
         this.inventoryUtil = inventoryUtil;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -74,38 +77,42 @@ public class Music extends SubCommand {
             return false;
         }
         if (!plot.isAdded(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_MUSIC_OTHER)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_MUSIC_OTHER)) {
             player.sendMessage(
-                TranslatableCaption.of("permission.no_permission"),
-                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_MUSIC_OTHER)));
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_MUSIC_OTHER))
+            );
             return true;
         }
         PlotInventory inv = new PlotInventory(this.inventoryUtil, player, 2, "Plot Jukebox") {
-            @Override public boolean onClick(int index) {
+            @Override
+            public boolean onClick(int index) {
                 PlotItemStack item = getItem(index);
                 if (item == null) {
                     return true;
                 }
                 if (item.getType() == ItemTypes.BEDROCK) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
-                        .createFlagInstance(item.getType());
+                            .createFlagInstance(item.getType());
                     PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Music removal"));
+                                TranslatableCaption.of("events.event_denied"),
+                                Template.of("value", "Music removal")
+                        );
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
                     getPlayer().sendMessage(TranslatableCaption.of("flag.flag_removed"));
                 } else if (item.getName().toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
-                        .createFlagInstance(item.getType());
+                            .createFlagInstance(item.getType());
                     PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
                     if (event.getEventResult() == Result.DENY) {
                         getPlayer().sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Music addition"));
+                                TranslatableCaption.of("events.event_denied"),
+                                Template.of("value", "Music addition")
+                        );
                         return true;
                     }
                     plot.setFlag(event.getFlag());
@@ -135,4 +142,5 @@ public class Music extends SubCommand {
         inv.openInventory();
         return true;
     }
+
 }

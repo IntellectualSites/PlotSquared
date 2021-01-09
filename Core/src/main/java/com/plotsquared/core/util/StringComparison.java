@@ -156,7 +156,9 @@ public class StringComparison<T> {
     }
 
     public interface StringComparable {
+
         String getComparableString();
+
     }
 
 
@@ -178,5 +180,7 @@ public class StringComparison<T> {
             this.match = match;
             this.best = best;
         }
+
     }
+
 }

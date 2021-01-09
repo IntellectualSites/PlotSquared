@@ -54,8 +54,8 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public class EntitySpawnListener implements Listener {
@@ -66,7 +66,7 @@ public class EntitySpawnListener implements Listener {
     private static String areaName = null;
 
     public static void testNether(final Entity entity) {
-        @Nonnull World world = entity.getWorld();
+        @NonNull World world = entity.getWorld();
         if (world.getEnvironment() != World.Environment.NETHER && world.getEnvironment() != World.Environment.THE_END) {
             return;
         }
@@ -74,7 +74,7 @@ public class EntitySpawnListener implements Listener {
     }
 
     public static void testCreate(final Entity entity) {
-        @Nonnull World world = entity.getWorld();
+        @NonNull World world = entity.getWorld();
         if (areaName == world.getName()) {
         } else {
             areaName = world.getName();
@@ -87,7 +87,7 @@ public class EntitySpawnListener implements Listener {
     }
 
     public static void test(Entity entity) {
-        @Nonnull World world = entity.getWorld();
+        @NonNull World world = entity.getWorld();
         List<MetadataValue> meta = entity.getMetadata(KEY);
         if (meta.isEmpty()) {
             if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world.getName())) {
@@ -122,7 +122,8 @@ public class EntitySpawnListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void creatureSpawnEvent(EntitySpawnEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void creatureSpawnEvent(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
         Location location = BukkitUtil.adapt(entity.getLocation());
         PlotArea area = location.getPlotArea();
@@ -166,39 +167,47 @@ public class EntitySpawnListener implements Listener {
         }
     }
 
-    @EventHandler public void onChunkLoad(ChunkLoadEvent event) {
-        @Nonnull Chunk chunk = event.getChunk();
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
+        @NonNull Chunk chunk = event.getChunk();
         for (final Entity entity : chunk.getEntities()) {
             testCreate(entity);
         }
     }
 
-    @EventHandler public void onVehicle(VehicleUpdateEvent event) {
+    @EventHandler
+    public void onVehicle(VehicleUpdateEvent event) {
         testNether(event.getVehicle());
     }
 
-    @EventHandler public void onVehicle(VehicleCreateEvent event) {
+    @EventHandler
+    public void onVehicle(VehicleCreateEvent event) {
         testCreate(event.getVehicle());
     }
 
-    @EventHandler public void onVehicle(VehicleBlockCollisionEvent event) {
+    @EventHandler
+    public void onVehicle(VehicleBlockCollisionEvent event) {
         testNether(event.getVehicle());
     }
 
-    @EventHandler public void onTeleport(EntityTeleportEvent event) {
+    @EventHandler
+    public void onTeleport(EntityTeleportEvent event) {
         Entity ent = event.getEntity();
         if (ent instanceof Vehicle || ent instanceof ArmorStand) {
             testNether(event.getEntity());
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void vehicleMove(VehicleMoveEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void vehicleMove(VehicleMoveEvent event) {
         testNether(event.getVehicle());
     }
 
-    @EventHandler public void spawn(CreatureSpawnEvent event) {
+    @EventHandler
+    public void spawn(CreatureSpawnEvent event) {
         if (event.getEntityType() == EntityType.ARMOR_STAND) {
             testCreate(event.getEntity());
         }
     }
+
 }

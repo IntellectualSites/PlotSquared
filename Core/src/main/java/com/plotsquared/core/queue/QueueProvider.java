@@ -27,26 +27,28 @@ package com.plotsquared.core.queue;
 
 import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 
 public abstract class QueueProvider {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotSquared.class.getSimpleName());
 
-    public static QueueProvider of(@Nonnull final Class<? extends QueueCoordinator> primary) {
+    public static QueueProvider of(final @NonNull Class<? extends QueueCoordinator> primary) {
         return new QueueProvider() {
 
-            @Override public QueueCoordinator getNewQueue(@Nonnull World world) {
+            @Override
+            public QueueCoordinator getNewQueue(@NonNull World world) {
                 try {
                     return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
                 } catch (Throwable e) {
                     logger.error("Error creating Queue: {} - Does it have the correct constructor(s)?", primary.getName());
                     if (!primary.getName().contains("com.plotsquared")) {
-                        logger.error("It looks like {} is a custom queue. Please look for a plugin in its classpath and report to them.",
-                            primary.getSimpleName());
+                        logger.error(
+                                "It looks like {} is a custom queue. Please look for a plugin in its classpath and report to them.",
+                                primary.getSimpleName()
+                        );
                     }
                     e.printStackTrace();
                 }
@@ -61,5 +63,6 @@ public abstract class QueueProvider {
      * @param world world
      * @return new QueueCoordinator
      */
-    public abstract QueueCoordinator getNewQueue(@Nonnull World world);
+    public abstract QueueCoordinator getNewQueue(@NonNull World world);
+
 }

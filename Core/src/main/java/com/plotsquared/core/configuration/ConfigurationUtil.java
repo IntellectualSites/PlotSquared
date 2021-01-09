@@ -33,8 +33,8 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -46,7 +46,8 @@ import java.util.function.Supplier;
 public class ConfigurationUtil {
 
     public static final SettingValue<Integer> INTEGER = new SettingValue<Integer>("INTEGER") {
-        @Override public boolean validateValue(String string) {
+        @Override
+        public boolean validateValue(String string) {
             try {
                 Integer.parseInt(string);
                 return true;
@@ -55,23 +56,27 @@ public class ConfigurationUtil {
             }
         }
 
-        @Override public Integer parseString(String string) {
+        @Override
+        public Integer parseString(String string) {
             return Integer.parseInt(string);
         }
     };
     public static final SettingValue<Boolean> BOOLEAN = new SettingValue<Boolean>("BOOLEAN") {
-        @Override public boolean validateValue(String string) {
+        @Override
+        public boolean validateValue(String string) {
             //noinspection ResultOfMethodCallIgnored
             Boolean.parseBoolean(string);
             return true;
         }
 
-        @Override public Boolean parseString(String string) {
+        @Override
+        public Boolean parseString(String string) {
             return Boolean.parseBoolean(string);
         }
     };
     public static final SettingValue<BiomeType> BIOME = new SettingValue<BiomeType>("BIOME") {
-        @Override public boolean validateValue(String string) {
+        @Override
+        public boolean validateValue(String string) {
             try {
                 return BiomeTypes.get(string) != null;
             } catch (Exception ignored) {
@@ -79,7 +84,8 @@ public class ConfigurationUtil {
             }
         }
 
-        @Override public BiomeType parseString(String string) {
+        @Override
+        public BiomeType parseString(String string) {
             if (validateValue(string)) {
                 return BiomeTypes.get(string.toLowerCase());
             }
@@ -88,27 +94,31 @@ public class ConfigurationUtil {
     };
 
     public static final SettingValue<BlockBucket> BLOCK_BUCKET =
-        new SettingValue<BlockBucket>("BLOCK_BUCKET") {
+            new SettingValue<BlockBucket>("BLOCK_BUCKET") {
 
-            @Override public BlockBucket parseString(final String string) {
-                BlockBucket bucket = new BlockBucket(string);
-                bucket.compile();
-                Pattern pattern = bucket.toPattern();
-                return pattern != null ? bucket : null;
-            }
-
-            @Override public boolean validateValue(final String string) {
-                try {
-                    return parseString(string) != null;
-                } catch (Exception e) {
-                    return false;
+                @Override
+                public BlockBucket parseString(final String string) {
+                    BlockBucket bucket = new BlockBucket(string);
+                    bucket.compile();
+                    Pattern pattern = bucket.toPattern();
+                    return pattern != null ? bucket : null;
                 }
-            }
-        };
 
-    private static <T> T getValueFromConfig(ConfigurationSection config, String path,
-        IntFunction<Optional<T>> intParser, Function<String, Optional<T>> textualParser,
-        Supplier<T> defaultValue) {
+                @Override
+                public boolean validateValue(final String string) {
+                    try {
+                        return parseString(string) != null;
+                    } catch (Exception e) {
+                        return false;
+                    }
+                }
+            };
+
+    private static <T> T getValueFromConfig(
+            ConfigurationSection config, String path,
+            IntFunction<Optional<T>> intParser, Function<String, Optional<T>> textualParser,
+            Supplier<T> defaultValue
+    ) {
         String value = config.getString(path);
         if (value == null) {
             return defaultValue.get();
@@ -121,12 +131,14 @@ public class ConfigurationUtil {
 
     public static PlotAreaType getType(ConfigurationSection config) {
         return getValueFromConfig(config, "generator.type", PlotAreaType::fromLegacyInt,
-            PlotAreaType::fromString, () -> PlotAreaType.NORMAL);
+                PlotAreaType::fromString, () -> PlotAreaType.NORMAL
+        );
     }
 
     public static PlotAreaTerrainType getTerrain(ConfigurationSection config) {
         return getValueFromConfig(config, "generator.terrain", PlotAreaTerrainType::fromLegacyInt,
-            PlotAreaTerrainType::fromString, () -> PlotAreaTerrainType.NONE);
+                PlotAreaTerrainType::fromString, () -> PlotAreaTerrainType.NONE
+        );
     }
 
 
@@ -134,7 +146,7 @@ public class ConfigurationUtil {
 
         private final String unknownValue;
 
-        UnknownBlockException(@Nonnull final String unknownValue) {
+        UnknownBlockException(final @NonNull String unknownValue) {
             super(String.format("\"%s\" is not a valid block", unknownValue));
             this.unknownValue = unknownValue;
         }
@@ -142,6 +154,7 @@ public class ConfigurationUtil {
         public String getUnknownValue() {
             return this.unknownValue;
         }
+
     }
 
 
@@ -163,6 +176,7 @@ public class ConfigurationUtil {
         public abstract T parseString(String string);
 
         public abstract boolean validateValue(String string);
+
     }
 
 
@@ -170,7 +184,7 @@ public class ConfigurationUtil {
 
         private final BlockState unsafeBlock;
 
-        UnsafeBlockException(@Nonnull final BlockState unsafeBlock) {
+        UnsafeBlockException(final @NonNull BlockState unsafeBlock) {
             super(String.format("%s is not a valid block", unsafeBlock));
             this.unsafeBlock = unsafeBlock;
         }
@@ -178,6 +192,7 @@ public class ConfigurationUtil {
         public BlockState getUnsafeBlock() {
             return this.unsafeBlock;
         }
+
     }
 
 }

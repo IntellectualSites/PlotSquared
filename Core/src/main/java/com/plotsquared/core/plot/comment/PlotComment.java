@@ -28,6 +28,7 @@ package com.plotsquared.core.plot.comment;
 import com.plotsquared.core.plot.PlotId;
 
 public class PlotComment {
+
     public final String comment;
     public final String inbox;
     public final String senderName;
@@ -35,8 +36,10 @@ public class PlotComment {
     public final String world;
     public final long timestamp;
 
-    public PlotComment(String world, PlotId id, String comment, String senderName, String inbox,
-        long timestamp) {
+    public PlotComment(
+            String world, PlotId id, String comment, String senderName, String inbox,
+            long timestamp
+    ) {
         this.world = world;
         this.id = id;
         this.comment = comment;
@@ -44,4 +47,5 @@ public class PlotComment {
         this.inbox = inbox;
         this.timestamp = timestamp;
     }
+
 }

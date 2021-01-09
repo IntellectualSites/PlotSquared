@@ -31,6 +31,7 @@ import java.util.Map;
  * Represents a source of configurable options and settings.
  */
 public interface Configuration extends ConfigurationSection {
+
     /**
      * Sets the default value of the given path as provided.
      * <p>If no source {@link Configuration} was provided as a default
@@ -43,7 +44,8 @@ public interface Configuration extends ConfigurationSection {
      * @param value Value to set the default to.
      * @throws IllegalArgumentException Thrown if path is null.
      */
-    @Override void addDefault(String path, Object value);
+    @Override
+    void addDefault(String path, Object value);
 
     /**
      * Sets the default values of the given paths as provided.
@@ -100,4 +102,5 @@ public interface Configuration extends ConfigurationSection {
      * @return Options for this configuration
      */
     ConfigurationOptions options();
+
 }

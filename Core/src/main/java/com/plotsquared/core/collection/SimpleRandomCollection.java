@@ -43,8 +43,9 @@ public class SimpleRandomCollection<E> extends RandomCollection<E> {
     }
 
     public void add(double weight, E result) {
-        if (weight <= 0)
+        if (weight <= 0) {
             return;
+        }
         total += weight;
         map.put(total, result);
     }
@@ -52,4 +53,5 @@ public class SimpleRandomCollection<E> extends RandomCollection<E> {
     public E next() {
         return map.ceilingEntry(random.nextDouble()).getValue();
     }
+
 }

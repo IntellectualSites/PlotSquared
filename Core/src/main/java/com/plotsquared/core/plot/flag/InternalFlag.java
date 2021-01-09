@@ -39,4 +39,5 @@ package com.plotsquared.core.plot.flag;
  * of such a scenario would be the flag listing in Dynmap.
  */
 public interface InternalFlag {
+
 }

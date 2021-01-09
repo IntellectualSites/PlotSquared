@@ -30,12 +30,12 @@ import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.player.PlotPlayer;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PlaceholderFormatter implements ChatFormatter {
 
-    @Override public void format(@Nonnull final ChatContext context) {
+    @Override
+    public void format(final @NonNull ChatContext context) {
         final PlotPlayer<?> recipient = context.getRecipient();
         if (recipient instanceof BukkitPlayer) {
             if (context.isRawOutput()) {

@@ -28,8 +28,7 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Event called when several plots are merged
@@ -52,8 +51,10 @@ public final class PlotMergeEvent extends PlotPlayerEvent implements Cancellable
      * @param max    Max merge size
      * @param player The player attempting the merge
      */
-    public PlotMergeEvent(@Nonnull final String world, @Nonnull final Plot plot,
-        @Nonnull final Direction dir, final int max, final PlotPlayer<?> player) {
+    public PlotMergeEvent(
+            final @NonNull String world, final @NonNull Plot plot,
+            final @NonNull Direction dir, final int max, final PlotPlayer<?> player
+    ) {
         super(player, plot);
         this.world = world;
         this.dir = dir;
@@ -62,11 +63,13 @@ public final class PlotMergeEvent extends PlotPlayerEvent implements Cancellable
     }
 
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
 
@@ -78,19 +81,20 @@ public final class PlotMergeEvent extends PlotPlayerEvent implements Cancellable
         return this.dir;
     }
 
+    public void setDir(Direction dir) {
+        this.dir = dir;
+    }
+
     public int getMax() {
         return this.max;
+    }
+
+    public void setMax(int max) {
+        this.max = max;
     }
 
     public PlotPlayer getPlayer() {
         return this.player;
     }
 
-    public void setDir(Direction dir) {
-        this.dir = dir;
-    }
-
-    public void setMax(int max) {
-        this.max = max;
-    }
 }

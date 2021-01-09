@@ -32,8 +32,8 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.task.RunnableVal;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -345,7 +345,7 @@ public interface AbstractDB {
      *
      * @param plot The Plot to get comments from
      */
-    void getComments(@Nonnull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
+    void getComments(@NonNull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
 
     void createPlotAndSettings(Plot plot, Runnable whenDone);
 
@@ -383,4 +383,5 @@ public interface AbstractDB {
     void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max);
 
     void updateTables(int[] oldVersion);
+
 }

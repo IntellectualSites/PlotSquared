@@ -48,8 +48,8 @@ import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,26 +61,29 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "set",
-    aliases = {"s"},
-    usage = "/plot set <biome | alias | home | flag> <value...>",
-    permission = "plots.set",
-    category = CommandCategory.APPEARANCE,
-    requiredType = RequiredType.NONE)
+        aliases = {"s"},
+        usage = "/plot set <biome | alias | home | flag> <value...>",
+        permission = "plots.set",
+        category = CommandCategory.APPEARANCE,
+        requiredType = RequiredType.NONE)
 public class Set extends SubCommand {
 
-    public static final String[] values = new String[] {"biome", "alias", "home"};
-    public static final String[] aliases = new String[] {"b", "w", "wf", "a", "h"};
+    public static final String[] values = new String[]{"biome", "alias", "home"};
+    public static final String[] aliases = new String[]{"b", "w", "wf", "a", "h"};
 
     private final SetCommand component;
 
-    @Inject public Set(@Nonnull final WorldUtil worldUtil) {
+    @Inject
+    public Set(final @NonNull WorldUtil worldUtil) {
         this.component = new SetCommand() {
 
-            @Override public String getId() {
+            @Override
+            public String getId() {
                 return "set.component";
             }
 
-            @Override public boolean set(PlotPlayer player, final Plot plot, String value) {
+            @Override
+            public boolean set(PlotPlayer player, final Plot plot, String value) {
                 final PlotArea plotArea = player.getLocation().getPlotArea();
                 if (plotArea == null) {
                     return false;
@@ -91,17 +94,17 @@ public class Set extends SubCommand {
 
                 String[] args = value.split(" ");
                 String material =
-                    StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
+                        StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
 
                 final List<String> forbiddenTypes = new ArrayList<>(Settings.General.INVALID_BLOCKS);
 
                 if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                     forbiddenTypes.addAll(worldUtil.getTileEntityTypes().stream().map(
-                        BlockType::getName).collect(Collectors.toList()));
+                            BlockType::getName).collect(Collectors.toList()));
                 }
 
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_ALLOW_UNSAFE) &&
-                    !forbiddenTypes.isEmpty()) {
+                        !forbiddenTypes.isEmpty()) {
                     for (String forbiddenType : forbiddenTypes) {
                         forbiddenType = forbiddenType.toLowerCase(Locale.ENGLISH);
                         if (forbiddenType.startsWith("minecraft:")) {
@@ -116,7 +119,7 @@ public class Set extends SubCommand {
                             if (blockType.startsWith("##")) {
                                 try {
                                     final BlockCategory category = BlockCategory.REGISTRY.get(blockType.substring(2)
-                                        .replaceAll("[*^|]+", "").toLowerCase(Locale.ENGLISH));
+                                            .replaceAll("[*^|]+", "").toLowerCase(Locale.ENGLISH));
                                     if (category == null || !category.contains(BlockTypes.get(forbiddenType))) {
                                         continue;
                                     }
@@ -137,8 +140,10 @@ public class Set extends SubCommand {
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
                         if (!Permissions.hasPermission(player, Permission.PERMISSION_SET_COMPONENT.format(component))) {
-                            player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                                Template.of("node", Permission.PERMISSION_SET_COMPONENT.format(component)));
+                            player.sendMessage(
+                                    TranslatableCaption.of("permission.no_permission"),
+                                    Template.of("node", Permission.PERMISSION_SET_COMPONENT.format(component))
+                            );
                             return false;
                         }
                         if (args.length < 2) {
@@ -161,11 +166,18 @@ public class Set extends SubCommand {
                             }
                             queue.setCompleteTask(() -> {
                                 plot.removeRunning();
-                                player.sendMessage(TranslatableCaption.of("working.component_complete"), Template.of("plot", String.valueOf(plot.getId())));
+                                player.sendMessage(
+                                        TranslatableCaption.of("working.component_complete"),
+                                        Template.of("plot", String.valueOf(plot.getId()))
+                                );
                             });
                             if (Settings.QUEUE.NOTIFY_PROGRESS) {
                                 queue.addProgressSubscriber(
-                                    PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class).createWithActor(player));
+                                        PlotSquared
+                                                .platform()
+                                                .injector()
+                                                .getInstance(ProgressSubscriberFactory.class)
+                                                .createWithActor(player));
                             }
                             queue.enqueue();
                             player.sendMessage(TranslatableCaption.of("working.generating_component"));
@@ -177,8 +189,10 @@ public class Set extends SubCommand {
             }
 
             @Override
-            public Collection<Command> tab(final PlotPlayer player, final String[] args,
-                final boolean space) {
+            public Collection<Command> tab(
+                    final PlotPlayer player, final String[] args,
+                    final boolean space
+            ) {
                 return TabCompletions.completePatterns(StringMan.join(args, ","));
             }
         };
@@ -190,12 +204,15 @@ public class Set extends SubCommand {
         if (plot != null) {
             newValues.addAll(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         }
-        player.sendMessage(StaticCaption.of(TranslatableCaption.of("commandconfig.subcommand_set_options_header_only").getComponent(player) + StringMan
-            .join(newValues, TranslatableCaption.of("blocklist.block_list_separator").getComponent(player))));
+        player.sendMessage(StaticCaption.of(TranslatableCaption
+                .of("commandconfig.subcommand_set_options_header_only")
+                .getComponent(player) + StringMan
+                .join(newValues, TranslatableCaption.of("blocklist.block_list_separator").getComponent(player))));
         return false;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             return noArgs(player);
         }
@@ -215,7 +232,7 @@ public class Set extends SubCommand {
         }
         // components
         HashSet<String> components =
-            new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
+                new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
             return this.component.onCommand(player, Arrays.copyOfRange(args, 0, args.length));
         }
@@ -260,9 +277,11 @@ public class Set extends SubCommand {
             if (Permissions.hasPermission(player, Permission.PERMISSION_SET_MIDDLE)) {
                 completions.add("middle");
             }
-            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
-                .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.APPEARANCE) {
-                }).collect(Collectors.toCollection(LinkedList::new));
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.APPEARANCE) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
 
             if (Permissions.hasPermission(player, Permission.PERMISSION_SET) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
@@ -288,11 +307,12 @@ public class Set extends SubCommand {
 
             // components
             HashSet<String> components =
-                new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
+                    new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
             if (components.contains(args[0].toLowerCase())) {
                 return this.component.tab(player, newArgs, space);
             }
         }
         return tabOf(player, args, space);
     }
+
 }

@@ -37,15 +37,15 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.generator.ChunkGenerator;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("unused")
 public class WorldEvents implements Listener {
 
     private final PlotAreaManager plotAreaManager;
 
-    @Inject public WorldEvents(@Nonnull final PlotAreaManager plotAreaManager) {
+    @Inject
+    public WorldEvents(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
 
@@ -67,4 +67,5 @@ public class WorldEvents implements Listener {
             PlotSquared.get().loadWorld(name, new BukkitPlotGenerator(name, gen, this.plotAreaManager));
         }
     }
+
 }

@@ -32,12 +32,12 @@ import com.plotsquared.core.util.PlotAreaConverter;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.PRTree;
 import org.khelekore.prtree.SimpleMBR;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -60,11 +60,12 @@ public class ScatteredPlotWorld extends PlotWorld {
      *
      * @param world World name
      */
-    public ScatteredPlotWorld(@Nonnull final String world) {
+    public ScatteredPlotWorld(final @NonNull String world) {
         super(world);
     }
 
-    @Override @Nullable public PlotArea getArea(@Nonnull final Location location) {
+    @Override
+    public @Nullable PlotArea getArea(final @NonNull Location location) {
         if (this.areas.isEmpty()) {
             return null;
         }
@@ -78,21 +79,25 @@ public class ScatteredPlotWorld extends PlotWorld {
         return null;
     }
 
-    @Override @Nonnull public Collection<PlotArea> getAreas() {
+    @Override
+    public @NonNull Collection<PlotArea> getAreas() {
         return Collections.unmodifiableCollection(this.areas);
     }
 
-    @Override public void addArea(@Nonnull final PlotArea area) {
+    @Override
+    public void addArea(final @NonNull PlotArea area) {
         this.areas.add(area);
         this.buildTree();
     }
 
-    @Override public void removeArea(@Nonnull final PlotArea area) {
+    @Override
+    public void removeArea(final @NonNull PlotArea area) {
         this.areas.remove(area);
         this.buildTree();
     }
 
-    @Override @Nonnull public Collection<PlotArea> getAreasInRegion(@Nonnull final CuboidRegion region) {
+    @Override
+    public @NonNull Collection<PlotArea> getAreasInRegion(final @NonNull CuboidRegion region) {
         if (this.areas.isEmpty()) {
             return Collections.emptyList();
         }

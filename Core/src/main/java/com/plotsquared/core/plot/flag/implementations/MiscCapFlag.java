@@ -27,17 +27,19 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.NonNegativeIntegerFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class MiscCapFlag extends NonNegativeIntegerFlag<MiscCapFlag> {
+
     public static final MiscCapFlag MISC_CAP_UNLIMITED = new MiscCapFlag(Integer.MAX_VALUE);
 
     protected MiscCapFlag(int value) {
         super(value, TranslatableCaption.of("flags.flag_description_misc_cap"));
     }
 
-    @Override protected MiscCapFlag flagOf(@Nonnull Integer value) {
+    @Override
+    protected MiscCapFlag flagOf(@NonNull Integer value) {
         return new MiscCapFlag(value);
     }
+
 }

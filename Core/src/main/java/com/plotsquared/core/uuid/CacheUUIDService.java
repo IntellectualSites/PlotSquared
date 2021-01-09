@@ -27,9 +27,9 @@ package com.plotsquared.core.uuid;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,34 +57,40 @@ public class CacheUUIDService implements UUIDService, Consumer<List<UUIDMapping>
         this.uuidCache = CacheBuilder.newBuilder().maximumSize(size).build();
     }
 
-    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
         mappings.addAll(this.uuidCache.getAllPresent(uuids).values());
         return mappings;
     }
 
-    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         mappings.addAll(this.usernameCache.getAllPresent(usernames).values());
         return mappings;
     }
 
-    @Override public void accept(final List<UUIDMapping> uuidMappings) {
+    @Override
+    public void accept(final List<UUIDMapping> uuidMappings) {
         for (final UUIDMapping mapping : uuidMappings) {
             this.uuidCache.put(mapping.getUuid(), mapping);
             this.usernameCache.put(mapping.getUsername(), mapping);
         }
     }
 
-    @Override @Nonnull public Collection<UUIDMapping> getImmediately() {
+    @Override
+    public @NonNull Collection<UUIDMapping> getImmediately() {
         return this.usernameCache.asMap().values();
     }
 
-    @Override public boolean canBeSynchronous() {
+    @Override
+    public boolean canBeSynchronous() {
         return true;
     }
 
-    @Override @Nullable public UUIDMapping getImmediately(@Nonnull final Object object) {
+    @Override
+    public @Nullable UUIDMapping getImmediately(final @NonNull Object object) {
         final List<UUIDMapping> list;
         if (object instanceof String) {
             list = getUUIDs(Collections.singletonList((String) object));

@@ -26,8 +26,8 @@
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -35,12 +35,13 @@ class OwnerFilter implements PlotFilter {
 
     private final UUID owner;
 
-    OwnerFilter(@Nonnull final UUID owner) {
+    OwnerFilter(final @NonNull UUID owner) {
         this.owner = owner;
     }
 
-    @Override public boolean accepts(@Nonnull final Plot plot) {
+    @Override
+    public boolean accepts(final @NonNull Plot plot) {
         return plot.hasOwner() && Objects.equals(plot.getOwnerAbs(), this.owner);
     }
-    
+
 }

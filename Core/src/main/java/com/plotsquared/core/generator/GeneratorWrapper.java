@@ -37,7 +37,10 @@ public interface GeneratorWrapper<T> {
 
     boolean isFull();
 
-    @Override String toString();
+    @Override
+    String toString();
 
-    @Override boolean equals(Object obj);
+    @Override
+    boolean equals(Object obj);
+
 }

@@ -29,10 +29,9 @@ import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.InventoryUtil;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 
 public class PlotInventory {
 
@@ -41,12 +40,14 @@ public class PlotInventory {
     private final PlotPlayer<?> player;
     private final int lines;
     private final PlotItemStack[] items;
+    private final InventoryUtil inventoryUtil;
     private String title;
     private boolean open = false;
-    private final InventoryUtil inventoryUtil;
 
-    public PlotInventory(@Nonnull final InventoryUtil inventoryUtil,
-                         PlotPlayer<?> player, int lines, String name) {
+    public PlotInventory(
+            final @NonNull InventoryUtil inventoryUtil,
+            PlotPlayer<?> player, int lines, String name
+    ) {
         this.lines = lines;
         this.title = name == null ? "" : name;
         this.player = player;
@@ -54,28 +55,30 @@ public class PlotInventory {
         this.inventoryUtil = inventoryUtil;
     }
 
-    public static boolean hasPlotInventoryOpen(@Nonnull final PlotPlayer<?> plotPlayer) {
+    public static boolean hasPlotInventoryOpen(final @NonNull PlotPlayer<?> plotPlayer) {
         return getOpenPlotInventory(plotPlayer) != null;
     }
 
-    public static PlotInventory getOpenPlotInventory(@Nonnull final PlotPlayer<?> plotPlayer) {
+    public static PlotInventory getOpenPlotInventory(final @NonNull PlotPlayer<?> plotPlayer) {
         try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
-            PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
+                PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
             return inventoryAccess.get().orElse(null);
         }
     }
 
-    public static void setPlotInventoryOpen(@Nonnull final PlotPlayer<?> plotPlayer,
-        @Nonnull final PlotInventory plotInventory) {
+    public static void setPlotInventoryOpen(
+            final @NonNull PlotPlayer<?> plotPlayer,
+            final @NonNull PlotInventory plotInventory
+    ) {
         try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
-            PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
+                PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
             inventoryAccess.set(plotInventory);
         }
     }
 
-    public static void removePlotInventoryOpen(@Nonnull final PlotPlayer<?>plotPlayer) {
+    public static void removePlotInventoryOpen(final @NonNull PlotPlayer<?> plotPlayer) {
         try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
-            PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
+                PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
             inventoryAccess.remove();
         }
     }
@@ -147,4 +150,5 @@ public class PlotInventory {
     public int getLines() {
         return lines;
     }
+
 }

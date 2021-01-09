@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class InstabreakFlag extends BooleanFlag<InstabreakFlag> {
 
@@ -39,7 +38,8 @@ public class InstabreakFlag extends BooleanFlag<InstabreakFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_instabreak"));
     }
 
-    @Override protected InstabreakFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected InstabreakFlag flagOf(@NonNull Boolean value) {
         return value ? INSTABREAK_TRUE : INSTABREAK_FALSE;
     }
 

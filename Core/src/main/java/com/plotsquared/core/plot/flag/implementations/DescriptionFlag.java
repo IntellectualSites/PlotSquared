@@ -27,34 +27,42 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class DescriptionFlag extends PlotFlag<String, DescriptionFlag> {
 
     public static final DescriptionFlag DESCRIPTION_FLAG_EMPTY = new DescriptionFlag("");
 
-    protected DescriptionFlag(@Nonnull String value) {
-        super(value, TranslatableCaption.of("flags.flag_category_string"), TranslatableCaption.of("flags.flag_description_description"));
+    protected DescriptionFlag(@NonNull String value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_string"),
+                TranslatableCaption.of("flags.flag_description_description")
+        );
     }
 
-    @Override public DescriptionFlag parse(@Nonnull String input) {
+    @Override
+    public DescriptionFlag parse(@NonNull String input) {
         return flagOf(input);
     }
 
-    @Override public DescriptionFlag merge(@Nonnull String newValue) {
+    @Override
+    public DescriptionFlag merge(@NonNull String newValue) {
         return flagOf(this.getValue() + " " + newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "&6This is my plot!";
     }
 
-    @Override protected DescriptionFlag flagOf(@Nonnull String value) {
+    @Override
+    protected DescriptionFlag flagOf(@NonNull String value) {
         return new DescriptionFlag(value);
     }
 

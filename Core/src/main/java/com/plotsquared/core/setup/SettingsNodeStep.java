@@ -32,9 +32,9 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.TabCompletions;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -47,8 +47,10 @@ public class SettingsNodeStep implements SetupStep {
     private final int id;
     private final SetupStep next;
 
-    public SettingsNodeStep(final ConfigurationNode configurationNode, final int id,
-        final SettingsNodesWrapper wrapper) {
+    public SettingsNodeStep(
+            final ConfigurationNode configurationNode, final int id,
+            final SettingsNodesWrapper wrapper
+    ) {
         this.configurationNode = configurationNode;
         this.id = id;
         if (wrapper.getSettingsNodes().length > id + 1) {
@@ -58,22 +60,28 @@ public class SettingsNodeStep implements SetupStep {
         }
     }
 
-    @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+    @Override
+    public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
         if (this.configurationNode.isValid(argument)) {
             this.configurationNode.setValue(argument);
         }
         return this.next;
     }
 
-    @Nonnull @Override public Collection<String> getSuggestions() {
+    @NonNull
+    @Override
+    public Collection<String> getSuggestions() {
         return this.configurationNode.getSuggestions();
     }
 
-    @Nullable @Override public String getDefaultValue() {
+    @Nullable
+    @Override
+    public String getDefaultValue() {
         return String.valueOf(this.configurationNode.getDefaultValue());
     }
 
-    @Override public void announce(PlotPlayer<?> plotPlayer) {
+    @Override
+    public void announce(PlotPlayer<?> plotPlayer) {
         plotPlayer.sendMessage(
                 TranslatableCaption.of("setup.setup_step"),
                 Template.of("step", String.valueOf(this.getId() + 1)),
@@ -83,14 +91,17 @@ public class SettingsNodeStep implements SetupStep {
         );
     }
 
-    @Override public Collection<Command> createSuggestions(PlotPlayer<?> plotPlayer, String argument) {
+    @Override
+    public Collection<Command> createSuggestions(PlotPlayer<?> plotPlayer, String argument) {
         switch (this.configurationNode.getType().getType()) {
             case "BLOCK_BUCKET":
                 return TabCompletions.completePatterns(argument);
             case "INTEGER":
                 if (getDefaultValue() != null && getDefaultValue().startsWith(argument)) {
                     return Collections.singletonList(new Command(null, false,
-                            getDefaultValue(), "", RequiredType.NONE, null) {});
+                            getDefaultValue(), "", RequiredType.NONE, null
+                    ) {
+                    });
                 }
             case "BOOLEAN":
                 return TabCompletions.completeBoolean(argument);
@@ -105,4 +116,5 @@ public class SettingsNodeStep implements SetupStep {
     public int getId() {
         return this.id;
     }
+
 }

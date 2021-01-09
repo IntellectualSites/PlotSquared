@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class FlatRandomCollection<T> extends RandomCollection<T> {
+
     private T[] values;
 
     public FlatRandomCollection(Map<T, Double> weights, Random random) {
@@ -63,7 +64,9 @@ public class FlatRandomCollection<T> extends RandomCollection<T> {
         this.values = (T[]) parsed.toArray();
     }
 
-    @Override public T next() {
+    @Override
+    public T next() {
         return values[random.nextInt(values.length)];
     }
+
 }

@@ -27,17 +27,19 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.NonNegativeIntegerFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class EntityCapFlag extends NonNegativeIntegerFlag<EntityCapFlag> {
+
     public static final EntityCapFlag ENTITY_CAP_UNLIMITED = new EntityCapFlag(Integer.MAX_VALUE);
 
     protected EntityCapFlag(int value) {
         super(value, TranslatableCaption.of("flags.flag_description_entity_cap"));
     }
 
-    @Override protected EntityCapFlag flagOf(@Nonnull Integer value) {
+    @Override
+    protected EntityCapFlag flagOf(@NonNull Integer value) {
         return new EntityCapFlag(value);
     }
+
 }

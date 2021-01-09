@@ -52,11 +52,11 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,7 +80,8 @@ public final class PlotModificationManager {
     private final Plot plot;
     private final ProgressSubscriberFactory subscriberFactory;
 
-    @Inject PlotModificationManager(@Nonnull final Plot plot) {
+    @Inject
+    PlotModificationManager(final @NonNull Plot plot) {
         this.plot = plot;
         this.subscriberFactory = PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class);
     }
@@ -92,9 +93,12 @@ public final class PlotModificationManager {
      * @param actor       the actor associated with the copy
      * @return Future that completes with {@code true} if the copy was successful, else {@code false}
      */
-    public CompletableFuture<Boolean> copy(@Nonnull final Plot destination, @Nullable PlotPlayer<?> actor) {
+    public CompletableFuture<Boolean> copy(final @NonNull Plot destination, @Nullable PlotPlayer<?> actor) {
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
-        final PlotId offset = PlotId.of(destination.getId().getX() - this.plot.getId().getX(), destination.getId().getY() - this.plot.getId().getY());
+        final PlotId offset = PlotId.of(
+                destination.getId().getX() - this.plot.getId().getX(),
+                destination.getId().getY() - this.plot.getId().getY()
+        );
         final Location db = destination.getBottomAbs();
         final Location ob = this.plot.getBottomAbs();
         final int offsetX = db.getX() - ob.getX();
@@ -156,7 +160,8 @@ public final class PlotModificationManager {
         // copy terrain
         final ArrayDeque<CuboidRegion> regions = new ArrayDeque<>(this.plot.getRegions());
         final Runnable run = new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 if (regions.isEmpty()) {
                     final QueueCoordinator queue = plot.getArea().getQueue();
                     for (final Plot current : plot.getConnectedPlots()) {
@@ -188,7 +193,7 @@ public final class PlotModificationManager {
      * @see #clear(boolean, boolean, PlotPlayer, Runnable)
      * @see #deletePlot(PlotPlayer, Runnable) to clear and delete a plot
      */
-    public void clear(@Nullable final Runnable whenDone) {
+    public void clear(final @Nullable Runnable whenDone) {
         this.clear(false, false, null, whenDone);
     }
 
@@ -201,10 +206,12 @@ public final class PlotModificationManager {
      * @param whenDone     A runnable to execute when clearing finishes, or null
      * @see #deletePlot(PlotPlayer, Runnable) to clear and delete a plot
      */
-    public boolean clear(final boolean checkRunning,
-                         final boolean isDelete,
-                         @Nullable final PlotPlayer<?> actor,
-                         @Nullable final Runnable whenDone) {
+    public boolean clear(
+            final boolean checkRunning,
+            final boolean isDelete,
+            final @Nullable PlotPlayer<?> actor,
+            final @Nullable Runnable whenDone
+    ) {
         if (checkRunning && this.plot.getRunning() != 0) {
             return false;
         }
@@ -215,13 +222,20 @@ public final class PlotModificationManager {
             this.removeSign();
         }
         PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
-            .callUnlink(this.plot.getArea(), this.plot, true, !isDelete, isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR);
+                .callUnlink(
+                        this.plot.getArea(),
+                        this.plot,
+                        true,
+                        !isDelete,
+                        isDelete ? PlotUnlinkEvent.REASON.DELETE : PlotUnlinkEvent.REASON.CLEAR
+                );
         if (event.getEventResult() != Result.DENY) {
             this.unlinkPlot(event.isCreateRoad(), event.isCreateSign());
         }
         final PlotManager manager = this.plot.getArea().getPlotManager();
         Runnable run = new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 if (queue.isEmpty()) {
                     Runnable run = () -> {
                         for (CuboidRegion region : regions) {
@@ -247,7 +261,12 @@ public final class PlotModificationManager {
                 Plot current = queue.poll();
                 if (plot.getArea().getTerrain() != PlotAreaTerrainType.NONE) {
                     try {
-                        PlotSquared.platform().regionManager().regenerateRegion(current.getBottomAbs(), current.getTopAbs(), false, this);
+                        PlotSquared.platform().regionManager().regenerateRegion(
+                                current.getBottomAbs(),
+                                current.getTopAbs(),
+                                false,
+                                this
+                        );
                     } catch (UnsupportedOperationException exception) {
                         exception.printStackTrace();
                         return;
@@ -267,7 +286,7 @@ public final class PlotModificationManager {
      * @param biome    The biome e.g. "forest"
      * @param whenDone The task to run when finished, or null
      */
-    public void setBiome(@Nullable final BiomeType biome, @Nonnull final Runnable whenDone) {
+    public void setBiome(final @Nullable BiomeType biome, final @NonNull Runnable whenDone) {
         final ArrayDeque<CuboidRegion> regions = new ArrayDeque<>(this.plot.getRegions());
         final int extendBiome;
         if (this.plot.getArea() instanceof SquarePlotWorld) {
@@ -276,7 +295,8 @@ public final class PlotModificationManager {
             extendBiome = 0;
         }
         Runnable run = new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 if (regions.isEmpty()) {
                     TaskManager.runTask(whenDone);
                     return;
@@ -332,7 +352,7 @@ public final class PlotModificationManager {
             }
         }
         for (Plot current : plots) {
-            boolean[] merged = new boolean[] {false, false, false, false};
+            boolean[] merged = new boolean[]{false, false, false, false};
             current.setMerged(merged);
         }
         if (createSign) {
@@ -353,7 +373,7 @@ public final class PlotModificationManager {
      *
      * @param name name
      */
-    public void setSign(@Nonnull final String name) {
+    public void setSign(final @NonNull String name) {
         if (!this.plot.isLoaded()) {
             return;
         }
@@ -361,8 +381,9 @@ public final class PlotModificationManager {
         if (this.plot.getArea().allowSigns()) {
             Location location = manager.getSignLoc(this.plot);
             String id = this.plot.getId().toString();
-            Caption[] lines = new Caption[] {TranslatableCaption.of("signs.owner_sign_line_1"), TranslatableCaption.of("signs.owner_sign_line_2"),
-                TranslatableCaption.of("signs.owner_sign_line_3"), TranslatableCaption.of("signs.owner_sign_line_4")};
+            Caption[] lines = new Caption[]{TranslatableCaption.of("signs.owner_sign_line_1"), TranslatableCaption.of(
+                    "signs.owner_sign_line_2"),
+                    TranslatableCaption.of("signs.owner_sign_line_3"), TranslatableCaption.of("signs.owner_sign_line_4")};
             PlotSquared.platform().worldUtil().setSign(location, lines, Template.of("id", id), Template.of("owner", name));
         }
     }
@@ -394,7 +415,10 @@ public final class PlotModificationManager {
         }
         Location location = manager.getSignLoc(this.plot);
         QueueCoordinator queue =
-            PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared.platform().worldUtil().getWeWorld(this.plot.getWorldName()));
+                PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared
+                        .platform()
+                        .worldUtil()
+                        .getWeWorld(this.plot.getWorldName()));
         queue.setBlock(location.getX(), location.getY(), location.getZ(), BlockTypes.AIR.getDefaultState());
         queue.enqueue();
     }
@@ -407,7 +431,10 @@ public final class PlotModificationManager {
             this.setSign("unknown");
             return;
         }
-        PlotSquared.get().getImpromptuUUIDPipeline().getSingle(this.plot.getOwnerAbs(), (username, sign) -> this.setSign(username));
+        PlotSquared.get().getImpromptuUUIDPipeline().getSingle(
+                this.plot.getOwnerAbs(),
+                (username, sign) -> this.setSign(username)
+        );
     }
 
     /**
@@ -432,7 +459,7 @@ public final class PlotModificationManager {
      * @param notify notify
      * @return {@code true} if plot was created successfully, else {@code false}
      */
-    public boolean create(@Nonnull final UUID uuid, final boolean notify) {
+    public boolean create(final @NonNull UUID uuid, final boolean notify) {
         this.plot.setOwnerAbs(uuid);
         Plot existing = this.plot.getArea().getOwnedPlotAbs(this.plot.getId());
         if (existing != null) {
@@ -456,11 +483,19 @@ public final class PlotModificationManager {
                 if (notify && plotworld.isAutoMerge()) {
                     final PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
 
-                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher().callMerge(this.plot, Direction.ALL, Integer.MAX_VALUE, player);
+                    PlotMergeEvent event = PlotSquared.get().getEventDispatcher().callMerge(
+                            this.plot,
+                            Direction.ALL,
+                            Integer.MAX_VALUE,
+                            player
+                    );
 
                     if (event.getEventResult() == Result.DENY) {
                         if (player != null) {
-                            player.sendMessage(TranslatableCaption.of("events.event_denied"), Template.of("value", "Auto merge on claim"));
+                            player.sendMessage(
+                                    TranslatableCaption.of("events.event_denied"),
+                                    Template.of("value", "Auto merge on claim")
+                            );
                         }
                         return;
                     }
@@ -469,7 +504,11 @@ public final class PlotModificationManager {
             });
             return true;
         }
-        logger.info("Failed to add plot {} to plot area {}", this.plot.getId().toCommaSeparatedString(), this.plot.getArea().toString());
+        logger.info(
+                "Failed to add plot {} to plot area {}",
+                this.plot.getId().toCommaSeparatedString(),
+                this.plot.getArea().toString()
+        );
         return false;
     }
 
@@ -480,8 +519,10 @@ public final class PlotModificationManager {
      * @param queue Nullable {@link QueueCoordinator}. If null, creates own queue and enqueues,
      *              otherwise writes to the queue but does not enqueue.
      */
-    public void removeRoadSouth(@Nullable final QueueCoordinator queue) {
-        if (this.plot.getArea().getType() != PlotAreaType.NORMAL && this.plot.getArea().getTerrain() == PlotAreaTerrainType.ROAD) {
+    public void removeRoadSouth(final @Nullable QueueCoordinator queue) {
+        if (this.plot.getArea().getType() != PlotAreaType.NORMAL && this.plot
+                .getArea()
+                .getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.plot.getRelative(Direction.SOUTH);
             Location bot = other.getBottomAbs();
             Location top = this.plot.getTopAbs();
@@ -503,11 +544,13 @@ public final class PlotModificationManager {
      * @param removeRoads whether to remove roads
      * @return {@code true} if a merge takes place, else {@code false}
      */
-    public boolean autoMerge(@Nonnull final Direction dir,
-                             int max,
-                             @Nonnull final UUID uuid,
-                             @Nullable PlotPlayer<?> actor,
-                             final boolean removeRoads) {
+    public boolean autoMerge(
+            final @NonNull Direction dir,
+            int max,
+            final @NonNull UUID uuid,
+            @Nullable PlotPlayer<?> actor,
+            final boolean removeRoads
+    ) {
         //Ignore merging if there is no owner for the plot
         if (!this.plot.hasOwner()) {
             return false;
@@ -528,7 +571,7 @@ public final class PlotModificationManager {
             if ((dir == Direction.ALL || dir == Direction.NORTH) && !this.plot.isMerged(Direction.NORTH)) {
                 Plot other = current.getRelative(Direction.NORTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
-                    || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
+                        || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
                     current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
@@ -545,7 +588,7 @@ public final class PlotModificationManager {
             if (max >= 0 && (dir == Direction.ALL || dir == Direction.EAST) && !current.isMerged(Direction.EAST)) {
                 Plot other = current.getRelative(Direction.EAST);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
-                    || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
+                        || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
                     current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
@@ -562,7 +605,7 @@ public final class PlotModificationManager {
             if (max >= 0 && (dir == Direction.ALL || dir == Direction.SOUTH) && !this.plot.isMerged(Direction.SOUTH)) {
                 Plot other = current.getRelative(Direction.SOUTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
-                    || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
+                        || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
                     current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
@@ -579,7 +622,7 @@ public final class PlotModificationManager {
             if (max >= 0 && (dir == Direction.ALL || dir == Direction.WEST) && !this.plot.isMerged(Direction.WEST)) {
                 Plot other = current.getRelative(Direction.WEST);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
-                    || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
+                        || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
                     current.mergePlot(other, removeRoads, queue);
                     merged.add(current.getId());
                     merged.add(other.getId());
@@ -612,11 +655,16 @@ public final class PlotModificationManager {
      * @param allowSwap   whether to swap plots
      * @return {@code true} if the move was successful, else {@code false}
      */
-    @Nonnull public CompletableFuture<Boolean> move(@Nonnull final Plot destination,
-                                                    @Nullable final PlotPlayer<?> actor,
-                                                    @Nonnull final Runnable whenDone,
-                                                    final boolean allowSwap) {
-        final PlotId offset = PlotId.of(destination.getId().getX() - this.plot.getId().getX(), destination.getId().getY() - this.plot.getId().getY());
+    public @NonNull CompletableFuture<Boolean> move(
+            final @NonNull Plot destination,
+            final @Nullable PlotPlayer<?> actor,
+            final @NonNull Runnable whenDone,
+            final boolean allowSwap
+    ) {
+        final PlotId offset = PlotId.of(
+                destination.getId().getX() - this.plot.getId().getX(),
+                destination.getId().getY() - this.plot.getId().getY()
+        );
         Location db = destination.getBottomAbs();
         Location ob = this.plot.getBottomAbs();
         final int offsetX = db.getX() - ob.getX();
@@ -670,7 +718,8 @@ public final class PlotModificationManager {
             // copy terrain
             if (occupied.get()) {
                 new Runnable() {
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         if (regions.isEmpty()) {
                             // Update signs
                             destination.getPlotModificationManager().setSign();
@@ -689,11 +738,15 @@ public final class PlotModificationManager {
                 }.run();
             } else {
                 new Runnable() {
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         if (regions.isEmpty()) {
                             Plot plot = destination.getRelative(0, 0);
                             Plot originPlot =
-                                originArea.getPlotAbs(PlotId.of(plot.getId().getX() - offset.getX(), plot.getId().getY() - offset.getY()));
+                                    originArea.getPlotAbs(PlotId.of(
+                                            plot.getId().getX() - offset.getX(),
+                                            plot.getId().getY() - offset.getY()
+                                    ));
                             final Runnable clearDone = () -> {
                                 QueueCoordinator queue = PlotModificationManager.this.plot.getArea().getQueue();
                                 for (final Plot current : plot.getConnectedPlots()) {
@@ -714,7 +767,10 @@ public final class PlotModificationManager {
                         }
                         final Runnable task = this;
                         CuboidRegion region = regions.poll();
-                        Location[] corners = PlotModificationManager.this.plot.getCorners(PlotModificationManager.this.plot.getWorldName(), region);
+                        Location[] corners = PlotModificationManager.this.plot.getCorners(
+                                PlotModificationManager.this.plot.getWorldName(),
+                                region
+                        );
                         final Location pos1 = corners[0];
                         final Location pos2 = corners[1];
                         Location newPos = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
@@ -745,9 +801,11 @@ public final class PlotModificationManager {
      * @param whenDone    A task to run when finished, or null
      * @return Future that completes with {@code true} if the swap was successful, else {@code false}
      */
-    @Nonnull public CompletableFuture<Boolean> swap(@Nonnull final Plot destination,
-                                                    @Nullable PlotPlayer<?> actor,
-                                                    @Nonnull final Runnable whenDone) {
+    public @NonNull CompletableFuture<Boolean> swap(
+            final @NonNull Plot destination,
+            @Nullable PlotPlayer<?> actor,
+            final @NonNull Runnable whenDone
+    ) {
         return this.move(destination, actor, whenDone, true);
     }
 
@@ -760,9 +818,11 @@ public final class PlotModificationManager {
      * @param whenDone    A task to run when done, or null
      * @return Future that completes with {@code true} if the move was successful, else {@code false}
      */
-    @Nonnull public CompletableFuture<Boolean> move(@Nonnull final Plot destination,
-                                                    @Nullable PlotPlayer<?> actor,
-                                                    @Nonnull final Runnable whenDone) {
+    public @NonNull CompletableFuture<Boolean> move(
+            final @NonNull Plot destination,
+            @Nullable PlotPlayer<?> actor,
+            final @NonNull Runnable whenDone
+    ) {
         return this.move(destination, actor, whenDone, false);
     }
 
@@ -778,10 +838,12 @@ public final class PlotModificationManager {
      *                  otherwise writes to the queue but does not enqueue.
      * @return {@code true} if the component was set successfully, else {@code false}
      */
-    public boolean setComponent(@Nonnull final String component,
-                                @Nonnull final Pattern blocks,
-                                @Nullable PlotPlayer<?> actor,
-                                @Nullable final QueueCoordinator queue) {
+    public boolean setComponent(
+            final @NonNull String component,
+            final @NonNull Pattern blocks,
+            @Nullable PlotPlayer<?> actor,
+            final @Nullable QueueCoordinator queue
+    ) {
         final PlotComponentSetEvent event = PlotSquared.get().getEventDispatcher().callComponentSet(this.plot, component, blocks);
         return this.plot.getManager().setComponent(this.plot.getId(), event.getComponent(), event.getPattern(), actor, queue);
     }
@@ -810,7 +872,7 @@ public final class PlotModificationManager {
     }
 
     /**
-    /**
+     * /**
      * Sets components such as border, wall, floor.
      * (components are generator specific)
      *
@@ -821,7 +883,13 @@ public final class PlotModificationManager {
      *                  otherwise writes to the queue but does not enqueue.
      * @return {@code true} if the update was successful, {@code false} if not
      */
-    @Deprecated public boolean setComponent(String component, String blocks, @Nullable PlotPlayer<?> actor, @Nullable QueueCoordinator queue) {
+    @Deprecated
+    public boolean setComponent(
+            String component,
+            String blocks,
+            @Nullable PlotPlayer<?> actor,
+            @Nullable QueueCoordinator queue
+    ) {
         final BlockBucket parsed = ConfigurationUtil.BLOCK_BUCKET.parseString(blocks);
         if (parsed != null && parsed.isEmpty()) {
             return false;
@@ -837,7 +905,9 @@ public final class PlotModificationManager {
      *              otherwise writes to the queue but does not enqueue.
      */
     public void removeRoadEast(@Nullable QueueCoordinator queue) {
-        if (this.plot.getArea().getType() != PlotAreaType.NORMAL && this.plot.getArea().getTerrain() == PlotAreaTerrainType.ROAD) {
+        if (this.plot.getArea().getType() != PlotAreaType.NORMAL && this.plot
+                .getArea()
+                .getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.plot.getRelative(Direction.EAST);
             Location bot = other.getBottomAbs();
             Location top = this.plot.getTopAbs();
@@ -856,7 +926,9 @@ public final class PlotModificationManager {
      *              otherwise writes to the queue but does not enqueue.
      */
     public void removeRoadSouthEast(@Nullable QueueCoordinator queue) {
-        if (this.plot.getArea().getType() != PlotAreaType.NORMAL && this.plot.getArea().getTerrain() == PlotAreaTerrainType.ROAD) {
+        if (this.plot.getArea().getType() != PlotAreaType.NORMAL && this.plot
+                .getArea()
+                .getTerrain() == PlotAreaTerrainType.ROAD) {
             Plot other = this.plot.getRelative(1, 1);
             Location pos1 = this.plot.getTopAbs().add(1, 0, 1).withY(0);
             Location pos2 = other.getBottomAbs().subtract(1, 0, 1).withY(MAX_HEIGHT);

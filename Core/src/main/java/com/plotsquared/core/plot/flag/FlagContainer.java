@@ -27,11 +27,11 @@ package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -64,8 +64,10 @@ public class FlagContainer {
      * @param plotFlagUpdateHandler Event handler that will be called whenever a plot flag is
      *                              added, removed or updated in this flag container.
      */
-    public FlagContainer(@Nullable final FlagContainer parentContainer,
-        @Nullable PlotFlagUpdateHandler plotFlagUpdateHandler) {
+    public FlagContainer(
+            final @Nullable FlagContainer parentContainer,
+            @Nullable PlotFlagUpdateHandler plotFlagUpdateHandler
+    ) {
         this.parentContainer = parentContainer;
         this.plotFlagUpdateHandler = plotFlagUpdateHandler;
         if (!(this instanceof GlobalFlagContainer)) {
@@ -83,7 +85,7 @@ public class FlagContainer {
      *                        and can set this parameter to null. If this is not a top level
      *                        flag container, the parent should not be null.
      */
-    public FlagContainer(@Nullable final FlagContainer parentContainer) {
+    public FlagContainer(final @Nullable FlagContainer parentContainer) {
         this(parentContainer, null);
     }
 
@@ -97,8 +99,10 @@ public class FlagContainer {
      * @param <T>  Flag type
      * @return Casted flag
      */
-    @SuppressWarnings("ALL") public static <V, T extends PlotFlag<V, ?>> T castUnsafe(
-        final PlotFlag<?, ?> flag) {
+    @SuppressWarnings("ALL")
+    public static <V, T extends PlotFlag<V, ?>> T castUnsafe(
+            final PlotFlag<?, ?> flag
+    ) {
         return (T) flag;
     }
 
@@ -107,11 +111,16 @@ public class FlagContainer {
      *
      * @return Parent container, if it exists
      */
-    @Nullable public FlagContainer getParentContainer() {
+    public @Nullable FlagContainer getParentContainer() {
         return this.parentContainer;
     }
 
-    @SuppressWarnings("unused") protected Map<Class<?>, PlotFlag<?, ?>> getInternalPlotFlagMap() {
+    public void setParentContainer(FlagContainer parentContainer) {
+        this.parentContainer = parentContainer;
+    }
+
+    @SuppressWarnings("unused")
+    protected Map<Class<?>, PlotFlag<?, ?>> getInternalPlotFlagMap() {
         return this.flagMap;
     }
 
@@ -134,8 +143,10 @@ public class FlagContainer {
      */
     public <V, T extends PlotFlag<V, ?>> void addFlag(final T flag) {
         try {
-            Preconditions.checkState(flag.getName().length() <= 64,
-                "flag name may not be more than 64 characters. Check: " + flag.getName());
+            Preconditions.checkState(
+                    flag.getName().length() <= 64,
+                    "flag name may not be more than 64 characters. Check: " + flag.getName()
+            );
             final PlotFlag<?, ?> oldInstance = this.flagMap.put(flag.getClass(), flag);
             final PlotFlagUpdateType plotFlagUpdateType;
             if (oldInstance != null) {
@@ -147,11 +158,11 @@ public class FlagContainer {
                 this.plotFlagUpdateHandler.handle(flag, plotFlagUpdateType);
             }
             this.updateSubscribers
-                .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
+                    .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
         } catch (IllegalStateException e) {
             logger.info("Flag {} (class '{}') could not be added to the container because the "
-                + "flag name exceeded the allowed limit of 64 characters. Please tell the developer "
-                + "of the flag to fix this.", flag.getName(), flag.getClass().getName());
+                    + "flag name exceeded the allowed limit of 64 characters. Please tell the developer "
+                    + "of the flag to fix this.", flag.getName(), flag.getClass().getName());
             e.printStackTrace();
         }
     }
@@ -170,7 +181,7 @@ public class FlagContainer {
             this.plotFlagUpdateHandler.handle(flag, PlotFlagUpdateType.FLAG_REMOVED);
         }
         this.updateSubscribers
-            .forEach(subscriber -> subscriber.handle(flag, PlotFlagUpdateType.FLAG_REMOVED));
+                .forEach(subscriber -> subscriber.handle(flag, PlotFlagUpdateType.FLAG_REMOVED));
         if (value == null) {
             return null;
         } else {
@@ -273,7 +284,7 @@ public class FlagContainer {
      * @param <T>       Flag type
      * @return The flag instance, if it exists in this container, else null.
      */
-    @Nullable public <V, T extends PlotFlag<V, ?>> T queryLocal(final Class<?> flagClass) {
+    public @Nullable <V, T extends PlotFlag<V, ?>> T queryLocal(final Class<?> flagClass) {
         final PlotFlag<?, ?> localFlag = this.flagMap.get(flagClass);
         if (localFlag == null) {
             return null;
@@ -290,14 +301,16 @@ public class FlagContainer {
      * @param plotFlagUpdateHandler The update handler which will react to changes.
      * @see PlotFlagUpdateType Plot flag update types
      */
-    public void subscribe(@Nonnull final PlotFlagUpdateHandler plotFlagUpdateHandler) {
+    public void subscribe(final @NonNull PlotFlagUpdateHandler plotFlagUpdateHandler) {
         this.updateSubscribers.add(plotFlagUpdateHandler);
     }
 
-    private void handleUnknowns(final PlotFlag<?, ?> flag,
-        final PlotFlagUpdateType plotFlagUpdateType) {
+    private void handleUnknowns(
+            final PlotFlag<?, ?> flag,
+            final PlotFlagUpdateType plotFlagUpdateType
+    ) {
         if (plotFlagUpdateType != PlotFlagUpdateType.FLAG_REMOVED && this.unknownFlags
-            .containsKey(flag.getName())) {
+                .containsKey(flag.getName())) {
             final String value = this.unknownFlags.remove(flag.getName());
             if (value != null) {
                 try {
@@ -351,10 +364,6 @@ public class FlagContainer {
         return result;
     }
 
-    public void setParentContainer(FlagContainer parentContainer) {
-        this.parentContainer = parentContainer;
-    }
-
     /**
      * Update event types used in {@link PlotFlagUpdateHandler}.
      */
@@ -378,7 +387,8 @@ public class FlagContainer {
     /**
      * Handler for update events in {@link FlagContainer flag containers}.
      */
-    @FunctionalInterface public interface PlotFlagUpdateHandler {
+    @FunctionalInterface
+    public interface PlotFlagUpdateHandler {
 
         /**
          * Act on the flag update event

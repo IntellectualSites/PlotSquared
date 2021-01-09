@@ -36,15 +36,16 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import net.kyori.adventure.text.minimessage.Template;
 import com.plotsquared.core.util.task.TaskTime;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Beta public class CommentManager {
+@Beta
+public class CommentManager {
 
     public static final HashMap<String, CommentInbox> inboxes = new HashMap<>();
 
@@ -58,7 +59,8 @@ import java.util.concurrent.atomic.AtomicInteger;
             final AtomicInteger size = new AtomicInteger(boxes.size());
             for (final CommentInbox inbox : inboxes.values()) {
                 inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-                    @Override public void run(List<PlotComment> value) {
+                    @Override
+                    public void run(List<PlotComment> value) {
                         int total;
                         if (value != null) {
                             int num = 0;
@@ -73,10 +75,10 @@ import java.util.concurrent.atomic.AtomicInteger;
                         }
                         if ((size.decrementAndGet() == 0) && (total > 0)) {
                             player.sendTitle(
-                                StaticCaption.of(""),
-                                TranslatableCaption.of("comment.inbox_notification"),
-                                Template.of("amount", Integer.toString(total)),
-                                Template.of("command", "/plot inbox")
+                                    StaticCaption.of(""),
+                                    TranslatableCaption.of("comment.inbox_notification"),
+                                    Template.of("amount", Integer.toString(total)),
+                                    Template.of("command", "/plot inbox")
                             );
                         }
                     }
@@ -86,7 +88,8 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
     public static long getTimestamp(PlotPlayer<?> player, String inbox) {
-        final MetaDataKey<Long> inboxKey = MetaDataKey.of(String.format("inbox:%s", inbox), new TypeLiteral<Long>() {});
+        final MetaDataKey<Long> inboxKey = MetaDataKey.of(String.format("inbox:%s", inbox), new TypeLiteral<Long>() {
+        });
         try (final MetaDataAccess<Long> inboxAccess = player.accessTemporaryMetaData(inboxKey)) {
             return inboxAccess.get().orElse(player.getLastPlayed());
         }
@@ -101,4 +104,5 @@ import java.util.concurrent.atomic.AtomicInteger;
         addInbox(new InboxPublic());
         addInbox(new InboxOwner());
     }
+
 }

@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class GrassGrowFlag extends BooleanFlag<GrassGrowFlag> {
 
@@ -39,7 +38,8 @@ public class GrassGrowFlag extends BooleanFlag<GrassGrowFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_grass_grow"));
     }
 
-    @Override protected GrassGrowFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected GrassGrowFlag flagOf(@NonNull Boolean value) {
         return value ? GRASS_GROW_TRUE : GRASS_GROW_FALSE;
     }
 

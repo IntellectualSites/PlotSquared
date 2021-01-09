@@ -33,8 +33,8 @@ import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import org.bukkit.Bukkit;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -43,20 +43,26 @@ import java.util.concurrent.TimeUnit;
  * Bukkit implementation of {@link TaskManager} using
  * by {@link org.bukkit.scheduler.BukkitScheduler} and {@link BukkitPlotSquaredTask}
  */
-@Singleton public class BukkitTaskManager extends TaskManager {
+@Singleton
+public class BukkitTaskManager extends TaskManager {
 
     private final BukkitPlatform bukkitMain;
     private final TaskTime.TimeConverter timeConverter;
 
-    @Inject public BukkitTaskManager(@Nonnull final BukkitPlatform bukkitMain,
-                                     @Nonnull final TaskTime.TimeConverter timeConverter) {
+    @Inject
+    public BukkitTaskManager(
+            final @NonNull BukkitPlatform bukkitMain,
+            final TaskTime.@NonNull TimeConverter timeConverter
+    ) {
         this.bukkitMain = bukkitMain;
         this.timeConverter = timeConverter;
     }
 
     @Override
-    public PlotSquaredTask taskRepeat(@Nonnull final Runnable runnable,
-                                      @Nonnull final TaskTime taskTime) {
+    public PlotSquaredTask taskRepeat(
+            final @NonNull Runnable runnable,
+            final @NonNull TaskTime taskTime
+    ) {
         final long ticks = this.timeConverter.toTicks(taskTime);
         final BukkitPlotSquaredTask bukkitPlotSquaredTask = new BukkitPlotSquaredTask(runnable);
         bukkitPlotSquaredTask.runTaskTimer(this.bukkitMain, ticks, ticks);
@@ -64,15 +70,18 @@ import java.util.concurrent.TimeUnit;
     }
 
     @Override
-    public PlotSquaredTask taskRepeatAsync(@Nonnull final Runnable runnable,
-                                           @Nonnull final TaskTime taskTime) {
+    public PlotSquaredTask taskRepeatAsync(
+            final @NonNull Runnable runnable,
+            final @NonNull TaskTime taskTime
+    ) {
         final long ticks = this.timeConverter.toTicks(taskTime);
         final BukkitPlotSquaredTask bukkitPlotSquaredTask = new BukkitPlotSquaredTask(runnable);
         bukkitPlotSquaredTask.runTaskTimerAsynchronously(this.bukkitMain, ticks, ticks);
         return bukkitPlotSquaredTask;
     }
 
-    @Override public void taskAsync(@Nonnull final Runnable runnable) {
+    @Override
+    public void taskAsync(final @NonNull Runnable runnable) {
         if (this.bukkitMain.isEnabled()) {
             new BukkitPlotSquaredTask(runnable).runTaskAsynchronously(this.bukkitMain);
         } else {
@@ -80,29 +89,38 @@ import java.util.concurrent.TimeUnit;
         }
     }
 
-    @Override public <T> T sync(@Nonnull final Callable<T> function, final int timeout) throws Exception {
+    @Override
+    public <T> T sync(final @NonNull Callable<T> function, final int timeout) throws Exception {
         if (PlotSquared.get().isMainThread(Thread.currentThread())) {
             return function.call();
         }
         return this.callMethodSync(function).get(timeout, TimeUnit.MILLISECONDS);
     }
 
-    @Override public <T> Future<T> callMethodSync(@Nonnull final Callable<T> method) {
+    @Override
+    public <T> Future<T> callMethodSync(final @NonNull Callable<T> method) {
         return Bukkit.getScheduler().callSyncMethod(this.bukkitMain, method);
     }
 
-    @Override public void task(@Nonnull final Runnable runnable) {
+    @Override
+    public void task(final @NonNull Runnable runnable) {
         new BukkitPlotSquaredTask(runnable).runTask(this.bukkitMain);
     }
 
-    @Override public void taskLater(@Nonnull final Runnable runnable,
-                                    @Nonnull final TaskTime taskTime) {
+    @Override
+    public void taskLater(
+            final @NonNull Runnable runnable,
+            final @NonNull TaskTime taskTime
+    ) {
         final long delay = this.timeConverter.toTicks(taskTime);
         new BukkitPlotSquaredTask(runnable).runTaskLater(this.bukkitMain, delay);
     }
 
-    @Override public void taskLaterAsync(@Nonnull final Runnable runnable,
-                                         @Nonnull final TaskTime taskTime) {
+    @Override
+    public void taskLaterAsync(
+            final @NonNull Runnable runnable,
+            final @NonNull TaskTime taskTime
+    ) {
         final long delay = this.timeConverter.toTicks(taskTime);
         new BukkitPlotSquaredTask(runnable).runTaskLaterAsynchronously(this.bukkitMain, delay);
     }

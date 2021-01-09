@@ -32,7 +32,8 @@ import java.util.Collections;
 
 class NullProvider implements PlotProvider {
 
-    @Override public Collection<Plot> getPlots() {
+    @Override
+    public Collection<Plot> getPlots() {
         return Collections.emptyList();
     }
 

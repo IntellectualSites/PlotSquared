@@ -32,27 +32,28 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class CmdConfirm {
 
-    @Nullable public static CmdInstance getPending(PlotPlayer<?> player) {
+    public @Nullable static CmdInstance getPending(PlotPlayer<?> player) {
         try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
-            PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
+                PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
             return metaDataAccess.get().orElse(null);
         }
     }
 
     public static void removePending(PlotPlayer<?> player) {
         try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
-            PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
+                PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
             metaDataAccess.remove();
         }
     }
 
-    public static void addPending(final PlotPlayer<?> player, String commandStr,
-        final Runnable runnable) {
+    public static void addPending(
+            final PlotPlayer<?> player, String commandStr,
+            final Runnable runnable
+    ) {
         removePending(player);
         if (commandStr != null) {
             player.sendMessage(
@@ -64,9 +65,10 @@ public class CmdConfirm {
         TaskManager.runTaskLater(() -> {
             CmdInstance cmd = new CmdInstance(runnable);
             try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
-                PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
+                    PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
                 metaDataAccess.set(cmd);
             }
         }, TaskTime.ticks(1L));
     }
+
 }

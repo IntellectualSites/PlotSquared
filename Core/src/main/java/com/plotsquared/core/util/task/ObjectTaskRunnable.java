@@ -35,8 +35,10 @@ public class ObjectTaskRunnable<T> implements Runnable {
     private final Iterator<T> iterator;
     private final RunnableVal<T> task;
 
-    public ObjectTaskRunnable(final Iterator<T> iterator,
-        final RunnableVal<T> task) {
+    public ObjectTaskRunnable(
+            final Iterator<T> iterator,
+            final RunnableVal<T> task
+    ) {
         this.iterator = iterator;
         this.task = task;
     }
@@ -45,7 +47,8 @@ public class ObjectTaskRunnable<T> implements Runnable {
         return this.completionFuture;
     }
 
-    @Override public void run() {
+    @Override
+    public void run() {
         long start = System.currentTimeMillis();
         boolean hasNext;
         while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {

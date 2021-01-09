@@ -26,9 +26,21 @@
 package com.plotsquared.core.location;
 
 public enum Direction {
-    ALL(-1, "all"), NORTH(0, "north"), EAST(1, "east"), SOUTH(2, "south"), WEST(3,
-        "west"), NORTHEAST(4, "northeast"), SOUTHEAST(5, "southeast"), SOUTHWEST(6,
-        "southwest"), NORTHWEST(7, "northwest"),
+    ALL(-1, "all"),
+    NORTH(0, "north"),
+    EAST(1, "east"),
+    SOUTH(2, "south"),
+    WEST(
+            3,
+            "west"
+    ),
+    NORTHEAST(4, "northeast"),
+    SOUTHEAST(5, "southeast"),
+    SOUTHWEST(
+            6,
+            "southwest"
+    ),
+    NORTHWEST(7, "northwest"),
     ;
 
 

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
@@ -49,20 +50,20 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("unused")
 public class ProjectileEventListener implements Listener {
 
     private final PlotAreaManager plotAreaManager;
 
-    @Inject public ProjectileEventListener(@Nonnull final PlotAreaManager plotAreaManager) {
+    @Inject
+    public ProjectileEventListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onPotionSplash(LingeringPotionSplashEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPotionSplash(LingeringPotionSplashEvent event) {
         Projectile entity = event.getEntity();
         Location location = BukkitUtil.adapt(entity.getLocation());
         if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
@@ -73,7 +74,8 @@ public class ProjectileEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onPotionSplash(PotionSplashEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPotionSplash(PotionSplashEvent event) {
         ThrownPotion damager = event.getPotion();
         Location location = BukkitUtil.adapt(damager.getLocation());
         if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
@@ -91,7 +93,8 @@ public class ProjectileEventListener implements Listener {
         }
     }
 
-    @EventHandler public void onProjectileLaunch(ProjectileLaunchEvent event) {
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
         Projectile entity = event.getEntity();
         if (!(entity instanceof ThrownPotion)) {
             return;
@@ -112,7 +115,8 @@ public class ProjectileEventListener implements Listener {
         }
     }
 
-    @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "cos it's not... dum IntelliJ"}) @EventHandler
+    @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "cos it's not... dum IntelliJ"})
+    @EventHandler
     public boolean onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
         Location location = BukkitUtil.adapt(entity.getLocation());
@@ -135,7 +139,7 @@ public class ProjectileEventListener implements Listener {
                 return true;
             }
             if (plot.isAdded(pp.getUUID()) || Permissions
-                .hasPermission(pp, Permission.PERMISSION_PROJECTILE_OTHER)) {
+                    .hasPermission(pp, Permission.PERMISSION_PROJECTILE_OTHER)) {
                 return true;
             }
             entity.remove();
@@ -147,7 +151,7 @@ public class ProjectileEventListener implements Listener {
                 return false;
             }
             Location sLoc =
-                BukkitUtil.adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
+                    BukkitUtil.adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
             if (!area.contains(sLoc.getX(), sLoc.getZ())) {
                 entity.remove();
                 return false;
@@ -160,4 +164,5 @@ public class ProjectileEventListener implements Listener {
         }
         return true;
     }
+
 }

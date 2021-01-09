@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class LeafDecayFlag extends BooleanFlag<LeafDecayFlag> {
 
@@ -39,7 +38,8 @@ public class LeafDecayFlag extends BooleanFlag<LeafDecayFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_leaf_decay"));
     }
 
-    @Override protected LeafDecayFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected LeafDecayFlag flagOf(@NonNull Boolean value) {
         return value ? LEAF_DECAY_TRUE : LEAF_DECAY_FALSE;
     }
 

@@ -30,6 +30,7 @@ package com.plotsquared.core.configuration;
  * Configuration}.
  */
 class ConfigurationOptions {
+
     private final Configuration configuration;
     private boolean copyDefaults = false;
 
@@ -95,4 +96,5 @@ class ConfigurationOptions {
         copyDefaults = value;
         return this;
     }
+
 }

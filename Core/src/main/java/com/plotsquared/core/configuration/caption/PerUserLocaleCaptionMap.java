@@ -25,7 +25,8 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -39,13 +40,16 @@ public class PerUserLocaleCaptionMap extends LocalizedCaptionMap {
         this.localeMap = localeMap;
     }
 
-    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption,
-        @Nonnull final LocaleHolder localeHolder) throws NoSuchCaptionException {
+    @Override
+    public @NonNull String getMessage(
+            final @NonNull TranslatableCaption caption,
+            final @NonNull LocaleHolder localeHolder
+    ) throws NoSuchCaptionException {
         return this.localeMap.get(localeHolder.getLocale()).getMessage(caption);
     }
 
     @Override
-    public boolean supportsLocale(@Nonnull final Locale locale) {
+    public boolean supportsLocale(final @NonNull Locale locale) {
         return this.localeMap.containsKey(locale);
     }
 

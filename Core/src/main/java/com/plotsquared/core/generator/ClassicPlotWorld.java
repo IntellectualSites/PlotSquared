@@ -34,9 +34,8 @@ import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.sk89q.worldedit.world.block.BlockTypes;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
@@ -53,13 +52,15 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public boolean PLOT_BEDROCK = true;
     public boolean PLACE_TOP_BLOCK = true;
 
-    public ClassicPlotWorld(@Nonnull final String worldName,
-                            @Nullable final String id,
-                            @Nonnull final IndependentPlotGenerator generator,
-                            @Nullable final PlotId min,
-                            @Nullable final PlotId max,
-                            @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                            @Nonnull final GlobalBlockQueue blockQueue) {
+    public ClassicPlotWorld(
+            final @NonNull String worldName,
+            final @Nullable String id,
+            final @NonNull IndependentPlotGenerator generator,
+            final @Nullable PlotId min,
+            final @Nullable PlotId max,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            final @NonNull GlobalBlockQueue blockQueue
+    ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
     }
 
@@ -70,41 +71,57 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
      * command - this may be useful if a config value can be changed at a later date, and has no impact on the actual
      * world generation</p>
      */
-    @Nonnull @Override public ConfigurationNode[] getSettingNodes() {
-        return new ConfigurationNode[] {
-            new ConfigurationNode("plot.height", this.PLOT_HEIGHT, "Plot height",
-                ConfigurationUtil.INTEGER),
-            new ConfigurationNode("plot.size", this.PLOT_WIDTH, "Plot width",
-                ConfigurationUtil.INTEGER),
-            new ConfigurationNode("plot.filling", this.MAIN_BLOCK, "Plot block",
-                ConfigurationUtil.BLOCK_BUCKET),
-            new ConfigurationNode("plot.floor", this.TOP_BLOCK, "Plot floor block",
-                ConfigurationUtil.BLOCK_BUCKET),
-            new ConfigurationNode("wall.block", this.WALL_BLOCK, "Top wall block",
-                ConfigurationUtil.BLOCK_BUCKET),
-            new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK,
-                "Wall block (claimed)", ConfigurationUtil.BLOCK_BUCKET),
-            new ConfigurationNode("wall.place_top_block", this.PLACE_TOP_BLOCK,
-                "Whether a top block should be placed or not", ConfigurationUtil.BOOLEAN),
-            new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width",
-                ConfigurationUtil.INTEGER),
-            new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height",
-                ConfigurationUtil.INTEGER),
-            new ConfigurationNode("road.block", this.ROAD_BLOCK, "Road block",
-                ConfigurationUtil.BLOCK_BUCKET),
-            new ConfigurationNode("wall.filling", this.WALL_FILLING, "Wall filling block",
-                ConfigurationUtil.BLOCK_BUCKET),
-            new ConfigurationNode("wall.height", this.WALL_HEIGHT, "Wall height",
-                ConfigurationUtil.INTEGER),
-            new ConfigurationNode("plot.bedrock", this.PLOT_BEDROCK, "Plot bedrock generation",
-                ConfigurationUtil.BOOLEAN)};
+    @NonNull
+    @Override
+    public ConfigurationNode[] getSettingNodes() {
+        return new ConfigurationNode[]{
+                new ConfigurationNode("plot.height", this.PLOT_HEIGHT, "Plot height",
+                        ConfigurationUtil.INTEGER
+                ),
+                new ConfigurationNode("plot.size", this.PLOT_WIDTH, "Plot width",
+                        ConfigurationUtil.INTEGER
+                ),
+                new ConfigurationNode("plot.filling", this.MAIN_BLOCK, "Plot block",
+                        ConfigurationUtil.BLOCK_BUCKET
+                ),
+                new ConfigurationNode("plot.floor", this.TOP_BLOCK, "Plot floor block",
+                        ConfigurationUtil.BLOCK_BUCKET
+                ),
+                new ConfigurationNode("wall.block", this.WALL_BLOCK, "Top wall block",
+                        ConfigurationUtil.BLOCK_BUCKET
+                ),
+                new ConfigurationNode("wall.block_claimed", this.CLAIMED_WALL_BLOCK,
+                        "Wall block (claimed)", ConfigurationUtil.BLOCK_BUCKET
+                ),
+                new ConfigurationNode("wall.place_top_block", this.PLACE_TOP_BLOCK,
+                        "Whether a top block should be placed or not", ConfigurationUtil.BOOLEAN
+                ),
+                new ConfigurationNode("road.width", this.ROAD_WIDTH, "Road width",
+                        ConfigurationUtil.INTEGER
+                ),
+                new ConfigurationNode("road.height", this.ROAD_HEIGHT, "Road height",
+                        ConfigurationUtil.INTEGER
+                ),
+                new ConfigurationNode("road.block", this.ROAD_BLOCK, "Road block",
+                        ConfigurationUtil.BLOCK_BUCKET
+                ),
+                new ConfigurationNode("wall.filling", this.WALL_FILLING, "Wall filling block",
+                        ConfigurationUtil.BLOCK_BUCKET
+                ),
+                new ConfigurationNode("wall.height", this.WALL_HEIGHT, "Wall height",
+                        ConfigurationUtil.INTEGER
+                ),
+                new ConfigurationNode("plot.bedrock", this.PLOT_BEDROCK, "Plot bedrock generation",
+                        ConfigurationUtil.BOOLEAN
+                )};
     }
 
     /**
      * This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.
      */
-    @Override public void loadConfiguration(ConfigurationSection config) {
+    @Override
+    public void loadConfiguration(ConfigurationSection config) {
         super.loadConfiguration(config);
         this.PLOT_BEDROCK = config.getBoolean("plot.bedrock");
         this.PLOT_HEIGHT = Math.min(255, config.getInt("plot.height"));
@@ -118,4 +135,5 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         this.CLAIMED_WALL_BLOCK = new BlockBucket(config.getString("wall.block_claimed"));
         this.PLACE_TOP_BLOCK = config.getBoolean("wall.place_top_block");
     }
+
 }

@@ -29,8 +29,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.PlotFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag {
 
@@ -39,7 +38,7 @@ public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag
      *
      * @param value Flag value
      */
-    public DoneFlag(@Nonnull String value) {
+    public DoneFlag(@NonNull String value) {
         super(value, TranslatableCaption.of("info.none"), TranslatableCaption.of("info.none"));
     }
 
@@ -47,23 +46,28 @@ public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag
         return !plot.getFlag(DoneFlag.class).isEmpty();
     }
 
-    @Override public DoneFlag parse(@Nonnull String input) {
+    @Override
+    public DoneFlag parse(@NonNull String input) {
         return flagOf(input);
     }
 
-    @Override public DoneFlag merge(@Nonnull String newValue) {
+    @Override
+    public DoneFlag merge(@NonNull String newValue) {
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "";
     }
 
-    @Override protected DoneFlag flagOf(@Nonnull String value) {
+    @Override
+    protected DoneFlag flagOf(@NonNull String value) {
         return new DoneFlag(value);
     }
 

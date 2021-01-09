@@ -68,4 +68,5 @@ public class InvalidConfigurationException extends Exception {
     public InvalidConfigurationException(String msg, Throwable cause) {
         super(msg, cause);
     }
+
 }

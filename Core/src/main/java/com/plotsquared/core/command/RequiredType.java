@@ -28,8 +28,7 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public enum RequiredType {
     CONSOLE(TranslatableCaption.of("console.not_console")),
@@ -49,7 +48,7 @@ public enum RequiredType {
         return this == player.getSuperCaller();
     }
 
-    @Nonnull public Caption getErrorMessage() {
+    public @NonNull Caption getErrorMessage() {
         return this.caption;
     }
 }

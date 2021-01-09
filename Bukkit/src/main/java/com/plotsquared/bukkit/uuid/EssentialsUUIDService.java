@@ -29,8 +29,8 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,11 +47,13 @@ public class EssentialsUUIDService implements UUIDService {
         this.essentials = Essentials.getPlugin(Essentials.class);
     }
 
-    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         return Collections.emptyList();
     }
 
-    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
             try {
@@ -62,7 +64,8 @@ public class EssentialsUUIDService implements UUIDService {
                         mappings.add(new UUIDMapping(uuid, username));
                     }
                 }
-            } catch (final Exception ignored){}
+            } catch (final Exception ignored) {
+            }
         }
         return mappings;
     }

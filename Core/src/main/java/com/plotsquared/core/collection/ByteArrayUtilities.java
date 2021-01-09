@@ -32,6 +32,7 @@ public class ByteArrayUtilities {
     }
 
     public static byte[] booleanToBytes(boolean b) {
-        return new byte[] {(byte) (b ? 1 : 0)};
+        return new byte[]{(byte) (b ? 1 : 0)};
     }
+
 }

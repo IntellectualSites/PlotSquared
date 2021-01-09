@@ -47,42 +47,48 @@ import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.TaskManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
 public class SinglePlotArea extends GridPlotWorld {
 
-    public boolean VOID = false;
-
     private final EventDispatcher eventDispatcher;
     private final PlotListener plotListener;
+    public boolean VOID = false;
 
-    public SinglePlotArea(@Nonnull final PlotAreaManager plotAreaManager,
-                          @Nonnull final EventDispatcher eventDispatcher,
-                          @Nonnull final PlotListener plotListener,
-                          @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                          @Nonnull final GlobalBlockQueue globalBlockQueue) {
+    public SinglePlotArea(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull PlotListener plotListener,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            final @NonNull GlobalBlockQueue globalBlockQueue
+    ) {
         super("*", null, new SingleWorldGenerator(plotAreaManager), null, null,
-            worldConfiguration, globalBlockQueue);
+                worldConfiguration, globalBlockQueue
+        );
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
         this.setAllowSigns(false);
         this.setDefaultHome(new PlotLoc(Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
 
-    @Nonnull @Override protected PlotManager createManager() {
+    @NonNull
+    @Override
+    protected PlotManager createManager() {
         return new SinglePlotManager(this);
     }
 
-    @Override public void loadConfiguration(ConfigurationSection config) {
+    @Override
+    public void loadConfiguration(ConfigurationSection config) {
         VOID = config.getBoolean("void", false);
     }
 
-    @Override public void saveConfiguration(ConfigurationSection config) {
+    @Override
+    public void saveConfiguration(ConfigurationSection config) {
         super.saveConfiguration(config);
     }
 
@@ -124,15 +130,19 @@ public class SinglePlotArea extends GridPlotWorld {
                     File levelDat = new File(src, "level.dat");
                     if (levelDat.exists()) {
                         try {
-                            Files.copy(levelDat.toPath(),
-                                new File(destination, levelDat.getName()).toPath());
+                            Files.copy(
+                                    levelDat.toPath(),
+                                    new File(destination, levelDat.getName()).toPath()
+                            );
                             File data = new File(src, "data");
                             if (data.exists()) {
                                 File dataDest = new File(destination, "data");
                                 dataDest.mkdirs();
                                 for (File file : data.listFiles()) {
-                                    Files.copy(file.toPath(),
-                                        new File(dataDest, file.getName()).toPath());
+                                    Files.copy(
+                                            file.toPath(),
+                                            new File(dataDest, file.getName()).toPath()
+                                    );
                                 }
                             }
                         } catch (IOException exception) {
@@ -168,44 +178,54 @@ public class SinglePlotArea extends GridPlotWorld {
     }
 
 
-
-    @Override public ConfigurationNode[] getSettingNodes() {
-        return new ConfigurationNode[] {
-            new ConfigurationNode("void", this.VOID, "Void world", ConfigurationUtil.BOOLEAN)};
+    @Override
+    public ConfigurationNode[] getSettingNodes() {
+        return new ConfigurationNode[]{
+                new ConfigurationNode("void", this.VOID, "Void world", ConfigurationUtil.BOOLEAN)};
     }
 
-    @Nullable @Override public Plot getOwnedPlot(@Nonnull final Location location) {
+    @Nullable
+    @Override
+    public Plot getOwnedPlot(final @NonNull Location location) {
         PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         Plot plot = pid == null ? null : this.plots.get(pid);
         return plot == null ? null : plot.getBasePlot(false);
     }
 
-    @Nullable @Override public Plot getOwnedPlotAbs(@Nonnull Location location) {
+    @Nullable
+    @Override
+    public Plot getOwnedPlotAbs(@NonNull Location location) {
         PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         return pid == null ? null : plots.get(pid);
     }
 
-    @Nullable @Override public Plot getPlot(@Nonnull final Location location) {
+    @Nullable
+    @Override
+    public Plot getPlot(final @NonNull Location location) {
         PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         return pid == null ? null : getPlot(pid);
     }
 
-    @Nullable @Override public Plot getPlotAbs(@Nonnull final Location location) {
+    @Nullable
+    @Override
+    public Plot getPlotAbs(final @NonNull Location location) {
         final PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         return pid == null ? null : getPlotAbs(pid);
     }
 
-    public boolean addPlot(@Nonnull Plot plot) {
+    public boolean addPlot(@NonNull Plot plot) {
         plot = adapt(plot);
         return super.addPlot(plot);
     }
 
-    @Override public boolean addPlotAbs(@Nonnull Plot plot) {
+    @Override
+    public boolean addPlotAbs(@NonNull Plot plot) {
         plot = adapt(plot);
         return super.addPlotAbs(plot);
     }
 
-    @Override public boolean addPlotIfAbsent(@Nonnull Plot plot) {
+    @Override
+    public boolean addPlotIfAbsent(@NonNull Plot plot) {
         plot = adapt(plot);
         return super.addPlotIfAbsent(plot);
     }
@@ -223,14 +243,15 @@ public class SinglePlotArea extends GridPlotWorld {
 
         final FlagContainer oldContainer = p.getFlagContainer();
         p = new SinglePlot(p.getId(), p.getOwnerAbs(), p.getTrusted(), p.getMembers(),
-            p.getDenied(), s.getAlias(), s.getPosition(), null, this, s.getMerged(),
-            p.getTimestamp(), p.temp);
+                p.getDenied(), s.getAlias(), s.getPosition(), null, this, s.getMerged(),
+                p.getTimestamp(), p.temp
+        );
         p.getFlagContainer().addAll(oldContainer);
 
         return p;
     }
 
-    @Nullable public Plot getPlotAbs(@Nonnull final PlotId id) {
+    public @Nullable Plot getPlotAbs(final @NonNull PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
             return new SinglePlot(this, id);
@@ -238,7 +259,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return plot;
     }
 
-    @Nullable public Plot getPlot(@Nonnull PlotId id) {
+    public @Nullable Plot getPlot(@NonNull PlotId id) {
         // TODO
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
@@ -246,4 +267,5 @@ public class SinglePlotArea extends GridPlotWorld {
         }
         return plot.getBasePlot(false);
     }
+
 }

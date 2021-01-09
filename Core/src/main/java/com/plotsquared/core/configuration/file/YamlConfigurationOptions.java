@@ -35,21 +35,25 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
         super(configuration);
     }
 
-    @Override public YamlConfiguration configuration() {
+    @Override
+    public YamlConfiguration configuration() {
         return (YamlConfiguration) super.configuration();
     }
 
-    @Override public YamlConfigurationOptions copyDefaults(boolean value) {
+    @Override
+    public YamlConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
 
-    @Override public YamlConfigurationOptions header(String value) {
+    @Override
+    public YamlConfigurationOptions header(String value) {
         super.header(value);
         return this;
     }
 
-    @Override public YamlConfigurationOptions copyHeader(boolean value) {
+    @Override
+    public YamlConfigurationOptions copyHeader(boolean value) {
         super.copyHeader(value);
         return this;
     }

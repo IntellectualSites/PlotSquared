@@ -34,6 +34,7 @@ import java.util.Stack;
  * It holds the history and the current setup state.
  */
 public class SetupProcess {
+
     private final PlotAreaBuilder builder;
     private final Stack<SetupStep> history;
     private SetupStep current;
@@ -63,4 +64,5 @@ public class SetupProcess {
             this.current = this.history.pop();
         }
     }
+
 }

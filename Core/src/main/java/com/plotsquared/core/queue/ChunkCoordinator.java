@@ -31,13 +31,16 @@ public abstract class ChunkCoordinator implements PlotSquaredTask {
 
     private boolean cancelled = false;
 
-    @Override public abstract void runTask();
+    @Override
+    public abstract void runTask();
 
-    @Override public boolean isCancelled() {
+    @Override
+    public boolean isCancelled() {
         return cancelled;
     }
 
-    @Override public void cancel() {
+    @Override
+    public void cancel() {
         this.cancelled = true;
     }
 
@@ -61,4 +64,5 @@ public abstract class ChunkCoordinator implements PlotSquaredTask {
      * @return Requested chunk count
      */
     public abstract int getTotalChunks();
+
 }

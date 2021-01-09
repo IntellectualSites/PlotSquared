@@ -32,11 +32,10 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.SimpleMBR;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * An unmodifiable 6-tuple (world,x,y,z,yaw,pitch)
@@ -49,8 +48,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
     private final BlockVector3 blockVector3;
     private final World<?> world;
 
-    private Location(@Nonnull final World<?> world, @Nonnull final BlockVector3 blockVector3,
-        final float yaw, final float pitch) {
+    private Location(
+            final @NonNull World<?> world, final @NonNull BlockVector3 blockVector3,
+            final float yaw, final float pitch
+    ) {
         super(blockVector3.getX(), blockVector3.getY(), blockVector3.getZ(), yaw, pitch);
         this.world = Preconditions.checkNotNull(world, "World may not be null");
         this.blockVector3 = Preconditions.checkNotNull(blockVector3, "Vector may not be null");
@@ -58,8 +59,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
         this.pitch = pitch;
     }
 
-    private Location(@Nonnull final String worldName, @Nonnull final BlockVector3 blockVector3,
-        final float yaw, final float pitch) {
+    private Location(
+            final @NonNull String worldName, final @NonNull BlockVector3 blockVector3,
+            final float yaw, final float pitch
+    ) {
         super(blockVector3.getX(), blockVector3.getY(), blockVector3.getZ(), yaw, pitch);
         Preconditions.checkNotNull(worldName, "World name may not be null");
         if (worldName.isEmpty()) {
@@ -81,8 +84,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param pitch        pitch
      * @return New location
      */
-    @Nonnull public static Location at(@Nonnull final String world,
-        @Nonnull final BlockVector3 blockVector3, final float yaw, final float pitch) {
+    public @NonNull static Location at(
+            final @NonNull String world,
+            final @NonNull BlockVector3 blockVector3, final float yaw, final float pitch
+    ) {
         return new Location(world, blockVector3, yaw, pitch);
     }
 
@@ -93,8 +98,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param blockVector3 (x,y,z) vector
      * @return New location
      */
-    @Nonnull public static Location at(@Nonnull final String world,
-        @Nonnull final BlockVector3 blockVector3) {
+    public @NonNull static Location at(
+            final @NonNull String world,
+            final @NonNull BlockVector3 blockVector3
+    ) {
         return at(world, blockVector3, 0f, 0f);
     }
 
@@ -109,8 +116,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param pitch Pitch
      * @return New location
      */
-    @Nonnull public static Location at(@Nonnull final String world, final int x, final int y,
-        final int z, final float yaw, final float pitch) {
+    public @NonNull static Location at(
+            final @NonNull String world, final int x, final int y,
+            final int z, final float yaw, final float pitch
+    ) {
         return at(world, BlockVector3.at(x, y, z), yaw, pitch);
     }
 
@@ -123,8 +132,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param z     Z coordinate
      * @return New location
      */
-    @Nonnull public static Location at(@Nonnull final String world, final int x, final int y,
-        final int z) {
+    public @NonNull static Location at(
+            final @NonNull String world, final int x, final int y,
+            final int z
+    ) {
         return at(world, BlockVector3.at(x, y, z));
     }
 
@@ -137,8 +148,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param pitch        pitch
      * @return New location
      */
-    @Nonnull public static Location at(@Nonnull final World<?> world,
-        @Nonnull final BlockVector3 blockVector3, final float yaw, final float pitch) {
+    public @NonNull static Location at(
+            final @NonNull World<?> world,
+            final @NonNull BlockVector3 blockVector3, final float yaw, final float pitch
+    ) {
         return new Location(world, blockVector3, yaw, pitch);
     }
 
@@ -149,8 +162,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param blockVector3 (x,y,z) vector
      * @return New location
      */
-    @Nonnull public static Location at(@Nonnull final World<?> world,
-        @Nonnull final BlockVector3 blockVector3) {
+    public @NonNull static Location at(
+            final @NonNull World<?> world,
+            final @NonNull BlockVector3 blockVector3
+    ) {
         return at(world, blockVector3, 0f, 0f);
     }
 
@@ -165,8 +180,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param pitch Pitch
      * @return New location
      */
-    @Nonnull public static Location at(@Nonnull final World<?> world, final int x, final int y,
-        final int z, final float yaw, final float pitch) {
+    public @NonNull static Location at(
+            final @NonNull World<?> world, final int x, final int y,
+            final int z, final float yaw, final float pitch
+    ) {
         return at(world, BlockVector3.at(x, y, z), yaw, pitch);
     }
 
@@ -179,8 +196,10 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param z     Z coordinate
      * @return New location
      */
-    @Nonnull public static Location at(@Nonnull final World<?> world, final int x, final int y,
-        final int z) {
+    public @NonNull static Location at(
+            final @NonNull World<?> world, final int x, final int y,
+            final int z
+    ) {
         return at(world, BlockVector3.at(x, y, z));
     }
 
@@ -189,7 +208,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      *
      * @return World object
      */
-    @Nonnull public World<?> getWorld() {
+    public @NonNull World<?> getWorld() {
         return this.world;
     }
 
@@ -198,7 +217,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      *
      * @return World name
      */
-    @Nonnull public String getWorldName() {
+    public @NonNull String getWorldName() {
         return this.world.getName();
     }
 
@@ -234,7 +253,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      *
      * @return Plot area containing the location, or {@code null}
      */
-    @Nullable public PlotArea getPlotArea() {
+    public @Nullable PlotArea getPlotArea() {
         return PlotSquared.get().getPlotAreaManager().getPlotArea(this);
     }
 
@@ -243,7 +262,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      *
      * @return Plot containing the location, or {@code null}
      */
-    @Nullable public Plot getOwnedPlot() {
+    public @Nullable Plot getOwnedPlot() {
         final PlotArea area = this.getPlotArea();
         if (area != null) {
             return area.getOwnedPlot(this);
@@ -257,7 +276,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      *
      * @return (Absolute) plot containing the location, or {@code null}
      */
-    @Nullable public Plot getOwnedPlotAbs() {
+    public @Nullable Plot getOwnedPlotAbs() {
         final PlotArea area = this.getPlotArea();
         if (area != null) {
             return area.getOwnedPlotAbs(this);
@@ -300,7 +319,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      *
      * @return (Absolute) plot containing the location, or {code null}
      */
-    @Nullable public Plot getPlotAbs() {
+    public @Nullable Plot getPlotAbs() {
         final PlotArea area = this.getPlotArea();
         if (area != null) {
             return area.getPlotAbs(this);
@@ -314,7 +333,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      *
      * @return plot containing the location, or {code null}
      */
-    @Nullable public Plot getPlot() {
+    public @Nullable Plot getPlot() {
         final PlotArea area = this.getPlotArea();
         if (area != null) {
             return area.getPlot(this);
@@ -328,7 +347,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      *
      * @return Chunk coordinates
      */
-    @Nonnull public BlockVector2 getChunkLocation() {
+    public @NonNull BlockVector2 getChunkLocation() {
         return BlockVector2.at(this.getX() >> 4, this.getZ() >> 4);
     }
 
@@ -340,7 +359,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param z Z offset
      * @return New location
      */
-    @Nonnull public Location add(final int x, final int y, final int z) {
+    public @NonNull Location add(final int x, final int y, final int z) {
         return new Location(this.world, this.blockVector3.add(x, y, z), this.yaw, this.pitch);
     }
 
@@ -350,7 +369,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param x New X coordinate
      * @return New location
      */
-    @Nonnull public Location withX(final int x) {
+    public @NonNull Location withX(final int x) {
         return new Location(this.world, this.blockVector3.withX(x), this.yaw, this.pitch);
     }
 
@@ -360,7 +379,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param y New Y coordinate
      * @return New location
      */
-    @Nonnull public Location withY(final int y) {
+    public @NonNull Location withY(final int y) {
         return new Location(this.world, this.blockVector3.withY(y), this.yaw, this.pitch);
     }
 
@@ -370,7 +389,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param z New Z coordinate
      * @return New location
      */
-    @Nonnull public Location withZ(final int z) {
+    public @NonNull Location withZ(final int z) {
         return new Location(this.world, this.blockVector3.withZ(z), this.yaw, this.pitch);
     }
 
@@ -380,7 +399,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param yaw New yaw
      * @return New location
      */
-    @Nonnull public Location withYaw(final float yaw) {
+    public @NonNull Location withYaw(final float yaw) {
         return new Location(this.world, this.blockVector3, yaw, this.pitch);
     }
 
@@ -390,7 +409,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param pitch New pitch
      * @return New location
      */
-    @Nonnull public Location withPitch(final float pitch) {
+    public @NonNull Location withPitch(final float pitch) {
         return new Location(this.world, this.blockVector3, this.yaw, pitch);
     }
 
@@ -400,18 +419,18 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param world New world
      * @return New location
      */
-    @Nonnull public Location withWorld(@Nonnull final String world) {
+    public @NonNull Location withWorld(final @NonNull String world) {
         return new Location(world, this.blockVector3, this.yaw, this.pitch);
     }
 
-    public double getEuclideanDistanceSquared(@Nonnull final Location l2) {
+    public double getEuclideanDistanceSquared(final @NonNull Location l2) {
         double x = getX() - l2.getX();
         double y = getY() - l2.getY();
         double z = getZ() - l2.getZ();
         return x * x + y * y + z * z;
     }
 
-    public double getEuclideanDistance(@Nonnull final Location l2) {
+    public double getEuclideanDistance(final @NonNull Location l2) {
         return Math.sqrt(getEuclideanDistanceSquared(l2));
     }
 
@@ -423,7 +442,7 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      * @param z Z offset
      * @return New location
      */
-    @Nonnull public Location subtract(int x, int y, int z) {
+    public @NonNull Location subtract(int x, int y, int z) {
         return this.add(-x, -y, -z);
     }
 
@@ -432,12 +451,14 @@ public final class Location extends BlockLoc implements Comparable<Location> {
      *
      * @return Minimum bounding rectangle
      */
-    @Nonnull public MBR toMBR() {
+    public @NonNull MBR toMBR() {
         return new SimpleMBR(this.getX(), this.getX(), this.getY(), this.getY(), this.getZ(),
-            this.getZ());
+                this.getZ()
+        );
     }
 
-    @Override public int compareTo(@Nonnull final Location o) {
+    @Override
+    public int compareTo(final @NonNull Location o) {
         if (this.getX() == o.getX() && this.getY() == o.getY() || this.getZ() == o.getZ()) {
             return 0;
         }
@@ -447,7 +468,8 @@ public final class Location extends BlockLoc implements Comparable<Location> {
         return 1;
     }
 
-    @Override public boolean equals(final Object o) {
+    @Override
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -459,20 +481,22 @@ public final class Location extends BlockLoc implements Comparable<Location> {
         }
         final Location location = (Location) o;
         return Float.compare(location.getYaw(), getYaw()) == 0
-            && Float.compare(location.getPitch(), getPitch()) == 0 && Objects
-            .equal(getBlockVector3(), location.getBlockVector3()) && Objects
-            .equal(getWorld(), location.getWorld());
+                && Float.compare(location.getPitch(), getPitch()) == 0 && Objects
+                .equal(getBlockVector3(), location.getBlockVector3()) && Objects
+                .equal(getWorld(), location.getWorld());
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects
-            .hashCode(super.hashCode(), getYaw(), getPitch(), getBlockVector3(), getWorld());
+                .hashCode(super.hashCode(), getYaw(), getPitch(), getBlockVector3(), getWorld());
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "\"plotsquaredlocation\":{\"x\":" + this.getX() + ",\"y\":" + this.getY() + ",\"z\":"
-            + this.getZ() + ",\"yaw\":" + this.yaw + ",\"pitch\":" + this.pitch + ",\"world\":\""
-            + this.world + "\"}";
+                + this.getZ() + ",\"yaw\":" + this.yaw + ",\"pitch\":" + this.pitch + ",\"world\":\""
+                + this.world + "\"}";
     }
 
     public float getYaw() {
@@ -486,4 +510,5 @@ public final class Location extends BlockLoc implements Comparable<Location> {
     public BlockVector3 getBlockVector3() {
         return this.blockVector3;
     }
+
 }

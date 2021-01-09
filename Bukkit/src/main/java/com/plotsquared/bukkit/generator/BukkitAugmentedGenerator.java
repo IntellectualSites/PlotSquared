@@ -29,8 +29,8 @@ import com.plotsquared.core.generator.AugmentedUtils;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Random;
 
 public class BukkitAugmentedGenerator extends BlockPopulator {
@@ -51,7 +51,8 @@ public class BukkitAugmentedGenerator extends BlockPopulator {
     }
 
     @Override
-    public void populate(@Nonnull World world, @Nonnull Random random, @Nonnull Chunk source) {
+    public void populate(@NonNull World world, @NonNull Random random, @NonNull Chunk source) {
         AugmentedUtils.generate(source, world.getName(), source.getX(), source.getZ(), null);
     }
+
 }

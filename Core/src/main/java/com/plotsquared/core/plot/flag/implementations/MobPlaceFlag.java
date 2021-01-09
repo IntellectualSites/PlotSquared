@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class MobPlaceFlag extends BooleanFlag<MobPlaceFlag> {
 
@@ -39,7 +38,8 @@ public class MobPlaceFlag extends BooleanFlag<MobPlaceFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_mob_place"));
     }
 
-    @Override protected MobPlaceFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected MobPlaceFlag flagOf(@NonNull Boolean value) {
         return value ? MOB_PLACE_TRUE : MOB_PLACE_FALSE;
     }
 

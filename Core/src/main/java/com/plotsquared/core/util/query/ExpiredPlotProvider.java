@@ -32,7 +32,8 @@ import java.util.Collection;
 
 class ExpiredPlotProvider implements PlotProvider {
 
-    @Override public Collection<Plot> getPlots() {
+    @Override
+    public Collection<Plot> getPlots() {
         return ExpireManager.IMP.getPendingExpired();
     }
 

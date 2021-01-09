@@ -25,13 +25,23 @@
  */
 package com.plotsquared.core;
 
-public class PlotVersion {
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+public final class PlotVersion {
+
     public final int year, month, day, hash;
     public final String versionString;
     public final int[] version;
     public final String suffix;
 
-    public PlotVersion(int year, int month, int day, int hash, String versionString) {
+    public PlotVersion(
+            final int year,
+            final int month,
+            final int day,
+            final int hash,
+            final String rawVersion
+    ) {
+        String versionString = rawVersion;
         this.year = year;
         this.month = month;
         this.day = day;
@@ -51,7 +61,12 @@ public class PlotVersion {
         version[2] = verArray.length > 2 ? Integer.parseInt(verArray[2]) : 0;
     }
 
-    public PlotVersion(String versionString, String commit, String date) {
+    public PlotVersion(
+            final String rawVersion,
+            final String commit,
+            final String date
+    ) {
+        String versionString = rawVersion;
         int dash = versionString.indexOf('-');
         if (dash != -1) {
             suffix = versionString.substring(dash);
@@ -73,7 +88,11 @@ public class PlotVersion {
         this.day = Integer.parseInt(split1[2]);
     }
 
-    public static PlotVersion tryParse(String versionString, String commit, String date) {
+    public static @NonNull PlotVersion tryParse(
+            final @NonNull String versionString,
+            final @NonNull String commit,
+            final @NonNull String date
+    ) {
         try {
             return new PlotVersion(versionString, commit, date);
         } catch (Exception e) {
@@ -82,7 +101,7 @@ public class PlotVersion {
         }
     }
 
-    public String versionString() {
+    public @NonNull String versionString() {
         if (hash == 0 && versionString == null) {
             return "NoVer-SNAPSHOT";
         } else {
@@ -90,7 +109,8 @@ public class PlotVersion {
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         if (hash == 0 && versionString == null) {
             return "PlotSquared-NoVer-SNAPSHOT";
         } else {
@@ -104,10 +124,10 @@ public class PlotVersion {
      * @param versionString the version to compare
      * @return true if the given version is a "later" version
      */
-    public boolean isLaterVersion(String versionString) {
+    public boolean isLaterVersion(final @NonNull String versionString) {
         int dash = versionString.indexOf('-');
         String[] verArray =
-            versionString.substring(0, dash == -1 ? versionString.length() : dash).split("\\.");
+                versionString.substring(0, dash == -1 ? versionString.length() : dash).split("\\.");
         int one = Integer.parseInt(verArray[0]);
         int two = Integer.parseInt(verArray[1]);
         int three = Integer.parseInt(verArray[2]);
@@ -133,9 +153,8 @@ public class PlotVersion {
             return true;
         } else {
             return verArray[0] == version[0] && verArray[1] == version[1]
-                && verArray[2] > version[2];
+                    && verArray[2] > version[2];
         }
     }
-
 
 }

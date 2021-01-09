@@ -26,11 +26,11 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
@@ -38,24 +38,25 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "unlink",
-    aliases = {"u", "unmerge"},
-    usage = "/plot unlink [createroads]",
-    requiredType = RequiredType.PLAYER,
-    category = CommandCategory.SETTINGS,
-    confirmation = true)
+        aliases = {"u", "unmerge"},
+        usage = "/plot unlink [createroads]",
+        requiredType = RequiredType.PLAYER,
+        category = CommandCategory.SETTINGS,
+        confirmation = true)
 public class Unlink extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
-    
-    @Inject public Unlink(@Nonnull final EventDispatcher eventDispatcher) {
+
+    @Inject
+    public Unlink(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-    
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -81,17 +82,19 @@ public class Unlink extends SubCommand {
         }
 
         PlotUnlinkEvent event = this.eventDispatcher
-            .callUnlink(plot.getArea(), plot, createRoad, createRoad,
-                PlotUnlinkEvent.REASON.PLAYER_COMMAND);
+                .callUnlink(plot.getArea(), plot, createRoad, createRoad,
+                        PlotUnlinkEvent.REASON.PLAYER_COMMAND
+                );
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Unlink"));
+                    Template.of("value", "Unlink")
+            );
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_UNLINK)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_UNLINK)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
         }
         Runnable runnable = () -> {
@@ -108,4 +111,5 @@ public class Unlink extends SubCommand {
         }
         return true;
     }
+
 }

@@ -39,8 +39,8 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -60,13 +60,17 @@ public class DebugPaste extends SubCommand {
     private final File configFile;
     private final File worldfile;
 
-    @Inject public DebugPaste(@ConfigFile @Nonnull final File configFile,
-                              @WorldFile @Nonnull final File worldFile) {
+    @Inject
+    public DebugPaste(
+            @ConfigFile final @NonNull File configFile,
+            @WorldFile final @NonNull File worldFile
+    ) {
         this.configFile = configFile;
         this.worldfile = worldFile;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.runTaskAsync(() -> {
             try {
                 StringBuilder b = new StringBuilder();
@@ -121,7 +125,8 @@ public class DebugPaste extends SubCommand {
                     final File logFile =
                             new File(PlotSquared.platform().getDirectory(), "../../logs/latest.log");
                     if (Files.size(logFile.toPath()) > 14_000_000) {
-                        throw new IOException("The latest.log is larger than 14MB. Please reboot your server and submit a new paste.");
+                        throw new IOException(
+                                "The latest.log is larger than 14MB. Please reboot your server and submit a new paste.");
                     }
                     incendoPaster
                             .addFile(logFile);
@@ -129,29 +134,38 @@ public class DebugPaste extends SubCommand {
                     player.sendMessage(
                             TranslatableCaption.of("debugpaste.latest_log"),
                             Template.of("file", "latest.log"),
-                            Template.of("size", "14MB"));
+                            Template.of("size", "14MB")
+                    );
                 }
 
                 try {
                     incendoPaster.addFile(this.configFile);
                 } catch (final IllegalArgumentException ignored) {
-                    player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
-                            Template.of("file", "settings.yml"));
+                    player.sendMessage(
+                            TranslatableCaption.of("debugpaste.empty_file"),
+                            Template.of("file", "settings.yml")
+                    );
                 }
                 try {
                     incendoPaster.addFile(this.worldfile);
                 } catch (final IllegalArgumentException ignored) {
-                    player.sendMessage(TranslatableCaption.of("debugpaste.empty_file"),
-                            Template.of("file", "worlds.yml"));
+                    player.sendMessage(
+                            TranslatableCaption.of("debugpaste.empty_file"),
+                            Template.of("file", "worlds.yml")
+                    );
                 }
 
                 try {
-                    final File MultiverseWorlds = new File(PlotSquared.platform().getDirectory(),
-                            "../Multiverse-Core/worlds.yml");
+                    final File MultiverseWorlds = new File(
+                            PlotSquared.platform().getDirectory(),
+                            "../Multiverse-Core/worlds.yml"
+                    );
                     incendoPaster.addFile(MultiverseWorlds, "Multiverse-Core/worlds.yml");
                 } catch (final IOException ignored) {
-                    player.sendMessage(TranslatableCaption.of("debugpaste.skip_multiverse"),
-                            Template.of("file", "worlds.yml"));
+                    player.sendMessage(
+                            TranslatableCaption.of("debugpaste.skip_multiverse"),
+                            Template.of("file", "worlds.yml")
+                    );
                 }
 
                 try {
@@ -187,4 +201,5 @@ public class DebugPaste extends SubCommand {
         });
         return true;
     }
+
 }

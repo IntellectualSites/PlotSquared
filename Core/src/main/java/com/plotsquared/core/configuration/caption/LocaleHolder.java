@@ -26,8 +26,8 @@
 package com.plotsquared.core.configuration.caption;
 
 import com.plotsquared.core.player.ConsolePlayer;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -41,7 +41,8 @@ public interface LocaleHolder {
      * @return Console locale holder
      * @see ConsolePlayer#getConsole() for direct access to the {@link ConsolePlayer}
      */
-    @Nonnull static LocaleHolder console() {
+    @NonNull
+    static LocaleHolder console() {
         return ConsolePlayer.getConsole();
     }
 
@@ -50,13 +51,13 @@ public interface LocaleHolder {
      *
      * @return Locale
      */
-    @Nonnull Locale getLocale();
+    @NonNull Locale getLocale();
 
     /**
      * Set the locale for the holder
      *
      * @param locale New locale
      */
-    void setLocale(@Nonnull Locale locale);
+    void setLocale(@NonNull Locale locale);
 
 }

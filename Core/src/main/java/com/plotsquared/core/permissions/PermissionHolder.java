@@ -26,10 +26,9 @@
 package com.plotsquared.core.permissions;
 
 import com.plotsquared.core.configuration.Settings;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Any object which can hold permissions
@@ -42,8 +41,8 @@ public interface PermissionHolder {
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    default boolean hasPermission(@Nonnull final String permission) {
-        return hasPermission(null ,permission);
+    default boolean hasPermission(final @NonNull String permission) {
+        return hasPermission(null, permission);
     }
 
     /**
@@ -51,12 +50,15 @@ public interface PermissionHolder {
      * - Excessively high values will lag<br>
      * - The default range that is checked is {@link Settings.Limit#MAX_PLOTS}<br>
      *
-     * @param stub   The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
-     * @param range  The range to check
+     * @param stub  The permission stub to check e.g. for `plots.plot.#` the stub is `plots.plot`
+     * @param range The range to check
      * @return The highest permission they have within that range
      */
-    @Nonnegative default int hasPermissionRange(@Nonnull final String stub,
-                                                @Nonnegative final int range) {
+    @NonNegative
+    default int hasPermissionRange(
+            final @NonNull String stub,
+            @NonNegative final int range
+    ) {
         if (hasPermission(Permission.PERMISSION_ADMIN.toString())) {
             return Integer.MAX_VALUE;
         }
@@ -88,6 +90,6 @@ public interface PermissionHolder {
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    boolean hasPermission(@Nullable String world, @Nonnull String permission);
+    boolean hasPermission(@Nullable String world, @NonNull String permission);
 
 }

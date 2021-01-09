@@ -25,6 +25,7 @@
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
@@ -102,9 +103,8 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.material.Directional;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -116,7 +116,8 @@ public class BlockEventListener implements Listener {
     private final PlotAreaManager plotAreaManager;
     private final WorldEdit worldEdit;
 
-    @Inject public BlockEventListener(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final WorldEdit worldEdit) {
+    @Inject
+    public BlockEventListener(final @NonNull PlotAreaManager plotAreaManager, final @NonNull WorldEdit worldEdit) {
         this.plotAreaManager = plotAreaManager;
         this.worldEdit = worldEdit;
     }
@@ -140,7 +141,8 @@ public class BlockEventListener implements Listener {
         }, TaskTime.ticks(3L));
     }
 
-    @EventHandler public void onRedstoneEvent(BlockRedstoneEvent event) {
+    @EventHandler
+    public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
@@ -281,19 +283,19 @@ public class BlockEventListener implements Listener {
         Plot plot = area.getPlot(location);
         if (plot != null) {
             if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area
-                .getMinBuildHeight()) && !Permissions
-                .hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+                    .getMinBuildHeight()) && !Permissions
+                    .hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 pp.sendMessage(
-                    TranslatableCaption.of("height.height_limit"),
-                    Template.of("limit", String.valueOf(area.getMaxBuildHeight()))
+                        TranslatableCaption.of("height.height_limit"),
+                        Template.of("limit", String.valueOf(area.getMaxBuildHeight()))
                 );
             }
             if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
                     );
                     event.setCancelled(true);
                     return;
@@ -303,25 +305,25 @@ public class BlockEventListener implements Listener {
                 if (place != null) {
                     Block block = event.getBlock();
                     if (place.contains(
-                        BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))) {
+                            BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))) {
                         return;
                     }
                 }
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                     );
                     event.setCancelled(true);
                     plot.debug(player.getName() + " could not place " + event.getBlock().getType()
-                        + " because of the place flag");
+                            + " because of the place flag");
                     return;
                 }
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                     );
                     event.setCancelled(true);
                     return;
@@ -332,19 +334,20 @@ public class BlockEventListener implements Listener {
                 if (block.getType().hasGravity()) {
                     sendBlockChange(block.getLocation(), block.getBlockData());
                     plot.debug(event.getBlock().getType()
-                        + " did not fall because of disable-physics = true");
+                            + " did not fall because of disable-physics = true");
                 }
             }
         } else if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
             pp.sendMessage(
-                TranslatableCaption.of("permission.no_permission_event"),
-                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                    TranslatableCaption.of("permission.no_permission_event"),
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
             );
             event.setCancelled(true);
         }
     }
 
-    @EventHandler(priority = EventPriority.LOWEST) public void blockDestroy(BlockBreakEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void blockDestroy(BlockBreakEvent event) {
         Player player = event.getPlayer();
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
         PlotArea area = location.getPlotArea();
@@ -356,26 +359,26 @@ public class BlockEventListener implements Listener {
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
             if (event.getBlock().getY() == 0) {
                 if (!Permissions
-                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
+                        .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
                     plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL))
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL))
                     );
                     event.setCancelled(true);
                     return;
                 }
             } else if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area
-                .getMinBuildHeight()) && !Permissions
-                .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
+                    .getMinBuildHeight()) && !Permissions
+                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
                 plotPlayer.sendMessage(
-                    TranslatableCaption.of("height.height_limit"),
-                    Template.of("limit", String.valueOf(area.getMaxBuildHeight()))
+                        TranslatableCaption.of("height.height_limit"),
+                        Template.of("limit", String.valueOf(area.getMaxBuildHeight()))
                 );
             }
             if (!plot.hasOwner()) {
                 if (!Permissions
-                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_UNOWNED, true)) {
+                        .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_UNOWNED, true)) {
                     event.setCancelled(true);
                 }
                 return;
@@ -390,19 +393,19 @@ public class BlockEventListener implements Listener {
                     }
                 }
                 if (Permissions
-                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
+                        .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
                 plotPlayer.sendMessage(
-                    TranslatableCaption.of("permission.no_permission_event"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
+                        TranslatableCaption.of("permission.no_permission_event"),
+                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
                 );
                 event.setCancelled(true);
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
                     );
                     event.setCancelled(true);
                     return;
@@ -414,20 +417,21 @@ public class BlockEventListener implements Listener {
         if (Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_DESTROY_ROAD)) {
             return;
         }
-        if (this.worldEdit!= null && pp.getAttribute("worldedit")) {
+        if (this.worldEdit != null && pp.getAttribute("worldedit")) {
             if (player.getInventory().getItemInMainHand().getType() == Material
-                .getMaterial(this.worldEdit.getConfiguration().wandItem)) {
+                    .getMaterial(this.worldEdit.getConfiguration().wandItem)) {
                 return;
             }
         }
         pp.sendMessage(
-            TranslatableCaption.of("permission.no_permission_event"),
-            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_ROAD))
+                TranslatableCaption.of("permission.no_permission_event"),
+                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_ROAD))
         );
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onBlockSpread(BlockSpreadEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockSpread(BlockSpreadEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         if (location.isPlotRoad()) {
@@ -474,7 +478,9 @@ public class BlockEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
-        if (event instanceof EntityBlockFormEvent) return; // handled below
+        if (event instanceof EntityBlockFormEvent) {
+            return; // handled below
+        }
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         if (location.isPlotRoad()) {
@@ -546,9 +552,11 @@ public class BlockEventListener implements Listener {
                 if (allowed) {
                     return; // player is not added but forming <flag> is allowed
                 }
-                plot.debug(String.format("%s could not be formed because %s = false (entity is player)",
+                plot.debug(String.format(
+                        "%s could not be formed because %s = false (entity is player)",
                         event.getNewState().getType(),
-                        flag == SnowFormFlag.class ? "snow-form" : "ice-form"));
+                        flag == SnowFormFlag.class ? "snow-form" : "ice-form"
+                ));
                 event.setCancelled(true); // player is not added and forming <flag> isn't allowed
             }
             return; // event is cancelled if not added and not allowed, otherwise forming <flag> is allowed
@@ -557,9 +565,11 @@ public class BlockEventListener implements Listener {
             if (allowed) {
                 return;
             }
-            plot.debug(String.format("%s could not be formed because %s = false (entity is not player)",
+            plot.debug(String.format(
+                    "%s could not be formed because %s = false (entity is not player)",
                     event.getNewState().getType(),
-                    flag == SnowFormFlag.class ? "snow-form" : "ice-form"));
+                    flag == SnowFormFlag.class ? "snow-form" : "ice-form"
+            ));
             event.setCancelled(true);
         }
     }
@@ -592,7 +602,7 @@ public class BlockEventListener implements Listener {
             if (!plot.hasOwner()) {
                 BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
                 if (Permissions
-                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
+                        .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_UNOWNED)) {
                     return;
                 }
                 event.setCancelled(true);
@@ -603,13 +613,13 @@ public class BlockEventListener implements Listener {
                 List<BlockTypeWrapper> destroy = plot.getFlag(BreakFlag.class);
                 Block block = event.getBlock();
                 if (destroy
-                    .contains(BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))
-                    || Permissions
-                    .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
+                        .contains(BlockTypeWrapper.get(BukkitAdapter.asBlockType(block.getType())))
+                        || Permissions
+                        .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_OTHER)) {
                     return;
                 }
                 plot.debug(player.getName() + " could not break " + block.getType()
-                    + " because it was not in the break flag");
+                        + " because it was not in the break flag");
                 event.setCancelled(true);
                 return;
             }
@@ -622,7 +632,8 @@ public class BlockEventListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onFade(BlockFadeEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onFade(BlockFadeEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
@@ -681,7 +692,8 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onChange(BlockFromToEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onChange(BlockFromToEvent event) {
         Block from = event.getBlock();
 
         // Check liquid flow flag inside of origin plot too
@@ -689,7 +701,9 @@ public class BlockEventListener implements Listener {
         final PlotArea fromArea = fLocation.getPlotArea();
         if (fromArea != null) {
             final Plot plot = fromArea.getOwnedPlot(fLocation);
-            if (plot != null && plot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event.getBlock().isLiquid()) {
+            if (plot != null && plot.getFlag(LiquidFlowFlag.class) == LiquidFlowFlag.FlowStatus.DISABLED && event
+                    .getBlock()
+                    .isLiquid()) {
                 plot.debug("Liquid could now flow because liquid-flow = disabled");
                 event.setCancelled(true);
                 return;
@@ -737,20 +751,21 @@ public class BlockEventListener implements Listener {
                 <-----O-----> x
              */
             if (BukkitUtil.adapt(location.clone().add(-1, 0, 1)  /* A */).getPlot() != null
-                || BukkitUtil.adapt(location.clone().add(1, 0, 0)   /* B */).getPlot() != null
-                || BukkitUtil.adapt(location.clone().add(1, 0, 1)   /* C */).getPlot() != null
-                || BukkitUtil.adapt(location.clone().add(-1, 0, 0)  /* D */).getPlot() != null
-                || BukkitUtil.adapt(location.clone().add(1, 0, 0)   /* E */).getPlot() != null
-                || BukkitUtil.adapt(location.clone().add(-1, 0, -1) /* F */).getPlot() != null
-                || BukkitUtil.adapt(location.clone().add(0, 0, -1)  /* G */).getPlot() != null
-                || BukkitUtil.adapt(location.clone().add(1, 0, 1)   /* H */).getPlot() != null) {
+                    || BukkitUtil.adapt(location.clone().add(1, 0, 0)   /* B */).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(1, 0, 1)   /* C */).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(-1, 0, 0)  /* D */).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(1, 0, 0)   /* E */).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(-1, 0, -1) /* F */).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(0, 0, -1)  /* G */).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(1, 0, 1)   /* H */).getPlot() != null) {
                 event.setCancelled(true);
             }
         }
     }
 
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onGrow(BlockGrowEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onGrow(BlockGrowEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         if (location.isUnownedPlotArea()) {
@@ -758,7 +773,8 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onBlockPistonExtend(BlockPistonExtendEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         BlockFace face = event.getDirection();
@@ -770,7 +786,9 @@ public class BlockEventListener implements Listener {
             }
             for (Block block1 : event.getBlocks()) {
                 Location bloc = BukkitUtil.adapt(block1.getLocation());
-                if (bloc.isPlotArea() || bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ()).isPlotArea()) {
+                if (bloc.isPlotArea() || bloc
+                        .add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())
+                        .isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -789,12 +807,15 @@ public class BlockEventListener implements Listener {
         }
         for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.adapt(block1.getLocation());
-            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(bloc.getX() + relative.getBlockX(), bloc.getZ() + relative.getBlockZ())) {
+            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(
+                    bloc.getX() + relative.getBlockX(),
+                    bloc.getZ() + relative.getBlockZ()
+            )) {
                 event.setCancelled(true);
                 return;
             }
             if (!plot.equals(area.getOwnedPlot(bloc)) || !plot
-                .equals(area.getOwnedPlot(bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
+                    .equals(area.getOwnedPlot(bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
                 event.setCancelled(true);
                 return;
             }
@@ -807,7 +828,8 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onBlockPistonRetract(BlockPistonRetractEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         BlockFace face = event.getDirection();
@@ -819,7 +841,9 @@ public class BlockEventListener implements Listener {
             }
             for (Block block1 : event.getBlocks()) {
                 Location bloc = BukkitUtil.adapt(block1.getLocation());
-                if (bloc.isPlotArea() || bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ()).isPlotArea()) {
+                if (bloc.isPlotArea() || bloc
+                        .add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())
+                        .isPlotArea()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -833,19 +857,23 @@ public class BlockEventListener implements Listener {
         }
         for (Block block1 : event.getBlocks()) {
             Location bloc = BukkitUtil.adapt(block1.getLocation());
-            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(bloc.getX() + relative.getBlockX(), bloc.getZ() + relative.getBlockZ())) {
+            if (!area.contains(bloc.getX(), bloc.getZ()) || !area.contains(
+                    bloc.getX() + relative.getBlockX(),
+                    bloc.getZ() + relative.getBlockZ()
+            )) {
                 event.setCancelled(true);
                 return;
             }
             if (!plot.equals(area.getOwnedPlot(bloc)) || !plot
-                .equals(area.getOwnedPlot(bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
+                    .equals(area.getOwnedPlot(bloc.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
                 event.setCancelled(true);
                 return;
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onBlockDispense(BlockDispenseEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockDispense(BlockDispenseEvent event) {
         Material type = event.getItem().getType();
         switch (type) {
             case SHULKER_BOX:
@@ -891,7 +919,8 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onStructureGrow(StructureGrowEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onStructureGrow(StructureGrowEvent event) {
         if (!this.plotAreaManager.hasPlotArea(event.getWorld().getName())) {
             return;
         }
@@ -947,7 +976,8 @@ public class BlockEventListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onBigBoom(BlockExplodeEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBigBoom(BlockExplodeEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         String world = location.getWorldName();
@@ -975,7 +1005,8 @@ public class BlockEventListener implements Listener {
         event.blockList().removeIf(blox -> !plot.equals(area.getOwnedPlot(BukkitUtil.adapt(blox.getLocation()))));
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onBlockBurn(BlockBurnEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockBurn(BlockBurnEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
 
@@ -1016,24 +1047,24 @@ public class BlockEventListener implements Listener {
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_ROAD)) {
                     pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_ROAD))
                     );
                     event.setCancelled(true);
                 }
             } else if (!plot.hasOwner()) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_UNOWNED)) {
                     pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_UNOWNED))
                     );
                     event.setCancelled(true);
                 }
             } else if (!plot.isAdded(pp.getUUID())) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     pp.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                     );
                     event.setCancelled(true);
                 }
@@ -1061,7 +1092,7 @@ public class BlockEventListener implements Listener {
                             location = BukkitUtil.adapt(shooter.getLocation());
                         } else if (fireball.getShooter() instanceof BlockProjectileSource) {
                             Block shooter =
-                                ((BlockProjectileSource) fireball.getShooter()).getBlock();
+                                    ((BlockProjectileSource) fireball.getShooter()).getBlock();
                             location = BukkitUtil.adapt(shooter.getLocation());
                         }
                         if (location != null && !plot.equals(location.getPlot())) {
@@ -1074,18 +1105,19 @@ public class BlockEventListener implements Listener {
                 Block ignitingBlock = event.getIgnitingBlock();
                 Plot plotIgnited = BukkitUtil.adapt(ignitingBlock.getLocation()).getPlot();
                 if (igniteCause == BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL && (
-                    !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null || !plotIgnited
-                        .equals(plot)) || (igniteCause == BlockIgniteEvent.IgniteCause.SPREAD
-                    || igniteCause == BlockIgniteEvent.IgniteCause.LAVA) && (
-                    !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null || !plotIgnited
-                        .equals(plot))) {
+                        !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null || !plotIgnited
+                                .equals(plot)) || (igniteCause == BlockIgniteEvent.IgniteCause.SPREAD
+                        || igniteCause == BlockIgniteEvent.IgniteCause.LAVA) && (
+                        !plot.getFlag(BlockIgnitionFlag.class) || plotIgnited == null || !plotIgnited
+                                .equals(plot))) {
                     event.setCancelled(true);
                 }
             }
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) public void onLeavesDecay(LeavesDecayEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onLeavesDecay(LeavesDecayEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
 
@@ -1103,4 +1135,5 @@ public class BlockEventListener implements Listener {
         }
 
     }
+
 }

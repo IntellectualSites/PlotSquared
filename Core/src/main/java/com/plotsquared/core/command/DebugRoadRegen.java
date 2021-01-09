@@ -34,28 +34,30 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import net.kyori.adventure.text.minimessage.Template;
 import com.plotsquared.core.queue.QueueCoordinator;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 @CommandDeclaration(command = "debugroadregen",
-    usage = DebugRoadRegen.USAGE,
-    requiredType = RequiredType.NONE,
-    category = CommandCategory.DEBUG,
-    permission = "plots.debugroadregen")
+        usage = DebugRoadRegen.USAGE,
+        requiredType = RequiredType.NONE,
+        category = CommandCategory.DEBUG,
+        permission = "plots.debugroadregen")
 public class DebugRoadRegen extends SubCommand {
 
     public static final String USAGE = "/plot debugroadregen <plot | region [height]>";
 
     private final HybridUtils hybridUtils;
 
-    @Inject public DebugRoadRegen(@Nonnull final HybridUtils hybridUtils) {
+    @Inject
+    public DebugRoadRegen(final @NonNull HybridUtils hybridUtils) {
         this.hybridUtils = hybridUtils;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
@@ -97,10 +99,14 @@ public class DebugRoadRegen extends SubCommand {
             manager.createRoadSouthEast(plot, queue);
             queue.setCompleteTask(() -> {
                 ;
-                player.sendMessage(TranslatableCaption.of("debugroadregen.regen_done"),
-                    Template.of("value", String.valueOf(plot.getId())));
-                player.sendMessage(TranslatableCaption.of("debugroadregen.regen_all"),
-                    Template.of("value", "/plot regenallroads"));
+                player.sendMessage(
+                        TranslatableCaption.of("debugroadregen.regen_done"),
+                        Template.of("value", String.valueOf(plot.getId()))
+                );
+                player.sendMessage(
+                        TranslatableCaption.of("debugroadregen.regen_all"),
+                        Template.of("value", "/plot regenallroads")
+                );
             });
             queue.enqueue();
         }
@@ -142,10 +148,14 @@ public class DebugRoadRegen extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             return true;
         }
-        player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"),
-                Template.of("command", "/plot createroadschematic"));
-        player.sendMessage(TranslatableCaption.of("debugroadregen.regenallroads"),
-                Template.of("command", "/plot regenallroads"));
+        player.sendMessage(
+                TranslatableCaption.of("debugroadregen.schematic"),
+                Template.of("command", "/plot createroadschematic")
+        );
+        player.sendMessage(
+                TranslatableCaption.of("debugroadregen.regenallroads"),
+                Template.of("command", "/plot regenallroads")
+        );
         boolean result = this.hybridUtils.scheduleSingleRegionRoadUpdate(plot, height);
         if (!result) {
             player.sendMessage(TranslatableCaption.of("debugexec.mass_schematic_update_in_progress"));
@@ -153,4 +163,5 @@ public class DebugRoadRegen extends SubCommand {
         }
         return true;
     }
+
 }

@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class ServerPlotFlag extends BooleanFlag<ServerPlotFlag> {
 
@@ -39,7 +38,8 @@ public class ServerPlotFlag extends BooleanFlag<ServerPlotFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_server_plot"));
     }
 
-    @Override protected ServerPlotFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected ServerPlotFlag flagOf(@NonNull Boolean value) {
         return value ? SERVER_PLOT_TRUE : SERVER_PLOT_FALSE;
     }
 

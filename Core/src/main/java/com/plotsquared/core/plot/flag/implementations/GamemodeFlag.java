@@ -30,17 +30,16 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
 
     public static final GameMode DEFAULT = new GameMode("default");
     public static final GamemodeFlag GAMEMODE_FLAG_CREATIVE = new GamemodeFlag(GameModes.CREATIVE);
     public static final GamemodeFlag GAMEMODE_FLAG_ADVENTURE =
-        new GamemodeFlag(GameModes.ADVENTURE);
+            new GamemodeFlag(GameModes.ADVENTURE);
     public static final GamemodeFlag GAMEMODE_FLAG_SPECTATOR =
-        new GamemodeFlag(GameModes.SPECTATOR);
+            new GamemodeFlag(GameModes.SPECTATOR);
     public static final GamemodeFlag GAMEMODE_FLAG_SURVIVAL = new GamemodeFlag(GameModes.SURVIVAL);
     public static final GamemodeFlag GAMEMODE_FLAG_DEFAULT = new GamemodeFlag(DEFAULT);
 
@@ -53,11 +52,16 @@ public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
      *
      * @param value Flag value
      */
-    protected GamemodeFlag(@Nonnull GameMode value) {
-        super(value, TranslatableCaption.of("flags.flag_category_gamemode"), TranslatableCaption.of("flags.flag_description_gamemode"));
+    protected GamemodeFlag(@NonNull GameMode value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_gamemode"),
+                TranslatableCaption.of("flags.flag_description_gamemode")
+        );
     }
 
-    @Override public GamemodeFlag parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public GamemodeFlag parse(@NonNull String input) throws FlagParseException {
         switch (input) {
             case "creative":
             case "c":
@@ -80,19 +84,23 @@ public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
         }
     }
 
-    @Override public GamemodeFlag merge(@Nonnull GameMode newValue) {
+    @Override
+    public GamemodeFlag merge(@NonNull GameMode newValue) {
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().getId();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "survival";
     }
 
-    @Override protected GamemodeFlag flagOf(@Nonnull GameMode value) {
+    @Override
+    protected GamemodeFlag flagOf(@NonNull GameMode value) {
         switch (value.getId()) {
             case "creative":
                 return GAMEMODE_FLAG_CREATIVE;

@@ -34,10 +34,11 @@ import java.util.concurrent.CompletableFuture;
 /**
  * SubCommand class
  *
+ * @see Command#Command(Command, boolean)
  * @deprecated In favor of normal Command class
- * @see Command#Command(Command, boolean) 
  */
 public abstract class SubCommand extends Command {
+
     public SubCommand() {
         super(MainCommand.getInstance(), true);
     }
@@ -48,11 +49,14 @@ public abstract class SubCommand extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) {
         return CompletableFuture.completedFuture(onCommand(player, args));
     }
 
     public abstract boolean onCommand(PlotPlayer<?> player, String[] args);
+
 }

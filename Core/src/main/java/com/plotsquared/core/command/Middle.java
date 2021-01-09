@@ -35,13 +35,14 @@ import com.plotsquared.core.plot.Plot;
  * @author manuelgu, altered by Citymonstret
  */
 @CommandDeclaration(command = "middle",
-    aliases = {"center", "centre"},
-    usage = "/plot middle",
-    category = CommandCategory.TELEPORT,
-    requiredType = RequiredType.PLAYER)
+        aliases = {"center", "centre"},
+        usage = "/plot middle",
+        category = CommandCategory.TELEPORT,
+        requiredType = RequiredType.PLAYER)
 public class Middle extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] arguments) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] arguments) {
         Location location = player.getLocation();
         Plot plot = location.getPlot();
         if (plot == null) {
@@ -52,4 +53,5 @@ public class Middle extends SubCommand {
         player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
         return true;
     }
+
 }

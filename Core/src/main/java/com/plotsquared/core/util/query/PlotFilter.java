@@ -26,16 +26,18 @@
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 
-@FunctionalInterface interface PlotFilter extends Predicate<Plot> {
+@FunctionalInterface
+interface PlotFilter extends Predicate<Plot> {
 
-    @Override default boolean test(@Nonnull final Plot plot) {
+    @Override
+    default boolean test(final @NonNull Plot plot) {
         return this.accepts(plot);
     }
 
-    boolean accepts(@Nonnull final Plot plot);
+    boolean accepts(final @NonNull Plot plot);
 
 }

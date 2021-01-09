@@ -105,4 +105,5 @@ public class PlotRangeIteratorTest {
         assertFalse(range.hasNext());
         assertThrows(NoSuchElementException.class, range::next);
     }
+
 }

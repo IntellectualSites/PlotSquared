@@ -36,31 +36,35 @@ import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.Objects;
 
 @CommandDeclaration(command = "reload",
-    aliases = "rl",
-    permission = "plots.admin.command.reload",
-    usage = "/plot reload",
-    category = CommandCategory.ADMINISTRATION)
+        aliases = "rl",
+        permission = "plots.admin.command.reload",
+        usage = "/plot reload",
+        category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
 
-    @Inject public Reload(@Nonnull final PlotAreaManager plotAreaManager,
-                          @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                          @WorldFile @Nonnull final File  worldFile) {
+    @Inject
+    public Reload(
+            final @NonNull PlotAreaManager plotAreaManager,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            @WorldFile final @NonNull File worldFile
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         try {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
@@ -68,7 +72,7 @@ public class Reload extends SubCommand {
             PlotSquared.get().loadCaptionMap();
             this.plotAreaManager.forEachPlotArea(area -> {
                 ConfigurationSection worldSection = this.worldConfiguration
-                    .getConfigurationSection("worlds." + area.getWorldName());
+                        .getConfigurationSection("worlds." + area.getWorldName());
                 if (worldSection == null) {
                     return;
                 }
@@ -77,7 +81,7 @@ public class Reload extends SubCommand {
                     area.loadDefaultConfiguration(worldSection);
                 } else {
                     ConfigurationSection areaSection = worldSection.getConfigurationSection(
-                        "areas." + area.getId() + "-" + area.getMin() + "-" + area.getMax());
+                            "areas." + area.getId() + "-" + area.getMin() + "-" + area.getMax());
                     YamlConfiguration clone = new YamlConfiguration();
                     for (String key : areaSection.getKeys(true)) {
                         if (areaSection.get(key) instanceof MemorySection) {
@@ -121,4 +125,5 @@ public class Reload extends SubCommand {
         }
         return true;
     }
+
 }

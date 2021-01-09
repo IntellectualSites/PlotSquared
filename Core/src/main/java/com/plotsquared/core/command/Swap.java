@@ -25,9 +25,9 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.Permissions;
@@ -38,16 +38,18 @@ import net.kyori.adventure.text.minimessage.Template;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(usage = "/plot swap <X;Z>",
-    command = "swap",
-    aliases = {"switch"},
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.PLAYER)
+        command = "swap",
+        aliases = {"switch"},
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.PLAYER)
 public class Swap extends SubCommand {
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
@@ -55,7 +57,7 @@ public class Swap extends SubCommand {
             return CompletableFuture.completedFuture(false);
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return CompletableFuture.completedFuture(false);
         }
@@ -96,7 +98,9 @@ public class Swap extends SubCommand {
         });
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         return true;
     }
+
 }

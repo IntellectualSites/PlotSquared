@@ -106,8 +106,8 @@ import com.plotsquared.core.plot.flag.implementations.VehicleUseFlag;
 import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -116,12 +116,6 @@ import java.util.Map;
 public final class GlobalFlagContainer extends FlagContainer {
 
     private static GlobalFlagContainer instance;
-
-    public static void setup() {
-        Preconditions.checkState(instance == null, "Cannot setup the container twice");
-        instance = new GlobalFlagContainer();
-    }
-
     private static Map<String, Class<?>> stringClassMap;
 
     private GlobalFlagContainer() {
@@ -230,28 +224,35 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(new DoneFlag(""));
     }
 
+    public static void setup() {
+        Preconditions.checkState(instance == null, "Cannot setup the container twice");
+        instance = new GlobalFlagContainer();
+    }
+
     public static GlobalFlagContainer getInstance() {
         return GlobalFlagContainer.instance;
     }
 
-    @Override public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
+    @Override
+    public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
         final PlotFlag<?, ?> flag = super.getFlagErased(flagClass);
         if (flag != null) {
             return flag;
         } else {
             throw new IllegalStateException(String.format("Unrecognized flag '%s'. All flag types"
-                + " must be present in the global flag container.", flagClass.getSimpleName()));
+                    + " must be present in the global flag container.", flagClass.getSimpleName()));
         }
     }
 
-    @Nonnull @Override
+    @NonNull
+    @Override
     public <V, T extends PlotFlag<V, ?>> T getFlag(Class<? extends T> flagClass) {
         final PlotFlag<?, ?> flag = super.getFlag(flagClass);
         if (flag != null) {
             return castUnsafe(flag);
         } else {
             throw new IllegalStateException(String.format("Unrecognized flag '%s'. All flag types"
-                + " must be present in the global flag container.", flagClass.getSimpleName()));
+                    + " must be present in the global flag container.", flagClass.getSimpleName()));
         }
     }
 

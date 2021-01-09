@@ -30,28 +30,39 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
-    extends PlotFlag<TimedFlag.Timed<T>, F> {
+        extends PlotFlag<TimedFlag.Timed<T>, F> {
+
     private final T defaultValue;
 
-    protected TimedFlag(@Nonnull Timed<T> value, T defaultValue, @Nonnull Caption flagDescription) {
+    protected TimedFlag(@NonNull Timed<T> value, T defaultValue, @NonNull Caption flagDescription) {
         super(value, TranslatableCaption.of("flags.flag_category_intervals"), flagDescription);
         this.defaultValue = defaultValue;
     }
 
-    @Override public F parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public F parse(@NonNull String input) throws FlagParseException {
         String[] split = input.split(" ", 2);
         int interval;
         try {
             interval = Integer.parseInt(split[0]);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, TranslatableCaption.of("invalid.not_a_number"), Template.of("value", split[0]));
+            throw new FlagParseException(
+                    this,
+                    input,
+                    TranslatableCaption.of("invalid.not_a_number"),
+                    Template.of("value", split[0])
+            );
         }
         if (interval < 1) {
-            throw new FlagParseException(this, input, TranslatableCaption.of("invalid.number_not_positive"), Template.of("value", split[0]));
+            throw new FlagParseException(
+                    this,
+                    input,
+                    TranslatableCaption.of("invalid.number_not_positive"),
+                    Template.of("value", split[0])
+            );
         }
         if (split.length == 1) {
             return flagOf(new Timed<>(interval, defaultValue));
@@ -60,20 +71,23 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
         return flagOf(new Timed<>(interval, parsedValue));
     }
 
-    @Override public F merge(@Nonnull Timed<T> newValue) {
+    @Override
+    public F merge(@NonNull Timed<T> newValue) {
         return flagOf(
-            new Timed<>(getValue().interval + newValue.interval, mergeValue(newValue.value)));
+                new Timed<>(getValue().interval + newValue.interval, mergeValue(newValue.value)));
     }
 
     protected abstract T parseValue(String input) throws FlagParseException;
 
     protected abstract T mergeValue(T other);
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().toString();
     }
 
     public static final class Timed<T> {
+
         private final int interval;
         private final T value;
 
@@ -90,8 +104,11 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
             return value;
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return String.format("%d %s", interval, value);
         }
+
     }
+
 }

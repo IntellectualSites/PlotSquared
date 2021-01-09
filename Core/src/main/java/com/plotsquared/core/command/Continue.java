@@ -26,11 +26,11 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
@@ -38,29 +38,30 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "continue",
-    permission = "plots.continue",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.continue",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER)
 public class Continue extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
-    
-    @Inject public Continue(@Nonnull final EventDispatcher eventDispatcher) {
+
+    @Inject
+    public Continue(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Plot plot = player.getCurrentPlot();
         if ((plot == null) || !plot.hasOwner()) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_CONTINUE)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", TranslatableCaption.of("permission.no_plot_perms").getComponent(player))
@@ -73,7 +74,7 @@ public class Continue extends SubCommand {
         }
         int size = plot.getConnectedPlots().size();
         if (Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots()
-            < player.getPlotCount() + size)) {
+                < player.getPlotCount() + size)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", Permission.PERMISSION_ADMIN_COMMAND_CONTINUE.toString())
@@ -86,15 +87,17 @@ public class Continue extends SubCommand {
         }
         PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class);
         PlotFlagRemoveEvent event =
-            this.eventDispatcher.callFlagRemove(plotFlag, plot);
+                this.eventDispatcher.callFlagRemove(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Done flag removal"));
+                    Template.of("value", "Done flag removal")
+            );
             return true;
         }
         plot.removeFlag(event.getFlag());
         player.sendMessage(TranslatableCaption.of("done.done_removed"));
         return true;
     }
+
 }

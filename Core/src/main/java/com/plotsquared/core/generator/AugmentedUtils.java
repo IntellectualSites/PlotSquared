@@ -39,9 +39,9 @@ import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Set;
 
 public class AugmentedUtils {
@@ -54,11 +54,13 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(@Nullable Object chunkObject,
-                                   @Nonnull final String world,
-                                   final int chunkX,
-                                   final int chunkZ,
-                                   QueueCoordinator queue) {
+    public static boolean generate(
+            @Nullable Object chunkObject,
+            final @NonNull String world,
+            final int chunkX,
+            final int chunkZ,
+            QueueCoordinator queue
+    ) {
         if (!enabled) {
             return false;
         }
@@ -91,7 +93,10 @@ public class AugmentedUtils {
             // Mask
             if (queue == null) {
                 enqueue = true;
-                queue = PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared.platform().worldUtil().getWeWorld(world));
+                queue = PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared
+                        .platform()
+                        .worldUtil()
+                        .getWeWorld(world));
                 if (chunkObject != null) {
                     queue.setChunkObject(chunkObject);
                 }
@@ -159,7 +164,11 @@ public class AugmentedUtils {
             }
 
             ScopedQueueCoordinator scoped =
-                new ScopedQueueCoordinator(secondaryMask, Location.at(world, blockX, 0, blockZ), Location.at(world, blockX + 15, 255, blockZ + 15));
+                    new ScopedQueueCoordinator(
+                            secondaryMask,
+                            Location.at(world, blockX, 0, blockZ),
+                            Location.at(world, blockX + 15, 255, blockZ + 15)
+                    );
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
             scoped.setForceSync(true);

@@ -28,9 +28,9 @@ package com.plotsquared.core.setup;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.player.PlotPlayer;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +47,7 @@ public interface SetupStep {
      */
     SetupStep handleInput(final PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument);
 
-    @Nonnull Collection<String> getSuggestions();
+    @NonNull Collection<String> getSuggestions();
 
     @Nullable String getDefaultValue();
 
@@ -62,14 +62,15 @@ public interface SetupStep {
      * Creates a collection of suggestions for the current input.
      *
      * @param plotPlayer the player to receive the suggestions.
-     * @param argument the argument already typed.
+     * @param argument   the argument already typed.
      * @return a collection of suggestions.
      */
     default Collection<Command> createSuggestions(final PlotPlayer<?> plotPlayer, String argument) {
         List<Command> result = new ArrayList<>(getSuggestions().size());
         for (String suggestion : getSuggestions()) {
             if (suggestion.startsWith(argument)) {
-                result.add(new Command(null, false, suggestion, "", RequiredType.NONE, null) {});
+                result.add(new Command(null, false, suggestion, "", RequiredType.NONE, null) {
+                });
             }
         }
         return result;
@@ -83,4 +84,5 @@ public interface SetupStep {
     default void onBack(PlotAreaBuilder builder) {
 
     }
+
 }

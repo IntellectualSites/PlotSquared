@@ -31,24 +31,28 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 
 public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, DenyTeleportFlag> {
 
     public static final DenyTeleportFlag DENY_TELEPORT_FLAG_NONE =
-        new DenyTeleportFlag(DeniedGroup.NONE);
+            new DenyTeleportFlag(DeniedGroup.NONE);
 
     /**
      * Construct a new flag instance.
      *
      * @param value Flag value
      */
-    protected DenyTeleportFlag(@Nonnull DeniedGroup value) {
-        super(value, TranslatableCaption.of("flags.flag_category_enum"), TranslatableCaption.of("flags.flag_description_deny_teleport"));
+    protected DenyTeleportFlag(@NonNull DeniedGroup value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_enum"),
+                TranslatableCaption.of("flags.flag_description_deny_teleport")
+        );
     }
 
     public static boolean allowsTeleport(PlotPlayer player, Plot plot) {
@@ -69,7 +73,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
                 break;
             case NONTRUSTED:
                 result =
-                    plot.getTrusted().contains(player.getUUID()) || plot.isOwner(player.getUUID());
+                        plot.getTrusted().contains(player.getUUID()) || plot.isOwner(player.getUUID());
                 break;
             case NONOWNERS:
                 result = plot.isOwner(player.getUUID());
@@ -80,42 +84,54 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         return result || player.hasPermission("plots.admin.entry.denied");
     }
 
-    @Override public DenyTeleportFlag parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public DenyTeleportFlag parse(@NonNull String input) throws FlagParseException {
         final DeniedGroup group = DeniedGroup.fromString(input);
         if (group == null) {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_enum"),
-                    Template.of("list", "members, nonmembers, trusted, nontrusted, nonowners"));
+                    Template.of("list", "members, nonmembers, trusted, nontrusted, nonowners")
+            );
         }
         return flagOf(group);
     }
 
-    @Override public DenyTeleportFlag merge(@Nonnull DeniedGroup newValue) {
+    @Override
+    public DenyTeleportFlag merge(@NonNull DeniedGroup newValue) {
         if (getValue().ordinal() < newValue.ordinal()) {
             return flagOf(newValue);
         }
         return this;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue().name();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "trusted";
     }
 
-    @Override protected DenyTeleportFlag flagOf(@Nonnull DeniedGroup value) {
+    @Override
+    protected DenyTeleportFlag flagOf(@NonNull DeniedGroup value) {
         return new DenyTeleportFlag(value);
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         return Arrays.asList("none", "members", "trusted", "nonmembers", "nontrusted", "nonowners");
     }
 
     public enum DeniedGroup {
-        NONE, MEMBERS, TRUSTED, NONMEMBERS, NONTRUSTED, NONOWNERS;
+        NONE,
+        MEMBERS,
+        TRUSTED,
+        NONMEMBERS,
+        NONTRUSTED,
+        NONOWNERS;
 
-        @Nullable public static DeniedGroup fromString(@Nonnull final String string) {
+        public @Nullable static DeniedGroup fromString(final @NonNull String string) {
             for (final DeniedGroup group : values()) {
                 if (group.name().equalsIgnoreCase(string)) {
                     return group;

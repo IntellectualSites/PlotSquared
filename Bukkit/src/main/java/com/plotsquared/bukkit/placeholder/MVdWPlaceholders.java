@@ -34,8 +34,7 @@ import com.plotsquared.core.util.placeholders.Placeholder;
 import com.plotsquared.core.util.placeholders.PlaceholderRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Placeholder support for MVdWPlaceholderAPI
@@ -46,7 +45,10 @@ public class MVdWPlaceholders {
     private final Plugin plugin;
     private final PlaceholderRegistry registry;
 
-    public MVdWPlaceholders(@Nonnull final Plugin plugin, @Nonnull final PlaceholderRegistry registry) {
+    public MVdWPlaceholders(
+            final @NonNull Plugin plugin,
+            final @NonNull PlaceholderRegistry registry
+    ) {
         this.plugin = plugin;
         this.registry = registry;
         for (final Placeholder placeholder : registry.getPlaceholders()) {
@@ -55,19 +57,24 @@ public class MVdWPlaceholders {
         PlotSquared.get().getEventDispatcher().registerListener(this);
     }
 
-    @Subscribe public void onNewPlaceholder(@Nonnull final PlaceholderRegistry.PlaceholderAddedEvent event) {
+    @Subscribe
+    public void onNewPlaceholder(final PlaceholderRegistry.@NonNull PlaceholderAddedEvent event) {
         this.addPlaceholder(event.getPlaceholder());
     }
 
-    private void addPlaceholder(@Nonnull final Placeholder placeholder) {
-        PlaceholderAPI.registerPlaceholder(plugin, PREFIX + String.format("%s", placeholder.getKey()), placeholderReplaceEvent -> {
-            if (!placeholderReplaceEvent.isOnline() || placeholderReplaceEvent.getPlayer() == null) {
-                return "";
-            }
-            final PlotPlayer<Player> player = BukkitUtil.adapt(placeholderReplaceEvent.getPlayer());
-            String key = placeholderReplaceEvent.getPlaceholder().substring(PREFIX.length());
-            return registry.getPlaceholderValue(key, player);
-        });
+    private void addPlaceholder(final @NonNull Placeholder placeholder) {
+        PlaceholderAPI.registerPlaceholder(
+                plugin,
+                PREFIX + String.format("%s", placeholder.getKey()),
+                placeholderReplaceEvent -> {
+                    if (!placeholderReplaceEvent.isOnline() || placeholderReplaceEvent.getPlayer() == null) {
+                        return "";
+                    }
+                    final PlotPlayer<Player> player = BukkitUtil.adapt(placeholderReplaceEvent.getPlayer());
+                    String key = placeholderReplaceEvent.getPlaceholder().substring(PREFIX.length());
+                    return registry.getPlaceholderValue(key, player);
+                }
+        );
     }
 
 }

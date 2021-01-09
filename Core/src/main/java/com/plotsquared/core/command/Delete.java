@@ -41,29 +41,32 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 
 @CommandDeclaration(command = "delete",
-    permission = "plots.delete",
-    usage = "/plot delete",
-    aliases = {"dispose", "del"},
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE,
-    confirmation = true)
+        permission = "plots.delete",
+        usage = "/plot delete",
+        aliases = {"dispose", "del"},
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE,
+        confirmation = true)
 public class Delete extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
 
-    @Inject public Delete(@Nonnull final EventDispatcher eventDispatcher,
-                          @Nonnull final EconHandler econHandler) {
+    @Inject
+    public Delete(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull EconHandler econHandler
+    ) {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
-    
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -82,20 +85,21 @@ public class Delete extends SubCommand {
         if (eventResult == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Delete"));
+                    Template.of("value", "Delete")
+            );
             return true;
         }
         boolean force = eventResult == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DELETE)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DELETE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         final PlotArea plotArea = plot.getArea();
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
         final int currentPlots = Settings.Limit.GLOBAL ?
-            player.getPlotCount() :
-            player.getPlotCount(location.getWorldName());
+                player.getPlotCount() :
+                player.getPlotCount(location.getWorldName());
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
                 player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
@@ -138,4 +142,5 @@ public class Delete extends SubCommand {
         }
         return true;
     }
+
 }

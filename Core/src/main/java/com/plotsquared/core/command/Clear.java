@@ -42,34 +42,40 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import net.kyori.adventure.text.minimessage.Template;
 import com.plotsquared.core.util.task.TaskManager;
-import javax.annotation.Nonnull;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "clear",
-    requiredType = RequiredType.NONE,
-    permission = "plots.clear",
-    category = CommandCategory.APPEARANCE,
-    usage = "/plot clear",
-    aliases = "reset",
-    confirmation = true)
+        requiredType = RequiredType.NONE,
+        permission = "plots.clear",
+        category = CommandCategory.APPEARANCE,
+        usage = "/plot clear",
+        aliases = "reset",
+        confirmation = true)
 public class Clear extends Command {
 
     private final EventDispatcher eventDispatcher;
     private final GlobalBlockQueue blockQueue;
 
-    @Inject public Clear(@Nonnull final EventDispatcher eventDispatcher,
-                         @Nonnull final GlobalBlockQueue blockQueue) {
+    @Inject
+    public Clear(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull GlobalBlockQueue blockQueue
+    ) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
         this.blockQueue = blockQueue;
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         if (args.length != 0) {
             sendUsage(player);
             return CompletableFuture.completedFuture(false);
@@ -79,7 +85,8 @@ public class Clear extends Command {
         if (eventResult == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Clear"));
+                    Template.of("value", "Clear")
+            );
             return CompletableFuture.completedFuture(true);
         }
         if (plot.getVolume() > Integer.MAX_VALUE) {
@@ -87,12 +94,14 @@ public class Clear extends Command {
             return CompletableFuture.completedFuture(true);
         }
         boolean force = eventResult == Result.FORCE;
-        checkTrue(force || plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.admin.command.clear"),
-            TranslatableCaption.of("permission.no_plot_perms"));
+        checkTrue(
+                force || plot.isOwner(player.getUUID()) || Permissions
+                        .hasPermission(player, "plots.admin.command.clear"),
+                TranslatableCaption.of("permission.no_plot_perms")
+        );
         checkTrue(plot.getRunning() == 0, TranslatableCaption.of("errors.wait_for_timer"));
         checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
-            .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
+                .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
         confirm.run(this, () -> {
             if (Settings.Teleport.ON_CLEAR) {
                 plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
@@ -107,18 +116,18 @@ public class Clear extends Command {
                         // If the state changes, then mark it as no longer done
                         if (DoneFlag.isDone(plot)) {
                             PlotFlag<?, ?> plotFlag =
-                                plot.getFlagContainer().getFlag(DoneFlag.class);
+                                    plot.getFlagContainer().getFlag(DoneFlag.class);
                             PlotFlagRemoveEvent event = this.eventDispatcher
-                                .callFlagRemove(plotFlag, plot);
+                                    .callFlagRemove(plotFlag, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
                             }
                         }
                         if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
                             PlotFlag<?, ?> plotFlag =
-                                plot.getFlagContainer().getFlag(AnalysisFlag.class);
+                                    plot.getFlagContainer().getFlag(AnalysisFlag.class);
                             PlotFlagRemoveEvent event = this.eventDispatcher
-                                .callFlagRemove(plotFlag, plot);
+                                    .callFlagRemove(plotFlag, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
                             }
@@ -139,4 +148,5 @@ public class Clear extends Command {
         }, null);
         return CompletableFuture.completedFuture(true);
     }
+
 }

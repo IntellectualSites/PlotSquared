@@ -28,8 +28,8 @@ package com.plotsquared.core.util.query;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,11 +38,12 @@ class GlobalPlotProvider implements PlotProvider {
 
     private final PlotAreaManager plotAreaManager;
 
-    GlobalPlotProvider(@Nonnull final PlotAreaManager plotAreaManager) {
+    GlobalPlotProvider(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
 
-    @Override public Collection<Plot> getPlots() {
+    @Override
+    public Collection<Plot> getPlots() {
         final Set<Plot> plots = new HashSet<>();
         for (final PlotArea plotArea : this.plotAreaManager.getAllPlotAreas()) {
             plots.addAll(plotArea.getPlots());

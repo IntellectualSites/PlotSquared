@@ -40,32 +40,37 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "buy",
-    usage = "/plot buy",
-    permission = "plots.buy",
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE)
+        usage = "/plot buy",
+        permission = "plots.buy",
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE)
 public class Buy extends Command {
 
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
 
-    @Inject public Buy(@Nonnull final EventDispatcher eventDispatcher,
-                       @Nonnull final EconHandler econHandler) {
+    @Inject
+    public Buy(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull EconHandler econHandler
+    ) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
 
         PlotArea area = player.getPlotAreaAbs();
         check(area, TranslatableCaption.of("errors.not_in_plot_world"));
@@ -83,17 +88,21 @@ public class Buy extends Command {
         checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(!plot.isOwner(player.getUUID()), TranslatableCaption.of("economy.cannot_buy_own"));
         Set<Plot> plots = plot.getConnectedPlots();
-        checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
-            TranslatableCaption.of("permission.cant_claim_more_plots"),
-                Template.of("amount", String.valueOf(player.getAllowedPlots())));
+        checkTrue(
+                player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
+                TranslatableCaption.of("permission.cant_claim_more_plots"),
+                Template.of("amount", String.valueOf(player.getAllowedPlots()))
+        );
         double price = plot.getFlag(PriceFlag.class);
         if (price <= 0) {
             throw new CommandException(TranslatableCaption.of("economy.not_for_sale"));
         }
-        checkTrue(this.econHandler.getMoney(player) >= price,
+        checkTrue(
+                this.econHandler.getMoney(player) >= price,
                 TranslatableCaption.of("economy.cannot_afford_plot"),
                 Template.of("money", this.econHandler.format(price)),
-                Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player))));
+                Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+        );
         this.econHandler.withdrawMoney(player, price);
         // Failure
         // Success
@@ -128,4 +137,5 @@ public class Buy extends Command {
         });
         return CompletableFuture.completedFuture(true);
     }
+
 }

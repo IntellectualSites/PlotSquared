@@ -27,17 +27,19 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.DoubleFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PriceFlag extends DoubleFlag<PriceFlag> {
+
     public static final PriceFlag PRICE_NOT_BUYABLE = new PriceFlag(0D);
 
-    protected PriceFlag(@Nonnull Double value) {
+    protected PriceFlag(@NonNull Double value) {
         super(value, Double.MIN_NORMAL, Double.MAX_VALUE, TranslatableCaption.of("flags.flag_description_price"));
     }
 
-    @Override protected PriceFlag flagOf(@Nonnull Double value) {
+    @Override
+    protected PriceFlag flagOf(@NonNull Double value) {
         return new PriceFlag(value);
     }
+
 }

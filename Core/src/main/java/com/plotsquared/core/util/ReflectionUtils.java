@@ -90,7 +90,7 @@ public class ReflectionUtils {
      */
     public static RefClass getRefClass(String className) throws ClassNotFoundException {
         className = className.replace("{cb}", preClassB).replace("{nms}", preClassM)
-            .replace("{nm}", "net.minecraft");
+                .replace("{nm}", "net.minecraft");
         return getRefClass(Class.forName(className));
     }
 
@@ -221,7 +221,9 @@ public class ReflectionUtils {
                     throw new RuntimeException(e);
                 }
             }
+
         }
+
     }
 
 
@@ -243,12 +245,13 @@ public class ReflectionUtils {
          * @param params parameters for constructor
          * @return new object
          * @throws ReflectiveOperationException reflective operation exception
-         * @throws IllegalArgumentException illegal argument exception
+         * @throws IllegalArgumentException     illegal argument exception
          */
         public Object create(Object... params)
-            throws ReflectiveOperationException, IllegalArgumentException {
+                throws ReflectiveOperationException, IllegalArgumentException {
             return this.constructor.newInstance(params);
         }
+
     }
 
 
@@ -312,6 +315,9 @@ public class ReflectionUtils {
                     throw new RuntimeException(e);
                 }
             }
+
         }
+
     }
+
 }

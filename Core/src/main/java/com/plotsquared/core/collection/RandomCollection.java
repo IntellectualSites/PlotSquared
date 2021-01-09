@@ -31,6 +31,7 @@ import java.util.Random;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class RandomCollection<T> {
+
     protected Random random;
 
     public RandomCollection(Map<T, Double> weights, Random random) {
@@ -55,4 +56,5 @@ public abstract class RandomCollection<T> {
     }
 
     public abstract T next();
+
 }

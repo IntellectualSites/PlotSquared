@@ -30,12 +30,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * plot functions
+ *
  * @deprecated Do not use
  */
-@Deprecated public class MainUtil {
+@Deprecated
+public class MainUtil {
 
     private static final Logger logger =
-        LoggerFactory.getLogger("P2/" + MainUtil.class.getSimpleName());
+            LoggerFactory.getLogger("P2/" + MainUtil.class.getSimpleName());
 
     /**
      * Cache of mapping x,y,z coordinates to the chunk array<br>

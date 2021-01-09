@@ -31,10 +31,20 @@ package com.plotsquared.core.util.task;
 public interface PlotSquaredTask extends Runnable {
 
     /**
+     * Get a new {@link NullTask}
+     *
+     * @return Null task instance
+     */
+    static NullTask nullTask() {
+        return new NullTask();
+    }
+
+    /**
      * Run the task. Don't override this, instead
      * implement {@link #runTask()}
      */
-    @Override default void run() {
+    @Override
+    default void run() {
         if (isCancelled()) {
             return;
         }
@@ -60,28 +70,21 @@ public interface PlotSquaredTask extends Runnable {
     void cancel();
 
     /**
-     * Get a new {@link NullTask}
-     *
-     * @return Null task instance
-     */
-    static NullTask nullTask() {
-        return new NullTask();
-    }
-
-
-    /**
      * Task that does nothing and is always cancelled
      */
     class NullTask implements PlotSquaredTask {
 
-        @Override public void runTask() {
+        @Override
+        public void runTask() {
         }
 
-        @Override public boolean isCancelled() {
+        @Override
+        public boolean isCancelled() {
             return true;
         }
 
-        @Override public void cancel() {
+        @Override
+        public void cancel() {
         }
 
     }

@@ -29,8 +29,8 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.PlayerManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
@@ -42,7 +42,7 @@ public final class Templates {
 
     private Templates() {
         throw new UnsupportedOperationException(
-            "This is a utility class and cannot be instantiated");
+                "This is a utility class and cannot be instantiated");
     }
 
     /**
@@ -54,20 +54,22 @@ public final class Templates {
      * @param replacements Replacements
      * @return Generated template
      */
-    @Nonnull public static Template of(@Nonnull final LocaleHolder localeHolder,
-        @Nonnull final String key, @Nonnull final Caption caption,
-        @Nonnull final Template... replacements) {
+    public @NonNull static Template of(
+            final @NonNull LocaleHolder localeHolder,
+            final @NonNull String key, final @NonNull Caption caption,
+            final @NonNull Template... replacements
+    ) {
         return Template.of(key, MINI_MESSAGE.parse(caption.getComponent(localeHolder), replacements));
     }
 
     /**
      * Create a {@link Template} from a username (using UUID mappings)
      *
-     * @param key          Template key
-     * @param uuid         Player UUID
+     * @param key  Template key
+     * @param uuid Player UUID
      * @return Generated template
      */
-    @Nonnull public static Template of(@Nonnull final String key, @Nonnull final UUID uuid) {
+    public @NonNull static Template of(final @NonNull String key, final @NonNull UUID uuid) {
         final String username = PlayerManager.getName(uuid);
         return Template.of(key, username);
     }
@@ -79,7 +81,7 @@ public final class Templates {
      * @param value Template value
      * @return Generated template
      */
-    @Nonnull public static Template of(@Nonnull final String key, @Nonnull final String value) {
+    public @NonNull static Template of(final @NonNull String key, final @NonNull String value) {
         return Template.of(key, value);
     }
 
@@ -90,7 +92,7 @@ public final class Templates {
      * @param area Plot area
      * @return Generated template
      */
-    @Nonnull public static Template of(@Nonnull final String key, @Nonnull final PlotArea area) {
+    public @NonNull static Template of(final @NonNull String key, final @NonNull PlotArea area) {
         return Template.of(key, area.toString());
     }
 
@@ -101,7 +103,7 @@ public final class Templates {
      * @param number Number
      * @return Generated template
      */
-    @Nonnull public static Template of(@Nonnull final String key, @Nonnull final Number number) {
+    public @NonNull static Template of(final @NonNull String key, final @NonNull Number number) {
         return Template.of(key, number.toString());
     }
 

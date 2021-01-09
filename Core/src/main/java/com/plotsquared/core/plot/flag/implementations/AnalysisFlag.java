@@ -29,8 +29,8 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.types.ListFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +40,8 @@ public class AnalysisFlag extends ListFlag<Integer, AnalysisFlag> implements Int
         super(valueList, TranslatableCaption.of("info.none"), TranslatableCaption.of("info.none"));
     }
 
-    @Override public AnalysisFlag parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public AnalysisFlag parse(@NonNull String input) throws FlagParseException {
         final String[] split = input.split(",");
         final List<Integer> numbers = new ArrayList<>();
         for (final String element : split) {
@@ -49,11 +50,13 @@ public class AnalysisFlag extends ListFlag<Integer, AnalysisFlag> implements Int
         return flagOf(numbers);
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "";
     }
 
-    @Override protected AnalysisFlag flagOf(@Nonnull List<Integer> value) {
+    @Override
+    protected AnalysisFlag flagOf(@NonNull List<Integer> value) {
         return new AnalysisFlag(value);
     }
 

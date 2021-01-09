@@ -27,8 +27,8 @@ package com.plotsquared.core.util.query;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.plot.Plot;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public final class PaginatedPlotResult {
     private final List<Plot> plots;
     private final int pageSize;
 
-    PaginatedPlotResult(@Nonnull final List<Plot> plots, final int pageSize) {
+    PaginatedPlotResult(final @NonNull List<Plot> plots, final int pageSize) {
         this.plots = plots;
         this.pageSize = pageSize;
     }

@@ -37,4 +37,5 @@ class ArmorStandStats {
     boolean noPlate;
     boolean invisible;
     boolean small;
+
 }

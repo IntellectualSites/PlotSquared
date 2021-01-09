@@ -39,26 +39,32 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "setbiome",
-    permission = "plots.set.biome",
-    usage = "/plot biome [biome]",
-    aliases = {"biome", "sb", "setb", "b"},
-    category = CommandCategory.APPEARANCE,
-    requiredType = RequiredType.NONE)
+        permission = "plots.set.biome",
+        usage = "/plot biome [biome]",
+        aliases = {"biome", "sb", "setb", "b"},
+        category = CommandCategory.APPEARANCE,
+        requiredType = RequiredType.NONE)
 public class Biome extends SetCommand {
 
-    @Override public boolean set(final PlotPlayer player, final Plot plot, final String value) {
+    @Override
+    public boolean set(final PlotPlayer player, final Plot plot, final String value) {
         BiomeType biome = null;
         try {
             biome = BiomeTypes.get(value.toLowerCase());
         } catch (final Exception ignore) {
         }
         if (biome == null) {
-            String biomes = StringMan.join(BiomeType.REGISTRY.values(),
-                MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("blocklist.block_list_separator").getComponent(player))));
+            String biomes = StringMan.join(
+                    BiomeType.REGISTRY.values(),
+                    MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption
+                            .of("blocklist.block_list_separator")
+                            .getComponent(player)))
+            );
             player.sendMessage(TranslatableCaption.of("biome.need_biome"));
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
-                    Template.of("values", biomes));
+                    Template.of("values", biomes)
+            );
             return false;
         }
         if (plot.getRunning() > 0) {
@@ -83,10 +89,10 @@ public class Biome extends SetCommand {
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return SuggestionHelper.getNamespacedRegistrySuggestions(BiomeType.REGISTRY, args[0])
-            .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
-            .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-            .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
-            }).collect(Collectors.toList());
+                .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 
 }

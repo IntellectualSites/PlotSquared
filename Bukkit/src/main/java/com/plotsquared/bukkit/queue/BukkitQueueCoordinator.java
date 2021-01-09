@@ -54,8 +54,8 @@ import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -65,31 +65,41 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     private final SideEffectSet noSideEffectSet;
     private final SideEffectSet lightingSideEffectSet;
     private org.bukkit.World bukkitWorld;
-    @Inject private ChunkCoordinatorBuilderFactory chunkCoordinatorBuilderFactory;
-    @Inject private ChunkCoordinatorFactory chunkCoordinatorFactory;
+    @Inject
+    private ChunkCoordinatorBuilderFactory chunkCoordinatorBuilderFactory;
+    @Inject
+    private ChunkCoordinatorFactory chunkCoordinatorFactory;
     private ChunkCoordinator chunkCoordinator;
 
-    @Inject public BukkitQueueCoordinator(@Nonnull World world) {
+    @Inject
+    public BukkitQueueCoordinator(@NonNull World world) {
         super(world);
-        noSideEffectSet = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF).with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
+        noSideEffectSet = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF).with(
+                SideEffect.NEIGHBORS,
+                SideEffect.State.OFF
+        );
         lightingSideEffectSet = SideEffectSet.none().with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
     }
 
-    @Override public BlockState getBlock(int x, int y, int z) {
+    @Override
+    public BlockState getBlock(int x, int y, int z) {
         Block block = getBukkitWorld().getBlockAt(x, y, z);
         return BukkitBlockUtil.get(block);
     }
 
-    @Override public void start() {
+    @Override
+    public void start() {
         chunkCoordinator.start();
     }
 
     //TODO: implement cancellation
-    @Override public void cancel() {
+    @Override
+    public void cancel() {
         chunkCoordinator.cancel();
     }
 
-    @Override public boolean enqueue() {
+    @Override
+    public boolean enqueue() {
         final Clipboard regenClipboard;
         if (isRegen()) {
             BlockVector3 start = BlockVector3.at(getRegenStart()[0] << 4, 0, getRegenStart()[1] << 4);
@@ -110,8 +120,8 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             consumer = blockVector2 -> {
                 LocalChunk localChunk = getBlockChunks().get(blockVector2);
                 boolean isRegenChunk =
-                    regenClipboard != null && blockVector2.getBlockX() > getRegenStart()[0] && blockVector2.getBlockZ() > getRegenStart()[1]
-                        && blockVector2.getBlockX() < getRegenEnd()[0] && blockVector2.getBlockZ() < getRegenEnd()[1];
+                        regenClipboard != null && blockVector2.getBlockX() > getRegenStart()[0] && blockVector2.getBlockZ() > getRegenStart()[1]
+                                && blockVector2.getBlockX() < getRegenEnd()[0] && blockVector2.getBlockZ() < getRegenEnd()[1];
                 if (isRegenChunk) {
                     for (int layer = 0; layer < 16; layer++) {
                         for (int y = layer << 4; y < 16; y++) {
@@ -190,16 +200,26 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             read.addAll(getReadChunks());
         }
         chunkCoordinator =
-            chunkCoordinatorBuilderFactory.create(chunkCoordinatorFactory).inWorld(getWorld()).withChunks(getBlockChunks().keySet()).withChunks(read)
-                .withInitialBatchSize(3).withMaxIterationTime(40).withThrowableConsumer(Throwable::printStackTrace).withFinalAction(getCompleteTask())
-                .withConsumer(consumer).unloadAfter(isUnloadAfter()).withProgressSubscribers(getProgressSubscribers()).build();
+                chunkCoordinatorBuilderFactory
+                        .create(chunkCoordinatorFactory)
+                        .inWorld(getWorld())
+                        .withChunks(getBlockChunks().keySet())
+                        .withChunks(read)
+                        .withInitialBatchSize(3)
+                        .withMaxIterationTime(40)
+                        .withThrowableConsumer(Throwable::printStackTrace)
+                        .withFinalAction(getCompleteTask())
+                        .withConsumer(consumer)
+                        .unloadAfter(isUnloadAfter())
+                        .withProgressSubscribers(getProgressSubscribers())
+                        .build();
         return super.enqueue();
     }
 
     /**
      * Set a block to the world. First tries WNA but defaults to normal block setting methods if that fails
      */
-    private void setWorldBlock(int x, int y, int z, @Nonnull BaseBlock block, @Nonnull BlockVector2 blockVector2) {
+    private void setWorldBlock(int x, int y, int z, @NonNull BaseBlock block, @NonNull BlockVector2 blockVector2) {
         try {
             BlockVector3 loc = BlockVector3.at(x, y, z);
             boolean lighting = false;
@@ -211,7 +231,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                     break;
                 case REPLACEMENT:
                     lighting = block.getBlockType().getMaterial().getLightValue() > 0
-                        || getWorld().getBlock(loc).getBlockType().getMaterial().getLightValue() > 0;
+                            || getWorld().getBlock(loc).getBlockType().getMaterial().getLightValue() > 0;
                     break;
                 default:
                     // Can only be "all"

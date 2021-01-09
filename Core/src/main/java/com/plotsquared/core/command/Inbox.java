@@ -51,10 +51,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "inbox",
-    usage = "/plot inbox [inbox] [delete <index> | clear | page]",
-    permission = "plots.inbox",
-    category = CommandCategory.CHAT,
-    requiredType = RequiredType.PLAYER)
+        usage = "/plot inbox [inbox] [delete <index> | clear | page]",
+        permission = "plots.inbox",
+        category = CommandCategory.CHAT,
+        requiredType = RequiredType.PLAYER)
 public class Inbox extends SubCommand {
 
     public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
@@ -79,8 +79,9 @@ public class Inbox extends SubCommand {
         }
         TextComponent.Builder builder = Component.text();
         builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("list.comment_list_header_paged").getComponent(player) + '\n',
-            Template.of("amount", String.valueOf(comments.length)), Template.of("cur", String.valueOf(page + 1)),
-            Template.of("max", String.valueOf(totalPages + 1)), Template.of("word", "all")));
+                Template.of("amount", String.valueOf(comments.length)), Template.of("cur", String.valueOf(page + 1)),
+                Template.of("max", String.valueOf(totalPages + 1)), Template.of("word", "all")
+        ));
 
         // This might work xD
         for (int x = page * 12; x < max; x++) {
@@ -88,10 +89,16 @@ public class Inbox extends SubCommand {
             Component commentColored;
             if (player.getName().equals(comment.senderName)) {
                 commentColored = MINI_MESSAGE
-                    .parse(TranslatableCaption.of("list.comment_list_by_lister").getComponent(player), Template.of("comment", comment.comment));
+                        .parse(
+                                TranslatableCaption.of("list.comment_list_by_lister").getComponent(player),
+                                Template.of("comment", comment.comment)
+                        );
             } else {
                 commentColored = MINI_MESSAGE
-                    .parse(TranslatableCaption.of("list.comment_list_by_other").getComponent(player), Template.of("comment", comment.comment));
+                        .parse(
+                                TranslatableCaption.of("list.comment_list_by_other").getComponent(player),
+                                Template.of("comment", comment.comment)
+                        );
             }
             Template number = Template.of("number", String.valueOf(x));
             Template world = Template.of("world", comment.world);
@@ -99,12 +106,20 @@ public class Inbox extends SubCommand {
             Template commenter = Template.of("commenter", comment.senderName);
             Template commentTemplate = Template.of("comment", commentColored);
             builder.append(MINI_MESSAGE
-                .parse(TranslatableCaption.of("list.comment_list_comment").getComponent(player), number, world, plot_id, commenter, commentTemplate));
+                    .parse(
+                            TranslatableCaption.of("list.comment_list_comment").getComponent(player),
+                            number,
+                            world,
+                            plot_id,
+                            commenter,
+                            commentTemplate
+                    ));
         }
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
@@ -119,14 +134,15 @@ public class Inbox extends SubCommand {
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-                        @Override public void run(List<PlotComment> value) {
+                        @Override
+                        public void run(List<PlotComment> value) {
                             if (value != null) {
                                 int total = 0;
                                 int unread = 0;
                                 for (PlotComment comment : value) {
                                     total++;
                                     if (comment.timestamp > CommentManager
-                                        .getTimestamp(player, inbox.toString())) {
+                                            .getTimestamp(player, inbox.toString())) {
                                         unread++;
                                     }
                                 }
@@ -167,7 +183,11 @@ public class Inbox extends SubCommand {
             );
             return false;
         }
-        final MetaDataKey<Long> metaDataKey = MetaDataKey.of(String.format("inbox:%s", inbox.toString()), new TypeLiteral<Long>() {});
+        final MetaDataKey<Long> metaDataKey = MetaDataKey.of(
+                String.format("inbox:%s", inbox.toString()),
+                new TypeLiteral<Long>() {
+                }
+        );
         try (final MetaDataAccess<Long> metaDataAccess = player.accessTemporaryMetaData(metaDataKey)) {
             metaDataAccess.set(System.currentTimeMillis());
         }
@@ -204,7 +224,8 @@ public class Inbox extends SubCommand {
                     }
 
                     if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-                        @Override public void run(List<PlotComment> value) {
+                        @Override
+                        public void run(List<PlotComment> value) {
                             if (index > value.size()) {
                                 player.sendMessage(
                                         TranslatableCaption.of("comment.not_valid_inbox_index"),
@@ -262,7 +283,8 @@ public class Inbox extends SubCommand {
             return false;
         }
         if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
-            @Override public void run(List<PlotComment> value) {
+            @Override
+            public void run(List<PlotComment> value) {
                 displayComments(player, value, page);
             }
         })) {
@@ -271,6 +293,7 @@ public class Inbox extends SubCommand {
         }
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -284,7 +307,9 @@ public class Inbox extends SubCommand {
             if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX_READ_REPORT)) {
                 completions.add("report");
             }
-            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.CHAT) {
                     }).collect(Collectors.toCollection(LinkedList::new));
             if (Permissions.hasPermission(player, Permission.PERMISSION_INBOX) && args[0].length() > 0) {
@@ -294,4 +319,5 @@ public class Inbox extends SubCommand {
         }
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

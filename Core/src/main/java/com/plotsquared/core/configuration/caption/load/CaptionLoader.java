@@ -60,6 +60,7 @@ import java.util.stream.Stream;
  * This class handles loading and updating of message files.
  */
 public final class CaptionLoader {
+
     private static final Logger logger = LoggerFactory.getLogger("P2/" + CaptionLoader.class.getSimpleName());
 
     private static final Gson GSON;
@@ -79,7 +80,8 @@ public final class CaptionLoader {
     private CaptionLoader(
             final @NonNull Locale internalLocale,
             final @NonNull Function<@NonNull Path, @NonNull Locale> localeExtractor,
-            final @NonNull DefaultCaptionProvider captionProvider) {
+            final @NonNull DefaultCaptionProvider captionProvider
+    ) {
         this.defaultLocale = internalLocale;
         this.localeExtractor = localeExtractor;
         this.captionProvider = captionProvider;
@@ -105,7 +107,8 @@ public final class CaptionLoader {
     public static @NonNull CaptionLoader of(
             final @NonNull Locale internalLocale,
             final @NonNull Function<@NonNull Path, @NonNull Locale> localeExtractor,
-            final @NonNull DefaultCaptionProvider captionProvider) {
+            final @NonNull DefaultCaptionProvider captionProvider
+    ) {
         return new CaptionLoader(internalLocale, localeExtractor, captionProvider);
     }
 
@@ -148,7 +151,8 @@ public final class CaptionLoader {
      */
     @SuppressWarnings("UnstableApiUsage")
     static @NonNull Map<@NonNull String, @NonNull String> loadFromReader(final @NonNull Reader reader) {
-        final Type type = new TypeToken<Map<String, String>>() {}.getType();
+        final Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
         return new LinkedHashMap<>(GSON.fromJson(reader, type));
     }
 
@@ -240,4 +244,5 @@ public final class CaptionLoader {
         }
         return modified;
     }
+
 }

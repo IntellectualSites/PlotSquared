@@ -30,8 +30,8 @@ import com.plotsquared.core.configuration.serialization.SerializableAs;
 import com.plotsquared.core.generator.ClassicPlotManagerComponent;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,8 +52,10 @@ public class ComponentPreset implements ConfigurationSerializable {
     private final List<String> description;
     private final ItemType icon;
 
-    public ComponentPreset(ClassicPlotManagerComponent component, String pattern, double cost,
-        String permission, String displayName, List<String> description, final ItemType icon) {
+    public ComponentPreset(
+            ClassicPlotManagerComponent component, String pattern, double cost,
+            String permission, String displayName, List<String> description, final ItemType icon
+    ) {
         this.component = component;
         this.pattern = pattern;
         this.cost = cost;
@@ -63,10 +65,10 @@ public class ComponentPreset implements ConfigurationSerializable {
         this.icon = icon;
     }
 
-    public static ComponentPreset deserialize(@Nonnull final Map<String, Object> map) {
+    public static ComponentPreset deserialize(final @NonNull Map<String, Object> map) {
         final ClassicPlotManagerComponent classicPlotManagerComponent = ClassicPlotManagerComponent
-            .fromString(map.getOrDefault("component", "").toString()).orElseThrow(() ->
-                new IllegalArgumentException("The preset needs a valid target component"));
+                .fromString(map.getOrDefault("component", "").toString()).orElseThrow(() ->
+                        new IllegalArgumentException("The preset needs a valid target component"));
         final String pattern = map.getOrDefault("pattern", "").toString();
         final double cost = Double.parseDouble(map.getOrDefault("cost", "0.0").toString());
         final String permission = map.getOrDefault("permission", "").toString();
@@ -74,7 +76,8 @@ public class ComponentPreset implements ConfigurationSerializable {
         final List<String> description = (List<String>) map.getOrDefault("description", new ArrayList<>());
         final ItemType icon = ItemTypes.get(map.getOrDefault("icon", "dirt").toString());
         return new ComponentPreset(classicPlotManagerComponent, pattern, cost, permission,
-            displayName, description, icon);
+                displayName, description, icon
+        );
     }
 
     public ClassicPlotManagerComponent getComponent() {
@@ -105,7 +108,8 @@ public class ComponentPreset implements ConfigurationSerializable {
         return this.icon;
     }
 
-    @Override public Map<String, Object> serialize() {
+    @Override
+    public Map<String, Object> serialize() {
         final Map<String, Object> map = new HashMap<>();
         map.put("component", this.component.name().toLowerCase());
         map.put("pattern", this.pattern);

@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class KelpGrowFlag extends BooleanFlag<KelpGrowFlag> {
 
@@ -39,7 +38,8 @@ public class KelpGrowFlag extends BooleanFlag<KelpGrowFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_kelp_grow"));
     }
 
-    @Override protected KelpGrowFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected KelpGrowFlag flagOf(@NonNull Boolean value) {
         return value ? KELP_GROW_TRUE : KELP_GROW_FALSE;
     }
 

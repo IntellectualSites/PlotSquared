@@ -26,9 +26,9 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -39,29 +39,32 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.sk89q.jnbt.CompoundTag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
 @CommandDeclaration(command = "save",
-    category = CommandCategory.SCHEMATIC,
-    requiredType = RequiredType.NONE,
-    permission = "plots.save")
+        category = CommandCategory.SCHEMATIC,
+        requiredType = RequiredType.NONE,
+        permission = "plots.save")
 public class Save extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final SchematicHandler schematicHandler;
 
-    @Inject public Save(@Nonnull final PlotAreaManager plotAreaManager,
-                        @Nonnull final SchematicHandler schematicHandler) {
+    @Inject
+    public Save(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull SchematicHandler schematicHandler
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.schematicHandler = schematicHandler;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final String world = player.getLocation().getWorldName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
@@ -77,7 +80,7 @@ public class Save extends SubCommand {
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SAVE)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SAVE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
@@ -118,4 +121,5 @@ public class Save extends SubCommand {
                 });
         return true;
     }
+
 }

@@ -42,10 +42,10 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +66,14 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     private Extent parent;
     private Map<Long, Integer[]> tileEntityCount = new HashMap<>();
 
-    public ProcessedWEExtent(String world, Set<CuboidRegion> mask, int max, Extent child, Extent parent, @Nonnull final WorldUtil worldUtil) {
+    public ProcessedWEExtent(
+            String world,
+            Set<CuboidRegion> mask,
+            int max,
+            Extent child,
+            Extent parent,
+            final @NonNull WorldUtil worldUtil
+    ) {
         super(child);
         this.mask = mask;
         this.world = world;
@@ -79,14 +86,20 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         this.parent = parent;
     }
 
-    @Override public BlockState getBlock(BlockVector3 position) {
+    private static long getChunkKey(final BlockVector3 location) {
+        return (long) (location.getBlockX() >> 4) & 4294967295L | ((long) (location.getBlockZ() >> 4) & 4294967295L) << 32;
+    }
+
+    @Override
+    public BlockState getBlock(BlockVector3 position) {
         if (WEManager.maskContains(this.mask, position.getX(), position.getY(), position.getZ())) {
             return super.getBlock(position);
         }
         return WEExtent.AIRSTATE;
     }
 
-    @Override public BaseBlock getFullBlock(BlockVector3 position) {
+    @Override
+    public BaseBlock getFullBlock(BlockVector3 position) {
         if (WEManager.maskContains(this.mask, position.getX(), position.getY(), position.getZ())) {
             return super.getFullBlock(position);
         }
@@ -95,13 +108,17 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
 
     @Override
     public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 location, T block)
-        throws WorldEditException {
+            throws WorldEditException {
 
         final boolean isTile = this.worldUtil.getTileEntityTypes().contains(block.getBlockType());
         if (isTile) {
-            final Integer[] tileEntityCount = this.tileEntityCount.computeIfAbsent(getChunkKey(location),
-                key -> new Integer[] {this.worldUtil.getTileEntityCount(world,
-                    BlockVector2.at(location.getBlockX() >> 4, location.getBlockZ() >> 4))});
+            final Integer[] tileEntityCount = this.tileEntityCount.computeIfAbsent(
+                    getChunkKey(location),
+                    key -> new Integer[]{this.worldUtil.getTileEntityCount(
+                            world,
+                            BlockVector2.at(location.getBlockX() >> 4, location.getBlockZ() >> 4)
+                    )}
+            );
             if (tileEntityCount[0] >= Settings.Chunk_Processor.MAX_TILES) {
                 return false;
             } else {
@@ -113,7 +130,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
                 if (this.parent != null) {
                     try {
                         Field field =
-                            AbstractDelegateExtent.class.getDeclaredField("extent");
+                                AbstractDelegateExtent.class.getDeclaredField("extent");
                         field.setAccessible(true);
                         field.set(this.parent, new NullExtent());
                     } catch (Exception e) {
@@ -129,7 +146,8 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         return !isTile;
     }
 
-    @Override public Entity createEntity(Location location, BaseEntity entity) {
+    @Override
+    public Entity createEntity(Location location, BaseEntity entity) {
         if (this.Eblocked) {
             return null;
         }
@@ -138,20 +156,17 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             this.Eblocked = true;
         }
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
-            location.getBlockZ())) {
+                location.getBlockZ()
+        )) {
             return super.createEntity(location, entity);
         }
         return null;
     }
 
-    @Override public boolean setBiome(BlockVector2 position, BiomeType biome) {
+    @Override
+    public boolean setBiome(BlockVector2 position, BiomeType biome) {
         return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
-            .setBiome(position, biome);
-    }
-
-
-    private static long getChunkKey(final BlockVector3 location) {
-        return (long) (location.getBlockX() >> 4) & 4294967295L | ((long) (location.getBlockZ() >> 4) & 4294967295L) << 32;
+                .setBiome(position, biome);
     }
 
 }

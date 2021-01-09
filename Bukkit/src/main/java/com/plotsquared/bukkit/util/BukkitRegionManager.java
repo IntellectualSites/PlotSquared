@@ -55,9 +55,9 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -75,18 +75,27 @@ public class BukkitRegionManager extends RegionManager {
 
     private final GlobalBlockQueue blockQueue;
 
-    @Inject public BukkitRegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue, @Nonnull
-        ProgressSubscriberFactory subscriberFactory) {
+    @Inject
+    public BukkitRegionManager(
+            @NonNull WorldUtil worldUtil, @NonNull GlobalBlockQueue blockQueue, @NonNull
+            ProgressSubscriberFactory subscriberFactory
+    ) {
         super(worldUtil, blockQueue, subscriberFactory);
         this.blockQueue = blockQueue;
     }
 
     @Override
-    public boolean handleClear(@Nonnull Plot plot, @Nullable Runnable whenDone, @Nonnull PlotManager manager, @Nullable PlotPlayer<?> player) {
+    public boolean handleClear(
+            @NonNull Plot plot,
+            @Nullable Runnable whenDone,
+            @NonNull PlotManager manager,
+            @Nullable PlotPlayer<?> player
+    ) {
         return false;
     }
 
-    @Override public int[] countEntities(@Nonnull Plot plot) {
+    @Override
+    public int[] countEntities(@NonNull Plot plot) {
         int[] existing = (int[]) plot.getMeta("EntityCount");
         if (existing != null && (System.currentTimeMillis() - (long) plot.getMeta("EntityCountTime") < 1000)) {
             return existing;
@@ -160,10 +169,13 @@ public class BukkitRegionManager extends RegionManager {
         return count;
     }
 
-    @Override public boolean regenerateRegion(@Nonnull final Location pos1,
-                                              @Nonnull final Location pos2,
-                                              final boolean ignoreAugment,
-                                              @Nullable final Runnable whenDone) {
+    @Override
+    public boolean regenerateRegion(
+            final @NonNull Location pos1,
+            final @NonNull Location pos2,
+            final boolean ignoreAugment,
+            final @Nullable Runnable whenDone
+    ) {
         final BukkitWorld world = new BukkitWorld((World) pos1.getWorld());
 
         final int p1x = pos1.getX();
@@ -251,35 +263,39 @@ public class BukkitRegionManager extends RegionManager {
             }
             CuboidRegion currentPlotClear = RegionUtil.createRegion(pos1.getX(), pos2.getX(), pos1.getZ(), pos2.getZ());
             map.saveEntitiesOut(Bukkit.getWorld(world.getName()).getChunkAt(x, z), currentPlotClear);
-            AugmentedUtils.bypass(ignoreAugment, () -> ChunkManager.setChunkInPlotArea(null, new RunnableVal<ScopedQueueCoordinator>() {
-                @Override public void run(ScopedQueueCoordinator value) {
-                    Location min = value.getMin();
-                    int bx = min.getX();
-                    int bz = min.getZ();
-                    for (int x1 = 0; x1 < 16; x1++) {
-                        for (int z1 = 0; z1 < 16; z1++) {
-                            PlotLoc plotLoc = new PlotLoc(bx + x1, bz + z1);
-                            BaseBlock[] ids = map.allBlocks.get(plotLoc);
-                            if (ids != null) {
-                                for (int y = 0; y < Math.min(128, ids.length); y++) {
-                                    BaseBlock id = ids[y];
-                                    if (id != null) {
-                                        value.setBlock(x1, y, z1, id);
-                                    } else {
-                                        value.setBlock(x1, y, z1, BlockTypes.AIR.getDefaultState());
-                                    }
-                                }
-                                for (int y = Math.min(128, ids.length); y < ids.length; y++) {
-                                    BaseBlock id = ids[y];
-                                    if (id != null) {
-                                        value.setBlock(x1, y, z1, id);
+            AugmentedUtils.bypass(
+                    ignoreAugment,
+                    () -> ChunkManager.setChunkInPlotArea(null, new RunnableVal<ScopedQueueCoordinator>() {
+                        @Override
+                        public void run(ScopedQueueCoordinator value) {
+                            Location min = value.getMin();
+                            int bx = min.getX();
+                            int bz = min.getZ();
+                            for (int x1 = 0; x1 < 16; x1++) {
+                                for (int z1 = 0; z1 < 16; z1++) {
+                                    PlotLoc plotLoc = new PlotLoc(bx + x1, bz + z1);
+                                    BaseBlock[] ids = map.allBlocks.get(plotLoc);
+                                    if (ids != null) {
+                                        for (int y = 0; y < Math.min(128, ids.length); y++) {
+                                            BaseBlock id = ids[y];
+                                            if (id != null) {
+                                                value.setBlock(x1, y, z1, id);
+                                            } else {
+                                                value.setBlock(x1, y, z1, BlockTypes.AIR.getDefaultState());
+                                            }
+                                        }
+                                        for (int y = Math.min(128, ids.length); y < ids.length; y++) {
+                                            BaseBlock id = ids[y];
+                                            if (id != null) {
+                                                value.setBlock(x1, y, z1, id);
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                }
-            }, world.getName(), chunk));
+                    }, world.getName(), chunk)
+            );
             //map.restoreBlocks(worldObj, 0, 0);
             map.restoreEntities(Bukkit.getWorld(world.getName()), 0, 0);
         });
@@ -289,7 +305,8 @@ public class BukkitRegionManager extends RegionManager {
         return true;
     }
 
-    @Override public void clearAllEntities(@Nonnull Location pos1, @Nonnull Location pos2) {
+    @Override
+    public void clearAllEntities(@NonNull Location pos1, @NonNull Location pos2) {
         String world = pos1.getWorldName();
 
         final World bukkitWorld = BukkitUtil.getWorld(world);
@@ -317,16 +334,16 @@ public class BukkitRegionManager extends RegionManager {
         }
     }
 
-    private void count(int[] count, @Nonnull Entity entity) {
+    private void count(int[] count, @NonNull Entity entity) {
         final com.sk89q.worldedit.world.entity.EntityType entityType = BukkitAdapter.adapt(entity.getType());
 
         if (EntityCategories.PLAYER.contains(entityType)) {
             return;
         } else if (EntityCategories.PROJECTILE.contains(entityType) || EntityCategories.OTHER.contains(entityType) || EntityCategories.HANGING
-            .contains(entityType)) {
+                .contains(entityType)) {
             count[CAP_MISC]++;
         } else if (EntityCategories.ANIMAL.contains(entityType) || EntityCategories.VILLAGER.contains(entityType) || EntityCategories.TAMEABLE
-            .contains(entityType)) {
+                .contains(entityType)) {
             count[CAP_MOB]++;
             count[CAP_ANIMAL]++;
         } else if (EntityCategories.VEHICLE.contains(entityType)) {
@@ -337,4 +354,5 @@ public class BukkitRegionManager extends RegionManager {
         }
         count[CAP_ENTITY]++;
     }
+
 }

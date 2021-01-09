@@ -35,12 +35,13 @@ import java.util.List;
 
 public abstract class CommentInbox {
 
-    @Override public abstract String toString();
+    @Override
+    public abstract String toString();
 
     public boolean canRead(Plot plot, PlotPlayer player) {
         if (Permissions.hasPermission(player, "plots.inbox.read." + toString(), true)) {
             return plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.read." + toString() + ".other", true);
+                    .hasPermission(player, "plots.inbox.read." + toString() + ".other", true);
         }
         return false;
     }
@@ -50,14 +51,14 @@ public abstract class CommentInbox {
             return Permissions.hasPermission(player, "plots.inbox.write." + toString(), true);
         }
         return Permissions.hasPermission(player, "plots.inbox.write." + toString(), true) && (
-            plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.write." + toString() + ".other", true));
+                plot.isOwner(player.getUUID()) || Permissions
+                        .hasPermission(player, "plots.inbox.write." + toString() + ".other", true));
     }
 
     public boolean canModify(Plot plot, PlotPlayer player) {
         if (Permissions.hasPermission(player, "plots.inbox.modify." + toString(), true)) {
             return plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.modify." + toString() + ".other", true);
+                    .hasPermission(player, "plots.inbox.modify." + toString() + ".other", true);
         }
         return false;
     }
@@ -67,7 +68,7 @@ public abstract class CommentInbox {
      * The `whenDone` parameter should be executed when it's done fetching the comments.
      * The value should be set to List of comments
      *
-     * @param plot plot
+     * @param plot     plot
      * @param whenDone task to run when comments are obtained
      * @return success or not
      */
@@ -82,4 +83,5 @@ public abstract class CommentInbox {
     public void clearInbox(Plot plot) {
         DBFunc.clearInbox(plot, toString());
     }
+
 }

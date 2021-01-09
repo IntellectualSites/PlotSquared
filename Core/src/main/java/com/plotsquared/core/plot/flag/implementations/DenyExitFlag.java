@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class DenyExitFlag extends BooleanFlag<DenyExitFlag> {
 
@@ -39,7 +38,8 @@ public class DenyExitFlag extends BooleanFlag<DenyExitFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_deny_exit"));
     }
 
-    @Override protected DenyExitFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected DenyExitFlag flagOf(@NonNull Boolean value) {
         return value ? DENY_EXIT_FLAG_TRUE : DENY_EXIT_FLAG_FALSE;
     }
 

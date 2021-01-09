@@ -29,8 +29,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.inject.TypeLiteral;
 import com.plotsquared.core.synchronization.LockKey;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public final class MetaDataKey<T> {
     private final TypeLiteral<T> type;
     private final LockKey lockKey;
 
-    private MetaDataKey(@Nonnull final String key, @Nonnull final TypeLiteral<T> type) {
+    private MetaDataKey(final @NonNull String key, final @NonNull TypeLiteral<T> type) {
         this.key = Preconditions.checkNotNull(key, "Key may not be null");
         this.type = Preconditions.checkNotNull(type, "Type may not be null");
         this.lockKey = LockKey.of(this.key);
@@ -57,23 +57,25 @@ public final class MetaDataKey<T> {
     /**
      * Get a new named lock key
      *
-     * @param key Key name
+     * @param key  Key name
      * @param type type
-     * @param <T> Type
+     * @param <T>  Type
      * @return MetaData key instance
      */
-    @Nonnull public static <T> MetaDataKey<T> of(@Nonnull final String key, @Nonnull final TypeLiteral<T> type) {
+    public @NonNull static <T> MetaDataKey<T> of(final @NonNull String key, final @NonNull TypeLiteral<T> type) {
         synchronized (keyMetaData) {
             return (MetaDataKey<T>)
-                keyMap.computeIfAbsent(key, missingKey -> new MetaDataKey<>(missingKey, type));
+                    keyMap.computeIfAbsent(key, missingKey -> new MetaDataKey<>(missingKey, type));
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.key;
     }
 
-    @Override public boolean equals(final Object o) {
+    @Override
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -84,7 +86,8 @@ public final class MetaDataKey<T> {
         return Objects.equal(this.key, lockKey.key);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hashCode(this.key);
     }
 
@@ -93,7 +96,7 @@ public final class MetaDataKey<T> {
      *
      * @return Lock key
      */
-    @Nonnull public LockKey getLockKey() {
+    public @NonNull LockKey getLockKey() {
         return this.lockKey;
     }
 
@@ -102,7 +105,7 @@ public final class MetaDataKey<T> {
      *
      * @return Meta data type
      */
-    @Nonnull public TypeLiteral<T> getType() {
+    public @NonNull TypeLiteral<T> getType() {
         return this.type;
     }
 

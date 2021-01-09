@@ -95,7 +95,8 @@ public class SingleWorldListener implements Listener {
     //        handle(event);
     //    }
 
-    @EventHandler(priority = EventPriority.LOWEST) public void onChunkLoad(ChunkLoadEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onChunkLoad(ChunkLoadEvent event) {
         handle(event);
     }
 
@@ -125,4 +126,5 @@ public class SingleWorldListener implements Listener {
         }
         return separator == 1;
     }
+
 }

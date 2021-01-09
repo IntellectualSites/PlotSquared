@@ -31,11 +31,12 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.TaskManager;
 
 @CommandDeclaration(command = "confirm",
-    permission = "plots.confirm",
-    category = CommandCategory.INFO)
+        permission = "plots.confirm",
+        category = CommandCategory.INFO)
 public class Confirm extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         CmdInstance command = CmdConfirm.getPending(player);
         if (command == null) {
             player.sendMessage(TranslatableCaption.of("confirm.failed_confirm"));
@@ -43,11 +44,12 @@ public class Confirm extends SubCommand {
         }
         CmdConfirm.removePending(player);
         if ((System.currentTimeMillis() - command.timestamp)
-            > Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS * 1000) {
+                > Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS * 1000) {
             player.sendMessage(TranslatableCaption.of("confirm.expired_confirm"));
             return false;
         }
         TaskManager.runTaskAsync(command.command);
         return true;
     }
+
 }

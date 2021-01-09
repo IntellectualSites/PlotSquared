@@ -47,6 +47,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface SerializableAs {
+
     /**
      * This is the name your class will be stored and retrieved as.
      * <p>
@@ -56,4 +57,5 @@ public @interface SerializableAs {
      * @return Name to serialize the class as.
      */
     String value();
+
 }

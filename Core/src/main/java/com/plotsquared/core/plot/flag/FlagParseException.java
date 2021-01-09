@@ -26,7 +26,6 @@
 package com.plotsquared.core.plot.flag;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 
 public class FlagParseException extends Exception {
@@ -45,10 +44,13 @@ public class FlagParseException extends Exception {
      * @param errorMessage An error message explaining the failure
      * @param args         Arguments used to format the error message
      */
-    public FlagParseException(final PlotFlag<?, ?> flag, final String value,
-        final Caption errorMessage, final Template... args) {
+    public FlagParseException(
+            final PlotFlag<?, ?> flag, final String value,
+            final Caption errorMessage, final Template... args
+    ) {
         super(String.format("Failed to parse flag of type '%s'. Value '%s' was not accepted.",
-            flag.getName(), value));
+                flag.getName(), value
+        ));
         this.flag = flag;
         this.value = value;
         this.errorMessage = errorMessage;
@@ -84,9 +86,11 @@ public class FlagParseException extends Exception {
 
     /**
      * Get the templates that were supplied by the flag instance.
+     *
      * @return Message templates.
      */
     public Template[] getTemplates() {
         return templates;
     }
+
 }

@@ -25,14 +25,15 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PlotSquaredChatFormatter implements ChatFormatter {
 
-    @Override public void format(@Nonnull final ChatContext context) {
+    @Override
+    public void format(final @NonNull ChatContext context) {
         if (context.isRawOutput()) {
             context.setMessage(
-                context.getMessage().replace('&', '\u2020').replace('\u00A7', '\u2030'));
+                    context.getMessage().replace('&', '\u2020').replace('\u00A7', '\u2030'));
         }
     }
 

@@ -29,8 +29,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class EntityWrapper {
 
@@ -42,7 +41,7 @@ public abstract class EntityWrapper {
     public double y;
     public double z;
 
-    EntityWrapper(@Nonnull final Entity entity) {
+    EntityWrapper(final @NonNull Entity entity) {
         this.entity = entity;
         this.type = entity.getType();
 
@@ -54,7 +53,9 @@ public abstract class EntityWrapper {
         this.pitch = location.getPitch();
     }
 
-    @SuppressWarnings("deprecation") @Override public String toString() {
+    @SuppressWarnings("deprecation")
+    @Override
+    public String toString() {
         return String.format("[%s, x=%s, y=%s, z=%s]", type.getName(), x, y, z);
     }
 
@@ -89,4 +90,5 @@ public abstract class EntityWrapper {
     public double getZ() {
         return this.z;
     }
+
 }

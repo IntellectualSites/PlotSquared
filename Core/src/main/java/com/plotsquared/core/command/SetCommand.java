@@ -36,7 +36,8 @@ import net.kyori.adventure.text.minimessage.Template;
 
 public abstract class SetCommand extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -45,16 +46,20 @@ public abstract class SetCommand extends SubCommand {
         }
         if (!plot.hasOwner()) {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
-                player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId())));
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                );
                 player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                 return false;
             }
         }
         if (!plot.isOwner(player.getUUID())) {
             if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
-                player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId())));
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                );
                 player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;
             }

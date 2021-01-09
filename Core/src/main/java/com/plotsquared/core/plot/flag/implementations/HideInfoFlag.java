@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class HideInfoFlag extends BooleanFlag<HideInfoFlag> {
 
@@ -39,7 +38,8 @@ public class HideInfoFlag extends BooleanFlag<HideInfoFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_hide_info"));
     }
 
-    @Override protected HideInfoFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected HideInfoFlag flagOf(@NonNull Boolean value) {
         return value ? HIDE_INFO_TRUE : HIDE_INFO_FALSE;
     }
 

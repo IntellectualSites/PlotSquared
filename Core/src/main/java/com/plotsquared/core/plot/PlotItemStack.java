@@ -45,8 +45,11 @@ public class PlotItemStack {
      * @param lore   The item stack lore
      * @deprecated Use {@link #PlotItemStack(String, int, String, String...)}
      */
-    @Deprecated public PlotItemStack(final int id, final short data, final int amount,
-        final String name, final String... lore) {
+    @Deprecated
+    public PlotItemStack(
+            final int id, final short data, final int amount,
+            final String name, final String... lore
+    ) {
 
         this.amount = amount;
         this.name = name;
@@ -60,8 +63,10 @@ public class PlotItemStack {
      * @param name   The display name of the item stack
      * @param lore   The item stack lore
      */
-    public PlotItemStack(final String id, final int amount, final String name,
-        final String... lore) {
+    public PlotItemStack(
+            final String id, final int amount, final String name,
+            final String... lore
+    ) {
         this.type = ItemTypes.get(id);
         this.amount = amount;
         this.name = name;
@@ -87,4 +92,5 @@ public class PlotItemStack {
     public String[] getLore() {
         return lore;
     }
+
 }

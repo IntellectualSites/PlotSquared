@@ -53,24 +53,25 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.Structure;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PaperListener113 extends PaperListener {
 
-    @Inject public PaperListener113(@Nonnull PlotAreaManager plotAreaManager) {
+    @Inject
+    public PaperListener113(@NonNull PlotAreaManager plotAreaManager) {
         super(plotAreaManager);
     }
 
-    @EventHandler public void onBlockPlace(BlockPlaceEvent event) {
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
         if (!Settings.Paper_Components.TILE_ENTITY_CHECK || !Settings.Enabled_Components.CHUNK_PROCESSOR) {
             return;
         }
         BlockState state = event.getBlock().getState(false);
         if (!(state instanceof Banner || state instanceof Beacon || state instanceof Bed || state instanceof CommandBlock
-            || state instanceof Comparator || state instanceof Conduit || state instanceof Container || state instanceof CreatureSpawner
-            || state instanceof DaylightDetector || state instanceof EnchantingTable || state instanceof EnderChest || state instanceof EndGateway
-            || state instanceof Jukebox || state instanceof Sign || state instanceof Skull || state instanceof Structure)) {
+                || state instanceof Comparator || state instanceof Conduit || state instanceof Container || state instanceof CreatureSpawner
+                || state instanceof DaylightDetector || state instanceof EnchantingTable || state instanceof EnderChest || state instanceof EndGateway
+                || state instanceof Jukebox || state instanceof Sign || state instanceof Skull || state instanceof Structure)) {
             return;
         }
         final Location location = BukkitUtil.adapt(event.getBlock().getLocation());
@@ -81,10 +82,13 @@ public class PaperListener113 extends PaperListener {
         final int tileEntityCount = event.getBlock().getChunk().getTileEntities(false).length;
         if (tileEntityCount >= Settings.Chunk_Processor.MAX_TILES) {
             final PlotPlayer<?> plotPlayer = BukkitUtil.adapt(event.getPlayer());
-            plotPlayer.sendMessage(TranslatableCaption.of("errors.tile_entity_cap_reached"),
-                Template.of("amount", String.valueOf(Settings.Chunk_Processor.MAX_TILES)));
+            plotPlayer.sendMessage(
+                    TranslatableCaption.of("errors.tile_entity_cap_reached"),
+                    Template.of("amount", String.valueOf(Settings.Chunk_Processor.MAX_TILES))
+            );
             event.setCancelled(true);
             event.setBuild(false);
         }
     }
+
 }

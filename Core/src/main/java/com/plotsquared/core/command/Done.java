@@ -26,7 +26,6 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotDoneEvent;
@@ -34,6 +33,7 @@ import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.expiration.ExpireManager;
@@ -44,26 +44,29 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "done",
-    aliases = {"submit"},
-    permission = "plots.done",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.NONE)
+        aliases = {"submit"},
+        permission = "plots.done",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE)
 public class Done extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
     private final HybridUtils hybridUtils;
 
-    @Inject public Done(@Nonnull final EventDispatcher eventDispatcher,
-                        @Nonnull final HybridUtils hybridUtils) {
+    @Inject
+    public Done(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull HybridUtils hybridUtils
+    ) {
         this.eventDispatcher = eventDispatcher;
         this.hybridUtils = hybridUtils;
     }
-    
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
@@ -74,12 +77,13 @@ public class Done extends SubCommand {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Done"));
+                    Template.of("value", "Done")
+            );
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
@@ -99,10 +103,11 @@ public class Done extends SubCommand {
             plot.removeRunning();
         } else {
             this.hybridUtils.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
-                @Override public void run(PlotAnalysis value) {
+                @Override
+                public void run(PlotAnalysis value) {
                     plot.removeRunning();
                     boolean result =
-                        value.getComplexity(doneRequirements) <= doneRequirements.THRESHOLD;
+                            value.getComplexity(doneRequirements) <= doneRequirements.THRESHOLD;
                     finish(plot, player, result);
                 }
             });
@@ -117,7 +122,7 @@ public class Done extends SubCommand {
         }
         long flagValue = System.currentTimeMillis() / 1000;
         PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class)
-            .createFlagInstance(Long.toString(flagValue));
+                .createFlagInstance(Long.toString(flagValue));
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(TranslatableCaption.of("events.event_denied"));
@@ -126,4 +131,5 @@ public class Done extends SubCommand {
         plot.setFlag(plotFlag);
         player.sendMessage(TranslatableCaption.of("done.done_success"));
     }
+
 }

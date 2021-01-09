@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class CoralDryFlag extends BooleanFlag<CoralDryFlag> {
 
@@ -39,7 +38,8 @@ public class CoralDryFlag extends BooleanFlag<CoralDryFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_coral_dry"));
     }
 
-    @Override protected CoralDryFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected CoralDryFlag flagOf(@NonNull Boolean value) {
         return value ? CORAL_DRY_TRUE : CORAL_DRY_FALSE;
     }
 

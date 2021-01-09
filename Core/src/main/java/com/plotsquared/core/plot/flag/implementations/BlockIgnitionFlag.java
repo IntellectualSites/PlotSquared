@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BlockIgnitionFlag extends BooleanFlag<BlockIgnitionFlag> {
 
@@ -39,7 +38,8 @@ public class BlockIgnitionFlag extends BooleanFlag<BlockIgnitionFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_block_ignition"));
     }
 
-    @Override protected BlockIgnitionFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected BlockIgnitionFlag flagOf(@NonNull Boolean value) {
         return value ? BLOCK_IGNITION_TRUE : BLOCK_IGNITION_FALSE;
     }
 

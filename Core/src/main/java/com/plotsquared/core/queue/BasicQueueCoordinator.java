@@ -39,9 +39,9 @@ import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.entity.EntityTypes;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -70,33 +70,40 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private Consumer<BlockVector2> consumer = null;
     private boolean unloadAfter = true;
     private Runnable whenDone;
-    @Nullable private LightingMode lightingMode = LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
+    @Nullable
+    private LightingMode lightingMode = LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
 
-    public BasicQueueCoordinator(@Nonnull World world) {
+    public BasicQueueCoordinator(@NonNull World world) {
         super(world);
         this.world = world;
         this.modified = System.currentTimeMillis();
     }
 
-    @Override public abstract BlockState getBlock(int x, int y, int z);
+    @Override
+    public abstract BlockState getBlock(int x, int y, int z);
 
-    @Override public final @Nonnull World getWorld() {
+    @Override
+    public final @NonNull World getWorld() {
         return world;
     }
 
-    @Override public final int size() {
+    @Override
+    public final int size() {
         return blockChunks.size() + readRegion.size();
     }
 
-    @Override public final void setModified(long modified) {
+    @Override
+    public final void setModified(long modified) {
         this.modified = modified;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
+    @Override
+    public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
+    @Override
+    public boolean setBlock(int x, int y, int z, @NonNull BaseBlock id) {
         if ((y > 255) || (y < 0)) {
             return false;
         }
@@ -105,14 +112,16 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return true;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
+    @Override
+    public boolean setBlock(int x, int y, int z, @NonNull BlockState id) {
         // Trying to mix BlockState and BaseBlock leads to all kinds of issues.
         // Since BaseBlock has more features than BlockState, simply convert
         // all BlockStates to BaseBlocks
         return setBlock(x, y, z, id.toBaseBlock());
     }
 
-    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biomeType) {
+    @Override
+    public boolean setBiome(int x, int z, @NonNull BiomeType biomeType) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         for (int y = 0; y < 256; y++) {
             chunk.setBiome(x & 15, y, z & 15, biomeType);
@@ -121,29 +130,34 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return true;
     }
 
-    @Override public final boolean setBiome(int x, int y, int z, @Nonnull BiomeType biomeType) {
+    @Override
+    public final boolean setBiome(int x, int y, int z, @NonNull BiomeType biomeType) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         chunk.setBiome(x & 15, y, z & 15, biomeType);
         settingBiomes = true;
         return true;
     }
 
-    @Override public boolean isSettingBiomes() {
+    @Override
+    public boolean isSettingBiomes() {
         return this.settingBiomes;
     }
 
-    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
+    @Override
+    public boolean setTile(int x, int y, int z, @NonNull CompoundTag tag) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
         chunk.setTile(x, y, z, tag);
         settingTiles = true;
         return true;
     }
 
-    @Override public boolean isSettingTiles() {
+    @Override
+    public boolean isSettingTiles() {
         return this.settingTiles;
     }
 
-    @Override public boolean setEntity(@Nonnull Entity entity) {
+    @Override
+    public boolean setEntity(@NonNull Entity entity) {
         if (entity.getState() == null || entity.getState().getType() == EntityTypes.PLAYER) {
             return false;
         }
@@ -153,32 +167,38 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return true;
     }
 
-    @Override public @Nonnull List<BlockVector2> getReadChunks() {
+    @Override
+    public @NonNull List<BlockVector2> getReadChunks() {
         return this.readRegion;
     }
 
-    @Override public void addReadChunk(@Nonnull BlockVector2 chunk) {
+    @Override
+    public void addReadChunk(@NonNull BlockVector2 chunk) {
         this.readRegion.add(chunk);
     }
 
-    @Override public void addReadChunks(@Nonnull Set<BlockVector2> readRegion) {
+    @Override
+    public void addReadChunks(@NonNull Set<BlockVector2> readRegion) {
         this.readRegion.addAll(readRegion);
     }
 
-    @Override public CuboidRegion getRegenRegion() {
+    @Override
+    public CuboidRegion getRegenRegion() {
         return this.regenRegion != null ? this.regenRegion.clone() : null;
     }
 
-    @Override public void setRegenRegion(@Nonnull CuboidRegion regenRegion) {
+    @Override
+    public void setRegenRegion(@NonNull CuboidRegion regenRegion) {
         this.regenRegion = regenRegion;
     }
 
-    @Override public void regenChunk(int x, int z) {
+    @Override
+    public void regenChunk(int x, int z) {
         regen = true;
         // There will never only be one nullified coordinate pair
         if (regenStart == null) {
-            regenStart = new int[] {x, z};
-            regenEnd = new int[] {x, z};
+            regenStart = new int[]{x, z};
+            regenEnd = new int[]{x, z};
             return;
         }
         if (x < regenStart[0]) {
@@ -195,11 +215,13 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         }
     }
 
-    @Override public boolean isUnloadAfter() {
+    @Override
+    public boolean isUnloadAfter() {
         return this.unloadAfter;
     }
 
-    @Override public void setUnloadAfter(boolean unloadAfter) {
+    @Override
+    public void setUnloadAfter(boolean unloadAfter) {
         this.unloadAfter = unloadAfter;
     }
 
@@ -235,7 +257,7 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
      *
      * @return ConcurrentHashMap of chunks to be accessed
      */
-    @Nonnull public ConcurrentHashMap<BlockVector2, LocalChunk> getBlockChunks() {
+    public @NonNull ConcurrentHashMap<BlockVector2, LocalChunk> getBlockChunks() {
         return this.blockChunks;
     }
 
@@ -244,15 +266,17 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
      *
      * @param chunk add a LocalChunk to be written to by the queue
      */
-    public final void setChunk(@Nonnull LocalChunk chunk) {
+    public final void setChunk(@NonNull LocalChunk chunk) {
         this.blockChunks.put(BlockVector2.at(chunk.getX(), chunk.getZ()), chunk);
     }
 
-    @Override @Nullable public final Consumer<BlockVector2> getChunkConsumer() {
+    @Override
+    public @Nullable final Consumer<BlockVector2> getChunkConsumer() {
         return this.consumer;
     }
 
-    @Override public final void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer) {
+    @Override
+    public final void setChunkConsumer(@NonNull Consumer<BlockVector2> consumer) {
         this.consumer = consumer;
     }
 
@@ -263,33 +287,39 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         return this.progressSubscribers;
     }
 
-    @Override public final void addProgressSubscriber(@Nonnull ProgressSubscriber progressSubscriber) {
+    @Override
+    public final void addProgressSubscriber(@NonNull ProgressSubscriber progressSubscriber) {
         this.progressSubscribers.add(progressSubscriber);
     }
 
-    @Override @Nonnull public final LightingMode getLightingMode() {
+    @Override
+    public @NonNull final LightingMode getLightingMode() {
         if (lightingMode == null) {
             return LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
         }
         return this.lightingMode;
     }
 
-    @Override public final void setLightingMode(@Nullable LightingMode mode) {
+    @Override
+    public final void setLightingMode(@Nullable LightingMode mode) {
         this.lightingMode = mode;
     }
 
-    @Override public Runnable getCompleteTask() {
+    @Override
+    public Runnable getCompleteTask() {
         return this.whenDone;
     }
 
-    @Override public void setCompleteTask(Runnable whenDone) {
+    @Override
+    public void setCompleteTask(Runnable whenDone) {
         this.whenDone = whenDone;
     }
 
     /**
      * Get the {@link LocalChunk} from the queue at the given chunk coordinates. Returns a new instance if one doesn't exist
      */
-    @Nonnull private LocalChunk getChunk(final int chunkX, final int chunkZ) {
+    @NonNull
+    private LocalChunk getChunk(final int chunkX, final int chunkZ) {
         if (chunkX != lastX || chunkZ != lastZ) {
             lastX = chunkX;
             lastZ = chunkZ;
@@ -306,4 +336,5 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         }
         return lastWrappedChunk;
     }
+
 }

@@ -32,15 +32,16 @@ import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.jnbt.CompoundTag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Schematic Handler.
  */
-@Singleton public class BukkitSchematicHandler extends SchematicHandler {
+@Singleton
+public class BukkitSchematicHandler extends SchematicHandler {
 
-    @Inject public BukkitSchematicHandler(@Nonnull final WorldUtil worldUtil, @Nonnull ProgressSubscriberFactory subscriberFactory) {
+    @Inject
+    public BukkitSchematicHandler(final @NonNull WorldUtil worldUtil, @NonNull ProgressSubscriberFactory subscriberFactory) {
         super(worldUtil, subscriberFactory);
     }
 
@@ -48,4 +49,5 @@ import javax.annotation.Nonnull;
     public boolean restoreTile(QueueCoordinator queue, CompoundTag ct, int x, int y, int z) {
         return new StateWrapper(ct).restoreTag(queue.getWorld().getName(), x, y, z);
     }
+
 }

@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class ExplosionFlag extends BooleanFlag<ExplosionFlag> {
 
@@ -39,7 +38,8 @@ public class ExplosionFlag extends BooleanFlag<ExplosionFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_explosion"));
     }
 
-    @Override protected ExplosionFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected ExplosionFlag flagOf(@NonNull Boolean value) {
         return value ? EXPLOSION_TRUE : EXPLOSION_FALSE;
     }
 

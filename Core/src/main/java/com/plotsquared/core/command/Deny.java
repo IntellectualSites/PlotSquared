@@ -27,10 +27,10 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.world.PlotAreaManager;
@@ -41,34 +41,38 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "deny",
-    aliases = {"d", "ban"},
-    usage = "/plot deny <player | *>",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+        aliases = {"d", "ban"},
+        usage = "/plot deny <player | *>",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final WorldUtil worldUtil;
 
-    @Inject public Deny(@Nonnull final PlotAreaManager plotAreaManager,
-                        @Nonnull final EventDispatcher eventDispatcher,
-                        @Nonnull final WorldUtil worldUtil) {
+    @Inject
+    public Deny(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull WorldUtil worldUtil
+    ) {
         super(Argument.PlayerName);
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.worldUtil = worldUtil;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
@@ -83,13 +87,20 @@ public class Deny extends SubCommand {
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
 
-        if (!(player.hasPermission("plots.deny." + size) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY)))
-            player.sendMessage(TranslatableCaption.of("members.plot_max_members_denied"), Template.of("amount", String.valueOf(size)));
+        if (!(player.hasPermission("plots.deny." + size) || Permissions.hasPermission(
+                player,
+                Permission.PERMISSION_ADMIN_COMMAND_DENY
+        ))) {
+            player.sendMessage(
+                    TranslatableCaption.of("members.plot_max_members_denied"),
+                    Template.of("amount", String.valueOf(size))
+            );
+        }
 
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
@@ -102,8 +113,8 @@ public class Deny extends SubCommand {
             } else {
                 for (UUID uuid : uuids) {
                     if (uuid == DBFunc.EVERYONE && !(
-                        Permissions.hasPermission(player, Permission.PERMISSION_DENY_EVERYONE) || Permissions
-                            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
+                            Permissions.hasPermission(player, Permission.PERMISSION_DENY_EVERYONE) || Permissions
+                                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
                                 Template.of("value", args[0])
@@ -144,7 +155,8 @@ public class Deny extends SubCommand {
         return true;
     }
 
-    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+    @Override
+    public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 
@@ -176,4 +188,5 @@ public class Deny extends SubCommand {
             player.teleport(spawn);
         }
     }
+
 }

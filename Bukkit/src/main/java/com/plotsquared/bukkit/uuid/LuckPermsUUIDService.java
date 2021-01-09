@@ -31,8 +31,8 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -53,21 +53,24 @@ public class LuckPermsUUIDService implements UUIDService {
         }
     }
 
-    @Override @Nonnull public List<UUIDMapping> getNames(@Nonnull final List<UUID> uuids) {
-       final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
-       final UserManager userManager = this.luckPerms.getUserManager();
-       for (final UUID uuid : uuids) {
-           try {
-               final String username = userManager.lookupUsername(uuid).get();
-               if (username != null) {
-                   mappings.add(new UUIDMapping(uuid, username));
-               }
-           } catch (final Exception ignored) {}
-       }
-       return mappings;
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
+        final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
+        final UserManager userManager = this.luckPerms.getUserManager();
+        for (final UUID uuid : uuids) {
+            try {
+                final String username = userManager.lookupUsername(uuid).get();
+                if (username != null) {
+                    mappings.add(new UUIDMapping(uuid, username));
+                }
+            } catch (final Exception ignored) {
+            }
+        }
+        return mappings;
     }
 
-    @Override @Nonnull public List<UUIDMapping> getUUIDs(@Nonnull final List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         final UserManager userManager = this.luckPerms.getUserManager();
         for (final String username : usernames) {
@@ -76,7 +79,8 @@ public class LuckPermsUUIDService implements UUIDService {
                 if (username != null) {
                     mappings.add(new UUIDMapping(uuid, username));
                 }
-            } catch (final Exception ignored) {}
+            } catch (final Exception ignored) {
+            }
         }
         return mappings;
     }

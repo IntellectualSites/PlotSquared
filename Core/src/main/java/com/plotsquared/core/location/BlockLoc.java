@@ -65,7 +65,8 @@ public class BlockLoc {
         return new BlockLoc(x, y, z, yaw, pitch);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         int prime = 31;
         int result = 1;
         result = prime * result + this.getX();
@@ -74,7 +75,8 @@ public class BlockLoc {
         return result;
     }
 
-    @Override public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -86,15 +88,16 @@ public class BlockLoc {
         }
         BlockLoc other = (BlockLoc) obj;
         return this.getX() == other.getX() && this.getY() == other.getY() && this.getZ() == other
-            .getZ();
+                .getZ();
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         if (this.getX() == 0 && this.getY() == 0 && this.getZ() == 0) {
             return "";
         }
         return this.getX() + "," + this.getY() + ',' + this.getZ() + ',' + this.getYaw() + ','
-            + this.getPitch();
+                + this.getPitch();
 
     }
 

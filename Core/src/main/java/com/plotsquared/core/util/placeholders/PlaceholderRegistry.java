@@ -28,6 +28,7 @@ package com.plotsquared.core.util.placeholders;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -41,10 +42,9 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.PlayerManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,12 +62,24 @@ public final class PlaceholderRegistry {
 
     private final Map<String, Placeholder> placeholders;
     private final EventDispatcher eventDispatcher;
-    private final long timestamp = 0;
 
-    @Inject public PlaceholderRegistry(@Nonnull final EventDispatcher eventDispatcher) {
+    @Inject
+    public PlaceholderRegistry(final @NonNull EventDispatcher eventDispatcher) {
         this.placeholders = Maps.newHashMap();
         this.eventDispatcher = eventDispatcher;
         this.registerDefault();
+    }
+
+    /**
+     * Converts a {@link Component} into a legacy-formatted string.
+     *
+     * @param caption      the caption key.
+     * @param localeHolder the locale holder to get the component for
+     * @return a legacy-formatted string.
+     */
+    private static String legacyComponent(TranslatableCaption caption, LocaleHolder localeHolder) {
+        Component component = MiniMessage.get().parse(caption.getComponent(localeHolder));
+        return PlotSquared.platform().toLegacyPlatformString(component);
     }
 
     private void registerDefault() {
@@ -114,7 +126,7 @@ public final class PlaceholderRegistry {
             return String.valueOf(plot.getMembers().size() + plot.getTrusted().size());
         });
         this.createPlaceholder("currentplot_members_added", (player, plot) -> {
-            if (plot.getMembers() .isEmpty()) {
+            if (plot.getMembers().isEmpty()) {
                 return legacyComponent(TranslatableCaption.of("info.none"), player);
             }
             return String.valueOf(plot.getMembers().size());
@@ -162,7 +174,7 @@ public final class PlaceholderRegistry {
             return sdf.format(creationDate);
         });
         this.createPlaceholder("currentplot_can_build", (player, plot) ->
-            plot.isAdded(player.getUUID()) ? "true" : "false");
+                plot.isAdded(player.getUUID()) ? "true" : "false");
         this.createPlaceholder("currentplot_x", (player, plot) -> Integer.toString(plot.getId().getX()));
         this.createPlaceholder("currentplot_y", (player, plot) -> Integer.toString(plot.getId().getY()));
         this.createPlaceholder("currentplot_xy", (player, plot) -> plot.getId().toString());
@@ -176,10 +188,14 @@ public final class PlaceholderRegistry {
      * @param key                 Placeholder key
      * @param placeholderFunction Placeholder generator. Cannot return null
      */
-    @SuppressWarnings("ALL") public void createPlaceholder(@Nonnull final String key,
-        @Nonnull final Function<PlotPlayer<?>, String> placeholderFunction) {
+    @SuppressWarnings("ALL")
+    public void createPlaceholder(
+            final @NonNull String key,
+            final @NonNull Function<PlotPlayer<?>, String> placeholderFunction
+    ) {
         this.registerPlaceholder(new Placeholder(key) {
-            @Override @Nonnull public String getValue(@Nonnull final PlotPlayer<?> player) {
+            @Override
+            public @NonNull String getValue(final @NonNull PlotPlayer<?> player) {
                 return placeholderFunction.apply(player);
             }
         });
@@ -191,10 +207,13 @@ public final class PlaceholderRegistry {
      * @param key                 Placeholder key
      * @param placeholderFunction Placeholder generator. Cannot return null
      */
-    public void createPlaceholder(@Nonnull final String key,
-        @Nonnull final BiFunction<PlotPlayer<?>, Plot, String> placeholderFunction) {
+    public void createPlaceholder(
+            final @NonNull String key,
+            final @NonNull BiFunction<PlotPlayer<?>, Plot, String> placeholderFunction
+    ) {
         this.registerPlaceholder(new PlotSpecificPlaceholder(key) {
-            @Override @Nonnull public String getValue(@Nonnull final PlotPlayer<?> player, @Nonnull final Plot plot) {
+            @Override
+            public @NonNull String getValue(final @NonNull PlotPlayer<?> player, final @NonNull Plot plot) {
                 return placeholderFunction.apply(player, plot);
             }
         });
@@ -205,10 +224,12 @@ public final class PlaceholderRegistry {
      *
      * @param placeholder Placeholder instance
      */
-    public void registerPlaceholder(@Nonnull final Placeholder placeholder) {
+    public void registerPlaceholder(final @NonNull Placeholder placeholder) {
         final Placeholder previous = this.placeholders
-            .put(placeholder.getKey().toLowerCase(Locale.ENGLISH),
-                Preconditions.checkNotNull(placeholder, "Placeholder may not be null"));
+                .put(
+                        placeholder.getKey().toLowerCase(Locale.ENGLISH),
+                        Preconditions.checkNotNull(placeholder, "Placeholder may not be null")
+                );
         if (previous == null) {
             this.eventDispatcher.callGenericEvent(new PlaceholderAddedEvent(placeholder));
         }
@@ -220,9 +241,9 @@ public final class PlaceholderRegistry {
      * @param key Placeholder key
      * @return Placeholder value
      */
-    @Nullable public Placeholder getPlaceholder(@Nonnull final String key) {
+    public @Nullable Placeholder getPlaceholder(final @NonNull String key) {
         return this.placeholders.get(
-            Preconditions.checkNotNull(key, "Key may not be null").toLowerCase(Locale.ENGLISH));
+                Preconditions.checkNotNull(key, "Key may not be null").toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -233,8 +254,10 @@ public final class PlaceholderRegistry {
      * @param player Player to evaluate for
      * @return Replacement value
      */
-    @Nonnull public String getPlaceholderValue(@Nonnull final String key,
-        @Nonnull final PlotPlayer<?> player) {
+    public @NonNull String getPlaceholderValue(
+            final @NonNull String key,
+            final @NonNull PlotPlayer<?> player
+    ) {
         final Placeholder placeholder = getPlaceholder(key);
         if (placeholder == null) {
             return "";
@@ -245,13 +268,15 @@ public final class PlaceholderRegistry {
             // If a placeholder for some reason decides to be disobedient, we catch it here
             if (placeholderValue == null) {
                 new RuntimeException(String
-                    .format("Placeholder '%s' returned null for player '%s'", placeholder.getKey(),
-                        player.getName())).printStackTrace();
+                        .format("Placeholder '%s' returned null for player '%s'", placeholder.getKey(),
+                                player.getName()
+                        )).printStackTrace();
             }
         } catch (final Exception exception) {
             new RuntimeException(String
-                .format("Placeholder '%s' failed to evalulate for player '%s'",
-                    placeholder.getKey(), player.getName()), exception).printStackTrace();
+                    .format("Placeholder '%s' failed to evalulate for player '%s'",
+                            placeholder.getKey(), player.getName()
+                    ), exception).printStackTrace();
         }
         return placeholderValue;
     }
@@ -261,22 +286,9 @@ public final class PlaceholderRegistry {
      *
      * @return Unmodifiable collection of placeholders
      */
-    @Nonnull public Collection<Placeholder> getPlaceholders() {
+    public @NonNull Collection<Placeholder> getPlaceholders() {
         return Collections.unmodifiableCollection(this.placeholders.values());
     }
-
-    /**
-     * Converts a {@link Component} into a legacy-formatted string.
-     *
-     * @param caption      the caption key.
-     * @param localeHolder the locale holder to get the component for
-     * @return a legacy-formatted string.
-     */
-    private static String legacyComponent(TranslatableCaption caption, LocaleHolder localeHolder) {
-        Component component = MiniMessage.get().parse(caption.getComponent(localeHolder));
-        return PlotSquared.platform().toLegacyPlatformString(component);
-    }
-
 
     /**
      * Event called when a new {@link Placeholder} has been added

@@ -38,9 +38,9 @@ import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -50,13 +50,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class DefaultProgressSubscriber implements ProgressSubscriber {
 
-    @Nonnull private final AtomicDouble progress = new AtomicDouble(0);
-    @Nonnull private final AtomicBoolean started = new AtomicBoolean(false);
-    @Nonnull private final AtomicBoolean cancelled = new AtomicBoolean(false);
-    @Nonnull private final TaskTime interval;
-    @Nonnull private final TaskTime wait;
-    @Nonnull private final PlotPlayer<?> actor;
-    @Nonnull private final Caption caption;
+    @NonNull
+    private final AtomicDouble progress = new AtomicDouble(0);
+    @NonNull
+    private final AtomicBoolean started = new AtomicBoolean(false);
+    @NonNull
+    private final AtomicBoolean cancelled = new AtomicBoolean(false);
+    @NonNull
+    private final TaskTime interval;
+    @NonNull
+    private final TaskTime wait;
+    @NonNull
+    private final PlotPlayer<?> actor;
+    @NonNull
+    private final Caption caption;
     private PlotSquaredTask task;
 
     @AssistedInject
@@ -66,8 +73,10 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
 
     @AssistedInject
     public DefaultProgressSubscriber(@Nullable @Assisted("subscriber") final PlotPlayer<?> actor) {
-        Preconditions.checkNotNull(actor,
-            "Actor cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!");
+        Preconditions.checkNotNull(
+                actor,
+                "Actor cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!"
+        );
         this.actor = actor;
         this.interval = TaskTime.ms(Settings.QUEUE.NOTIFY_INTERVAL);
         this.wait = TaskTime.ms(Settings.QUEUE.NOTIFY_WAIT);
@@ -75,12 +84,16 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
     }
 
     @AssistedInject
-    public DefaultProgressSubscriber(@Nullable @Assisted("subscriber") final PlotPlayer<?> actor,
-                                     @Assisted("progressInterval") final long interval,
-                                     @Assisted("waitBeforeStarting") final long wait,
-                                     @Nullable @Assisted("caption") final Caption caption) {
-        Preconditions.checkNotNull(actor,
-            "Actor cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!");
+    public DefaultProgressSubscriber(
+            @Nullable @Assisted("subscriber") final PlotPlayer<?> actor,
+            @Assisted("progressInterval") final long interval,
+            @Assisted("waitBeforeStarting") final long wait,
+            @Nullable @Assisted("caption") final Caption caption
+    ) {
+        Preconditions.checkNotNull(
+                actor,
+                "Actor cannot be null when using DefaultProgressSubscriber! Make sure if attempting to use custom Subscribers it is correctly parsed to the queue!"
+        );
         this.actor = actor;
         this.interval = TaskTime.ms(interval);
         this.wait = TaskTime.ms(wait);
@@ -91,23 +104,29 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
         }
     }
 
-    @Override public void notifyProgress(@Nonnull ChunkCoordinator coordinator, double progress) {
+    @Override
+    public void notifyProgress(@NonNull ChunkCoordinator coordinator, double progress) {
         this.progress.set(progress);
         if (coordinator.isCancelled() || progress >= 1) {
             if (task != null) {
                 task.cancel();
             }
         } else if (started.compareAndSet(false, true)) {
-            TaskManager.getPlatformImplementation().taskLater(() -> task = TaskManager.getPlatformImplementation().taskRepeat(() -> {
-                    if (!started.get()) {
-                        return;
-                    }
-                    if (cancelled.get()) {
-                        task.cancel();
-                        return;
-                    }
-                    actor.sendMessage(caption, Template.of("progress", String.format("%.2f", this.progress.doubleValue() * 100)));
-            }, interval), wait);
+            TaskManager.getPlatformImplementation().taskLater(() -> task = TaskManager
+                    .getPlatformImplementation()
+                    .taskRepeat(() -> {
+                        if (!started.get()) {
+                            return;
+                        }
+                        if (cancelled.get()) {
+                            task.cancel();
+                            return;
+                        }
+                        actor.sendMessage(
+                                caption,
+                                Template.of("progress", String.format("%.2f", this.progress.doubleValue() * 100))
+                        );
+                    }, interval), wait);
         }
     }
 
@@ -121,4 +140,5 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
             task.cancel();
         }
     }
+
 }

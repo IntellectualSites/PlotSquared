@@ -64,15 +64,18 @@ abstract class StoredEntity implements Entity {
         return entity;
     }
 
-    @Override public BaseEntity getState() {
+    @Override
+    public BaseEntity getState() {
         return new BaseEntity(entity);
     }
 
-    @Override public Location getLocation() {
+    @Override
+    public Location getLocation() {
         return location;
     }
 
-    @Override public Extent getExtent() {
+    @Override
+    public Extent getExtent() {
         return location.getExtent();
     }
 

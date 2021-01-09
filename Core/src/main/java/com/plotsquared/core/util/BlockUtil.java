@@ -35,10 +35,8 @@ import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldedit.world.block.FuzzyBlockState;
 import com.sk89q.worldedit.world.registry.LegacyMapper;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
 
@@ -66,18 +64,18 @@ public final class BlockUtil {
      * @param id Legacy ID
      * @return Block state, or {@code null}
      */
-    @Nullable public static BlockState get(@Nonnegative final int id) {
+    public @Nullable static BlockState get(final int id) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id);
     }
 
     /**
      * Get a {@link BlockState} from a legacy id-data pair
      *
-     * @param id Legacy ID
+     * @param id   Legacy ID
      * @param data Legacy data
      * @return Block state, or {@code null}
      */
-    @Nullable public static BlockState get(@Nonnegative final int id, final int data) {
+    public @Nullable static BlockState get(final int id, final int data) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id, data);
     }
 
@@ -88,7 +86,7 @@ public final class BlockUtil {
      * @return Parsed block state, or {@code null} if none
      *         could be parsed
      */
-   @Nullable public static BlockState get(@Nonnull String id) {
+    public @Nullable static BlockState get(@NonNull String id) {
         if (id.length() == 1 && id.charAt(0) == '*') {
             return FuzzyBlockState.builder().type(BlockTypes.AIR).build();
         }
@@ -123,7 +121,7 @@ public final class BlockUtil {
      * @param commaDelimited List of block states
      * @return Parsed block states
      */
-    @Nonnull public static BlockState[] parse(@Nonnull final String commaDelimited) {
+    public @NonNull static BlockState[] parse(final @NonNull String commaDelimited) {
         final String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
         final BlockState[] result = new BlockState[split.length];
         for (int i = 0; i < split.length; i++) {
@@ -139,7 +137,7 @@ public final class BlockUtil {
      * @return Deserialized block state, or {@code null} if the map is
      *         not a properly serialized block state
      */
-    @Nullable public static BlockState deserialize(@Nonnull final Map<String, Object> map) {
+    public @Nullable static BlockState deserialize(final @NonNull Map<String, Object> map) {
         if (map.containsKey("material")) {
             final Object object = map.get("material");
             return get(object.toString());

@@ -49,4 +49,5 @@ public @interface CommandDeclaration {
     CommandCategory category() default CommandCategory.INFO;
 
     boolean confirmation() default false;
+
 }

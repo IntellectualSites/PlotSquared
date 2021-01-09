@@ -39,4 +39,5 @@ public interface YieldRunnable extends Runnable {
     default void yield() {
         TaskManager.runTaskLater(this, TaskTime.ticks(1L));
     }
+
 }

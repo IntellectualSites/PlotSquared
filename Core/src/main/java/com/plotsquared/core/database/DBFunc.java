@@ -48,6 +48,7 @@ import java.util.concurrent.CompletableFuture;
  * - These functions do not update the local plot objects and only make changes to the DB
  */
 public class DBFunc {
+
     /**
      * The "global" uuid.
      */
@@ -119,7 +120,8 @@ public class DBFunc {
      * @param name
      * @return
      */
-    @Deprecated public static boolean hasColumn(ResultSet resultSet, String name) {
+    @Deprecated
+    public static boolean hasColumn(ResultSet resultSet, String name) {
         try {
             ResultSetMetaData meta = resultSet.getMetaData();
             int count = meta.getColumnCount();
@@ -159,8 +161,10 @@ public class DBFunc {
         DBFunc.dbManager.createPlotsAndData(plots, whenDone);
     }
 
-    public static void createPlotSafe(final Plot plot, final Runnable success,
-        final Runnable failure) {
+    public static void createPlotSafe(
+            final Plot plot, final Runnable success,
+            final Runnable failure
+    ) {
         if (dbManager == null) {
             return;
         }
@@ -412,8 +416,10 @@ public class DBFunc {
     /**
      * @param plot
      */
-    public static void getComments(Plot plot, String inbox,
-        RunnableVal<List<PlotComment>> whenDone) {
+    public static void getComments(
+            Plot plot, String inbox,
+            RunnableVal<List<PlotComment>> whenDone
+    ) {
         if (plot != null && plot.temp == -1 || dbManager == null) {
             return;
         }
@@ -597,4 +603,5 @@ public class DBFunc {
             DBFunc.dbManager.close();
         }
     }
+
 }

@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class IceMeltFlag extends BooleanFlag<IceMeltFlag> {
 
@@ -39,7 +38,8 @@ public class IceMeltFlag extends BooleanFlag<IceMeltFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_ice_melt"));
     }
 
-    @Override protected IceMeltFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected IceMeltFlag flagOf(@NonNull Boolean value) {
         return value ? ICE_MELT_TRUE : ICE_MELT_FALSE;
     }
 

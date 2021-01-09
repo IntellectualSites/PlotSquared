@@ -36,27 +36,33 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
     public PAPIPlaceholders() {
     }
 
-    @Override public boolean persist() {
+    @Override
+    public boolean persist() {
         return true;
     }
 
-    @Override public boolean canRegister() {
+    @Override
+    public boolean canRegister() {
         return true;
     }
 
-    @Override public String getAuthor() {
+    @Override
+    public String getAuthor() {
         return "IntellectualSites";
     }
 
-    @Override public String getIdentifier() {
+    @Override
+    public String getIdentifier() {
         return "plotsquared";
     }
 
-    @Override public String getVersion() {
+    @Override
+    public String getVersion() {
         return "3";
     }
 
-    @Override public String onPlaceholderRequest(Player p, String identifier) {
+    @Override
+    public String onPlaceholderRequest(Player p, String identifier) {
         final PlotPlayer<?> pl = PlotSquared.platform().playerManager().getPlayerIfExists(p.getUniqueId());
 
         if (pl == null) {
@@ -66,18 +72,20 @@ public class PAPIPlaceholders extends PlaceholderExpansion {
         // PAPI specific ones that don't translate well over into other placeholder APIs
         if (identifier.startsWith("has_plot_")) {
             identifier = identifier.substring("has_plot_".length());
-            if (identifier.isEmpty())
+            if (identifier.isEmpty()) {
                 return "";
+            }
 
             return pl.getPlotCount(identifier) > 0 ?
-                PlaceholderAPIPlugin.booleanTrue() :
-                PlaceholderAPIPlugin.booleanFalse();
+                    PlaceholderAPIPlugin.booleanTrue() :
+                    PlaceholderAPIPlugin.booleanFalse();
         }
 
         if (identifier.startsWith("plot_count_")) {
             identifier = identifier.substring("plot_count_".length());
-            if (identifier.isEmpty())
+            if (identifier.isEmpty()) {
                 return "";
+            }
 
             return String.valueOf(pl.getPlotCount(identifier));
         }

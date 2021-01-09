@@ -36,9 +36,9 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,24 +64,42 @@ public class PlayerBackupProfile implements BackupProfile {
     private final Plot plot;
     private final BackupManager backupManager;
     private final SchematicHandler schematicHandler;
-
-    @Inject public PlayerBackupProfile(@Assisted @Nonnull final UUID owner, @Assisted @Nonnull final Plot plot,
-        @Nonnull final BackupManager backupManager, @Nonnull final SchematicHandler schematicHandler) {
+    private final Object backupLock = new Object();
+    private volatile List<Backup> backupCache;
+    @Inject
+    public PlayerBackupProfile(
+            @Assisted final @NonNull UUID owner, @Assisted final @NonNull Plot plot,
+            final @NonNull BackupManager backupManager, final @NonNull SchematicHandler schematicHandler
+    ) {
         this.owner = owner;
         this.plot = plot;
         this.backupManager = backupManager;
         this.schematicHandler = schematicHandler;
     }
 
-    private volatile List<Backup> backupCache;
-    private final Object backupLock = new Object();
-
-    private static boolean isValidFile(@Nonnull final Path path) {
+    private static boolean isValidFile(final @NonNull Path path) {
         final String name = path.getFileName().toString();
         return name.endsWith(".schem") || name.endsWith(".schematic");
     }
 
-    @Override @Nonnull public CompletableFuture<List<Backup>> listBackups() {
+    private static Path resolve(final @NonNull Path parent, final String child) {
+        Path path = parent;
+        try {
+            if (!Files.exists(parent)) {
+                Files.createDirectory(parent);
+            }
+            path = parent.resolve(child);
+            if (!Files.exists(path)) {
+                Files.createDirectory(path);
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+        return path;
+    }
+
+    @Override
+    public @NonNull CompletableFuture<List<Backup>> listBackups() {
         synchronized (this.backupLock) {
             if (this.backupCache != null) {
                 return CompletableFuture.completedFuture(backupCache);
@@ -101,9 +119,9 @@ public class PlayerBackupProfile implements BackupProfile {
                     Files.walk(path).filter(PlayerBackupProfile::isValidFile).forEach(file -> {
                         try {
                             final BasicFileAttributes basicFileAttributes =
-                                Files.readAttributes(file, BasicFileAttributes.class);
+                                    Files.readAttributes(file, BasicFileAttributes.class);
                             backups.add(
-                                new Backup(this, basicFileAttributes.creationTime().toMillis(), file));
+                                    new Backup(this, basicFileAttributes.creationTime().toMillis(), file));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -117,38 +135,26 @@ public class PlayerBackupProfile implements BackupProfile {
         }
     }
 
-    @Override public void destroy() {
+    @Override
+    public void destroy() {
         this.listBackups().whenCompleteAsync((backups, error) -> {
-           if (error != null) {
-               error.printStackTrace();
-           }
-           backups.forEach(Backup::delete);
-           this.backupCache = null;
+            if (error != null) {
+                error.printStackTrace();
+            }
+            backups.forEach(Backup::delete);
+            this.backupCache = null;
         });
     }
 
-    @Nonnull public Path getBackupDirectory() {
-        return resolve(resolve(resolve(backupManager.getBackupPath(), Objects.requireNonNull(plot.getArea().toString(), "plot area id")),
-            Objects.requireNonNull(plot.getId().toDashSeparatedString(), "plot id")), Objects.requireNonNull(owner.toString(), "owner"));
+    public @NonNull Path getBackupDirectory() {
+        return resolve(resolve(
+                resolve(backupManager.getBackupPath(), Objects.requireNonNull(plot.getArea().toString(), "plot area id")),
+                Objects.requireNonNull(plot.getId().toDashSeparatedString(), "plot id")
+        ), Objects.requireNonNull(owner.toString(), "owner"));
     }
 
-    private static Path resolve(@Nonnull final Path parent, final String child) {
-        Path path = parent;
-        try {
-            if (!Files.exists(parent)) {
-                Files.createDirectory(parent);
-            }
-            path = parent.resolve(child);
-            if (!Files.exists(path)) {
-                Files.createDirectory(path);
-            }
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
-        return path;
-    }
-
-    @Override @Nonnull public CompletableFuture<Backup> createBackup() {
+    @Override
+    public @NonNull CompletableFuture<Backup> createBackup() {
         final CompletableFuture<Backup> future = new CompletableFuture<>();
         this.listBackups().thenAcceptAsync(backups -> {
             synchronized (this.backupLock) {
@@ -157,8 +163,9 @@ public class PlayerBackupProfile implements BackupProfile {
                 }
                 final List<Plot> plots = Collections.singletonList(plot);
                 final boolean result = this.schematicHandler.exportAll(plots, getBackupDirectory().toFile(),
-                    "%world%-%id%-" + System.currentTimeMillis(), () ->
-                    future.complete(new Backup(this, System.currentTimeMillis(), null)));
+                        "%world%-%id%-" + System.currentTimeMillis(), () ->
+                                future.complete(new Backup(this, System.currentTimeMillis(), null))
+                );
                 if (!result) {
                     future.completeExceptionally(new RuntimeException("Failed to complete the backup"));
                 }
@@ -168,7 +175,8 @@ public class PlayerBackupProfile implements BackupProfile {
         return future;
     }
 
-    @Override @Nonnull public CompletableFuture<Void> restoreBackup(@Nonnull final Backup backup, @Nullable PlotPlayer<?> player) {
+    @Override
+    public @NonNull CompletableFuture<Void> restoreBackup(final @NonNull Backup backup, @Nullable PlotPlayer<?> player) {
         final CompletableFuture<Void> future = new CompletableFuture<>();
         if (backup.getFile() == null || !Files.exists(backup.getFile())) {
             future.completeExceptionally(new IllegalArgumentException("The specific backup does not exist"));
@@ -181,15 +189,19 @@ public class PlayerBackupProfile implements BackupProfile {
                     e.printStackTrace();
                 }
                 if (schematic == null) {
-                    future.completeExceptionally(new IllegalArgumentException("The backup is non-existent or not in the correct format"));
+                    future.completeExceptionally(new IllegalArgumentException(
+                            "The backup is non-existent or not in the correct format"));
                 } else {
                     this.schematicHandler.paste(schematic, plot, 0, 1, 0, false, player, new RunnableVal<Boolean>() {
-                        @Override public void run(Boolean value) {
+                        @Override
+                        public void run(Boolean value) {
                             if (value) {
                                 future.complete(null);
                             } else {
                                 future.completeExceptionally(new RuntimeException(MINI_MESSAGE.stripTokens(
-                                    TranslatableCaption.of("schematics.schematic_paste_failed").getComponent(ConsolePlayer.getConsole()))));
+                                        TranslatableCaption
+                                                .of("schematics.schematic_paste_failed")
+                                                .getComponent(ConsolePlayer.getConsole()))));
                             }
                         }
                     });

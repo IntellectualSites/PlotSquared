@@ -69,9 +69,10 @@ public class SetGenCB {
         }
         if (!set) {
             world.getPopulators()
-                .removeIf(blockPopulator -> blockPopulator instanceof BukkitAugmentedGenerator);
+                    .removeIf(blockPopulator -> blockPopulator instanceof BukkitAugmentedGenerator);
         }
         PlotSquared.get()
-            .loadWorld(world.getName(), PlotSquared.platform().getGenerator(world.getName(), null));
+                .loadWorld(world.getName(), PlotSquared.platform().getGenerator(world.getName(), null));
     }
+
 }

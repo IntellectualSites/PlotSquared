@@ -28,23 +28,23 @@ package com.plotsquared.bukkit.managers;
 import com.google.inject.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Multiverse specific manager that informs Multiverse of
  * world creation by executing a console command
  */
-@Singleton public class MultiverseWorldManager extends BukkitWorldManager {
+@Singleton
+public class MultiverseWorldManager extends BukkitWorldManager {
 
-    @Override @Nullable
-    public World handleWorldCreation(@Nonnull final String worldName, @Nullable final String generator) {
+    @Override
+    public @Nullable World handleWorldCreation(final @NonNull String worldName, final @Nullable String generator) {
         // First let Bukkit register the world
         this.setGenerator(worldName, generator);
         // Then we send the console command
         final StringBuilder commandBuilder = new StringBuilder("mv create ")
-            .append(worldName).append(" normal");
+                .append(worldName).append(" normal");
         if (generator != null) {
             commandBuilder.append(" -g ").append(generator);
         }
@@ -52,7 +52,8 @@ import javax.annotation.Nullable;
         return Bukkit.getWorld(worldName);
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return "bukkit-multiverse";
     }
 

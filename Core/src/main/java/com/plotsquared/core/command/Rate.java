@@ -26,12 +26,12 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotInventory;
@@ -46,8 +46,8 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,23 +58,27 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "rate",
-    permission = "plots.rate",
-    usage = "/plot rate [# | next | purge]",
-    aliases = "rt",
-    category = CommandCategory.INFO,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.rate",
+        usage = "/plot rate [# | next | purge]",
+        aliases = "rt",
+        category = CommandCategory.INFO,
+        requiredType = RequiredType.PLAYER)
 public class Rate extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
     private final InventoryUtil inventoryUtil;
-    
-    @Inject public Rate(@Nonnull final EventDispatcher eventDispatcher,
-                        @Nonnull final InventoryUtil inventoryUtil) {
+
+    @Inject
+    public Rate(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull InventoryUtil inventoryUtil
+    ) {
         this.eventDispatcher = eventDispatcher;
         this.inventoryUtil = inventoryUtil;
     }
-    
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
                 case "next": {
@@ -100,8 +104,8 @@ public class Rate extends SubCommand {
                     UUID uuid = player.getUUID();
                     for (Plot p : plots) {
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(p)) && p
-                            .isBasePlot() && (!p.getRatings().containsKey(uuid)) && !p
-                            .isAdded(uuid)) {
+                                .isBasePlot() && (!p.getRatings().containsKey(uuid)) && !p
+                                .isAdded(uuid)) {
                             p.teleportPlayer(player, TeleportCause.COMMAND, result -> {
                             });
                             player.sendMessage(TranslatableCaption.of("tutorial.rate_this"));
@@ -118,7 +122,7 @@ public class Rate extends SubCommand {
                         return false;
                     }
                     if (!Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS, true)) {
+                            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS, true)) {
                         return false;
                     }
                     plot.clearRatings();
@@ -146,7 +150,8 @@ public class Rate extends SubCommand {
         }
         if (Settings.Ratings.CATEGORIES != null && !Settings.Ratings.CATEGORIES.isEmpty()) {
             final Runnable run = new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     if (plot.getRatings().containsKey(player.getUUID())) {
                         player.sendMessage(
                                 TranslatableCaption.of("ratings.rating_already_exists"),
@@ -158,13 +163,14 @@ public class Rate extends SubCommand {
                     final MutableInt rating = new MutableInt(0);
                     String title = Settings.Ratings.CATEGORIES.get(0);
                     PlotInventory inventory = new PlotInventory(inventoryUtil, player, 1, title) {
-                        @Override public boolean onClick(int i) {
+                        @Override
+                        public boolean onClick(int i) {
                             rating.add((i + 1) * Math.pow(10, index.getValue()));
                             index.increment();
                             if (index.getValue() >= Settings.Ratings.CATEGORIES.size()) {
                                 int rV = rating.getValue();
                                 PlotRateEvent event = Rate.this.eventDispatcher
-                                    .callRating(this.getPlayer(), plot, new Rating(rV));
+                                        .callRating(this.getPlayer(), plot, new Rating(rV));
                                 if (event.getRating() != null) {
                                     plot.addRating(this.getPlayer().getUUID(), event.getRating());
                                     getPlayer().sendMessage(
@@ -172,9 +178,9 @@ public class Rate extends SubCommand {
                                             Template.of("plot", plot.getId().toString())
                                     );
                                     if (Permissions
-                                        .hasPermission(this.getPlayer(), Permission.PERMISSION_COMMENT)) {
+                                            .hasPermission(this.getPlayer(), Permission.PERMISSION_COMMENT)) {
                                         Command command =
-                                            MainCommand.getInstance().getCommand(Comment.class);
+                                                MainCommand.getInstance().getCommand(Comment.class);
                                         if (command != null) {
                                             getPlayer().sendMessage(
                                                     TranslatableCaption.of("tutorial.comment_this"),
@@ -240,7 +246,7 @@ public class Rate extends SubCommand {
                 return;
             }
             PlotRateEvent event =
-                this.eventDispatcher.callRating(player, plot, new Rating(rating));
+                    this.eventDispatcher.callRating(player, plot, new Rating(rating));
             if (event.getRating() != null) {
                 plot.addRating(uuid, event.getRating());
                 player.sendMessage(
@@ -261,6 +267,29 @@ public class Rate extends SubCommand {
         }
         run.run();
         return true;
+    }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, Permission.PERMISSION_RATE)) {
+                completions.add("1 - 10");
+            }
+            if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS)) {
+                completions.add("purge");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, Permission.PERMISSION_RATE) && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 
     private class MutableInt {
@@ -286,26 +315,7 @@ public class Rate extends SubCommand {
         void add(Number v) {
             this.value += v.intValue();
         }
+
     }
 
-    @Override
-    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
-        if (args.length == 1) {
-            final List<String> completions = new LinkedList<>();
-            if (Permissions.hasPermission(player, Permission.PERMISSION_RATE)) {
-                completions.add("1 - 10");
-            }
-            if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS)) {
-                completions.add("purge");
-            }
-            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
-                    .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
-                    }).collect(Collectors.toCollection(LinkedList::new));
-            if (Permissions.hasPermission(player, Permission.PERMISSION_RATE) && args[0].length() > 0) {
-                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
-            }
-            return commands;
-        }
-        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
-    }
 }

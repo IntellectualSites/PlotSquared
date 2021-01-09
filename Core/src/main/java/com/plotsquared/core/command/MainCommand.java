@@ -37,7 +37,6 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.world.SinglePlot;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.Permissions;
@@ -56,7 +55,7 @@ import java.util.concurrent.CompletableFuture;
  * PlotSquared command class.
  */
 @CommandDeclaration(command = "plot",
-    aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
+        aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
 public class MainCommand extends Command {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + MainCommand.class.getSimpleName());
@@ -193,7 +192,7 @@ public class MainCommand extends Command {
                             PlotArea area = player.getApplicablePlotArea();
                             if (area != null && econHandler.isEnabled(area)) {
                                 PlotExpression priceEval =
-                                    area.getPrices().get(cmd.getFullId());
+                                        area.getPrices().get(cmd.getFullId());
                                 double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                 if (econHandler.getMoney(player) < price) {
                                     if (failure != null) {
@@ -224,7 +223,8 @@ public class MainCommand extends Command {
                     }
                 }
             }, new RunnableVal2<Command, CommandResult>() {
-                @Override public void run(Command cmd, CommandResult result) {
+                @Override
+                public void run(Command cmd, CommandResult result) {
                     // Post command stuff!?
                 }
             }).thenAccept(result -> {
@@ -238,9 +238,11 @@ public class MainCommand extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) {
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) {
         // Optional command scope //
         Location location = null;
         Plot plot = null;
@@ -249,9 +251,9 @@ public class MainCommand extends Command {
             PlotArea area = player.getApplicablePlotArea();
             Plot newPlot = Plot.fromString(area, args[0]);
             if (newPlot != null && (player instanceof ConsolePlayer || newPlot.getArea()
-                .equals(area) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN)
-                || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_AREA_SUDO))
-                && !newPlot.isDenied(player.getUUID())) {
+                    .equals(area) || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN)
+                    || Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_AREA_SUDO))
+                    && !newPlot.isDenied(player.getUUID())) {
                 final Location newLoc;
                 if (newPlot.getArea() instanceof SinglePlotArea) {
                     newLoc = newPlot.isLoaded() ? newPlot.getCenterSynchronous() : Location.at("", 0, 0, 0);
@@ -261,12 +263,12 @@ public class MainCommand extends Command {
                 if (player.canTeleport(newLoc)) {
                     // Save meta
                     try (final MetaDataAccess<Location> locationMetaDataAccess
-                        = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+                                 = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
                         location = locationMetaDataAccess.get().orElse(null);
                         locationMetaDataAccess.set(newLoc);
                     }
                     try (final MetaDataAccess<Plot> plotMetaDataAccess
-                        = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                                 = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
                         plot = plotMetaDataAccess.get().orElse(null);
                         plotMetaDataAccess.set(newPlot);
                     }
@@ -280,13 +282,14 @@ public class MainCommand extends Command {
             if (args.length >= 2 && !args[0].isEmpty() && args[0].charAt(0) == '-') {
                 if ("f".equals(args[0].substring(1))) {
                     confirm = new RunnableVal3<Command, Runnable, Runnable>() {
-                        @Override public void run(Command cmd, Runnable success, Runnable failure) {
+                        @Override
+                        public void run(Command cmd, Runnable success, Runnable failure) {
                             if (area != null && PlotSquared.platform().econHandler().isEnabled(area)) {
                                 PlotExpression priceEval =
-                                    area.getPrices().get(cmd.getFullId());
+                                        area.getPrices().get(cmd.getFullId());
                                 double price = priceEval != null ? priceEval.evaluate(0d) : 0d;
                                 if (price != 0d
-                                    && PlotSquared.platform().econHandler().getMoney(player) < price) {
+                                        && PlotSquared.platform().econHandler().getMoney(player) < price) {
                                     if (failure != null) {
                                         failure.run();
                                     }
@@ -313,8 +316,10 @@ public class MainCommand extends Command {
             e.printStackTrace();
             String message = e.getMessage();
             if (message != null) {
-                player.sendMessage(TranslatableCaption.of("errors.error"),
-                        net.kyori.adventure.text.minimessage.Template.of("value", message));
+                player.sendMessage(
+                        TranslatableCaption.of("errors.error"),
+                        net.kyori.adventure.text.minimessage.Template.of("value", message)
+                );
             } else {
                 player.sendMessage(
                         TranslatableCaption.of("errors.error_console"));
@@ -323,7 +328,7 @@ public class MainCommand extends Command {
         // Reset command scope //
         if (tp && !(player instanceof ConsolePlayer)) {
             try (final MetaDataAccess<Location> locationMetaDataAccess
-                = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
+                         = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
                 if (location == null) {
                     locationMetaDataAccess.remove();
                 } else {
@@ -331,7 +336,7 @@ public class MainCommand extends Command {
                 }
             }
             try (final MetaDataAccess<Plot> plotMetaDataAccess
-                = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                         = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
                 if (plot == null) {
                     plotMetaDataAccess.remove();
                 } else {
@@ -342,7 +347,9 @@ public class MainCommand extends Command {
         return CompletableFuture.completedFuture(true);
     }
 
-    @Override public boolean canExecute(PlotPlayer player, boolean message) {
+    @Override
+    public boolean canExecute(PlotPlayer player, boolean message) {
         return true;
     }
+
 }

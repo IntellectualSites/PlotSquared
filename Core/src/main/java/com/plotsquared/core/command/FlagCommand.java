@@ -53,9 +53,9 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,11 +70,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @CommandDeclaration(command = "flag",
-    aliases = {"f", "flag"},
-    usage = "/plot flag <set | remove | add | list | info> <flag> <value>",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.NONE,
-    permission = "plots.flag")
+        aliases = {"f", "flag"},
+        usage = "/plot flag <set | remove | add | list | info> <flag> <value>",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE,
+        permission = "plots.flag")
 @SuppressWarnings("unused")
 public final class FlagCommand extends Command {
 
@@ -90,8 +90,10 @@ public final class FlagCommand extends Command {
         return true;
     }
 
-    private static boolean checkPermValue(@Nonnull final PlotPlayer<?> player,
-        @Nonnull final PlotFlag<?, ?> flag, @Nonnull String key, @Nonnull String value) {
+    private static boolean checkPermValue(
+            final @NonNull PlotPlayer<?> player,
+            final @NonNull PlotFlag<?, ?> flag, @NonNull String key, @NonNull String value
+    ) {
         key = key.toLowerCase();
         value = value.toLowerCase();
         String perm = Permission.PERMISSION_SET_FLAG_KEY_VALUE.format(key.toLowerCase(), value.toLowerCase());
@@ -101,12 +103,17 @@ public final class FlagCommand extends Command {
                 perm = perm.substring(0, perm.length() - value.length() - 1);
                 if (numeric > 0) {
                     int checkRange = PlotSquared.get().getPlatform().equalsIgnoreCase("bukkit") ?
-                        numeric :
-                        Settings.Limit.MAX_PLOTS;
+                            numeric :
+                            Settings.Limit.MAX_PLOTS;
                     final boolean result = player.hasPermissionRange(perm, checkRange) >= numeric;
                     if (!result) {
-                        player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                            Template.of("node", Permission.PERMISSION_SET_FLAG_KEY_VALUE.format(key.toLowerCase(), value.toLowerCase())));
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.no_permission"),
+                                Template.of(
+                                        "node",
+                                        Permission.PERMISSION_SET_FLAG_KEY_VALUE.format(key.toLowerCase(), value.toLowerCase())
+                                )
+                        );
                     }
                     return result;
                 }
@@ -117,7 +124,10 @@ public final class FlagCommand extends Command {
             try {
                 PlotFlag<? extends List<?>, ?> parsedFlag = listFlag.parse(value);
                 for (final Object entry : parsedFlag.getValue()) {
-                    final String permission = Permission.PERMISSION_SET_FLAG_KEY_VALUE.format(key.toLowerCase(), entry.toString().toLowerCase());
+                    final String permission = Permission.PERMISSION_SET_FLAG_KEY_VALUE.format(
+                            key.toLowerCase(),
+                            entry.toString().toLowerCase()
+                    );
                     final boolean result = Permissions.hasPermission(player, permission);
                     if (!result) {
                         player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", permission));
@@ -149,7 +159,7 @@ public final class FlagCommand extends Command {
      *
      * @return true if the player is allowed to modify the flags at their current location
      */
-    private static boolean checkRequirements(@Nonnull final PlotPlayer<?> player) {
+    private static boolean checkRequirements(final @NonNull PlotPlayer<?> player) {
         final Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -161,7 +171,7 @@ public final class FlagCommand extends Command {
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
+                .hasPermission(player, Permission.PERMISSION_SET_FLAG_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", String.valueOf(Permission.PERMISSION_SET_FLAG_OTHER))
@@ -179,16 +189,21 @@ public final class FlagCommand extends Command {
      * @param arg    String to extract flag from
      * @return The flag, if found, else null
      */
-    @Nullable private static PlotFlag<?, ?> getFlag(@Nonnull final PlotPlayer<?> player,
-        @Nonnull final String arg) {
+    @Nullable
+    private static PlotFlag<?, ?> getFlag(
+            final @NonNull PlotPlayer<?> player,
+            final @NonNull String arg
+    ) {
         if (arg.length() > 0) {
             final PlotFlag<?, ?> flag = GlobalFlagContainer.getInstance().getFlagFromString(arg);
             if (flag instanceof InternalFlag || flag == null) {
                 boolean suggested = false;
                 try {
                     final StringComparison<PlotFlag<?, ?>> stringComparison =
-                        new StringComparison<>(arg,
-                            GlobalFlagContainer.getInstance().getFlagMap().values());
+                            new StringComparison<>(
+                                    arg,
+                                    GlobalFlagContainer.getInstance().getFlagMap().values()
+                            );
                     final String best = stringComparison.getBestMatch();
                     if (best != null) {
                         player.sendMessage(
@@ -209,41 +224,45 @@ public final class FlagCommand extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         if (args.length == 0 || !Arrays
-            .asList("set", "s", "list", "l", "delete", "remove", "r", "add", "a", "info", "i")
-            .contains(args[0].toLowerCase(Locale.ENGLISH))) {
+                .asList("set", "s", "list", "l", "delete", "remove", "r", "add", "a", "info", "i")
+                .contains(args[0].toLowerCase(Locale.ENGLISH))) {
             new HelpMenu(player).setCategory(CommandCategory.SETTINGS)
-                .setCommands(this.getCommands()).generateMaxPages()
-                .generatePage(0, getParent().toString(), player).render();
+                    .setCommands(this.getCommands()).generateMaxPages()
+                    .generatePage(0, getParent().toString(), player).render();
             return CompletableFuture.completedFuture(true);
         }
         return super.execute(player, args, confirm, whenDone);
     }
 
     @Override
-    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args,
-        final boolean space) {
+    public Collection<Command> tab(
+            final PlotPlayer<?> player, final String[] args,
+            final boolean space
+    ) {
         if (args.length == 1) {
             return Stream
-                .of("set", "add", "remove", "delete", "info", "list")
-                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
-                }).collect(Collectors.toList());
+                    .of("set", "add", "remove", "delete", "info", "list")
+                    .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                    .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+                    }).collect(Collectors.toList());
         } else if (Arrays.asList("set", "add", "remove", "delete", "info")
-            .contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 2) {
+                .contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 2) {
             return GlobalFlagContainer.getInstance().getRecognizedPlotFlags().stream()
-                .filter(flag -> !(flag instanceof InternalFlag))
-                .filter(flag -> flag.getName().startsWith(args[1].toLowerCase(Locale.ENGLISH)))
-                .map(flag -> new Command(null, false, flag.getName(), "", RequiredType.NONE, null) {
-                }).collect(Collectors.toList());
+                    .filter(flag -> !(flag instanceof InternalFlag))
+                    .filter(flag -> flag.getName().startsWith(args[1].toLowerCase(Locale.ENGLISH)))
+                    .map(flag -> new Command(null, false, flag.getName(), "", RequiredType.NONE, null) {
+                    }).collect(Collectors.toList());
         } else if (Arrays.asList("set", "add", "remove", "delete")
-            .contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 3) {
+                .contains(args[0].toLowerCase(Locale.ENGLISH)) && args.length == 3) {
             try {
                 final PlotFlag<?, ?> flag =
-                    GlobalFlagContainer.getInstance().getFlagFromString(args[1]);
+                        GlobalFlagContainer.getInstance().getFlagFromString(args[1]);
                 if (flag != null) {
                     Stream<String> stream = flag.getTabCompletions().stream();
                     if (flag instanceof ListFlag && args[2].contains(",")) {
@@ -261,16 +280,18 @@ public final class FlagCommand extends Command {
                             cmp = "";
                         }
                         return stream
-                            .filter(value -> value.startsWith(cmp.toLowerCase(Locale.ENGLISH))).map(
-                                value -> new Command(null, false, prefix + value, "",
-                                    RequiredType.NONE, null) {
-                                }).collect(Collectors.toList());
+                                .filter(value -> value.startsWith(cmp.toLowerCase(Locale.ENGLISH))).map(
+                                        value -> new Command(null, false, prefix + value, "",
+                                                RequiredType.NONE, null
+                                        ) {
+                                        }).collect(Collectors.toList());
                     } else {
                         return stream
-                            .filter(value -> value.startsWith(args[2].toLowerCase(Locale.ENGLISH)))
-                            .map(value -> new Command(null, false, value, "", RequiredType.NONE,
-                                null) {
-                            }).collect(Collectors.toList());
+                                .filter(value -> value.startsWith(args[2].toLowerCase(Locale.ENGLISH)))
+                                .map(value -> new Command(null, false, value, "", RequiredType.NONE,
+                                        null
+                                ) {
+                                }).collect(Collectors.toList());
                     }
                 }
             } catch (final Exception e) {
@@ -280,14 +301,16 @@ public final class FlagCommand extends Command {
     }
 
     @CommandDeclaration(command = "set",
-        aliases = {"s", "set"},
-        usage = "/plot flag set <flag> <value>",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
-        permission = "plots.set.flag")
-    public void set(final Command command, final PlotPlayer<?> player, final String[] args,
-        final RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+            aliases = {"s", "set"},
+            usage = "/plot flag set <flag> <value>",
+            category = CommandCategory.SETTINGS,
+            requiredType = RequiredType.NONE,
+            permission = "plots.set.flag")
+    public void set(
+            final Command command, final PlotPlayer<?> player, final String[] args,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
         if (!checkRequirements(player)) {
             return;
         }
@@ -307,7 +330,8 @@ public final class FlagCommand extends Command {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Flag set"));
+                    Template.of("value", "Flag set")
+            );
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -332,14 +356,16 @@ public final class FlagCommand extends Command {
     }
 
     @CommandDeclaration(command = "add",
-        aliases = {"a", "add"},
-        usage = "/plot flag add <flag> <value>",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
-        permission = "plots.flag.add")
-    public void add(final Command command, PlotPlayer<?> player, final String[] args,
-        final RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+            aliases = {"a", "add"},
+            usage = "/plot flag add <flag> <value>",
+            category = CommandCategory.SETTINGS,
+            requiredType = RequiredType.NONE,
+            permission = "plots.flag.add")
+    public void add(
+            final Command command, PlotPlayer<?> player, final String[] args,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
         if (!checkRequirements(player)) {
             return;
         }
@@ -359,12 +385,13 @@ public final class FlagCommand extends Command {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Flag add"));
+                    Template.of("value", "Flag add")
+            );
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
         final PlotFlag localFlag = player.getLocation().getPlotAbs().getFlagContainer()
-            .getFlag(event.getFlag().getClass());
+                .getFlag(event.getFlag().getClass());
         if (!force) {
             for (String entry : args[1].split(",")) {
                 if (!checkPermValue(player, event.getFlag(), args[0], entry)) {
@@ -386,7 +413,7 @@ public final class FlagCommand extends Command {
             return;
         }
         boolean result =
-            player.getLocation().getPlotAbs().setFlag(localFlag.merge(parsed.getValue()));
+                player.getLocation().getPlotAbs().setFlag(localFlag.merge(parsed.getValue()));
         if (!result) {
             player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
             return;
@@ -395,14 +422,16 @@ public final class FlagCommand extends Command {
     }
 
     @CommandDeclaration(command = "remove",
-        aliases = {"r", "remove", "delete"},
-        usage = "/plot flag remove <flag> [values]",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
-        permission = "plots.flag.remove")
-    public void remove(final Command command, PlotPlayer<?> player, final String[] args,
-        final RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+            aliases = {"r", "remove", "delete"},
+            usage = "/plot flag remove <flag> [values]",
+            category = CommandCategory.SETTINGS,
+            requiredType = RequiredType.NONE,
+            permission = "plots.flag.remove")
+    public void remove(
+            final Command command, PlotPlayer<?> player, final String[] args,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
         if (!checkRequirements(player)) {
             return;
         }
@@ -422,15 +451,18 @@ public final class FlagCommand extends Command {
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Flag remove"));
+                    Template.of("value", "Flag remove")
+            );
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
         flag = event.getFlag();
         if (!force && !Permissions.hasPermission(player, Permission.PERMISSION_SET_FLAG_KEY.format(args[0].toLowerCase()))) {
             if (args.length != 2) {
-                player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_SET_FLAG_KEY.format(args[0].toLowerCase())));
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", Permission.PERMISSION_SET_FLAG_KEY.format(args[0].toLowerCase()))
+                );
                 return;
             }
         }
@@ -438,7 +470,7 @@ public final class FlagCommand extends Command {
             String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
             final ListFlag listFlag = (ListFlag) flag;
             final List list =
-                new ArrayList(plot.getFlag((Class<? extends ListFlag<?, ?>>) listFlag.getClass()));
+                    new ArrayList(plot.getFlag((Class<? extends ListFlag<?, ?>>) listFlag.getClass()));
             final PlotFlag parsedFlag;
             try {
                 parsedFlag = listFlag.parse(value);
@@ -498,14 +530,16 @@ public final class FlagCommand extends Command {
     }
 
     @CommandDeclaration(command = "list",
-        aliases = {"l", "list", "flags"},
-        usage = "/plot flag list",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
-        permission = "plots.flag.list")
-    public void list(final Command command, final PlotPlayer<?> player, final String[] args,
-        final RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+            aliases = {"l", "list", "flags"},
+            usage = "/plot flag list",
+            category = CommandCategory.SETTINGS,
+            requiredType = RequiredType.NONE,
+            permission = "plots.flag.list")
+    public void list(
+            final Command command, final PlotPlayer<?> player, final String[] args,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
         if (!checkRequirements(player)) {
             return;
         }
@@ -517,36 +551,43 @@ public final class FlagCommand extends Command {
             }
             final String category = MINI_MESSAGE.stripTokens(plotFlag.getFlagCategory().getComponent(player));
             final Collection<String> flagList =
-                flags.computeIfAbsent(category, k -> new ArrayList<>());
+                    flags.computeIfAbsent(category, k -> new ArrayList<>());
             flagList.add(plotFlag.getName());
         }
 
         for (final Map.Entry<String, ArrayList<String>> entry : flags.entrySet()) {
             Collections.sort(entry.getValue());
             Component category =
-                MINI_MESSAGE.parse(TranslatableCaption.of("flag.flag_list_categories").getComponent(player),
-                        Template.of("category", entry.getKey()));
+                    MINI_MESSAGE.parse(
+                            TranslatableCaption.of("flag.flag_list_categories").getComponent(player),
+                            Template.of("category", entry.getKey())
+                    );
             TextComponent.Builder builder = Component.text().append(category);
             final Iterator<String> flagIterator = entry.getValue().iterator();
             while (flagIterator.hasNext()) {
                 final String flag = flagIterator.next();
                 builder.append(MINI_MESSAGE
-                    .parse(TranslatableCaption.of("flag.flag_list_flag").getComponent(player), Template.of("command", "/plot flag info " + flag),
-                        Template.of("flag", flag), Template.of("suffix", flagIterator.hasNext() ? ", " : "")));
+                        .parse(TranslatableCaption.of("flag.flag_list_flag").getComponent(player),
+                                Template.of("command", "/plot flag info " + flag),
+                                Template.of("flag", flag),
+                                Template.of("suffix", flagIterator.hasNext() ? ", " : "")
+                        ));
             }
             player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
         }
     }
 
     @CommandDeclaration(command = "info",
-        aliases = {"i", "info"},
-        usage = "/plot flag info <flag>",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.NONE,
-        permission = "plots.flag.info")
-    public void info(final Command command, final PlotPlayer<?> player, final String[] args,
-        final RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+            aliases = {"i", "info"},
+            usage = "/plot flag info <flag>",
+            category = CommandCategory.SETTINGS,
+            requiredType = RequiredType.NONE,
+            permission = "plots.flag.info")
+    public void info(
+            final Command command, final PlotPlayer<?> player, final String[] args,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
         if (!checkRequirements(player)) {
             return;
         }
@@ -563,21 +604,27 @@ public final class FlagCommand extends Command {
             // Flag name
             player.sendMessage(TranslatableCaption.of("flag.flag_info_name"), Template.of("flag", plotFlag.getName()));
             // Flag category
-            player.sendMessage(TranslatableCaption.of("flag.flag_info_category"),
-                    Templates.of(player, "value", plotFlag.getFlagCategory()));
+            player.sendMessage(
+                    TranslatableCaption.of("flag.flag_info_category"),
+                    Templates.of(player, "value", plotFlag.getFlagCategory())
+            );
             // Flag description
             // TODO maybe merge and \n instead?
             player.sendMessage(TranslatableCaption.of("flag.flag_info_description"));
             player.sendMessage(plotFlag.getFlagDescription());
             // Flag example
-            player.sendMessage(TranslatableCaption.of("flag.flag_info_example"),
+            player.sendMessage(
+                    TranslatableCaption.of("flag.flag_info_example"),
                     Template.of("flag", plotFlag.getName()),
-                    Template.of("value", plotFlag.getExample()));
+                    Template.of("value", plotFlag.getExample())
+            );
             // Default value
             final String defaultValue = player.getLocation().getPlotArea().getFlagContainer()
-                .getFlagErased(plotFlag.getClass()).toString();
-            player.sendMessage(TranslatableCaption.of("flag.flag_info_default_value"),
-                    Template.of("value", defaultValue));
+                    .getFlagErased(plotFlag.getClass()).toString();
+            player.sendMessage(
+                    TranslatableCaption.of("flag.flag_info_default_value"),
+                    Template.of("value", defaultValue)
+            );
             // Footer. Done this way to prevent the duplicate-message-thingy from catching it
             player.sendMessage(TranslatableCaption.of("flag.flag_info_footer"));
         }

@@ -32,15 +32,15 @@ import com.plotsquared.core.util.BlockUtil;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
-    extends ListFlag<BlockTypeWrapper, F> {
+        extends ListFlag<BlockTypeWrapper, F> {
 
     public static boolean skipCategoryVerification = false;
 
@@ -48,7 +48,8 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         super(blockTypeList, TranslatableCaption.of("flags.flag_category_block_list"), description);
     }
 
-    @Override public F parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public F parse(@NonNull String input) throws FlagParseException {
         final List<BlockTypeWrapper> parsedBlocks = new ArrayList<>();
         final String[] split = input.replaceAll("\\s+", "").split(",(?![^\\(\\[]*[\\]\\)])");
         if (split.length == 0) {
@@ -70,18 +71,20 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         return this.flagOf(parsedBlocks);
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "air,grass_block";
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         final Collection<String> tabCompletions = new ArrayList<>();
         tabCompletions.addAll(
-            BlockType.REGISTRY.keySet().stream().map(val -> val.replace("minecraft:", ""))
-                .collect(Collectors.toList()));
+                BlockType.REGISTRY.keySet().stream().map(val -> val.replace("minecraft:", ""))
+                        .collect(Collectors.toList()));
         tabCompletions.addAll(
-            BlockCategory.REGISTRY.keySet().stream().map(val -> "#" + val.replace("minecraft:", ""))
-                .collect(Collectors.toList()));
+                BlockCategory.REGISTRY.keySet().stream().map(val -> "#" + val.replace("minecraft:", ""))
+                        .collect(Collectors.toList()));
         return tabCompletions;
     }
 

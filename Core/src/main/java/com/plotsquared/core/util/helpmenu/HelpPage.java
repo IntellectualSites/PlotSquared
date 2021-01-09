@@ -56,15 +56,29 @@ public class HelpPage {
             player.sendMessage(TranslatableCaption.of("invalid.not_valid_number"), Template.of("value", "(0)"));
         } else {
             Template header = Template.of("header", TranslatableCaption.of("help.help_header").getComponent(player));
-            Template page_header = Template.of("page_header",
-                MINI_MESSAGE.parse(TranslatableCaption.of("help.help_page_header").getComponent(player), catTemplate, curTemplate, maxTemplate));
+            Template page_header = Template.of(
+                    "page_header",
+                    MINI_MESSAGE.parse(
+                            TranslatableCaption.of("help.help_page_header").getComponent(player),
+                            catTemplate,
+                            curTemplate,
+                            maxTemplate
+                    )
+            );
             Template help_objects = Template.of("help_objects", StringMan.join(this.helpObjects, "\n"));
             Template footer = Template.of("footer", TranslatableCaption.of("help.help_footer").getComponent(player));
-            player.sendMessage(StaticCaption.of("<header>\n<page_header>\n<help_objects>\n<footer>"), header, page_header, help_objects, footer);
+            player.sendMessage(
+                    StaticCaption.of("<header>\n<page_header>\n<help_objects>\n<footer>"),
+                    header,
+                    page_header,
+                    help_objects,
+                    footer
+            );
         }
     }
 
     public void addHelpItem(HelpObject object) {
         this.helpObjects.add(object);
     }
+
 }

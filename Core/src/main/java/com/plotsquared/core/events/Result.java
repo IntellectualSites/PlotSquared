@@ -38,7 +38,9 @@ import java.util.Map;
  */
 public enum Result {
 
-    DENY(0), ACCEPT(1), FORCE(2);
+    DENY(0),
+    ACCEPT(1),
+    FORCE(2);
 
     private static Map<Integer, Result> map = new HashMap<>();
 

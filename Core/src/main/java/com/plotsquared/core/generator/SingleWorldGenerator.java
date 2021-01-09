@@ -35,8 +35,7 @@ import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockTypes;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class SingleWorldGenerator extends IndependentPlotGenerator {
 
@@ -49,15 +48,18 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
 
     private final PlotAreaManager plotAreaManager;
 
-    @Inject public SingleWorldGenerator(@Nonnull final PlotAreaManager plotAreaManager) {
+    @Inject
+    public SingleWorldGenerator(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return "PlotSquared:single";
     }
 
-    @Override public void generateChunk(ScopedQueueCoordinator result, PlotArea settings) {
+    @Override
+    public void generateChunk(ScopedQueueCoordinator result, PlotArea settings) {
         SinglePlotArea area = (SinglePlotArea) settings;
         if (area.VOID) {
             Location min = result.getMin();
@@ -72,11 +74,13 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         result.fillBiome(BiomeTypes.PLAINS);
     }
 
-    @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
+    @Override
+    public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return ((SinglePlotAreaManager) this.plotAreaManager).getArea();
     }
 
-    @Override public void initialize(PlotArea area) {
+    @Override
+    public void initialize(PlotArea area) {
     }
 
 }

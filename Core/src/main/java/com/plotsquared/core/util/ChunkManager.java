@@ -41,16 +41,25 @@ public abstract class ChunkManager {
     private static final Map<BlockVector2, RunnableVal<ScopedQueueCoordinator>> forceChunks = new ConcurrentHashMap<>();
     private static final Map<BlockVector2, RunnableVal<ScopedQueueCoordinator>> addChunks = new ConcurrentHashMap<>();
 
-    public static void setChunkInPlotArea(RunnableVal<ScopedQueueCoordinator> force,
-                                          RunnableVal<ScopedQueueCoordinator> add,
-                                          String world,
-                                          BlockVector2 loc) {
-        QueueCoordinator queue = PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared.platform().worldUtil().getWeWorld(world));
+    public static void setChunkInPlotArea(
+            RunnableVal<ScopedQueueCoordinator> force,
+            RunnableVal<ScopedQueueCoordinator> add,
+            String world,
+            BlockVector2 loc
+    ) {
+        QueueCoordinator queue = PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared
+                .platform()
+                .worldUtil()
+                .getWeWorld(world));
         if (PlotSquared.get().getPlotAreaManager().isAugmented(world) && PlotSquared.get().isNonStandardGeneration(world, loc)) {
             int blockX = loc.getX() << 4;
             int blockZ = loc.getZ() << 4;
             ScopedQueueCoordinator scoped =
-                new ScopedQueueCoordinator(queue, Location.at(world, blockX, 0, blockZ), Location.at(world, blockX + 15, 255, blockZ + 15));
+                    new ScopedQueueCoordinator(
+                            queue,
+                            Location.at(world, blockX, 0, blockZ),
+                            Location.at(world, blockX + 15, 255, blockZ + 15)
+                    );
             if (force != null) {
                 force.run(scoped);
             } else {
@@ -91,6 +100,7 @@ public abstract class ChunkManager {
         return false;
     }
 
-    @Deprecated public abstract CompletableFuture loadChunk(String world, BlockVector2 loc, boolean force);
+    @Deprecated
+    public abstract CompletableFuture loadChunk(String world, BlockVector2 loc, boolean force);
 
 }

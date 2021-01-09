@@ -28,8 +28,8 @@ package com.plotsquared.bukkit.util;
 import com.google.common.collect.Maps;
 import com.plotsquared.core.location.World;
 import org.bukkit.Bukkit;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Objects;
 
@@ -49,7 +49,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
      * @param worldName World name
      * @return World instance
      */
-    @Nonnull public static BukkitWorld of(@Nonnull final String worldName) {
+    public @NonNull static BukkitWorld of(final @NonNull String worldName) {
         final org.bukkit.World bukkitWorld = Bukkit.getWorld(worldName);
         if (bukkitWorld == null) {
             throw new IllegalArgumentException(String.format("There is no world with the name '%s'", worldName));
@@ -63,7 +63,7 @@ public class BukkitWorld implements World<org.bukkit.World> {
      * @param world Bukkit world
      * @return World instance
      */
-    @Nonnull public static BukkitWorld of(final org.bukkit.World world) {
+    public @NonNull static BukkitWorld of(final org.bukkit.World world) {
         BukkitWorld bukkitWorld = worldMap.get(world.getName());
         if (bukkitWorld != null && bukkitWorld.getPlatformWorld().equals(world)) {
             return bukkitWorld;
@@ -73,11 +73,13 @@ public class BukkitWorld implements World<org.bukkit.World> {
         return bukkitWorld;
     }
 
-    @Override public org.bukkit.World getPlatformWorld() {
+    @Override
+    public org.bukkit.World getPlatformWorld() {
         return this.world;
     }
 
-    @Override @Nonnull public String getName() {
+    @Override
+    public @NonNull String getName() {
         return this.world.getName();
     }
 
@@ -113,4 +115,5 @@ public class BukkitWorld implements World<org.bukkit.World> {
     public String toString() {
         return "BukkitWorld(world=" + this.world + ")";
     }
+
 }

@@ -27,21 +27,22 @@ package com.plotsquared.bukkit.util.task;
 
 import com.plotsquared.core.util.task.PlotSquaredTask;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Bukkit implementation of {@link PlotSquaredTask}
  */
 public final class BukkitPlotSquaredTask extends BukkitRunnable implements PlotSquaredTask {
 
-    @Nonnull private final Runnable runnable;
+    @NonNull
+    private final Runnable runnable;
 
-    public BukkitPlotSquaredTask(@Nonnull final Runnable runnable) {
+    public BukkitPlotSquaredTask(final @NonNull Runnable runnable) {
         this.runnable = runnable;
     }
 
-    @Override public void runTask() {
+    @Override
+    public void runTask() {
         this.runnable.run();
     }
 

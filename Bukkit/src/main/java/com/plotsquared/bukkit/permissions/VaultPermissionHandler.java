@@ -37,9 +37,9 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
@@ -48,19 +48,23 @@ public class VaultPermissionHandler implements PermissionHandler {
 
     private Permission permissions;
 
-    @Override public void initialize() {
+    @Override
+    public void initialize() {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
             throw new IllegalStateException("Vault is not present on the server");
         }
         RegisteredServiceProvider<Permission> permissionProvider =
-            Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
+                Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
         if (permissionProvider != null) {
             this.permissions = permissionProvider.getProvider();
         }
     }
 
-    @Nonnull @Override public Optional<PermissionProfile> getPermissionProfile(
-        @Nonnull PlotPlayer<?> playerPlotPlayer) {
+    @NonNull
+    @Override
+    public Optional<PermissionProfile> getPermissionProfile(
+            @NonNull PlotPlayer<?> playerPlotPlayer
+    ) {
         if (playerPlotPlayer instanceof BukkitPlayer) {
             final BukkitPlayer bukkitPlayer = (BukkitPlayer) playerPlotPlayer;
             return Optional.of(new VaultPermissionProfile(bukkitPlayer.getPlatformPlayer()));
@@ -70,18 +74,25 @@ public class VaultPermissionHandler implements PermissionHandler {
         return Optional.empty();
     }
 
-    @Nonnull @Override public Optional<PermissionProfile> getPermissionProfile(
-        @Nonnull OfflinePlotPlayer offlinePlotPlayer) {
+    @NonNull
+    @Override
+    public Optional<PermissionProfile> getPermissionProfile(
+            @NonNull OfflinePlotPlayer offlinePlotPlayer
+    ) {
         if (offlinePlotPlayer instanceof BukkitOfflinePlayer) {
             return Optional.of(new VaultPermissionProfile(((BukkitOfflinePlayer) offlinePlotPlayer).player));
         }
         return Optional.empty();
     }
 
-    @Nonnull @Override public Set<PermissionHandlerCapability> getCapabilities() {
-        return EnumSet.of(PermissionHandlerCapability.PER_WORLD_PERMISSIONS,
-                          PermissionHandlerCapability.ONLINE_PERMISSIONS,
-                          PermissionHandlerCapability.OFFLINE_PERMISSIONS);
+    @NonNull
+    @Override
+    public Set<PermissionHandlerCapability> getCapabilities() {
+        return EnumSet.of(
+                PermissionHandlerCapability.PER_WORLD_PERMISSIONS,
+                PermissionHandlerCapability.ONLINE_PERMISSIONS,
+                PermissionHandlerCapability.OFFLINE_PERMISSIONS
+        );
     }
 
 
@@ -89,12 +100,15 @@ public class VaultPermissionHandler implements PermissionHandler {
 
         private final OfflinePlayer offlinePlayer;
 
-        private VaultPermissionProfile(@Nonnull final OfflinePlayer offlinePlayer) {
+        private VaultPermissionProfile(final @NonNull OfflinePlayer offlinePlayer) {
             this.offlinePlayer = offlinePlayer;
         }
 
-        @Override public boolean hasPermission(@Nullable final String world,
-                                               @Nonnull final String permission) {
+        @Override
+        public boolean hasPermission(
+                final @Nullable String world,
+                final @NonNull String permission
+        ) {
             if (permissions == null) {
                 return false;
             }

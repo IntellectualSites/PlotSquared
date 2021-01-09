@@ -45,8 +45,9 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Arrays;
 
 public class GenChunk extends ScopedQueueCoordinator {
@@ -65,7 +66,7 @@ public class GenChunk extends ScopedQueueCoordinator {
         this.biomes = Biome.values();
     }
 
-    @Nullable public ChunkData getChunkData() {
+    public @Nullable ChunkData getChunkData() {
         return this.chunkData;
     }
 
@@ -74,11 +75,11 @@ public class GenChunk extends ScopedQueueCoordinator {
      *
      * @param chunkData Bukkit ChunkData
      */
-    public void setChunkData(@Nonnull ChunkData chunkData) {
+    public void setChunkData(@NonNull ChunkData chunkData) {
         this.chunkData = chunkData;
     }
 
-    @Nonnull public Chunk getChunk() {
+    public @NonNull Chunk getChunk() {
         if (chunk == null) {
             World worldObj = BukkitUtil.getWorld(world);
             if (worldObj != null) {
@@ -93,7 +94,7 @@ public class GenChunk extends ScopedQueueCoordinator {
      *
      * @param chunk Bukkit Chunk
      */
-    public void setChunk(@Nonnull Chunk chunk) {
+    public void setChunk(@NonNull Chunk chunk) {
         this.chunk = chunk;
     }
 
@@ -103,14 +104,15 @@ public class GenChunk extends ScopedQueueCoordinator {
      *
      * @param wrap P2 ChunkWrapper
      */
-    public void setChunk(@Nonnull ChunkWrapper wrap) {
+    public void setChunk(@NonNull ChunkWrapper wrap) {
         chunk = null;
         world = wrap.world;
         chunkX = wrap.x;
         chunkZ = wrap.z;
     }
 
-    @Override public void fillBiome(@Nonnull BiomeType biomeType) {
+    @Override
+    public void fillBiome(@NonNull BiomeType biomeType) {
         if (biomeGrid == null) {
             return;
         }
@@ -124,7 +126,8 @@ public class GenChunk extends ScopedQueueCoordinator {
         }
     }
 
-    @Override public void setCuboid(@Nonnull Location pos1, @Nonnull Location pos2, @Nonnull BlockState block) {
+    @Override
+    public void setCuboid(@NonNull Location pos1, @NonNull Location pos2, @NonNull BlockState block) {
         if (result != null && pos1.getX() == 0 && pos1.getZ() == 0 && pos2.getX() == 15 && pos2.getZ() == 15) {
             for (int y = pos1.getY(); y <= pos2.getY(); y++) {
                 int layer = y >> 4;
@@ -146,20 +149,20 @@ public class GenChunk extends ScopedQueueCoordinator {
         chunkData.setRegion(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1, BukkitAdapter.adapt(block));
     }
 
-    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biomeType) {
+    @Override
+    public boolean setBiome(int x, int z, @NonNull BiomeType biomeType) {
         return setBiome(x, z, BukkitAdapter.adapt(biomeType));
     }
 
     /**
      * Set the in the whole column of XZ
      *
-     * @param x Relative x location within the chunk (0 - 15)
-     * @param z Relative z location within the chunk (0 - 15)
+     * @param x     Relative x location within the chunk (0 - 15)
+     * @param z     Relative z location within the chunk (0 - 15)
      * @param biome Bukkit biome to set
-     *
      * @return if successful
      */
-    public boolean setBiome(int x, int z, @Nonnull Biome biome) {
+    public boolean setBiome(int x, int z, @NonNull Biome biome) {
         if (this.biomeGrid != null) {
             for (int y = 0; y < 256; y++) {
                 this.setBiome(x, y, z, biome);
@@ -169,7 +172,7 @@ public class GenChunk extends ScopedQueueCoordinator {
         return false;
     }
 
-    public boolean setBiome(int x, int y, int z, @Nonnull Biome biome) {
+    public boolean setBiome(int x, int y, int z, @NonNull Biome biome) {
         if (this.biomeGrid != null) {
             this.biomeGrid.setBiome(x, y, z, biome);
             return true;
@@ -177,11 +180,13 @@ public class GenChunk extends ScopedQueueCoordinator {
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
+    @Override
+    public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(Preconditions.checkNotNull(pattern, "Pattern may not be null"), x, y, z));
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
+    @Override
+    public boolean setBlock(int x, int y, int z, @NonNull BlockState id) {
         if (this.result == null) {
             this.chunkData.setBlock(x, y, z, BukkitAdapter.adapt(id));
             return true;
@@ -191,7 +196,7 @@ public class GenChunk extends ScopedQueueCoordinator {
         return true;
     }
 
-    private void storeCache(final int x, final int y, final int z, @Nonnull final BlockState id) {
+    private void storeCache(final int x, final int y, final int z, final @NonNull BlockState id) {
         int i = y >> 4;
         BlockState[] v = this.result[i];
         if (v == null) {
@@ -201,7 +206,8 @@ public class GenChunk extends ScopedQueueCoordinator {
         v[j] = id;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
+    @Override
+    public boolean setBlock(int x, int y, int z, @NonNull BaseBlock id) {
         if (this.result == null) {
             this.chunkData.setBlock(x, y, z, BukkitAdapter.adapt(id));
             return true;
@@ -211,7 +217,8 @@ public class GenChunk extends ScopedQueueCoordinator {
         return true;
     }
 
-    @Override @Nullable public BlockState getBlock(int x, int y, int z) {
+    @Override
+    public @Nullable BlockState getBlock(int x, int y, int z) {
         int i = y >> 4;
         if (result == null) {
             return BukkitBlockUtil.get(chunkData.getType(x, y, z));
@@ -232,19 +239,22 @@ public class GenChunk extends ScopedQueueCoordinator {
         return chunk == null ? chunkZ : chunk.getZ();
     }
 
-    @Override @Nonnull public com.sk89q.worldedit.world.World getWorld() {
+    @Override
+    public com.sk89q.worldedit.world.@NonNull World getWorld() {
         return chunk == null ? BukkitAdapter.adapt(Bukkit.getWorld(world)) : BukkitAdapter.adapt(chunk.getWorld());
     }
 
-    @Override @Nonnull public Location getMax() {
+    @Override
+    public @NonNull Location getMax() {
         return Location.at(getWorld().getName(), 15 + (getX() << 4), 255, 15 + (getZ() << 4));
     }
 
-    @Override @Nonnull public Location getMin() {
+    @Override
+    public @NonNull Location getMin() {
         return Location.at(getWorld().getName(), getX() << 4, 0, getZ() << 4);
     }
 
-    @Nonnull public GenChunk clone() {
+    public @NonNull GenChunk clone() {
         GenChunk toReturn = new GenChunk();
         if (this.result != null) {
             for (int i = 0; i < this.result.length; i++) {
@@ -258,4 +268,5 @@ public class GenChunk extends ScopedQueueCoordinator {
         toReturn.chunkData = this.chunkData;
         return toReturn;
     }
+
 }

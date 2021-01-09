@@ -54,11 +54,11 @@ public final class PlayerMetaDataKeys {
     public static final MetaDataKey<CmdInstance> TEMPORARY_CONFIRM = MetaDataKey.of("cmdConfirm", new TypeLiteral<CmdInstance>() {});
     //@formatter:on
 
-    public static void load() {
-        // Do nothing :D
+    private PlayerMetaDataKeys() {
     }
 
-    private PlayerMetaDataKeys() {
+    public static void load() {
+        // Do nothing :D
     }
 
 }

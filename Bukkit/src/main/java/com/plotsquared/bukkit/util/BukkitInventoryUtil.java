@@ -47,39 +47,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-@Singleton public class BukkitInventoryUtil extends InventoryUtil {
-
-    @Override public void open(PlotInventory inv) {
-        BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
-        Inventory inventory = Bukkit.createInventory(null, inv.getLines() * 9,
-            ChatColor.translateAlternateColorCodes('&', inv.getTitle()));
-        PlotItemStack[] items = inv.getItems();
-        for (int i = 0; i < inv.getLines() * 9; i++) {
-            PlotItemStack item = items[i];
-            if (item != null) {
-                inventory.setItem(i, getItem(item));
-            }
-        }
-        bp.player.openInventory(inventory);
-    }
-
-    @Override public void close(PlotInventory inv) {
-        if (!inv.isOpen()) {
-            return;
-        }
-        BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
-        bp.player.closeInventory();
-    }
-
-    @Override public void setItem(PlotInventory inv, int index, PlotItemStack item) {
-        BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
-        InventoryView opened = bp.player.getOpenInventory();
-        if (!inv.isOpen()) {
-            return;
-        }
-        opened.setItem(index, getItem(item));
-        bp.player.updateInventory();
-    }
+@Singleton
+public class BukkitInventoryUtil extends InventoryUtil {
 
     private static ItemStack getItem(PlotItemStack item) {
         if (item == null) {
@@ -108,6 +77,42 @@ import java.util.stream.IntStream;
         return stack;
     }
 
+    @Override
+    public void open(PlotInventory inv) {
+        BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
+        Inventory inventory = Bukkit.createInventory(null, inv.getLines() * 9,
+                ChatColor.translateAlternateColorCodes('&', inv.getTitle())
+        );
+        PlotItemStack[] items = inv.getItems();
+        for (int i = 0; i < inv.getLines() * 9; i++) {
+            PlotItemStack item = items[i];
+            if (item != null) {
+                inventory.setItem(i, getItem(item));
+            }
+        }
+        bp.player.openInventory(inventory);
+    }
+
+    @Override
+    public void close(PlotInventory inv) {
+        if (!inv.isOpen()) {
+            return;
+        }
+        BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
+        bp.player.closeInventory();
+    }
+
+    @Override
+    public void setItem(PlotInventory inv, int index, PlotItemStack item) {
+        BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
+        InventoryView opened = bp.player.getOpenInventory();
+        if (!inv.isOpen()) {
+            return;
+        }
+        opened.setItem(index, getItem(item));
+        bp.player.updateInventory();
+    }
+
     public PlotItemStack getItem(ItemStack item) {
         if (item == null) {
             return null;
@@ -132,14 +137,16 @@ import java.util.stream.IntStream;
         return new PlotItemStack(id.name(), amount, name, lore);
     }
 
-    @Override public PlotItemStack[] getItems(PlotPlayer player) {
+    @Override
+    public PlotItemStack[] getItems(PlotPlayer player) {
         BukkitPlayer bp = (BukkitPlayer) player;
         PlayerInventory inv = bp.player.getInventory();
         return IntStream.range(0, 36).mapToObj(i -> getItem(inv.getItem(i)))
-            .toArray(PlotItemStack[]::new);
+                .toArray(PlotItemStack[]::new);
     }
 
-    @Override public boolean isOpen(PlotInventory plotInventory) {
+    @Override
+    public boolean isOpen(PlotInventory plotInventory) {
         if (!plotInventory.isOpen()) {
             return false;
         }
@@ -152,4 +159,5 @@ import java.util.stream.IntStream;
         }
         return false;
     }
+
 }

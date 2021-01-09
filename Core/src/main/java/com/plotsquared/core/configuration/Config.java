@@ -53,9 +53,9 @@ public class Config {
      * Get the value for a node<br>
      * Probably throws some error if you try to get a non existent key
      *
-     * @param key configuration key
+     * @param key  configuration key
      * @param root configuration class
-     * @param <T> value type
+     * @param <T>  value type
      * @return value
      */
     public static <T> T get(String key, Class<?> root) {
@@ -80,7 +80,7 @@ public class Config {
      *
      * @param key   config node
      * @param value value
-     * @param root configuration class
+     * @param root  configuration class
      */
     public static void set(String key, Object value, Class<? extends Config> root) {
         String[] split = key.split("\\.");
@@ -213,7 +213,7 @@ public class Config {
                     }
                 } else {
                     writer.write(spacing + toNodeName(field.getName() + ": ") + toYamlString(
-                        field.get(instance), spacing) + lineSeparator);
+                            field.get(instance), spacing) + lineSeparator);
                 }
             }
             for (Class<?> current : clazz.getClasses()) {
@@ -233,7 +233,7 @@ public class Config {
                 BlockName blockNames = current.getAnnotation(BlockName.class);
                 if (blockNames != null) {
                     Field instanceField =
-                        clazz.getDeclaredField(toFieldName(current.getSimpleName()));
+                            clazz.getDeclaredField(toFieldName(current.getSimpleName()));
                     setAccessible(instanceField);
                     ConfigBlock value = (ConfigBlock) instanceField.get(instance);
                     if (value == null) {
@@ -245,7 +245,7 @@ public class Config {
                     }
                     // Save each instance
                     for (Map.Entry<String, Object> entry : ((Map<String, Object>) value.getRaw())
-                        .entrySet()) {
+                            .entrySet()) {
                         String key = entry.getKey();
                         writer.write(spacing + "  " + toNodeName(key) + ":" + lineSeparator);
                         save(writer, current, entry.getValue(), indent + 4);
@@ -290,7 +290,8 @@ public class Config {
             return field;
         } catch (final Throwable e) {
             logger.error("Invalid config field: {} for {}",
-                StringMan.join(split, "."), toNodeName(instance.getClass().getSimpleName()));
+                    StringMan.join(split, "."), toNodeName(instance.getClass().getSimpleName())
+            );
             e.printStackTrace();
             return null;
         }
@@ -397,6 +398,7 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     public @interface Create {
+
     }
 
 
@@ -406,6 +408,7 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     public @interface Final {
+
     }
 
 
@@ -415,7 +418,9 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface Comment {
+
         String[] value();
+
     }
 
 
@@ -425,7 +430,9 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface BlockName {
+
         String[] value();
+
     }
 
 
@@ -435,6 +442,7 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface Ignore {
+
     }
 
 
@@ -462,5 +470,7 @@ public class Config {
         private Map<String, T> getRaw() {
             return INSTANCES;
         }
+
     }
+
 }

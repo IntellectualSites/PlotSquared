@@ -86,8 +86,10 @@ public abstract class FileConfiguration extends MemoryConfiguration {
 
         String data = saveToString();
 
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file),
-            StandardCharsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(
+                new FileOutputStream(file),
+                StandardCharsets.UTF_8
+        )) {
             writer.write(data);
         }
     }
@@ -141,8 +143,8 @@ public abstract class FileConfiguration extends MemoryConfiguration {
         String builder;
 
         try (BufferedReader input = reader instanceof BufferedReader ?
-            (BufferedReader) reader :
-            new BufferedReader(reader)) {
+                (BufferedReader) reader :
+                new BufferedReader(reader)) {
 
             builder = input.lines().map(line -> line + '\n').collect(Collectors.joining());
         }
@@ -178,11 +180,13 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      */
     protected abstract String buildHeader();
 
-    @Override public FileConfigurationOptions options() {
+    @Override
+    public FileConfigurationOptions options() {
         if (this.options == null) {
             this.options = new FileConfigurationOptions(this);
         }
 
         return (FileConfigurationOptions) this.options;
     }
+
 }

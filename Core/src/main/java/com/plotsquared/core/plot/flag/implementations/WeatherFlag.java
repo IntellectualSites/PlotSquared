@@ -28,8 +28,8 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -44,11 +44,16 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
      *
      * @param value Flag value
      */
-    protected WeatherFlag(@Nonnull PlotWeather value) {
-        super(value, TranslatableCaption.of("flags.flag_category_weather"), TranslatableCaption.of("flags.flag_description_weather"));
+    protected WeatherFlag(@NonNull PlotWeather value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_weather"),
+                TranslatableCaption.of("flags.flag_description_weather")
+        );
     }
 
-    @Override public WeatherFlag parse(@Nonnull String input) {
+    @Override
+    public WeatherFlag parse(@NonNull String input) {
         switch (input.toLowerCase()) {
             case "rain":
             case "storm":
@@ -65,19 +70,23 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
         }
     }
 
-    @Override public WeatherFlag merge(@Nonnull PlotWeather newValue) {
+    @Override
+    public WeatherFlag merge(@NonNull PlotWeather newValue) {
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().toString();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "storm";
     }
 
-    @Override protected WeatherFlag flagOf(@Nonnull PlotWeather value) {
+    @Override
+    protected WeatherFlag flagOf(@NonNull PlotWeather value) {
         switch (value) {
             case RAIN:
                 return PLOT_WEATHER_FLAG_RAIN;
@@ -88,9 +97,10 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
         }
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         return Arrays
-            .asList("rain", "storm", "on", "lightning", "thunder", "clear", "off", "sun", "reset");
+                .asList("rain", "storm", "on", "lightning", "thunder", "clear", "off", "sun", "reset");
     }
 
 }

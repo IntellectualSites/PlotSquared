@@ -47,21 +47,23 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
 
 @CommandDeclaration(command = "caps",
-    category = CommandCategory.INFO,
-    usage = "/plot caps")
+        category = CommandCategory.INFO,
+        usage = "/plot caps")
 public class Caps extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
         if (!plot.isAdded(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_CAPS_OTHER)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_CAPS_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_CAPS_OTHER)));
+                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_CAPS_OTHER))
+            );
             return false;
         }
         if (plot.getVolume() > Integer.MAX_VALUE) {
@@ -79,9 +81,11 @@ public class Caps extends SubCommand {
         return true;
     }
 
-    private <T extends PlotFlag<Integer, T>> void sendFormatted(final Plot plot,
-        final PlotPlayer<?> player, final Class<T> capFlag, final int[] countedEntities,
-        final String name, final int type) {
+    private <T extends PlotFlag<Integer, T>> void sendFormatted(
+            final Plot plot,
+            final PlotPlayer<?> player, final Class<T> capFlag, final int[] countedEntities,
+            final String name, final int type
+    ) {
         final int current = countedEntities[type];
         final int max = plot.getFlag(capFlag);
         final String percentage = String.format("%.1f", 100 * ((float) current / max));
@@ -90,6 +94,8 @@ public class Caps extends SubCommand {
                 Template.of("cap", name),
                 Template.of("current", String.valueOf(current)),
                 Template.of("limit", String.valueOf(max)),
-                Template.of("percentage", percentage));
+                Template.of("percentage", percentage)
+        );
     }
+
 }

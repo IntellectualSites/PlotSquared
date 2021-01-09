@@ -40,10 +40,11 @@ public class BackupModule extends AbstractModule {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + BackupModule.class.getSimpleName());
 
-    @Override protected void configure() {
+    @Override
+    protected void configure() {
         try {
             install(new FactoryModuleBuilder()
-                .implement(BackupProfile.class, PlayerBackupProfile.class).build(PlayerBackupProfileFactory.class));
+                    .implement(BackupProfile.class, PlayerBackupProfile.class).build(PlayerBackupProfileFactory.class));
             bind(BackupManager.class).to(SimpleBackupManager.class);
         } catch (final Exception e) {
             logger.error("Failed to initialize backup manager", e);

@@ -26,8 +26,7 @@
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class PlotEvent {
 
@@ -52,7 +51,7 @@ public abstract class PlotEvent {
      *
      * @return the event class name
      */
-    @Nonnull public String getEventName() {
+    public @NonNull String getEventName() {
         if (name == null) {
             name = getClass().getSimpleName();
         }

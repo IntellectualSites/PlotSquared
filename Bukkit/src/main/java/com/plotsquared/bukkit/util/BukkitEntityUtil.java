@@ -66,7 +66,7 @@ import java.util.Objects;
 public class BukkitEntityUtil {
 
     public static final com.sk89q.worldedit.world.entity.EntityType FAKE_ENTITY_TYPE =
-        new com.sk89q.worldedit.world.entity.EntityType("plotsquared:fake");
+            new com.sk89q.worldedit.world.entity.EntityType("plotsquared:fake");
 
     public static boolean entityDamage(Entity damager, Entity victim) {
         return entityDamage(damager, victim, null);
@@ -152,7 +152,7 @@ public class BukkitEntityUtil {
             } else { // shooter is not player
                 if (shooter instanceof BlockProjectileSource) {
                     Location sLoc = BukkitUtil
-                        .adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
+                            .adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
                     dplot = dArea.getPlot(sLoc);
                 }
                 player = null;
@@ -174,13 +174,13 @@ public class BukkitEntityUtil {
 
             if (EntityCategories.HANGING.contains(entityType)) { // hanging
                 if (plot != null && (plot.getFlag(HangingBreakFlag.class) || plot
-                    .isAdded(plotPlayer.getUUID()))) {
+                        .isAdded(plotPlayer.getUUID()))) {
                     if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                         if (!Permissions
-                            .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
+                                .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                             plotPlayer.sendMessage(
-                                TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
+                                    TranslatableCaption.of("permission.no_permission_event"),
+                                    Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BUILD_OTHER))
                             );
                             return false;
                         }
@@ -189,79 +189,79 @@ public class BukkitEntityUtil {
                 }
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
                     plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
                     );
                     return false;
                 }
             } else if (victim.getType() == EntityType.ARMOR_STAND) {
                 if (plot != null && (plot.getFlag(MiscBreakFlag.class) || plot
-                    .isAdded(plotPlayer.getUUID()))) {
+                        .isAdded(plotPlayer.getUUID()))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY + "." + stub)) {
                     plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", Permission.PERMISSION_ADMIN_DESTROY + "." + stub)
                     );
                     if (plot != null) {
                         plot.debug(player.getName()
-                            + " could not break armor stand because misc-break = false");
+                                + " could not break armor stand because misc-break = false");
                     }
                     return false;
                 }
             } else if (EntityCategories.HOSTILE.contains(entityType)) {
                 if (isPlot) {
                     if (plot.getFlag(HostileAttackFlag.class) || plot.getFlag(PveFlag.class) || plot
-                        .isAdded(plotPlayer.getUUID())) {
+                            .isAdded(plotPlayer.getUUID())) {
                         return true;
                     }
                 } else if (roadFlags && (area.getRoadFlag(HostileAttackFlag.class) || area
-                    .getFlag(PveFlag.class))) {
+                        .getFlag(PveFlag.class))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
-                            + " because pve = false OR hostile-attack = false");
+                                + " because pve = false OR hostile-attack = false");
                     }
                     return false;
                 }
             } else if (EntityCategories.TAMEABLE.contains(entityType)) { // victim is tameable
                 if (isPlot) {
                     if (plot.getFlag(TamedAttackFlag.class) || plot.getFlag(PveFlag.class) || plot
-                        .isAdded(plotPlayer.getUUID())) {
+                            .isAdded(plotPlayer.getUUID())) {
                         return true;
                     }
                 } else if (roadFlags && (area.getRoadFlag(TamedAttackFlag.class) || area
-                    .getFlag(PveFlag.class))) {
+                        .getFlag(PveFlag.class))) {
                     return true;
                 }
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
-                            + " because pve = false OR tamed-attack = false");
+                                + " because pve = false OR tamed-attack = false");
                     }
                     return false;
                 }
             } else if (EntityCategories.PLAYER.contains(entityType)) {
                 if (isPlot) {
                     if (!plot.getFlag(PvpFlag.class) && !Permissions
-                        .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
+                            .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
                         plotPlayer.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
+                                TranslatableCaption.of("permission.no_permission_event"),
+                                Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
                         );
                         plot.debug(player.getName() + " could not attack " + entityType
-                            + " because pve = false");
+                                + " because pve = false");
                         return false;
                     } else {
                         return true;
@@ -271,31 +271,31 @@ public class BukkitEntityUtil {
                 }
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVP + "." + stub)) {
                     plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", Permission.PERMISSION_ADMIN_PVP + "." + stub)
                     );
                     return false;
                 }
             } else if (EntityCategories.ANIMAL.contains(entityType)) { // victim is animal
                 if (isPlot) {
                     if (plot.getFlag(AnimalAttackFlag.class) || plot.getFlag(PveFlag.class) || plot
-                        .isAdded(plotPlayer.getUUID())) {
+                            .isAdded(plotPlayer.getUUID())) {
                         plot.debug(player.getName() + " could not attack " + entityType
-                            + " because pve = false OR animal-attack = false");
+                                + " because pve = false OR animal-attack = false");
                         return true;
                     }
                 } else if (roadFlags && (area.getRoadFlag(AnimalAttackFlag.class) || area
-                    .getFlag(PveFlag.class))) {
+                        .getFlag(PveFlag.class))) {
                     if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                         plotPlayer.sendMessage(
-                            TranslatableCaption.of("permission.no_permission_event"),
-                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                                TranslatableCaption.of("permission.no_permission_event"),
+                                Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
                         );
                         return false;
                     }
                 }
             } else if (EntityCategories.VEHICLE
-                .contains(entityType)) { // Vehicles are managed in vehicle destroy event
+                    .contains(entityType)) { // Vehicles are managed in vehicle destroy event
                 return true;
             } else { // victim is something else
                 if (isPlot) {
@@ -307,25 +307,25 @@ public class BukkitEntityUtil {
                 }
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
                     plotPlayer.sendMessage(
-                        TranslatableCaption.of("permission.no_permission_event"),
-                        Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
                     );
                     if (plot != null) {
                         plot.debug(player.getName() + " could not attack " + entityType
-                            + " because pve = false");
+                                + " because pve = false");
                     }
                     return false;
                 }
             }
             return true;
         } else if (dplot != null && (!dplot.equals(vplot) || Objects
-            .equals(dplot.getOwnerAbs(), vplot.getOwnerAbs()))) {
+                .equals(dplot.getOwnerAbs(), vplot.getOwnerAbs()))) {
             return vplot != null && vplot.getFlag(PveFlag.class);
         }
         //disable the firework damage. too much of a headache to support at the moment.
         if (vplot != null) {
             if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause
-                && damager.getType() == EntityType.FIREWORK) {
+                    && damager.getType() == EntityType.FIREWORK) {
                 return false;
             }
         }
@@ -333,46 +333,50 @@ public class BukkitEntityUtil {
             return true;
         }
         return ((vplot != null && vplot.getFlag(PveFlag.class)) || !(damager instanceof Arrow
-            && !(victim instanceof Creature)));
+                && !(victim instanceof Creature)));
     }
 
     public static boolean checkEntity(Entity entity, Plot plot) {
         if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot.getArea()
-            .getFlagContainer().getFlagMap().isEmpty()) {
+                .getFlagContainer().getFlagMap().isEmpty()) {
             return false;
         }
 
         final com.sk89q.worldedit.world.entity.EntityType entityType =
-            BukkitAdapter.adapt(entity.getType());
+                BukkitAdapter.adapt(entity.getType());
 
         if (EntityCategories.PLAYER.contains(entityType)) {
             return false;
         }
 
         if (EntityCategories.PROJECTILE.contains(entityType) || EntityCategories.OTHER
-            .contains(entityType) || EntityCategories.HANGING.contains(entityType)) {
+                .contains(entityType) || EntityCategories.HANGING.contains(entityType)) {
             return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                MiscCapFlag.MISC_CAP_UNLIMITED);
+                    MiscCapFlag.MISC_CAP_UNLIMITED
+            );
         }
 
         // Has to go go before vehicle as horses are both
         // animals and vehicles
         if (EntityCategories.ANIMAL.contains(entityType) || EntityCategories.VILLAGER
-            .contains(entityType) || EntityCategories.TAMEABLE.contains(entityType)) {
+                .contains(entityType) || EntityCategories.TAMEABLE.contains(entityType)) {
             return EntityUtil
-                .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
-                    AnimalCapFlag.ANIMAL_CAP_UNLIMITED);
+                    .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
+                            AnimalCapFlag.ANIMAL_CAP_UNLIMITED
+                    );
         }
 
         if (EntityCategories.HOSTILE.contains(entityType)) {
             return EntityUtil
-                .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
-                    HostileCapFlag.HOSTILE_CAP_UNLIMITED);
+                    .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
+                            HostileCapFlag.HOSTILE_CAP_UNLIMITED
+                    );
         }
 
         if (EntityCategories.VEHICLE.contains(entityType)) {
             return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
-                VehicleCapFlag.VEHICLE_CAP_UNLIMITED);
+                    VehicleCapFlag.VEHICLE_CAP_UNLIMITED
+            );
         }
 
         return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED);

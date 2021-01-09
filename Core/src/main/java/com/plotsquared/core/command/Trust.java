@@ -27,10 +27,10 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
@@ -40,8 +40,8 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -50,34 +50,40 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "trust",
-    aliases = {"t"},
-    requiredType = RequiredType.PLAYER,
-    usage = "/plot trust <player | *>",
-    category = CommandCategory.SETTINGS)
+        aliases = {"t"},
+        requiredType = RequiredType.PLAYER,
+        usage = "/plot trust <player | *>",
+        category = CommandCategory.SETTINGS)
 public class Trust extends Command {
 
     private final EventDispatcher eventDispatcher;
-    
-    @Inject public Trust(@Nonnull final EventDispatcher eventDispatcher) {
+
+    @Inject
+    public Trust(final @NonNull EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         final Plot currentPlot = player.getCurrentPlot();
         if (currentPlot == null) {
             throw new CommandException(TranslatableCaption.of("errors.not_in_plot"));
         }
         checkTrue(currentPlot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
-        checkTrue(currentPlot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
-                TranslatableCaption.of("permission.no_plot_perms"));
+        checkTrue(
+                currentPlot.isOwner(player.getUUID()) || Permissions
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST),
+                TranslatableCaption.of("permission.no_plot_perms")
+        );
 
         checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
-            Templates.of("value", getUsage()));
+                Templates.of("value", getUsage())
+        );
 
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
@@ -94,15 +100,16 @@ public class Trust extends Command {
                 return;
             } else {
                 checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
-                    Templates.of("value", args[0]));
+                        Templates.of("value", args[0])
+                );
 
                 Iterator<UUID> iterator = uuids.iterator();
                 int size = currentPlot.getTrusted().size() + currentPlot.getMembers().size();
                 while (iterator.hasNext()) {
                     UUID uuid = iterator.next();
                     if (uuid == DBFunc.EVERYONE && !(
-                        Permissions.hasPermission(player, Permission.PERMISSION_TRUST_EVERYONE) || Permissions
-                            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
+                            Permissions.hasPermission(player, Permission.PERMISSION_TRUST_EVERYONE) || Permissions
+                                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_TRUST))) {
                         player.sendMessage(
                                 TranslatableCaption.of("errors.invalid_player"),
                                 Template.of("value", PlayerManager.getName(uuid))
@@ -131,7 +138,10 @@ public class Trust extends Command {
                 checkTrue(!uuids.isEmpty(), null);
                 int maxTrustSize = Permissions.hasPermissionRange(player, Permission.PERMISSION_TRUST, Settings.Limit.MAX_PLOTS);
                 if (size > maxTrustSize) {
-                    player.sendMessage(TranslatableCaption.of("members.plot_max_members_trusted"), Template.of("amount", String.valueOf(size - 1)));
+                    player.sendMessage(
+                            TranslatableCaption.of("members.plot_max_members_trusted"),
+                            Template.of("amount", String.valueOf(size - 1))
+                    );
                     return;
                 }
                 // Success
@@ -155,7 +165,8 @@ public class Trust extends Command {
         return CompletableFuture.completedFuture(true);
     }
 
-    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+    @Override
+    public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 

@@ -52,20 +52,20 @@ import com.plotsquared.core.util.task.AutoClaimFinishTask;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "auto",
-    permission = "plots.auto",
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE,
-    aliases = "a",
-    usage = "/plot auto [length, width]")
+        permission = "plots.auto",
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE,
+        aliases = "a",
+        usage = "/plot auto [length, width]")
 public class Auto extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
@@ -73,10 +73,13 @@ public class Auto extends SubCommand {
     private final EconHandler econHandler;
     private final ServicePipeline servicePipeline;
 
-    @Inject public Auto(@Nonnull final PlotAreaManager plotAreaManager,
-                        @Nonnull final EventDispatcher eventDispatcher,
-                        @Nonnull final EconHandler econHandler,
-                        @Nonnull final ServicePipeline servicePipeline) {
+    @Inject
+    public Auto(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull EconHandler econHandler,
+            final @NonNull ServicePipeline servicePipeline
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
@@ -84,14 +87,18 @@ public class Auto extends SubCommand {
         this.servicePipeline.registerServiceType(TypeToken.of(AutoService.class), new AutoService.DefaultAutoService());
         final AutoService.MultiPlotService multiPlotService = new AutoService.MultiPlotService();
         this.servicePipeline.registerServiceImplementation(AutoService.class, multiPlotService,
-            Collections.singletonList(multiPlotService));
+                Collections.singletonList(multiPlotService)
+        );
         final AutoService.SinglePlotService singlePlotService = new AutoService.SinglePlotService();
         this.servicePipeline.registerServiceImplementation(AutoService.class, singlePlotService,
-            Collections.singletonList(singlePlotService));
+                Collections.singletonList(singlePlotService)
+        );
     }
 
-    public static boolean checkAllowedPlots(PlotPlayer player, PlotArea plotarea,
-        @Nullable Integer allowedPlots, int sizeX, int sizeZ) {
+    public static boolean checkAllowedPlots(
+            PlotPlayer player, PlotArea plotarea,
+            @Nullable Integer allowedPlots, int sizeX, int sizeZ
+    ) {
         if (allowedPlots == null) {
             allowedPlots = player.getAllowedPlots();
         }
@@ -104,16 +111,20 @@ public class Auto extends SubCommand {
         int diff = allowedPlots - currentPlots;
         if (diff - sizeX * sizeZ < 0) {
             try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(
-                PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                    PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
                 if (metaDataAccess.isPresent()) {
                     int grantedPlots = metaDataAccess.get().orElse(0);
                     if (diff < 0 && grantedPlots < sizeX * sizeZ) {
-                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(diff + grantedPlots)));
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.cant_claim_more_plots"),
+                                Template.of("amount", String.valueOf(diff + grantedPlots))
+                        );
                         return false;
                     } else if (diff >= 0 && grantedPlots + diff < sizeX * sizeZ) {
-                        player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"),
-                                Template.of("amount", String.valueOf(diff + grantedPlots)));
+                        player.sendMessage(
+                                TranslatableCaption.of("permission.cant_claim_more_plots"),
+                                Template.of("amount", String.valueOf(diff + grantedPlots))
+                        );
                         return false;
                     } else {
                         int left = grantedPlots + diff < 0 ? 0 : diff - sizeX * sizeZ;
@@ -122,13 +133,17 @@ public class Auto extends SubCommand {
                         } else {
                             metaDataAccess.set(left);
                         }
-                        player.sendMessage(TranslatableCaption.of("economy.removed_granted_plot"),
-                            Template.of("usedGrants", String.valueOf(grantedPlots - left)),
-                            Template.of("remainingGrants", String.valueOf(left)));
+                        player.sendMessage(
+                                TranslatableCaption.of("economy.removed_granted_plot"),
+                                Template.of("usedGrants", String.valueOf(grantedPlots - left)),
+                                Template.of("remainingGrants", String.valueOf(left))
+                        );
                     }
                 } else {
-                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots"),
-                            Template.of("amount", "0"));
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.cant_claim_more_plots"),
+                            Template.of("amount", "0")
+                    );
                     return false;
                 }
             }
@@ -136,10 +151,12 @@ public class Auto extends SubCommand {
         return true;
     }
 
-    private void claimSingle(@Nonnull final PlotPlayer<?> player, @Nonnull final Plot plot,
-        @Nonnull final PlotArea plotArea, @Nullable final String schematic) {
+    private void claimSingle(
+            final @NonNull PlotPlayer<?> player, final @NonNull Plot plot,
+            final @NonNull PlotArea plotArea, final @Nullable String schematic
+    ) {
         try (final MetaDataAccess<Boolean> metaDataAccess =
-            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
             metaDataAccess.set(true);
         }
         plot.setOwnerAbs(player.getUUID());
@@ -149,11 +166,13 @@ public class Auto extends SubCommand {
                 this.value = plot;
             }
 
-            @Override public void run(final Plot plot) {
+            @Override
+            public void run(final Plot plot) {
                 try {
                     TaskManager.getPlatformImplementation().sync(
-                        new AutoClaimFinishTask(player, plot, plotArea, schematic,
-                            PlotSquared.get().getEventDispatcher()));
+                            new AutoClaimFinishTask(player, plot, plotArea, schematic,
+                                    PlotSquared.get().getEventDispatcher()
+                            ));
                 } catch (final Exception e) {
                     e.printStackTrace();
                 }
@@ -164,12 +183,13 @@ public class Auto extends SubCommand {
 
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
         if (plotarea == null) {
             final PermissionHandler permissionHandler = PlotSquared.platform().permissionHandler();
             if (permissionHandler.hasCapability(
-                PermissionHandler.PermissionHandlerCapability.PER_WORLD_PERMISSIONS)) {
+                    PermissionHandler.PermissionHandlerCapability.PER_WORLD_PERMISSIONS)) {
                 for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
                     if (player.hasPermission(area.getWorldName(), "plots.auto")) {
                         if (plotarea != null) {
@@ -228,11 +248,12 @@ public class Auto extends SubCommand {
             }
         }
         PlayerAutoPlotEvent event = this.eventDispatcher
-            .callAuto(player, plotarea, schematic, size_x, size_z);
+                .callAuto(player, plotarea, schematic, size_x, size_z);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Auto claim"));
+                    Template.of("value", "Auto claim")
+            );
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
@@ -240,19 +261,24 @@ public class Auto extends SubCommand {
         size_z = event.getSize_z();
         schematic = event.getSchematic();
         if (!force && mega && !Permissions.hasPermission(player, Permission.PERMISSION_AUTO_MEGA)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", String.valueOf(Permission.PERMISSION_AUTO_MEGA)));
+            player.sendMessage(
+                    TranslatableCaption.of("permission.no_permission"),
+                    Template.of("node", String.valueOf(Permission.PERMISSION_AUTO_MEGA))
+            );
         }
         if (!force && size_x * size_z > Settings.Claim.MAX_AUTO_AREA) {
-            player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_plots_num"),
-                    Template.of("amount", String.valueOf(Settings.Claim.MAX_AUTO_AREA)));
+            player.sendMessage(
+                    TranslatableCaption.of("permission.cant_claim_more_plots_num"),
+                    Template.of("amount", String.valueOf(Settings.Claim.MAX_AUTO_AREA))
+            );
             return false;
         }
         final int allowed_plots = player.getAllowedPlots();
         try (final MetaDataAccess<Boolean> metaDataAccess =
-            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_AUTO)) {
             if (!force && (metaDataAccess.get().orElse(false) || !checkAllowedPlots(player,
-                plotarea, allowed_plots, size_x, size_z))) {
+                    plotarea, allowed_plots, size_x, size_z
+            ))) {
                 return false;
             }
         }
@@ -266,8 +292,11 @@ public class Auto extends SubCommand {
                 );
                 return true;
             }
-            if (!force && !Permissions.hasPermission(player, Permission.PERMISSION_CLAIM_SCHEMATIC.format(schematic)) && !Permissions
-                .hasPermission(player, "plots.admin.command.schematic")) {
+            if (!force && !Permissions.hasPermission(
+                    player,
+                    Permission.PERMISSION_CLAIM_SCHEMATIC.format(schematic)
+            ) && !Permissions
+                    .hasPermission(player, "plots.admin.command.schematic")) {
                 player.sendMessage(
                         TranslatableCaption.of("permission.no_permission"),
                         Template.of("node", "plots.claim.%s0")
@@ -278,8 +307,8 @@ public class Auto extends SubCommand {
         if (this.econHandler != null && plotarea.useEconomy()) {
             PlotExpression costExp = plotarea.getPrices().get("claim");
             double cost = costExp.evaluate(Settings.Limit.GLOBAL ?
-                player.getPlotCount() :
-                player.getPlotCount(plotarea.getWorldName()));
+                    player.getPlotCount() :
+                    player.getPlotCount(plotarea.getWorldName()));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 if (!force && this.econHandler.getMoney(player) < cost) {
@@ -299,9 +328,9 @@ public class Auto extends SubCommand {
         }
 
         final List<Plot> plots = this.servicePipeline
-            .pump(new AutoService.AutoQuery(player, null, size_x, size_z, plotarea))
-            .through(AutoService.class)
-            .getResult();
+                .pump(new AutoService.AutoQuery(player, null, size_x, size_z, plotarea))
+                .through(AutoService.class)
+                .getResult();
 
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
@@ -313,12 +342,14 @@ public class Auto extends SubCommand {
             while (plotIterator.hasNext()) {
                 plotIterator.next().claim(player, !plotIterator.hasNext(), null);
             }
-            final PlotAutoMergeEvent mergeEvent = this.eventDispatcher.callAutoMerge(plots.get(0),
-                plots.stream().map(Plot::getId).collect(Collectors.toList()));
+            final PlotAutoMergeEvent mergeEvent = this.eventDispatcher.callAutoMerge(
+                    plots.get(0),
+                    plots.stream().map(Plot::getId).collect(Collectors.toList())
+            );
             if (!force && mergeEvent.getEventResult() == Result.DENY) {
                 player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Auto merge")
+                        TranslatableCaption.of("events.event_denied"),
+                        Template.of("value", "Auto merge")
                 );
                 return false;
             }
@@ -326,4 +357,5 @@ public class Auto extends SubCommand {
         }
         return true;
     }
+
 }

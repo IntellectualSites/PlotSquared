@@ -27,8 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.caption.Caption;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Any entity that is able to execute commands, receive messages &amp; and have
@@ -42,7 +41,7 @@ public interface CommandCaller {
      * @param caption      Caption to send
      * @param replacements Variable replacements
      */
-    void sendMessage(@Nonnull Caption caption, @Nonnull Template... replacements);
+    void sendMessage(@NonNull Caption caption, @NonNull Template... replacements);
 
     /**
      * Check the player's permissions. <i>Will be cached if permission caching is enabled.</i>
@@ -50,7 +49,7 @@ public interface CommandCaller {
      * @param permission the name of the permission
      * @return if permission is had
      */
-    boolean hasPermission(@Nonnull String permission);
+    boolean hasPermission(@NonNull String permission);
 
     /**
      * Get the type of the caller

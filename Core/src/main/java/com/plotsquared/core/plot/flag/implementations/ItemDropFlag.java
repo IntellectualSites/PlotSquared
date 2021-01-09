@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class ItemDropFlag extends BooleanFlag<ItemDropFlag> {
 
@@ -39,7 +38,8 @@ public class ItemDropFlag extends BooleanFlag<ItemDropFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_item_drop"));
     }
 
-    @Override protected ItemDropFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected ItemDropFlag flagOf(@NonNull Boolean value) {
         return value ? ITEM_DROP_TRUE : ITEM_DROP_FALSE;
     }
 

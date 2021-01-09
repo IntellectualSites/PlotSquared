@@ -2,7 +2,7 @@ import java.time.format.DateTimeFormatter
 
 dependencies {
     // Expected everywhere.
-    compileOnlyApi("javax.annotation:javax.annotation-api:1.3.2")
+    compileOnlyApi("org.checkerframework:checker-qual:3.9.0")
 
     // Minecraft expectations
     compileOnlyApi("com.google.guava:guava:21.0") // Minecraft uses v21.0
@@ -23,7 +23,6 @@ dependencies {
         exclude("com.google.inject", "guice")
     }
     compileOnlyApi("com.google.code.findbugs:annotations:3.0.1")
-    compileOnlyApi("javax.inject:javax.inject:1")
 
     // Plugins
     compileOnlyApi("com.sk89q.worldedit:worldedit-core:7.2.0") {
@@ -52,9 +51,9 @@ dependencies {
 tasks.processResources {
     filesMatching("plugin.properties") {
         expand(
-            "version" to project.version.toString(),
-            "commit" to rootProject.grgit.head().abbreviatedId,
-            "date" to rootProject.grgit.head().dateTime.format(DateTimeFormatter.ofPattern("yy.MM.dd"))
+                "version" to project.version.toString(),
+                "commit" to rootProject.grgit.head().abbreviatedId,
+                "date" to rootProject.grgit.head().dateTime.format(DateTimeFormatter.ofPattern("yy.MM.dd"))
         )
     }
 }

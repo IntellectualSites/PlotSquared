@@ -27,12 +27,12 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotChangeOwnerEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
@@ -41,8 +41,8 @@ import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -50,21 +50,23 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 @CommandDeclaration(command = "setowner",
-    permission = "plots.set.owner",
-    usage = "/plot setowner <player>",
-    aliases = {"owner", "so", "seto"},
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE,
-    confirmation = true)
+        permission = "plots.set.owner",
+        usage = "/plot setowner <player>",
+        aliases = {"owner", "so", "seto"},
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE,
+        confirmation = true)
 public class Owner extends SetCommand {
 
     private final EventDispatcher eventDispatcher;
-    
-    @Inject public Owner(@Nonnull final EventDispatcher eventDispatcher) {
+
+    @Inject
+    public Owner(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-    
-    @Override public boolean set(final PlotPlayer player, final Plot plot, String value) {
+
+    @Override
+    public boolean set(final PlotPlayer player, final Plot plot, String value) {
         if (value == null || value.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("owner.set_owner_missing_player"));
             player.sendMessage(
@@ -77,34 +79,47 @@ public class Owner extends SetCommand {
 
         final Consumer<UUID> uuidConsumer = uuid -> {
             if (uuid == null && !value.equalsIgnoreCase("none") && !value.equalsIgnoreCase("null")
-                && !value.equalsIgnoreCase("-")) {
+                    && !value.equalsIgnoreCase("-")) {
                 player.sendMessage(
                         TranslatableCaption.of("errors.invalid_player"),
                         Template.of("value", value)
                 );
                 return;
             }
-            PlotChangeOwnerEvent event = this.eventDispatcher.callOwnerChange(player, plot, plot.hasOwner() ? plot.getOwnerAbs() : null, uuid,
-                    plot.hasOwner()); 
+            PlotChangeOwnerEvent event = this.eventDispatcher.callOwnerChange(player,
+                    plot,
+                    plot.hasOwner() ? plot.getOwnerAbs() : null,
+                    uuid,
+                    plot.hasOwner()
+            );
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Owner change"));
+                        TranslatableCaption.of("events.event_denied"),
+                        Template.of("value", "Owner change")
+                );
                 return;
             }
             uuid = event.getNewOwner();
             boolean force = event.getEventResult() == Result.FORCE;
             if (uuid == null) {
                 if (!force && !Permissions
-                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER,
-                        true)) {
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER,
+                                true
+                        )) {
                     return;
                 }
-                PlotUnlinkEvent unlinkEvent = this.eventDispatcher.callUnlink(plot.getArea(), plot, false, false, PlotUnlinkEvent.REASON.NEW_OWNER);
+                PlotUnlinkEvent unlinkEvent = this.eventDispatcher.callUnlink(
+                        plot.getArea(),
+                        plot,
+                        false,
+                        false,
+                        PlotUnlinkEvent.REASON.NEW_OWNER
+                );
                 if (unlinkEvent.getEventResult() == Result.DENY) {
                     player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Unlink on owner change"));
+                            TranslatableCaption.of("events.event_denied"),
+                            Template.of("value", "Unlink on owner change")
+                    );
                     return;
                 }
                 plot.getPlotModificationManager().unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
@@ -125,7 +140,7 @@ public class Owner extends SetCommand {
                 return;
             }
             if (!force && !Permissions
-                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
+                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
                 if (other == null) {
                     player.sendMessage(
                             TranslatableCaption.of("invalid_player_offline"),
@@ -135,8 +150,8 @@ public class Owner extends SetCommand {
                 }
                 int size = plots.size();
                 int currentPlots = (Settings.Limit.GLOBAL ?
-                    other.getPlotCount() :
-                    other.getPlotCount(plot.getWorldName())) + size;
+                        other.getPlotCount() :
+                        other.getPlotCount(plot.getWorldName())) + size;
                 if (currentPlots > other.getAllowedPlots()) {
                     player.sendMessage(TranslatableCaption.of("permission.cant_transfer_more_plots"));
                     return;
@@ -147,8 +162,9 @@ public class Owner extends SetCommand {
                 final boolean removeDenied = plot.isDenied(finalUUID);
                 Runnable run = () -> {
                     if (plot.setOwner(finalUUID, player)) {
-                        if (removeDenied)
+                        if (removeDenied) {
                             plot.removeDenied(finalUUID);
+                        }
                         plot.getPlotModificationManager().setSign(finalName);
                         player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                         if (other != null) {
@@ -179,7 +195,10 @@ public class Owner extends SetCommand {
         }
         return true;
     }
-    @Override public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

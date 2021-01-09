@@ -48,29 +48,34 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-@Singleton public class BukkitSetupUtils extends SetupUtils {
+@Singleton
+public class BukkitSetupUtils extends SetupUtils {
 
     private final PlotAreaManager plotAreaManager;
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
 
-    @Inject public BukkitSetupUtils(@Nonnull final PlotAreaManager plotAreaManager,
-                            @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                            @WorldFile @Nonnull final File worldFile) {
+    @Inject
+    public BukkitSetupUtils(
+            final @NonNull PlotAreaManager plotAreaManager,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            @WorldFile final @NonNull File worldFile
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;
     }
 
-    @Override public void updateGenerators() {
+    @Override
+    public void updateGenerators() {
         if (!SetupUtils.generators.isEmpty()) {
             return;
         }
@@ -97,7 +102,8 @@ import java.util.Objects;
         }
     }
 
-    @Override public void unload(String worldName, boolean save) {
+    @Override
+    public void unload(String worldName, boolean save) {
         TaskManager.runTask(() -> {
             World world = Bukkit.getWorld(worldName);
             if (world == null) {
@@ -120,7 +126,8 @@ import java.util.Objects;
         });
     }
 
-    @Override public String setupWorld(PlotAreaBuilder builder) {
+    @Override
+    public String setupWorld(PlotAreaBuilder builder) {
         this.updateGenerators();
         ConfigurationNode[] steps = builder.settingsNodesWrapper() == null ?
                 new ConfigurationNode[0] : builder.settingsNodesWrapper().getSettingsNodes();
@@ -233,7 +240,8 @@ import java.util.Objects;
         return builder.worldName();
     }
 
-    @Override public String getGenerator(PlotArea plotArea) {
+    @Override
+    public String getGenerator(PlotArea plotArea) {
         if (SetupUtils.generators.isEmpty()) {
             updateGenerators();
         }
@@ -253,4 +261,5 @@ import java.util.Objects;
         }
         return null;
     }
+
 }

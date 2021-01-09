@@ -29,13 +29,14 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 
 @CommandDeclaration(command = "chat",
-    usage = "/plot chat",
-    permission = "plots.chat",
-    category = CommandCategory.CHAT,
-    requiredType = RequiredType.PLAYER)
+        usage = "/plot chat",
+        permission = "plots.chat",
+        category = CommandCategory.CHAT,
+        requiredType = RequiredType.PLAYER)
 public class Chat extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (player.getPlotAreaAbs().isForcingPlotChat()) {
             player.sendMessage(TranslatableCaption.of("chat.plot_chat_forced"));
             return true;
@@ -43,4 +44,5 @@ public class Chat extends SubCommand {
         MainCommand.getInstance().toggle.chat(this, player, args, null, null);
         return true;
     }
+
 }

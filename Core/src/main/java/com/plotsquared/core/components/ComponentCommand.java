@@ -33,11 +33,11 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotInventory;
 
 @CommandDeclaration(command = "components",
-permission = "plots.components",
-description = "Open the component preset GUI",
-usage = "/plot components",
-category = CommandCategory.APPEARANCE,
-requiredType = RequiredType.PLAYER)
+        permission = "plots.components",
+        description = "Open the component preset GUI",
+        usage = "/plot components",
+        category = CommandCategory.APPEARANCE,
+        requiredType = RequiredType.PLAYER)
 public class ComponentCommand extends SubCommand {
 
     private final ComponentPresetManager componentPresetManager;
@@ -46,7 +46,8 @@ public class ComponentCommand extends SubCommand {
         this.componentPresetManager = componentPresetManager;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final PlotInventory inventory = componentPresetManager.buildInventory(player);
         if (inventory != null) {
             inventory.openInventory();

@@ -29,8 +29,7 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
@@ -46,10 +45,10 @@ public class EntityUtil {
 
     private EntityUtil() {
         throw new UnsupportedOperationException(
-            "This is a utility class and cannot be instantiated");
+                "This is a utility class and cannot be instantiated");
     }
 
-    private static int capNumeral(@Nonnull final String flagName) {
+    private static int capNumeral(final @NonNull String flagName) {
         int i;
         switch (flagName) {
             case "mob-cap":

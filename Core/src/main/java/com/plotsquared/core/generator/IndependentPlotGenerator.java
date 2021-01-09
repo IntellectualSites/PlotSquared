@@ -98,7 +98,9 @@ public abstract class IndependentPlotGenerator {
         return (GeneratorWrapper<T>) PlotSquared.platform().wrapPlotGenerator(world, this);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getName();
     }
+
 }

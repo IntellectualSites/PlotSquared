@@ -36,4 +36,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @BindingAnnotation
 public @interface ConsoleActor {
+
 }

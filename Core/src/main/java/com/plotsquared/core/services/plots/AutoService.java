@@ -33,9 +33,9 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +44,7 @@ import java.util.function.Predicate;
 public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> {
 
     Cache<PlotId, Plot> plotCandidateCache = CacheBuilder.newBuilder()
-        .expireAfterWrite(20, TimeUnit.SECONDS).build();
+            .expireAfterWrite(20, TimeUnit.SECONDS).build();
     Object plotLock = new Object();
 
     final class AutoQuery {
@@ -64,8 +64,10 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
          * @param sizeZ    Number of plots along the Z axis
          * @param plotArea Plot area to search in
          */
-        public AutoQuery(@Nonnull final PlotPlayer<?> player, @Nullable final PlotId startId,
-            final int sizeX, final int sizeZ, @Nonnull final PlotArea plotArea) {
+        public AutoQuery(
+                final @NonNull PlotPlayer<?> player, final @Nullable PlotId startId,
+                final int sizeX, final int sizeZ, final @NonNull PlotArea plotArea
+        ) {
             this.player = player;
             this.startId = startId;
             this.sizeX = sizeX;
@@ -78,7 +80,7 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
          *
          * @return Player
          */
-        @Nonnull public PlotPlayer<?> getPlayer() {
+        public @NonNull PlotPlayer<?> getPlayer() {
             return this.player;
         }
 
@@ -87,7 +89,7 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
          *
          * @return Start ID
          */
-        @Nullable public PlotId getStartId() {
+        public @Nullable PlotId getStartId() {
             return this.startId;
         }
 
@@ -114,7 +116,7 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
          *
          * @return Plot area
          */
-        @Nonnull public PlotArea getPlotArea() {
+        public @NonNull PlotArea getPlotArea() {
             return this.plotArea;
         }
 
@@ -123,7 +125,8 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
 
     final class DefaultAutoService implements AutoService {
 
-        @Override public List<Plot> handle(@Nonnull final AutoQuery autoQuery) {
+        @Override
+        public List<Plot> handle(final @NonNull AutoQuery autoQuery) {
             return Collections.emptyList();
         }
 
@@ -132,7 +135,9 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
 
     final class SinglePlotService implements AutoService, Predicate<AutoQuery> {
 
-        @Nullable @Override public List<Plot> handle(@Nonnull AutoQuery autoQuery) {
+        @Nullable
+        @Override
+        public List<Plot> handle(@NonNull AutoQuery autoQuery) {
             Plot plot;
             do {
                 synchronized (plotLock) {
@@ -146,7 +151,8 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
             return null;
         }
 
-        @Override public boolean test(@Nonnull final AutoQuery autoQuery) {
+        @Override
+        public boolean test(final @NonNull AutoQuery autoQuery) {
             return autoQuery.sizeX == 1 && autoQuery.sizeZ == 1;
         }
 
@@ -155,16 +161,20 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
 
     final class MultiPlotService implements AutoService, Predicate<AutoQuery> {
 
-        @Override public List<Plot> handle(@Nonnull final AutoQuery autoQuery) {
+        @Override
+        public List<Plot> handle(final @NonNull AutoQuery autoQuery) {
             /* TODO: Add timeout? */
-            outer: while (true) {
+            outer:
+            while (true) {
                 synchronized (plotLock) {
                     final PlotId start =
-                        autoQuery.getPlotArea().getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
-                    final PlotId end = PlotId.of(start.getX() + autoQuery.getSizeX() - 1,
-                        start.getY() + autoQuery.getSizeZ() - 1);
+                            autoQuery.getPlotArea().getMeta("lastPlot", PlotId.of(0, 0)).getNextId();
+                    final PlotId end = PlotId.of(
+                            start.getX() + autoQuery.getSizeX() - 1,
+                            start.getY() + autoQuery.getSizeZ() - 1
+                    );
                     final List<Plot> plots =
-                        autoQuery.getPlotArea().canClaim(autoQuery.getPlayer(), start, end);
+                            autoQuery.getPlotArea().canClaim(autoQuery.getPlayer(), start, end);
                     if (plots != null && !plots.isEmpty()) {
                         autoQuery.getPlotArea().setMeta("lastPlot", start);
                         for (final Plot plot : plots) {
@@ -179,7 +189,8 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
             }
         }
 
-        @Override public boolean test(@Nonnull final AutoQuery autoQuery) {
+        @Override
+        public boolean test(final @NonNull AutoQuery autoQuery) {
             return autoQuery.getPlotArea().getType() != PlotAreaType.PARTIAL;
         }
 

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.permissions;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Permission class.
@@ -206,7 +206,7 @@ public enum Permission {
 
     private final String text;
 
-    Permission(@Nonnull final String text) {
+    Permission(final @NonNull String text) {
         this.text = text;
     }
 

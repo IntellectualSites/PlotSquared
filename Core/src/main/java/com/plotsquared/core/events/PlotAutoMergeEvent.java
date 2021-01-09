@@ -27,8 +27,8 @@ package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,8 +49,10 @@ public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePl
      * @param plot  Plot that was merged
      * @param plots A list of plots involved in the event
      */
-    public PlotAutoMergeEvent(@Nonnull final String world, @Nonnull final Plot plot,
-        @Nonnull final List<PlotId> plots) {
+    public PlotAutoMergeEvent(
+            final @NonNull String world, final @NonNull Plot plot,
+            final @NonNull List<PlotId> plots
+    ) {
         super(plot);
         this.world = world;
         this.plots = plots;
@@ -65,15 +67,18 @@ public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePl
         return Collections.unmodifiableList(this.plots);
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
 
     public String getWorld() {
         return this.world;
     }
+
 }

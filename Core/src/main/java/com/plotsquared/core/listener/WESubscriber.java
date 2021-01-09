@@ -46,21 +46,23 @@ import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Set;
 
 public class WESubscriber {
-    
+
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
 
-    @Inject public WESubscriber(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final WorldUtil worldUtil) {
+    @Inject
+    public WESubscriber(final @NonNull PlotAreaManager plotAreaManager, final @NonNull WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
     }
 
-    @Subscribe(priority = Priority.VERY_EARLY) public void onEditSession(EditSessionEvent event) {
+    @Subscribe(priority = Priority.VERY_EARLY)
+    public void onEditSession(EditSessionEvent event) {
         if (!Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
             WorldEdit.getInstance().getEventBus().unregister(this);
             return;
@@ -78,8 +80,10 @@ public class WESubscriber {
             if (plotPlayer == null) {
                 Player player = (Player) actor;
                 Location location = player.getLocation();
-                com.plotsquared.core.location.Location pLoc = com.plotsquared.core.location.Location.at(player.getWorld().getName(),
-                    location.toVector().toBlockPoint());
+                com.plotsquared.core.location.Location pLoc = com.plotsquared.core.location.Location.at(
+                        player.getWorld().getName(),
+                        location.toVector().toBlockPoint()
+                );
                 Plot plot = pLoc.getPlot();
                 if (plot == null) {
                     event.setExtent(new NullExtent());
@@ -92,8 +96,10 @@ public class WESubscriber {
                 mask = WEManager.getMask(plotPlayer);
                 if (mask.isEmpty()) {
                     if (Permissions.hasPermission(plotPlayer, "plots.worldedit.bypass")) {
-                        plotPlayer.sendMessage(TranslatableCaption.of("worldedit.worldedit_bypass"),
-                                Template.of("command", "/plot wea"));
+                        plotPlayer.sendMessage(
+                                TranslatableCaption.of("worldedit.worldedit_bypass"),
+                                Template.of("command", "/plot wea")
+                        );
                     }
                     if (this.plotAreaManager.hasPlotArea(world)) {
                         event.setExtent(new NullExtent());
@@ -104,12 +110,14 @@ public class WESubscriber {
             if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                 if (this.plotAreaManager.hasPlotArea(world)) {
                     event.setExtent(
-                        new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(),
-                            event.getExtent(), this.worldUtil));
+                            new ProcessedWEExtent(world, mask, event.getMaxBlocks(), event.getExtent(),
+                                    event.getExtent(), this.worldUtil
+                            ));
                 }
             } else if (this.plotAreaManager.hasPlotArea(world)) {
                 event.setExtent(new WEExtent(mask, event.getExtent()));
             }
         }
     }
+
 }

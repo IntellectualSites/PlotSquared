@@ -27,8 +27,8 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.location.Location;
 import com.sk89q.worldedit.math.BlockVector2;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 /**
  * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
  */
@@ -125,7 +125,7 @@ public class ChunkUtil {
      * @param chunk BlockVector2 of chunk coordinates
      * @return true if the region pos1-pos2 contains the chunk
      */
-    public static boolean isWholeChunk(@Nonnull Location pos1, @Nonnull Location pos2, @Nonnull BlockVector2 chunk) {
+    public static boolean isWholeChunk(@NonNull Location pos1, @NonNull Location pos2, @NonNull BlockVector2 chunk) {
         int x1 = pos1.getX();
         int z1 = pos1.getZ();
         int x2 = pos2.getX();
@@ -134,4 +134,5 @@ public class ChunkUtil {
         int cz = chunk.getZ() << 4;
         return cx > x1 && cz > z1 && cx < x2 && cz < z2;
     }
+
 }

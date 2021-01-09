@@ -26,9 +26,9 @@
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.location.Direction;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -61,7 +61,7 @@ public final class PlotId {
      * @param y The plot y coordinate
      * @return a new PlotId at x,y
      */
-    @Nonnull public static PlotId of(final int x, final int y) {
+    public @NonNull static PlotId of(final int x, final int y) {
         return new PlotId(x, y);
     }
 
@@ -72,7 +72,7 @@ public final class PlotId {
      * @return the PlotId representation of the argument
      * @throws IllegalArgumentException if the string does not contain a valid PlotId
      */
-    @Nonnull public static PlotId fromString(@Nonnull final String string) {
+    public @NonNull static PlotId fromString(final @NonNull String string) {
         final PlotId plot = fromStringOrNull(string);
         if (plot == null) {
             throw new IllegalArgumentException("Cannot create PlotID. String invalid.");
@@ -86,7 +86,7 @@ public final class PlotId {
      * @param string ID string
      * @return Plot ID, or {@code null} if none could be parsed
      */
-    @Nullable public static PlotId fromStringOrNull(@Nonnull final String string) {
+    public @Nullable static PlotId fromStringOrNull(final @NonNull String string) {
         final String[] parts = string.split("[;_,.]");
         if (parts.length < 2) {
             return null;
@@ -109,7 +109,7 @@ public final class PlotId {
      * @param hash ID hash
      * @return Plot ID
      */
-    @Nonnull public static PlotId unpair(final int hash) {
+    public @NonNull static PlotId unpair(final int hash) {
         return PlotId.of(hash >> 16, hash & 0xFFFF);
     }
 
@@ -118,7 +118,7 @@ public final class PlotId {
      *
      * @return Plot ID copy
      */
-    @Nonnull public PlotId copy() {
+    public @NonNull PlotId copy() {
         return of(this.getX(), this.getY());
     }
 
@@ -145,7 +145,7 @@ public final class PlotId {
      *
      * @return Next plot ID
      */
-    @Nonnull public PlotId getNextId() {
+    public @NonNull PlotId getNextId() {
         final int absX = Math.abs(x);
         final int absY = Math.abs(y);
         if (absX > absY) {
@@ -180,7 +180,7 @@ public final class PlotId {
      * @param direction Direction
      * @return Relative plot ID
      */
-    @Nonnull public PlotId getRelative(@Nonnull final Direction direction) {
+    public @NonNull PlotId getRelative(final @NonNull Direction direction) {
         switch (direction) {
             case NORTH:
                 return PlotId.of(this.getX(), this.getY() - 1);
@@ -194,7 +194,8 @@ public final class PlotId {
         return this;
     }
 
-    @Override public boolean equals(final Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -217,7 +218,8 @@ public final class PlotId {
      *
      * @return {@code x + ";" + y}
      */
-    @Override @Nonnull public String toString() {
+    @Override
+    public @NonNull String toString() {
         return this.getX() + ";" + this.getY();
     }
 
@@ -228,7 +230,7 @@ public final class PlotId {
      * @param separator Separator
      * @return {@code x + separator + y}
      */
-    @Nonnull public String toSeparatedString(String separator) {
+    public @NonNull String toSeparatedString(String separator) {
         return this.getX() + separator + this.getY();
     }
 
@@ -238,7 +240,7 @@ public final class PlotId {
      *
      * @return {@code x + "," + y}
      */
-    @Nonnull public String toCommaSeparatedString() {
+    public @NonNull String toCommaSeparatedString() {
         return this.getX() + "," + this.getY();
     }
 
@@ -248,7 +250,7 @@ public final class PlotId {
      *
      * @return {@code x + "_" + y}
      */
-    @Nonnull public String toUnderscoreSeparatedString() {
+    public @NonNull String toUnderscoreSeparatedString() {
         return this.getX() + "_" + this.getY();
     }
 
@@ -258,11 +260,12 @@ public final class PlotId {
      *
      * @return {@code x + "-" + y}
      */
-    @Nonnull public String toDashSeparatedString() {
+    public @NonNull String toDashSeparatedString() {
         return this.getX() + "-" + this.getY();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return this.hash;
     }
 
@@ -275,23 +278,25 @@ public final class PlotId {
         private int x;
         private int y;
 
-        private PlotRangeIterator(@Nonnull final PlotId start, @Nonnull final PlotId end) {
+        private PlotRangeIterator(final @NonNull PlotId start, final @NonNull PlotId end) {
             this.start = start;
             this.end = end;
             this.x = this.start.getX();
             this.y = this.start.getY();
         }
 
-        public static PlotRangeIterator range(@Nonnull final PlotId start, @Nonnull final PlotId end) {
+        public static PlotRangeIterator range(final @NonNull PlotId start, final @NonNull PlotId end) {
             return new PlotRangeIterator(start, end);
         }
 
-        @Override public boolean hasNext() {
+        @Override
+        public boolean hasNext() {
             // end is fully included
             return this.x <= this.end.getX() && this.y <= this.end.getY();
         }
 
-        @Override public PlotId next() {
+        @Override
+        public PlotId next() {
             if (!hasNext()) {
                 throw new NoSuchElementException("The iterator has no more entries");
             }
@@ -308,7 +313,9 @@ public final class PlotId {
             return result;
         }
 
-        @Nonnull @Override public Iterator<PlotId> iterator() {
+        @NonNull
+        @Override
+        public Iterator<PlotId> iterator() {
             return this;
         }
 

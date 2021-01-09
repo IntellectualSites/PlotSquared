@@ -27,21 +27,21 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PreventCreativeCopyFlag extends BooleanFlag<PreventCreativeCopyFlag> {
 
     public static final PreventCreativeCopyFlag PREVENT_CREATIVE_COPY_TRUE =
-        new PreventCreativeCopyFlag(true);
+            new PreventCreativeCopyFlag(true);
     public static final PreventCreativeCopyFlag PREVENT_CREATIVE_COPY_FALSE =
-        new PreventCreativeCopyFlag(false);
+            new PreventCreativeCopyFlag(false);
 
-    private PreventCreativeCopyFlag(@Nonnull final Boolean value) {
+    private PreventCreativeCopyFlag(final @NonNull Boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_prevent_creative_copy"));
     }
 
-    @Override protected PreventCreativeCopyFlag flagOf(@Nonnull final Boolean value) {
+    @Override
+    protected PreventCreativeCopyFlag flagOf(final @NonNull Boolean value) {
         return value ? PREVENT_CREATIVE_COPY_TRUE : PREVENT_CREATIVE_COPY_FALSE;
     }
 

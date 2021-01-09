@@ -54,10 +54,10 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Objects;
@@ -76,7 +76,8 @@ public class ChunkListener implements Listener {
     private Chunk lastChunk;
     private boolean ignoreUnload = false;
 
-    @Inject public ChunkListener(@Nonnull final PlotAreaManager plotAreaManager) {
+    @Inject
+    public ChunkListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
         if (Settings.Chunk_Processor.AUTO_TRIM) {
             try {
@@ -105,11 +106,11 @@ public class ChunkListener implements Listener {
                     Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
                     Object chunkMap = w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
                     Method methodIsChunkInUse =
-                        chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
+                            chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
                     Chunk[] chunks = world.getLoadedChunks();
                     for (Chunk chunk : chunks) {
                         if ((boolean) methodIsChunkInUse
-                            .invoke(chunkMap, chunk.getX(), chunk.getZ())) {
+                                .invoke(chunkMap, chunk.getX(), chunk.getZ())) {
                             continue;
                         }
                         int x = chunk.getX();
@@ -179,7 +180,8 @@ public class ChunkListener implements Listener {
         return plot != null && plot.hasOwner();
     }
 
-    @EventHandler public void onChunkUnload(ChunkUnloadEvent event) {
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event) {
         if (ignoreUnload) {
             return;
         }
@@ -197,11 +199,13 @@ public class ChunkListener implements Listener {
         }
     }
 
-    @EventHandler public void onChunkLoad(ChunkLoadEvent event) {
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
         processChunk(event.getChunk(), false);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST) public void onItemSpawn(ItemSpawnEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
         PaperLib.getChunkAtAsync(event.getLocation()).thenAccept(chunk -> {
             if (chunk == this.lastChunk) {
@@ -306,10 +310,11 @@ public class ChunkListener implements Listener {
                 return true;
             }
 
-            for (int i = 0 ; i < (tiles.length - Settings.Chunk_Processor.MAX_TILES); i++) {
+            for (int i = 0; i < (tiles.length - Settings.Chunk_Processor.MAX_TILES); i++) {
                 tiles[i].getBlock().setType(Material.AIR, false);
             }
         }
         return false;
     }
+
 }

@@ -25,7 +25,8 @@
  */
 package com.plotsquared.core.uuid;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -37,16 +38,16 @@ public class UUIDMapping {
     private final UUID uuid;
     private final String username;
 
-    public UUIDMapping(@Nonnull final UUID uuid, final String username) {
+    public UUIDMapping(final @NonNull UUID uuid, final String username) {
         this.uuid = uuid;
         this.username = username;
     }
 
-    @Nonnull public String getUsername() {
+    public @NonNull String getUsername() {
         return this.username;
     }
 
-    @Nonnull public UUID getUuid() {
+    public @NonNull UUID getUuid() {
         return this.uuid;
     }
 
@@ -84,4 +85,5 @@ public class UUIDMapping {
         result = result * PRIME + $username.hashCode();
         return result;
     }
+
 }

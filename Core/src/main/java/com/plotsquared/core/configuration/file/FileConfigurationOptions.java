@@ -34,6 +34,7 @@ import com.plotsquared.core.configuration.MemoryConfigurationOptions;
  * FileConfiguration}.
  */
 public class FileConfigurationOptions extends MemoryConfigurationOptions {
+
     private String header = null;
     private boolean copyHeader = true;
 
@@ -41,11 +42,13 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
         super(configuration);
     }
 
-    @Override public FileConfiguration configuration() {
+    @Override
+    public FileConfiguration configuration() {
         return (FileConfiguration) super.configuration();
     }
 
-    @Override public FileConfigurationOptions copyDefaults(boolean value) {
+    @Override
+    public FileConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
@@ -132,4 +135,5 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
 
         return this;
     }
+
 }

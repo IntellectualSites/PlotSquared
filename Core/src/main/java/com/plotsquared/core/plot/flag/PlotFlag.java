@@ -27,8 +27,8 @@ package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.configuration.caption.Caption;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -53,13 +53,15 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      * @param flagCategory    The flag category
      * @param flagDescription A caption describing the flag functionality
      */
-    protected PlotFlag(@Nonnull final T value, @Nonnull final Caption flagCategory,
-        @Nonnull final Caption flagDescription) {
+    protected PlotFlag(
+            final @NonNull T value, final @NonNull Caption flagCategory,
+            final @NonNull Caption flagDescription
+    ) {
         this.value = Preconditions.checkNotNull(value, "flag value may not be null");
         this.flagCategory =
-            Preconditions.checkNotNull(flagCategory, "flag category may not be null");
+                Preconditions.checkNotNull(flagCategory, "flag category may not be null");
         this.flagDescription =
-            Preconditions.checkNotNull(flagDescription, "flag description may not be null");
+                Preconditions.checkNotNull(flagDescription, "flag description may not be null");
         // Parse flag name
         // noinspection unchecked
         this.flagName = getFlagName(this.getClass());
@@ -67,9 +69,10 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
 
     /**
      * Return the name of the flag.
+     *
      * @param flagClass Flag class
-     * @param <T> Value type
-     * @param <F> Flag type
+     * @param <T>       Value type
+     * @param <F>       Flag type
      * @return The name of the flag implemented by the given class
      */
     public static <T, F extends PlotFlag<T, F>> String getFlagName(Class<F> flagClass) {
@@ -92,7 +95,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      *
      * @return Non-nullable flag value
      */
-    @Nonnull public final T getValue() {
+    public @NonNull final T getValue() {
         return this.value;
     }
 
@@ -105,7 +108,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      * @return Parsed value, if valid.
      * @throws FlagParseException If the value could not be parsed.
      */
-    public abstract F parse(@Nonnull final String input) throws FlagParseException;
+    public abstract F parse(final @NonNull String input) throws FlagParseException;
 
     /**
      * Merge this flag's value with another value and return an instance
@@ -114,7 +117,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      * @param newValue New flag value.
      * @return Flag containing parsed flag value.
      */
-    public abstract F merge(@Nonnull final T newValue);
+    public abstract F merge(final @NonNull T newValue);
 
     /**
      * Returns a string representation of the flag instance, that when
@@ -163,7 +166,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      */
     public abstract String getExample();
 
-    protected abstract F flagOf(@Nonnull T value);
+    protected abstract F flagOf(@NonNull T value);
 
     /**
      * Create a new instance of the flag using a provided
@@ -172,7 +175,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      * @param value The flag value
      * @return The created flag instance
      */
-    public final F createFlagInstance(@Nonnull final T value) {
+    public final F createFlagInstance(final @NonNull T value) {
         return flagOf(Preconditions.checkNotNull(value));
     }
 
@@ -187,17 +190,21 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     }
 
     public boolean equals(final Object o) {
-        if (o == this)
+        if (o == this) {
             return true;
-        if (!(o instanceof PlotFlag))
+        }
+        if (!(o instanceof PlotFlag)) {
             return false;
+        }
         final PlotFlag<?, ?> other = (PlotFlag<?, ?>) o;
-        if (!other.canEqual((Object) this))
+        if (!other.canEqual((Object) this)) {
             return false;
+        }
         final Object this$value = this.getValue();
         final Object other$value = other.getValue();
-        if (this$value == null ? other$value != null : !this$value.equals(other$value))
+        if (this$value == null ? other$value != null : !this$value.equals(other$value)) {
             return false;
+        }
         return true;
     }
 
@@ -212,4 +219,5 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
         result = result * PRIME + ($value == null ? 43 : $value.hashCode());
         return result;
     }
+
 }

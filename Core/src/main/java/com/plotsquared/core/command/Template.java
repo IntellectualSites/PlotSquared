@@ -27,16 +27,16 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.ConfigurationUtil;
-import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.inject.annotations.WorldConfig;
-import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.InvalidConfigurationException;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldFile;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
@@ -51,16 +51,16 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -68,9 +68,9 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @CommandDeclaration(command = "template",
-    permission = "plots.admin",
-    usage = "/plot template [import | export] <world> <template>",
-    category = CommandCategory.ADMINISTRATION)
+        permission = "plots.admin",
+        usage = "/plot template [import | export] <world> <template>",
+        category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
@@ -79,11 +79,14 @@ public class Template extends SubCommand {
     private final SetupUtils setupUtils;
     private final WorldUtil worldUtil;
 
-    @Inject public Template(@Nonnull final PlotAreaManager plotAreaManager,
-                            @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                            @WorldFile @Nonnull final File worldFile,
-                            @Nonnull final SetupUtils setupUtils,
-                            @Nonnull final WorldUtil worldUtil) {
+    @Inject
+    public Template(
+            final @NonNull PlotAreaManager plotAreaManager,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            @WorldFile final @NonNull File worldFile,
+            final @NonNull SetupUtils setupUtils,
+            final @NonNull WorldUtil worldUtil
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;
@@ -94,7 +97,7 @@ public class Template extends SubCommand {
     public static boolean extractAllFiles(String world, String template) {
         try {
             File folder =
-                FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
+                    FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
             if (!folder.exists()) {
                 return false;
             }
@@ -109,9 +112,9 @@ public class Template extends SubCommand {
                 while (ze != null) {
                     if (!ze.isDirectory()) {
                         String name = ze.getName().replace('\\', File.separatorChar)
-                            .replace('/', File.separatorChar);
+                                .replace('/', File.separatorChar);
                         File newFile = new File(
-                            (output + File.separator + name).replaceAll("__TEMP_DIR__", world));
+                                (output + File.separator + name).replaceAll("__TEMP_DIR__", world));
                         File parent = newFile.getParentFile();
                         if (parent != null) {
                             parent.mkdirs();
@@ -135,7 +138,10 @@ public class Template extends SubCommand {
     }
 
     public static byte[] getBytes(PlotArea plotArea) {
-        ConfigurationSection section = PlotSquared.get().getWorldConfiguration().getConfigurationSection("worlds." + plotArea.getWorldName());
+        ConfigurationSection section = PlotSquared
+                .get()
+                .getWorldConfiguration()
+                .getConfigurationSection("worlds." + plotArea.getWorldName());
         YamlConfiguration config = new YamlConfiguration();
         String generator = PlotSquared.platform().setupUtils().getGenerator(plotArea);
         if (generator != null) {
@@ -151,8 +157,8 @@ public class Template extends SubCommand {
         File output = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(
-            output + File.separator + world + ".template");
-            ZipOutputStream zos = new ZipOutputStream(fos)) {
+                output + File.separator + world + ".template");
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
 
             for (FileBytes file : files) {
                 ZipEntry ze = new ZipEntry(file.path);
@@ -163,7 +169,8 @@ public class Template extends SubCommand {
         }
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
@@ -208,8 +215,10 @@ public class Template extends SubCommand {
                     );
                     return false;
                 }
-                File worldFile = FileUtils.getFile(PlotSquared.platform().getDirectory(),
-                    Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml");
+                File worldFile = FileUtils.getFile(
+                        PlotSquared.platform().getDirectory(),
+                        Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml"
+                );
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
                 this.worldConfiguration.set("worlds." + world, worldConfig.get(""));
                 try {
@@ -219,7 +228,7 @@ public class Template extends SubCommand {
                     e.printStackTrace();
                 }
                 String manager =
-                    worldConfig.getString("generator.plugin", PlotSquared.platform().pluginName());
+                        worldConfig.getString("generator.plugin", PlotSquared.platform().pluginName());
                 String generator = worldConfig.getString("generator.init", manager);
                 PlotAreaBuilder builder = PlotAreaBuilder.newBuilder()
                         .plotAreaType(ConfigurationUtil.getType(worldConfig))
@@ -246,8 +255,10 @@ public class Template extends SubCommand {
                 }
                 final PlotArea area = this.plotAreaManager.getPlotAreaByString(world);
                 if (area == null) {
-                    player.sendMessage(TranslatableCaption.of("errors.not_valid_plot_world"),
-                            net.kyori.adventure.text.minimessage.Template.of("value", args[1]));
+                    player.sendMessage(
+                            TranslatableCaption.of("errors.not_valid_plot_world"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", args[1])
+                    );
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();
@@ -270,7 +281,9 @@ public class Template extends SubCommand {
         }
         return false;
     }
-    @Override public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
             if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE_EXPORT)) {
@@ -279,13 +292,24 @@ public class Template extends SubCommand {
             if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE_IMPORT)) {
                 completions.add("import");
             }
-            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
-                .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
-                }).collect(Collectors.toCollection(LinkedList::new));
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(
+                            null,
+                            true,
+                            completion,
+                            "",
+                            RequiredType.NONE,
+                            CommandCategory.ADMINISTRATION
+                    ) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
             if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
             }
             return commands;
-        } return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

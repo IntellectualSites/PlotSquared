@@ -47,11 +47,11 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.Set;
@@ -66,7 +66,11 @@ public abstract class RegionManager {
     private final ProgressSubscriberFactory subscriberFactory;
 
     @Inject
-    public RegionManager(@Nonnull WorldUtil worldUtil, @Nonnull GlobalBlockQueue blockQueue, @Nonnull ProgressSubscriberFactory subscriberFactory) {
+    public RegionManager(
+            @NonNull WorldUtil worldUtil,
+            @NonNull GlobalBlockQueue blockQueue,
+            @NonNull ProgressSubscriberFactory subscriberFactory
+    ) {
         this.worldUtil = worldUtil;
         this.blockQueue = blockQueue;
         this.subscriberFactory = subscriberFactory;
@@ -118,13 +122,15 @@ public abstract class RegionManager {
      *                otherwise writes to the queue but does not enqueue.
      * @return true if not enqueued, otherwise whether the created queue enqueued.
      */
-    public boolean setCuboids(@Nonnull final PlotArea area,
-                              @Nonnull final Set<CuboidRegion> regions,
-                              @Nonnull final Pattern blocks,
-                              int minY,
-                              int maxY,
-                              @Nullable PlotPlayer<?> actor,
-                              @Nullable QueueCoordinator queue) {
+    public boolean setCuboids(
+            final @NonNull PlotArea area,
+            final @NonNull Set<CuboidRegion> regions,
+            final @NonNull Pattern blocks,
+            int minY,
+            int maxY,
+            @Nullable PlotPlayer<?> actor,
+            @Nullable QueueCoordinator queue
+    ) {
         boolean enqueue = false;
         if (queue == null) {
             queue = area.getQueue();
@@ -134,8 +140,18 @@ public abstract class RegionManager {
             }
         }
         for (CuboidRegion region : regions) {
-            Location pos1 = Location.at(area.getWorldName(), region.getMinimumPoint().getX(), minY, region.getMinimumPoint().getZ());
-            Location pos2 = Location.at(area.getWorldName(), region.getMaximumPoint().getX(), maxY, region.getMaximumPoint().getZ());
+            Location pos1 = Location.at(
+                    area.getWorldName(),
+                    region.getMinimumPoint().getX(),
+                    minY,
+                    region.getMinimumPoint().getZ()
+            );
+            Location pos2 = Location.at(
+                    area.getWorldName(),
+                    region.getMaximumPoint().getX(),
+                    maxY,
+                    region.getMaximumPoint().getZ()
+            );
             queue.setCuboid(pos1, pos2, blocks);
         }
         return !enqueue || queue.enqueue();
@@ -160,10 +176,12 @@ public abstract class RegionManager {
      * @param actor    the player running the clear
      * @return true if the clear worked. False if someone went wrong so P2 can then handle the clear
      */
-    public abstract boolean handleClear(@Nonnull Plot plot,
-                                        @Nullable final Runnable whenDone,
-                                        @Nonnull PlotManager manager,
-                                        @Nullable PlotPlayer<?> actor);
+    public abstract boolean handleClear(
+            @NonNull Plot plot,
+            final @Nullable Runnable whenDone,
+            @NonNull PlotManager manager,
+            @Nullable PlotPlayer<?> actor
+    );
 
     /**
      * Copy a region to a new location (in the same world)
@@ -175,11 +193,13 @@ public abstract class RegionManager {
      * @param whenDone task to run when complete
      * @return success or not
      */
-    public boolean copyRegion(@Nonnull final Location pos1,
-                              @Nonnull final Location pos2,
-                              @Nonnull final Location newPos,
-                              @Nullable final PlotPlayer<?> actor,
-                              @Nonnull final Runnable whenDone) {
+    public boolean copyRegion(
+            final @NonNull Location pos1,
+            final @NonNull Location pos2,
+            final @NonNull Location newPos,
+            final @Nullable PlotPlayer<?> actor,
+            final @NonNull Runnable whenDone
+    ) {
         final int relX = newPos.getX() - pos1.getX();
         final int relZ = newPos.getZ() - pos1.getZ();
         final com.sk89q.worldedit.world.World oldWorld = worldUtil.getWeWorld(pos1.getWorldName());
@@ -190,14 +210,27 @@ public abstract class RegionManager {
         copyFrom.setCompleteTask(copyTo::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             copyFrom.addProgressSubscriber(subscriberFactory
-                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region_copy")));
+                    .createFull(
+                            actor,
+                            Settings.QUEUE.NOTIFY_INTERVAL,
+                            Settings.QUEUE.NOTIFY_WAIT,
+                            TranslatableCaption.of("swap.progress_region_copy")
+                    ));
         }
         copyFrom
-            .addReadChunks(new CuboidRegion(BlockVector3.at(pos1.getX(), 0, pos1.getZ()), BlockVector3.at(pos2.getX(), 0, pos2.getZ())).getChunks());
+                .addReadChunks(new CuboidRegion(
+                        BlockVector3.at(pos1.getX(), 0, pos1.getZ()),
+                        BlockVector3.at(pos2.getX(), 0, pos2.getZ())
+                ).getChunks());
         copyTo.setCompleteTask(whenDone);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             copyTo.addProgressSubscriber(subscriberFactory
-                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region_paste")));
+                    .createFull(
+                            actor,
+                            Settings.QUEUE.NOTIFY_INTERVAL,
+                            Settings.QUEUE.NOTIFY_WAIT,
+                            TranslatableCaption.of("swap.progress_region_paste")
+                    ));
         }
         return copyFrom.enqueue();
     }
@@ -226,7 +259,13 @@ public abstract class RegionManager {
      * @param actor    the actor associated with the region copy
      * @param whenDone task to run when complete
      */
-    public void swap(Location pos1, Location pos2, Location swapPos, @Nullable final PlotPlayer<?> actor, final Runnable whenDone) {
+    public void swap(
+            Location pos1,
+            Location pos2,
+            Location swapPos,
+            final @Nullable PlotPlayer<?> actor,
+            final Runnable whenDone
+    ) {
         int relX = swapPos.getX() - pos1.getX();
         int relZ = swapPos.getZ() - pos1.getZ();
 
@@ -238,8 +277,10 @@ public abstract class RegionManager {
         fromQueue1.setUnloadAfter(false);
         fromQueue2.setUnloadAfter(false);
         fromQueue1.addReadChunks(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
-        fromQueue2.addReadChunks(new CuboidRegion(swapPos.getBlockVector3(),
-            BlockVector3.at(swapPos.getX() + pos2.getX() - pos1.getX(), 0, swapPos.getZ() + pos2.getZ() - pos1.getZ())).getChunks());
+        fromQueue2.addReadChunks(new CuboidRegion(
+                swapPos.getBlockVector3(),
+                BlockVector3.at(swapPos.getX() + pos2.getX() - pos1.getX(), 0, swapPos.getZ() + pos2.getZ() - pos1.getZ())
+        ).getChunks());
         QueueCoordinator toQueue1 = blockQueue.getNewQueue(world1);
         QueueCoordinator toQueue2 = blockQueue.getNewQueue(world2);
 
@@ -248,34 +289,52 @@ public abstract class RegionManager {
         fromQueue1.setCompleteTask(fromQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             fromQueue1.addProgressSubscriber(subscriberFactory
-                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region1_copy")));
+                    .createFull(
+                            actor,
+                            Settings.QUEUE.NOTIFY_INTERVAL,
+                            Settings.QUEUE.NOTIFY_WAIT,
+                            TranslatableCaption.of("swap.progress_region1_copy")
+                    ));
         }
         fromQueue2.setCompleteTask(toQueue1::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             fromQueue2.addProgressSubscriber(subscriberFactory
-                .createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT, TranslatableCaption.of("swap.progress_region2_copy")));
+                    .createFull(
+                            actor,
+                            Settings.QUEUE.NOTIFY_INTERVAL,
+                            Settings.QUEUE.NOTIFY_WAIT,
+                            TranslatableCaption.of("swap.progress_region2_copy")
+                    ));
         }
         toQueue1.setCompleteTask(toQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            toQueue1.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                TranslatableCaption.of("swap.progress_region1_paste")));
+            toQueue1.addProgressSubscriber(subscriberFactory.createFull(actor,
+                    Settings.QUEUE.NOTIFY_INTERVAL,
+                    Settings.QUEUE.NOTIFY_WAIT,
+                    TranslatableCaption.of("swap.progress_region1_paste")
+            ));
         }
         toQueue2.setCompleteTask(whenDone);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            toQueue2.addProgressSubscriber(subscriberFactory.createFull(actor, Settings.QUEUE.NOTIFY_INTERVAL, Settings.QUEUE.NOTIFY_WAIT,
-                TranslatableCaption.of("swap.progress_region2_paste")));
+            toQueue2.addProgressSubscriber(subscriberFactory.createFull(actor,
+                    Settings.QUEUE.NOTIFY_INTERVAL,
+                    Settings.QUEUE.NOTIFY_WAIT,
+                    TranslatableCaption.of("swap.progress_region2_paste")
+            ));
         }
         fromQueue1.enqueue();
     }
 
-    private void copyFromTo(Location pos1,
-                            Location pos2,
-                            int relX,
-                            int relZ,
-                            World world1,
-                            QueueCoordinator fromQueue,
-                            QueueCoordinator toQueue,
-                            boolean removeEntities) {
+    private void copyFromTo(
+            Location pos1,
+            Location pos2,
+            int relX,
+            int relZ,
+            World world1,
+            QueueCoordinator fromQueue,
+            QueueCoordinator toQueue,
+            boolean removeEntities
+    ) {
         fromQueue.setChunkConsumer(chunk -> {
             int cx = chunk.getX();
             int cz = chunk.getZ();
@@ -306,11 +365,27 @@ public abstract class RegionManager {
         });
     }
 
-    public void setBiome(final CuboidRegion region, final int extendBiome, final BiomeType biome, final String world, final Runnable whenDone) {
+    public void setBiome(
+            final CuboidRegion region,
+            final int extendBiome,
+            final BiomeType biome,
+            final String world,
+            final Runnable whenDone
+    ) {
         Location pos1 = Location
-            .at(world, region.getMinimumPoint().getX() - extendBiome, region.getMinimumPoint().getY(), region.getMinimumPoint().getZ() - extendBiome);
+                .at(
+                        world,
+                        region.getMinimumPoint().getX() - extendBiome,
+                        region.getMinimumPoint().getY(),
+                        region.getMinimumPoint().getZ() - extendBiome
+                );
         Location pos2 = Location
-            .at(world, region.getMaximumPoint().getX() + extendBiome, region.getMaximumPoint().getY(), region.getMaximumPoint().getZ() + extendBiome);
+                .at(
+                        world,
+                        region.getMaximumPoint().getX() + extendBiome,
+                        region.getMaximumPoint().getY(),
+                        region.getMaximumPoint().getZ() + extendBiome
+                );
         final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
 
         final int minX = pos1.getX();
@@ -321,10 +396,18 @@ public abstract class RegionManager {
         queue.setChunkConsumer(blockVector2 -> {
             final int cx = blockVector2.getX() << 4;
             final int cz = blockVector2.getZ() << 4;
-            WorldUtil.setBiome(world, Math.max(minX, cx), Math.max(minZ, cz), Math.min(maxX, cx + 15), Math.min(maxZ, cz + 15), biome);
+            WorldUtil.setBiome(
+                    world,
+                    Math.max(minX, cx),
+                    Math.max(minZ, cz),
+                    Math.min(maxX, cx + 15),
+                    Math.min(maxZ, cz + 15),
+                    biome
+            );
             worldUtil.refreshChunk(blockVector2.getBlockX(), blockVector2.getBlockZ(), world);
         });
         queue.setCompleteTask(whenDone);
         queue.enqueue();
     }
+
 }

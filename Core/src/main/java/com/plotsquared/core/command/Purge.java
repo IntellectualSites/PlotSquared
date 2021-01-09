@@ -41,10 +41,10 @@ import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,11 +53,11 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandDeclaration(usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true | false] clear:[true | false]",
-    command = "purge",
-    permission = "plots.admin",
-    category = CommandCategory.ADMINISTRATION,
-    requiredType = RequiredType.CONSOLE,
-    confirmation = true)
+        command = "purge",
+        permission = "plots.admin",
+        category = CommandCategory.ADMINISTRATION,
+        requiredType = RequiredType.CONSOLE,
+        confirmation = true)
 public class Purge extends SubCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + Purge.class.getSimpleName());
@@ -65,13 +65,17 @@ public class Purge extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
 
-    @Inject public Purge(@Nonnull final PlotAreaManager plotAreaManager,
-                         @Nonnull final PlotListener plotListener) {
+    @Inject
+    public Purge(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull PlotListener plotListener
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.plotListener = plotListener;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             sendUsage(player);
             return false;
@@ -174,7 +178,7 @@ public class Purge extends SubCommand {
         }
         if (PlotSquared.get().plots_tmp != null) {
             for (Entry<String, HashMap<PlotId, Plot>> entry : PlotSquared.get().plots_tmp
-                .entrySet()) {
+                    .entrySet()) {
                 String worldName = entry.getKey();
                 if (world != null && !world.equalsIgnoreCase(worldName)) {
                     continue;
@@ -199,7 +203,7 @@ public class Purge extends SubCommand {
             return false;
         }
         String cmd =
-            "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
+                "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
         boolean finalClear = clear;
         Runnable run = () -> {
             if (Settings.DEBUG) {
@@ -209,7 +213,8 @@ public class Purge extends SubCommand {
             Iterator<Plot> iterator = toDelete.iterator();
             AtomicBoolean cleared = new AtomicBoolean(true);
             Runnable runasync = new Runnable() {
-                @Override public void run() {
+                @Override
+                public void run() {
                     while (iterator.hasNext() && cleared.get()) {
                         cleared.set(false);
                         Plot plot = iterator.next();
@@ -231,7 +236,7 @@ public class Purge extends SubCommand {
                                 }
                             } catch (NullPointerException e) {
                                 logger.error("NullPointer during purge detected. This is likely"
-                                    + " because you are deleting a world that has been removed", e);
+                                        + " because you are deleting a world that has been removed", e);
                             }
                         }
                         cleared.set(true);
@@ -258,4 +263,5 @@ public class Purge extends SubCommand {
         }
         return true;
     }
+
 }

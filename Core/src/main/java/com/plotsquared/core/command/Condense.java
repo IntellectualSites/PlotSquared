@@ -37,8 +37,8 @@ import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -49,10 +49,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @CommandDeclaration(command = "condense",
-    permission = "plots.admin",
-    usage = "/plot condense <area> <start|stop|info> [radius]",
-    category = CommandCategory.ADMINISTRATION,
-    requiredType = RequiredType.CONSOLE)
+        permission = "plots.admin",
+        usage = "/plot condense <area> <start|stop|info> [radius]",
+        category = CommandCategory.ADMINISTRATION,
+        requiredType = RequiredType.CONSOLE)
 public class Condense extends SubCommand {
 
     public static boolean TASK = false;
@@ -60,13 +60,17 @@ public class Condense extends SubCommand {
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
 
-    @Inject public Condense(@Nonnull final PlotAreaManager plotAreaManager,
-                            @Nonnull final WorldUtil worldUtil) {
+    @Inject
+    public Condense(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull WorldUtil worldUtil
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
@@ -157,7 +161,8 @@ public class Condense extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("condense.task_started"));
                 Condense.TASK = true;
                 Runnable run = new Runnable() {
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         if (!Condense.TASK) {
                             player.sendMessage(TranslatableCaption.of("condense.task_cancelled"));
                         }
@@ -274,10 +279,11 @@ public class Condense extends SubCommand {
         HashSet<PlotId> outside = new HashSet<>();
         for (Plot plot : plots) {
             if (plot.getId().getX() > radius || plot.getId().getX() < -radius || plot.getId().getY() > radius
-                || plot.getId().getY() < -radius) {
+                    || plot.getId().getY() < -radius) {
                 outside.add(plot.getId());
             }
         }
         return outside;
     }
+
 }

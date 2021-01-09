@@ -38,9 +38,9 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -50,16 +50,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * {@inheritDoc}
  */
-@Singleton public class SimpleBackupManager implements BackupManager {
+@Singleton
+public class SimpleBackupManager implements BackupManager {
 
     private final Path backupPath;
     private final boolean automaticBackup;
     private final int backupLimit;
     private final Cache<PlotCacheKey, BackupProfile> backupProfileCache = CacheBuilder.newBuilder()
-        .expireAfterAccess(3, TimeUnit.MINUTES).build();
+            .expireAfterAccess(3, TimeUnit.MINUTES).build();
     private final PlayerBackupProfileFactory playerBackupProfileFactory;
 
-    @Inject public SimpleBackupManager(@Nonnull final PlayerBackupProfileFactory playerBackupProfileFactory) throws Exception {
+    @Inject
+    public SimpleBackupManager(final @NonNull PlayerBackupProfileFactory playerBackupProfileFactory) throws Exception {
         this.playerBackupProfileFactory = playerBackupProfileFactory;
         this.backupPath = Objects.requireNonNull(PlotSquared.platform()).getDirectory().toPath().resolve("backups");
         if (!Files.exists(backupPath)) {
@@ -69,18 +71,24 @@ import java.util.concurrent.TimeUnit;
         this.backupLimit = Settings.Backup.BACKUP_LIMIT;
     }
 
-    public SimpleBackupManager(final Path backupPath, final boolean automaticBackup,
-        final int backupLimit, final PlayerBackupProfileFactory playerBackupProfileFactory) {
+    public SimpleBackupManager(
+            final Path backupPath, final boolean automaticBackup,
+            final int backupLimit, final PlayerBackupProfileFactory playerBackupProfileFactory
+    ) {
         this.backupPath = backupPath;
         this.automaticBackup = automaticBackup;
         this.backupLimit = backupLimit;
         this.playerBackupProfileFactory = playerBackupProfileFactory;
     }
 
-    @Override @Nonnull public BackupProfile getProfile(@Nonnull final Plot plot) {
+    @Override
+    public @NonNull BackupProfile getProfile(final @NonNull Plot plot) {
         if (plot.hasOwner()) {
             try {
-                return backupProfileCache.get(new PlotCacheKey(plot), () -> this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot));
+                return backupProfileCache.get(
+                        new PlotCacheKey(plot),
+                        () -> this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot)
+                );
             } catch (ExecutionException e) {
                 final BackupProfile profile = this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot);
                 this.backupProfileCache.put(new PlotCacheKey(plot), profile);
@@ -90,32 +98,39 @@ import java.util.concurrent.TimeUnit;
         return new NullBackupProfile();
     }
 
-    @Override public void automaticBackup(@Nullable PlotPlayer player, @Nonnull final Plot plot, @Nonnull Runnable whenDone) {
+    @Override
+    public void automaticBackup(@Nullable PlotPlayer player, final @NonNull Plot plot, @NonNull Runnable whenDone) {
         final BackupProfile profile;
         if (!this.shouldAutomaticallyBackup() || (profile = getProfile(plot)) instanceof NullBackupProfile) {
             whenDone.run();
         } else {
             if (player != null) {
-                player.sendMessage(TranslatableCaption.of("backups.backup_automatic_started"), Template.of("plot", String.valueOf(plot.getId())));
+                player.sendMessage(
+                        TranslatableCaption.of("backups.backup_automatic_started"),
+                        Template.of("plot", String.valueOf(plot.getId()))
+                );
             }
             profile.createBackup().whenComplete((backup, throwable) -> {
-               if (throwable != null) {
-                   if (player != null) {
-                       player.sendMessage(TranslatableCaption.of("backups.backup_automatic_failure"),
-                           Templates.of("reason", throwable.getMessage()));
-                   }
-                   throwable.printStackTrace();
-               } else {
-                   if (player != null) {
-                       player.sendMessage(TranslatableCaption.of("backups.backup_automatic_finished"));
-                       TaskManager.runTaskAsync(whenDone);
-                   }
-               }
+                if (throwable != null) {
+                    if (player != null) {
+                        player.sendMessage(
+                                TranslatableCaption.of("backups.backup_automatic_failure"),
+                                Templates.of("reason", throwable.getMessage())
+                        );
+                    }
+                    throwable.printStackTrace();
+                } else {
+                    if (player != null) {
+                        player.sendMessage(TranslatableCaption.of("backups.backup_automatic_finished"));
+                        TaskManager.runTaskAsync(whenDone);
+                    }
+                }
             });
         }
     }
 
-    @Override public boolean shouldAutomaticallyBackup() {
+    @Override
+    public boolean shouldAutomaticallyBackup() {
         return this.automaticBackup;
     }
 
@@ -135,7 +150,8 @@ import java.util.concurrent.TimeUnit;
             this.plot = plot;
         }
 
-        @Override public boolean equals(final Object o) {
+        @Override
+        public boolean equals(final Object o) {
             if (this == o) {
                 return true;
             }
@@ -144,13 +160,15 @@ import java.util.concurrent.TimeUnit;
             }
             final PlotCacheKey that = (PlotCacheKey) o;
             return Objects.equals(plot.getArea(), that.plot.getArea())
-                && Objects.equals(plot.getId(), that.plot.getId())
-                && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
+                    && Objects.equals(plot.getId(), that.plot.getId())
+                    && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return Objects.hash(plot.getArea(), plot.getId(), plot.getOwnerAbs());
         }
+
     }
 
 }

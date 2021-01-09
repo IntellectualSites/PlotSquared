@@ -30,10 +30,10 @@ import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.MemorySection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
-import com.plotsquared.core.configuration.caption.load.CaptionLoader;
 import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.DummyCaptionMap;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.configuration.caption.load.CaptionLoader;
 import com.plotsquared.core.configuration.caption.load.DefaultCaptionProvider;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
@@ -73,10 +73,12 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.math.BlockVector2;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -120,7 +122,7 @@ import java.util.zip.ZipInputStream;
 public class PlotSquared {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotSquared.class.getSimpleName());
-    private static PlotSquared instance;
+    private static @MonotonicNonNull PlotSquared instance;
 
     // Implementation
     private final PlotPlatform<?> platform;
@@ -128,9 +130,13 @@ public class PlotSquared {
     private final Thread thread;
     // UUID pipelines
     private final UUIDPipeline impromptuUUIDPipeline =
-        new UUIDPipeline(Executors.newCachedThreadPool());
+            new UUIDPipeline(Executors.newCachedThreadPool());
     private final UUIDPipeline backgroundUUIDPipeline =
-        new UUIDPipeline(Executors.newSingleThreadExecutor());
+            new UUIDPipeline(Executors.newSingleThreadExecutor());
+    // Localization
+    private final CaptionLoader captionLoader;
+    private final Map<String, CaptionMap> captionMaps = new HashMap<>();
+    public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     // WorldEdit instance
     private WorldEdit worldedit;
     private File configFile;
@@ -138,11 +144,7 @@ public class PlotSquared {
     private YamlConfiguration worldConfiguration;
     // Temporary hold the plots/clusters before the worlds load
     private HashMap<String, Set<PlotCluster>> clustersTmp;
-    public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     private YamlConfiguration config;
-    // Localization
-    private final CaptionLoader captionLoader;
-    private final Map<String, CaptionMap> captionMaps = new HashMap<>();
     // Platform / Version / Update URL
     private PlotVersion version;
     // Files and configuration
@@ -157,7 +159,10 @@ public class PlotSquared {
      * @param iPlotMain Implementation of {@link PlotPlatform} used
      * @param platform  The platform being used
      */
-    public PlotSquared(final PlotPlatform<?> iPlotMain, final String platform) {
+    public PlotSquared(
+            final @NonNull PlotPlatform<?> iPlotMain,
+            final @NonNull String platform
+    ) {
         if (instance != null) {
             throw new IllegalStateException("Cannot re-initialize the PlotSquared singleton");
         }
@@ -175,10 +180,14 @@ public class PlotSquared {
         //
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
-        this.captionLoader = CaptionLoader.of(Locale.ENGLISH,
+        this.captionLoader = CaptionLoader.of(
+                Locale.ENGLISH,
                 CaptionLoader.patternExtractor(Pattern.compile("messages_(.*)\\.json")),
-                DefaultCaptionProvider.forClassLoaderFormatString(this.getClass().getClassLoader(),
-                        "lang/messages_%s.json")); // the path in our jar file
+                DefaultCaptionProvider.forClassLoaderFormatString(
+                        this.getClass().getClassLoader(),
+                        "lang/messages_%s.json"
+                )
+        ); // the path in our jar file
         // Load caption map
         try {
             this.loadCaptionMap();
@@ -194,14 +203,16 @@ public class PlotSquared {
             try {
                 URL logurl = PlotSquared.class.getProtectionDomain().getCodeSource().getLocation();
                 this.jarFile = new File(
-                    new URL(logurl.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
-                        .toURI().getPath());
+                        new URL(logurl.toURI().toString().split("\\!")[0].replaceAll("jar:file", "file"))
+                                .toURI().getPath());
             } catch (MalformedURLException | URISyntaxException | SecurityException e) {
                 e.printStackTrace();
                 this.jarFile = new File(this.platform.getDirectory().getParentFile(), "PlotSquared.jar");
                 if (!this.jarFile.exists()) {
-                    this.jarFile = new File(this.platform.getDirectory().getParentFile(),
-                        "PlotSquared-" + platform + ".jar");
+                    this.jarFile = new File(
+                            this.platform.getDirectory().getParentFile(),
+                            "PlotSquared-" + platform + ".jar"
+                    );
                 }
             }
 
@@ -234,6 +245,27 @@ public class PlotSquared {
         }
     }
 
+    /**
+     * Gets an instance of PlotSquared.
+     *
+     * @return instance of PlotSquared
+     */
+    public static @NonNull PlotSquared get() {
+        return PlotSquared.instance;
+    }
+
+    /**
+     * Get the platform specific implementation of PlotSquared
+     *
+     * @return Platform implementation
+     */
+    public static @NonNull PlotPlatform<?> platform() {
+        if (instance != null && instance.platform != null) {
+            return instance.platform;
+        }
+        throw new IllegalStateException("Plot platform implementation is missing");
+    }
+
     public void loadCaptionMap() throws Exception {
         this.platform.copyCaptionMaps();
         // Setup localization
@@ -245,8 +277,10 @@ public class PlotSquared {
             captionMap = this.captionLoader.loadSingle(this.platform.getDirectory().toPath().resolve("lang").resolve(fileName));
         }
         this.captionMaps.put(TranslatableCaption.DEFAULT_NAMESPACE, captionMap);
-        logger.info("Loaded caption map for namespace 'plotsquared': {}",
-            this.captionMaps.get(TranslatableCaption.DEFAULT_NAMESPACE).getClass().getCanonicalName());
+        logger.info(
+                "Loaded caption map for namespace 'plotsquared': {}",
+                this.captionMaps.get(TranslatableCaption.DEFAULT_NAMESPACE).getClass().getCanonicalName()
+        );
     }
 
     /**
@@ -254,29 +288,8 @@ public class PlotSquared {
      *
      * @return Plot area manager
      */
-    @Nonnull public PlotAreaManager getPlotAreaManager() {
+    public @NonNull PlotAreaManager getPlotAreaManager() {
         return this.platform.injector().getInstance(PlotAreaManager.class);
-    }
-
-    /**
-     * Gets an instance of PlotSquared.
-     *
-     * @return instance of PlotSquared
-     */
-    public static PlotSquared get() {
-        return PlotSquared.instance;
-    }
-
-    /**
-     * Get the platform specific implementation of PlotSquared
-     *
-     * @return Platform implementation
-     */
-    @Nonnull public static PlotPlatform<?> platform() {
-        if (instance != null && instance.platform != null) {
-            return instance.platform;
-        }
-        throw new IllegalStateException("Plot platform implementation is missing");
     }
 
     public void startExpiryTasks() {
@@ -290,7 +303,7 @@ public class PlotSquared {
         }
     }
 
-    public boolean isMainThread(Thread thread) {
+    public boolean isMainThread(final @NonNull Thread thread) {
         return this.thread == thread;
     }
 
@@ -301,9 +314,12 @@ public class PlotSquared {
      * @param version2 Second version
      * @return true if `version` is &gt;= `version2`
      */
-    public boolean checkVersion(int[] version, int... version2) {
+    public boolean checkVersion(
+            final int[] version,
+            final int... version2
+    ) {
         return version[0] > version2[0] || version[0] == version2[0] && version[1] > version2[1]
-            || version[0] == version2[0] && version[1] == version2[1] && version[2] >= version2[2];
+                || version[0] == version2[0] && version[1] == version2[1] && version[2] >= version2[2];
     }
 
     /**
@@ -311,7 +327,7 @@ public class PlotSquared {
      *
      * @return current version in config or null
      */
-    public PlotVersion getVersion() {
+    public @NonNull PlotVersion getVersion() {
         return this.version;
     }
 
@@ -322,7 +338,7 @@ public class PlotSquared {
      *
      * @return the server implementation
      */
-    public String getPlatform() {
+    public @NonNull String getPlatform() {
         return Settings.PLATFORM;
     }
 
@@ -332,7 +348,7 @@ public class PlotSquared {
      * @param plotArea the {@code PlotArea} to add.
      * @see #removePlotArea(PlotArea) To remove the reference
      */
-    public void addPlotArea(PlotArea plotArea) {
+    public void addPlotArea(final @NonNull PlotArea plotArea) {
         HashMap<PlotId, Plot> plots;
         if (plots_tmp == null || (plots = plots_tmp.remove(plotArea.toString())) == null) {
             if (plotArea.getType() == PlotAreaType.PARTIAL) {
@@ -358,8 +374,8 @@ public class PlotSquared {
         if (clustersTmp == null || (clusters = clustersTmp.remove(plotArea.toString())) == null) {
             if (plotArea.getType() == PlotAreaType.PARTIAL) {
                 clusters = this.clustersTmp != null ?
-                    this.clustersTmp.get(plotArea.getWorldName()) :
-                    null;
+                        this.clustersTmp.get(plotArea.getWorldName()) :
+                        null;
                 if (clusters != null) {
                     Iterator<PlotCluster> iterator = clusters.iterator();
                     while (iterator.hasNext()) {
@@ -382,8 +398,8 @@ public class PlotSquared {
             return;
         }
         File file = new File(
-            this.platform.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.getId()
-                + "_" + plotArea.getWorldName());
+                this.platform.getDirectory() + File.separator + "persistent_regen_data_" + plotArea.getId()
+                        + "_" + plotArea.getWorldName());
         if (!file.exists()) {
             return;
         }
@@ -397,7 +413,11 @@ public class PlotSquared {
                 regionInts.forEach(l -> regions.add(BlockVector2.at(l[0], l[1])));
                 chunkInts.forEach(l -> chunks.add(BlockVector2.at(l[0], l[1])));
                 int height = (int) list.get(2);
-                logger.info("Incomplete road regeneration found. Restarting in world {} with height {}", plotArea.getWorldName(), height);
+                logger.info(
+                        "Incomplete road regeneration found. Restarting in world {} with height {}",
+                        plotArea.getWorldName(),
+                        height
+                );
                 logger.info(" - Regions: {}", regions.size());
                 logger.info(" - Chunks: {}", chunks.size());
                 HybridUtils.UPDATE = true;
@@ -417,12 +437,12 @@ public class PlotSquared {
      *
      * @param area the {@code PlotArea} to remove
      */
-    public void removePlotArea(PlotArea area) {
+    public void removePlotArea(final @NonNull PlotArea area) {
         getPlotAreaManager().removePlotArea(area);
         setPlotsTmp(area);
     }
 
-    public void removePlotAreas(@Nonnull final String world) {
+    public void removePlotAreas(final @NonNull String world) {
         for (final PlotArea area : this.getPlotAreaManager().getPlotAreasSet(world)) {
             if (area.getWorldName().equals(world)) {
                 removePlotArea(area);
@@ -430,12 +450,12 @@ public class PlotSquared {
         }
     }
 
-    private void setPlotsTmp(PlotArea area) {
+    private void setPlotsTmp(final @NonNull PlotArea area) {
         if (this.plots_tmp == null) {
             this.plots_tmp = new HashMap<>();
         }
         HashMap<PlotId, Plot> map =
-            this.plots_tmp.computeIfAbsent(area.toString(), k -> new HashMap<>());
+                this.plots_tmp.computeIfAbsent(area.toString(), k -> new HashMap<>());
         for (Plot plot : area.getPlots()) {
             map.put(plot.getId(), plot);
         }
@@ -445,7 +465,7 @@ public class PlotSquared {
         this.clustersTmp.put(area.toString(), area.getClusters());
     }
 
-    public Set<PlotCluster> getClusters(@Nonnull final String world) {
+    public Set<PlotCluster> getClusters(final @NonNull String world) {
         final Set<PlotCluster> set = new HashSet<>();
         for (final PlotArea area : this.getPlotAreaManager().getPlotAreasSet(world)) {
             set.addAll(area.getClusters());
@@ -542,7 +562,7 @@ public class PlotSquared {
      *
      * @param input an array of plots to sort
      */
-    private void sortPlotsByHash(Plot[] input) {
+    private void sortPlotsByHash(final @NonNull Plot @NonNull[] input) {
         List<Plot>[] bucket = new ArrayList[32];
         Arrays.fill(bucket, new ArrayList<>());
         boolean maxLength = false;
@@ -567,11 +587,11 @@ public class PlotSquared {
         }
     }
 
-    private ArrayList<Plot> sortPlotsByTimestamp(Collection<Plot> plots) {
+    private @NonNull List<Plot> sortPlotsByTimestamp(final @NonNull Collection<Plot> plots) {
         int hardMax = 256000;
         int max = 0;
         int overflowSize = 0;
-        for (Plot plot : plots) {
+        for (final Plot plot : plots) {
             int hash = MathMan.getPositiveId(plot.hashCode());
             if (hash > max) {
                 if (hash >= hardMax) {
@@ -615,10 +635,10 @@ public class PlotSquared {
     /**
      * Sort plots by creation timestamp.
      *
-     * @param input
-     * @return
+     * @param input Plots to sort
+     * @return Sorted list
      */
-    private List<Plot> sortPlotsByModified(Collection<Plot> input) {
+    private @NonNull List<Plot> sortPlotsByModified(final @NonNull Collection<Plot> input) {
         List<Plot> list;
         if (input instanceof List) {
             list = (List<Plot>) input;
@@ -639,8 +659,11 @@ public class PlotSquared {
      *                     want default world order
      * @return ArrayList of plot
      */
-    public ArrayList<Plot> sortPlots(Collection<Plot> plots, SortType type,
-        final PlotArea priorityArea) {
+    public @NonNull List<Plot> sortPlots(
+            final @NonNull Collection<Plot> plots,
+            final @NonNull SortType type,
+            final @Nullable PlotArea priorityArea
+    ) {
         // group by world
         // sort each
         HashMap<PlotArea, Collection<Plot>> map = new HashMap<>();
@@ -698,7 +721,7 @@ public class PlotSquared {
         return toReturn;
     }
 
-    public void setPlots(@Nonnull final Map<String, HashMap<PlotId, Plot>> plots) {
+    public void setPlots(final @NonNull Map<String, HashMap<PlotId, Plot>> plots) {
         if (this.plots_tmp == null) {
             this.plots_tmp = new HashMap<>();
         }
@@ -724,7 +747,10 @@ public class PlotSquared {
      * @param callEvent If to call an event about the plot being removed
      * @return true if plot existed | false if it didn't
      */
-    public boolean removePlot(Plot plot, boolean callEvent) {
+    public boolean removePlot(
+            final @NonNull Plot plot,
+            final boolean callEvent
+    ) {
         if (plot == null) {
             return false;
         }
@@ -761,7 +787,10 @@ public class PlotSquared {
      * @param world         the world to load
      * @param baseGenerator The generator for that world, or null
      */
-    public void loadWorld(String world, GeneratorWrapper<?> baseGenerator) {
+    public void loadWorld(
+            final @NonNull String world,
+            final @Nullable GeneratorWrapper<?> baseGenerator
+    ) {
         if (world.equals("CheckingPlotSquaredGenerator")) {
             return;
         }
@@ -790,13 +819,13 @@ public class PlotSquared {
             } else if (worldSection != null) {
                 String secondaryGeneratorName = worldSection.getString("generator.plugin");
                 GeneratorWrapper<?> secondaryGenerator =
-                    this.platform.getGenerator(world, secondaryGeneratorName);
+                        this.platform.getGenerator(world, secondaryGeneratorName);
                 if (secondaryGenerator != null && secondaryGenerator.isFull()) {
                     plotGenerator = secondaryGenerator.getPlotGenerator();
                 } else {
                     String primaryGeneratorName = worldSection.getString("generator.init");
                     GeneratorWrapper<?> primaryGenerator =
-                        this.platform.getGenerator(world, primaryGeneratorName);
+                            this.platform.getGenerator(world, primaryGeneratorName);
                     if (primaryGenerator != null && primaryGenerator.isFull()) {
                         plotGenerator = primaryGenerator.getPlotGenerator();
                     } else {
@@ -840,7 +869,7 @@ public class PlotSquared {
                 String gen_string = worldSection.getString("generator.plugin", platform.pluginName());
                 if (type == PlotAreaType.PARTIAL) {
                     Set<PlotCluster> clusters =
-                        this.clustersTmp != null ? this.clustersTmp.get(world) : new HashSet<>();
+                            this.clustersTmp != null ? this.clustersTmp.get(world) : new HashSet<>();
                     if (clusters == null) {
                         throw new IllegalArgumentException("No cluster exists for world: " + world);
                     }
@@ -858,7 +887,7 @@ public class PlotSquared {
                             throw new IllegalArgumentException("Invalid Generator: " + gen_string);
                         }
                         PlotArea pa =
-                            areaGen.getPlotGenerator().getNewPlotArea(world, name, pos1, pos2);
+                                areaGen.getPlotGenerator().getNewPlotArea(world, name, pos1, pos2);
                         pa.saveConfiguration(worldSection);
                         pa.loadDefaultConfiguration(worldSection);
                         try {
@@ -901,22 +930,22 @@ public class PlotSquared {
             }
             if (type == PlotAreaType.AUGMENTED) {
                 throw new IllegalArgumentException(
-                    "Invalid type for multi-area world. Expected `PARTIAL`, got `"
-                        + PlotAreaType.AUGMENTED + "`");
+                        "Invalid type for multi-area world. Expected `PARTIAL`, got `"
+                                + PlotAreaType.AUGMENTED + "`");
             }
             for (String areaId : areasSection.getKeys(false)) {
                 logger.info(" - {}", areaId);
                 String[] split = areaId.split("(?<=[^;-])-");
                 if (split.length != 3) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId
-                        + ". Expected form `<name>-<pos1>-<pos2>`");
+                            + ". Expected form `<name>-<pos1>-<pos2>`");
                 }
                 String name = split[0];
                 PlotId pos1 = PlotId.fromString(split[1]);
                 PlotId pos2 = PlotId.fromString(split[2]);
                 if (name.isEmpty()) {
                     throw new IllegalArgumentException("Invalid Area identifier: " + areaId
-                        + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
+                            + ". Expected form `<name>-<x1;z1>-<x2;z2>`");
                 }
                 final PlotArea existing = this.getPlotAreaManager().getPlotArea(world, name);
                 if (existing != null && name.equals(existing.getId())) {
@@ -989,18 +1018,23 @@ public class PlotSquared {
      * @param generator the plot generator
      * @return boolean | if valid arguments were provided
      */
-    public boolean setupPlotWorld(String world, String args, IndependentPlotGenerator generator) {
+    public boolean setupPlotWorld(
+            final @NonNull String world,
+            final @Nullable String args,
+            final @NonNull IndependentPlotGenerator generator
+    ) {
         if (args != null && !args.isEmpty()) {
             // save configuration
 
             final List<String> validArguments = Arrays
-                .asList("s=", "size=", "g=", "gap=", "h=", "height=", "f=", "floor=", "m=", "main=",
-                    "w=", "wall=", "b=", "border=");
+                    .asList("s=", "size=", "g=", "gap=", "h=", "height=", "f=", "floor=", "m=", "main=",
+                            "w=", "wall=", "b=", "border="
+                    );
 
             // Calculate the number of expected arguments
             int expected = (int) validArguments.stream()
-                .filter(validArgument -> args.toLowerCase(Locale.ENGLISH).contains(validArgument))
-                .count();
+                    .filter(validArgument -> args.toLowerCase(Locale.ENGLISH).contains(validArgument))
+                    .count();
 
             String[] split = args.toLowerCase(Locale.ENGLISH).split(",(?![^\\(\\[]*[\\]\\)])");
 
@@ -1035,7 +1069,9 @@ public class PlotSquared {
                 split = combinedArgs;
             }
 
-            final HybridPlotWorldFactory hybridPlotWorldFactory = this.platform.injector().getInstance(HybridPlotWorldFactory.class);
+            final HybridPlotWorldFactory hybridPlotWorldFactory = this.platform
+                    .injector()
+                    .getInstance(HybridPlotWorldFactory.class);
             final HybridPlotWorld plotWorld = hybridPlotWorldFactory.create(world, null, generator, null, null);
 
             for (String element : split) {
@@ -1051,42 +1087,60 @@ public class PlotSquared {
                     switch (key) {
                         case "s":
                         case "size":
-                            this.worldConfiguration.set(base + "plot.size",
-                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
+                            this.worldConfiguration.set(
+                                    base + "plot.size",
+                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                            );
                             break;
                         case "g":
                         case "gap":
-                            this.worldConfiguration.set(base + "road.width",
-                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
+                            this.worldConfiguration.set(
+                                    base + "road.width",
+                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                            );
                             break;
                         case "h":
                         case "height":
-                            this.worldConfiguration.set(base + "road.height",
-                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
-                            this.worldConfiguration.set(base + "plot.height",
-                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
-                            this.worldConfiguration.set(base + "wall.height",
-                                ConfigurationUtil.INTEGER.parseString(value).shortValue());
+                            this.worldConfiguration.set(
+                                    base + "road.height",
+                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                            );
+                            this.worldConfiguration.set(
+                                    base + "plot.height",
+                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                            );
+                            this.worldConfiguration.set(
+                                    base + "wall.height",
+                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                            );
                             break;
                         case "f":
                         case "floor":
-                            this.worldConfiguration.set(base + "plot.floor",
-                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString());
+                            this.worldConfiguration.set(
+                                    base + "plot.floor",
+                                    ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
+                            );
                             break;
                         case "m":
                         case "main":
-                            this.worldConfiguration.set(base + "plot.filling",
-                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString());
+                            this.worldConfiguration.set(
+                                    base + "plot.filling",
+                                    ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
+                            );
                             break;
                         case "w":
                         case "wall":
-                            this.worldConfiguration.set(base + "wall.filling",
-                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString());
+                            this.worldConfiguration.set(
+                                    base + "wall.filling",
+                                    ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
+                            );
                             break;
                         case "b":
                         case "border":
-                            this.worldConfiguration.set(base + "wall.block",
-                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString());
+                            this.worldConfiguration.set(
+                                    base + "wall.block",
+                                    ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
+                            );
                             break;
                         default:
                             logger.error("Key not found: {}", element);
@@ -1100,7 +1154,7 @@ public class PlotSquared {
             }
             try {
                 ConfigurationSection section =
-                    this.worldConfiguration.getConfigurationSection("worlds." + world);
+                        this.worldConfiguration.getConfigurationSection("worlds." + world);
                 plotWorld.saveConfiguration(section);
                 plotWorld.loadDefaultConfiguration(section);
                 this.worldConfiguration.save(this.worldsFile);
@@ -1117,7 +1171,10 @@ public class PlotSquared {
      * @param file   Name of the file inside PlotSquared.jar
      * @param folder The output location relative to /plugins/PlotSquared/
      */
-    public void copyFile(String file, String folder) {
+    public void copyFile(
+            final @NonNull String file,
+            final @NonNull String folder
+    ) {
         try {
             File output = this.platform.getDirectory();
             if (!output.exists()) {
@@ -1131,7 +1188,7 @@ public class PlotSquared {
                 byte[] buffer = new byte[2048];
                 if (stream == null) {
                     try (ZipInputStream zis = new ZipInputStream(
-                        new FileInputStream(this.jarFile))) {
+                            new FileInputStream(this.jarFile))) {
                         ZipEntry ze = zis.getNextEntry();
                         while (ze != null) {
                             String name = ze.getName();
@@ -1194,7 +1251,7 @@ public class PlotSquared {
      */
     private void checkRoadRegenPersistence() {
         if (!HybridUtils.UPDATE || !Settings.Enabled_Components.PERSISTENT_ROAD_REGEN || (
-            HybridUtils.regions.isEmpty() && HybridUtils.chunks.isEmpty())) {
+                HybridUtils.regions.isEmpty() && HybridUtils.chunks.isEmpty())) {
             return;
         }
         logger.info("Road regeneration incomplete. Saving incomplete regions to disk");
@@ -1203,24 +1260,24 @@ public class PlotSquared {
         ArrayList<int[]> regions = new ArrayList<>();
         ArrayList<int[]> chunks = new ArrayList<>();
         for (BlockVector2 r : HybridUtils.regions) {
-            regions.add(new int[] {r.getBlockX(), r.getBlockZ()});
+            regions.add(new int[]{r.getBlockX(), r.getBlockZ()});
         }
         for (BlockVector2 c : HybridUtils.chunks) {
-            chunks.add(new int[] {c.getBlockX(), c.getBlockZ()});
+            chunks.add(new int[]{c.getBlockX(), c.getBlockZ()});
         }
         List<Object> list = new ArrayList<>();
         list.add(regions);
         list.add(chunks);
         list.add(HybridUtils.height);
         File file = new File(
-            this.platform.getDirectory() + File.separator + "persistent_regen_data_" + HybridUtils.area
-                .getId() + "_" + HybridUtils.area.getWorldName());
+                this.platform.getDirectory() + File.separator + "persistent_regen_data_" + HybridUtils.area
+                        .getId() + "_" + HybridUtils.area.getWorldName());
         if (file.exists() && !file.delete()) {
             logger.error("persistent_regene_data file already exists and could not be deleted");
             return;
         }
         try (ObjectOutputStream oos = new ObjectOutputStream(
-            Files.newOutputStream(file.toPath(), StandardOpenOption.CREATE_NEW))) {
+                Files.newOutputStream(file.toPath(), StandardOpenOption.CREATE_NEW))) {
             oos.writeObject(list);
         } catch (IOException e) {
             logger.error("Error creating persistent_region_data file", e);
@@ -1238,7 +1295,8 @@ public class PlotSquared {
             Database database;
             if (Storage.MySQL.USE) {
                 database = new MySQL(Storage.MySQL.HOST, Storage.MySQL.PORT, Storage.MySQL.DATABASE,
-                    Storage.MySQL.USER, Storage.MySQL.PASSWORD);
+                        Storage.MySQL.USER, Storage.MySQL.PASSWORD
+                );
             } else if (Storage.SQLite.USE) {
                 File file = FileUtils.getFile(platform.getDirectory(), Storage.SQLite.DB + ".db");
                 database = new SQLite(file);
@@ -1247,7 +1305,13 @@ public class PlotSquared {
                 this.platform.shutdown(); //shutdown used instead of disable because no database is set
                 return;
             }
-            DBFunc.dbManager = new SQLManager(database, Storage.PREFIX, this.eventDispatcher, this.plotListener, this.worldConfiguration);
+            DBFunc.dbManager = new SQLManager(
+                    database,
+                    Storage.PREFIX,
+                    this.eventDispatcher,
+                    this.plotListener,
+                    this.worldConfiguration
+            );
             this.plots_tmp = DBFunc.getPlots();
             if (getPlotAreaManager() instanceof SinglePlotAreaManager) {
                 SinglePlotArea area = ((SinglePlotAreaManager) getPlotAreaManager()).getArea();
@@ -1261,32 +1325,35 @@ public class PlotSquared {
             }
             this.clustersTmp = DBFunc.getClusters();
         } catch (ClassNotFoundException | SQLException e) {
-            logger.error("Failed to open database connection ({}). Disabling PlotSquared", Storage.MySQL.USE ? "MySQL" : "SQLite");
+            logger.error(
+                    "Failed to open database connection ({}). Disabling PlotSquared",
+                    Storage.MySQL.USE ? "MySQL" : "SQLite"
+            );
             logger.error("==== Here is an ugly stacktrace, if you are interested in those things ===");
             e.printStackTrace();
             logger.error("==== End of stacktrace ====");
-            logger.error("Please go to the {} 'storage.yml' and configure the database correctly",
-                platform.pluginName());
+            logger.error(
+                    "Please go to the {} 'storage.yml' and configure the database correctly",
+                    platform.pluginName()
+            );
             this.platform.shutdown(); //shutdown used instead of disable because of database error
         }
     }
 
     /**
      * Setup the default configuration.
-     *
-     * @throws IOException if the config failed to save
      */
-    public void setupConfig() throws IOException {
+    public void setupConfig() {
         String lastVersionString = this.getConfig().getString("version");
         if (lastVersionString != null) {
             String[] split = lastVersionString.split("\\.");
-            int[] lastVersion = new int[] {Integer.parseInt(split[0]), Integer.parseInt(split[1]),
-                Integer.parseInt(split[2])};
-            if (checkVersion(new int[] {3, 4, 0}, lastVersion)) {
+            int[] lastVersion = new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]),
+                    Integer.parseInt(split[2])};
+            if (checkVersion(new int[]{3, 4, 0}, lastVersion)) {
                 Settings.convertLegacy(configFile);
                 if (getConfig().contains("worlds")) {
                     ConfigurationSection worldSection =
-                        getConfig().getConfigurationSection("worlds");
+                            getConfig().getConfigurationSection("worlds");
                     worldConfiguration.set("worlds", worldSection);
                     try {
                         worldConfiguration.save(worldsFile);
@@ -1335,22 +1402,23 @@ public class PlotSquared {
 
             if (this.worldConfiguration.contains("worlds")) {
                 if (!this.worldConfiguration.contains("configuration_version") || (
-                    !this.worldConfiguration.getString("configuration_version")
-                        .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION) && !this.worldConfiguration
-                        .getString("configuration_version").equalsIgnoreCase("v5"))) {
+                        !this.worldConfiguration.getString("configuration_version")
+                                .equalsIgnoreCase(LegacyConverter.CONFIGURATION_VERSION) && !this.worldConfiguration
+                                .getString("configuration_version").equalsIgnoreCase("v5"))) {
                     // Conversion needed
                     logger.info("A legacy configuration file was detected. Conversion will be attempted.");
                     try {
                         com.google.common.io.Files
-                            .copy(this.worldsFile, new File(folder, "worlds.yml.old"));
+                                .copy(this.worldsFile, new File(folder, "worlds.yml.old"));
                         logger.info("A copy of worlds.yml has been saved in the file worlds.yml.old");
                         final ConfigurationSection worlds =
-                            this.worldConfiguration.getConfigurationSection("worlds");
+                                this.worldConfiguration.getConfigurationSection("worlds");
                         final LegacyConverter converter = new LegacyConverter(worlds);
                         converter.convert();
                         this.worldConfiguration.set("worlds", worlds);
                         this.setConfigurationVersion(LegacyConverter.CONFIGURATION_VERSION);
-                        logger.info("The conversion has finished. PlotSquared will now be disabled and the new configuration file will be used at next startup. Please review the new worlds.yml file. Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. You need to re-generate the schematics.");
+                        logger.info(
+                                "The conversion has finished. PlotSquared will now be disabled and the new configuration file will be used at next startup. Please review the new worlds.yml file. Please note that schematics will not be converted, as we are now using WorldEdit to handle schematics. You need to re-generate the schematics.");
                     } catch (final Exception e) {
                         logger.error("Failed to convert the legacy configuration file. See stack trace for information.", e);
                     }
@@ -1387,12 +1455,12 @@ public class PlotSquared {
         return true;
     }
 
-    public String getConfigurationVersion() {
+    public @NonNull String getConfigurationVersion() {
         return this.worldConfiguration.get("configuration_version", LegacyConverter.CONFIGURATION_VERSION)
-            .toString();
+                .toString();
     }
 
-    public void setConfigurationVersion(final String newVersion) throws IOException {
+    public void setConfigurationVersion(final @NonNull String newVersion) throws IOException {
         this.worldConfiguration.set("configuration_version", newVersion);
         this.worldConfiguration.save(this.worldsFile);
     }
@@ -1418,7 +1486,7 @@ public class PlotSquared {
         }
     }
 
-    public void forEachPlotRaw(Consumer<Plot> consumer) {
+    public void forEachPlotRaw(final @NonNull Consumer<Plot> consumer) {
         for (final PlotArea area : this.getPlotAreaManager().getAllPlotAreas()) {
             area.getPlots().forEach(consumer);
         }
@@ -1436,8 +1504,10 @@ public class PlotSquared {
      * @param chunkCoordinates Chunk coordinates
      * @return True if the chunk uses non-standard generation, false if not
      */
-    public boolean isNonStandardGeneration(@Nonnull final String world,
-        @Nonnull final BlockVector2 chunkCoordinates) {
+    public boolean isNonStandardGeneration(
+            final @NonNull String world,
+            final @NonNull BlockVector2 chunkCoordinates
+    ) {
         final Location location = Location.at(world, chunkCoordinates.getBlockX() << 4, 64, chunkCoordinates.getBlockZ() << 4);
         final PlotArea area = getPlotAreaManager().getApplicablePlotArea(location);
         if (area == null) {
@@ -1446,31 +1516,31 @@ public class PlotSquared {
         return area.getTerrain() != PlotAreaTerrainType.NONE;
     }
 
-    public YamlConfiguration getConfig() {
+    public @NonNull YamlConfiguration getConfig() {
         return config;
     }
 
-    public UUIDPipeline getImpromptuUUIDPipeline() {
+    public @NonNull UUIDPipeline getImpromptuUUIDPipeline() {
         return this.impromptuUUIDPipeline;
     }
 
-    public UUIDPipeline getBackgroundUUIDPipeline() {
+    public @NonNull UUIDPipeline getBackgroundUUIDPipeline() {
         return this.backgroundUUIDPipeline;
     }
 
-    public WorldEdit getWorldEdit() {
+    public @NonNull WorldEdit getWorldEdit() {
         return this.worldedit;
     }
 
-    public File getConfigFile() {
+    public @NonNull File getConfigFile() {
         return this.configFile;
     }
 
-    public File getWorldsFile() {
+    public @NonNull File getWorldsFile() {
         return this.worldsFile;
     }
 
-    public YamlConfiguration getWorldConfiguration() {
+    public @NonNull YamlConfiguration getWorldConfiguration() {
         return this.worldConfiguration;
     }
 
@@ -1482,33 +1552,42 @@ public class PlotSquared {
      * @return Map instance
      * @see #registerCaptionMap(String, CaptionMap) To register a caption map
      */
-    @Nonnull public CaptionMap getCaptionMap(@Nonnull final String namespace) {
-        return this.captionMaps.computeIfAbsent(namespace.toLowerCase(Locale.ENGLISH),
-            missingNamespace -> new DummyCaptionMap());
+    public @NonNull CaptionMap getCaptionMap(final @NonNull String namespace) {
+        return this.captionMaps.computeIfAbsent(
+                namespace.toLowerCase(Locale.ENGLISH),
+                missingNamespace -> new DummyCaptionMap()
+        );
     }
 
     /**
      * Register a caption map
      *
-     * @param namespace Namespace
+     * @param namespace  Namespace
      * @param captionMap Map instance
      */
-    public void registerCaptionMap(@Nonnull final String namespace, @Nonnull final CaptionMap captionMap) {
+    public void registerCaptionMap(
+            final @NonNull String namespace,
+            final @NonNull CaptionMap captionMap
+    ) {
         if (namespace.equalsIgnoreCase(TranslatableCaption.DEFAULT_NAMESPACE)) {
             throw new IllegalArgumentException("Cannot replace default caption map");
         }
         this.captionMaps.put(namespace.toLowerCase(Locale.ENGLISH), captionMap);
     }
 
-    public EventDispatcher getEventDispatcher() {
+    public @NonNull EventDispatcher getEventDispatcher() {
         return this.eventDispatcher;
     }
 
-    public PlotListener getPlotListener() {
+    public @NonNull PlotListener getPlotListener() {
         return this.plotListener;
     }
 
     public enum SortType {
-        CREATION_DATE, CREATION_DATE_TIMESTAMP, LAST_MODIFIED, DISTANCE_FROM_ORIGIN
+        CREATION_DATE,
+        CREATION_DATE_TIMESTAMP,
+        LAST_MODIFIED,
+        DISTANCE_FROM_ORIGIN
     }
+
 }

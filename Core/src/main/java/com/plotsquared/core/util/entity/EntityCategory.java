@@ -39,7 +39,7 @@ import java.util.Set;
 public class EntityCategory extends Category<EntityType> implements Keyed {
 
     public static final NamespacedRegistry<EntityCategory> REGISTRY =
-        new NamespacedRegistry<>("entity type");
+            new NamespacedRegistry<>("entity type");
 
     private final WorldUtil worldUtil;
     private final String key;
@@ -50,7 +50,8 @@ public class EntityCategory extends Category<EntityType> implements Keyed {
         this.worldUtil = worldUtil;
     }
 
-    @Override protected Set<EntityType> load() {
+    @Override
+    protected Set<EntityType> load() {
         return this.worldUtil.getTypesInCategory(this.key);
     }
 

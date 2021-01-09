@@ -27,9 +27,9 @@ package com.plotsquared.core.plot;
 
 import com.plotsquared.core.location.Location;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -45,7 +45,7 @@ public abstract class PlotWorld {
      *
      * @param world World name
      */
-    protected PlotWorld(@Nonnull final String world) {
+    protected PlotWorld(final @NonNull String world) {
         this.world = world;
     }
 
@@ -56,14 +56,14 @@ public abstract class PlotWorld {
      * @param location Location
      * @return Containing plot area, or null
      */
-    @Nullable public abstract PlotArea getArea(@Nonnull final Location location);
+    public @Nullable abstract PlotArea getArea(final @NonNull Location location);
 
     /**
      * Get all plot areas in the world
      *
      * @return All plot areas in the world
      */
-    @Nonnull public abstract Collection<PlotArea> getAreas();
+    public @NonNull abstract Collection<PlotArea> getAreas();
 
     /**
      * Get all plot areas in a specified region
@@ -71,15 +71,16 @@ public abstract class PlotWorld {
      * @param region Region
      * @return All areas in the region
      */
-    @Nonnull public abstract Collection<PlotArea> getAreasInRegion(
-        @Nonnull final CuboidRegion region);
+    public @NonNull abstract Collection<PlotArea> getAreasInRegion(
+            final @NonNull CuboidRegion region
+    );
 
     /**
      * Register a new area in the world
      *
      * @param area Plot area
      */
-    public void addArea(@Nonnull final PlotArea area) {
+    public void addArea(final @NonNull PlotArea area) {
         throw new UnsupportedOperationException("This world type does not allow adding new areas");
     }
 
@@ -88,7 +89,7 @@ public abstract class PlotWorld {
      *
      * @param area Plot area
      */
-    public void removeArea(@Nonnull final PlotArea area) {
+    public void removeArea(final @NonNull PlotArea area) {
         throw new UnsupportedOperationException("This world type does not allow removing areas");
     }
 
@@ -128,4 +129,5 @@ public abstract class PlotWorld {
         result = result * PRIME + ($world == null ? 43 : $world.hashCode());
         return result;
     }
+
 }

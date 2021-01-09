@@ -42,18 +42,18 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PatternUtil {
 
-    public static BaseBlock apply(@Nonnull Pattern pattern, int x, int y, int z) {
+    public static BaseBlock apply(@NonNull Pattern pattern, int x, int y, int z) {
         Preconditions.checkNotNull(pattern, "Pattern may not be null");
         if (pattern instanceof BlockPattern || pattern instanceof RandomPattern
-            || pattern instanceof BlockState || pattern instanceof BlockType
-            || pattern instanceof BaseBlock) {
+                || pattern instanceof BlockState || pattern instanceof BlockType
+                || pattern instanceof BaseBlock) {
             return pattern.apply(BlockVector3.ZERO);
         }
         return pattern.apply(BlockVector3.at(x, y, z));
@@ -89,7 +89,10 @@ public class PatternUtil {
         try {
             return WorldEdit.getInstance().getPatternFactory().parseFromInput(input, context);
         } catch (InputParseException e) {
-            throw new Command.CommandException(TranslatableCaption.of("invalid.not_valid_block"), Template.of("value", e.getMessage()));
+            throw new Command.CommandException(
+                    TranslatableCaption.of("invalid.not_valid_block"),
+                    Template.of("value", e.getMessage())
+            );
         }
     }
 
@@ -108,4 +111,5 @@ public class PatternUtil {
         }
         return false;
     }
+
 }

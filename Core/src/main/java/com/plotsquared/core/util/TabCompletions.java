@@ -36,8 +36,8 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.uuid.UUIDMapping;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,18 +55,22 @@ import java.util.stream.Collectors;
 public final class TabCompletions {
 
     private static final Cache<String, List<String>> cachedCompletionValues =
-        CacheBuilder.newBuilder()
-                .expireAfterWrite(Settings.Tab_Completions.CACHE_EXPIRATION, TimeUnit.SECONDS)
-                .build();
+            CacheBuilder.newBuilder()
+                    .expireAfterWrite(Settings.Tab_Completions.CACHE_EXPIRATION, TimeUnit.SECONDS)
+                    .build();
 
     private static final Command booleanTrueCompletion = new Command(null, false, "true", "",
-            RequiredType.NONE, null) {};
+            RequiredType.NONE, null
+    ) {
+    };
     private static final Command booleanFalseCompletion = new Command(null, false, "false", "",
-            RequiredType.NONE, null) {};
+            RequiredType.NONE, null
+    ) {
+    };
 
     private TabCompletions() {
         throw new UnsupportedOperationException(
-            "This is a utility class and cannot be instantiated");
+                "This is a utility class and cannot be instantiated");
     }
 
     /**
@@ -77,8 +81,10 @@ public final class TabCompletions {
      * @param existing Players that should not be included in completions
      * @return List of completions
      */
-    @Nonnull public static List<Command> completePlayers(@Nonnull final String input,
-        @Nonnull final List<String> existing) {
+    public @NonNull static List<Command> completePlayers(
+            final @NonNull String input,
+            final @NonNull List<String> existing
+    ) {
         return completePlayers("players", input, existing, uuid -> true);
     }
 
@@ -90,16 +96,21 @@ public final class TabCompletions {
      * @param existing Players that should not be included in completions
      * @return List of completions
      */
-    @Nonnull public static List<Command> completeAddedPlayers(@Nonnull final Plot plot,
-        @Nonnull final String input, @Nonnull final List<String> existing) {
+    public @NonNull static List<Command> completeAddedPlayers(
+            final @NonNull Plot plot,
+            final @NonNull String input, final @NonNull List<String> existing
+    ) {
         return completePlayers("added" + plot, input, existing,
                 uuid -> plot.getMembers().contains(uuid)
-                || plot.getTrusted().contains(uuid)
-                || plot.getDenied().contains(uuid));
+                        || plot.getTrusted().contains(uuid)
+                        || plot.getDenied().contains(uuid)
+        );
     }
 
-    @Nonnull public static List<Command> completePlayersInPlot(@Nonnull final Plot plot,
-        @Nonnull final String input, @Nonnull final List<String> existing) {
+    public @NonNull static List<Command> completePlayersInPlot(
+            final @NonNull Plot plot,
+            final @NonNull String input, final @NonNull List<String> existing
+    ) {
         List<String> players = cachedCompletionValues.getIfPresent("inPlot" + plot);
         if (players == null) {
             final List<PlotPlayer<?>> inPlot = plot.getPlayersInPlot();
@@ -119,15 +130,15 @@ public final class TabCompletions {
      * @param input Command input
      * @return List of completions
      */
-    @Nonnull public static List<Command> completePatterns(@Nonnull final String input) {
+    public @NonNull static List<Command> completePatterns(final @NonNull String input) {
         return PatternUtil.getSuggestions(input.trim()).stream()
-            .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
-            .filter(value -> value.startsWith(input.toLowerCase(Locale.ENGLISH)))
-            .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
-            }).collect(Collectors.toList());
+                .map(value -> value.toLowerCase(Locale.ENGLISH).replace("minecraft:", ""))
+                .filter(value -> value.startsWith(input.toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 
-    @Nonnull public static List<Command> completeBoolean(@Nonnull final String input) {
+    public @NonNull static List<Command> completeBoolean(final @NonNull String input) {
         if (input.isEmpty()) {
             return Arrays.asList(booleanTrueCompletion, booleanFalseCompletion);
         }
@@ -149,8 +160,10 @@ public final class TabCompletions {
      * @param highestLimit Highest number to include
      * @return Unmodifiable list of number completions
      */
-    @Nonnull public static List<Command> completeNumbers(@Nonnull final String input,
-        final int amountLimit, final int highestLimit) {
+    public @NonNull static List<Command> completeNumbers(
+            final @NonNull String input,
+            final int amountLimit, final int highestLimit
+    ) {
         if (input.isEmpty() || input.length() > highestLimit || !MathMan.isInteger(input)) {
             return Collections.emptyList();
         }
@@ -174,7 +187,7 @@ public final class TabCompletions {
      * @param input Input to filter with
      * @return Unmodifiable list of area completions
      */
-    @Nonnull public static List<Command> completeAreas(@Nonnull final String input) {
+    public @NonNull static List<Command> completeAreas(final @NonNull String input) {
         final List<Command> completions = new ArrayList<>();
         for (final PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
             String areaName = area.getWorldName();
@@ -185,16 +198,20 @@ public final class TabCompletions {
                 continue;
             }
             completions.add(new Command(null, false, areaName, "",
-                    RequiredType.NONE, null) {});
+                    RequiredType.NONE, null
+            ) {
+            });
         }
         return Collections.unmodifiableList(completions);
     }
 
-    @Nonnull public static List<Command> asCompletions(String... toFilter) {
+    public @NonNull static List<Command> asCompletions(String... toFilter) {
         final List<Command> completions = new ArrayList<>();
         for (String completion : toFilter) {
             completions.add(new Command(null, false, completion, "",
-                    RequiredType.NONE, null) {});
+                    RequiredType.NONE, null
+            ) {
+            });
         }
         return Collections.unmodifiableList(completions);
     }
@@ -206,9 +223,11 @@ public final class TabCompletions {
      * @param uuidFilter      Filter applied before caching values
      * @return List of completions
      */
-    private static List<Command> completePlayers(@Nonnull final String cacheIdentifier,
-        @Nonnull final String input, @Nonnull final List<String> existing,
-        @Nonnull final Predicate<UUID> uuidFilter) {
+    private static List<Command> completePlayers(
+            final @NonNull String cacheIdentifier,
+            final @NonNull String input, final @NonNull List<String> existing,
+            final @NonNull Predicate<UUID> uuidFilter
+    ) {
         List<String> players;
         if (Settings.Enabled_Components.EXTENDED_USERNAME_COMPLETION) {
             players = cachedCompletionValues.getIfPresent(cacheIdentifier);
@@ -235,13 +254,16 @@ public final class TabCompletions {
         return filterCached(players, input, existing);
     }
 
-    private static List<Command> filterCached(Collection<String> playerNames, String input,
-        List<String> existing) {
+    private static List<Command> filterCached(
+            Collection<String> playerNames, String input,
+            List<String> existing
+    ) {
         final String processedInput = input.toLowerCase(Locale.ENGLISH);
         return playerNames.stream().filter(player -> player.toLowerCase(Locale.ENGLISH).startsWith(processedInput))
                 .filter(player -> !existing.contains(player)).map(
                         player -> new Command(null, false, player, "", RequiredType.NONE,
-                                CommandCategory.INFO) {
+                                CommandCategory.INFO
+                        ) {
                         })
                 /* If there are more than 200 suggestions, just send the first 200 */
                 .limit(200)

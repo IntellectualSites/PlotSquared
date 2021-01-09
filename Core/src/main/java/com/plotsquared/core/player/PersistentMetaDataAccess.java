@@ -26,25 +26,29 @@
 package com.plotsquared.core.player;
 
 import com.plotsquared.core.synchronization.LockRepository;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
 
-    PersistentMetaDataAccess(@Nonnull final PlotPlayer<?> player,
-                             @Nonnull final MetaDataKey<T> metaDataKey,
-                             @Nonnull final LockRepository.LockAccess lockAccess) {
+    PersistentMetaDataAccess(
+            final @NonNull PlotPlayer<?> player,
+            final @NonNull MetaDataKey<T> metaDataKey,
+            final LockRepository.@NonNull LockAccess lockAccess
+    ) {
         super(player, metaDataKey, lockAccess);
     }
 
-    @Override public boolean isPresent() {
+    @Override
+    public boolean isPresent() {
         this.checkClosed();
         return this.getPlayer().hasPersistentMeta(getMetaDataKey().toString());
     }
 
-    @Override @Nullable public T remove() {
+    @Override
+    public @Nullable T remove() {
         this.checkClosed();
         final Object old = this.getPlayer().removePersistentMeta(this.getMetaDataKey().toString());
         if (old == null) {
@@ -53,12 +57,15 @@ final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
         return (T) old;
     }
 
-    @Override public void set(@Nonnull T value) {
+    @Override
+    public void set(@NonNull T value) {
         this.checkClosed();
         this.getPlayer().setPersistentMeta(this.getMetaDataKey(), value);
     }
 
-    @Nonnull @Override public Optional<T> get() {
+    @NonNull
+    @Override
+    public Optional<T> get() {
         this.checkClosed();
         return Optional.ofNullable(this.getPlayer().getPersistentMeta(this.getMetaDataKey()));
     }

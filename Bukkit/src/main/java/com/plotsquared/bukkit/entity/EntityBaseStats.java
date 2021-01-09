@@ -34,4 +34,5 @@ class EntityBaseStats {
     double vZ;
     double vY;
     double vX;
+
 }

@@ -25,7 +25,8 @@
  */
 package com.plotsquared.core.backup;
 
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +39,8 @@ public class Backup {
 
     private final BackupProfile owner;
     private final long creationTime;
-    @Nullable private final Path file;
+    @Nullable
+    private final Path file;
 
     Backup(final BackupProfile owner, final long creationTime, final Path file) {
         this.owner = owner;
@@ -67,7 +69,8 @@ public class Backup {
         return this.creationTime;
     }
 
-    @Nullable public Path getFile() {
+    public @Nullable Path getFile() {
         return this.file;
     }
+
 }

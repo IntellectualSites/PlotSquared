@@ -41,15 +41,18 @@ public class HelpObject {
     private final String rendered;
 
     public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
-        rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_item").getComponent(audience),
-            Template.of("usage", command.getUsage().replace("{label}", label)),
-            Template.of("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
-            Templates.of(audience, "desc", command.getDescription()),
-            Template.of("arguments", buildArgumentList(command.getRequiredArguments())),
-            Template.of("label", label)));
+        rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+                TranslatableCaption.of("help.help_item").getComponent(audience),
+                Template.of("usage", command.getUsage().replace("{label}", label)),
+                Template.of("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
+                Templates.of(audience, "desc", command.getDescription()),
+                Template.of("arguments", buildArgumentList(command.getRequiredArguments())),
+                Template.of("label", label)
+        ));
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return rendered;
     }
 
@@ -60,8 +63,9 @@ public class HelpObject {
         final StringBuilder builder = new StringBuilder();
         for (final Argument<?> argument : arguments) {
             builder.append("[").append(argument.getName()).append(" (")
-                .append(argument.getExample()).append(")],");
+                    .append(argument.getExample()).append(")],");
         }
         return arguments.length > 0 ? builder.substring(0, builder.length() - 1) : "";
     }
+
 }

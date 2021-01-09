@@ -33,29 +33,32 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "leave",
-    permission = "plots.leave",
-    usage = "/plot leave",
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.leave",
+        usage = "/plot leave",
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.PLAYER)
 public class Leave extends Command {
-    
+
     private final EventDispatcher eventDispatcher;
-    
-    @Inject public Leave(@Nonnull final EventDispatcher eventDispatcher) {
+
+    @Inject
+    public Leave(final @NonNull EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
         checkTrue(plot.isAdded(player.getUUID()), TranslatableCaption.of("members.not_added_trusted"));
@@ -84,4 +87,5 @@ public class Leave extends Command {
         }
         return CompletableFuture.completedFuture(true);
     }
+
 }

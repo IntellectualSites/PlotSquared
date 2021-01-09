@@ -34,27 +34,30 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "regenallroads",
-    aliases = {"rgar"},
-    usage = "/plot regenallroads <world> [height]",
-    category = CommandCategory.ADMINISTRATION,
-    requiredType = RequiredType.CONSOLE,
-    permission = "plots.regenallroads")
+        aliases = {"rgar"},
+        usage = "/plot regenallroads <world> [height]",
+        category = CommandCategory.ADMINISTRATION,
+        requiredType = RequiredType.CONSOLE,
+        permission = "plots.regenallroads")
 public class RegenAllRoads extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final HybridUtils hybridUtils;
 
-    @Inject public RegenAllRoads(@Nonnull final PlotAreaManager plotAreaManager,
-                                 @Nonnull final HybridUtils hybridUtils) {
+    @Inject
+    public RegenAllRoads(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull HybridUtils hybridUtils
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.hybridUtils = hybridUtils;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         int height = 0;
         if (args.length == 2) {
             try {
@@ -91,8 +94,10 @@ public class RegenAllRoads extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.invalid_plot_world"));
             return false;
         }
-        player.sendMessage(TranslatableCaption.of("debugroadregen.schematic"),
-                Template.of("command", "/plot createroadschematic"));
+        player.sendMessage(
+                TranslatableCaption.of("debugroadregen.schematic"),
+                Template.of("command", "/plot createroadschematic")
+        );
         player.sendMessage(TranslatableCaption.of("debugroadregen.regenallroads_started"));
         boolean result = this.hybridUtils.scheduleRoadUpdate(area, height);
         if (!result) {
@@ -101,4 +106,5 @@ public class RegenAllRoads extends SubCommand {
         }
         return true;
     }
+
 }

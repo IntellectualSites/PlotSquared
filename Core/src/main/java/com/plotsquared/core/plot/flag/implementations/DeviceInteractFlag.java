@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class DeviceInteractFlag extends BooleanFlag<DeviceInteractFlag> {
 
@@ -39,7 +38,8 @@ public class DeviceInteractFlag extends BooleanFlag<DeviceInteractFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_device_interact"));
     }
 
-    @Override protected DeviceInteractFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected DeviceInteractFlag flagOf(@NonNull Boolean value) {
         return value ? DEVICE_INTERACT_TRUE : DEVICE_INTERACT_FALSE;
     }
 

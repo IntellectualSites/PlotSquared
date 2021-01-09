@@ -27,34 +27,42 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class GreetingFlag extends PlotFlag<String, GreetingFlag> {
 
     public static final GreetingFlag GREETING_FLAG_EMPTY = new GreetingFlag("");
 
-    protected GreetingFlag(@Nonnull String value) {
-        super(value, TranslatableCaption.of("flags.flag_category_string"), TranslatableCaption.of("flags.flag_description_greeting"));
+    protected GreetingFlag(@NonNull String value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_string"),
+                TranslatableCaption.of("flags.flag_description_greeting")
+        );
     }
 
-    @Override public GreetingFlag parse(@Nonnull String input) {
+    @Override
+    public GreetingFlag parse(@NonNull String input) {
         return flagOf(input);
     }
 
-    @Override public GreetingFlag merge(@Nonnull String newValue) {
+    @Override
+    public GreetingFlag merge(@NonNull String newValue) {
         return flagOf(this.getValue() + " " + newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "&6Welcome to my plot!";
     }
 
-    @Override protected GreetingFlag flagOf(@Nonnull String value) {
+    @Override
+    protected GreetingFlag flagOf(@NonNull String value) {
         return new GreetingFlag(value);
     }
 

@@ -27,8 +27,8 @@ package com.plotsquared.core.configuration.caption;
 
 import com.google.common.base.Objects;
 import com.plotsquared.core.PlotSquared;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -45,7 +45,7 @@ public final class TranslatableCaption implements NamespacedCaption {
     private final String namespace;
     private final String key;
 
-    private TranslatableCaption(@Nonnull final String namespace, @Nonnull final String key) {
+    private TranslatableCaption(final @NonNull String namespace, final @NonNull String key) {
         this.namespace = namespace;
         this.key = key;
     }
@@ -57,7 +57,7 @@ public final class TranslatableCaption implements NamespacedCaption {
      *               included, {@link #DEFAULT_NAMESPACE} will be used.
      * @return Caption instance
      */
-    @Nonnull public static TranslatableCaption of(@Nonnull final String rawKey) {
+    public @NonNull static TranslatableCaption of(final @NonNull String rawKey) {
         final String namespace;
         final String key;
         if (rawKey.contains(":")) {
@@ -68,8 +68,10 @@ public final class TranslatableCaption implements NamespacedCaption {
             namespace = DEFAULT_NAMESPACE;
             key = rawKey;
         }
-        return new TranslatableCaption(namespace.toLowerCase(Locale.ENGLISH),
-            key.toLowerCase(Locale.ENGLISH));
+        return new TranslatableCaption(
+                namespace.toLowerCase(Locale.ENGLISH),
+                key.toLowerCase(Locale.ENGLISH)
+        );
     }
 
     /**
@@ -79,25 +81,33 @@ public final class TranslatableCaption implements NamespacedCaption {
      * @param key       Caption key
      * @return Caption instance
      */
-    @Nonnull public static TranslatableCaption of(@Nonnull final String namespace,
-        @Nonnull final String key) {
-        return new TranslatableCaption(namespace.toLowerCase(Locale.ENGLISH),
-            key.toLowerCase(Locale.ENGLISH));
+    public @NonNull static TranslatableCaption of(
+            final @NonNull String namespace,
+            final @NonNull String key
+    ) {
+        return new TranslatableCaption(
+                namespace.toLowerCase(Locale.ENGLISH),
+                key.toLowerCase(Locale.ENGLISH)
+        );
     }
 
-    @Override @Nonnull public String getComponent(@Nonnull final LocaleHolder localeHolder) {
+    @Override
+    public @NonNull String getComponent(final @NonNull LocaleHolder localeHolder) {
         return PlotSquared.get().getCaptionMap(this.namespace).getMessage(this, localeHolder);
     }
 
-    @Override @Nonnull public String getKey() {
+    @Override
+    public @NonNull String getKey() {
         return this.key;
     }
 
-    @Override @Nonnull public String getNamespace() {
+    @Override
+    public @NonNull String getNamespace() {
         return this.namespace;
     }
 
-    @Override public boolean equals(final Object o) {
+    @Override
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -106,10 +116,11 @@ public final class TranslatableCaption implements NamespacedCaption {
         }
         final TranslatableCaption that = (TranslatableCaption) o;
         return Objects.equal(this.getNamespace(), that.getNamespace()) && Objects
-            .equal(this.getKey(), that.getKey());
+                .equal(this.getKey(), that.getKey());
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hashCode(this.getNamespace(), this.getKey());
     }
 

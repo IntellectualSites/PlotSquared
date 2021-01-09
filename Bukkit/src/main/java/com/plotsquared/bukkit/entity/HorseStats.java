@@ -34,4 +34,5 @@ class HorseStats {
     Horse.Variant variant;
     Horse.Color color;
     Horse.Style style;
+
 }

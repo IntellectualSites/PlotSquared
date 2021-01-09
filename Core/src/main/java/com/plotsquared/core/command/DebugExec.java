@@ -28,7 +28,6 @@ package com.plotsquared.core.command;
 import com.google.common.io.Files;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -38,6 +37,7 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -67,11 +67,11 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.world.block.BlockState;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -88,9 +88,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugexec",
-    permission = "plots.admin",
-    aliases = {"exec", "$"},
-    category = CommandCategory.DEBUG)
+        permission = "plots.admin",
+        aliases = {"exec", "$"},
+        category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + DebugExec.class.getSimpleName());
@@ -109,16 +109,19 @@ public class DebugExec extends SubCommand {
     private ScriptEngine engine;
     private Bindings scope;
 
-    @Inject public DebugExec(@Nonnull final PlotAreaManager plotAreaManager,
-                     @Nonnull final EventDispatcher eventDispatcher,
-                     @Nullable final WorldEdit worldEdit,
-                     @Nonnull final GlobalBlockQueue blockQueue,
-                     @Nonnull final SchematicHandler schematicHandler,
-                     @Nonnull final EconHandler econHandler,
-                     @Nonnull final ChunkManager chunkManager,
-                     @Nonnull final WorldUtil worldUtil,
-                     @Nonnull final SetupUtils setupUtils,
-                     @Nonnull final HybridUtils hybridUtils) {
+    @Inject
+    public DebugExec(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher,
+            final @Nullable WorldEdit worldEdit,
+            final @NonNull GlobalBlockQueue blockQueue,
+            final @NonNull SchematicHandler schematicHandler,
+            final @NonNull EconHandler econHandler,
+            final @NonNull ChunkManager chunkManager,
+            final @NonNull WorldUtil worldUtil,
+            final @NonNull SetupUtils setupUtils,
+            final @NonNull HybridUtils hybridUtils
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.worldEdit = worldEdit;
@@ -202,11 +205,13 @@ public class DebugExec extends SubCommand {
         }
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         List<String> allowed_params = Arrays
-            .asList("analyze", "calibrate-analysis", "remove-flag", "stop-expire", "start-expire",
-                "seen", "list-scripts", "start-rgar", "stop-rgar", "help", "addcmd", "runasync",
-                "run", "allcmd", "all");
+                .asList("analyze", "calibrate-analysis", "remove-flag", "stop-expire", "start-expire",
+                        "seen", "list-scripts", "start-rgar", "stop-rgar", "help", "addcmd", "runasync",
+                        "run", "allcmd", "all"
+                );
         if (args.length > 0) {
             String arg = args[0].toLowerCase();
             String script;
@@ -228,7 +233,8 @@ public class DebugExec extends SubCommand {
                     }
                     player.sendMessage(TranslatableCaption.of("debugexec.starting_task"));
                     this.hybridUtils.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
-                        @Override public void run(PlotAnalysis value) {
+                        @Override
+                        public void run(PlotAnalysis value) {
                             player.sendMessage(
                                     TranslatableCaption.of("debugexec.analyze_done"),
                                     Template.of("command", "/plot debugexec analyze")
@@ -257,7 +263,10 @@ public class DebugExec extends SubCommand {
                         player.sendMessage(TranslatableCaption.of("debugexec.threshold_default_double"));
                         return false;
                     }
-                    PlotAnalysis.calcOptimalModifiers(() -> player.sendMessage(TranslatableCaption.of("debugexec.calibration_done")), threshold);
+                    PlotAnalysis.calcOptimalModifiers(
+                            () -> player.sendMessage(TranslatableCaption.of("debugexec.calibration_done")),
+                            threshold
+                    );
                     return true;
                 case "stop-expire":
                     if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
@@ -274,11 +283,11 @@ public class DebugExec extends SubCommand {
                     }
                     String flag = args[1];
                     final PlotFlag<?, ?> flagInstance =
-                        GlobalFlagContainer.getInstance().getFlagFromString(flag);
+                            GlobalFlagContainer.getInstance().getFlagFromString(flag);
                     if (flagInstance != null) {
                         for (Plot plot : PlotQuery.newQuery().whereBasePlot()) {
                             PlotFlagRemoveEvent event = this.eventDispatcher
-                                .callFlagRemove(flagInstance, plot);
+                                    .callFlagRemove(flagInstance, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
                             }
@@ -335,20 +344,26 @@ public class DebugExec extends SubCommand {
                     }
                 case "?":
                 case "help":
-                    player.sendMessage(StaticCaption.of("<prefix><gold>Possible sub commands: </gray>/plot debugexec <" + StringMan.join(allowed_params, " | ") + "></gray>"));
+                    player.sendMessage(StaticCaption.of("<prefix><gold>Possible sub commands: </gray>/plot debugexec <" + StringMan
+                            .join(allowed_params, " | ") + "></gray>"));
                     return false;
                 case "addcmd":
                     try {
-                        final String cmd = StringMan.join(Files.readLines(FileUtils.getFile(new File(
-                                PlotSquared.platform().getDirectory() + File.separator
-                                    + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
-                            System.getProperty("line.separator"));
+                        final String cmd = StringMan.join(
+                                Files.readLines(FileUtils.getFile(new File(
+                                        PlotSquared.platform().getDirectory() + File.separator
+                                                + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
+                                System.getProperty("line.separator")
+                        );
                         new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
-                            RequiredType.NONE, CommandCategory.DEBUG) {
+                                RequiredType.NONE, CommandCategory.DEBUG
+                        ) {
                             @Override
-                            public CompletableFuture<Boolean> execute(PlotPlayer<?> player,
-                                String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
-                                RunnableVal2<Command, CommandResult> whenDone) {
+                            public CompletableFuture<Boolean> execute(
+                                    PlotPlayer<?> player,
+                                    String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
+                                    RunnableVal2<Command, CommandResult> whenDone
+                            ) {
                                 try {
                                     DebugExec.this.scope.put("PlotPlayer", player);
                                     DebugExec.this.scope.put("args", args);
@@ -373,10 +388,12 @@ public class DebugExec extends SubCommand {
                     async = true;
                 case "run":
                     try {
-                        script = StringMan.join(Files.readLines(FileUtils.getFile(new File(
-                                PlotSquared.platform().getDirectory() + File.separator
-                                    + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
-                            System.getProperty("line.separator"));
+                        script = StringMan.join(
+                                Files.readLines(FileUtils.getFile(new File(
+                                        PlotSquared.platform().getDirectory() + File.separator
+                                                + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
+                                System.getProperty("line.separator")
+                        );
                         if (args.length > 2) {
                             HashMap<String, String> replacements = new HashMap<>();
                             for (int i = 2; i < args.length; i++) {
@@ -391,7 +408,7 @@ public class DebugExec extends SubCommand {
                     break;
                 case "list-scripts":
                     String path = PlotSquared.platform().getDirectory() + File.separator
-                        + Settings.Paths.SCRIPTS;
+                            + Settings.Paths.SCRIPTS;
                     File folder = new File(path);
                     File[] filesArray = folder.listFiles();
 
@@ -415,12 +432,17 @@ public class DebugExec extends SubCommand {
 
                     List<File> allFiles = Arrays.asList(filesArray);
                     paginate(player, allFiles, 8, page, new RunnableVal3<Integer, File, CaptionHolder>() {
-                        @Override public void run(Integer i, File file, CaptionHolder message) {
+                        @Override
+                        public void run(Integer i, File file, CaptionHolder message) {
                             String name = file.getName();
                             Template numTemplate = Template.of("number", String.valueOf(i));
                             Template nameTemplate = Template.of("name", name);
                             message.set(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                                .parse(TranslatableCaption.of("debugexec.script_list_item").getComponent(player), numTemplate, nameTemplate))));
+                                    .parse(
+                                            TranslatableCaption.of("debugexec.script_list_item").getComponent(player),
+                                            numTemplate,
+                                            nameTemplate
+                                    ))));
                         }
                     }, "/plot debugexec list-scripts", TranslatableCaption.of("scripts.script_list"));
                     return true;
@@ -433,9 +455,9 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     script =
-                        "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if("
-                            + args[1] + "){" + StringMan
-                            .join(Arrays.copyOfRange(args, 2, args.length), " ") + "}}";
+                            "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if("
+                                    + args[1] + "){" + StringMan
+                                    .join(Arrays.copyOfRange(args, 2, args.length), " ") + "}}";
 
                     break;
                 default:
@@ -473,4 +495,5 @@ public class DebugExec extends SubCommand {
         }
         return false;
     }
+
 }

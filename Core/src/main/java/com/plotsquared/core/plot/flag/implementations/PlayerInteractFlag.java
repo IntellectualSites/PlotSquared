@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PlayerInteractFlag extends BooleanFlag<PlayerInteractFlag> {
 
@@ -39,7 +38,8 @@ public class PlayerInteractFlag extends BooleanFlag<PlayerInteractFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_player_interact"));
     }
 
-    @Override protected PlayerInteractFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected PlayerInteractFlag flagOf(@NonNull Boolean value) {
         return value ? PLAYER_INTERACT_TRUE : PLAYER_INTERACT_FALSE;
     }
 

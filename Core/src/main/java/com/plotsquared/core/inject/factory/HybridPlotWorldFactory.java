@@ -29,16 +29,17 @@ import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.plot.PlotId;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface HybridPlotWorldFactory {
 
-    @Nonnull HybridPlotWorld create(@Nonnull @Assisted("world") String worldName,
-                                    @Nullable @Assisted("id") String id,
-                                    @Nonnull IndependentPlotGenerator plotGenerator,
-                                    @Nullable @Assisted("min") PlotId min,
-                                    @Nullable @Assisted("max") PlotId max);
+    @NonNull HybridPlotWorld create(
+            @NonNull @Assisted("world") String worldName,
+            @Nullable @Assisted("id") String id,
+            @NonNull IndependentPlotGenerator plotGenerator,
+            @Nullable @Assisted("min") PlotId min,
+            @Nullable @Assisted("max") PlotId max
+    );
 
 }

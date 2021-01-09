@@ -29,9 +29,9 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
@@ -46,30 +46,40 @@ public class TitlesFlag extends PlotFlag<TitlesFlag.TitlesFlagValue, TitlesFlag>
         super(value, TranslatableCaption.of("flags.flag_category_enum"), TranslatableCaption.of("flags.flag_description_titles"));
     }
 
-    @Override public TitlesFlag parse(@Nonnull final String input) throws FlagParseException {
+    @Override
+    public TitlesFlag parse(final @NonNull String input) throws FlagParseException {
         final TitlesFlagValue titlesFlagValue = TitlesFlagValue.fromString(input);
         if (titlesFlagValue == null) {
-            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_enum"), Template.of("list", "none, true, false"));
+            throw new FlagParseException(
+                    this,
+                    input,
+                    TranslatableCaption.of("flags.flag_error_enum"),
+                    Template.of("list", "none, true, false")
+            );
         }
         return flagOf(titlesFlagValue);
     }
 
-    @Override public TitlesFlag merge(@Nonnull TitlesFlagValue newValue) {
+    @Override
+    public TitlesFlag merge(@NonNull TitlesFlagValue newValue) {
         if (newValue == TitlesFlagValue.TRUE || newValue == TitlesFlagValue.FALSE) {
             return flagOf(newValue);
         }
         return this;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().name().toLowerCase(Locale.ENGLISH);
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "true";
     }
 
-    @Override protected TitlesFlag flagOf(@Nonnull TitlesFlagValue value) {
+    @Override
+    protected TitlesFlag flagOf(@NonNull TitlesFlagValue value) {
         if (value == TitlesFlagValue.TRUE) {
             return TITLES_TRUE;
         } else if (value == TitlesFlagValue.FALSE) {
@@ -78,14 +88,17 @@ public class TitlesFlag extends PlotFlag<TitlesFlag.TitlesFlagValue, TitlesFlag>
         return TITLES_NONE;
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         return Arrays.asList("none", "true", "false");
     }
 
     public enum TitlesFlagValue {
-        NONE, TRUE, FALSE;
+        NONE,
+        TRUE,
+        FALSE;
 
-        @Nullable public static TitlesFlagValue fromString(final String value) {
+        public @Nullable static TitlesFlagValue fromString(final String value) {
             if (value.equalsIgnoreCase("true")) {
                 return TRUE;
             } else if (value.equalsIgnoreCase("false")) {

@@ -44,7 +44,8 @@ public class InboxOwner extends CommentInbox {
             return true;
         }
         DBFunc.getComments(plot, toString(), new RunnableVal<List<PlotComment>>() {
-            @Override public void run(List<PlotComment> value) {
+            @Override
+            public void run(List<PlotComment> value) {
                 whenDone.value = value;
                 if (value != null) {
                     for (PlotComment comment : value) {
@@ -59,7 +60,8 @@ public class InboxOwner extends CommentInbox {
         return true;
     }
 
-    @Override public boolean addComment(Plot plot, PlotComment comment) {
+    @Override
+    public boolean addComment(Plot plot, PlotComment comment) {
         if (plot.getOwner() == null) {
             return false;
         }
@@ -68,7 +70,8 @@ public class InboxOwner extends CommentInbox {
         return true;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "owner";
     }
 

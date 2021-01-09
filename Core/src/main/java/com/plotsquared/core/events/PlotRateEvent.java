@@ -28,13 +28,13 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.Rating;
-
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class PlotRateEvent extends PlotEvent implements CancellablePlotEvent {
 
     private final PlotPlayer rater;
-    @Nullable private Rating rating;
+    @Nullable
+    private Rating rating;
     private Result eventResult;
 
     /**
@@ -54,7 +54,7 @@ public class PlotRateEvent extends PlotEvent implements CancellablePlotEvent {
         return this.rater;
     }
 
-    @Nullable public Rating getRating() {
+    public @Nullable Rating getRating() {
         return this.rating;
     }
 
@@ -62,11 +62,14 @@ public class PlotRateEvent extends PlotEvent implements CancellablePlotEvent {
         this.rating = rating;
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
 }

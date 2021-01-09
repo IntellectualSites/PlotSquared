@@ -28,8 +28,7 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class PlayerClaimPlotEvent extends PlotPlayerEvent implements CancellablePlotEvent {
 
@@ -53,7 +52,7 @@ public class PlayerClaimPlotEvent extends PlotPlayerEvent implements Cancellable
      *
      * @return schematic string
      */
-    @Nullable public String getSchematic() {
+    public @Nullable String getSchematic() {
         return this.schematic;
     }
 
@@ -66,11 +65,14 @@ public class PlayerClaimPlotEvent extends PlotPlayerEvent implements Cancellable
         this.schematic = schematic;
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
 }

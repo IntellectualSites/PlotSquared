@@ -26,8 +26,7 @@
 package com.plotsquared.core.location;
 
 import com.plotsquared.core.util.StringMan;
-
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * (x,y,z) or (x,z) representation for PlotSquared (hence the "Plot" prefix)
@@ -54,7 +53,7 @@ public final class PlotLoc {
         this.z = z;
     }
 
-    @Nullable public static PlotLoc fromString(final String input) {
+    public @Nullable static PlotLoc fromString(final String input) {
         if (input == null || "side".equalsIgnoreCase(input)) {
             return null;
         } else if (StringMan.isEqualIgnoreCaseToAny(input, "center", "middle")) {
@@ -66,10 +65,11 @@ public final class PlotLoc {
                     return new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                 } else if (split.length == 3) {
                     return new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]),
-                        Integer.parseInt(split[2]));
+                            Integer.parseInt(split[2])
+                    );
                 } else {
                     throw new IllegalArgumentException(
-                        String.format("Unable to deserialize: %s", input));
+                            String.format("Unable to deserialize: %s", input));
                 }
             } catch (NumberFormatException ignored) {
                 return null;
@@ -89,7 +89,8 @@ public final class PlotLoc {
         return this.z;
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = (prime * result) + this.getX();
@@ -98,14 +99,16 @@ public final class PlotLoc {
         return result;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         if (this.getY() == -1) {
             return String.format("%d,%d", x, z);
         }
         return String.format("%d,%d,%d", x, y, z);
     }
 
-    @Override public boolean equals(final Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -114,6 +117,7 @@ public final class PlotLoc {
         }
         final PlotLoc other = (PlotLoc) obj;
         return (this.getX() == other.getX()) && (this.getY() ==
-            other.getY()) && (this.getZ() == other.getZ());
+                other.getY()) && (this.getZ() == other.getZ());
     }
+
 }

@@ -30,7 +30,10 @@ import java.util.Map;
 
 public enum LightingMode {
 
-    NONE(0), PLACEMENT(1), REPLACEMENT(2), ALL(3);
+    NONE(0),
+    PLACEMENT(1),
+    REPLACEMENT(2),
+    ALL(3);
 
     private static final Map<Integer, LightingMode> map = new HashMap<>();
 

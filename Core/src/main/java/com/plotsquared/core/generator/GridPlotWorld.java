@@ -30,16 +30,18 @@ import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class GridPlotWorld extends PlotArea {
 
     public short SIZE;
 
-    public GridPlotWorld(String worldName, String id, @Nonnull IndependentPlotGenerator generator,
-                         PlotId min, PlotId max, @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                         @Nonnull final GlobalBlockQueue blockQueue) {
+    public GridPlotWorld(
+            String worldName, String id, @NonNull IndependentPlotGenerator generator,
+            PlotId min, PlotId max, @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            final @NonNull GlobalBlockQueue blockQueue
+    ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
     }
+
 }

@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class ForcefieldFlag extends BooleanFlag<ForcefieldFlag> {
 
@@ -39,7 +38,8 @@ public class ForcefieldFlag extends BooleanFlag<ForcefieldFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_forcefield"));
     }
 
-    @Override protected ForcefieldFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected ForcefieldFlag flagOf(@NonNull Boolean value) {
         return value ? FORCEFIELD_TRUE : FORCEFIELD_FALSE;
     }
 

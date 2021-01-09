@@ -36,7 +36,8 @@ public enum PlayerBlockEventType {
     TELEPORT_OBJECT,
 
     // armor stands
-    PLACE_MISC, PLACE_VEHICLE,
+    PLACE_MISC,
+    PLACE_VEHICLE,
 
     // armor stands
     INTERACT_BLOCK, // blocks

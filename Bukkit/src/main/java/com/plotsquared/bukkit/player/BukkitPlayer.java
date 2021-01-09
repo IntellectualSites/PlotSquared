@@ -28,10 +28,10 @@ package com.plotsquared.bukkit.player;
 import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -54,10 +54,9 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.RegisteredListener;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnegative;
-
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
@@ -73,24 +72,29 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
     private String name;
+
     /**
      * <p>Please do not use this method. Instead use
      * BukkitUtil.getPlayer(Player), as it caches player objects.</p>
      *
-     * @param plotAreaManager PlotAreaManager instance
-     * @param eventDispatcher EventDispatcher instance
-     * @param player Bukkit player instance
+     * @param plotAreaManager   PlotAreaManager instance
+     * @param eventDispatcher   EventDispatcher instance
+     * @param player            Bukkit player instance
      * @param permissionHandler PermissionHandler instance
      */
-    public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final EventDispatcher eventDispatcher,
-                        @Nonnull final Player player, @Nonnull final PermissionHandler permissionHandler) {
+    public BukkitPlayer(
+            final @NonNull PlotAreaManager plotAreaManager, final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull Player player, final @NonNull PermissionHandler permissionHandler
+    ) {
         this(plotAreaManager, eventDispatcher, player, false, permissionHandler);
     }
 
-    public BukkitPlayer(@Nonnull final PlotAreaManager plotAreaManager, @Nonnull final
-    EventDispatcher eventDispatcher, @Nonnull final Player player,
-                        final boolean realPlayer,
-                        @Nonnull final PermissionHandler permissionHandler) {
+    public BukkitPlayer(
+            final @NonNull PlotAreaManager plotAreaManager, final @NonNull
+            EventDispatcher eventDispatcher, final @NonNull Player player,
+            final boolean realPlayer,
+            final @NonNull PermissionHandler permissionHandler
+    ) {
         super(plotAreaManager, eventDispatcher, permissionHandler);
         this.player = player;
         this.setupPermissionProfile();
@@ -99,32 +103,39 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public Actor toActor() {
+    @Override
+    public Actor toActor() {
         return BukkitAdapter.adapt(player);
     }
 
-    @Override public Player getPlatformPlayer() {
+    @Override
+    public Player getPlatformPlayer() {
         return this.player;
     }
 
-    @Nonnull @Override public UUID getUUID() {
+    @NonNull
+    @Override
+    public UUID getUUID() {
         if (Settings.UUID.OFFLINE) {
             if (Settings.UUID.FORCE_LOWERCASE) {
                 return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
-                    getName().toLowerCase()).getBytes(Charsets.UTF_8));
+                        getName().toLowerCase()).getBytes(Charsets.UTF_8));
             } else {
                 return UUID.nameUUIDFromBytes(("OfflinePlayer:" +
-                    getName()).getBytes(Charsets.UTF_8));
+                        getName()).getBytes(Charsets.UTF_8));
             }
         }
         return player.getUniqueId();
     }
 
-    @Override @Nonnegative public long getLastPlayed() {
+    @Override
+    @NonNegative
+    public long getLastPlayed() {
         return this.player.getLastSeen();
     }
 
-    @Override public boolean canTeleport(@Nonnull final Location location) {
+    @Override
+    public boolean canTeleport(final @NonNull Location location) {
         final org.bukkit.Location to = BukkitUtil.adapt(location);
         final org.bukkit.Location from = player.getLocation();
         PlayerTeleportEvent event = new PlayerTeleportEvent(player, from, to);
@@ -137,7 +148,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         return true;
     }
 
-    private void callEvent(@Nonnull final Event event) {
+    private void callEvent(final @NonNull Event event) {
         final RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (final RegisteredListener listener : listeners) {
             if (listener.getPlugin().getName().equals(PlotSquared.platform().pluginName())) {
@@ -151,8 +162,12 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override @Nonnegative public int hasPermissionRange(@Nonnull final String stub,
-                                            @Nonnegative final int range) {
+    @Override
+    @NonNegative
+    public int hasPermissionRange(
+            final @NonNull String stub,
+            @NonNegative final int range
+    ) {
         if (hasPermission(Permission.PERMISSION_ADMIN.toString())) {
             return Integer.MAX_VALUE;
         }
@@ -213,34 +228,40 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     }
 
     @Override
-    public void teleport(@Nonnull final Location location, @Nonnull final TeleportCause cause) {
+    public void teleport(final @NonNull Location location, final @NonNull TeleportCause cause) {
         if (Math.abs(location.getX()) >= 30000000 || Math.abs(location.getZ()) >= 30000000) {
             return;
         }
         final org.bukkit.Location bukkitLocation =
-            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX() + 0.5,
-                location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch());
+                new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX() + 0.5,
+                        location.getY(), location.getZ() + 0.5, location.getYaw(), location.getPitch()
+                );
         PaperLib.teleportAsync(player, bukkitLocation, getTeleportCause(cause));
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         if (this.name == null) {
             this.name = this.player.getName();
         }
         return this.name;
     }
 
-    @Override public void setCompassTarget(Location location) {
+    @Override
+    public void setCompassTarget(Location location) {
         this.player.setCompassTarget(
-            new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX(),
-                location.getY(), location.getZ()));
+                new org.bukkit.Location(BukkitUtil.getWorld(location.getWorldName()), location.getX(),
+                        location.getY(), location.getZ()
+                ));
     }
 
-    @Override public Location getLocationFull() {
+    @Override
+    public Location getLocationFull() {
         return BukkitUtil.adaptComplete(this.player.getLocation());
     }
 
-    @Override public void setWeather(@Nonnull final PlotWeather weather) {
+    @Override
+    public void setWeather(final @NonNull PlotWeather weather) {
         switch (weather) {
             case CLEAR:
                 this.player.setPlayerWeather(WeatherType.CLEAR);
@@ -255,7 +276,8 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public com.sk89q.worldedit.world.gamemode.GameMode getGameMode() {
+    @Override
+    public com.sk89q.worldedit.world.gamemode.GameMode getGameMode() {
         switch (this.player.getGameMode()) {
             case ADVENTURE:
                 return ADVENTURE;
@@ -282,7 +304,8 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public void setTime(final long time) {
+    @Override
+    public void setTime(final long time) {
         if (time != Long.MAX_VALUE) {
             this.player.setPlayerTime(time, false);
         } else {
@@ -290,48 +313,57 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    @Override public boolean getFlight() {
+    @Override
+    public boolean getFlight() {
         return player.getAllowFlight();
     }
 
-    @Override public void setFlight(boolean fly) {
+    @Override
+    public void setFlight(boolean fly) {
         this.player.setAllowFlight(fly);
     }
 
-    @Override public void playMusic(@Nonnull final Location location, @Nonnull final ItemType id) {
+    @Override
+    public void playMusic(final @NonNull Location location, final @NonNull ItemType id) {
         if (id == ItemTypes.AIR) {
             // Let's just stop all the discs because why not?
             for (final Sound sound : Arrays.stream(Sound.values())
-                .filter(sound -> sound.name().contains("DISC")).collect(Collectors.toList())) {
+                    .filter(sound -> sound.name().contains("DISC")).collect(Collectors.toList())) {
                 player.stopSound(sound);
             }
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, Material.AIR);
         } else {
             // this.player.playEffect(BukkitUtil.getLocation(location), Effect.RECORD_PLAY, id.to(Material.class));
             this.player.playSound(BukkitUtil.adapt(location),
-                Sound.valueOf(BukkitAdapter.adapt(id).name()), Float.MAX_VALUE, 1f);
+                    Sound.valueOf(BukkitAdapter.adapt(id).name()), Float.MAX_VALUE, 1f
+            );
         }
     }
 
-    @Override public void kick(final String message) {
+    @Override
+    public void kick(final String message) {
         this.player.kickPlayer(message);
     }
 
-    @Override public void stopSpectating() {
+    @Override
+    public void stopSpectating() {
         if (getGameMode() == SPECTATOR) {
             this.player.setSpectatorTarget(null);
         }
     }
 
-    @Override public boolean isBanned() {
+    @Override
+    public boolean isBanned() {
         return this.player.isBanned();
     }
 
-    @Override @Nonnull public Audience getAudience() {
+    @Override
+    public @NonNull Audience getAudience() {
         return BukkitUtil.BUKKIT_AUDIENCES.player(this.player);
     }
 
-    @Override public boolean canSee(final PlotPlayer<?> other) {
+    @Override
+    public boolean canSee(final PlotPlayer<?> other) {
         if (other instanceof ConsolePlayer) {
             return true;
         } else {
@@ -339,7 +371,7 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
     }
 
-    public PlayerTeleportEvent.TeleportCause getTeleportCause(@Nonnull final TeleportCause cause) {
+    public PlayerTeleportEvent.TeleportCause getTeleportCause(final @NonNull TeleportCause cause) {
         switch (cause) {
             case COMMAND:
                 return PlayerTeleportEvent.TeleportCause.COMMAND;
@@ -349,4 +381,5 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 return PlayerTeleportEvent.TeleportCause.UNKNOWN;
         }
     }
+
 }

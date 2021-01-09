@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class VehicleUseFlag extends BooleanFlag<VehicleUseFlag> {
 
@@ -39,7 +38,8 @@ public class VehicleUseFlag extends BooleanFlag<VehicleUseFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_vehicle_use"));
     }
 
-    @Override protected VehicleUseFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected VehicleUseFlag flagOf(@NonNull Boolean value) {
         return value ? VEHICLE_USE_TRUE : VEHICLE_USE_FALSE;
     }
 

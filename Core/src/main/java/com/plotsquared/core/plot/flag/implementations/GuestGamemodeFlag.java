@@ -30,32 +30,36 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
 
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_CREATIVE =
-        new GuestGamemodeFlag(GameModes.CREATIVE);
+            new GuestGamemodeFlag(GameModes.CREATIVE);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_ADVENTURE =
-        new GuestGamemodeFlag(GameModes.ADVENTURE);
+            new GuestGamemodeFlag(GameModes.ADVENTURE);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_SPECTATOR =
-        new GuestGamemodeFlag(GameModes.SPECTATOR);
+            new GuestGamemodeFlag(GameModes.SPECTATOR);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_SURVIVAL =
-        new GuestGamemodeFlag(GameModes.SURVIVAL);
+            new GuestGamemodeFlag(GameModes.SURVIVAL);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_DEFAULT =
-        new GuestGamemodeFlag(GamemodeFlag.DEFAULT);
+            new GuestGamemodeFlag(GamemodeFlag.DEFAULT);
 
     /**
      * Construct a new flag instance.
      *
      * @param value Flag value
      */
-    protected GuestGamemodeFlag(@Nonnull GameMode value) {
-        super(value, TranslatableCaption.of("flags.flag_category_gamemode"), TranslatableCaption.of("flags.flag_description_guest_gamemode"));
+    protected GuestGamemodeFlag(@NonNull GameMode value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_gamemode"),
+                TranslatableCaption.of("flags.flag_description_guest_gamemode")
+        );
     }
 
-    @Override public GuestGamemodeFlag parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public GuestGamemodeFlag parse(@NonNull String input) throws FlagParseException {
         switch (input) {
             case "creative":
             case "c":
@@ -78,19 +82,23 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
         }
     }
 
-    @Override public GuestGamemodeFlag merge(@Nonnull GameMode newValue) {
+    @Override
+    public GuestGamemodeFlag merge(@NonNull GameMode newValue) {
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().getId();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "survival";
     }
 
-    @Override protected GuestGamemodeFlag flagOf(@Nonnull GameMode value) {
+    @Override
+    protected GuestGamemodeFlag flagOf(@NonNull GameMode value) {
         switch (value.getId()) {
             case "creative":
                 return GUEST_GAMEMODE_FLAG_CREATIVE;

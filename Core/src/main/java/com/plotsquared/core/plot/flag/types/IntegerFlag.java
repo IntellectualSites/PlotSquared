@@ -28,37 +28,44 @@ package com.plotsquared.core.plot.flag.types;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class IntegerFlag<F extends NumberFlag<Integer, F>> extends NumberFlag<Integer, F> {
 
-    protected IntegerFlag(final int value, int minimum, int maximum,
-        @Nonnull Caption flagDescription) {
+    protected IntegerFlag(
+            final int value, int minimum, int maximum,
+            @NonNull Caption flagDescription
+    ) {
         super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_integers"), flagDescription);
     }
 
-    protected IntegerFlag(@Nonnull Caption flagDescription) {
+    protected IntegerFlag(@NonNull Caption flagDescription) {
         this(0, Integer.MIN_VALUE, Integer.MAX_VALUE, flagDescription);
     }
 
-    @Override public F merge(@Nonnull Integer newValue) {
+    @Override
+    public F merge(@NonNull Integer newValue) {
         return flagOf(getValue() + newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue().toString();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "10";
     }
 
-    @Nonnull @Override protected Integer parseNumber(String input) throws FlagParseException {
+    @NonNull
+    @Override
+    protected Integer parseNumber(String input) throws FlagParseException {
         try {
             return Integer.parseInt(input);
         } catch (Throwable throwable) {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_integer"));
         }
     }
+
 }

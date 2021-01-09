@@ -25,8 +25,9 @@
  */
 package com.plotsquared.core.util;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Collection;
 
 /**
@@ -53,8 +54,10 @@ public interface PlatformWorldManager<T> {
      * @param generator World generator
      * @return Created world
      */
-    @Nullable T handleWorldCreation(@Nonnull final String worldName,
-        @Nullable final String generator);
+    @Nullable T handleWorldCreation(
+            final @NonNull String worldName,
+            final @Nullable String generator
+    );
 
     /**
      * Get the implementation name

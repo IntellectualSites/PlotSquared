@@ -25,22 +25,23 @@
  */
 package com.plotsquared.core.uuid;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Thrown by {@link ServiceError} when something goes wrong
  */
 public class ServiceError extends RuntimeException {
 
-    public ServiceError(@Nonnull final String message) {
+    public ServiceError(final @NonNull String message) {
         super(message);
     }
 
-    public ServiceError(@Nonnull final String message, @Nonnull final Throwable cause) {
+    public ServiceError(final @NonNull String message, final @NonNull Throwable cause) {
         super(message, cause);
     }
 
-    @Override public Throwable fillInStackTrace() {
+    @Override
+    public Throwable fillInStackTrace() {
         return this;
     }
 

@@ -42,4 +42,5 @@ public class PlayerLeavePlotEvent extends PlotPlayerEvent {
     public PlayerLeavePlotEvent(PlotPlayer player, Plot plot) {
         super(player, plot);
     }
+
 }

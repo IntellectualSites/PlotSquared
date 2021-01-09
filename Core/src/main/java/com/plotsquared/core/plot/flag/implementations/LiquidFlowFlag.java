@@ -27,8 +27,8 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -36,14 +36,19 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
 
     public static final LiquidFlowFlag LIQUID_FLOW_ENABLED = new LiquidFlowFlag(FlowStatus.ENABLED);
     public static final LiquidFlowFlag LIQUID_FLOW_DISABLED =
-        new LiquidFlowFlag(FlowStatus.DISABLED);
+            new LiquidFlowFlag(FlowStatus.DISABLED);
     public static final LiquidFlowFlag LIQUID_FLOW_DEFAULT = new LiquidFlowFlag(FlowStatus.DEFAULT);
 
     private LiquidFlowFlag(FlowStatus value) {
-        super(value, TranslatableCaption.of("flags.flag_category_boolean"), TranslatableCaption.of("flags.flag_description_liquid_flow"));
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_boolean"),
+                TranslatableCaption.of("flags.flag_description_liquid_flow")
+        );
     }
 
-    @Override public LiquidFlowFlag parse(@Nonnull final String input) {
+    @Override
+    public LiquidFlowFlag parse(final @NonNull String input) {
         switch (input.toLowerCase()) {
             case "true":
             case "enabled":
@@ -58,22 +63,26 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
         }
     }
 
-    @Override public LiquidFlowFlag merge(@Nonnull final FlowStatus newValue) {
+    @Override
+    public LiquidFlowFlag merge(final @NonNull FlowStatus newValue) {
         if (newValue == FlowStatus.ENABLED || this.getValue() == FlowStatus.ENABLED) {
             return LIQUID_FLOW_ENABLED;
         }
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue().name().toLowerCase();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "true";
     }
 
-    @Override protected LiquidFlowFlag flagOf(@Nonnull final FlowStatus value) {
+    @Override
+    protected LiquidFlowFlag flagOf(final @NonNull FlowStatus value) {
         switch (value) {
             case ENABLED:
                 return LIQUID_FLOW_ENABLED;
@@ -84,12 +93,15 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
         }
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         return Arrays.asList("true", "false", "default");
     }
 
     public enum FlowStatus {
-        ENABLED, DISABLED, DEFAULT
+        ENABLED,
+        DISABLED,
+        DEFAULT
     }
 
 }

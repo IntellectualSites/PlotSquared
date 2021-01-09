@@ -25,7 +25,8 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,17 +43,18 @@ public interface CaptionMap {
      * @return Component
      * @throws NoSuchCaptionException if no caption with the given key exists
      */
-    @Nonnull String getMessage(@Nonnull TranslatableCaption caption) throws NoSuchCaptionException;
+    @NonNull String getMessage(@NonNull TranslatableCaption caption) throws NoSuchCaptionException;
 
     /**
      * Get a message using a specific locale
      *
-     * @param caption Caption containing the caption key
+     * @param caption      Caption containing the caption key
      * @param localeHolder Holder that determines the message locale
      * @return Component
      * @throws NoSuchCaptionException if no caption with the given key exists
      */
-    @Nonnull String getMessage(@Nonnull TranslatableCaption caption, @Nonnull LocaleHolder localeHolder) throws NoSuchCaptionException;
+    @NonNull String getMessage(@NonNull TranslatableCaption caption, @NonNull LocaleHolder localeHolder) throws
+            NoSuchCaptionException;
 
     /**
      * Check if the map supports a given locale
@@ -60,25 +62,25 @@ public interface CaptionMap {
      * @param locale Locale
      * @return True if the map supports the locale
      */
-    boolean supportsLocale(@Nonnull Locale locale);
+    boolean supportsLocale(@NonNull Locale locale);
 
     /**
      * Get the locale of the messages stored in the map
      *
      * @return Message locale
      */
-    @Nonnull Locale getLocale();
+    @NonNull Locale getLocale();
 
     /**
      * Gets a copy of the map of captions stored in the CaptionMap
      *
      * @return ImmutableMap of TranslatableCaption, String captionMap
      */
-    @Nonnull Map<TranslatableCaption, String> getCaptions();
+    @NonNull Map<TranslatableCaption, String> getCaptions();
 
     class NoSuchCaptionException extends IllegalArgumentException {
 
-        public NoSuchCaptionException(@Nonnull final NamespacedCaption caption) {
+        public NoSuchCaptionException(final @NonNull NamespacedCaption caption) {
             super(String.format("No caption with the key '%s:%s' exists in the map", caption.getNamespace(), caption.getKey()));
         }
 

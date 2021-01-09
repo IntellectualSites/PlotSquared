@@ -27,8 +27,8 @@ package com.plotsquared.core.permissions;
 
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.Set;
 
@@ -48,8 +48,9 @@ public interface PermissionHandler {
      * @param playerPlotPlayer Plot player
      * @return Permission profile, if one was able to be constructed
      */
-    @Nonnull Optional<PermissionProfile> getPermissionProfile(
-        @Nonnull PlotPlayer<?> playerPlotPlayer);
+    @NonNull Optional<PermissionProfile> getPermissionProfile(
+            @NonNull PlotPlayer<?> playerPlotPlayer
+    );
 
     /**
      * Attempt to construct a permission profile for an offline plot player
@@ -57,15 +58,16 @@ public interface PermissionHandler {
      * @param offlinePlotPlayer Offline player
      * @return Permission profile, if one was able to be constructed
      */
-    @Nonnull Optional<PermissionProfile> getPermissionProfile(
-        @Nonnull OfflinePlotPlayer offlinePlotPlayer);
+    @NonNull Optional<PermissionProfile> getPermissionProfile(
+            @NonNull OfflinePlotPlayer offlinePlotPlayer
+    );
 
     /**
      * Get all capabilities that the permission handler has
      *
      * @return Immutable set of capabilities
      */
-    @Nonnull Set<PermissionHandlerCapability> getCapabilities();
+    @NonNull Set<PermissionHandlerCapability> getCapabilities();
 
     /**
      * Check whether or not the permission handler has a given capability
@@ -73,7 +75,7 @@ public interface PermissionHandler {
      * @param capability Capability
      * @return {@code true} if the handler has the capability, else {@code false}
      */
-    default boolean hasCapability(@Nonnull final PermissionHandlerCapability capability) {
+    default boolean hasCapability(final @NonNull PermissionHandlerCapability capability) {
         return this.getCapabilities().contains(capability);
     }
 

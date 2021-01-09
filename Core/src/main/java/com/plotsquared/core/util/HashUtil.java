@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.util;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class HashUtil {
 
@@ -39,13 +39,13 @@ public final class HashUtil {
      * @param array Booleans to hash
      * @return hashcode
      */
-    public static int hash(@Nonnull final boolean[] array) {
+    public static int hash(final @NonNull boolean[] array) {
         if (array.length == 4) {
             if (!array[0] && !array[1] && !array[2] && !array[3]) {
                 return 0;
             }
             return ((array[0] ? 1 : 0) << 3) + ((array[1] ? 1 : 0) << 2) + ((array[2] ? 1 : 0) << 1)
-                + (array[3] ? 1 : 0);
+                    + (array[3] ? 1 : 0);
         }
         int n = 0;
         for (boolean anArray : array) {

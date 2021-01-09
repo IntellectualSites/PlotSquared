@@ -31,11 +31,11 @@ import com.plotsquared.core.configuration.Settings;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,24 +49,27 @@ public class BlockTypeWrapper {
 
     private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
     private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();
-    @Nullable private final BlockType blockType;
     private static final String minecraftNamespace = "minecraft";
-    @Nullable private final String blockCategoryId;
-    @Nullable private BlockCategory blockCategory;
+    @Nullable
+    private final BlockType blockType;
+    @Nullable
+    private final String blockCategoryId;
+    @Nullable
+    private BlockCategory blockCategory;
 
-    private BlockTypeWrapper(@Nonnull final BlockType blockType) {
+    private BlockTypeWrapper(final @NonNull BlockType blockType) {
         this.blockType = Preconditions.checkNotNull(blockType);
         this.blockCategory = null;
         this.blockCategoryId = null;
     }
 
-    private BlockTypeWrapper(@Nonnull final BlockCategory blockCategory) {
+    private BlockTypeWrapper(final @NonNull BlockCategory blockCategory) {
         this.blockType = null;
         this.blockCategory = Preconditions.checkNotNull(blockCategory);
         this.blockCategoryId = blockCategory.getId(); // used in toString()/equals()/hashCode()
     }
 
-    private BlockTypeWrapper(@Nonnull final String blockCategoryId) {
+    private BlockTypeWrapper(final @NonNull String blockCategoryId) {
         this.blockType = null;
         this.blockCategory = null;
         this.blockCategoryId = Preconditions.checkNotNull(blockCategoryId);
@@ -78,7 +81,7 @@ public class BlockTypeWrapper {
 
     public static BlockTypeWrapper get(final BlockCategory blockCategory) {
         return blockCategories
-            .computeIfAbsent(blockCategory.getId(), id -> new BlockTypeWrapper(blockCategory));
+                .computeIfAbsent(blockCategory.getId(), id -> new BlockTypeWrapper(blockCategory));
     }
 
     public static BlockTypeWrapper get(final String blockCategoryId) {
@@ -92,7 +95,8 @@ public class BlockTypeWrapper {
         return blockCategories.computeIfAbsent(id, BlockTypeWrapper::new);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         if (this.blockType != null) {
             final String key = this.blockType.toString();
             if (key.startsWith("minecraft:")) {
@@ -135,9 +139,9 @@ public class BlockTypeWrapper {
      *
      * @return the block category represented by this wrapper.
      */
-    @Nullable public BlockCategory getBlockCategory() {
+    public @Nullable BlockCategory getBlockCategory() {
         if (this.blockCategory == null
-            && this.blockCategoryId != null) { // only if name is available
+                && this.blockCategoryId != null) { // only if name is available
             this.blockCategory = BlockCategory.REGISTRY.get(this.blockCategoryId);
             if (this.blockCategory == null && !BlockCategory.REGISTRY.values().isEmpty()) {
                 if (Settings.DEBUG) {
@@ -149,21 +153,25 @@ public class BlockTypeWrapper {
         return this.blockCategory;
     }
 
-    @Override public boolean equals(final Object o) {
-        if (this == o)
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         BlockTypeWrapper that = (BlockTypeWrapper) o;
         return Objects.equal(this.blockType, that.blockType) && Objects
-            .equal(this.blockCategoryId, that.blockCategoryId);
+                .equal(this.blockCategoryId, that.blockCategoryId);
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return Objects.hashCode(this.blockType, this.blockCategoryId);
     }
 
-    @Nullable public BlockType getBlockType() {
+    public @Nullable BlockType getBlockType() {
         return this.blockType;
     }
 
@@ -177,9 +185,11 @@ public class BlockTypeWrapper {
             super(id);
         }
 
-        @Override public <B extends BlockStateHolder<B>> boolean contains(B blockStateHolder) {
+        @Override
+        public <B extends BlockStateHolder<B>> boolean contains(B blockStateHolder) {
             return false;
         }
+
     }
 
 }

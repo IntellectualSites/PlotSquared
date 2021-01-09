@@ -27,12 +27,12 @@ package com.plotsquared.core.inject.factory;
 
 import com.plotsquared.core.backup.PlayerBackupProfile;
 import com.plotsquared.core.plot.Plot;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public interface PlayerBackupProfileFactory {
 
-    @Nonnull PlayerBackupProfile create(@Nonnull UUID uuid, @Nonnull Plot plot);
+    @NonNull PlayerBackupProfile create(@NonNull UUID uuid, @NonNull Plot plot);
 
 }

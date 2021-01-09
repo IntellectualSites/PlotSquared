@@ -27,17 +27,19 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.LongFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class TimeFlag extends LongFlag<TimeFlag> {
+
     public static final TimeFlag TIME_DISABLED = new TimeFlag(Long.MIN_VALUE);
 
-    protected TimeFlag(@Nonnull Long value) {
+    protected TimeFlag(@NonNull Long value) {
         super(value, TranslatableCaption.of("flags.flag_description_time"));
     }
 
-    @Override protected TimeFlag flagOf(@Nonnull Long value) {
+    @Override
+    protected TimeFlag flagOf(@NonNull Long value) {
         return new TimeFlag(value);
     }
+
 }

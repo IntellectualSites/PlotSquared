@@ -92,8 +92,9 @@ public class WEManager {
         String world = location.getWorldName();
         if (!PlotSquared.get().getPlotAreaManager().hasPlotArea(world)) {
             regions.add(RegionUtil
-                .createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
-                    Integer.MAX_VALUE));
+                    .createRegion(Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
+                            Integer.MAX_VALUE
+                    ));
             return regions;
         }
         PlotArea area = player.getApplicablePlotArea();
@@ -103,13 +104,13 @@ public class WEManager {
         boolean allowMember = player.hasPermission("plots.worldedit.member");
         Plot plot = player.getCurrentPlot();
         try (final MetaDataAccess<Plot> metaDataAccess =
-            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_WORLD_EDIT_REGION_PLOT)) {
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_WORLD_EDIT_REGION_PLOT)) {
             if (plot == null) {
                 plot = metaDataAccess.get().orElse(null);
             }
             if (plot != null && (!Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot)) && (
-                (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
-                    .getTrusted().contains(uuid))) && !plot.getFlag(NoWorldeditFlag.class)) {
+                    (allowMember && plot.isAdded(uuid)) || (!allowMember && (plot.isOwner(uuid)) || plot
+                            .getTrusted().contains(uuid))) && !plot.getFlag(NoWorldeditFlag.class)) {
                 for (CuboidRegion region : plot.getRegions()) {
                     BlockVector3 pos1 = region.getMinimumPoint().withY(area.getMinBuildHeight());
                     BlockVector3 pos2 = region.getMaximumPoint().withY(area.getMaxBuildHeight());
@@ -134,4 +135,5 @@ public class WEManager {
         }
         return false;
     }
+
 }

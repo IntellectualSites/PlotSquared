@@ -56,7 +56,8 @@ public class SQLite extends Database {
         this.dbLocation = dbLocation.getAbsolutePath();
     }
 
-    @Override public Connection openConnection() throws SQLException, ClassNotFoundException {
+    @Override
+    public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             return this.connection;
         }
@@ -76,15 +77,18 @@ public class SQLite extends Database {
         return this.connection;
     }
 
-    @Override public boolean checkConnection() throws SQLException {
+    @Override
+    public boolean checkConnection() throws SQLException {
         return (this.connection != null) && !this.connection.isClosed();
     }
 
-    @Override public Connection getConnection() {
+    @Override
+    public Connection getConnection() {
         return this.connection;
     }
 
-    @Override public boolean closeConnection() throws SQLException {
+    @Override
+    public boolean closeConnection() throws SQLException {
         if (this.connection == null) {
             return false;
         }
@@ -93,7 +97,8 @@ public class SQLite extends Database {
         return true;
     }
 
-    @Override public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
+    @Override
+    public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
@@ -102,7 +107,8 @@ public class SQLite extends Database {
         }
     }
 
-    @Override public int updateSQL(String query) throws SQLException, ClassNotFoundException {
+    @Override
+    public int updateSQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
@@ -111,9 +117,11 @@ public class SQLite extends Database {
         }
     }
 
-    @Override public Connection forceConnection() throws SQLException, ClassNotFoundException {
+    @Override
+    public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
         this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.dbLocation);
         return this.connection;
     }
+
 }

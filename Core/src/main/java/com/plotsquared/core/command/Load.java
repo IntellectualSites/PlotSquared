@@ -43,31 +43,35 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
 @CommandDeclaration(command = "load",
-    aliases = "restore",
-    category = CommandCategory.SCHEMATIC,
-    requiredType = RequiredType.NONE,
-    permission = "plots.load",
-    usage = "/plot load")
+        aliases = "restore",
+        category = CommandCategory.SCHEMATIC,
+        requiredType = RequiredType.NONE,
+        permission = "plots.load",
+        usage = "/plot load")
 public class Load extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final SchematicHandler schematicHandler;
 
-    @Inject public Load(@Nonnull final PlotAreaManager plotAreaManager,
-                        @Nonnull final SchematicHandler schematicHandler) {
+    @Inject
+    public Load(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull SchematicHandler schematicHandler
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.schematicHandler = schematicHandler;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final String world = player.getLocation().getWorldName();
         if (!this.plotAreaManager.hasPlotArea(world)) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
@@ -83,7 +87,7 @@ public class Load extends SubCommand {
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_LOAD)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_LOAD)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
@@ -93,7 +97,7 @@ public class Load extends SubCommand {
         }
 
         try (final MetaDataAccess<List<String>> metaDataAccess =
-            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
             if (args.length != 0) {
                 if (args.length == 1) {
                     List<String> schematics = metaDataAccess.get().orElse(null);
@@ -111,9 +115,9 @@ public class Load extends SubCommand {
                     } catch (Exception ignored) {
                         // use /plot load <index>
                         player.sendMessage(
-                            TranslatableCaption.of("invalid.not_valid_number"),
-                            Template.of("value", "(1, " + schematics.size() + ')')
-                    );
+                                TranslatableCaption.of("invalid.not_valid_number"),
+                                Template.of("value", "(1, " + schematics.size() + ')')
+                        );
                         return false;
                     }
                     final URL url;
@@ -131,30 +135,40 @@ public class Load extends SubCommand {
                         if (taskSchematic == null) {
                             plot.removeRunning();
                             player.sendMessage(
-                                TranslatableCaption.of("schematics.schematic_invalid"),
-                                Template.of("reason", "non-existent or not in gzip format")
-                        );
+                                    TranslatableCaption.of("schematics.schematic_invalid"),
+                                    Template.of("reason", "non-existent or not in gzip format")
+                            );
                             return;
                         }
                         PlotArea area = plot.getArea();
-                        this.schematicHandler.paste(taskSchematic, plot, 0, area.getMinBuildHeight(), 0, false, player, new RunnableVal<Boolean>() {
-                            @Override public void run(Boolean value) {
-                                plot.removeRunning();
-                                if (value) {
-                                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
-                                } else {
-                                    player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
+                        this.schematicHandler.paste(
+                                taskSchematic,
+                                plot,
+                                0,
+                                area.getMinBuildHeight(),
+                                0,
+                                false,
+                                player,
+                                new RunnableVal<Boolean>() {
+                                    @Override
+                                    public void run(Boolean value) {
+                                        plot.removeRunning();
+                                        if (value) {
+                                            player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
+                                        } else {
+                                            player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
+                                        }
+                                    }
                                 }
-                            }
-                        });
+                        );
                     });
                     return true;
                 }
                 plot.removeRunning();
                 player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot load <index>")
-            );
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", "/plot load <index>")
+                );
                 return false;
             }
 
@@ -182,7 +196,7 @@ public class Load extends SubCommand {
 
     public void displaySaves(PlotPlayer<?> player) {
         try (final MetaDataAccess<List<String>> metaDataAccess =
-            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
             List<String> schematics = metaDataAccess.get().orElse(Collections.emptyList());
             for (int i = 0; i < Math.min(schematics.size(), 32); i++) {
                 try {
@@ -197,7 +211,7 @@ public class Load extends SubCommand {
                     String size = split[4];
                     String color = "<dark_aqua>";
                     player.sendMessage(StaticCaption.of("<dark_gray>[</dark_gray><gray>" + (i + 1) + "</gray><dark_aqua>] </dark_aqua>" + color + time + "<dark_gray> | </dark_gray>" + color + world + ';' + id
-                        + "<dark_gray> | </dark_gray>" + color + size + 'x' + size));
+                            + "<dark_gray> | </dark_gray>" + color + size + 'x' + size));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -241,4 +255,5 @@ public class Load extends SubCommand {
         }
         return toreturn.toString().trim();
     }
+
 }

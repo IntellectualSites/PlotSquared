@@ -40,7 +40,8 @@ class AreaLimitedPlotProvider implements PlotProvider {
         this.areas = areas;
     }
 
-    @Override public Collection<Plot> getPlots() {
+    @Override
+    public Collection<Plot> getPlots() {
         final List<Plot> plots = new LinkedList<>();
         for (final PlotArea area : areas) {
             plots.addAll(area.getPlots());

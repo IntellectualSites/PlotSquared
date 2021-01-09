@@ -25,7 +25,8 @@
  */
 package com.plotsquared.core.generator;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Optional;
 
 /**
@@ -50,7 +51,7 @@ public enum ClassicPlotManagerComponent {
         return stringValues;
     }
 
-    public static Optional<ClassicPlotManagerComponent> fromString(@Nonnull final String string) {
+    public static Optional<ClassicPlotManagerComponent> fromString(final @NonNull String string) {
         for (final ClassicPlotManagerComponent classicPlotManagerComponent : values()) {
             if (classicPlotManagerComponent.name().equalsIgnoreCase(string)) {
                 return Optional.of(classicPlotManagerComponent);

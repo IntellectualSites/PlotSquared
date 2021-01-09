@@ -26,8 +26,8 @@
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.plot.comment.PlotComment;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -37,7 +37,7 @@ public final class PlotCommentContainer {
 
     private final Plot plot;
 
-    PlotCommentContainer(@Nonnull final Plot plot) {
+    PlotCommentContainer(final @NonNull Plot plot) {
         this.plot = plot;
     }
 
@@ -47,7 +47,7 @@ public final class PlotCommentContainer {
      * @param comment Comment to remove
      * @return {@code true} if the comment was removed, {@code false} if not
      */
-    public boolean removeComment(@Nonnull final PlotComment comment) {
+    public boolean removeComment(final @NonNull PlotComment comment) {
         return this.getSettings().removeComment(comment);
     }
 
@@ -56,7 +56,7 @@ public final class PlotCommentContainer {
      *
      * @param comments Comments to remove
      */
-    public void removeComments(@Nonnull final List<PlotComment> comments) {
+    public void removeComments(final @NonNull List<PlotComment> comments) {
         this.getSettings().removeComments(comments);
     }
 
@@ -66,7 +66,7 @@ public final class PlotCommentContainer {
      * @param inbox Inbox
      * @return List of comments
      */
-    @Nonnull public List<PlotComment> getComments(@Nonnull final String inbox) {
+    public @NonNull List<PlotComment> getComments(final @NonNull String inbox) {
         return this.getSettings().getComments(inbox);
     }
 
@@ -75,7 +75,7 @@ public final class PlotCommentContainer {
      *
      * @param comment Comment to add
      */
-    public void addComment(@Nonnull final PlotComment comment) {
+    public void addComment(final @NonNull PlotComment comment) {
         this.getSettings().addComment(comment);
     }
 
@@ -84,11 +84,12 @@ public final class PlotCommentContainer {
      *
      * @param list New comments
      */
-    public void setComments(@Nonnull final List<PlotComment> list) {
+    public void setComments(final @NonNull List<PlotComment> list) {
         this.getSettings().setComments(list);
     }
 
-    @Nonnull private PlotSettings getSettings() {
+    @NonNull
+    private PlotSettings getSettings() {
         if (this.plot.getSettings() == null) {
             throw new IllegalStateException("Cannot access comments for unowned plots");
         }

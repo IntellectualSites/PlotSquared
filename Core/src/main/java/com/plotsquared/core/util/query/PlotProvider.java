@@ -29,7 +29,8 @@ import com.plotsquared.core.plot.Plot;
 
 import java.util.Collection;
 
-@FunctionalInterface interface PlotProvider {
+@FunctionalInterface
+interface PlotProvider {
 
     Collection<Plot> getPlots();
 

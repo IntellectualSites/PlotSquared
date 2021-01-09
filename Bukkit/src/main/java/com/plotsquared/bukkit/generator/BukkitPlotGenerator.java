@@ -41,30 +41,32 @@ import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 public class BukkitPlotGenerator extends ChunkGenerator
-    implements GeneratorWrapper<ChunkGenerator> {
+        implements GeneratorWrapper<ChunkGenerator> {
 
-    @SuppressWarnings("unused") public final boolean PAPER_ASYNC_SAFE = true;
+    @SuppressWarnings("unused")
+    public final boolean PAPER_ASYNC_SAFE = true;
 
     private final PlotAreaManager plotAreaManager;
     private final IndependentPlotGenerator plotGenerator;
     private final ChunkGenerator platformGenerator;
     private final boolean full;
+    private final String levelName;
     private List<BlockPopulator> populators;
     private boolean loaded = false;
 
-    private final String levelName;
-
-    public BukkitPlotGenerator(@Nonnull final String name,
-                               @Nonnull final IndependentPlotGenerator generator,
-                               @Nonnull final PlotAreaManager plotAreaManager) {
+    public BukkitPlotGenerator(
+            final @NonNull String name,
+            final @NonNull IndependentPlotGenerator generator,
+            final @NonNull PlotAreaManager plotAreaManager
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.levelName = name;
         this.plotGenerator = generator;
@@ -74,10 +76,10 @@ public class BukkitPlotGenerator extends ChunkGenerator
         this.full = true;
     }
 
-    public BukkitPlotGenerator(final String world, final ChunkGenerator cg, @Nonnull final PlotAreaManager plotAreaManager) {
+    public BukkitPlotGenerator(final String world, final ChunkGenerator cg, final @NonNull PlotAreaManager plotAreaManager) {
         if (cg instanceof BukkitPlotGenerator) {
             throw new IllegalArgumentException("ChunkGenerator: " + cg.getClass().getName()
-                + " is already a BukkitPlotGenerator!");
+                    + " is already a BukkitPlotGenerator!");
         }
         this.plotAreaManager = plotAreaManager;
         this.levelName = world;
@@ -86,23 +88,28 @@ public class BukkitPlotGenerator extends ChunkGenerator
         this.plotGenerator = new DelegatePlotGenerator(cg, world);
     }
 
-    @Override public void augment(PlotArea area) {
+    @Override
+    public void augment(PlotArea area) {
         BukkitAugmentedGenerator.get(BukkitUtil.getWorld(area.getWorldName()));
     }
 
-    @Override public boolean isFull() {
+    @Override
+    public boolean isFull() {
         return this.full;
     }
 
-    @Override public IndependentPlotGenerator getPlotGenerator() {
+    @Override
+    public IndependentPlotGenerator getPlotGenerator() {
         return this.plotGenerator;
     }
 
-    @Override public ChunkGenerator getPlatformGenerator() {
+    @Override
+    public ChunkGenerator getPlatformGenerator() {
         return this.platformGenerator;
     }
 
-    @Override @Nonnull public List<BlockPopulator> getDefaultPopulators(@Nonnull World world) {
+    @Override
+    public @NonNull List<BlockPopulator> getDefaultPopulators(@NonNull World world) {
         try {
             if (!this.loaded) {
                 String name = world.getName();
@@ -146,9 +153,11 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return toAdd;
     }
 
-    @Override @Nonnull
-    public ChunkData generateChunkData(@Nonnull World world, @Nonnull Random random, int x, int z,
-        @Nonnull BiomeGrid biome) {
+    @Override
+    public @NonNull ChunkData generateChunkData(
+            @NonNull World world, @NonNull Random random, int x, int z,
+            @NonNull BiomeGrid biome
+    ) {
 
         GenChunk result = new GenChunk();
         if (this.getPlotGenerator() instanceof SingleWorldGenerator) {
@@ -200,8 +209,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
         PlotArea area = this.plotAreaManager.getPlotArea(world.getName(), null);
         if (area == null && (area = this.plotAreaManager.getPlotArea(this.levelName, null)) == null) {
             throw new IllegalStateException(
-                "Cannot regenerate chunk that does not belong to a plot area." + " Location: " + loc
-                    + ", world: " + world);
+                    "Cannot regenerate chunk that does not belong to a plot area." + " Location: " + loc
+                            + ", world: " + world);
         }
         try {
             this.plotGenerator.generateChunk(result, area);
@@ -212,7 +221,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
         ChunkManager.postProcessChunk(loc, result);
     }
 
-    @Override public boolean canSpawn(@Nonnull final World world, final int x, final int z) {
+    @Override
+    public boolean canSpawn(final @NonNull World world, final int x, final int z) {
         return true;
     }
 
@@ -236,7 +246,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
         return true;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         if (this.platformGenerator == this) {
             return this.plotGenerator.getName();
         }
@@ -247,7 +258,8 @@ public class BukkitPlotGenerator extends ChunkGenerator
         }
     }
 
-    @Override public boolean equals(final Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -257,4 +269,5 @@ public class BukkitPlotGenerator extends ChunkGenerator
     public String getLevelName() {
         return this.levelName;
     }
+
 }

@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.generator;
 
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -54,12 +55,11 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -80,15 +80,19 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private Location SIGN_LOCATION;
     private File root = null;
 
-    @Inject private SchematicHandler schematicHandler;
+    @Inject
+    private SchematicHandler schematicHandler;
 
-    @Inject public HybridPlotWorld(@Assisted("world") final String worldName,
-                                   @Nullable @Assisted("id") final String id,
-                                   @Assisted @Nonnull final IndependentPlotGenerator generator,
-                                   @Nullable @Assisted("min") final PlotId min,
-                                   @Nullable @Assisted("max") final PlotId max,
-                                   @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                                   @Nonnull final GlobalBlockQueue blockQueue) {
+    @Inject
+    public HybridPlotWorld(
+            @Assisted("world") final String worldName,
+            @Nullable @Assisted("id") final String id,
+            @Assisted final @NonNull IndependentPlotGenerator generator,
+            @Nullable @Assisted("min") final PlotId min,
+            @Nullable @Assisted("max") final PlotId max,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            final @NonNull GlobalBlockQueue blockQueue
+    ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
         PlotSquared.platform().injector().injectMembers(this);
     }
@@ -123,7 +127,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 if (direction != null) {
                     Vector3 vector = transform.apply(direction.toVector()).subtract(transform.apply(Vector3.ZERO)).normalize();
                     Direction newDirection =
-                        Direction.findClosest(vector, Direction.Flag.CARDINAL | Direction.Flag.ORDINAL | Direction.Flag.SECONDARY_ORDINAL);
+                            Direction.findClosest(
+                                    vector,
+                                    Direction.Flag.CARDINAL | Direction.Flag.ORDINAL | Direction.Flag.SECONDARY_ORDINAL
+                            );
 
                     if (newDirection != null) {
                         CompoundTagBuilder builder = tag.createBuilder();
@@ -138,12 +145,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         return BlockTransformExtent.transform(id, transform);
     }
 
-    @Nonnull @Override protected PlotManager createManager() {
+    @NonNull
+    @Override
+    protected PlotManager createManager() {
         return new HybridPlotManager(this, PlotSquared.platform().regionManager(),
-            PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class));
+                PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class)
+        );
     }
 
-    public Location getSignLocation(@Nonnull Plot plot) {
+    public Location getSignLocation(@NonNull Plot plot) {
         plot = plot.getBasePlot(false);
         final Location bot = plot.getBottomAbs();
         if (SIGN_LOCATION == null) {
@@ -157,7 +167,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      * <p>This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.</p>
      */
-    @Override public void loadConfiguration(ConfigurationSection config) {
+    @Override
+    public void loadConfiguration(ConfigurationSection config) {
         super.loadConfiguration(config);
         if ((this.ROAD_WIDTH & 1) == 0) {
             this.PATH_WIDTH_LOWER = (short) (Math.floor(this.ROAD_WIDTH / 2) - 1);
@@ -198,7 +209,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
     }
 
-    @Override public boolean isCompatible(@Nonnull final PlotArea plotArea) {
+    @Override
+    public boolean isCompatible(final @NonNull PlotArea plotArea) {
         if (!(plotArea instanceof SquarePlotWorld)) {
             return false;
         }
@@ -212,9 +224,15 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         // Try to determine root. This means that plot areas can have separate schematic
         // directories
         if (!(root =
-            FileUtils.getFile(PlotSquared.platform().getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName() + "/" + this.getId()))
-            .exists()) {
-            root = FileUtils.getFile(PlotSquared.platform().getDirectory(), "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName());
+                FileUtils.getFile(
+                        PlotSquared.platform().getDirectory(),
+                        "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName() + "/" + this.getId()
+                ))
+                .exists()) {
+            root = FileUtils.getFile(
+                    PlotSquared.platform().getDirectory(),
+                    "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName()
+            );
         }
 
         File schematic1File = new File(root, "sideroad.schem");
@@ -282,14 +300,23 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 for (short z = 0; z < l3; z++) {
                     for (short y = 0; y < h3; y++) {
                         BaseBlock id =
-                            blockArrayClipboard3.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                                blockArrayClipboard3.getFullBlock(BlockVector3.at(
+                                        x + min.getBlockX(),
+                                        y + min.getBlockY(),
+                                        z + min.getBlockZ()
+                                ));
                         if (!id.getBlockType().getMaterial().isAir()) {
                             addOverlayBlock((short) (x + shift + oddshift + centerShiftX), (short) (y + plotY),
-                                (short) (z + shift + oddshift + centerShiftZ), id, false, h3);
+                                    (short) (z + shift + oddshift + centerShiftZ), id, false, h3
+                            );
                         }
                     }
                     BiomeType biome = blockArrayClipboard3.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
-                    addOverlayBiome((short) (x + shift + oddshift + centerShiftX), (short) (z + shift + oddshift + centerShiftZ), biome);
+                    addOverlayBiome(
+                            (short) (x + shift + oddshift + centerShiftX),
+                            (short) (z + shift + oddshift + centerShiftZ),
+                            biome
+                    );
                 }
             }
 
@@ -318,10 +345,21 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
                 for (short y = 0; y < h1; y++) {
-                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                    BaseBlock id = blockArrayClipboard1.getFullBlock(BlockVector3.at(
+                            x + min.getBlockX(),
+                            y + min.getBlockY(),
+                            z + min.getBlockZ()
+                    ));
                     if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z + shift + oddshift), id, false, h1);
-                        addOverlayBlock((short) (z + shift + oddshift), (short) (y + roadY), (short) (shift - x + (oddshift - 1)), id, true, h1);
+                        addOverlayBlock(
+                                (short) (z + shift + oddshift),
+                                (short) (y + roadY),
+                                (short) (shift - x + (oddshift - 1)),
+                                id,
+                                true,
+                                h1
+                        );
                     }
                 }
                 BiomeType biome = blockArrayClipboard1.getBiome(BlockVector2.at(x + min.getBlockX(), z + min.getBlockZ()));
@@ -339,7 +377,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         for (short x = 0; x < w2; x++) {
             for (short z = 0; z < l2; z++) {
                 for (short y = 0; y < h2; y++) {
-                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(x + min.getBlockX(), y + min.getBlockY(), z + min.getBlockZ()));
+                    BaseBlock id = blockArrayClipboard2.getFullBlock(BlockVector3.at(
+                            x + min.getBlockX(),
+                            y + min.getBlockY(),
+                            z + min.getBlockZ()
+                    ));
                     if (!id.getBlockType().getMaterial().isAir()) {
                         addOverlayBlock((short) (x - shift), (short) (y + roadY), (short) (z - shift), id, false, h2);
                     }
@@ -391,4 +433,5 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public File getRoot() {
         return this.root;
     }
+
 }

@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class SnowFormFlag extends BooleanFlag<SnowFormFlag> {
 
@@ -39,7 +38,8 @@ public class SnowFormFlag extends BooleanFlag<SnowFormFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_snow_form"));
     }
 
-    @Override protected SnowFormFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected SnowFormFlag flagOf(@NonNull Boolean value) {
         return value ? SNOW_FORM_TRUE : SNOW_FORM_FALSE;
     }
 

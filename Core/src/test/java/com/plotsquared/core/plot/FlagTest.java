@@ -43,7 +43,8 @@ public class FlagTest {
 
     private ItemType testBlock;
 
-    @Before public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         //EventUtil.manager = new EventUtilTest();
         DBFunc.dbManager = new AbstractDBTest();
     }
@@ -68,8 +69,10 @@ public class FlagTest {
 //        }
 //    }
 
-    @Test public void testFlagName() {
+    @Test
+    public void testFlagName() {
         String flagName = PlotFlag.getFlagName(UseFlag.class);
         assertEquals("use", flagName);
     }
+
 }

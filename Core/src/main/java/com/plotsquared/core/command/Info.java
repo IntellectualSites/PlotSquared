@@ -25,24 +25,25 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
 import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "info",
-    aliases = "i",
-    usage = "/plot info <id> [-f to force info]",
-    category = CommandCategory.INFO)
+        aliases = "i",
+        usage = "/plot info <id> [-f to force info]",
+        category = CommandCategory.INFO)
 public class Info extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Plot plot;
         String arg;
         if (args.length > 0) {
@@ -89,7 +90,7 @@ public class Info extends SubCommand {
             if (args.length == 1) {
                 args = new String[0];
             } else {
-                args = new String[] {args[1]};
+                args = new String[]{args[1]};
             }
         }
 
@@ -99,7 +100,7 @@ public class Info extends SubCommand {
             for (final String argument : args) {
                 if (argument.equalsIgnoreCase("-f")) {
                     if (!player
-                        .hasPermission(Permission.PERMISSION_AREA_INFO_FORCE.toString())) {
+                            .hasPermission(Permission.PERMISSION_AREA_INFO_FORCE.toString())) {
                         player.sendMessage(
                                 TranslatableCaption.of("permission.no_permission"),
                                 Template.of("node", Permission.PERMISSION_AREA_INFO_FORCE.toString())
@@ -134,11 +135,13 @@ public class Info extends SubCommand {
             info = getCaption(arg);
             if (info == null) {
                 if (Settings.Ratings.USE_LIKES) {
-                    player.sendMessage(StaticCaption.of("&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                            + "&aowner&7, " + " &alikes"));
+                    player.sendMessage(StaticCaption.of(
+                            "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
+                                    + "&aowner&7, " + " &alikes"));
                 } else {
-                    player.sendMessage(StaticCaption.of("&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
-                            + "&aowner&7, " + " &arating"));
+                    player.sendMessage(StaticCaption.of(
+                            "&6Categories&7: &amembers&7, &aalias&7, &abiome&7, &aseen&7, &adenied&7, &aflags&7, &aid&7, &asize&7, &atrusted&7, "
+                                    + "&aowner&7, " + " &arating"));
                 }
                 return false;
             }
@@ -182,4 +185,5 @@ public class Info extends SubCommand {
                 return null;
         }
     }
+
 }

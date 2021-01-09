@@ -34,8 +34,13 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * This is a wrapper for {@link Expression}.
  */
 public class PlotExpression {
+
     private final Expression expression;
     private final Object lock = new Object();
+
+    private PlotExpression(final @NonNull String rawExpression, final @NonNull String @NonNull [] variableNames) {
+        this.expression = Expression.compile(rawExpression, variableNames);
+    }
 
     /**
      * Compiles an expression from a string.
@@ -44,13 +49,11 @@ public class PlotExpression {
      * @param variableNames the variables that can be set in {@link #evaluate(double...)}.
      * @return the compiled expression.
      */
-    public static @NonNull PlotExpression compile(final @NonNull String expression,
-                                                  final @NonNull String @NonNull ... variableNames) {
+    public static @NonNull PlotExpression compile(
+            final @NonNull String expression,
+            final @NonNull String @NonNull ... variableNames
+    ) {
         return new PlotExpression(expression, variableNames);
-    }
-
-    private PlotExpression(final @NonNull String rawExpression, final @NonNull String @NonNull [] variableNames) {
-        this.expression = Expression.compile(rawExpression, variableNames);
     }
 
     /**
@@ -67,4 +70,5 @@ public class PlotExpression {
         }
         return evaluate;
     }
+
 }

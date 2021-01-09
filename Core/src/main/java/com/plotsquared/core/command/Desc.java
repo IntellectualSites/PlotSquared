@@ -35,41 +35,49 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "setdescription",
-    permission = "plots.set.desc",
-    usage = "/plot desc <description>",
-    aliases = {"desc", "setdesc", "setd", "description"},
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.set.desc",
+        usage = "/plot desc <description>",
+        aliases = {"desc", "setdesc", "setd", "description"},
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER)
 public class Desc extends SetCommand {
 
     private final EventDispatcher eventDispatcher;
-    
-    @Inject public Desc(@Nonnull final EventDispatcher eventDispatcher) {
+
+    @Inject
+    public Desc(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-    
-    @Override public boolean set(PlotPlayer player, Plot plot, String desc) {
+
+    @Override
+    public boolean set(PlotPlayer player, Plot plot, String desc) {
         if (desc.isEmpty()) {
-            PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plot.getFlagContainer().getFlag(DescriptionFlag.class), plot);
+            PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plot
+                    .getFlagContainer()
+                    .getFlag(DescriptionFlag.class), plot);
             if (event.getEventResult() == Result.DENY) {
                 player.sendMessage(
-                    TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Description removal"));
+                        TranslatableCaption.of("events.event_denied"),
+                        Template.of("value", "Description removal")
+                );
                 return false;
             }
             plot.removeFlag(event.getFlag());
             player.sendMessage(TranslatableCaption.of("desc.desc_unset"));
             return true;
         }
-        PlotFlagAddEvent event = this.eventDispatcher.callFlagAdd(plot.getFlagContainer().getFlag(DescriptionFlag.class).createFlagInstance(desc), plot);
+        PlotFlagAddEvent event = this.eventDispatcher.callFlagAdd(plot
+                .getFlagContainer()
+                .getFlag(DescriptionFlag.class)
+                .createFlagInstance(desc), plot);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
                     TranslatableCaption.of("events.event_denied"),
-                    Template.of("value", "Description set"));
+                    Template.of("value", "Description set")
+            );
             return false;
         }
         boolean result = plot.setFlag(event.getFlag());
@@ -80,4 +88,5 @@ public class Desc extends SetCommand {
         player.sendMessage(TranslatableCaption.of("desc.desc_set"));
         return true;
     }
+
 }

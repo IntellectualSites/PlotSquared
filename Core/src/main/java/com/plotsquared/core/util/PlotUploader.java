@@ -33,11 +33,11 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.NBTOutputStream;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -51,6 +51,7 @@ import java.util.zip.GZIPOutputStream;
  * This class handles communication with the Arkitektonika REST service.
  */
 public class PlotUploader {
+
     private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotUploader.class.getSimpleName());
     private static final Path TEMP_DIR = Paths.get(PlotSquared.platform().getDirectory().getPath());
     private final SchematicHandler schematicHandler;
@@ -63,7 +64,7 @@ public class PlotUploader {
      * @param schematicHandler the handler to create schematics of plots.
      */
     @Inject
-    public PlotUploader(@Nonnull final SchematicHandler schematicHandler) {
+    public PlotUploader(final @NonNull SchematicHandler schematicHandler) {
         this.schematicHandler = schematicHandler;
         this.arkitektonika = Arkitektonika.builder().withUrl(Settings.Arkitektonika.BACKEND_URL).build();
     }
@@ -76,7 +77,7 @@ public class PlotUploader {
      * @param plot The plot to upload
      * @return a {@link CompletableFuture} that provides a {@link PlotUploadResult} if finished.
      */
-    public CompletableFuture<PlotUploadResult> upload(@Nonnull final Plot plot) {
+    public CompletableFuture<PlotUploadResult> upload(final @NonNull Plot plot) {
         return this.schematicHandler.getCompoundTag(plot)
                 .handle((tag, t) -> {
                     plot.removeRunning();
@@ -87,8 +88,8 @@ public class PlotUploader {
                 .thenApply(this::wrapIntoResult);
     }
 
-    @Nonnull
-    private PlotUploadResult wrapIntoResult(@Nullable final SchematicKeys schematicKeys) {
+    @NonNull
+    private PlotUploadResult wrapIntoResult(final @Nullable SchematicKeys schematicKeys) {
         if (schematicKeys == null) {
             return PlotUploadResult.failed();
         }
@@ -98,7 +99,7 @@ public class PlotUploader {
     }
 
     @Nullable
-    private SchematicKeys uploadAndDelete(@Nonnull final Path file) {
+    private SchematicKeys uploadAndDelete(final @NonNull Path file) {
         try {
             final CompletableFuture<SchematicKeys> upload = this.arkitektonika.upload(file.toFile());
             return upload.join();
@@ -114,8 +115,8 @@ public class PlotUploader {
         }
     }
 
-    @Nonnull
-    private Path writeToTempFile(@Nonnull final CompoundTag schematic) {
+    @NonNull
+    private Path writeToTempFile(final @NonNull CompoundTag schematic) {
         try {
             final Path tempFile = Files.createTempFile(TEMP_DIR, null, null);
             try (final OutputStream stream = Files.newOutputStream(tempFile)) {
@@ -134,7 +135,7 @@ public class PlotUploader {
      * @param stream    The stream to write the schematic to
      * @throws IOException if an I/O error occurred
      */
-    private void writeSchematic(@Nonnull final CompoundTag schematic, @Nonnull final OutputStream stream)
+    private void writeSchematic(final @NonNull CompoundTag schematic, final @NonNull OutputStream stream)
             throws IOException {
         try (final NBTOutputStream nbtOutputStream = new NBTOutputStream(new GZIPOutputStream(stream))) {
             nbtOutputStream.writeNamedTag("Schematic", schematic);
@@ -145,23 +146,26 @@ public class PlotUploader {
      * A result of a plot upload process.
      */
     public static class PlotUploadResult {
+
         private final boolean success;
         private final String downloadUrl;
         private final String deletionUrl;
 
-        private PlotUploadResult(boolean success, @Nullable final String downloadUrl,
-                                 @Nullable final String deletionUrl) {
+        private PlotUploadResult(
+                boolean success, final @Nullable String downloadUrl,
+                final @Nullable String deletionUrl
+        ) {
             this.success = success;
             this.downloadUrl = downloadUrl;
             this.deletionUrl = deletionUrl;
         }
 
-        @Nonnull
-        private static PlotUploadResult success(@Nonnull final String downloadUrl, @Nullable final String deletionUrl) {
+        @NonNull
+        private static PlotUploadResult success(final @NonNull String downloadUrl, final @Nullable String deletionUrl) {
             return new PlotUploadResult(true, downloadUrl, deletionUrl);
         }
 
-        @Nonnull
+        @NonNull
         private static PlotUploadResult failed() {
             return new PlotUploadResult(false, null, null);
         }
@@ -192,5 +196,7 @@ public class PlotUploader {
         public String getDeletionUrl() {
             return deletionUrl;
         }
+
     }
+
 }

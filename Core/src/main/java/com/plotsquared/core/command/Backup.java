@@ -38,8 +38,8 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.nio.file.Files;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -57,15 +57,16 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @CommandDeclaration(command = "backup",
-    usage = "/plot backup <save | list | load>",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER,
-    permission = "plots.backup")
+        usage = "/plot backup <save | list | load>",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER,
+        permission = "plots.backup")
 public final class Backup extends Command {
 
     private final BackupManager backupManager;
 
-    @Inject public Backup(@Nonnull final BackupManager backupManager) {
+    @Inject
+    public Backup(final @NonNull BackupManager backupManager) {
         super(MainCommand.getInstance(), true);
         this.backupManager = backupManager;
     }
@@ -79,22 +80,25 @@ public final class Backup extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         if (args.length == 0 || !Arrays.asList("save", "list", "load")
-            .contains(args[0].toLowerCase(Locale.ENGLISH))) {
+                .contains(args[0].toLowerCase(Locale.ENGLISH))) {
             return CompletableFuture.completedFuture(sendMessage(player));
         }
         return super.execute(player, args, confirm, whenDone);
     }
 
-    @Override public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
+    @Override
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         if (args.length == 1) {
             return Stream.of("save", "list", "load")
-                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
-                .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
-                }).collect(Collectors.toList());
+                    .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                    .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
+                    }).collect(Collectors.toList());
         } else if (args[0].equalsIgnoreCase("load")) {
 
             final Plot plot = player.getCurrentPlot();
@@ -102,17 +106,18 @@ public final class Backup extends Command {
                 final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
                 if (backupProfile instanceof PlayerBackupProfile) {
                     final CompletableFuture<List<com.plotsquared.core.backup.Backup>> backupList =
-                        backupProfile.listBackups();
+                            backupProfile.listBackups();
                     if (backupList.isDone()) {
                         final List<com.plotsquared.core.backup.Backup> backups =
-                            backupList.getNow(new ArrayList<>());
+                                backupList.getNow(new ArrayList<>());
                         if (backups.isEmpty()) {
                             return new ArrayList<>();
                         }
                         return IntStream.range(1, 1 + backups.size()).mapToObj(
-                            i -> new Command(null, false, Integer.toString(i), "",
-                                RequiredType.NONE, null) {
-                            }).collect(Collectors.toList());
+                                i -> new Command(null, false, Integer.toString(i), "",
+                                        RequiredType.NONE, null
+                                ) {
+                                }).collect(Collectors.toList());
 
                     }
                 }
@@ -122,13 +127,15 @@ public final class Backup extends Command {
     }
 
     @CommandDeclaration(command = "save",
-        usage = "/plot backup save",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.PLAYER,
-        permission = "plots.backup.save")
-    public void save(final Command command, final PlotPlayer<?> player, final String[] args,
-        final RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+            usage = "/plot backup save",
+            category = CommandCategory.SETTINGS,
+            requiredType = RequiredType.PLAYER,
+            permission = "plots.backup.save")
+    public void save(
+            final Command command, final PlotPlayer<?> player, final String[] args,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
@@ -145,7 +152,7 @@ public final class Backup extends Command {
                     Template.of("plot", "generic.generic_merged")
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BACKUP_OTHER))
@@ -174,13 +181,15 @@ public final class Backup extends Command {
     }
 
     @CommandDeclaration(command = "list",
-        usage = "/plot backup list",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.PLAYER,
-        permission = "plots.backup.list")
-    public void list(final Command command, final PlotPlayer<?> player, final String[] args,
-        final RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+            usage = "/plot backup list",
+            category = CommandCategory.SETTINGS,
+            requiredType = RequiredType.PLAYER,
+            permission = "plots.backup.list")
+    public void list(
+            final Command command, final PlotPlayer<?> player, final String[] args,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
@@ -195,7 +204,7 @@ public final class Backup extends Command {
                     Template.of("plot", "generic.generic_merged")
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BACKUP_OTHER))
@@ -227,7 +236,8 @@ public final class Backup extends Command {
                                         Template.of("number", Integer.toString(i + 1)),
                                         Template.of("value", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.ofInstant(
                                                 Instant.ofEpochMilli(backups.get(i).getCreationTime()),
-                                                ZoneId.systemDefault())))
+                                                ZoneId.systemDefault()
+                                        )))
                                 );
                             }
                         } catch (final Exception e) {
@@ -240,13 +250,15 @@ public final class Backup extends Command {
     }
 
     @CommandDeclaration(command = "load",
-        usage = "/plot backup load <#>",
-        category = CommandCategory.SETTINGS,
-        requiredType = RequiredType.PLAYER,
-        permission = "plots.backup.load")
-    public void load(final Command command, final PlotPlayer<?> player, final String[] args,
-        final RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+            usage = "/plot backup load <#>",
+            category = CommandCategory.SETTINGS,
+            requiredType = RequiredType.PLAYER,
+            permission = "plots.backup.load")
+    public void load(
+            final Command command, final PlotPlayer<?> player, final String[] args,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
@@ -265,7 +277,7 @@ public final class Backup extends Command {
                     Template.of("plot", "generic.generic_merged")
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
+                .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
                     Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_BACKUP_OTHER))
@@ -308,26 +320,27 @@ public final class Backup extends Command {
                             );
                         } else {
                             final com.plotsquared.core.backup.Backup backup =
-                                backups.get(number - 1);
+                                    backups.get(number - 1);
                             if (backup == null || backup.getFile() == null || !Files
-                                .exists(backup.getFile())) {
+                                    .exists(backup.getFile())) {
                                 player.sendMessage(
                                         TranslatableCaption.of("backup_impossible"),
                                         Template.of("plot", "generic.generic_invalid_choice")
                                 );
                             } else {
                                 CmdConfirm.addPending(player, "/plot backup load " + number,
-                                    () -> backupProfile.restoreBackup(backup, player)
-                                        .whenComplete((n, error) -> {
-                                            if (error != null) {
-                                                player.sendMessage(
-                                                        TranslatableCaption.of("backups.backup_load_failure"),
-                                                        Template.of("reason", error.getMessage())
-                                                );
-                                            } else {
-                                                player.sendMessage(TranslatableCaption.of("backups.backup_load_success"));
-                                            }
-                                        }));
+                                        () -> backupProfile.restoreBackup(backup, player)
+                                                .whenComplete((n, error) -> {
+                                                    if (error != null) {
+                                                        player.sendMessage(
+                                                                TranslatableCaption.of("backups.backup_load_failure"),
+                                                                Template.of("reason", error.getMessage())
+                                                        );
+                                                    } else {
+                                                        player.sendMessage(TranslatableCaption.of("backups.backup_load_success"));
+                                                    }
+                                                })
+                                );
                             }
                         }
                     }

@@ -46,20 +46,20 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 @CommandDeclaration(command = "trim",
-    permission = "plots.admin",
-    usage = "/plot trim <world> [regenerate]",
-    requiredType = RequiredType.CONSOLE,
-    category = CommandCategory.ADMINISTRATION)
+        permission = "plots.admin",
+        usage = "/plot trim <world> [regenerate]",
+        requiredType = RequiredType.CONSOLE,
+        category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + Trim.class.getSimpleName());
@@ -70,10 +70,13 @@ public class Trim extends SubCommand {
     private final GlobalBlockQueue blockQueue;
     private final RegionManager regionManager;
 
-    @Inject public Trim(@Nonnull final PlotAreaManager plotAreaManager,
-                        @Nonnull final WorldUtil worldUtil,
-                        @Nonnull final GlobalBlockQueue blockQueue,
-                        @Nonnull final RegionManager regionManager) {
+    @Inject
+    public Trim(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull WorldUtil worldUtil,
+            final @NonNull GlobalBlockQueue blockQueue,
+            final @NonNull RegionManager regionManager
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
         this.blockQueue = blockQueue;
@@ -87,8 +90,10 @@ public class Trim extends SubCommand {
      * @param result (viable = .mcr to trim, nonViable = .mcr keep)
      * @return success or not
      */
-    public static boolean getTrimRegions(String world,
-        final RunnableVal2<Set<BlockVector2>, Set<BlockVector2>> result) {
+    public static boolean getTrimRegions(
+            String world,
+            final RunnableVal2<Set<BlockVector2>, Set<BlockVector2>> result
+    ) {
         if (result == null) {
             return false;
         }
@@ -103,7 +108,8 @@ public class Trim extends SubCommand {
         StaticCaption.of(" - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
         StaticCaption.of(" - TIME ESTIMATE: 12 Parsecs");
         TaskManager.getPlatformImplementation().objectTask(plots, new RunnableVal<Plot>() {
-            @Override public void run(Plot plot) {
+            @Override
+            public void run(Plot plot) {
                 Location pos1 = plot.getCorners()[0];
                 Location pos2 = plot.getCorners()[1];
                 int ccx1 = pos1.getX() >> 9;
@@ -120,11 +126,12 @@ public class Trim extends SubCommand {
                 }
             }
         }).thenAccept(ignore ->
-            TaskManager.getPlatformImplementation().taskLater(result, TaskTime.ticks(1L)));
+                TaskManager.getPlatformImplementation().taskLater(result, TaskTime.ticks(1L)));
         return true;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             sendUsage(player);
             return false;
@@ -141,14 +148,16 @@ public class Trim extends SubCommand {
         Trim.TASK = true;
         final boolean regen = args.length == 2 && Boolean.parseBoolean(args[1]);
         getTrimRegions(world, new RunnableVal2<Set<BlockVector2>, Set<BlockVector2>>() {
-            @Override public void run(Set<BlockVector2> viable, final Set<BlockVector2> nonViable) {
+            @Override
+            public void run(Set<BlockVector2> viable, final Set<BlockVector2> nonViable) {
                 Runnable regenTask;
                 if (regen) {
                     logger.info("Starting regen task");
                     logger.info(" - This is a VERY slow command");
                     logger.info(" - It will say 'Trim done!' when complete");
                     regenTask = new Runnable() {
-                        @Override public void run() {
+                        @Override
+                        public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
                                 player.sendMessage(TranslatableCaption.of("trim.trim_done"));
@@ -171,12 +180,12 @@ public class Trim extends SubCommand {
                             int bx = cbx << 4;
                             int bz = cbz << 4;
                             CuboidRegion region =
-                                RegionUtil.createRegion(bx, bx + 511, bz, bz + 511);
+                                    RegionUtil.createRegion(bx, bx + 511, bz, bz + 511);
                             for (Plot plot : PlotQuery.newQuery().inWorld(world)) {
                                 Location bot = plot.getBottomAbs();
                                 Location top = plot.getExtendedTopAbs();
                                 CuboidRegion plotReg = RegionUtil
-                                    .createRegion(bot.getX(), top.getX(), bot.getZ(), top.getZ());
+                                        .createRegion(bot.getX(), top.getX(), bot.getZ(), top.getZ());
                                 if (!RegionUtil.intersects(region, plotReg)) {
                                     continue;
                                 }
@@ -191,11 +200,12 @@ public class Trim extends SubCommand {
                             }
                             final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
                             TaskManager.getPlatformImplementation().objectTask(chunks, new RunnableVal<BlockVector2>() {
-                                @Override public void run(BlockVector2 value) {
+                                @Override
+                                public void run(BlockVector2 value) {
                                     queue.regenChunk(value.getX(), value.getZ());
                                 }
                             }).thenAccept(ignore -> TaskManager.getPlatformImplementation()
-                                .taskLater(this, TaskTime.ticks(1L)));
+                                    .taskLater(this, TaskTime.ticks(1L)));
                         }
                     };
                 } else {
@@ -211,4 +221,5 @@ public class Trim extends SubCommand {
         });
         return true;
     }
+
 }

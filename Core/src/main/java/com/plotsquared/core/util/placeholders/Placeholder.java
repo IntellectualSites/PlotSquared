@@ -27,8 +27,7 @@ package com.plotsquared.core.util.placeholders;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.player.PlotPlayer;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A placeholder is a keyed value that gets replaced by a {@link PlotPlayer player}-specific value at runtime
@@ -37,7 +36,7 @@ public abstract class Placeholder {
 
     private final String key;
 
-    public Placeholder(@Nonnull final String key) {
+    public Placeholder(final @NonNull String key) {
         this.key = Preconditions.checkNotNull(key, "Key may not be null");
     }
 
@@ -47,14 +46,14 @@ public abstract class Placeholder {
      * @param player Player
      * @return Placeholder value. Return {@code ""} if no placeholder value can be returned
      */
-    @Nonnull public abstract String getValue(@Nonnull final PlotPlayer<?> player);
+    public @NonNull abstract String getValue(final @NonNull PlotPlayer<?> player);
 
     /**
      * Get the placeholder key
      *
      * @return Placeholder key
      */
-    @Nonnull public final String getKey() {
+    public @NonNull final String getKey() {
         return this.key;
     }
 

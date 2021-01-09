@@ -30,8 +30,7 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.TimeUtil;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class KeepFlag extends PlotFlag<Object, KeepFlag> {
 
@@ -42,11 +41,12 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
      *
      * @param value Flag value
      */
-    protected KeepFlag(@Nonnull Object value) {
+    protected KeepFlag(@NonNull Object value) {
         super(value, TranslatableCaption.of("flags.flag_category_mixed"), TranslatableCaption.of("flags.flag_description_keep"));
     }
 
-    @Override public KeepFlag parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public KeepFlag parse(@NonNull String input) throws FlagParseException {
         if (MathMan.isInteger(input)) {
             final long value = Long.parseLong(input);
             if (value < 0) {
@@ -65,7 +65,8 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
         }
     }
 
-    @Override public KeepFlag merge(@Nonnull Object newValue) {
+    @Override
+    public KeepFlag merge(@NonNull Object newValue) {
         if (newValue.equals(true)) {
             return flagOf(true);
         } else if (newValue.equals(false)) {
@@ -86,15 +87,18 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().toString();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "3w 4d 2h";
     }
 
-    @Override protected KeepFlag flagOf(@Nonnull Object value) {
+    @Override
+    protected KeepFlag flagOf(@NonNull Object value) {
         return new KeepFlag(value);
     }
 

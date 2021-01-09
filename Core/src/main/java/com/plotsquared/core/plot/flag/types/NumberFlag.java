@@ -30,31 +30,35 @@ import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class NumberFlag<N extends Number & Comparable<N>, F extends PlotFlag<N, F>>
-    extends PlotFlag<N, F> {
+        extends PlotFlag<N, F> {
+
     protected final N minimum;
     protected final N maximum;
 
-    protected NumberFlag(@Nonnull N value, N minimum, N maximum, @Nonnull Caption flagCategory,
-        @Nonnull Caption flagDescription) {
+    protected NumberFlag(
+            @NonNull N value, N minimum, N maximum, @NonNull Caption flagCategory,
+            @NonNull Caption flagDescription
+    ) {
         super(value, flagCategory, flagDescription);
         if (maximum.compareTo(minimum) < 0) {
             throw new IllegalArgumentException(
-                "Maximum may not be less than minimum:" + maximum + " < " + minimum);
+                    "Maximum may not be less than minimum:" + maximum + " < " + minimum);
         }
         this.minimum = minimum;
         this.maximum = maximum;
     }
 
-    @Override public F parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public F parse(@NonNull String input) throws FlagParseException {
         final N parsed = parseNumber(input);
         if (parsed.compareTo(minimum) < 0 || parsed.compareTo(maximum) > 0) {
             throw new FlagParseException(this, input, TranslatableCaption.of("invalid.number_not_in_range"),
                     Templates.of("min", minimum),
-                    Templates.of("max", maximum));
+                    Templates.of("max", maximum)
+            );
         }
         return flagOf(parsed);
 
@@ -67,5 +71,7 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
      * @return the parsed number.
      * @throws FlagParseException if the number couldn't be parsed.
      */
-    @Nonnull protected abstract N parseNumber(String input) throws FlagParseException;
+    @NonNull
+    protected abstract N parseNumber(String input) throws FlagParseException;
+
 }

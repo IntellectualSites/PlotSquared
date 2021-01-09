@@ -39,9 +39,9 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,8 +50,8 @@ import java.util.stream.Collectors;
 
 public enum CommonSetupSteps implements SetupStep {
     CHOOSE_GENERATOR(TranslatableCaption.of("setup.setup_init")) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
             if (!SetupUtils.generators.containsKey(arg)) {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_generator_error"));
                 return this; // invalid input -> same setup step
@@ -60,17 +60,21 @@ public enum CommonSetupSteps implements SetupStep {
             return CommonSetupSteps.CHOOSE_PLOT_AREA_TYPE; // proceed with next step
         }
 
-        @Nonnull @Override public Collection<String> getSuggestions() {
+        @NonNull
+        @Override
+        public Collection<String> getSuggestions() {
             return Collections.unmodifiableSet(SetupUtils.generators.keySet());
         }
 
-        @Nullable @Override public String getDefaultValue() {
+        @Nullable
+        @Override
+        public String getDefaultValue() {
             return PlotSquared.platform().pluginName();
         }
     },
     CHOOSE_PLOT_AREA_TYPE(PlotAreaType.class, TranslatableCaption.of("setup.setup_world_type")) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
             Optional<PlotAreaType> plotAreaType = PlotAreaType.fromString(arg);
             if (!plotAreaType.isPresent()) {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_type_error"));
@@ -107,13 +111,15 @@ public enum CommonSetupSteps implements SetupStep {
             }
         }
 
-        @Nullable @Override public String getDefaultValue() {
+        @Nullable
+        @Override
+        public String getDefaultValue() {
             return PlotAreaType.NORMAL.toString();
         }
     },
     CHOOSE_AREA_ID(TranslatableCaption.of("setup.setup_area_name")) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             if (!StringMan.isAlphanumericUnd(argument)) {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_area_non_alphanumerical"));
                 return this;
@@ -128,13 +134,15 @@ public enum CommonSetupSteps implements SetupStep {
             return CHOOSE_MINIMUM_PLOT_ID;
         }
 
-        @Nullable @Override public String getDefaultValue() {
+        @Nullable
+        @Override
+        public String getDefaultValue() {
             return null;
         }
     },
     CHOOSE_MINIMUM_PLOT_ID(TranslatableCaption.of("setup.setup_area_min_plot_id")) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             try {
                 builder.minimumId(PlotId.fromString(argument));
             } catch (IllegalArgumentException ignored) {
@@ -147,13 +155,14 @@ public enum CommonSetupSteps implements SetupStep {
             return CHOOSE_MAXIMUM_PLOT_ID;
         }
 
-        @Override public String getDefaultValue() {
+        @Override
+        public String getDefaultValue() {
             return "0;0";
         }
     },
     CHOOSE_MAXIMUM_PLOT_ID(TranslatableCaption.of("setup.setup_area_max_plot_id")) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             try {
                 builder.maximumId(PlotId.fromString(argument));
             } catch (IllegalArgumentException ignored) {
@@ -166,13 +175,14 @@ public enum CommonSetupSteps implements SetupStep {
             return CHOOSE_TERRAIN_TYPE;
         }
 
-        @Override public String getDefaultValue() {
+        @Override
+        public String getDefaultValue() {
             return "0;0";
         }
     },
     CHOOSE_TERRAIN_TYPE(PlotAreaTerrainType.class, TranslatableCaption.of("setup.setup_partial_area")) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             Optional<PlotAreaTerrainType> optTerrain;
             if (!(optTerrain = PlotAreaTerrainType.fromString(argument))
                     .isPresent()) {
@@ -187,13 +197,15 @@ public enum CommonSetupSteps implements SetupStep {
             return wrapper.getFirstStep();
         }
 
-        @Nullable @Override public String getDefaultValue() {
+        @Nullable
+        @Override
+        public String getDefaultValue() {
             return PlotAreaTerrainType.NONE.toString();
         }
     },
     CHOOSE_WORLD_NAME(TranslatableCaption.of("setup.setup_world_name")) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             if (!isValidWorldName(argument)) {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_name_format"));
                 return this;
@@ -207,7 +219,7 @@ public enum CommonSetupSteps implements SetupStep {
             }
             builder.worldName(argument);
             try (final MetaDataAccess<SetupProcess> setupAccess = plotPlayer.accessTemporaryMetaData(
-                PlayerMetaDataKeys.TEMPORARY_SETUP)) {
+                    PlayerMetaDataKeys.TEMPORARY_SETUP)) {
                 setupAccess.remove();
             }
             String world;
@@ -226,35 +238,33 @@ public enum CommonSetupSteps implements SetupStep {
             return null;
         }
 
-        @Nullable @Override public String getDefaultValue() {
+        @Nullable
+        @Override
+        public String getDefaultValue() {
             return null;
         }
     };
 
-    @Nonnull private final Collection<String> suggestions;
+    @NonNull
+    private final Collection<String> suggestions;
     private final Caption description;
 
     /**
-     *
      * @param suggestions the input suggestions for this step
      * @param description the caption describing this step
      */
-    CommonSetupSteps(@Nonnull Collection<String> suggestions, @Nonnull Caption description) {
+    CommonSetupSteps(@NonNull Collection<String> suggestions, @NonNull Caption description) {
         this.suggestions = suggestions;
         this.description = description;
     }
 
-    CommonSetupSteps(@Nonnull Caption description) {
+    CommonSetupSteps(@NonNull Caption description) {
         this.description = description;
         this.suggestions = Collections.emptyList();
     }
 
-    <E extends Enum<E>> CommonSetupSteps(@Nonnull Class<E> argumentType, Caption description) {
+    <E extends Enum<E>> CommonSetupSteps(@NonNull Class<E> argumentType, Caption description) {
         this(enumToStrings(argumentType), description);
-    }
-
-    @Override public void announce(PlotPlayer<?> plotPlayer) {
-        plotPlayer.sendMessage(this.description);
     }
 
     private static <E extends Enum<E>> Collection<String> enumToStrings(Class<E> type) {
@@ -273,7 +283,12 @@ public enum CommonSetupSteps implements SetupStep {
         });
     }
 
-    @Nonnull public Collection<String> getSuggestions() {
+    @Override
+    public void announce(PlotPlayer<?> plotPlayer) {
+        plotPlayer.sendMessage(this.description);
+    }
+
+    public @NonNull Collection<String> getSuggestions() {
         return this.suggestions;
     }
 }

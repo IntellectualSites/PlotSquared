@@ -38,10 +38,13 @@ public abstract class InventoryUtil {
 
     public abstract void close(final PlotInventory inv);
 
-    public abstract void setItem(final PlotInventory plotInventory, final int index,
-        final PlotItemStack item);
+    public abstract void setItem(
+            final PlotInventory plotInventory, final int index,
+            final PlotItemStack item
+    );
 
     public abstract PlotItemStack[] getItems(final PlotPlayer player);
 
     public abstract boolean isOpen(final PlotInventory plotInventory);
+
 }

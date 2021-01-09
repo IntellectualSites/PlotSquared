@@ -30,10 +30,9 @@ import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.permissions.PermissionProfile;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import org.bukkit.OfflinePlayer;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.UUID;
 
@@ -46,30 +45,40 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
      * as it caches player objects.
      *
-     * @param player Bukkit OfflinePlayer player to convert
+     * @param player            Bukkit OfflinePlayer player to convert
      * @param permissionHandler Permission Profile to be used
      */
-    public BukkitOfflinePlayer(@Nonnull final OfflinePlayer player, @Nonnull final
-        PermissionHandler permissionHandler) {
+    public BukkitOfflinePlayer(
+            final @NonNull OfflinePlayer player, final @NonNull
+            PermissionHandler permissionHandler
+    ) {
         this.player = player;
         this.permissionProfile = permissionHandler.getPermissionProfile(this)
-            .orElse(NullPermissionProfile.INSTANCE);
+                .orElse(NullPermissionProfile.INSTANCE);
     }
 
-    @Nonnull @Override public UUID getUUID() {
+    @NonNull
+    @Override
+    public UUID getUUID() {
         return this.player.getUniqueId();
     }
 
-    @Override @Nonnegative public long getLastPlayed() {
+    @Override
+    @NonNegative
+    public long getLastPlayed() {
         return this.player.getLastSeen();
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return this.player.getName();
     }
 
-    @Override public boolean hasPermission(@Nullable final String world,
-                                           @Nonnull final String permission) {
+    @Override
+    public boolean hasPermission(
+            final @Nullable String world,
+            final @NonNull String permission
+    ) {
         return this.permissionProfile.hasPermission(world, permission);
     }
 

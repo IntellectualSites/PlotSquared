@@ -34,17 +34,21 @@ import com.plotsquared.core.util.query.PlotQuery;
 import java.util.List;
 
 @CommandDeclaration(command = "debugsavetest",
-    permission = "plots.debugsavetest",
-    category = CommandCategory.DEBUG,
-    requiredType = RequiredType.CONSOLE,
-    usage = "/plot debugsavetest")
+        permission = "plots.debugsavetest",
+        category = CommandCategory.DEBUG,
+        requiredType = RequiredType.CONSOLE,
+        usage = "/plot debugsavetest")
 public class DebugSaveTest extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
         player.sendMessage(TranslatableCaption.of("debugsavetest.starting"));
-        DBFunc.createPlotsAndData(plots,
-            () -> player.sendMessage(TranslatableCaption.of("debugsavetest.done")));
+        DBFunc.createPlotsAndData(
+                plots,
+                () -> player.sendMessage(TranslatableCaption.of("debugsavetest.done"))
+        );
         return true;
     }
+
 }

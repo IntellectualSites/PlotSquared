@@ -32,6 +32,7 @@ import com.sk89q.worldedit.world.registry.LegacyMapper;
 import java.util.Locale;
 
 public final class ItemUtil {
+
     private ItemUtil() {
     }
 
@@ -46,16 +47,19 @@ public final class ItemUtil {
                 if (split.length == 2) {
                     if (MathMan.isInteger(split[1])) {
                         return LegacyMapper.getInstance()
-                            .getItemFromLegacy(Integer.parseInt(split[0]),
-                                Integer.parseInt(split[1]));
+                                .getItemFromLegacy(
+                                        Integer.parseInt(split[0]),
+                                        Integer.parseInt(split[1])
+                                );
                     }
                 } else {
                     return LegacyMapper.getInstance().getItemFromLegacy(Integer.parseInt(split[0]));
                 }
             }
         }
-        if (!input.split("\\[", 2)[0].contains(":"))
+        if (!input.split("\\[", 2)[0].contains(":")) {
             input = "minecraft:" + input;
+        }
         return ItemTypes.get(input);
     }
 
@@ -67,4 +71,5 @@ public final class ItemUtil {
         }
         return result;
     }
+
 }

@@ -27,8 +27,8 @@ package com.plotsquared.core.util;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -149,7 +149,7 @@ public class StringMan {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if ((c < 0x30) || ((c >= 0x3a) && (c <= 0x40)) || ((c > 0x5a) && (c <= 0x60)) || (c
-                > 0x7a)) {
+                    > 0x7a)) {
                 return false;
             }
         }
@@ -267,7 +267,7 @@ public class StringMan {
         return false;
     }
 
-    public static boolean isEqualIgnoreCaseToAny(@Nonnull String a, String... args) {
+    public static boolean isEqualIgnoreCaseToAny(@NonNull String a, String... args) {
         for (String arg : args) {
             if (a.equalsIgnoreCase(arg)) {
                 return true;
@@ -287,7 +287,7 @@ public class StringMan {
 
     public static boolean isEqualIgnoreCase(String a, String b) {
         return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && a
-            .equalsIgnoreCase(b));
+                .equalsIgnoreCase(b));
     }
 
     public static String repeat(String s, int n) {
@@ -321,4 +321,5 @@ public class StringMan {
         }
         return col;
     }
+
 }

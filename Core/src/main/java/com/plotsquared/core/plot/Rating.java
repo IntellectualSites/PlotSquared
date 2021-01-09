@@ -109,11 +109,12 @@ public class Rating {
         }
         if (Settings.Ratings.CATEGORIES != null && Settings.Ratings.CATEGORIES.size() > 1) {
             return IntStream.range(0, Settings.Ratings.CATEGORIES.size()).map(
-                i -> (int) ((i + 1) * Math
-                    .pow(10, this.ratingMap.get(Settings.Ratings.CATEGORIES.get(i))))).sum();
+                    i -> (int) ((i + 1) * Math
+                            .pow(10, this.ratingMap.get(Settings.Ratings.CATEGORIES.get(i))))).sum();
         } else {
             return this.ratingMap.get(null);
         }
 
     }
+
 }

@@ -29,7 +29,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.google.inject.assistedinject.FactoryProvider;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.listener.SingleWorldListener;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
@@ -73,32 +72,33 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BukkitModule extends AbstractModule {
 
     private final BukkitPlatform bukkitPlatform;
 
-    public BukkitModule(@Nonnull final BukkitPlatform bukkitPlatform) {
+    public BukkitModule(final @NonNull BukkitPlatform bukkitPlatform) {
         this.bukkitPlatform = bukkitPlatform;
     }
 
-    @Override protected void configure() {
+    @Override
+    protected void configure() {
         bind(PlayerManager.class).to(BukkitPlayerManager.class);
         bind(JavaPlugin.class).toInstance(bukkitPlatform);
         bind(PlotPlatform.class).toInstance(bukkitPlatform);
         bind(BukkitPlatform.class).toInstance(bukkitPlatform);
         bind(IndependentPlotGenerator.class).annotatedWith(DefaultGenerator.class).to(HybridGen.class);
         // Console actor
-        @Nonnull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+        @NonNull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
         WorldEditPlugin wePlugin = ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
         bind(Actor.class).annotatedWith(ConsoleActor.class).toInstance(wePlugin.wrapCommandSender(console));
         bind(InventoryUtil.class).to(BukkitInventoryUtil.class);
         bind(SetupUtils.class).to(BukkitSetupUtils.class);
         bind(WorldUtil.class).to(BukkitUtil.class);
-        install(new FactoryModuleBuilder().implement(ProgressSubscriber.class, DefaultProgressSubscriber.class).build(ProgressSubscriberFactory.class));
+        install(new FactoryModuleBuilder()
+                .implement(ProgressSubscriber.class, DefaultProgressSubscriber.class)
+                .build(ProgressSubscriberFactory.class));
         bind(GlobalBlockQueue.class).toInstance(new GlobalBlockQueue(QueueProvider.of(BukkitQueueCoordinator.class)));
         bind(ChunkManager.class).to(BukkitChunkManager.class);
         bind(RegionManager.class).to(BukkitRegionManager.class);
@@ -114,11 +114,15 @@ public class BukkitModule extends AbstractModule {
             bind(PlotAreaManager.class).to(DefaultPlotAreaManager.class);
         }
         install(new FactoryModuleBuilder().build(HybridPlotWorldFactory.class));
-        install(new FactoryModuleBuilder().implement(ChunkCoordinator.class, BukkitChunkCoordinator.class).build(ChunkCoordinatorFactory.class));
+        install(new FactoryModuleBuilder()
+                .implement(ChunkCoordinator.class, BukkitChunkCoordinator.class)
+                .build(ChunkCoordinatorFactory.class));
         install(new FactoryModuleBuilder().build(ChunkCoordinatorBuilderFactory.class));
     }
 
-    @Provides @Singleton @Nonnull EconHandler provideEconHandler() {
+    @Provides
+    @Singleton
+    @NonNull EconHandler provideEconHandler() {
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             try {
                 return new BukkitEconHandler();

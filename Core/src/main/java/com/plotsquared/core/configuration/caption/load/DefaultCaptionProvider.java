@@ -44,7 +44,8 @@ public interface DefaultCaptionProvider {
      */
     static @NonNull DefaultCaptionProvider forClassLoader(
             final @NonNull ClassLoader classLoader,
-            final @NonNull Function<@NonNull Locale, @NonNull String> urlProvider) {
+            final @NonNull Function<@NonNull Locale, @NonNull String> urlProvider
+    ) {
         return new ClassLoaderCaptionProvider(classLoader, urlProvider);
     }
 
@@ -60,7 +61,8 @@ public interface DefaultCaptionProvider {
      */
     static @NonNull DefaultCaptionProvider forClassLoaderFormatString(
             final @NonNull ClassLoader classLoader,
-            final @NonNull String toFormat) {
+            final @NonNull String toFormat
+    ) {
         return forClassLoader(classLoader, locale -> String.format(toFormat, locale.toString()));
     }
 
@@ -72,4 +74,5 @@ public interface DefaultCaptionProvider {
      * @return a map of default values for the given locale.
      */
     @Nullable Map<@NonNull String, @NonNull String> loadDefaults(final @NonNull Locale locale);
+
 }

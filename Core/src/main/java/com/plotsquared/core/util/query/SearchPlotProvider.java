@@ -30,8 +30,8 @@ import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,12 +43,8 @@ class SearchPlotProvider implements PlotProvider {
 
     private final String searchTerm;
 
-    SearchPlotProvider(@Nonnull final String searchTerm) {
+    SearchPlotProvider(final @NonNull String searchTerm) {
         this.searchTerm = searchTerm;
-    }
-
-    @Override public Collection<Plot> getPlots() {
-        return getPlotsBySearch(this.searchTerm);
     }
 
     /**
@@ -58,7 +54,8 @@ class SearchPlotProvider implements PlotProvider {
      * @param search Search string
      * @return Search results
      */
-    @Nonnull private static List<Plot> getPlotsBySearch(@Nonnull final String search) {
+    @NonNull
+    private static List<Plot> getPlotsBySearch(final @NonNull String search) {
         String[] split = search.split(" ");
         int size = split.length * 2;
 
@@ -68,7 +65,7 @@ class SearchPlotProvider implements PlotProvider {
         for (String term : split) {
             try {
                 UUID uuid = PlotSquared.get().getImpromptuUUIDPipeline()
-                    .getSingle(term, Settings.UUID.BLOCKING_TIMEOUT);
+                        .getSingle(term, Settings.UUID.BLOCKING_TIMEOUT);
                 if (uuid == null) {
                     uuid = UUID.fromString(term);
                 }
@@ -79,8 +76,8 @@ class SearchPlotProvider implements PlotProvider {
         }
 
         ArrayList<ArrayList<Plot>> plotList =
-            IntStream.range(0, size).mapToObj(i -> new ArrayList<Plot>())
-                .collect(Collectors.toCollection(() -> new ArrayList<>(size)));
+                IntStream.range(0, size).mapToObj(i -> new ArrayList<Plot>())
+                        .collect(Collectors.toCollection(() -> new ArrayList<>(size)));
 
         PlotArea area = null;
         String alias = null;
@@ -118,6 +115,11 @@ class SearchPlotProvider implements PlotProvider {
             }
         }
         return plots;
+    }
+
+    @Override
+    public Collection<Plot> getPlots() {
+        return getPlotsBySearch(this.searchTerm);
     }
 
 }

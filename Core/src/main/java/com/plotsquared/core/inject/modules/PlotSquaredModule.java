@@ -43,7 +43,8 @@ import java.io.File;
 
 public class PlotSquaredModule extends AbstractModule {
 
-    @Override protected void configure() {
+    @Override
+    protected void configure() {
         final PlotSquared plotSquared = PlotSquared.get();
         bind(ServicePipeline.class).toInstance(ServicePipeline.builder().build());
         bind(YamlConfiguration.class).annotatedWith(WorldConfig.class).toInstance(plotSquared.getWorldConfiguration());

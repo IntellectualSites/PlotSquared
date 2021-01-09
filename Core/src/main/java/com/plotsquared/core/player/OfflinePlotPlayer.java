@@ -27,7 +27,6 @@ package com.plotsquared.core.player;
 
 import com.plotsquared.core.permissions.PermissionHolder;
 
-import javax.annotation.Nonnegative;
 import java.util.UUID;
 
 public interface OfflinePlotPlayer extends PermissionHolder {
@@ -44,7 +43,7 @@ public interface OfflinePlotPlayer extends PermissionHolder {
      *
      * @return the time in milliseconds when last online
      */
-    @Nonnegative long getLastPlayed();
+    long getLastPlayed();
 
     /**
      * Gets the name of this player.

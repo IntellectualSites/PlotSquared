@@ -26,12 +26,12 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.Rating;
@@ -42,8 +42,8 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,20 +53,50 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "like",
-    permission = "plots.like",
-    usage = "/plot like [next | purge]",
-    category = CommandCategory.INFO,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.like",
+        usage = "/plot like [next | purge]",
+        category = CommandCategory.INFO,
+        requiredType = RequiredType.PLAYER)
 public class Like extends SubCommand {
 
     private final EventDispatcher eventDispatcher;
-    
-    @Inject public Like(@Nonnull final EventDispatcher eventDispatcher) {
+
+    @Inject
+    public Like(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-    
-    protected boolean handleLike(final PlotPlayer<?> player, String[] args,
-        final boolean like) {
+
+    /**
+     * Get the likes to dislike ratio of a plot as a percentage (in decimal form)
+     *
+     * @param plot plot
+     * @return likes to dislike ratio, returns zero if the plot has no likes
+     */
+    public static double getLikesPercentage(final Plot plot) {
+        if (!plot.hasRatings()) {
+            return 0;
+        }
+        final Collection<Boolean> reactions = plot.getLikes().values();
+        double numLikes = 0, numDislikes = 0;
+        for (final boolean reaction : reactions) {
+            if (reaction) {
+                numLikes += 1;
+            } else {
+                numDislikes += 1;
+            }
+        }
+        if (numLikes == 0 && numDislikes == 0) {
+            return 0D;
+        } else if (numDislikes == 0) {
+            return 1.0D;
+        }
+        return numLikes / (numLikes + numDislikes);
+    }
+
+    protected boolean handleLike(
+            final PlotPlayer<?> player, String[] args,
+            final boolean like
+    ) {
         final UUID uuid = player.getUUID();
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
@@ -82,7 +112,7 @@ public class Like extends SubCommand {
                     });
                     for (final Plot plot : plots) {
                         if ((!Settings.Done.REQUIRED_FOR_RATINGS || DoneFlag.isDone(plot)) && plot
-                            .isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
+                                .isBasePlot() && (!plot.getLikes().containsKey(uuid))) {
                             plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
                             });
                             player.sendMessage(TranslatableCaption.of("tutorial.rate_this"));
@@ -99,7 +129,7 @@ public class Like extends SubCommand {
                         return false;
                     }
                     if (!Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS, true)) {
+                            .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS, true)) {
                         return false;
                     }
                     plot.clearRatings();
@@ -142,7 +172,7 @@ public class Like extends SubCommand {
             }
             plot.addRating(uuid, new Rating(rating));
             final PlotRateEvent event =
-                this.eventDispatcher.callRating(player, plot, new Rating(rating));
+                    this.eventDispatcher.callRating(player, plot, new Rating(rating));
             if (event.getRating() != null) {
                 plot.addRating(uuid, event.getRating());
                 if (like) {
@@ -172,34 +202,8 @@ public class Like extends SubCommand {
         return true;
     }
 
-    /**
-     * Get the likes to dislike ratio of a plot as a percentage (in decimal form)
-     *
-     * @param plot plot
-     * @return likes to dislike ratio, returns zero if the plot has no likes
-     */
-    public static double getLikesPercentage(final Plot plot) {
-        if (!plot.hasRatings()) {
-            return 0;
-        }
-        final Collection<Boolean> reactions = plot.getLikes().values();
-        double numLikes = 0, numDislikes = 0;
-        for (final boolean reaction : reactions) {
-            if (reaction) {
-                numLikes += 1;
-            } else {
-                numDislikes += 1;
-            }
-        }
-        if (numLikes == 0 && numDislikes == 0) {
-            return 0D;
-        } else if (numDislikes == 0) {
-            return 1.0D;
-        }
-        return numLikes / (numLikes + numDislikes);
-    }
-
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         return handleLike(player, args, true);
     }
 
@@ -210,7 +214,9 @@ public class Like extends SubCommand {
             if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS)) {
                 completions.add("purge");
             }
-            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
                     }).collect(Collectors.toCollection(LinkedList::new));
             if (Permissions.hasPermission(player, Permission.PERMISSION_RATE) && args[0].length() > 0) {

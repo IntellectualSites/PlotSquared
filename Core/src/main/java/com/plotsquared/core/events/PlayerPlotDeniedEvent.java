@@ -77,4 +77,5 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
     public PlotPlayer getInitiator() {
         return this.initiator;
     }
+
 }

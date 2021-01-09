@@ -32,9 +32,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,13 +45,15 @@ import java.util.List;
  * Default Bukkit world manager. It will handle world creation by
  * registering the generator in bukkit.yml
  */
-@Singleton public class BukkitWorldManager implements PlatformWorldManager<World> {
+@Singleton
+public class BukkitWorldManager implements PlatformWorldManager<World> {
 
-    @Override public void initialize() {
+    @Override
+    public void initialize() {
     }
 
-    @Override @Nullable
-    public World handleWorldCreation(@Nonnull String worldName, @Nullable String generator) {
+    @Override
+    public @Nullable World handleWorldCreation(@NonNull String worldName, @Nullable String generator) {
         this.setGenerator(worldName, generator);
         final WorldCreator wc = new WorldCreator(worldName);
         wc.environment(World.Environment.NORMAL);
@@ -62,7 +64,7 @@ import java.util.List;
         return Bukkit.createWorld(wc);
     }
 
-    protected void setGenerator(@Nullable final String worldName, @Nullable final String generator) {
+    protected void setGenerator(final @Nullable String worldName, final @Nullable String generator) {
         if (generator == null) {
             return;
         }
@@ -76,11 +78,13 @@ import java.util.List;
         }
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return "bukkit";
     }
 
-    @Override public Collection<String> getWorlds() {
+    @Override
+    public Collection<String> getWorlds() {
         final List<World> worlds = Bukkit.getWorlds();
         final List<String> worldNames = new ArrayList<>();
         for (final World world : worlds) {

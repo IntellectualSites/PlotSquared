@@ -46,13 +46,17 @@ public class ConfigurationNode {
     private final Collection<String> suggestions;
     private Object value;
 
-    public ConfigurationNode(String constant, Object defaultValue, String description,
-        ConfigurationUtil.SettingValue type) {
+    public ConfigurationNode(
+            String constant, Object defaultValue, String description,
+            ConfigurationUtil.SettingValue type
+    ) {
         this(constant, defaultValue, description, type, new ArrayList<>());
     }
 
-    public ConfigurationNode(String constant, Object defaultValue, String description,
-                             ConfigurationUtil.SettingValue type, Collection<String> suggestions) {
+    public ConfigurationNode(
+            String constant, Object defaultValue, String description,
+            ConfigurationUtil.SettingValue type, Collection<String> suggestions
+    ) {
         this.constant = constant;
         this.defaultValue = defaultValue;
         this.description = description;
@@ -123,4 +127,5 @@ public class ConfigurationNode {
     public Collection<String> getSuggestions() {
         return this.suggestions;
     }
+
 }

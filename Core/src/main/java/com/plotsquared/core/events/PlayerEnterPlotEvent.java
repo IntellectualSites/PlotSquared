@@ -39,4 +39,5 @@ public class PlayerEnterPlotEvent extends PlotPlayerEvent {
     public PlayerEnterPlotEvent(PlotPlayer player, Plot plot) {
         super(player, plot);
     }
+
 }

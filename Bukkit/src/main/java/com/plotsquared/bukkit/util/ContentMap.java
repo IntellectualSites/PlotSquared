@@ -96,8 +96,10 @@ public class ContentMap {
         saveEntitiesIn(chunk, region, 0, 0, false);
     }
 
-    void saveEntitiesIn(Chunk chunk, CuboidRegion region, int offsetX, int offsetZ,
-        boolean delete) {
+    void saveEntitiesIn(
+            Chunk chunk, CuboidRegion region, int offsetX, int offsetZ,
+            boolean delete
+    ) {
         for (Entity entity : chunk.getEntities()) {
             Location location = BukkitUtil.adapt(entity.getLocation());
             int x = location.getX();
@@ -143,4 +145,5 @@ public class ContentMap {
         PlotLoc loc = new PlotLoc(x + offsetX, z + offsetZ);
         this.allBlocks.put(loc, ids);
     }
+
 }

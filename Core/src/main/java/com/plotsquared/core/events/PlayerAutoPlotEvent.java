@@ -28,15 +28,14 @@ package com.plotsquared.core.events;
 import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
-
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEvent {
 
-    private Result eventResult;
-    private String schematic;
     private final PlotPlayer<?> player;
     private final PlotArea plotArea;
+    private Result eventResult;
+    private String schematic;
     private int size_x;
     private int size_z;
 
@@ -49,8 +48,10 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      * @param size_x    The size of the auto area
      * @param size_z    The size of the auto area
      */
-    public PlayerAutoPlotEvent(PlotPlayer<?> player, PlotArea plotArea, @Nullable String schematic,
-        int size_x, int size_z) {
+    public PlayerAutoPlotEvent(
+            PlotPlayer<?> player, PlotArea plotArea, @Nullable String schematic,
+            int size_x, int size_z
+    ) {
         super(null);
         this.player = player;
         this.plotArea = plotArea;
@@ -64,7 +65,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      *
      * @return schematic string
      */
-    @Nullable public String getSchematic() {
+    public @Nullable String getSchematic() {
         return this.schematic;
     }
 
@@ -77,11 +78,13 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
         this.schematic = schematic;
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
 
@@ -97,15 +100,16 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
         return this.size_x;
     }
 
-    public int getSize_z() {
-        return this.size_z;
-    }
-
     public void setSize_x(int size_x) {
         this.size_x = size_x;
+    }
+
+    public int getSize_z() {
+        return this.size_z;
     }
 
     public void setSize_z(int size_z) {
         this.size_z = size_z;
     }
+
 }

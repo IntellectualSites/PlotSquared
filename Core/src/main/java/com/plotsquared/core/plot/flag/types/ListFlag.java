@@ -28,8 +28,8 @@ package com.plotsquared.core.plot.flag.types;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.StringMan;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,14 +40,17 @@ public abstract class ListFlag<V, F extends PlotFlag<List<V>, F>> extends PlotFl
         super(Collections.unmodifiableList(valueList), category, description);
     }
 
-    @Override public F merge(@Nonnull List<V> newValue) {
+    @Override
+    public F merge(@NonNull List<V> newValue) {
         final List<V> mergedList = new ArrayList<>();
         mergedList.addAll(getValue());
         mergedList.addAll(newValue);
         return this.flagOf(mergedList);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return StringMan.join(this.getValue(), ",");
     }
+
 }

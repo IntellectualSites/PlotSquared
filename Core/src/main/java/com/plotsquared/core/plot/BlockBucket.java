@@ -36,8 +36,8 @@ import com.sk89q.worldedit.function.pattern.BlockPattern;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -49,28 +49,29 @@ import java.util.regex.Matcher;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class BlockBucket implements ConfigurationSerializable {
+
     private static java.util.regex.Pattern regex = java.util.regex.Pattern.compile(
-        "((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
+            "((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
     private boolean compiled;
     private StringBuilder input;
     private BlockState single;
     private Pattern pattern;
 
-    public BlockBucket(@Nonnull final BlockType type) {
+    public BlockBucket(final @NonNull BlockType type) {
         this(type.getId());
         this.single = type.getDefaultState();
         this.pattern = new BlockPattern(this.single);
         this.compiled = true;
     }
 
-    public BlockBucket(@Nonnull final BlockState state) {
+    public BlockBucket(final @NonNull BlockState state) {
         this(state.getAsString());
         this.single = state;
         this.pattern = new BlockPattern(this.single);
         this.compiled = true;
     }
 
-    public BlockBucket(@Nonnull final String input) {
+    public BlockBucket(final @NonNull String input) {
         this.input = new StringBuilder(input);
     }
 
@@ -78,30 +79,31 @@ public final class BlockBucket implements ConfigurationSerializable {
         this.input = new StringBuilder();
     }
 
-    public static BlockBucket withSingle(@Nonnull final BlockState block) {
+    public static BlockBucket withSingle(final @NonNull BlockState block) {
         final BlockBucket blockBucket = new BlockBucket();
         blockBucket.addBlock(block, 100);
         return blockBucket;
     }
 
-    public static BlockBucket deserialize(@Nonnull final Map<String, Object> map) {
+    public static BlockBucket deserialize(final @NonNull Map<String, Object> map) {
         if (!map.containsKey("blocks")) {
             return null;
         }
         return ConfigurationUtil.BLOCK_BUCKET.parseString(map.get("blocks").toString());
     }
 
-    public void addBlock(@Nonnull final BlockState block) {
+    public void addBlock(final @NonNull BlockState block) {
         this.addBlock(block, -1);
     }
 
-    public void addBlock(@Nonnull final BlockState block, final int chance) {
+    public void addBlock(final @NonNull BlockState block, final int chance) {
         addBlock(block, (double) chance);
     }
 
-    private void addBlock(@Nonnull final BlockState block, double chance) {
-        if (chance == -1)
+    private void addBlock(final @NonNull BlockState block, double chance) {
+        if (chance == -1) {
             chance = 1;
+        }
         String prefix = input.length() == 0 ? "" : ",";
         input.append(prefix).append(block.toString()).append(":").append(chance);
         this.compiled = false;
@@ -133,7 +135,7 @@ public final class BlockBucket implements ConfigurationSerializable {
                     String block = matcher.group("block");
                     //noinspection PointlessNullCheck
                     if (chanceStr != null && block != null && !MathMan.isInteger(block) && MathMan
-                        .isInteger(chanceStr)) {
+                            .isInteger(chanceStr)) {
                         String namespace = matcher.group("namespace");
                         string = (namespace == null ? "" : namespace + ":") + block;
                     }
@@ -174,7 +176,8 @@ public final class BlockBucket implements ConfigurationSerializable {
         return this.pattern;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return input.toString();
     }
 
@@ -183,7 +186,8 @@ public final class BlockBucket implements ConfigurationSerializable {
         return isEmpty() || (single != null && single.getBlockType().getMaterial().isAir());
     }
 
-    @Override public Map<String, Object> serialize() {
+    @Override
+    public Map<String, Object> serialize() {
         if (!isCompiled()) {
             compile();
         }
@@ -240,17 +244,22 @@ public final class BlockBucket implements ConfigurationSerializable {
         }
 
         public boolean equals(final Object o) {
-            if (o == this)
+            if (o == this) {
                 return true;
-            if (!(o instanceof Range))
+            }
+            if (!(o instanceof Range)) {
                 return false;
+            }
             final Range other = (Range) o;
-            if (this.getMin() != other.getMin())
+            if (this.getMin() != other.getMin()) {
                 return false;
-            if (this.getMax() != other.getMax())
+            }
+            if (this.getMax() != other.getMax()) {
                 return false;
-            if (this.isAutomatic() != other.isAutomatic())
+            }
+            if (this.isAutomatic() != other.isAutomatic()) {
                 return false;
+            }
             return true;
         }
 
@@ -266,5 +275,7 @@ public final class BlockBucket implements ConfigurationSerializable {
         public boolean isAutomatic() {
             return this.automatic;
         }
+
     }
+
 }

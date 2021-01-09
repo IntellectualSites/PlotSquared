@@ -49,9 +49,9 @@ import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.placeholders.PlaceholderRegistry;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 
 /**
@@ -66,14 +66,14 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return the PlotSquared directory
      */
-    @Nonnull File getDirectory();
+    @NonNull File getDirectory();
 
     /**
      * Gets the folder where all world data is stored.
      *
      * @return the world folder
      */
-    @Nonnull File worldContainer();
+    @NonNull File worldContainer();
 
     /**
      * Completely shuts down the plugin.
@@ -85,7 +85,8 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Plugin name
      */
-    @Nonnull default String pluginName() {
+    @NonNull
+    default String pluginName() {
         return "PlotSquared";
     }
 
@@ -94,21 +95,21 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return server version as array of numbers
      */
-    @Nonnull int[] serverVersion();
+    int[] serverVersion();
 
     /**
      * Gets the server implementation name and version
      *
      * @return server implementation and version as string
      */
-    @Nonnull String serverImplementation();
+    @NonNull String serverImplementation();
 
     /**
      * Gets the native server code package prefix.
      *
      * @return The package prefix
      */
-    @Nonnull String serverNativePackage();
+    @NonNull String serverNativePackage();
 
     /**
      * Start Metrics.
@@ -120,14 +121,14 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @param world The world to set the generator
      */
-    void setGenerator(String world);
+    void setGenerator(@NonNull String world);
 
     /**
      * Unregisters a {@link PlotPlayer} from cache e.g. if they have logged off.
      *
      * @param player the player to remove
      */
-    void unregister(PlotPlayer<?> player);
+    void unregister(@NonNull PlotPlayer<?> player);
 
     /**
      * Gets the generator wrapper for a world (world) and generator (name).
@@ -136,7 +137,10 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @param name  The name of the generator
      * @return The generator being used for the provided world
      */
-    @Nullable GeneratorWrapper<?> getGenerator(@Nonnull String world, @Nullable String name);
+    @Nullable GeneratorWrapper<?> getGenerator(
+            @NonNull String world,
+            @Nullable String name
+    );
 
     /**
      * Create a platform generator from a plot generator
@@ -145,14 +149,17 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @param generator Plot generator
      * @return Platform generator wrapper
      */
-    @Nonnull GeneratorWrapper<?> wrapPlotGenerator(@Nonnull String world, @Nonnull IndependentPlotGenerator generator);
+    @NonNull GeneratorWrapper<?> wrapPlotGenerator(
+            @NonNull String world,
+            @NonNull IndependentPlotGenerator generator
+    );
 
     /**
      * Usually HybridGen
      *
      * @return Default implementation generator
      */
-    @Nonnull default IndependentPlotGenerator defaultGenerator() {
+    default @NonNull IndependentPlotGenerator defaultGenerator() {
         return injector().getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class));
     }
 
@@ -161,7 +168,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Backup manager
      */
-    @Nonnull default BackupManager backupManager() {
+    default @NonNull BackupManager backupManager() {
         return injector().getInstance(BackupManager.class);
     }
 
@@ -170,7 +177,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return World manager
      */
-    @Nonnull default PlatformWorldManager<?> worldManager() {
+    default @NonNull PlatformWorldManager<?> worldManager() {
         return injector().getInstance(PlatformWorldManager.class);
     }
 
@@ -179,8 +186,9 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Player manager
      */
-    @Nonnull default PlayerManager<? extends PlotPlayer<P>, ? extends P> playerManager() {
-        return injector().getInstance(Key.get(new TypeLiteral<PlayerManager<? extends PlotPlayer<P>, ? extends P>>() {}));
+    default @NonNull PlayerManager<? extends PlotPlayer<P>, ? extends P> playerManager() {
+        return injector().getInstance(Key.get(new TypeLiteral<PlayerManager<? extends PlotPlayer<P>, ? extends P>>() {
+        }));
     }
 
     /**
@@ -189,21 +197,21 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @param worldName World name
      * @return Platform world wrapper
      */
-    @Nullable World<?> getPlatformWorld(@Nonnull final String worldName);
+    @Nullable World<?> getPlatformWorld(@NonNull String worldName);
 
     /**
      * Get the {@link com.google.inject.Injector} instance used by PlotSquared
      *
      * @return Injector instance
      */
-    @Nonnull Injector injector();
+    @NonNull Injector injector();
 
     /**
      * Get the world utility implementation
      *
      * @return World utility
      */
-    @Nonnull default WorldUtil worldUtil() {
+    default @NonNull WorldUtil worldUtil() {
         return injector().getInstance(WorldUtil.class);
     }
 
@@ -212,7 +220,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Global block queue implementation
      */
-    @Nonnull default GlobalBlockQueue globalBlockQueue() {
+    default @NonNull GlobalBlockQueue globalBlockQueue() {
         return injector().getInstance(GlobalBlockQueue.class);
     }
 
@@ -221,7 +229,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Hybrid utils
      */
-    @Nonnull default HybridUtils hybridUtils() {
+    default @NonNull HybridUtils hybridUtils() {
         return injector().getInstance(HybridUtils.class);
     }
 
@@ -230,16 +238,16 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Setup utils
      */
-    @Nonnull default SetupUtils setupUtils() {
+    default @NonNull SetupUtils setupUtils() {
         return injector().getInstance(SetupUtils.class);
     }
 
     /**
      * Get the {@link EconHandler} implementation for the platform
-     *      *
+     *
      * @return Econ handler
      */
-    @Nonnull default EconHandler econHandler() {
+    default @NonNull EconHandler econHandler() {
         return injector().getInstance(EconHandler.class);
     }
 
@@ -248,7 +256,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Region manager
      */
-    @Nonnull default RegionManager regionManager() {
+    default @NonNull RegionManager regionManager() {
         return injector().getInstance(RegionManager.class);
     }
 
@@ -257,7 +265,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Region manager
      */
-    @Nonnull default ChunkManager chunkManager() {
+    default @NonNull ChunkManager chunkManager() {
         return injector().getInstance(ChunkManager.class);
     }
 
@@ -266,7 +274,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Console audience
      */
-    @Nonnull Audience consoleAudience();
+    @NonNull Audience consoleAudience();
 
     /**
      * Get a formatted string containing all plugins on the server together
@@ -274,7 +282,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Formatted string
      */
-    @Nonnull String pluginsFormatted();
+    @NonNull String pluginsFormatted();
 
     /**
      * Load the caption maps
@@ -286,7 +294,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Permission handler
      */
-    @Nonnull default PermissionHandler permissionHandler() {
+    default @NonNull PermissionHandler permissionHandler() {
         return injector().getInstance(PermissionHandler.class);
     }
 
@@ -295,7 +303,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Service pipeline
      */
-    @Nonnull default ServicePipeline servicePipeline() {
+    default @NonNull ServicePipeline servicePipeline() {
         return injector().getInstance(ServicePipeline.class);
     }
 
@@ -304,10 +312,10 @@ public interface PlotPlatform<P> extends LocaleHolder {
      *
      * @return Placeholder registry
      */
-    @Nonnull default PlaceholderRegistry placeholderRegistry() {
+    default @NonNull PlaceholderRegistry placeholderRegistry() {
         return injector().getInstance(PlaceholderRegistry.class);
     }
 
-    @Nonnull String toLegacyPlatformString(Component component);
+    @NonNull String toLegacyPlatformString(Component component);
 
 }

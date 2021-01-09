@@ -26,8 +26,7 @@
 package com.plotsquared.bukkit.util.task;
 
 import com.plotsquared.core.util.task.TaskTime;
-
-import javax.annotation.Nonnegative;
+import org.checkerframework.checker.index.qual.NonNegative;
 
 /**
  * Naive time converter that assumes that all ticks are 50 milliseconds
@@ -36,11 +35,13 @@ public final class SpigotTimeConverter implements TaskTime.TimeConverter {
 
     private static final long MS_PER_TICKS = 50L;
 
-    @Override public long msToTicks(@Nonnegative final long ms) {
+    @Override
+    public long msToTicks(@NonNegative final long ms) {
         return Math.max(1L, ms / MS_PER_TICKS);
     }
 
-    @Override public long ticksToMs(@Nonnegative final long ticks) {
+    @Override
+    public long ticksToMs(@NonNegative final long ticks) {
         return Math.max(1L, ticks * MS_PER_TICKS);
     }
 

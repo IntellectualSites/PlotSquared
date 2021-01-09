@@ -26,8 +26,7 @@
 package com.plotsquared.core.queue.subscriber;
 
 import com.plotsquared.core.queue.ChunkCoordinator;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface ProgressSubscriber {
 
@@ -37,10 +36,11 @@ public interface ProgressSubscriber {
      * @param coordinator Coordinator instance that triggered the notification
      * @param progress    Progress in the range [0, 1]
      */
-    void notifyProgress(@Nonnull final ChunkCoordinator coordinator, final double progress);
+    void notifyProgress(final @NonNull ChunkCoordinator coordinator, final double progress);
 
     /**
      * Notify the subscriber that its parent ChunkCoordinator has finished
      */
     void notifyEnd();
+
 }

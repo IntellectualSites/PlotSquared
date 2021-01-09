@@ -33,21 +33,27 @@ import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "plugin",
-    permission = "plots.use",
-    usage = "/plot plugin",
-    aliases = "version",
-    category = CommandCategory.INFO)
+        permission = "plots.use",
+        usage = "/plot plugin",
+        aliases = "version",
+        category = CommandCategory.INFO)
 public class PluginCmd extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.getPlatformImplementation().taskAsync(() -> {
             player.sendMessage(
-                    StaticCaption.of("<gray>>> </gray><gold><bold>" + PlotSquared.platform().pluginName() + " <reset><gray>(<gold>Version</gold><gray>: </gray><gold><version></gold><gray>)</gray>"),
+                    StaticCaption.of("<gray>>> </gray><gold><bold>" + PlotSquared
+                            .platform()
+                            .pluginName() + " <reset><gray>(<gold>Version</gold><gray>: </gray><gold><version></gold><gray>)</gray>"),
                     Template.of("version", String.valueOf(PlotSquared.get().getVersion()))
             );
-            player.sendMessage(StaticCaption.of("<gray>>> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray><gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray><gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));
-            player.sendMessage(StaticCaption.of("<gray>>> </gray><gold><bold>Wiki<reset><gray>: </gray><gold><click:open_url:https://wiki.intellectualsites.com/plotsquared/home>https://wiki.intellectualsites.com/plotsquared/home</gold>"));
-            player.sendMessage(StaticCaption.of("<gray>>> </gray><gold><bold>Discord<reset><gray>: </gray><gold><click:open_url:https://discord.gg/KxkjDVg>https://discord.gg/KxkjDVg</gold>"));
+            player.sendMessage(StaticCaption.of(
+                    "<gray>>> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray><gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray><gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));
+            player.sendMessage(StaticCaption.of(
+                    "<gray>>> </gray><gold><bold>Wiki<reset><gray>: </gray><gold><click:open_url:https://wiki.intellectualsites.com/plotsquared/home>https://wiki.intellectualsites.com/plotsquared/home</gold>"));
+            player.sendMessage(StaticCaption.of(
+                    "<gray>>> </gray><gold><bold>Discord<reset><gray>: </gray><gold><click:open_url:https://discord.gg/KxkjDVg>https://discord.gg/KxkjDVg</gold>"));
             player.sendMessage(
                     StaticCaption.of("<gray>>> </gray><gold><bold>Premium<reset><gray>: <gold><value></gold>"),
                     Template.of("value", String.valueOf(PremiumVerification.isPremium()))
@@ -55,4 +61,5 @@ public class PluginCmd extends SubCommand {
         });
         return true;
     }
+
 }

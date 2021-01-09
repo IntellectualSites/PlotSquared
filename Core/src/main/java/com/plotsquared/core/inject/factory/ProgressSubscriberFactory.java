@@ -29,19 +29,20 @@ import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface ProgressSubscriberFactory {
 
-    @Nonnull ProgressSubscriber create();
+    @NonNull ProgressSubscriber create();
 
-    @Nonnull ProgressSubscriber createWithActor(@Nullable @Assisted("subscriber") PlotPlayer<?> actor);
+    @NonNull ProgressSubscriber createWithActor(@Nullable @Assisted("subscriber") PlotPlayer<?> actor);
 
-    @Nonnull ProgressSubscriber createFull(@Nullable @Assisted("subscriber") PlotPlayer<?> actor,
-                                       @Assisted("progressInterval") final long interval,
-                                       @Assisted("waitBeforeStarting") final long wait,
-                                       @Nullable @Assisted("caption") Caption caption);
+    @NonNull ProgressSubscriber createFull(
+            @Nullable @Assisted("subscriber") PlotPlayer<?> actor,
+            @Assisted("progressInterval") final long interval,
+            @Assisted("waitBeforeStarting") final long wait,
+            @Nullable @Assisted("caption") Caption caption
+    );
 
 }

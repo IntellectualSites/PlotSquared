@@ -27,8 +27,7 @@ package com.plotsquared.bukkit.util.task;
 
 import com.plotsquared.core.util.task.TaskTime;
 import org.bukkit.Bukkit;
-
-import javax.annotation.Nonnegative;
+import org.checkerframework.checker.index.qual.NonNegative;
 
 /**
  * Time converter that uses the server MSPT count to convert between
@@ -38,11 +37,13 @@ public final class PaperTimeConverter implements TaskTime.TimeConverter {
 
     private static final long MIN_MS_PER_TICKS = 50L;
 
-    @Override public long msToTicks(@Nonnegative final long ms) {
+    @Override
+    public long msToTicks(@NonNegative final long ms) {
         return Math.max(1L, (long) (ms / Math.max(MIN_MS_PER_TICKS, Bukkit.getAverageTickTime())));
     }
 
-    @Override public long ticksToMs(@Nonnegative final long ticks) {
+    @Override
+    public long ticksToMs(@NonNegative final long ticks) {
         return Math.max(1L, (long) (ticks * Math.max(MIN_MS_PER_TICKS, Bukkit.getAverageTickTime())));
     }
 

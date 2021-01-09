@@ -30,8 +30,8 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.TabCompletions;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -39,19 +39,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "dislike",
-    permission = "plots.dislike",
-    usage = "/plot dislike [next|purge]",
-    category = CommandCategory.INFO,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.dislike",
+        usage = "/plot dislike [next|purge]",
+        category = CommandCategory.INFO,
+        requiredType = RequiredType.PLAYER)
 public class Dislike extends SubCommand {
 
     private final Like like;
 
-    @Inject public Dislike(@Nonnull final Like like) {
+    @Inject
+    public Dislike(final @NonNull Like like) {
         this.like = like;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         return this.like.handleLike(player, args, false);
     }
 
@@ -62,7 +64,9 @@ public class Dislike extends SubCommand {
             if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS)) {
                 completions.add("purge");
             }
-            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
                     }).collect(Collectors.toCollection(LinkedList::new));
             if (Permissions.hasPermission(player, Permission.PERMISSION_RATE) && args[0].length() > 0) {

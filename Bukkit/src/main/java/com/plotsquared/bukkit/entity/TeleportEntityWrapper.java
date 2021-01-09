@@ -44,7 +44,8 @@ public class TeleportEntityWrapper extends EntityWrapper {
         super(entity);
     }
 
-    @Override public Entity spawn(final World world, final int xOffset, final int zOffset) {
+    @Override
+    public Entity spawn(final World world, final int xOffset, final int zOffset) {
         if (!getEntity().getLocation().getChunk().equals(oldLocation.getChunk())) {
             final Location oldLocation = this.oldLocation.clone();
             oldLocation.add(xOffset, 0, xOffset);
@@ -58,7 +59,8 @@ public class TeleportEntityWrapper extends EntityWrapper {
         return getEntity();
     }
 
-    @Override public void saveEntity() {
+    @Override
+    public void saveEntity() {
         if (getEntity().hasMetadata("ps-tmp-teleport")) {
             this.oldLocation = (Location) this.getEntity().getMetadata("ps-tmp-teleport").get(0);
         } else {
@@ -77,11 +79,13 @@ public class TeleportEntityWrapper extends EntityWrapper {
         this.getEntity().setInvulnerable(true);
         this.fireTicksOld = this.getEntity().getFireTicks();
         this.livingTicksOld = this.getEntity().getTicksLived();
-        this.getEntity().setMetadata("ps-tmp-teleport",
-            new FixedMetadataValue(BukkitPlatform.getPlugin(BukkitPlatform.class), oldLocation));
+        this.getEntity().setMetadata(
+                "ps-tmp-teleport",
+                new FixedMetadataValue(BukkitPlatform.getPlugin(BukkitPlatform.class), oldLocation)
+        );
         final Chunk newChunk = getNewChunk();
         this.getEntity().teleport(
-            new Location(newChunk.getWorld(), newChunk.getX() << 4, 5000, newChunk.getZ() << 4));
+                new Location(newChunk.getWorld(), newChunk.getX() << 4, 5000, newChunk.getZ() << 4));
     }
 
     private Chunk getNewChunk() {
@@ -115,4 +119,5 @@ public class TeleportEntityWrapper extends EntityWrapper {
     private Chunk getChunkRelative(final Chunk chunk, final int dx, final int dz) {
         return chunk.getWorld().getChunkAt(chunk.getX() + dx, chunk.getZ() + dz);
     }
+
 }

@@ -27,8 +27,8 @@ package com.plotsquared.core.plot;
 
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -40,12 +40,11 @@ public enum PlotAreaType {
     AUGMENTED(TranslatableCaption.of("plotareatype.plot_area_type_augmented")),
     PARTIAL(TranslatableCaption.of("plotareatype.plot_area_type_partial"));
 
+    private static final Map<String, PlotAreaType> types = Stream.of(values())
+            .collect(Collectors.toMap(e -> e.toString().toLowerCase(), Function.identity()));
     private final Caption description;
 
-    private static final Map<String, PlotAreaType> types = Stream.of(values())
-        .collect(Collectors.toMap(e -> e.toString().toLowerCase(), Function.identity()));
-
-    PlotAreaType(@Nonnull final Caption description) {
+    PlotAreaType(final @NonNull Caption description) {
         this.description = description;
     }
 
@@ -57,7 +56,8 @@ public enum PlotAreaType {
         return Optional.ofNullable(types.get(typeName.toLowerCase()));
     }
 
-    @Deprecated public static Optional<PlotAreaType> fromLegacyInt(int typeId) {
+    @Deprecated
+    public static Optional<PlotAreaType> fromLegacyInt(int typeId) {
         if (typeId < 0 || typeId >= values().length) {
             return Optional.empty();
         }

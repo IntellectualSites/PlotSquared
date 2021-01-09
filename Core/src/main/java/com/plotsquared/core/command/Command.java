@@ -39,8 +39,8 @@ import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -77,8 +77,10 @@ public abstract class Command {
     private CommandCategory category;
     private Argument[] arguments;
 
-    public Command(Command parent, boolean isStatic, String id, String permission,
-        RequiredType required, CommandCategory category) {
+    public Command(
+            Command parent, boolean isStatic, String id, String permission,
+            RequiredType required, CommandCategory category
+    ) {
         this.parent = parent;
         this.isStatic = isStatic;
         this.id = id;
@@ -104,13 +106,15 @@ public abstract class Command {
                 // final PlotPlayer<?> player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult>
                 // whenDone
                 if (types.length == 5 && types[0] == Command.class && types[1] == PlotPlayer.class
-                    && types[2] == String[].class && types[3] == RunnableVal3.class
-                    && types[4] == RunnableVal2.class) {
+                        && types[2] == String[].class && types[3] == RunnableVal3.class
+                        && types[4] == RunnableVal2.class) {
                     Command tmp = new Command(this, true) {
                         @Override
-                        public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-                            RunnableVal3<Command, Runnable, Runnable> confirm,
-                            RunnableVal2<Command, CommandResult> whenDone) {
+                        public CompletableFuture<Boolean> execute(
+                                PlotPlayer<?> player, String[] args,
+                                RunnableVal3<Command, Runnable, Runnable> confirm,
+                                RunnableVal2<Command, CommandResult> whenDone
+                        ) {
                             try {
                                 method.invoke(Command.this, this, player, args, confirm, whenDone);
                                 return CompletableFuture.completedFuture(true);
@@ -242,8 +246,10 @@ public abstract class Command {
         return "plots." + getFullId();
     }
 
-    public <T> void paginate(PlotPlayer<?> player, List<T> c, int size, int page,
-                             RunnableVal3<Integer, T, CaptionHolder> add, String baseCommand, Caption header) {
+    public <T> void paginate(
+            PlotPlayer<?> player, List<T> c, int size, int page,
+            RunnableVal3<Integer, T, CaptionHolder> add, String baseCommand, Caption header
+    ) {
         // Calculate pages & index
         if (page < 0) {
             page = 0;
@@ -299,11 +305,13 @@ public abstract class Command {
      * @param confirm  Instance, Success, Failure
      * @param whenDone task to run when done
      * @return CompletableFuture true if the command executed fully, false in
-     * any other case
+     *         any other case
      */
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         if (args.length == 0 || args[0] == null) {
             if (this.parent == null) {
                 MainCommand.getInstance().help.displayHelp(player, null, 0);
@@ -338,8 +346,10 @@ public abstract class Command {
             player.sendMessage(TranslatableCaption.of("commandconfig.not_valid_subcommand"));
             List<Command> commands = getCommands(player);
             if (commands.isEmpty()) {
-                player.sendMessage(TranslatableCaption.of("commandconfig.did_you_mean"),
-                        Template.of("value", MainCommand.getInstance().help.getUsage()));
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.did_you_mean"),
+                        Template.of("value", MainCommand.getInstance().help.getUsage())
+                );
                 return CompletableFuture.completedFuture(false);
             }
             HashSet<String> setArgs = new HashSet<>(args.length);
@@ -357,8 +367,10 @@ public abstract class Command {
             if (cmd == null) {
                 cmd = new StringComparison<>(args[0], this.allCommands).getMatchObject();
             }
-            player.sendMessage(TranslatableCaption.of("commandconfig.did_you_mean"),
-                    Template.of("value", cmd.getUsage()));
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.did_you_mean"),
+                    Template.of("value", cmd.getUsage())
+            );
             return CompletableFuture.completedFuture(false);
         }
         String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -391,8 +403,10 @@ public abstract class Command {
             }
             if (failed) {
                 // TODO improve or remove the Argument system
-                player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", StringMan.join(fullSplit, " ")));
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Template.of("value", StringMan.join(fullSplit, " "))
+                );
                 return false;
             }
         }
@@ -402,7 +416,7 @@ public abstract class Command {
     public int getMatch(String[] args, Command cmd, PlotPlayer<?> player) {
         String perm = cmd.getPermission();
         int count = cmd.getAliases().stream().filter(alias -> alias.startsWith(args[0]))
-            .mapToInt(alias -> 5).sum();
+                .mapToInt(alias -> 5).sum();
         HashSet<String> desc = new HashSet<>();
         Collections.addAll(desc, cmd.getDescription().getComponent(player).split(" "));
         for (String arg : args) {
@@ -478,8 +492,10 @@ public abstract class Command {
             }
         } else if (!Permissions.hasPermission(player, getPermission())) {
             if (message) {
-                player.sendMessage(TranslatableCaption.of("permission.no_permission"),
-                        Template.of("node", getPermission()));
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", getPermission())
+                );
             }
         } else {
             return true;
@@ -501,8 +517,10 @@ public abstract class Command {
     }
 
     public void sendUsage(PlotPlayer<?> player) {
-        player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax"),
-                Template.of("value", getUsage()));
+        player.sendMessage(
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                Template.of("value", getUsage())
+        );
     }
 
     public String getUsage() {
@@ -524,8 +542,10 @@ public abstract class Command {
         return getCommandString() + " " + args + "]";
     }
 
-    public Collection<Command> tabOf(PlotPlayer<?> player, String[] input, boolean space,
-        String... args) {
+    public Collection<Command> tabOf(
+            PlotPlayer<?> player, String[] input, boolean space,
+            String... args
+    ) {
         if (!space) {
             return null;
         }
@@ -562,7 +582,7 @@ public abstract class Command {
                     Set<Command> commands = new HashSet<>();
                     for (Map.Entry<String, Command> entry : this.staticCommands.entrySet()) {
                         if (entry.getKey().startsWith(arg) && entry.getValue()
-                            .canExecute(player, false)) {
+                                .canExecute(player, false)) {
                             commands.add(entry.getValue());
                         }
                     }
@@ -578,11 +598,13 @@ public abstract class Command {
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return !this.aliases.isEmpty() ? this.aliases.get(0) : this.id;
     }
 
-    @Override public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -596,7 +618,8 @@ public abstract class Command {
         return this.getFullId().equals(other.getFullId());
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return this.getFullId().hashCode();
     }
 
@@ -615,7 +638,8 @@ public abstract class Command {
 
 
     public enum CommandResult {
-        FAILURE, SUCCESS
+        FAILURE,
+        SUCCESS
     }
 
 
@@ -624,15 +648,17 @@ public abstract class Command {
         private final Template[] args;
         private final Caption message;
 
-        public CommandException(@Nullable final Caption message, final Template... args) {
+        public CommandException(final @Nullable Caption message, final Template... args) {
             this.message = message;
             this.args = args;
         }
 
-        public void perform(@Nullable final PlotPlayer<?> player) {
+        public void perform(final @Nullable PlotPlayer<?> player) {
             if (player != null && message != null) {
                 player.sendMessage(message, args);
             }
         }
+
     }
+
 }

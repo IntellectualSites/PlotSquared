@@ -31,11 +31,10 @@ import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
 
@@ -46,17 +45,20 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     public int ROAD_OFFSET_X = 0;
     public int ROAD_OFFSET_Z = 0;
 
-    public SquarePlotWorld(final String worldName,
-                           @Nullable final String id,
-                           @Nonnull final IndependentPlotGenerator generator,
-                           @Nullable final PlotId min,
-                           @Nullable final PlotId max,
-                           @WorldConfig @Nonnull final YamlConfiguration worldConfiguration,
-                           @Nonnull final GlobalBlockQueue blockQueue) {
+    public SquarePlotWorld(
+            final String worldName,
+            final @Nullable String id,
+            final @NonNull IndependentPlotGenerator generator,
+            final @Nullable PlotId min,
+            final @Nullable PlotId max,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            final @NonNull GlobalBlockQueue blockQueue
+    ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
     }
 
-    @Override public void loadConfiguration(ConfigurationSection config) {
+    @Override
+    public void loadConfiguration(ConfigurationSection config) {
         if (!config.contains("plot.height")) {
             if (Settings.DEBUG) {
                 logger.info(" - Configuration is null? ({})", config.getCurrentPath());
@@ -69,4 +71,5 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
         this.ROAD_OFFSET_Z = config.getInt("road.offset.z");
         this.SIZE = (short) (this.PLOT_WIDTH + this.ROAD_WIDTH);
     }
+
 }

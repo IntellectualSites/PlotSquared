@@ -31,4 +31,5 @@ class TameableStats {
 
     AnimalTamer owner;
     boolean tamed;
+
 }

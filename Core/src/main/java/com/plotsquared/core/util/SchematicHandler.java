@@ -71,11 +71,11 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -118,20 +118,23 @@ public abstract class SchematicHandler {
     private static final Gson GSON = new Gson();
     public static SchematicHandler manager;
     private final WorldUtil worldUtil;
-    private boolean exportAll = false;
     private final ProgressSubscriberFactory subscriberFactory;
+    private boolean exportAll = false;
 
-    @Inject public SchematicHandler(@Nonnull final WorldUtil worldUtil, @Nonnull ProgressSubscriberFactory subscriberFactory) {
+    @Inject
+    public SchematicHandler(final @NonNull WorldUtil worldUtil, @NonNull ProgressSubscriberFactory subscriberFactory) {
         this.worldUtil = worldUtil;
         this.subscriberFactory = subscriberFactory;
     }
 
     @Deprecated
-    public static void upload(@Nullable UUID uuid,
-                              @Nullable final String file,
-                              @Nonnull final String extension,
-                              @Nullable final RunnableVal<OutputStream> writeTask,
-                              @Nonnull final RunnableVal<URL> whenDone) {
+    public static void upload(
+            @Nullable UUID uuid,
+            final @Nullable String file,
+            final @NonNull String extension,
+            final @Nullable RunnableVal<OutputStream> writeTask,
+            final @NonNull RunnableVal<URL> whenDone
+    ) {
         if (writeTask == null) {
             TaskManager.runTask(whenDone);
             return;
@@ -161,7 +164,7 @@ public abstract class SchematicHandler {
                 con.setDoOutput(true);
                 con.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
                 try (OutputStream output = con.getOutputStream();
-                    PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
+                     PrintWriter writer = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), true)) {
                     String CRLF = "\r\n";
                     writer.append("--").append(boundary).append(CRLF);
                     writer.append("Content-Disposition: form-data; name=\"param\"").append(CRLF);
@@ -170,12 +173,13 @@ public abstract class SchematicHandler {
                     writer.append(CRLF).append(param).append(CRLF).flush();
                     writer.append("--").append(boundary).append(CRLF);
                     writer.append("Content-Disposition: form-data; name=\"schematicFile\"; filename=\"").append(filename)
-                        .append(String.valueOf('"')).append(CRLF);
+                            .append(String.valueOf('"')).append(CRLF);
                     writer.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(filename)).append(CRLF);
                     writer.append("Content-Transfer-Encoding: binary").append(CRLF);
                     writer.append(CRLF).flush();
                     writeTask.value = new AbstractDelegateOutputStream(output) {
-                        @Override public void close() {
+                        @Override
+                        public void close() {
                         } // Don't close
                     };
                     writeTask.run();
@@ -201,7 +205,12 @@ public abstract class SchematicHandler {
         });
     }
 
-    public boolean exportAll(Collection<Plot> collection, final File outputDir, final String namingScheme, final Runnable ifSuccess) {
+    public boolean exportAll(
+            Collection<Plot> collection,
+            final File outputDir,
+            final String namingScheme,
+            final Runnable ifSuccess
+    ) {
         if (this.exportAll) {
             return false;
         }
@@ -211,7 +220,8 @@ public abstract class SchematicHandler {
         this.exportAll = true;
         final ArrayList<Plot> plots = new ArrayList<>(collection);
         TaskManager.runTaskAsync(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 if (plots.isEmpty()) {
                     SchematicHandler.this.exportAll = false;
                     TaskManager.runTask(ifSuccess);
@@ -233,7 +243,7 @@ public abstract class SchematicHandler {
                     name = plot.getId().getX() + ";" + plot.getId().getY() + ',' + plot.getArea() + ',' + owner;
                 } else {
                     name = namingScheme.replaceAll("%id%", plot.getId().toString()).replaceAll("%idx%", plot.getId().getX() + "")
-                        .replaceAll("%idy%", plot.getId().getY() + "").replaceAll("%world%", plot.getArea().toString());
+                            .replaceAll("%idy%", plot.getId().getY() + "").replaceAll("%world%", plot.getArea().toString());
                 }
 
                 final String directory;
@@ -273,14 +283,16 @@ public abstract class SchematicHandler {
      * @param actor      the actor pasting the schematic
      * @param whenDone   task to run when schematic is pasted
      */
-    public void paste(final Schematic schematic,
-                      final Plot plot,
-                      final int xOffset,
-                      final int yOffset,
-                      final int zOffset,
-                      final boolean autoHeight,
-                      final PlotPlayer<?> actor,
-                      final RunnableVal<Boolean> whenDone) {
+    public void paste(
+            final Schematic schematic,
+            final Plot plot,
+            final int xOffset,
+            final int yOffset,
+            final int zOffset,
+            final boolean autoHeight,
+            final PlotPlayer<?> actor,
+            final RunnableVal<Boolean> whenDone
+    ) {
         if (whenDone != null) {
             whenDone.value = false;
         }
@@ -296,9 +308,9 @@ public abstract class SchematicHandler {
             // Validate dimensions
             CuboidRegion region = plot.getLargestRegion();
             boolean sizeMismatch =
-                ((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
-                    (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT
-                    > 256);
+                    ((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
+                            (region.getMaximumPoint().getZ() - region.getMinimumPoint().getZ() + zOffset + 1) < LENGTH) || (HEIGHT
+                            > 256);
             if (!Settings.Schematics.PASTE_MISMATCHES && sizeMismatch) {
                 actor.sendMessage(TranslatableCaption.of("schematics.schematic_size_mismatch"));
                 TaskManager.runTask(whenDone);
@@ -317,8 +329,9 @@ public abstract class SchematicHandler {
                         y_offset_actual = yOffset + pw.getMinBuildHeight() + ((ClassicPlotWorld) pw).PLOT_HEIGHT;
                     } else {
                         y_offset_actual = yOffset + 1 + this.worldUtil
-                            .getHighestBlockSynchronous(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
-                                region.getMinimumPoint().getZ() + 1);
+                                .getHighestBlockSynchronous(plot.getWorldName(), region.getMinimumPoint().getX() + 1,
+                                        region.getMinimumPoint().getZ() + 1
+                                );
                     }
                 }
             } else {
@@ -342,7 +355,7 @@ public abstract class SchematicHandler {
                 p1z = corners[0].getZ() + zOffset;
                 p2x = corners[1].getX() + xOffset;
                 p2z = corners[1].getZ() + zOffset;
-                allRegion = new RegionIntersection(null, plot.getRegions().toArray(new CuboidRegion[] {}));
+                allRegion = new RegionIntersection(null, plot.getRegions().toArray(new CuboidRegion[]{}));
             }
             // Paste schematic here
             final QueueCoordinator queue = plot.getArea().getQueue();
@@ -356,7 +369,11 @@ public abstract class SchematicHandler {
                     for (int rx = 0; rx < blockArrayClipboard.getDimensions().getX(); rx++) {
                         int xx = p1x + rx;
                         int zz = p1z + rz;
-                        if (sizeMismatch && (xx < p1x || xx > p2x || zz < p1z || zz > p2z || !allRegion.contains(BlockVector3.at(xx, ry, zz)))) {
+                        if (sizeMismatch && (xx < p1x || xx > p2x || zz < p1z || zz > p2z || !allRegion.contains(BlockVector3.at(
+                                xx,
+                                ry,
+                                zz
+                        )))) {
                             continue;
                         }
                         BlockVector3 loc = BlockVector3.at(rx, ry, rz);
@@ -419,8 +436,8 @@ public abstract class SchematicHandler {
             final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
             if (rawNames != null) {
                 final List<String> transformed = Arrays.stream(rawNames)
-                    //.map(rawName -> rawName.substring(0, rawName.length() - 10))
-                    .collect(Collectors.toList());
+                        //.map(rawName -> rawName.substring(0, rawName.length() - 10))
+                        .collect(Collectors.toList());
                 names.addAll(transformed);
             }
         }
@@ -452,7 +469,7 @@ public abstract class SchematicHandler {
         return null;
     }
 
-    public Schematic getSchematic(@Nonnull URL url) {
+    public Schematic getSchematic(@NonNull URL url) {
         try {
             ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
             InputStream inputStream = Channels.newInputStream(readableByteChannel);
@@ -463,7 +480,7 @@ public abstract class SchematicHandler {
         return null;
     }
 
-    public Schematic getSchematic(@Nonnull InputStream is) {
+    public Schematic getSchematic(@NonNull InputStream is) {
         try {
             SpongeSchematicReader schematicReader = new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
             Clipboard clip = schematicReader.read();
@@ -510,7 +527,8 @@ public abstract class SchematicHandler {
             return;
         }
         upload(uuid, file, "schem", new RunnableVal<OutputStream>() {
-            @Override public void run(OutputStream output) {
+            @Override
+            public void run(OutputStream output) {
                 try (NBTOutputStream nos = new NBTOutputStream(new GZIPOutputStream(output, true))) {
                     nos.writeNamedTag("Schematic", tag);
                 } catch (IOException e1) {
@@ -546,12 +564,14 @@ public abstract class SchematicHandler {
         return true;
     }
 
-    private void writeSchematicData(@Nonnull final Map<String, Tag> schematic,
-                                    @Nonnull final Map<String, Integer> palette,
-                                    @Nonnull final Map<String, Integer> biomePalette,
-                                    @Nonnull final List<CompoundTag> tileEntities,
-                                    @Nonnull final ByteArrayOutputStream buffer,
-                                    @Nonnull final ByteArrayOutputStream biomeBuffer) {
+    private void writeSchematicData(
+            final @NonNull Map<String, Tag> schematic,
+            final @NonNull Map<String, Integer> palette,
+            final @NonNull Map<String, Integer> biomePalette,
+            final @NonNull List<CompoundTag> tileEntities,
+            final @NonNull ByteArrayOutputStream buffer,
+            final @NonNull ByteArrayOutputStream biomeBuffer
+    ) {
         schematic.put("PaletteMax", new IntTag(palette.size()));
 
         Map<String, Tag> paletteTag = new HashMap<>();
@@ -570,12 +590,18 @@ public abstract class SchematicHandler {
         schematic.put("BiomeData", new ByteArrayTag(biomeBuffer.toByteArray()));
     }
 
-    @Nonnull
+    @NonNull
     private Map<String, Tag> initSchematic(short width, short height, short length) {
         Map<String, Tag> schematic = new HashMap<>();
         schematic.put("Version", new IntTag(2));
-        schematic.put("DataVersion",
-            new IntTag(WorldEdit.getInstance().getPlatformManager().queryCapability(Capability.WORLD_EDITING).getDataVersion()));
+        schematic.put(
+                "DataVersion",
+                new IntTag(WorldEdit
+                        .getInstance()
+                        .getPlatformManager()
+                        .queryCapability(Capability.WORLD_EDITING)
+                        .getDataVersion())
+        );
 
         Map<String, Tag> metadata = new HashMap<>();
         metadata.put("WEOffsetX", new IntTag(0));
@@ -589,7 +615,7 @@ public abstract class SchematicHandler {
         schematic.put("Length", new ShortTag(length));
 
         // The Sponge format Offset refers to the 'min' points location in the world. That's our 'Origin'
-        schematic.put("Offset", new IntArrayTag(new int[] {0, 0, 0,}));
+        schematic.put("Offset", new IntArrayTag(new int[]{0, 0, 0,}));
         return schematic;
     }
 
@@ -599,7 +625,7 @@ public abstract class SchematicHandler {
      * @param plot The plot to get the contents from.
      * @return a {@link CompletableFuture} that provides the created {@link CompoundTag}.
      */
-    public CompletableFuture<CompoundTag> getCompoundTag(@Nonnull final Plot plot) {
+    public CompletableFuture<CompoundTag> getCompoundTag(final @NonNull Plot plot) {
         return getCompoundTag(Objects.requireNonNull(plot.getWorldName()), plot.getRegions());
     }
 
@@ -608,12 +634,13 @@ public abstract class SchematicHandler {
      * matching the Sponge schematic format.
      *
      * @param worldName The world to get the contents from.
-     * @param regions The regions to get the contents from.
+     * @param regions   The regions to get the contents from.
      * @return a {@link CompletableFuture} that provides the created {@link CompoundTag}.
      */
-    @Nonnull
-    public CompletableFuture<CompoundTag> getCompoundTag(@Nonnull final String worldName,
-                                                         @Nonnull final Set<CuboidRegion> regions) {
+    public @NonNull CompletableFuture<CompoundTag> getCompoundTag(
+            final @NonNull String worldName,
+            final @NonNull Set<CuboidRegion> regions
+    ) {
         CompletableFuture<CompoundTag> completableFuture = new CompletableFuture<>();
         TaskManager.runTaskAsync(() -> {
             World world = this.worldUtil.getWeWorld(worldName);
@@ -718,7 +745,7 @@ public abstract class SchematicHandler {
                                         // Do this after we get "getNbtId" cos otherwise "getNbtId" doesn't work.
                                         // Dum.
                                         values.remove("id");
-                                        values.put("Pos", new IntArrayTag(new int[] {relativeX, relativeY, relativeZ}));
+                                        values.put("Pos", new IntArrayTag(new int[]{relativeX, relativeY, relativeZ}));
 
                                         tileEntities.add(new CompoundTag(values));
                                     }
@@ -774,6 +801,7 @@ public abstract class SchematicHandler {
 
 
     public static class UnsupportedFormatException extends Exception {
+
         /**
          * Throw with a message.
          *
@@ -792,6 +820,7 @@ public abstract class SchematicHandler {
         public UnsupportedFormatException(String message, Throwable cause) {
             super(message, cause);
         }
+
     }
 
 }

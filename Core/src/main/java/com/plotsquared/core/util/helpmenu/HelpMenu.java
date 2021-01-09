@@ -53,7 +53,7 @@ public class HelpMenu {
 
     public HelpMenu getCommands() {
         this.commands =
-            MainCommand.getInstance().getCommands(this.commandCategory, this.commandCaller);
+                MainCommand.getInstance().getCommands(this.commandCategory, this.commandCaller);
         return this;
     }
 

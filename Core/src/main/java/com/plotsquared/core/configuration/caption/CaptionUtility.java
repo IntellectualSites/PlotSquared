@@ -26,9 +26,8 @@
 package com.plotsquared.core.configuration.caption;
 
 import com.plotsquared.core.player.PlotPlayer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class CaptionUtility {
 
@@ -41,7 +40,7 @@ public class CaptionUtility {
      */
     public static String formatRaw(PlotPlayer<?> recipient, String message) {
         final ChatFormatter.ChatContext chatContext =
-            new ChatFormatter.ChatContext(recipient, message, true);
+                new ChatFormatter.ChatContext(recipient, message, true);
         for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
             chatFormatter.format(chatContext);
         }
@@ -55,10 +54,12 @@ public class CaptionUtility {
      * @param message   Message
      * @return Formatted message
      */
-    public static String format(@Nullable final PlotPlayer<?> recipient,
-        @Nonnull final String message) {
+    public static String format(
+            final @Nullable PlotPlayer<?> recipient,
+            final @NonNull String message
+    ) {
         final ChatFormatter.ChatContext chatContext =
-            new ChatFormatter.ChatContext(recipient, message, false);
+                new ChatFormatter.ChatContext(recipient, message, false);
         for (final ChatFormatter chatFormatter : ChatFormatter.formatters) {
             chatFormatter.format(chatContext);
         }

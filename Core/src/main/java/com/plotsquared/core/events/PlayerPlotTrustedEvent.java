@@ -77,4 +77,5 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
     public PlotPlayer getInitiator() {
         return this.initiator;
     }
+
 }

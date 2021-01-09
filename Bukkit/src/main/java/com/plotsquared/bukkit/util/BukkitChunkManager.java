@@ -37,11 +37,14 @@ import java.util.concurrent.CompletableFuture;
 public class BukkitChunkManager extends ChunkManager {
 
     public static boolean isIn(CuboidRegion region, int x, int z) {
-        return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX() && z >= region.getMinimumPoint().getZ() && z <= region
-            .getMaximumPoint().getZ();
+        return x >= region.getMinimumPoint().getX() && x <= region.getMaximumPoint().getX() && z >= region
+                .getMinimumPoint()
+                .getZ() && z <= region
+                .getMaximumPoint().getZ();
     }
 
-    @Override public CompletableFuture<?> loadChunk(String world, BlockVector2 chunkLoc, boolean force) {
+    @Override
+    public CompletableFuture<?> loadChunk(String world, BlockVector2 chunkLoc, boolean force) {
         return PaperLib.getChunkAtAsync(BukkitUtil.getWorld(world), chunkLoc.getX(), chunkLoc.getZ(), force);
     }
 

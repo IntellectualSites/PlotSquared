@@ -27,8 +27,7 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class MycelGrowFlag extends BooleanFlag<MycelGrowFlag> {
 
@@ -39,7 +38,8 @@ public class MycelGrowFlag extends BooleanFlag<MycelGrowFlag> {
         super(value, TranslatableCaption.of("flags.flag_description_mycel_grow"));
     }
 
-    @Override protected MycelGrowFlag flagOf(@Nonnull Boolean value) {
+    @Override
+    protected MycelGrowFlag flagOf(@NonNull Boolean value) {
         return value ? MYCEL_GROW_TRUE : MYCEL_GROW_FALSE;
     }
 

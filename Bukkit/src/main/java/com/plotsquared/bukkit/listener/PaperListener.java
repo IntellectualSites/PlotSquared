@@ -60,8 +60,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -77,11 +77,13 @@ public class PaperListener implements Listener {
     private final PlotAreaManager plotAreaManager;
     private Chunk lastChunk;
 
-    @Inject public PaperListener(@Nonnull final PlotAreaManager plotAreaManager) {
+    @Inject
+    public PaperListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
-    
-    @EventHandler public void onEntityPathfind(EntityPathfindEvent event) {
+
+    @EventHandler
+    public void onEntityPathfind(EntityPathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
         }
@@ -114,7 +116,8 @@ public class PaperListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler public void onEntityPathfind(SlimePathfindEvent event) {
+    @EventHandler
+    public void onEntityPathfind(SlimePathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
         }
@@ -155,7 +158,8 @@ public class PaperListener implements Listener {
         event.setCancelled(true);
     }
 
-    @EventHandler public void onPreCreatureSpawnEvent(PreCreatureSpawnEvent event) {
+    @EventHandler
+    public void onPreCreatureSpawnEvent(PreCreatureSpawnEvent event) {
         if (!Settings.Paper_Components.CREATURE_SPAWN) {
             return;
         }
@@ -269,7 +273,8 @@ public class PaperListener implements Listener {
         }
     }
 
-    @EventHandler public void onPreSpawnerSpawnEvent(PreSpawnerSpawnEvent event) {
+    @EventHandler
+    public void onPreSpawnerSpawnEvent(PreSpawnerSpawnEvent event) {
         if (Settings.Paper_Components.SPAWNER_SPAWN) {
             Location location = BukkitUtil.adapt(event.getSpawnerLocation());
             PlotArea area = location.getPlotArea();
@@ -280,7 +285,8 @@ public class PaperListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST) public void onBlockPlace(BlockPlaceEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockPlace(BlockPlaceEvent event) {
         if (!Settings.Paper_Components.TILE_ENTITY_CHECK || !Settings.Enabled_Components.CHUNK_PROCESSOR) {
             return;
         }
@@ -310,7 +316,8 @@ public class PaperListener implements Listener {
      *
      * @param event Paper's PlayerLaunchProjectileEvent
      */
-    @EventHandler public void onProjectileLaunch(PlayerLaunchProjectileEvent event) {
+    @EventHandler
+    public void onProjectileLaunch(PlayerLaunchProjectileEvent event) {
         if (!Settings.Paper_Components.PLAYER_PROJECTILE) {
             return;
         }
@@ -334,7 +341,8 @@ public class PaperListener implements Listener {
         }
     }
 
-    @EventHandler public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
+    @EventHandler
+    public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
         if (!Settings.Paper_Components.ASYNC_TAB_COMPLETION) {
             return;
         }
@@ -352,7 +360,7 @@ public class PaperListener implements Listener {
         if (unprocessedArgs.length == 1) {
             return; // We don't do anything in this case
         } else if (!Settings.Enabled_Components.TAB_COMPLETED_ALIASES
-            .contains(unprocessedArgs[0].toLowerCase(Locale.ENGLISH))) {
+                .contains(unprocessedArgs[0].toLowerCase(Locale.ENGLISH))) {
             return;
         }
         final String[] args = new String[unprocessedArgs.length - 1];
@@ -369,7 +377,8 @@ public class PaperListener implements Listener {
             }
             event.setCompletions(result);
             event.setHandled(true);
-        } catch (final Exception ignored) {}
+        } catch (final Exception ignored) {
+        }
     }
 
 }

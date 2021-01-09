@@ -36,8 +36,8 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Random;
 
 final class BlockStatePopulator extends BlockPopulator {
@@ -47,12 +47,16 @@ final class BlockStatePopulator extends BlockPopulator {
 
     private QueueCoordinator queue;
 
-    public BlockStatePopulator(@Nonnull final IndependentPlotGenerator plotGenerator, @Nonnull final PlotAreaManager plotAreaManager) {
+    public BlockStatePopulator(
+            final @NonNull IndependentPlotGenerator plotGenerator,
+            final @NonNull PlotAreaManager plotAreaManager
+    ) {
         this.plotGenerator = plotGenerator;
         this.plotAreaManager = plotAreaManager;
     }
 
-    @Override public void populate(@Nonnull final World world, @Nonnull final Random random, @Nonnull final Chunk source) {
+    @Override
+    public void populate(final @NonNull World world, final @NonNull Random random, final @NonNull Chunk source) {
         if (this.queue == null) {
             this.queue = PlotSquared.platform().globalBlockQueue().getNewQueue(new BukkitWorld(world));
         }

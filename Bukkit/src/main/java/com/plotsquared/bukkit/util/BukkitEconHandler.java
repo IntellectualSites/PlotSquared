@@ -38,11 +38,17 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-@Singleton public class BukkitEconHandler extends EconHandler {
+@Singleton
+public class BukkitEconHandler extends EconHandler {
 
     private Economy econ;
 
-    @Override public boolean init() {
+    private static OfflinePlayer getBukkitOfflinePlayer(PlotPlayer<?> plotPlayer) {
+        return ((BukkitPlayer) plotPlayer).player;
+    }
+
+    @Override
+    public boolean init() {
         if (this.econ == null) {
             setupEconomy();
         }
@@ -54,13 +60,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
             return;
         }
         RegisteredServiceProvider<Economy> economyProvider =
-            Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+                Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (economyProvider != null) {
             this.econ = economyProvider.getProvider();
         }
     }
 
-    @Override public double getMoney(PlotPlayer<?> player) {
+    @Override
+    public double getMoney(PlotPlayer<?> player) {
         double bal = super.getMoney(player);
         if (Double.isNaN(bal)) {
             return this.econ.getBalance(getBukkitOfflinePlayer(player));
@@ -68,15 +75,18 @@ import org.checkerframework.checker.nullness.qual.NonNull;
         return bal;
     }
 
-    @Override public void withdrawMoney(PlotPlayer<?> player, double amount) {
+    @Override
+    public void withdrawMoney(PlotPlayer<?> player, double amount) {
         this.econ.withdrawPlayer(getBukkitOfflinePlayer(player), amount);
     }
 
-    @Override public void depositMoney(PlotPlayer<?> player, double amount) {
+    @Override
+    public void depositMoney(PlotPlayer<?> player, double amount) {
         this.econ.depositPlayer(getBukkitOfflinePlayer(player), amount);
     }
 
-    @Override public void depositMoney(OfflinePlotPlayer player, double amount) {
+    @Override
+    public void depositMoney(OfflinePlotPlayer player, double amount) {
         this.econ.depositPlayer(((BukkitOfflinePlayer) player).player, amount);
     }
 
@@ -95,12 +105,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
         return true;
     }
 
-    @Override public double getBalance(PlotPlayer<?> player) {
+    @Override
+    public double getBalance(PlotPlayer<?> player) {
         return this.econ.getBalance(getBukkitOfflinePlayer(player));
-    }
-
-    private static OfflinePlayer getBukkitOfflinePlayer(PlotPlayer<?> plotPlayer) {
-        return ((BukkitPlayer) plotPlayer).player;
     }
 
 }

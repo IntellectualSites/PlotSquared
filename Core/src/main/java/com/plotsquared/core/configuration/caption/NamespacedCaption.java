@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A {@link Caption} that can be identified by a namespace-key pair
@@ -37,13 +37,13 @@ public interface NamespacedCaption extends Caption {
      *
      * @return Caption key
      */
-    @Nonnull String getKey();
+    @NonNull String getKey();
 
     /**
      * Get the namespace that this caption belongs to
      *
      * @return Namespace
      */
-    @Nonnull String getNamespace();
+    @NonNull String getNamespace();
 
 }

@@ -30,9 +30,9 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -62,7 +62,7 @@ public interface PlotAreaManager {
      * @param location The location
      * @return The area if found, else {@code null}
      */
-    @Nullable PlotArea getPlotArea(@Nonnull Location location);
+    @Nullable PlotArea getPlotArea(@NonNull Location location);
 
     /**
      * Get the plot area in a world with an (optional ID).
@@ -74,7 +74,7 @@ public interface PlotAreaManager {
      * @param id    Area ID
      * @return Plot area matching the criteria
      */
-    @Nullable PlotArea getPlotArea(@Nonnull String world, @Nullable String id);
+    @Nullable PlotArea getPlotArea(@NonNull String world, @Nullable String id);
 
     /**
      * Get all plot areas in a world, with an optional region constraint
@@ -83,49 +83,49 @@ public interface PlotAreaManager {
      * @param region Optional region
      * @return All plots in the region
      */
-    @Nonnull PlotArea[] getPlotAreas(@Nonnull String world, @Nullable CuboidRegion region);
+    @NonNull PlotArea[] getPlotAreas(@NonNull String world, @Nullable CuboidRegion region);
 
     /**
      * Get all plot areas recognized by PlotSquared
      *
      * @return All plot areas
      */
-    @Nonnull PlotArea[] getAllPlotAreas();
+    @NonNull PlotArea[] getAllPlotAreas();
 
     /**
      * Get all worlds recognized by PlotSquared
      *
      * @return All world names
      */
-    @Nonnull String[] getAllWorlds();
+    @NonNull String[] getAllWorlds();
 
     /**
      * Add a plot area
      *
      * @param area Area
      */
-    void addPlotArea(@Nonnull PlotArea area);
+    void addPlotArea(@NonNull PlotArea area);
 
     /**
      * Remove a plot area
      *
      * @param area Area
      */
-    void removePlotArea(@Nonnull PlotArea area);
+    void removePlotArea(@NonNull PlotArea area);
 
     /**
      * Add a world
      *
      * @param worldName Name of the world to add
      */
-    void addWorld(@Nonnull String worldName);
+    void addWorld(@NonNull String worldName);
 
     /**
      * Remove a world
      *
      * @param worldName Name of the world to remove
      */
-    void removeWorld(@Nonnull String worldName);
+    void removeWorld(@NonNull String worldName);
 
     /**
      * Method that delegates to {@link #getPlotAreas(String, CuboidRegion)} but returns an
@@ -135,8 +135,11 @@ public interface PlotAreaManager {
      * @param region Optional region
      * @return All areas in the world (and region)
      */
-    @Nonnull default Set<PlotArea> getPlotAreasSet(@Nonnull final String world,
-        @Nullable final CuboidRegion region) {
+    @NonNull
+    default Set<PlotArea> getPlotAreasSet(
+            final @NonNull String world,
+            final @Nullable CuboidRegion region
+    ) {
         final PlotArea[] areas = this.getPlotAreas(world, region);
         final Set<PlotArea> set = new HashSet<>();
         Collections.addAll(set, areas);
@@ -150,7 +153,8 @@ public interface PlotAreaManager {
      * @param world World name
      * @return Modifiable set containing all plot areas in the specified world
      */
-    @Nonnull default Set<PlotArea> getPlotAreasSet(@Nonnull final String world) {
+    @NonNull
+    default Set<PlotArea> getPlotAreasSet(final @NonNull String world) {
         final Set<PlotArea> set = new HashSet<>();
         Collections.addAll(set, this.getPlotAreas(world, null));
         return set;
@@ -163,14 +167,15 @@ public interface PlotAreaManager {
      * @param search Search string
      * @return An area that matches the search string, or {@code null}
      */
-    @Nullable default PlotArea getPlotAreaByString(@Nonnull final String search) {
+    @Nullable
+    default PlotArea getPlotAreaByString(final @NonNull String search) {
         String[] split = search.split("[;,]");
         PlotArea[] areas = this.getPlotAreas(split[0], null);
         if (areas == null) {
             for (PlotArea area : this.getAllPlotAreas()) {
                 if (area.getWorldName().equalsIgnoreCase(split[0])) {
                     if (area.getId() == null || split.length == 2 && area.getId()
-                        .equalsIgnoreCase(split[1])) {
+                            .equalsIgnoreCase(split[1])) {
                         return area;
                     }
                 }
@@ -198,7 +203,7 @@ public interface PlotAreaManager {
      * @return if a plot world is registered
      * @see #getPlotAreaByString(String) to get the PlotArea object
      */
-    default boolean hasPlotArea(@Nonnull final String world) {
+    default boolean hasPlotArea(final @NonNull String world) {
         return this.getPlotAreas(world, null).length != 0;
     }
 
@@ -208,7 +213,7 @@ public interface PlotAreaManager {
      * @param world World name
      * @return {@code true} if the world is augmented plot world, {@code false} if not
      */
-    default boolean isAugmented(@Nonnull final String world) {
+    default boolean isAugmented(final @NonNull String world) {
         final PlotArea[] areas = this.getPlotAreas(world, null);
         return areas != null && (areas.length > 1 || areas[0].getType() != PlotAreaType.NORMAL);
     }
@@ -218,7 +223,7 @@ public interface PlotAreaManager {
      *
      * @param action Action to perform
      */
-    default void forEachPlotArea(@Nonnull final Consumer<? super PlotArea> action) {
+    default void forEachPlotArea(final @NonNull Consumer<? super PlotArea> action) {
         for (final PlotArea area : this.getAllPlotAreas()) {
             action.accept(area);
         }

@@ -25,7 +25,8 @@
  */
 package com.plotsquared.core.util;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.io.File;
 import java.nio.file.Paths;
 
@@ -40,7 +41,7 @@ public final class FileUtils {
      * @param directory Directory to delete
      * @throws RuntimeException If the deletion fails
      */
-    public static void deleteDirectory(@Nonnull final File directory) {
+    public static void deleteDirectory(final @NonNull File directory) {
         if (directory.exists()) {
             final File[] files = directory.listFiles();
             if (null != files) {
@@ -53,11 +54,11 @@ public final class FileUtils {
         }
         if (!directory.delete()) {
             throw new RuntimeException(
-                String.format("Failed to delete directory %s", directory.getName()));
+                    String.format("Failed to delete directory %s", directory.getName()));
         }
     }
 
-    @Nonnull public static File getFile(@Nonnull final File base, @Nonnull final String path) {
+    public @NonNull static File getFile(final @NonNull File base, final @NonNull String path) {
         if (Paths.get(path).isAbsolute()) {
             return new File(path);
         }

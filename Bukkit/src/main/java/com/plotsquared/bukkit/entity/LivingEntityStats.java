@@ -50,4 +50,5 @@ class LivingEntityStats {
     ItemStack chestplate;
     Collection<PotionEffect> potions;
     ItemStack offHand;
+
 }

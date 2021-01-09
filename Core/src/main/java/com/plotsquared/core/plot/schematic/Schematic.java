@@ -49,10 +49,6 @@ public class Schematic {
         this.clipboard = clip;
     }
 
-    public void setFlags(Map<String, Tag> flags) {
-        this.flags = flags == null ? new HashMap<>() : flags;
-    }
-
     public boolean setBlock(BlockVector3 position, BaseBlock block) throws WorldEditException {
         if (clipboard.getRegion().contains(position)) {
             BlockVector3 vector3 = position.subtract(clipboard.getRegion().getMinimumPoint());
@@ -65,7 +61,7 @@ public class Schematic {
 
     public void save(File file) throws IOException {
         try (SpongeSchematicWriter schematicWriter = new SpongeSchematicWriter(
-            new NBTOutputStream(new FileOutputStream(file)))) {
+                new NBTOutputStream(new FileOutputStream(file)))) {
             schematicWriter.write(clipboard);
         }
     }
@@ -77,4 +73,9 @@ public class Schematic {
     public Map<String, Tag> getFlags() {
         return this.flags;
     }
+
+    public void setFlags(Map<String, Tag> flags) {
+        this.flags = flags == null ? new HashMap<>() : flags;
+    }
+
 }

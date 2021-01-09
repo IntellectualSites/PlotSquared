@@ -29,8 +29,8 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
@@ -38,9 +38,9 @@ import java.util.Locale;
 public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFlag<Boolean, F> {
 
     private static final Collection<String> positiveValues =
-        Arrays.asList("1", "yes", "allow", "true");
+            Arrays.asList("1", "yes", "allow", "true");
     private static final Collection<String> negativeValues =
-        Arrays.asList("0", "no", "deny", "disallow", "false");
+            Arrays.asList("0", "no", "deny", "disallow", "false");
 
     /**
      * Construct a new flag instance.
@@ -62,7 +62,8 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
         this(false, description);
     }
 
-    @Override public F parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public F parse(@NonNull String input) throws FlagParseException {
         if (positiveValues.contains(input.toLowerCase(Locale.ENGLISH))) {
             return this.flagOf(true);
         } else if (negativeValues.contains(input.toLowerCase(Locale.ENGLISH))) {
@@ -72,19 +73,24 @@ public abstract class BooleanFlag<F extends PlotFlag<Boolean, F>> extends PlotFl
         }
     }
 
-    @Override public F merge(@Nonnull Boolean newValue) {
+    @Override
+    public F merge(@NonNull Boolean newValue) {
         return this.flagOf(getValue() || newValue);
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "true";
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue().toString();
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         return Arrays.asList("true", "false");
     }
+
 }

@@ -36,9 +36,9 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -64,208 +64,240 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         return parent;
     }
 
-    @Override public int size() {
+    @Override
+    public int size() {
         if (parent != null) {
             return parent.size();
         }
         return 0;
     }
 
-    @Override public void setModified(long modified) {
+    @Override
+    public void setModified(long modified) {
         if (parent != null) {
             parent.setModified(modified);
         }
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @Nonnull Pattern pattern) {
+    @Override
+    public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
         if (parent != null) {
             return parent.setBlock(x, y, z, pattern);
         }
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @Nonnull BaseBlock id) {
+    @Override
+    public boolean setBlock(int x, int y, int z, @NonNull BaseBlock id) {
         if (parent != null) {
             return parent.setBlock(x, y, z, id);
         }
         return false;
     }
 
-    @Override public boolean setBlock(int x, int y, int z, @Nonnull BlockState id) {
+    @Override
+    public boolean setBlock(int x, int y, int z, @NonNull BlockState id) {
         if (parent != null) {
             return parent.setBlock(x, y, z, id);
         }
         return false;
     }
 
-    @Override @Nullable public BlockState getBlock(int x, int y, int z) {
+    @Override
+    public @Nullable BlockState getBlock(int x, int y, int z) {
         if (parent != null) {
             return parent.getBlock(x, y, z);
         }
         return null;
     }
 
-    @Override public boolean setBiome(int x, int z, @Nonnull BiomeType biome) {
+    @Override
+    public boolean setBiome(int x, int z, @NonNull BiomeType biome) {
         if (parent != null) {
             return parent.setBiome(x, z, biome);
         }
         return false;
     }
 
-    @Override public boolean setBiome(int x, int y, int z, @Nonnull BiomeType biome) {
+    @Override
+    public boolean setBiome(int x, int y, int z, @NonNull BiomeType biome) {
         if (parent != null) {
             return parent.setBiome(x, y, z, biome);
         }
         return false;
     }
 
-    @Override public boolean isSettingBiomes() {
+    @Override
+    public boolean isSettingBiomes() {
         if (parent != null) {
             return parent.isSettingBiomes();
         }
         return false;
     }
 
-    @Override public boolean setEntity(@Nonnull Entity entity) {
+    @Override
+    public boolean setEntity(@NonNull Entity entity) {
         if (parent != null) {
             return parent.setEntity(entity);
         }
         return false;
     }
 
-    @Override public void regenChunk(int x, int z) {
+    @Override
+    public void regenChunk(int x, int z) {
         if (parent != null) {
             parent.regenChunk(x, z);
         }
     }
 
-    @Override @Nullable public World getWorld() {
+    @Override
+    public @Nullable World getWorld() {
         if (parent != null) {
             return parent.getWorld();
         }
         return null;
     }
 
-    @Override public boolean setTile(int x, int y, int z, @Nonnull CompoundTag tag) {
+    @Override
+    public boolean setTile(int x, int y, int z, @NonNull CompoundTag tag) {
         if (parent != null) {
             return parent.setTile(x, y, z, tag);
         }
         return false;
     }
 
-    @Override public boolean isSettingTiles() {
+    @Override
+    public boolean isSettingTiles() {
         if (parent != null) {
             return parent.isSettingTiles();
         }
         return false;
     }
 
-    @Override public boolean enqueue() {
+    @Override
+    public boolean enqueue() {
         if (parent != null) {
             return parent.enqueue();
         }
         return false;
     }
 
-    @Override public void start() {
+    @Override
+    public void start() {
         if (parent != null) {
             parent.start();
         }
     }
 
-    @Override public void cancel() {
+    @Override
+    public void cancel() {
         if (parent != null) {
             parent.cancel();
         }
     }
 
-    @Override public Runnable getCompleteTask() {
+    @Override
+    public Runnable getCompleteTask() {
         if (parent != null) {
             return parent.getCompleteTask();
         }
         return null;
     }
 
-    @Override public void setCompleteTask(Runnable whenDone) {
+    @Override
+    public void setCompleteTask(Runnable whenDone) {
         if (parent != null) {
             parent.setCompleteTask(whenDone);
         }
     }
 
-    @Override @Nullable public Consumer<BlockVector2> getChunkConsumer() {
+    @Override
+    public @Nullable Consumer<BlockVector2> getChunkConsumer() {
         if (parent != null) {
             return parent.getChunkConsumer();
         }
         return null;
     }
 
-    @Override public void setChunkConsumer(@Nonnull Consumer<BlockVector2> consumer) {
+    @Override
+    public void setChunkConsumer(@NonNull Consumer<BlockVector2> consumer) {
         if (parent != null) {
             parent.setChunkConsumer(consumer);
         }
     }
 
-    @Override public void addProgressSubscriber(@Nonnull ProgressSubscriber progressSubscriber) {
+    @Override
+    public void addProgressSubscriber(@NonNull ProgressSubscriber progressSubscriber) {
         if (parent != null) {
             parent.addProgressSubscriber(progressSubscriber);
         }
     }
 
-    @Override @Nonnull public LightingMode getLightingMode() {
+    @Override
+    public @NonNull LightingMode getLightingMode() {
         if (parent != null) {
             return parent.getLightingMode();
         }
         return LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
     }
 
-    @Override public void setLightingMode(@Nullable LightingMode mode) {
+    @Override
+    public void setLightingMode(@Nullable LightingMode mode) {
         if (parent != null) {
             parent.setLightingMode(mode);
         }
     }
 
-    @Override @Nonnull public List<BlockVector2> getReadChunks() {
+    @Override
+    public @NonNull List<BlockVector2> getReadChunks() {
         if (parent != null) {
             return parent.getReadChunks();
         }
         return new ArrayList<>();
     }
 
-    @Override public void addReadChunks(@Nonnull Set<BlockVector2> readChunks) {
+    @Override
+    public void addReadChunks(@NonNull Set<BlockVector2> readChunks) {
         if (parent != null) {
             parent.addReadChunks(readChunks);
         }
     }
 
-    @Override public void addReadChunk(@Nonnull BlockVector2 chunk) {
+    @Override
+    public void addReadChunk(@NonNull BlockVector2 chunk) {
         if (parent != null) {
             parent.addReadChunk(chunk);
         }
     }
 
-    @Override public boolean isUnloadAfter() {
+    @Override
+    public boolean isUnloadAfter() {
         if (parent != null) {
             return parent.isUnloadAfter();
         }
         return false;
     }
 
-    @Override public void setUnloadAfter(boolean setUnloadAfter) {
+    @Override
+    public void setUnloadAfter(boolean setUnloadAfter) {
         if (parent != null) {
             parent.setUnloadAfter(setUnloadAfter);
         }
     }
 
-    @Override @Nullable public CuboidRegion getRegenRegion() {
+    @Override
+    public @Nullable CuboidRegion getRegenRegion() {
         if (parent != null) {
             return parent.getRegenRegion();
         }
         return null;
     }
 
-    @Override public void setRegenRegion(@Nonnull CuboidRegion regenRegion) {
+    @Override
+    public void setRegenRegion(@NonNull CuboidRegion regenRegion) {
         if (parent != null) {
             parent.setRegenRegion(regenRegion);
         }
     }
+
 }

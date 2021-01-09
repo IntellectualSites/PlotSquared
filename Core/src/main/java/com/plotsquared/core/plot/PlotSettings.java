@@ -47,7 +47,7 @@ public class PlotSettings {
     /**
      * Merged plots.
      */
-    private boolean[] merged = new boolean[] {false, false, false, false};
+    private boolean[] merged = new boolean[]{false, false, false, false};
     /**
      * Plot alias.
      */
@@ -75,15 +75,15 @@ public class PlotSettings {
         return this.merged[direction];
     }
 
-    public void setMerged(boolean[] merged) {
-        this.merged = merged;
-    }
-
     public Map<UUID, Integer> getRatings() {
         if (this.ratings == null) {
             this.ratings = new HashMap<>();
         }
         return this.ratings;
+    }
+
+    public void setRatings(HashMap<UUID, Integer> ratings) {
+        this.ratings = ratings;
     }
 
     public boolean setMerged(int direction, boolean merged) {
@@ -114,19 +114,20 @@ public class PlotSettings {
 
     public void setPosition(BlockLoc position) {
         if (position != null && position.getX() == 0 && position.getY() == 0
-            && position.getZ() == 0) {
+                && position.getZ() == 0) {
             position = null;
         }
         this.position = position;
     }
 
-    @SuppressWarnings({"UnstableApiUsage"}) public List<PlotComment> getComments(String inbox) {
+    @SuppressWarnings({"UnstableApiUsage"})
+    public List<PlotComment> getComments(String inbox) {
         if (this.comments == null) {
             return Collections.emptyList();
         }
 
         return this.comments.stream().filter(comment -> comment.inbox.equals(inbox))
-            .collect(ImmutableList.toImmutableList());
+                .collect(ImmutableList.toImmutableList());
     }
 
     boolean removeComment(PlotComment comment) {
@@ -151,6 +152,10 @@ public class PlotSettings {
         return this.merged;
     }
 
+    public void setMerged(boolean[] merged) {
+        this.merged = merged;
+    }
+
     public String getAlias() {
         return this.alias;
     }
@@ -159,11 +164,8 @@ public class PlotSettings {
         this.alias = alias;
     }
 
-    public void setRatings(HashMap<UUID, Integer> ratings) {
-        this.ratings = ratings;
-    }
-
     public void setComments(List<PlotComment> comments) {
         this.comments = comments;
     }
+
 }

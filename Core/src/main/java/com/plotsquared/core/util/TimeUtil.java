@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.util;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class TimeUtil {
 
@@ -40,7 +40,7 @@ public final class TimeUtil {
      * @param time Time to format
      * @return Formatted string
      */
-    @Nonnull public static String secToTime(@Nonnegative long time) {
+    public @NonNull static String secToTime(@NonNegative long time) {
         StringBuilder toReturn = new StringBuilder();
         if (time >= 33868800) {
             int years = (int) (time / 33868800);
@@ -79,7 +79,8 @@ public final class TimeUtil {
      * @param string String to parse
      * @return Parsed time
      */
-    @Nonnegative public static long timeToSec(@Nonnull String string) {
+    @NonNegative
+    public static long timeToSec(@NonNull String string) {
         if (MathMan.isInteger(string)) {
             return Long.parseLong(string);
         }

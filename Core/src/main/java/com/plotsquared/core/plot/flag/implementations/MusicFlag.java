@@ -31,8 +31,7 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.ItemUtil;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
 
@@ -47,20 +46,22 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
         super(value, TranslatableCaption.of("flags.flag_category_music"), TranslatableCaption.of("flags.flag_description_music"));
     }
 
-    @Override public MusicFlag parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public MusicFlag parse(@NonNull String input) throws FlagParseException {
         if (!input.isEmpty() && !input.contains("music_disc_")) {
             input = "music_disc_" + input;
         }
         final ItemType itemType = ItemUtil.get(input);
         if (itemType != null && itemType.getId() != null && (itemType == ItemTypes.AIR || itemType
-            .getId().contains("music_disc_"))) {
+                .getId().contains("music_disc_"))) {
             return new MusicFlag(ItemUtil.get(input));
         } else {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_music"));
         }
     }
 
-    @Override public MusicFlag merge(@Nonnull ItemType newValue) {
+    @Override
+    public MusicFlag merge(@NonNull ItemType newValue) {
         if (getValue().equals(ItemTypes.AIR)) {
             return new MusicFlag(newValue);
         } else if (newValue.equals(ItemTypes.AIR)) {
@@ -70,15 +71,18 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().getId();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "ward";
     }
 
-    @Override protected MusicFlag flagOf(@Nonnull ItemType value) {
+    @Override
+    protected MusicFlag flagOf(@NonNull ItemType value) {
         return new MusicFlag(value);
     }
 

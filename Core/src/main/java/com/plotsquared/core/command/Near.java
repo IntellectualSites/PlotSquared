@@ -36,19 +36,22 @@ import net.kyori.adventure.text.minimessage.Template;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "near",
-    aliases = "n",
-    usage = "/plot near",
-    category = CommandCategory.INFO,
-    requiredType = RequiredType.PLAYER)
+        aliases = "n",
+        usage = "/plot near",
+        category = CommandCategory.INFO,
+        requiredType = RequiredType.PLAYER)
 public class Near extends Command {
+
     public Near() {
         super(MainCommand.getInstance(), true);
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         player.sendMessage(
                 TranslatableCaption.of("near.plot_near"),
@@ -56,4 +59,5 @@ public class Near extends Command {
         );
         return CompletableFuture.completedFuture(true);
     }
+
 }

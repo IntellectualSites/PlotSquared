@@ -31,7 +31,7 @@ public final class ThreadUtils {
 
     private ThreadUtils() {
         throw new UnsupportedOperationException(
-            "This is a utility class and cannot be instantiated");
+                "This is a utility class and cannot be instantiated");
     }
 
     /**

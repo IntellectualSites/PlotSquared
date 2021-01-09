@@ -26,9 +26,9 @@
 package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
@@ -42,32 +42,35 @@ import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "home",
-                    permission = "plots.home",
-                    usage = "/plot home [<page> | <alias> | <area;x;y> | <area> <x;y> | <area> <page>]",
-                    aliases = {"h"},
-                    requiredType = RequiredType.PLAYER,
-                    category = CommandCategory.TELEPORT)
+        permission = "plots.home",
+        usage = "/plot home [<page> | <alias> | <area;x;y> | <area> <x;y> | <area> <page>]",
+        aliases = {"h"},
+        requiredType = RequiredType.PLAYER,
+        category = CommandCategory.TELEPORT)
 public class HomeCommand extends Command {
 
     private final PlotAreaManager plotAreaManager;
 
-    @Inject public HomeCommand(@Nonnull final PlotAreaManager plotAreaManager) {
+    @Inject
+    public HomeCommand(final @NonNull PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
         this.plotAreaManager = plotAreaManager;
     }
 
-    private void home(@Nonnull final PlotPlayer<?> player,
-                      @Nonnull final PlotQuery query, final int page,
-                      final RunnableVal3<Command, Runnable, Runnable> confirm,
-                      final RunnableVal2<Command, CommandResult> whenDone) {
+    private void home(
+            final @NonNull PlotPlayer<?> player,
+            final @NonNull PlotQuery query, final int page,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
         List<Plot> plots = query.asList();
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
@@ -90,14 +93,18 @@ public class HomeCommand extends Command {
         }), () -> whenDone.run(HomeCommand.this, CommandResult.FAILURE));
     }
 
-    @Nonnull private PlotQuery query(@Nonnull final PlotPlayer<?> player) {
+    @NonNull
+    private PlotQuery query(final @NonNull PlotPlayer<?> player) {
         // everything plots need to have in common here
         return PlotQuery.newQuery().thatPasses(plot -> plot.isOwner(player.getUUID()));
     }
 
-    @Override public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-           RunnableVal3<Command, Runnable, Runnable> confirm,
-           RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    @Override
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         // /plot home <number> (or page, whatever it's called)
         // /plot home <alias>
         // /plot home <[area;]x;y>
@@ -229,4 +236,5 @@ public class HomeCommand extends Command {
         }
         return completions;
     }
+
 }

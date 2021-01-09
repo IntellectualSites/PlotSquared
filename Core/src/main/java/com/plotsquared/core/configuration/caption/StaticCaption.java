@@ -26,8 +26,7 @@
 package com.plotsquared.core.configuration.caption;
 
 import com.google.common.base.Preconditions;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class StaticCaption implements Caption {
 
@@ -43,12 +42,13 @@ public final class StaticCaption implements Caption {
      * @param text Text
      * @return Created caption
      */
-    @Nonnull public static StaticCaption of(@Nonnull final String text) {
+    public @NonNull static StaticCaption of(final @NonNull String text) {
         return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
     }
 
     @Override
-    public @Nonnull String getComponent(@Nonnull LocaleHolder localeHolder) {
+    public @NonNull String getComponent(@NonNull LocaleHolder localeHolder) {
         return this.value; // can't be translated
     }
+
 }

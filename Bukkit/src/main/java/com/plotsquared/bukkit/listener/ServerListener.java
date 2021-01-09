@@ -35,21 +35,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class ServerListener implements Listener {
 
     private final BukkitPlatform plugin;
 
-    @Inject public ServerListener(@Nonnull final BukkitPlatform plugin) {
+    @Inject
+    public ServerListener(final @NonNull BukkitPlatform plugin) {
         this.plugin = plugin;
     }
 
-    @EventHandler public void onServerLoad(ServerLoadEvent event) {
+    @EventHandler
+    public void onServerLoad(ServerLoadEvent event) {
         if (Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI") != null && Settings.Enabled_Components.USE_MVDWAPI) {
             new MVdWPlaceholders(this.plugin, this.plugin.placeholderRegistry());
             ConsolePlayer.getConsole().sendMessage(TranslatableCaption.of("placeholder.hooked"));
         }
     }
+
 }

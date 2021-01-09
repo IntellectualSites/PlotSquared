@@ -46,11 +46,11 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,7 +71,8 @@ public class ComponentPresetManager {
     private final EconHandler econHandler;
     private final InventoryUtil inventoryUtil;
 
-    @Inject public ComponentPresetManager(@Nonnull final EconHandler econHandler, @Nonnull final InventoryUtil inventoryUtil) {
+    @Inject
+    public ComponentPresetManager(final @NonNull EconHandler econHandler, final @NonNull InventoryUtil inventoryUtil) {
         this.econHandler = econHandler;
         this.inventoryUtil = inventoryUtil;
         final File file = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "components.yml");
@@ -105,12 +106,22 @@ public class ComponentPresetManager {
         this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
 
         if (yamlConfiguration.contains("presets")) {
-            this.presets = yamlConfiguration.getMapList("presets").stream().map(o -> (Map<String, Object>) o).map(ComponentPreset::deserialize)
-                .collect(Collectors.toList());
+            this.presets = yamlConfiguration
+                    .getMapList("presets")
+                    .stream()
+                    .map(o -> (Map<String, Object>) o)
+                    .map(ComponentPreset::deserialize)
+                    .collect(Collectors.toList());
         } else {
             final List<ComponentPreset> defaultPreset = Collections.singletonList(
-                new ComponentPreset(ClassicPlotManagerComponent.FLOOR, "##wool", 0, "", "<gold>D</gold><green>i</green><red>s</red><yellow>c</yellow><aqua>o</aqua><dark_green> F</dark_green><dark_aqua>l</dark_aqua><light_purple>o</light_purple><blue>o</blue><dark_red>r</dark_red>",
-                    Arrays.asList("<gold>Spice up your plot floor</gold>"), ItemTypes.YELLOW_WOOL));
+                    new ComponentPreset(ClassicPlotManagerComponent.FLOOR,
+                            "##wool",
+                            0,
+                            "",
+                            "<gold>D</gold><green>i</green><red>s</red><yellow>c</yellow><aqua>o</aqua><dark_green> F</dark_green><dark_aqua>l</dark_aqua><light_purple>o</light_purple><blue>o</blue><dark_red>r</dark_red>",
+                            Arrays.asList("<gold>Spice up your plot floor</gold>"),
+                            ItemTypes.YELLOW_WOOL
+                    ));
             yamlConfiguration.set("presets", defaultPreset.stream().map(ComponentPreset::serialize).collect(Collectors.toList()));
             try {
                 yamlConfiguration.save(file);
@@ -131,7 +142,7 @@ public class ComponentPresetManager {
      * @param player player
      * @return Build inventory, if it could be created
      */
-    @Nullable public PlotInventory buildInventory(final PlotPlayer<?> player) {
+    public @Nullable PlotInventory buildInventory(final PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
 
         if (plot == null) {
@@ -147,14 +158,18 @@ public class ComponentPresetManager {
 
         final List<ComponentPreset> allowedPresets = new ArrayList<>(this.presets.size());
         for (final ComponentPreset componentPreset : this.presets) {
-            if (!componentPreset.getPermission().isEmpty() && !Permissions.hasPermission(player, componentPreset.getPermission())) {
+            if (!componentPreset.getPermission().isEmpty() && !Permissions.hasPermission(
+                    player,
+                    componentPreset.getPermission()
+            )) {
                 continue;
             }
             allowedPresets.add(componentPreset);
         }
         final int size = (int) Math.ceil((double) allowedPresets.size() / 9.0D);
         final PlotInventory plotInventory = new PlotInventory(this.inventoryUtil, player, size, this.guiName) {
-            @Override public boolean onClick(final int index) {
+            @Override
+            public boolean onClick(final int index) {
                 if (!getPlayer().getCurrentPlot().equals(plot)) {
                     return false;
                 }
@@ -185,8 +200,10 @@ public class ComponentPresetManager {
                         return false;
                     } else {
                         econHandler.withdrawMoney(getPlayer(), componentPreset.getCost());
-                        getPlayer().sendMessage(TranslatableCaption.of("economy.removed_balance"),
-                                Template.of("money", econHandler.format(componentPreset.getCost())));
+                        getPlayer().sendMessage(
+                                TranslatableCaption.of("economy.removed_balance"),
+                                Template.of("money", econHandler.format(componentPreset.getCost()))
+                        );
                     }
                 }
 
@@ -194,7 +211,12 @@ public class ComponentPresetManager {
                     plot.addRunning();
                     QueueCoordinator queue = plot.getArea().getQueue();
                     for (Plot current : plot.getConnectedPlots()) {
-                        current.getPlotModificationManager().setComponent(componentPreset.getComponent().name(), pattern, player, queue);
+                        current.getPlotModificationManager().setComponent(
+                                componentPreset.getComponent().name(),
+                                pattern,
+                                player,
+                                queue
+                        );
                     }
                     queue.setCompleteTask(plot::removeRunning);
                     queue.enqueue();
@@ -209,19 +231,30 @@ public class ComponentPresetManager {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
             if (preset.getCost() > 0 && this.econHandler.isEnabled(plot.getArea())) {
-                lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("preset.preset_lore_cost").getComponent(player),
-                    Template.of("cost", String.format("%.2f", preset.getCost())))));
+                lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+                        TranslatableCaption.of("preset.preset_lore_cost").getComponent(player),
+                        Template.of("cost", String.format("%.2f", preset.getCost()))
+                )));
             }
-            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(TranslatableCaption.of("preset.preset_lore_component").getComponent(player),
-                Template.of("component", preset.getComponent().name().toLowerCase()))));
+            lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+                    TranslatableCaption.of("preset.preset_lore_component").getComponent(player),
+                    Template.of("component", preset.getComponent().name().toLowerCase())
+            )));
             lore.removeIf(String::isEmpty);
             if (!lore.isEmpty()) {
                 lore.add("<gold>");
             }
             lore.addAll(preset.getDescription());
             lore.add("</gold>");
-            plotInventory.setItem(i,
-                new PlotItemStack(preset.getIcon().getId().replace("minecraft:", ""), 1, preset.getDisplayName(), lore.toArray(new String[0])));
+            plotInventory.setItem(
+                    i,
+                    new PlotItemStack(
+                            preset.getIcon().getId().replace("minecraft:", ""),
+                            1,
+                            preset.getDisplayName(),
+                            lore.toArray(new String[0])
+                    )
+            );
         }
 
         return plotInventory;

@@ -55,7 +55,8 @@ public class UpdateUtility implements Listener {
     public final JavaPlugin javaPlugin;
     private boolean notify = true;
 
-    @Inject public UpdateUtility(final JavaPlugin javaPlugin) {
+    @Inject
+    public UpdateUtility(final JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
         internalVersion = PlotSquared.get().getVersion();
     }
@@ -64,12 +65,12 @@ public class UpdateUtility implements Listener {
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(this.javaPlugin, () -> {
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(
-                    "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
-                    .openConnection();
+                        "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
+                        .openConnection();
                 connection.setRequestMethod("GET");
                 JsonObject result = (new JsonParser())
-                    .parse(new JsonReader(new InputStreamReader(connection.getInputStream())))
-                    .getAsJsonObject();
+                        .parse(new JsonReader(new InputStreamReader(connection.getInputStream())))
+                        .getAsJsonObject();
                 spigotVersion = result.get("current_version").getAsString();
             } catch (IOException e) {
                 logger.error("Unable to check for updates. Error: {}", e.getMessage());
@@ -79,7 +80,8 @@ public class UpdateUtility implements Listener {
             if (internalVersion.isLaterVersion(spigotVersion)) {
                 logger.info("There appears to be a PlotSquared update available!");
                 logger.info("You are running version {}, the latest version is {}",
-                    internalVersion.versionString(), spigotVersion);
+                        internalVersion.versionString(), spigotVersion
+                );
                 logger.info("https://www.spigotmc.org/resources/77506/updates");
                 hasUpdate = true;
                 if (Settings.UpdateChecker.NOTIFY_ONCE) {
@@ -95,4 +97,5 @@ public class UpdateUtility implements Listener {
     private void cancelTask() {
         Bukkit.getScheduler().runTaskLater(javaPlugin, () -> task.cancel(), 20L);
     }
+
 }

@@ -25,8 +25,8 @@
  */
 package com.plotsquared.core.permissions;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A permission profile that can be used to check for permissions
@@ -39,8 +39,8 @@ public interface PermissionProfile {
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    default boolean hasPermission(@Nonnull final String permission) {
-        return hasPermission(null ,permission);
+    default boolean hasPermission(final @NonNull String permission) {
+        return hasPermission(null, permission);
     }
 
     /**
@@ -50,6 +50,6 @@ public interface PermissionProfile {
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    boolean hasPermission(@Nullable final String world, @Nonnull String permission);
+    boolean hasPermission(final @Nullable String world, @NonNull String permission);
 
 }

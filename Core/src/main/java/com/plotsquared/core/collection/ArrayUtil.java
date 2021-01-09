@@ -28,6 +28,7 @@ package com.plotsquared.core.collection;
 import java.util.Arrays;
 
 public class ArrayUtil {
+
     public static final <T> T[] concatAll(T[] first, T[]... rest) {
         int totalLength = first.length;
         for (T[] array : rest) {
@@ -41,4 +42,5 @@ public class ArrayUtil {
         }
         return result;
     }
+
 }

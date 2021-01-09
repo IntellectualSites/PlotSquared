@@ -27,34 +27,42 @@ package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class FarewellFlag extends PlotFlag<String, FarewellFlag> {
 
     public static final FarewellFlag FAREWELL_FLAG_EMPTY = new FarewellFlag("");
 
-    protected FarewellFlag(@Nonnull String value) {
-        super(value, TranslatableCaption.of("flags.flag_category_string"), TranslatableCaption.of("flags.flag_description_farewell"));
+    protected FarewellFlag(@NonNull String value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_string"),
+                TranslatableCaption.of("flags.flag_description_farewell")
+        );
     }
 
-    @Override public FarewellFlag parse(@Nonnull String input) {
+    @Override
+    public FarewellFlag parse(@NonNull String input) {
         return flagOf(input);
     }
 
-    @Override public FarewellFlag merge(@Nonnull String newValue) {
+    @Override
+    public FarewellFlag merge(@NonNull String newValue) {
         return flagOf(this.getValue() + " " + newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "&cBye :(";
     }
 
-    @Override protected FarewellFlag flagOf(@Nonnull String value) {
+    @Override
+    protected FarewellFlag flagOf(@NonNull String value) {
         return new FarewellFlag(value);
     }
 

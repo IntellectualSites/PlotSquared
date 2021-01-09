@@ -25,7 +25,8 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -35,25 +36,33 @@ import java.util.Map;
  */
 public class DummyCaptionMap implements CaptionMap {
 
-    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption)
-        throws NoSuchCaptionException {
+    @Override
+    public @NonNull String getMessage(final @NonNull TranslatableCaption caption)
+            throws NoSuchCaptionException {
         throw new NoSuchCaptionException(caption);
     }
 
-    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption,
-                                       @Nonnull final LocaleHolder localeHolder) throws NoSuchCaptionException {
+    @Override
+    public @NonNull String getMessage(
+            final @NonNull TranslatableCaption caption,
+            final @NonNull LocaleHolder localeHolder
+    ) throws NoSuchCaptionException {
         throw new NoSuchCaptionException(caption);
     }
 
-    @Override public boolean supportsLocale(@Nonnull Locale locale) {
+    @Override
+    public boolean supportsLocale(@NonNull Locale locale) {
         return false;
     }
 
-    @Override @Nonnull public Locale getLocale() {
+    @Override
+    public @NonNull Locale getLocale() {
         throw new UnsupportedOperationException("Cannot get locale of DummyCaptionMap");
     }
 
-    @Nonnull @Override public Map<TranslatableCaption, String> getCaptions() {
+    @NonNull
+    @Override
+    public Map<TranslatableCaption, String> getCaptions() {
         return new HashMap<>();
     }
 

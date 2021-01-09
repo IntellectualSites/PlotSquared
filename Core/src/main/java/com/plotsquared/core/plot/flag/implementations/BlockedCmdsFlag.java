@@ -28,8 +28,8 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.ListFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,22 +37,26 @@ import java.util.List;
 public class BlockedCmdsFlag extends ListFlag<String, BlockedCmdsFlag> {
 
     public static final BlockedCmdsFlag BLOCKED_CMDS_FLAG_NONE =
-        new BlockedCmdsFlag(Collections.emptyList());
+            new BlockedCmdsFlag(Collections.emptyList());
 
     protected BlockedCmdsFlag(List<String> valueList) {
         super(valueList, TranslatableCaption.of("flags.flag_category_string_list"),
-                TranslatableCaption.of("flags.flag_description_blocked_cmds"));
+                TranslatableCaption.of("flags.flag_description_blocked_cmds")
+        );
     }
 
-    @Override public BlockedCmdsFlag parse(@Nonnull String input) throws FlagParseException {
+    @Override
+    public BlockedCmdsFlag parse(@NonNull String input) throws FlagParseException {
         return flagOf(Arrays.asList(input.split(",")));
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "gamemode survival, spawn";
     }
 
-    @Override protected BlockedCmdsFlag flagOf(@Nonnull List<String> value) {
+    @Override
+    protected BlockedCmdsFlag flagOf(@NonNull List<String> value) {
         return new BlockedCmdsFlag(value);
 
     }

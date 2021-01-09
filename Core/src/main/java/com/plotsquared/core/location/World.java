@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.location;
 
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * PlotSquared representation of a platform world
@@ -33,20 +33,6 @@ import javax.annotation.Nonnull;
  * @param <T> Platform world type
  */
 public interface World<T> {
-
-    /**
-     * Get the platform world represented by this world
-     *
-     * @return Platform world
-     */
-    @Nonnull T getPlatformWorld();
-
-    /**
-     * Get the name of the world
-     *
-     * @return World name
-     */
-    @Nonnull String getName();
 
     /**
      * Get a {@link NullWorld} implementation
@@ -58,24 +44,43 @@ public interface World<T> {
         return new NullWorld<>();
     }
 
+    /**
+     * Get the platform world represented by this world
+     *
+     * @return Platform world
+     */
+    @NonNull T getPlatformWorld();
+
+    /**
+     * Get the name of the world
+     *
+     * @return World name
+     */
+    @NonNull String getName();
+
     class NullWorld<T> implements World<T> {
 
         private NullWorld() {
         }
 
-        @Nonnull @Override public T getPlatformWorld() {
+        @NonNull
+        @Override
+        public T getPlatformWorld() {
             throw new UnsupportedOperationException("Cannot get platform world from NullWorld");
         }
 
-        @Override public @Nonnull String getName() {
+        @Override
+        public @NonNull String getName() {
             return "";
         }
 
-        @Override public boolean equals(final Object obj) {
+        @Override
+        public boolean equals(final Object obj) {
             return obj instanceof NullWorld;
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return "null".hashCode();
         }
 

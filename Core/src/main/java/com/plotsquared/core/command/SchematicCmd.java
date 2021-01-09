@@ -44,8 +44,8 @@ import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,23 +56,27 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "schematic",
-    permission = "plots.schematic",
-    aliases = {"sch", "schem"},
-    category = CommandCategory.SCHEMATIC,
-    usage = "/plot schematic <save | saveall | paste>")
+        permission = "plots.schematic",
+        aliases = {"sch", "schem"},
+        category = CommandCategory.SCHEMATIC,
+        usage = "/plot schematic <save | saveall | paste>")
 public class SchematicCmd extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final SchematicHandler schematicHandler;
     private boolean running = false;
 
-    @Inject public SchematicCmd(@Nonnull final PlotAreaManager plotAreaManager,
-                                @Nonnull final SchematicHandler schematicHandler) {
+    @Inject
+    public SchematicCmd(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull SchematicHandler schematicHandler
+    ) {
         this.plotAreaManager = plotAreaManager;
         this.schematicHandler = schematicHandler;
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
@@ -108,7 +112,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (!plot.isOwner(player.getUUID()) && !Permissions
-                    .hasPermission(player, "plots.admin.command.schematic.paste")) {
+                        .hasPermission(player, "plots.admin.command.schematic.paste")) {
                     player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
@@ -150,16 +154,26 @@ public class SchematicCmd extends SubCommand {
                         );
                         return;
                     }
-                    this.schematicHandler.paste(schematic, plot, 0, plot.getArea().getMinBuildHeight(), 0, false, player, new RunnableVal<Boolean>() {
-                        @Override public void run(Boolean value) {
-                            SchematicCmd.this.running = false;
-                            if (value) {
-                                player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
-                            } else {
-                                player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
+                    this.schematicHandler.paste(
+                            schematic,
+                            plot,
+                            0,
+                            plot.getArea().getMinBuildHeight(),
+                            0,
+                            false,
+                            player,
+                            new RunnableVal<Boolean>() {
+                                @Override
+                                public void run(Boolean value) {
+                                    SchematicCmd.this.running = false;
+                                    if (value) {
+                                        player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_success"));
+                                    } else {
+                                        player.sendMessage(TranslatableCaption.of("schematics.schematic_paste_failed"));
+                                    }
+                                }
                             }
-                        }
-                    });
+                    );
                 });
                 break;
             }
@@ -195,7 +209,8 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 boolean result = this.schematicHandler.exportAll(plots, null, null,
-                    () -> player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_finished")));
+                        () -> player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_finished"))
+                );
                 if (!result) {
                     player.sendMessage(TranslatableCaption.of("error.task_in_process"));
                     return false;
@@ -232,7 +247,7 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (!plot.isOwner(player.getUUID()) && !Permissions
-                    .hasPermission(player, "plots.admin.command.schematic.save")) {
+                        .hasPermission(player, "plots.admin.command.schematic.save")) {
                     player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
@@ -272,6 +287,7 @@ public class SchematicCmd extends SubCommand {
         }
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -285,8 +301,17 @@ public class SchematicCmd extends SubCommand {
             if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_PASTE)) {
                 completions.add("paste");
             }
-            final List<Command> commands = completions.stream().filter(completion -> completion.toLowerCase().startsWith(args[0].toLowerCase()))
-                    .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.ADMINISTRATION) {
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(
+                            null,
+                            true,
+                            completion,
+                            "",
+                            RequiredType.NONE,
+                            CommandCategory.ADMINISTRATION
+                    ) {
                     }).collect(Collectors.toCollection(LinkedList::new));
             if (Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
@@ -295,4 +320,5 @@ public class SchematicCmd extends SubCommand {
         }
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

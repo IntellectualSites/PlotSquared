@@ -26,8 +26,8 @@
 package com.plotsquared.core.configuration.caption;
 
 import com.google.common.collect.ImmutableMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Locale;
 import java.util.Map;
 
@@ -41,7 +41,8 @@ public class LocalizedCaptionMap implements CaptionMap {
         this.captions = captions;
     }
 
-    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption) {
+    @Override
+    public @NonNull String getMessage(final @NonNull TranslatableCaption caption) {
         String message = this.captions.get(caption);
         if (message == null) {
             throw new NoSuchCaptionException(caption);
@@ -49,20 +50,27 @@ public class LocalizedCaptionMap implements CaptionMap {
         return message;
     }
 
-    @Override @Nonnull public String getMessage(@Nonnull final TranslatableCaption caption,
-                                                @Nonnull final LocaleHolder localeHolder) {
+    @Override
+    public @NonNull String getMessage(
+            final @NonNull TranslatableCaption caption,
+            final @NonNull LocaleHolder localeHolder
+    ) {
         return getMessage(caption); // use the translation of this locale
     }
 
-    @Override public boolean supportsLocale(@Nonnull final Locale locale) {
+    @Override
+    public boolean supportsLocale(final @NonNull Locale locale) {
         return this.locale.equals(locale);
     }
 
-    @Override @Nonnull public Locale getLocale() {
+    @Override
+    public @NonNull Locale getLocale() {
         return this.locale;
     }
 
-    @Nonnull @Override public Map<TranslatableCaption, String> getCaptions() {
+    @NonNull
+    @Override
+    public Map<TranslatableCaption, String> getCaptions() {
         return ImmutableMap.copyOf(captions);
     }
 

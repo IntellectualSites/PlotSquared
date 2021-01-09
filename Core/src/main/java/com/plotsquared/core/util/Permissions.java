@@ -25,14 +25,13 @@
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.permissions.PermissionHolder;
 import com.plotsquared.core.player.PlotPlayer;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * The Permissions class handles checking user permissions.<br>
@@ -48,31 +47,31 @@ public class Permissions {
     /**
      * Check if the owner of the profile has a given (global) permission
      *
-     * @param caller permission holder
+     * @param caller     permission holder
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    public static boolean hasPermission(@Nonnull final PermissionHolder caller, @Nonnull final Permission permission) {
+    public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull Permission permission) {
         return caller.hasPermission(permission.toString());
     }
 
     /**
      * Check if the owner of the profile has a given (global) permission
      *
-     * @param caller permission holder
+     * @param caller     permission holder
      * @param permission Permission
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
-    public static boolean hasPermission(@Nonnull final PermissionHolder caller, @Nonnull final String permission) {
+    public static boolean hasPermission(final @NonNull PermissionHolder caller, final @NonNull String permission) {
         return caller.hasPermission(permission);
     }
 
     /**
      * Checks if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
      *
-     * @param player permission holder
+     * @param player     permission holder
      * @param permission permission
-     * @param notify if to notify the permission holder
+     * @param notify     if to notify the permission holder
      * @return if permission is had
      */
     public static boolean hasPermission(PlotPlayer<?> player, String permission, boolean notify) {
@@ -105,4 +104,5 @@ public class Permissions {
     public static int hasPermissionRange(PlotPlayer<?> player, String stub, int range) {
         return player.hasPermissionRange(stub, range);
     }
+
 }

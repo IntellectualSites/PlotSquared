@@ -27,7 +27,6 @@ package com.plotsquared.core.listener;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -70,11 +69,10 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -92,7 +90,7 @@ public class PlotListener {
 
     private final EventDispatcher eventDispatcher;
 
-    public PlotListener(@Nullable final EventDispatcher eventDispatcher) {
+    public PlotListener(final @Nullable EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
 
@@ -143,7 +141,7 @@ public class PlotListener {
 
     public boolean plotEntry(final PlotPlayer<?> player, final Plot plot) {
         if (plot.isDenied(player.getUUID()) && !Permissions
-            .hasPermission(player, "plots.admin.entry.denied")) {
+                .hasPermission(player, "plots.admin.entry.denied")) {
             return false;
         }
         try (final MetaDataAccess<Plot> lastPlot = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
@@ -235,9 +233,9 @@ public class PlotListener {
                     player.setTime(time);
                 } catch (Exception ignored) {
                     PlotFlag<?, ?> plotFlag =
-                        GlobalFlagContainer.getInstance().getFlag(TimeFlag.class);
+                            GlobalFlagContainer.getInstance().getFlag(TimeFlag.class);
                     PlotFlagRemoveEvent event =
-                        this.eventDispatcher.callFlagRemove(plotFlag, plot);
+                            this.eventDispatcher.callFlagRemove(plotFlag, plot);
                     if (event.getEventResult() != Result.DENY) {
                         plot.removeFlag(event.getFlag());
                     }
@@ -249,7 +247,7 @@ public class PlotListener {
             ItemType musicFlag = plot.getFlag(MusicFlag.class);
 
             try (final MetaDataAccess<Location> musicMeta =
-                player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_MUSIC)) {
+                         player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_MUSIC)) {
                 if (musicFlag != null) {
                     final String rawId = musicFlag.getId();
                     if (rawId.contains("disc") || musicFlag == ItemTypes.AIR) {
@@ -281,26 +279,34 @@ public class PlotListener {
 
             if (titles && !player.getAttribute("disabletitles")) {
                 if (!TranslatableCaption.of("titles.title_entered_plot").getComponent(ConsolePlayer.getConsole()).isEmpty()
-                    || !TranslatableCaption.of("titles.title_entered_plot_sub").getComponent(ConsolePlayer.getConsole()).isEmpty()) {
+                        || !TranslatableCaption
+                        .of("titles.title_entered_plot_sub")
+                        .getComponent(ConsolePlayer.getConsole())
+                        .isEmpty()) {
                     TaskManager.runTaskLaterAsync(() -> {
                         Plot lastPlot;
                         try (final MetaDataAccess<Plot> lastPlotAccess =
-                            player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
+                                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
                             lastPlot = lastPlotAccess.get().orElse(null);
                         }
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
                             final Consumer<String> userConsumer = user -> player
-                                .sendTitle(TranslatableCaption.of("titles.title_entered_plot"),
-                                    TranslatableCaption.of("titles.title_entered_plot_sub"),
-                                    Templates.of("x", lastPlot.getId().getX()), Templates.of("z", lastPlot.getId().getY()),
-                                    Templates.of("world", Objects.requireNonNull(plot.getArea().getId(), "Unknown")),
-                                    Templates.of("greeting", greeting), Templates.of("alias", plot.getAlias()),
-                                    Templates.of("owner", user));
+                                    .sendTitle(TranslatableCaption.of("titles.title_entered_plot"),
+                                            TranslatableCaption.of("titles.title_entered_plot_sub"),
+                                            Templates.of("x", lastPlot.getId().getX()),
+                                            Templates.of("z", lastPlot.getId().getY()),
+                                            Templates.of("world", Objects.requireNonNull(plot.getArea().getId(), "Unknown")),
+                                            Templates.of("greeting", greeting),
+                                            Templates.of("alias", plot.getAlias()),
+                                            Templates.of("owner", user)
+                                    );
                             UUID uuid = plot.getOwner();
                             if (uuid == null) {
                                 userConsumer.accept("Unknown");
                             } else if (uuid.equals(DBFunc.SERVER)) {
-                                userConsumer.accept(MINI_MESSAGE.stripTokens(TranslatableCaption.of("info.server").getComponent(player)));
+                                userConsumer.accept(MINI_MESSAGE.stripTokens(TranslatableCaption
+                                        .of("info.server")
+                                        .getComponent(player)));
                             } else {
                                 PlotSquared.get().getImpromptuUUIDPipeline().getSingle(plot.getOwner(), (user, throwable) -> {
                                     if (throwable != null) {
@@ -318,12 +324,12 @@ public class PlotListener {
             TimedFlag.Timed<Integer> feed = plot.getFlag(FeedFlag.class);
             if (feed.getInterval() != 0 && feed.getValue() != 0) {
                 feedRunnable
-                    .put(player.getUUID(), new Interval(feed.getInterval(), feed.getValue(), 20));
+                        .put(player.getUUID(), new Interval(feed.getInterval(), feed.getValue(), 20));
             }
             TimedFlag.Timed<Integer> heal = plot.getFlag(HealFlag.class);
             if (heal.getInterval() != 0 && heal.getValue() != 0) {
                 healRunnable
-                    .put(player.getUUID(), new Interval(heal.getInterval(), heal.getValue(), 20));
+                        .put(player.getUUID(), new Interval(heal.getInterval(), heal.getValue(), 20));
             }
             return true;
         }
@@ -340,10 +346,10 @@ public class PlotListener {
                     return true;
                 }
                 try (final MetaDataAccess<Boolean> kickAccess =
-                    player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
+                             player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_KICK)) {
                     if (plot.getFlag(DenyExitFlag.class) && !Permissions
-                        .hasPermission(player, Permission.PERMISSION_ADMIN_EXIT_DENIED) &&
-                        !kickAccess.get().orElse(false)) {
+                            .hasPermission(player, Permission.PERMISSION_ADMIN_EXIT_DENIED) &&
+                            !kickAccess.get().orElse(false)) {
                         if (previous != null) {
                             lastPlot.set(previous);
                         }
@@ -351,7 +357,7 @@ public class PlotListener {
                     }
                 }
                 if (!plot.getFlag(GamemodeFlag.class).equals(GamemodeFlag.DEFAULT) || !plot
-                    .getFlag(GuestGamemodeFlag.class).equals(GamemodeFlag.DEFAULT)) {
+                        .getFlag(GuestGamemodeFlag.class).equals(GamemodeFlag.DEFAULT)) {
                     if (player.getGameMode() != pw.getGameMode()) {
                         if (!Permissions.hasPermission(player, "plots.gamemode.bypass")) {
                             player.setGameMode(pw.getGameMode());
@@ -359,11 +365,11 @@ public class PlotListener {
                             player.sendMessage(
                                     TranslatableCaption.of("gamemode.gamemode_was_bypassed"),
                                     Template.of("gamemode", pw.getGameMode().getName().toLowerCase()),
-                                Template.of("plot", plot.toString())
-                        );
+                                    Template.of("plot", plot.toString())
+                            );
+                        }
                     }
                 }
-            }
 
                 final String farewell = plot.getFlag(FarewellFlag.class);
                 if (!farewell.isEmpty()) {
@@ -376,14 +382,14 @@ public class PlotListener {
                             final PlotPlayer owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                             if ((owner != null) && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
                                 player.sendMessage(
-                                    TranslatableCaption.of("notification.notify_leave"),
-                                    Template.of("player", player.getName()),
-                                    Template.of("plot", plot.getId().toString())
-                            );
+                                        TranslatableCaption.of("notification.notify_leave"),
+                                        Template.of("player", player.getName()),
+                                        Template.of("plot", plot.getId().toString())
+                                );
+                            }
                         }
                     }
                 }
-            }
 
                 final FlyFlag.FlyStatus flyStatus = plot.getFlag(FlyFlag.class);
                 if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
@@ -413,7 +419,7 @@ public class PlotListener {
                 }
 
                 try (final MetaDataAccess<Location> musicAccess =
-                    player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_MUSIC)) {
+                             player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_MUSIC)) {
                     musicAccess.get().ifPresent(lastLoc -> {
                         musicAccess.remove();
                         player.playMusic(lastLoc, ItemTypes.AIR);
@@ -444,5 +450,7 @@ public class PlotListener {
             this.amount = amount;
             this.max = max;
         }
+
     }
+
 }

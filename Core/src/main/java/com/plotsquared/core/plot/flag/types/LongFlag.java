@@ -29,37 +29,49 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import net.kyori.adventure.text.minimessage.Template;
-
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag<Long, F> {
 
-    protected LongFlag(@Nonnull Long value, Long minimum, Long maximum,
-        @Nonnull Caption flagDescription) {
+    protected LongFlag(
+            @NonNull Long value, Long minimum, Long maximum,
+            @NonNull Caption flagDescription
+    ) {
         super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_integers"), flagDescription);
     }
 
-    protected LongFlag(@Nonnull Long value, @Nonnull Caption flagDescription) {
+    protected LongFlag(@NonNull Long value, @NonNull Caption flagDescription) {
         this(value, Long.MIN_VALUE, Long.MAX_VALUE, flagDescription);
     }
 
-    @Override public F merge(@Nonnull Long newValue) {
+    @Override
+    public F merge(@NonNull Long newValue) {
         return flagOf(getValue() + newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().toString();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "123456789";
     }
 
-    @Nonnull @Override protected Long parseNumber(String input) throws FlagParseException {
+    @NonNull
+    @Override
+    protected Long parseNumber(String input) throws FlagParseException {
         try {
             return Long.parseLong(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, TranslatableCaption.of("invalid.not_a_number"), Template.of("value", input));
+            throw new FlagParseException(
+                    this,
+                    input,
+                    TranslatableCaption.of("invalid.not_a_number"),
+                    Template.of("value", input)
+            );
         }
     }
+
 }

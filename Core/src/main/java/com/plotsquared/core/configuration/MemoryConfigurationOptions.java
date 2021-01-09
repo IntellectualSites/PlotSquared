@@ -30,15 +30,18 @@ package com.plotsquared.core.configuration;
  * MemoryConfiguration}.
  */
 public class MemoryConfigurationOptions extends ConfigurationOptions {
+
     protected MemoryConfigurationOptions(MemoryConfiguration configuration) {
         super(configuration);
     }
 
-    @Override public MemoryConfiguration configuration() {
+    @Override
+    public MemoryConfiguration configuration() {
         return (MemoryConfiguration) super.configuration();
     }
 
-    @Override public MemoryConfigurationOptions copyDefaults(boolean value) {
+    @Override
+    public MemoryConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
