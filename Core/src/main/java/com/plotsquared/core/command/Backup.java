@@ -137,6 +137,8 @@ public final class Backup extends Command {
                     TranslatableCaption.of("backup_impossible"),
                     Template.of("plot", "generic.generic_unowned")
             );
+        } else if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
         } else if (plot.isMerged()) {
             player.sendMessage(
                     TranslatableCaption.of("backup_impossible"),

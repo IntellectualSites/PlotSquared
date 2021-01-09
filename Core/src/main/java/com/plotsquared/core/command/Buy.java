@@ -120,7 +120,7 @@ public class Buy extends Command {
                 plot.removeFlag(event.getFlag());
             }
             plot.setOwner(player.getUUID());
-            player.sendMessage(TranslatableCaption.of("working.claimed"));
+            player.sendMessage(TranslatableCaption.of("working.claimed"), Template.of("plot", String.valueOf(plot.getId())));
             whenDone.run(Buy.this, CommandResult.SUCCESS);
         }, () -> {
             this.econHandler.depositMoney(player, price);

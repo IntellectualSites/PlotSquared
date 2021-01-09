@@ -127,7 +127,7 @@ public class Download extends SubCommand {
                 @Override public void run(URL url) {
                     plot.removeRunning();
                     if (url == null) {
-                        player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
+                        player.sendMessage(TranslatableCaption.of("web.generating_link_failed"), Template.of("plot", String.valueOf(plot.getId())));
                         return;
                     }
                     player.sendMessage(TranslatableCaption.of("web.generation_link_success"), Template.of("url", url.toString()));
@@ -137,7 +137,7 @@ public class Download extends SubCommand {
             sendUsage(player);
             return false;
         }
-        player.sendMessage(TranslatableCaption.of("web.generating_link"));
+        player.sendMessage(TranslatableCaption.of("web.generating_link"), Template.of("plot", String.valueOf(plot.getId())));
         return true;
     }
 
@@ -184,7 +184,7 @@ public class Download extends SubCommand {
         this.plotUploader.upload(plot)
                 .whenComplete((result, throwable) -> {
                     if (throwable != null || !result.isSuccess()) {
-                        player.sendMessage(TranslatableCaption.of("web.generating_link_failed"));
+                        player.sendMessage(TranslatableCaption.of("web.generating_link_failed"), Template.of("plot", String.valueOf(plot.getId())));
                     } else {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generation_link_success"),

@@ -64,6 +64,10 @@ public class Caps extends SubCommand {
                     Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_CAPS_OTHER)));
             return false;
         }
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            return false;
+        }
         player.sendMessage(TranslatableCaption.of("info.plot_caps_header"));
         final int[] countedEntities = plot.countEntities();
         sendFormatted(plot, player, MobCapFlag.class, countedEntities, "mobs", CAP_MOB);
