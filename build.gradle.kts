@@ -6,7 +6,7 @@ plugins {
     java
     `java-library`
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "6.0.0"
+    id("com.github.johnrengelman.shadow") version "6.1.0"
     id("net.minecrell.licenser") version "0.4.1"
     id("org.ajoberstar.grgit") version "4.1.0"
 

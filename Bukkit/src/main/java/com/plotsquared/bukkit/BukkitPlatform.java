@@ -117,6 +117,7 @@ import com.plotsquared.core.uuid.CacheUUIDService;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
+import de.notmyfault.serverlib.ServerLib;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -541,6 +542,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         // Check whether the server runs on 11 or greater
         checkJvm();
+        // Check if we are in a safe environment
+        ServerLib.checkUnsafeForks();
     }
 
     private void unload() {

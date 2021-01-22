@@ -27,8 +27,15 @@ repositories {
     }
 
     maven {
-        name = "IntellectualSites"
+        name = "IntellectualSites Releases"
         url = uri("https://mvn.intellectualsites.com/content/repositories/releases")
+    }
+    maven {
+        name = "IntellectualSites 3rd Party"
+        url = uri("https://mvn.intellectualsites.com/content/repositories/thirdparty")
+        content {
+            includeGroup("de.notmyfault")
+        }
     }
 }
 
@@ -40,10 +47,10 @@ dependencies {
     //
 
     // Metrics
-    implementation("org.bstats:bstats-bukkit:1.7")
+    implementation("org.bstats:bstats-bukkit:1.8")
 
     // Minecraft
-    compileOnlyApi("com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT")
+    compileOnlyApi("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.6")
 
     // Plugins
@@ -62,6 +69,7 @@ dependencies {
 
     // Other libraries
     implementation("com.sk89q:squirrelid:1.0.0-SNAPSHOT") { isTransitive = false }
+    implementation("de.notmyfault:serverlib:1.0.0")
 
     // Our libraries
     implementation("com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT")
@@ -98,6 +106,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("com.intellectualsites.arkitektonika", "com.plotsquared.core.arkitektonika")
     relocate("com.intellectualsites.http", "com.plotsquared.core.http")
     relocate("com.intellectualsites.paster", "com.plotsquared.core.paster")
+    relocate("de.notmyfault:serverlib", "com.plotsquared.bukkit.serverlib")
 
     // Get rid of all the libs which are 100% unused.
     minimize()
