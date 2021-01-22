@@ -118,6 +118,7 @@ import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
+import de.notmyfault.serverlib.ServerLib;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
@@ -144,7 +145,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -405,6 +405,9 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
                 getLogger().warning("Failed to clean up players: " + e.getMessage());
             }
         }, 100L, 100L);
+
+        // Check if we are in a safe environment
+        ServerLib.checkUnsafeForks();
     }
 
     private void unload() {
