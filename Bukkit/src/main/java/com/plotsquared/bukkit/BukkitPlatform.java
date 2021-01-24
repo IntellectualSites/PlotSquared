@@ -123,6 +123,8 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.DrilldownPie;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -1030,7 +1032,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
         this.metricsStarted = true;
         Metrics metrics = new Metrics(this, BSTATS_ID); // bstats
-        metrics.addCustomChart(new Metrics.DrilldownPie("area_types", () -> {
+        metrics.addCustomChart(new DrilldownPie("area_types", () -> {
             final Map<String, Map<String, Integer>> map = new HashMap<>();
             for (final PlotAreaType plotAreaType : PlotAreaType.values()) {
                 final Map<String, Integer> terrainTypes = new HashMap<>();
@@ -1048,18 +1050,18 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
             return map;
         }));
-        metrics.addCustomChart(new Metrics.SimplePie(
+        metrics.addCustomChart(new SimplePie(
                 "premium",
                 () -> PremiumVerification.isPremium() ? "Premium" : "Non-Premium"
         ));
-        metrics.addCustomChart(new Metrics.SimplePie("worlds", () -> Settings.Enabled_Components.WORLDS ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie("economy", () -> Settings.Enabled_Components.ECONOMY ? "true" : "false"));
-        metrics.addCustomChart(new Metrics.SimplePie(
+        metrics.addCustomChart(new SimplePie("worlds", () -> Settings.Enabled_Components.WORLDS ? "true" : "false"));
+        metrics.addCustomChart(new SimplePie("economy", () -> Settings.Enabled_Components.ECONOMY ? "true" : "false"));
+        metrics.addCustomChart(new SimplePie(
                 "plot_expiry",
                 () -> Settings.Enabled_Components.PLOT_EXPIRY ? "true" : "false"
         ));
-        metrics.addCustomChart(new Metrics.SimplePie("database_type", () -> Storage.MySQL.USE ? "MySQL" : "SQLite"));
-        metrics.addCustomChart(new Metrics.SimplePie(
+        metrics.addCustomChart(new SimplePie("database_type", () -> Storage.MySQL.USE ? "MySQL" : "SQLite"));
+        metrics.addCustomChart(new SimplePie(
                 "worldedit_implementation",
                 () -> Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null ? "FastAsyncWorldEdit" : "WorldEdit"
         ));

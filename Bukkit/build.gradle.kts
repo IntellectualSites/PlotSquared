@@ -7,11 +7,6 @@ repositories {
     }
 
     maven {
-        name = "CodeMC"
-        url = uri("https://repo.codemc.org/repository/maven-public")
-    }
-
-    maven {
         name = "PlaceholderAPI"
         url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
@@ -47,7 +42,7 @@ dependencies {
     //
 
     // Metrics
-    implementation("org.bstats:bstats-bukkit:1.8")
+    implementation("org.bstats:bstats-bukkit:2.1.0")
 
     // Minecraft
     compileOnlyApi("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
