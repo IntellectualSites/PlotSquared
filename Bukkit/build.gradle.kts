@@ -64,7 +64,7 @@ dependencies {
 
     // Other libraries
     implementation("com.sk89q:squirrelid:1.0.0-SNAPSHOT") { isTransitive = false }
-    implementation("de.notmyfault:serverlib:1.0.0")
+    implementation("de.notmyfault:serverlib:1.0.1")
 
     // Our libraries
     implementation("com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT")
