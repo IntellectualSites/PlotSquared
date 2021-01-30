@@ -42,7 +42,7 @@ dependencies {
     compile("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT"){ transitive = false }
     compile('com.sk89q:squirrelid:1.0.0-SNAPSHOT'){ transitive = false }
     compile('be.maximvdw:MVdWPlaceholderAPI:3.1.1'){ transitive = false }
-    implementation("de.notmyfault:serverlib:1.0.0")
+    implementation("de.notmyfault:serverlib:1.0.1")
 }
 
 sourceCompatibility = 1.8
@@ -102,7 +102,7 @@ shadowJar {
         include(dependency("org.khelekore:prtree:1.7.0-SNAPSHOT"))
         include(dependency("com.sk89q:squirrelid:1.0.0-SNAPSHOT"))
         include(dependency("com.intellectualsites.paster:Paster:1.0.2-SNAPSHOT"))
-        include(dependency("de.notmyfault:serverlib:1.0.0"))
+        include(dependency("de.notmyfault:serverlib:1.0.1"))
     }
     relocate('net.kyori.text', 'com.plotsquared.formatting.text')
     relocate("io.papermc.lib", "com.plotsquared.bukkit.paperlib")

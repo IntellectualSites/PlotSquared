@@ -185,7 +185,7 @@
     <dependency>
       <groupId>de.notmyfault</groupId>
       <artifactId>serverlib</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
