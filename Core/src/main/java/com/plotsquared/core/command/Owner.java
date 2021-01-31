@@ -33,6 +33,8 @@ import com.plotsquared.core.events.PlotChangeOwnerEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.EventDispatcher;
@@ -152,9 +154,18 @@ public class Owner extends SetCommand {
                 int currentPlots = (Settings.Limit.GLOBAL ?
                         other.getPlotCount() :
                         other.getPlotCount(plot.getWorldName())) + size;
-                if (currentPlots > other.getAllowedPlots()) {
-                    player.sendMessage(TranslatableCaption.of("permission.cant_transfer_more_plots"));
-                    return;
+                try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                    int grants = 0;
+                    if (currentPlots >= other.getAllowedPlots()) {
+                        if (metaDataAccess.isPresent()) {
+                            grants = metaDataAccess.get().orElse(0);
+                            if (grants <= 0) {
+                                metaDataAccess.remove();
+                                player.sendMessage(TranslatableCaption.of("permission.cant_transfer_more_plots"));
+                                return;
+                            }
+                        }
+                    }
                 }
             }
             final UUID finalUUID = uuid;
