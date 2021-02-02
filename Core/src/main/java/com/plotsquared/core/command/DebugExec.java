@@ -331,7 +331,7 @@ public class DebugExec extends SubCommand {
                         return false;
                     }
                     HybridUtils.UPDATE = false;
-                    player.sendMessage(TranslatableCaption.of("debugexec.cancelling_task"));
+                    player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
                     return true;
                 case "start-expire":
                     if (ExpireManager.IMP == null) {

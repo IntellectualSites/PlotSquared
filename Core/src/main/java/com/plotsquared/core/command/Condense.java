@@ -164,7 +164,7 @@ public class Condense extends SubCommand {
                     @Override
                     public void run() {
                         if (!Condense.TASK) {
-                            player.sendMessage(TranslatableCaption.of("condense.task_cancelled"));
+                            player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
                         }
                         if (allPlots.isEmpty()) {
                             Condense.TASK = false;
@@ -218,7 +218,7 @@ public class Condense extends SubCommand {
             }
             case "stop":
                 if (!Condense.TASK) {
-                    player.sendMessage(TranslatableCaption.of("condense.task_already_stopped"));
+                    player.sendMessage(TranslatableCaption.of("condense.task_stopped"));
                     return false;
                 }
                 Condense.TASK = false;

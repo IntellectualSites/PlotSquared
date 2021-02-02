@@ -150,7 +150,10 @@ public class Cluster extends SubCommand {
                         player.getClusterCount() :
                         player.getPlotCount(player.getLocation().getWorldName());
                 if (currentClusters >= player.getAllowedPlots()) {
-                    player.sendMessage(TranslatableCaption.of("permission.cant_claim_more_clusters"));
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.cant_claim_more_clusters"),
+                            Template.of("amount", String.valueOf(player.getAllowedPlots()))
+                    );
                 }
                 PlotId pos1;
                 PlotId pos2;
