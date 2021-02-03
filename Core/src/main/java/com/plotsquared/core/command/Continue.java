@@ -76,8 +76,8 @@ public class Continue extends SubCommand {
         if (Settings.Done.COUNTS_TOWARDS_LIMIT && (player.getAllowedPlots()
                 < player.getPlotCount() + size)) {
             player.sendMessage(
-                    TranslatableCaption.of("permission.no_permission"),
-                    Template.of("node", Permission.PERMISSION_ADMIN_COMMAND_CONTINUE.toString())
+                    TranslatableCaption.of("permission.cant_claim_more_plots"),
+                    Template.of("amount", String.valueOf(player.getAllowedPlots()))
             );
             return false;
         }
