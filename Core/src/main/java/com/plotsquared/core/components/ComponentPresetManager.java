@@ -53,6 +53,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,35 +73,41 @@ public class ComponentPresetManager {
     private final String guiName;
     private final EconHandler econHandler;
     private final InventoryUtil inventoryUtil;
+    private File componentsFile;
 
     @Inject
-    public ComponentPresetManager(final @NonNull EconHandler econHandler, final @NonNull InventoryUtil inventoryUtil) {
+    public ComponentPresetManager(final @NonNull EconHandler econHandler, final @NonNull InventoryUtil inventoryUtil) throws
+            IOException {
         this.econHandler = econHandler;
         this.inventoryUtil = inventoryUtil;
-        final File file = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "components.yml");
-        if (!file.exists()) {
-            boolean created = false;
+        final File oldLocation = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "components.yml");
+        final File folder = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "config");
+        if (!folder.exists() && !folder.mkdirs()) {
+            logger.error("Failed to create the /plugins/PlotSquared/config folder. Please create it manually");
+        }
+        if (oldLocation.exists()) {
+            Path oldLoc = Paths.get(PlotSquared.platform().getDirectory() + "/components.yml");
+            Path newLoc = Paths.get(PlotSquared.platform().getDirectory() + "/config" + "/components.yml");
+            Files.move(oldLoc, newLoc);
+        } else {
             try {
-                created = file.createNewFile();
+                this.componentsFile = new File(folder, "components.yml");
+                if (!this.componentsFile.exists() && !this.componentsFile.createNewFile()) {
+                    logger.error("Could not create the components.yml file. Please create 'components.yml' manually.");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-            if (!created) {
-                logger.error("Failed to create components.yml");
-                this.guiName = "&cInvalid!";
-                this.presets = new ArrayList<>();
-                return;
             }
         }
 
         ConfigurationSerialization.registerClass(ComponentPreset.class, "ComponentPreset");
 
-        final YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
+        final YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(this.componentsFile);
 
         if (!yamlConfiguration.contains("title")) {
             yamlConfiguration.set("title", "&6Plot Components");
             try {
-                yamlConfiguration.save(file);
+                yamlConfiguration.save(this.componentsFile);
             } catch (IOException e) {
                 logger.error("Failed to save default values to components.yml", e);
             }
@@ -124,7 +133,7 @@ public class ComponentPresetManager {
                     ));
             yamlConfiguration.set("presets", defaultPreset.stream().map(ComponentPreset::serialize).collect(Collectors.toList()));
             try {
-                yamlConfiguration.save(file);
+                yamlConfiguration.save(this.componentsFile);
             } catch (final IOException e) {
                 logger.error("Failed to save default values to components.yml", e);
             }
