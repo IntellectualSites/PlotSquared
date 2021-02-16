@@ -53,7 +53,7 @@ public class PluginCmd extends SubCommand {
             player.sendMessage(StaticCaption.of(
                     "<gray>>> </gray><gold><bold>Wiki<reset><gray>: </gray><gold><click:open_url:https://wiki.intellectualsites.com/plotsquared/home>https://wiki.intellectualsites.com/plotsquared/home</gold>"));
             player.sendMessage(StaticCaption.of(
-                    "<gray>>> </gray><gold><bold>Discord<reset><gray>: </gray><gold><click:open_url:https://discord.gg/KxkjDVg>https://discord.gg/KxkjDVg</gold>"));
+                    "<gray>>> </gray><gold><bold>Discord<reset><gray>: </gray><gold><click:open_url:https://discord.gg/intellectualsites>https://discord.gg/intellectualsites</gold>"));
             player.sendMessage(
                     StaticCaption.of("<gray>>> </gray><gold><bold>Premium<reset><gray>: <gold><value></gold>"),
                     Template.of("value", String.valueOf(PremiumVerification.isPremium()))

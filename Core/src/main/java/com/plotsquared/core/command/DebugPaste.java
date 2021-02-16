@@ -116,7 +116,7 @@ public class DebugPaste extends SubCommand {
                 b.append("# Okay :D Great. You are now ready to create your bug report!");
                 b.append(
                         "\n# You can do so at https://issues.intellectualsites.com/projects/ps");
-                b.append("\n# or via our Discord at https://discord.gg/KxkjDVg");
+                b.append("\n# or via our Discord at https://discord.gg/intellectualsites");
 
                 final IncendoPaster incendoPaster = new IncendoPaster("plotsquared");
                 incendoPaster.addFile(new IncendoPaster.PasteFile("information", b.toString()));
