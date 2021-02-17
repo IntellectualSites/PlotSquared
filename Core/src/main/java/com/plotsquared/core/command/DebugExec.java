@@ -25,67 +25,32 @@
  */
 package com.plotsquared.core.command;
 
-import com.google.common.io.Files;
 import com.google.inject.Inject;
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Settings;
-import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.HybridUtils;
-import com.plotsquared.core.location.Location;
-import com.plotsquared.core.permissions.Permission;
-import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
-import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
-import com.plotsquared.core.util.FileUtils;
-import com.plotsquared.core.util.MathMan;
-import com.plotsquared.core.util.SchematicHandler;
-import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.WEManager;
-import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
-import com.plotsquared.core.util.task.RunnableVal2;
-import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.util.task.TaskManager;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.world.block.BlockState;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "debugexec",
         permission = "plots.admin",
@@ -97,125 +62,30 @@ public class DebugExec extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
-    private final WorldEdit worldEdit;
-    private final GlobalBlockQueue blockQueue;
-    private final SchematicHandler schematicHandler;
-    private final EconHandler econHandler;
-    private final ChunkManager chunkManager;
-    private final WorldUtil worldUtil;
-    private final SetupUtils setupUtils;
     private final HybridUtils hybridUtils;
 
-    private ScriptEngine engine;
-    private Bindings scope;
 
     @Inject
     public DebugExec(
             final @NonNull PlotAreaManager plotAreaManager,
             final @NonNull EventDispatcher eventDispatcher,
-            final @Nullable WorldEdit worldEdit,
-            final @NonNull GlobalBlockQueue blockQueue,
-            final @NonNull SchematicHandler schematicHandler,
-            final @NonNull EconHandler econHandler,
-            final @NonNull ChunkManager chunkManager,
-            final @NonNull WorldUtil worldUtil,
-            final @NonNull SetupUtils setupUtils,
             final @NonNull HybridUtils hybridUtils
     ) {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
-        this.worldEdit = worldEdit;
-        this.blockQueue = blockQueue;
-        this.schematicHandler = schematicHandler;
-        this.econHandler = econHandler;
-        this.chunkManager = chunkManager;
-        this.worldUtil = worldUtil;
-        this.setupUtils = setupUtils;
         this.hybridUtils = hybridUtils;
 
-        init();
-    }
-
-    public ScriptEngine getEngine() {
-        if (this.engine == null) {
-            init();
-        }
-        return this.engine;
-    }
-
-    public Bindings getScope() {
-        return this.scope;
-    }
-
-    public void init() {
-        if (this.engine != null) {
-            return;
-        }
-        //create script engine manager
-        ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
-        //create nashorn engine
-        this.engine = scriptEngineManager.getEngineByName("nashorn");
-        try {
-            engine.eval("print('PlotSquared scripting engine started');");
-        } catch (ScriptException e) {
-            e.printStackTrace();
-        }
-        if (this.engine == null) {
-            this.engine = new ScriptEngineManager(null).getEngineByName("JavaScript");
-        }
-        ScriptContext context = new SimpleScriptContext();
-        this.scope = context.getBindings(ScriptContext.ENGINE_SCOPE);
-
-        // stuff
-        this.scope.put("Settings", new Settings());
-        this.scope.put("StringMan", new StringMan());
-        this.scope.put("MathMan", new MathMan());
-
-        // Classes
-        this.scope.put("Location", Location.class);
-        this.scope.put("BlockState", BlockState.class);
-        this.scope.put("Plot", Plot.class);
-        this.scope.put("PlotId", PlotId.class);
-        this.scope.put("Runnable", Runnable.class);
-        this.scope.put("RunnableVal", RunnableVal.class);
-
-        // Instances
-        this.scope.put("PS", PlotSquared.get());
-        this.scope.put("GlobalBlockQueue", this.blockQueue);
-        this.scope.put("ExpireManager", ExpireManager.IMP);
-        if (this.worldEdit != null) {
-            this.scope.put("WEManager", new WEManager());
-        }
-        this.scope.put("TaskManager", TaskManager.getPlatformImplementation());
-        this.scope.put("ConsolePlayer", ConsolePlayer.getConsole());
-        this.scope.put("SchematicHandler", this.schematicHandler);
-        this.scope.put("ChunkManager", this.chunkManager);
-        this.scope.put("BlockManager", this.worldUtil);
-        this.scope.put("SetupUtils", this.setupUtils);
-        this.scope.put("EventUtil", this.eventDispatcher);
-        this.scope.put("EconHandler", this.econHandler);
-        this.scope.put("DBFunc", DBFunc.dbManager);
-        this.scope.put("HybridUtils", this.hybridUtils);
-        this.scope.put("IMP", PlotSquared.platform());
-        this.scope.put("MainCommand", MainCommand.getInstance());
-
-        // enums
-        for (Enum<?> value : Permission.values()) {
-            this.scope.put("C_" + value.name(), value);
-        }
     }
 
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        List<String> allowed_params = Arrays
+        List<String> allowedParams = Arrays
                 .asList("analyze", "calibrate-analysis", "remove-flag", "stop-expire", "start-expire",
                         "seen", "list-scripts", "start-rgar", "stop-rgar", "help", "addcmd", "runasync",
                         "run", "allcmd", "all"
                 );
         if (args.length > 0) {
             String arg = args[0].toLowerCase();
-            String script;
-            boolean async = false;
             switch (arg) {
                 case "analyze": {
                     Plot plot = player.getCurrentPlot();
@@ -297,6 +167,7 @@ public class DebugExec extends SubCommand {
                             TranslatableCaption.of("debugexec.cleared_flag"),
                             Template.of("value", flag)
                     );
+                    return true;
                 case "start-rgar": {
                     if (args.length != 2) {
                         player.sendMessage(
@@ -342,157 +213,11 @@ public class DebugExec extends SubCommand {
                     } else {
                         player.sendMessage(TranslatableCaption.of("debugexec.expiry_already_started"));
                     }
-                case "?":
-                case "help":
-                    player.sendMessage(StaticCaption.of("<prefix><gold>Possible sub commands: </gray>/plot debugexec <" + StringMan
-                            .join(allowed_params, " | ") + "></gray>"));
-                    return false;
-                case "addcmd":
-                    try {
-                        final String cmd = StringMan.join(
-                                Files.readLines(FileUtils.getFile(new File(
-                                        PlotSquared.platform().getDirectory() + File.separator
-                                                + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
-                                System.getProperty("line.separator")
-                        );
-                        new Command(MainCommand.getInstance(), true, args[1].split("\\.")[0], null,
-                                RequiredType.NONE, CommandCategory.DEBUG
-                        ) {
-                            @Override
-                            public CompletableFuture<Boolean> execute(
-                                    PlotPlayer<?> player,
-                                    String[] args, RunnableVal3<Command, Runnable, Runnable> confirm,
-                                    RunnableVal2<Command, CommandResult> whenDone
-                            ) {
-                                try {
-                                    DebugExec.this.scope.put("PlotPlayer", player);
-                                    DebugExec.this.scope.put("args", args);
-                                    DebugExec.this.engine.eval(cmd, DebugExec.this.scope);
-                                } catch (ScriptException e) {
-                                    e.printStackTrace();
-                                    player.sendMessage(TranslatableCaption.of("error.command_went_wrong"));
-                                }
-                                return CompletableFuture.completedFuture(true);
-                            }
-                        };
-                        return true;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot debugexec addcmd <file>")
-                        );
-                        return false;
-                    }
-                case "runasync":
-                    async = true;
-                case "run":
-                    try {
-                        script = StringMan.join(
-                                Files.readLines(FileUtils.getFile(new File(
-                                        PlotSquared.platform().getDirectory() + File.separator
-                                                + Settings.Paths.SCRIPTS), args[1]), StandardCharsets.UTF_8),
-                                System.getProperty("line.separator")
-                        );
-                        if (args.length > 2) {
-                            HashMap<String, String> replacements = new HashMap<>();
-                            for (int i = 2; i < args.length; i++) {
-                                replacements.put("%s" + (i - 2), args[i]);
-                            }
-                            script = StringMan.replaceFromMap(script, replacements);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return false;
-                    }
-                    break;
-                case "list-scripts":
-                    String path = PlotSquared.platform().getDirectory() + File.separator
-                            + Settings.Paths.SCRIPTS;
-                    File folder = new File(path);
-                    File[] filesArray = folder.listFiles();
-
-                    int page;
-                    switch (args.length) {
-                        case 1:
-                            page = 0;
-                            break;
-                        case 2:
-                            if (MathMan.isInteger(args[1])) {
-                                page = Integer.parseInt(args[1]) - 1;
-                                break;
-                            }
-                        default:
-                            player.sendMessage(
-                                    TranslatableCaption.of("commandconfig.command_syntax"),
-                                    Template.of("value", "/plot debugexec list-scripts [#]")
-                            );
-                            return false;
-                    }
-
-                    List<File> allFiles = Arrays.asList(filesArray);
-                    paginate(player, allFiles, 8, page, new RunnableVal3<Integer, File, CaptionHolder>() {
-                        @Override
-                        public void run(Integer i, File file, CaptionHolder message) {
-                            String name = file.getName();
-                            Template numTemplate = Template.of("number", String.valueOf(i));
-                            Template nameTemplate = Template.of("name", name);
-                            message.set(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                                    .parse(
-                                            TranslatableCaption.of("debugexec.script_list_item").getComponent(player),
-                                            numTemplate,
-                                            nameTemplate
-                                    ))));
-                        }
-                    }, "/plot debugexec list-scripts", TranslatableCaption.of("scripts.script_list"));
                     return true;
-                case "all":
-                    if (args.length < 3) {
-                        player.sendMessage(
-                                TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot debugexec all <condition> <code>")
-                        );
-                        return false;
-                    }
-                    script =
-                            "_1=PS.getBasePlots().iterator();while(_1.hasNext()){plot=_1.next();if("
-                                    + args[1] + "){" + StringMan
-                                    .join(Arrays.copyOfRange(args, 2, args.length), " ") + "}}";
-
-                    break;
-                default:
-                    script = StringMan.join(args, " ");
-            }
-            if (!(player instanceof ConsolePlayer)) {
-                player.sendMessage(TranslatableCaption.of("console.not_console"));
-                return false;
-            }
-            init();
-            this.scope.put("PlotPlayer", player);
-            try {
-                if (async) {
-                    final String toExec = script;
-                    TaskManager.runTaskAsync(() -> {
-                        long start = System.currentTimeMillis();
-                        Object result = null;
-                        try {
-                            result = DebugExec.this.engine.eval(toExec, DebugExec.this.scope);
-                        } catch (ScriptException e) {
-                            e.printStackTrace();
-                        }
-                        logger.info("{}ms -> {}", System.currentTimeMillis() - start, result);
-                    });
-                } else {
-                    long start = System.currentTimeMillis();
-                    Object result = this.engine.eval(script, this.scope);
-                    logger.info("{}ms -> {}", System.currentTimeMillis() - start, result);
-                }
-                return true;
-            } catch (ScriptException e) {
-                e.printStackTrace();
-                return false;
             }
         }
+        player.sendMessage(StaticCaption.of("<prefix><gold>Possible sub commands: </gray>/plot debugexec <"
+                + StringMan.join(allowedParams, " | ") + "></gray>"));
         return false;
     }
 
