@@ -309,7 +309,6 @@
   "unsafe.debugallowunsafe_off": "<prefix><gray>Unsafe actions disabled.</gray>",
   "need.need_block": "<prefix><red>You've got to specify a block.</red>",
   "near.plot_near": "<prefix><gold>Players: <gray><list></gray></gold>",
-  "scripts.script_list": "<dark_gray><strikethrough>--------- <reset><gold>SCRIPTS </gold><dark_gray><strikethrough>---------</dark_gray><reset>",
   "info.none": "<gray>None</gray>",
   "info.now": "<gray>Now</gray>",
   "info.never": "<gray>Never</gray>",

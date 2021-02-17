@@ -80,9 +80,13 @@ public class DebugExec extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         List<String> allowedParams = Arrays
-                .asList("analyze", "calibrate-analysis", "remove-flag", "stop-expire", "start-expire",
-                        "seen", "list-scripts", "start-rgar", "stop-rgar", "help", "addcmd", "runasync",
-                        "run", "allcmd", "all"
+                .asList("analyze",
+                        "calibrate-analysis",
+                        "start-expire",
+                        "stop-expire",
+                        "remove-flag",
+                        "start-rgar",
+                        "stop-rgar"
                 );
         if (args.length > 0) {
             String arg = args[0].toLowerCase();
@@ -137,6 +141,16 @@ public class DebugExec extends SubCommand {
                             () -> player.sendMessage(TranslatableCaption.of("debugexec.calibration_done")),
                             threshold
                     );
+                    return true;
+                case "start-expire":
+                    if (ExpireManager.IMP == null) {
+                        ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
+                    }
+                    if (ExpireManager.IMP.runAutomatedTask()) {
+                        player.sendMessage(TranslatableCaption.of("debugexec.expiry_started"));
+                    } else {
+                        player.sendMessage(TranslatableCaption.of("debugexec.expiry_already_started"));
+                    }
                     return true;
                 case "stop-expire":
                     if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
@@ -203,16 +217,6 @@ public class DebugExec extends SubCommand {
                     }
                     HybridUtils.UPDATE = false;
                     player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
-                    return true;
-                case "start-expire":
-                    if (ExpireManager.IMP == null) {
-                        ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
-                    }
-                    if (ExpireManager.IMP.runAutomatedTask()) {
-                        player.sendMessage(TranslatableCaption.of("debugexec.expiry_started"));
-                    } else {
-                        player.sendMessage(TranslatableCaption.of("debugexec.expiry_already_started"));
-                    }
                     return true;
             }
         }
