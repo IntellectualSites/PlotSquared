@@ -89,15 +89,14 @@ public class ComponentPresetManager {
             Path oldLoc = Paths.get(PlotSquared.platform().getDirectory() + "/components.yml");
             Path newLoc = Paths.get(PlotSquared.platform().getDirectory() + "/config" + "/components.yml");
             Files.move(oldLoc, newLoc);
-        } else {
-            try {
-                this.componentsFile = new File(folder, "components.yml");
-                if (!this.componentsFile.exists() && !this.componentsFile.createNewFile()) {
-                    logger.error("Could not create the components.yml file. Please create 'components.yml' manually.");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        }
+        try {
+            this.componentsFile = new File(folder, "components.yml");
+            if (!this.componentsFile.exists() && !this.componentsFile.createNewFile()) {
+                logger.error("Could not create the components.yml file. Please create 'components.yml' manually.");
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         ConfigurationSerialization.registerClass(ComponentPreset.class, "ComponentPreset");
