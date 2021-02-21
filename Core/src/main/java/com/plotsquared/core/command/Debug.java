@@ -28,9 +28,9 @@ package com.plotsquared.core.command;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.StringMan;
@@ -88,6 +88,7 @@ public class Debug extends SubCommand {
                             .getValue()
                             .toString() + " , "));
                 }
+                return true;
             }
         }
         if (args.length > 0 && "loadedchunks".equalsIgnoreCase(args[0])) {
@@ -151,12 +152,12 @@ public class Debug extends SubCommand {
         Set<TranslatableCaption> captions = PlotSquared
                 .get()
                 .getCaptionMap(TranslatableCaption.DEFAULT_NAMESPACE)
-                .getCaptions()
-                .keySet();
+                .getCaptions();
         if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
             StringBuilder msg = new StringBuilder();
+            LocaleHolder localeHolder = args.length > 1 && "own".equalsIgnoreCase(args[1]) ? player : LocaleHolder.console();
             for (Caption caption : captions) {
-                msg.append(caption.getComponent(ConsolePlayer.getConsole())).append("\n");
+                msg.append(caption.getComponent(localeHolder)).append("\n");
             }
             player.sendMessage(StaticCaption.of(msg.toString()));
             return true;
@@ -190,7 +191,7 @@ public class Debug extends SubCommand {
                 Template.of("var", "View all captions"),
                 Template.of("val", "/plot debug msg")
         ));
-        player.sendMessage(StaticCaption.of(information.toString()));
+        player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
         return true;
     }
 
