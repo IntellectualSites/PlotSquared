@@ -145,8 +145,6 @@ public class Settings extends Config {
         Web.URL = config.getString("web.url", Web.URL);
 
         // Caching
-        Enabled_Components.PERMISSION_CACHE =
-                config.getBoolean("cache.permissions", Enabled_Components.PERMISSION_CACHE);
         Enabled_Components.RATING_CACHE =
                 config.getBoolean("cache.ratings", Enabled_Components.RATING_CACHE);
 
@@ -688,8 +686,6 @@ public class Settings extends Config {
                 UPDATE_NOTIFICATIONS = true;
         @Comment("Stores user metadata in a database")
         public static boolean PERSISTENT_META = true;
-        @Comment("Optimizes permission checks")
-        public static boolean PERMISSION_CACHE = true;
         @Comment("Getting a rating won't need the database")
         public static boolean RATING_CACHE =
                 true;
