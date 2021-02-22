@@ -1030,6 +1030,8 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
             () -> Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null ?
                 "FastAsyncWorldEdit" :
                 "WorldEdit"));
+        metrics.addCustomChart(new Metrics.SimplePie("offline_mode", () -> Settings.UUID.OFFLINE ? "true" : "false"));
+        metrics.addCustomChart(new Metrics.SimplePie("offline_mode_force", () -> Settings.UUID.FORCE_LOWERCASE ? "true" : "false"));
     }
 
     @Override public ChunkManager initChunkManager() {
