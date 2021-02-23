@@ -1065,6 +1065,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 "worldedit_implementation",
                 () -> Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null ? "FastAsyncWorldEdit" : "WorldEdit"
         ));
+        metrics.addCustomChart(new SimplePie("offline_mode", () -> Settings.UUID.OFFLINE ? "true" : "false"));
+        metrics.addCustomChart(new SimplePie("offline_mode_force", () -> Settings.UUID.FORCE_LOWERCASE ? "true" : "false"));
     }
 
     @Override

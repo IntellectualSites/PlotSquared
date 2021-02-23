@@ -25,11 +25,12 @@
  */
 package com.plotsquared.core.configuration.caption;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class LocalizedCaptionMap implements CaptionMap {
 
@@ -68,10 +69,9 @@ public class LocalizedCaptionMap implements CaptionMap {
         return this.locale;
     }
 
-    @NonNull
     @Override
-    public Map<TranslatableCaption, String> getCaptions() {
-        return ImmutableMap.copyOf(captions);
+    public @NonNull Set<TranslatableCaption> getCaptions() {
+        return ImmutableSet.copyOf(this.captions.keySet());
     }
 
 }

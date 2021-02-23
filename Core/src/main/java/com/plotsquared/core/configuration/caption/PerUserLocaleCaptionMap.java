@@ -25,11 +25,13 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import com.google.common.collect.ImmutableSet;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class PerUserLocaleCaptionMap extends LocalizedCaptionMap {
 
@@ -51,6 +53,11 @@ public class PerUserLocaleCaptionMap extends LocalizedCaptionMap {
     @Override
     public boolean supportsLocale(final @NonNull Locale locale) {
         return this.localeMap.containsKey(locale);
+    }
+
+    @Override
+    public @NonNull Set<TranslatableCaption> getCaptions() {
+        return ImmutableSet.copyOf(this.localeMap.get(LocaleHolder.console().getLocale()).getCaptions());
     }
 
 }

@@ -28,7 +28,7 @@ package com.plotsquared.core.configuration.caption;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Locale;
-import java.util.Map;
+import java.util.Set;
 
 /**
  * Map containing mappings between {@link TranslatableCaption captions} and
@@ -43,7 +43,7 @@ public interface CaptionMap {
      * @return Component
      * @throws NoSuchCaptionException if no caption with the given key exists
      */
-    @NonNull String getMessage(@NonNull TranslatableCaption caption) throws NoSuchCaptionException;
+    @NonNull String getMessage(final @NonNull TranslatableCaption caption) throws NoSuchCaptionException;
 
     /**
      * Get a message using a specific locale
@@ -53,7 +53,7 @@ public interface CaptionMap {
      * @return Component
      * @throws NoSuchCaptionException if no caption with the given key exists
      */
-    @NonNull String getMessage(@NonNull TranslatableCaption caption, @NonNull LocaleHolder localeHolder) throws
+    @NonNull String getMessage(final @NonNull TranslatableCaption caption, final @NonNull LocaleHolder localeHolder) throws
             NoSuchCaptionException;
 
     /**
@@ -62,7 +62,7 @@ public interface CaptionMap {
      * @param locale Locale
      * @return True if the map supports the locale
      */
-    boolean supportsLocale(@NonNull Locale locale);
+    boolean supportsLocale(final @NonNull Locale locale);
 
     /**
      * Get the locale of the messages stored in the map
@@ -72,11 +72,11 @@ public interface CaptionMap {
     @NonNull Locale getLocale();
 
     /**
-     * Gets a copy of the map of captions stored in the CaptionMap
+     * Gets a copy of the set of captions stored in the CaptionMap
      *
-     * @return ImmutableMap of TranslatableCaption, String captionMap
+     * @return An immutable set of TranslatableCaption
      */
-    @NonNull Map<TranslatableCaption, String> getCaptions();
+    @NonNull Set<TranslatableCaption> getCaptions();
 
     class NoSuchCaptionException extends IllegalArgumentException {
 

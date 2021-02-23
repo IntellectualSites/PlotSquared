@@ -83,8 +83,6 @@ public class Settings extends Config {
                 .getBoolean("protection.redstone.disable-unoccupied", Redstone.DISABLE_UNOCCUPIED);
 
         // UUID
-        UUID.USE_SQLUUIDHANDLER =
-                config.getBoolean("uuid.use_sqluuidhandler", UUID.USE_SQLUUIDHANDLER);
         UUID.OFFLINE = config.getBoolean("UUID.offline", UUID.OFFLINE);
         UUID.FORCE_LOWERCASE = config.getBoolean("UUID.force-lowercase", UUID.FORCE_LOWERCASE);
 
@@ -147,8 +145,6 @@ public class Settings extends Config {
         Web.URL = config.getString("web.url", Web.URL);
 
         // Caching
-        Enabled_Components.PERMISSION_CACHE =
-                config.getBoolean("cache.permissions", Enabled_Components.PERMISSION_CACHE);
         Enabled_Components.RATING_CACHE =
                 config.getBoolean("cache.ratings", Enabled_Components.RATING_CACHE);
 
@@ -263,9 +259,6 @@ public class Settings extends Config {
         public static boolean OFFLINE = false;
         @Comment("Force using lowercase UUIDs")
         public static boolean FORCE_LOWERCASE = false;
-        @Comment("Use a database to store UUID/name info")
-        public static boolean
-                USE_SQLUUIDHANDLER = false;
         @Comment("How many UUIDs that may be stored in the cache")
         public static int UUID_CACHE_SIZE = 100000;
         @Comment("Rate limit (per 10 minutes) for background UUID fetching from the Mojang API")
@@ -577,9 +570,6 @@ public class Settings extends Config {
         public static boolean ON_CLEAR = false;
         @Comment("Teleport outside of the plot before deleting")
         public static boolean ON_DELETE = false;
-        @Comment("The visit command is ordered by world instead of globally")
-        public static boolean
-                PER_WORLD_VISIT = false;
 
     }
 
@@ -695,10 +685,6 @@ public class Settings extends Config {
                 UPDATE_NOTIFICATIONS = true;
         @Comment("Stores user metadata in a database")
         public static boolean PERSISTENT_META = true;
-        @Comment("Optimizes permission checks")
-        public static boolean PERMISSION_CACHE = true;
-        @Comment("Optimizes block changing code")
-        public static boolean BLOCK_CACHE = true;
         @Comment("Getting a rating won't need the database")
         public static boolean RATING_CACHE =
                 true;
