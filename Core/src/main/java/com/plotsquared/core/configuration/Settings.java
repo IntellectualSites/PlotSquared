@@ -439,7 +439,6 @@ public class Settings extends Config {
     public static final class Paths {
 
         public static String SCHEMATICS = "schematics";
-        public static String SCRIPTS = "scripts";
         public static String TEMPLATES = "templates";
 
     }
