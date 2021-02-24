@@ -41,6 +41,7 @@ import com.plotsquared.core.plot.flag.implementations.BlockBurnFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockIgnitionFlag;
 import com.plotsquared.core.plot.flag.implementations.BreakFlag;
 import com.plotsquared.core.plot.flag.implementations.CoralDryFlag;
+import com.plotsquared.core.plot.flag.implementations.CropGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
@@ -768,7 +769,17 @@ public class BlockEventListener implements Listener {
     public void onGrow(BlockGrowEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
-        if (location.isUnownedPlotArea()) {
+
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+
+        Plot plot = location.getOwnedPlot();
+        if (plot == null || !plot.getFlag(CropGrowFlag.class)) {
+            if (plot != null) {
+                plot.debug("Crop grow event was cancelled because crop-grow = false");
+            }
             event.setCancelled(true);
         }
     }

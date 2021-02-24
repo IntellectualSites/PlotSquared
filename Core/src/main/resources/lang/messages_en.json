@@ -552,6 +552,7 @@
   "flags.flag_description_snow_melt": "<gray>Set to `true` to allow snow to melt within the plot.</gray>",
   "flags.flag_description_soil_dry": "<gray>Set to `true` to allow soil to dry within the plot.</gray>",
   "flags.flag_description_coral_dry": "<gray>Set to `true` to allow coral blocks to dry within the plot.</gray>",
+  "flags.flag_description_crop_grow": "<gray>Set to `false` to disable crop growing on the plot</gray>",
   "flags.flag_description_tamed_attack": "<gray>Set to `true` to allow guests to attack tamed animals in the plot.</gray>",
   "flags.flag_description_tamed_interact": "<gray>Set to `true` to allow guests to interact with tamed animals in the plot.</gray>",
   "flags.flag_description_time": "<gray>Set the time in the plot to a fixed value.</gray>",
