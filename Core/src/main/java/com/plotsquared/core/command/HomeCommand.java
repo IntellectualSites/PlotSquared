@@ -140,7 +140,7 @@ public class HomeCommand extends Command {
                         );
                         return CompletableFuture.completedFuture(false);
                     }
-                    query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
+                    query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
                     break;
                 }
                 // either plot id or alias
@@ -202,7 +202,7 @@ public class HomeCommand extends Command {
                 query.withPlot(plot);
                 break;
             case 0:
-                query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
+                query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
                 break;
         }
         if (basePlotOnly) {
