@@ -30,7 +30,8 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+
+import javax.annotation.Nullable;
 
 public interface ProgressSubscriberFactory {
 

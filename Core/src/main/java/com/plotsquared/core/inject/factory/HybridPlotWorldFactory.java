@@ -30,7 +30,8 @@ import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+
+import javax.annotation.Nullable;
 
 public interface HybridPlotWorldFactory {
 

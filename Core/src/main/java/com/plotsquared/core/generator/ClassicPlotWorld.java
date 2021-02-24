@@ -35,7 +35,8 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class ClassicPlotWorld extends SquarePlotWorld {

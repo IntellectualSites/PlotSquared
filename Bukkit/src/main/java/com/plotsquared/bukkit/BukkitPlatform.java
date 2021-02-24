@@ -219,7 +219,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private Locale serverLocale;
 
     @Override
-    public @NonNull int[] serverVersion() {
+    public int @NonNull [] serverVersion() {
         if (this.version == null) {
             try {
                 this.version = new int[3];
