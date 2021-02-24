@@ -119,7 +119,7 @@ public class HomeCommand extends Command {
                         Captions.NOT_A_NUMBER.send(player, identifier);
                         return CompletableFuture.completedFuture(false);
                     }
-                    query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
+                    query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
                     break;
                 }
                 // either plot id or alias
@@ -178,7 +178,7 @@ public class HomeCommand extends Command {
                 query.withPlot(plot);
                 break;
             case 0:
-                query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
+                query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
                 break;
         }
         if (basePlotOnly) {
