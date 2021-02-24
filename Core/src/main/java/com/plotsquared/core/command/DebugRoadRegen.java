@@ -58,11 +58,18 @@ public class DebugRoadRegen extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        Location location = player.getLocation();
+        Plot plot = location.getPlotAbs();
         if (args.length < 1) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
                     Template.of("value", DebugRoadRegen.USAGE)
             );
+            return false;
+        }
+
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return false;
         }
         String kind = args[0].toLowerCase();

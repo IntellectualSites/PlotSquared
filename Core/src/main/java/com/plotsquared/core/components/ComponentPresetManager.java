@@ -162,6 +162,9 @@ public class ComponentPresetManager {
         } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID())) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return null;
+        } else if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            return null;
         }
 
         final List<ComponentPreset> allowedPresets = new ArrayList<>(this.presets.size());

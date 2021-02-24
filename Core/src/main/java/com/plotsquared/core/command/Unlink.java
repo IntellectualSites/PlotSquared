@@ -67,6 +67,10 @@ public class Unlink extends SubCommand {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            return false;
+        }
         if (!plot.isMerged()) {
             player.sendMessage(TranslatableCaption.of("merge.unlink_impossible"));
         }

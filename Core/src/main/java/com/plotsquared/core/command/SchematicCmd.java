@@ -116,6 +116,10 @@ public class SchematicCmd extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
+                if (plot.getVolume() > Integer.MAX_VALUE) {
+                    player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+                    return false;
+                }
                 if (this.running) {
                     player.sendMessage(TranslatableCaption.of("error.task_in_process"));
                     return false;
@@ -179,6 +183,8 @@ public class SchematicCmd extends SubCommand {
             }
             case "saveall":
             case "exportall": {
+                Location loc = player.getLocation();
+                final Plot plot = loc.getPlotAbs();
                 if (!(player instanceof ConsolePlayer)) {
                     player.sendMessage(TranslatableCaption.of("console.not_console"));
                     return false;
@@ -189,6 +195,10 @@ public class SchematicCmd extends SubCommand {
                             TranslatableCaption.of("commandconfig.command_syntax"),
                             Template.of("value", "Use /plot sch exportall area")
                     );
+                    return false;
+                }
+                if (plot.getVolume() > Integer.MAX_VALUE) {
+                    player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
                     return false;
                 }
                 PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);
@@ -244,6 +254,10 @@ public class SchematicCmd extends SubCommand {
                 }
                 if (!plot.hasOwner()) {
                     player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+                    return false;
+                }
+                if (plot.getVolume() > Integer.MAX_VALUE) {
+                    player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
                     return false;
                 }
                 if (!plot.isOwner(player.getUUID()) && !Permissions

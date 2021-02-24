@@ -50,8 +50,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "debug",
         category = CommandCategory.DEBUG,
@@ -193,6 +196,14 @@ public class Debug extends SubCommand {
         ));
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
         return true;
+    }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
+        return Stream.of("loadedchunks", "debug-players", "logging", "entitytypes", "msg")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 
 }

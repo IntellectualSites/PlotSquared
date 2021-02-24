@@ -203,6 +203,8 @@ public final class Backup extends Command {
                     TranslatableCaption.of("backup_impossible"),
                     Template.of("plot", "generic.generic_merged")
             );
+        } else if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(
@@ -272,10 +274,8 @@ public final class Backup extends Command {
                     TranslatableCaption.of("backup_impossible"),
                     Template.of("plot", "generic.generic_merged")
             );
-            player.sendMessage(
-                    TranslatableCaption.of("backup_impossible"),
-                    Template.of("plot", "generic.generic_merged")
-            );
+        } else if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
             player.sendMessage(

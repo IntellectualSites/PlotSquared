@@ -58,6 +58,10 @@ public class CreateRoadSchematic extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            return false;
+        }
         if (!(location.getPlotArea() instanceof HybridPlotWorld)) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
         }

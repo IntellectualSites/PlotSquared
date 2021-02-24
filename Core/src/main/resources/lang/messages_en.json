@@ -8,7 +8,7 @@
   "move.requires_unowned": "<prefix><red>The location specified is already occupied.</red>",
   "debug.requires_unmerged": "<prefix><red>The plot cannot be merged.</red>",
   "debug.debug_header": "<prefix> <gold>Debug Information</gold>\n",
-  "debug.debug_section": "<gray>>></gray> <gold><bold>&l<val></bold></gold>",
+  "debug.debug_section": "<gray>>></gray> <gold><bold><val></bold></gold>",
   "debug.debug_line": "<gray>>></gray> <gold><var></gold><gray>:</gray><gold> <val></gold>\n",
   "debug.plot_debug": "<gray>[<gold>Plot </gold><gray>Debug] (</gray><gold><plot></gold><gray>): <message></gray>",
   "debug.fetching_loaded_chunks": "<prefix><gold>Fetching loaded chunks...</gold>",
