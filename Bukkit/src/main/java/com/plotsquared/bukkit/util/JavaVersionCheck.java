@@ -66,14 +66,6 @@ public class JavaVersionCheck {
             logger.error("* Current Java version: {}", System.getProperty("java.version"));
             logger.error("************************************************************");
         }
-        if (checkJavaVersion() >= 15) {
-            logger.error("************************************************************");
-            logger.error("* PlotSquared uses Nashorn for the internal scripting engine.");
-            logger.error("* Within Java 15, Nashorn has been removed from Java.");
-            logger.error("* Until we add a suitable workaround, you should stick to Java 11");
-            logger.error("* to use all features of PlotSquared.");
-            logger.error("************************************************************");
-        }
     }
 
 }
