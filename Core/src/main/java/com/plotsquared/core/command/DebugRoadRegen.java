@@ -68,6 +68,8 @@ public class DebugRoadRegen extends SubCommand {
             return false;
         }
 
+        PlotArea area = player.getPlotAreaAbs();
+        check(area, TranslatableCaption.of("errors.not_in_plot_world"));
         if (plot.getVolume() > Integer.MAX_VALUE) {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return false;

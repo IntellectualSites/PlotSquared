@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.PlotArea;
 
 @CommandDeclaration(command = "chat",
         usage = "/plot chat",
@@ -37,6 +38,8 @@ public class Chat extends SubCommand {
 
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        PlotArea area = player.getPlotAreaAbs();
+        check(area, TranslatableCaption.of("errors.not_in_plot_world"));
         if (player.getPlotAreaAbs().isForcingPlotChat()) {
             player.sendMessage(TranslatableCaption.of("chat.plot_chat_forced"));
             return true;
