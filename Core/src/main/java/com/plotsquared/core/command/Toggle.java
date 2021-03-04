@@ -172,7 +172,7 @@ public class Toggle extends Command {
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) {
-        if (!toggle(player, "debug")) {
+        if (toggle(player, "debug")) {
             player.sendMessage(
                     TranslatableCaption.of("toggle.toggle_disabled"),
                     Template.of("setting", command.toString())
