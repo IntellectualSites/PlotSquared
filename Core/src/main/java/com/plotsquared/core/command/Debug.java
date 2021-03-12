@@ -62,8 +62,6 @@ import java.util.stream.Stream;
         permission = "plots.admin")
 public class Debug extends SubCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + Debug.class.getSimpleName());
-
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
 
@@ -81,7 +79,7 @@ public class Debug extends SubCommand {
         if (args.length == 0) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot debug <loadedchunks | debug-players | logging | entitytypes | msg>")
+                    Template.of("value", "/plot debug <loadedchunks | debug-players | entitytypes | msg>")
             );
         }
         if (args.length > 0) {
@@ -122,13 +120,6 @@ public class Debug extends SubCommand {
             }
             return true;
         }
-        if (args.length > 0 && "logging".equalsIgnoreCase(args[0])) {
-            logger.info("Info!");
-            logger.warn("Warning!");
-            logger.error("Error!", new RuntimeException());
-            logger.debug("Debug!");
-            return true;
-        }
         if (args.length > 0 && "entitytypes".equalsIgnoreCase(args[0])) {
             EntityCategories.init();
             player.sendMessage(TranslatableCaption.of("debug.entity_categories"));
@@ -156,15 +147,6 @@ public class Debug extends SubCommand {
                 .get()
                 .getCaptionMap(TranslatableCaption.DEFAULT_NAMESPACE)
                 .getCaptions();
-        if ((args.length > 0) && args[0].equalsIgnoreCase("msg")) {
-            StringBuilder msg = new StringBuilder();
-            LocaleHolder localeHolder = args.length > 1 && "own".equalsIgnoreCase(args[1]) ? player : LocaleHolder.console();
-            for (Caption caption : captions) {
-                msg.append(caption.getComponent(localeHolder)).append("\n");
-            }
-            player.sendMessage(StaticCaption.of(msg.toString()));
-            return true;
-        }
         TextComponent.Builder information = Component.text();
         Component header = MINI_MESSAGE.parse(TranslatableCaption.of("debug.debug_header").getComponent(player) + "\n");
         String line = TranslatableCaption.of("debug.debug_line").getComponent(player) + "\n";
@@ -189,18 +171,13 @@ public class Debug extends SubCommand {
                 Template.of("var", "Total Messages"),
                 Template.of("val", String.valueOf(captions.size()))
         ));
-        information.append(MINI_MESSAGE.parse(
-                line,
-                Template.of("var", "View all captions"),
-                Template.of("val", "/plot debug msg")
-        ));
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
         return true;
     }
 
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
-        return Stream.of("loadedchunks", "debug-players", "logging", "entitytypes", "msg")
+        return Stream.of("loadedchunks", "debug-players", "entitytypes")
                 .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
                 .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
