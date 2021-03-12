@@ -1174,7 +1174,7 @@ public class Plot {
      * @return success
      */
     public boolean removeFlag(final @NonNull PlotFlag<?, ?> flag) {
-        if (flag == null) {
+        if (flag == null || origin == null) {
             return false;
         }
         boolean removed = false;

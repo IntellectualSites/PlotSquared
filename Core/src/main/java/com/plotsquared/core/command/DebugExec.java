@@ -49,16 +49,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "debugexec",
         permission = "plots.admin",
         aliases = {"exec", "$"},
         category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
-
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + DebugExec.class.getSimpleName());
 
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
@@ -155,8 +157,10 @@ public class DebugExec extends SubCommand {
                 case "stop-expire":
                     if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
                         player.sendMessage(TranslatableCaption.of("debugexec.task_halted"));
+                    } else {
+                        player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
                     }
-                    player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
+                    return true;
                 case "remove-flag":
                     if (args.length != 2) {
                         player.sendMessage(
@@ -220,9 +224,17 @@ public class DebugExec extends SubCommand {
                     return true;
             }
         }
-        player.sendMessage(StaticCaption.of("<prefix><gold>Possible sub commands: </gray>/plot debugexec <"
+        player.sendMessage(StaticCaption.of("<prefix><gold>Possible sub commands: </gold><gray>/plot debugexec <"
                 + StringMan.join(allowedParams, " | ") + "></gray>"));
         return false;
+    }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
+        return Stream.of("analyze", "calibrate-analysis", "start-expire", "stop-expire", "remove-flag", "start-rgar", "stop-rgar")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 
 }
