@@ -142,7 +142,8 @@ public class Auto extends SubCommand {
                 } else {
                     player.sendMessage(
                             TranslatableCaption.of("permission.cant_claim_more_plots"),
-                            Template.of("amount", "0")
+                            Template.of("amount", String.valueOf(player.getAllowedPlots())
+                            )
                     );
                     return false;
                 }
