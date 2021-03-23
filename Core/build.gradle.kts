@@ -16,10 +16,10 @@ dependencies {
     api("net.kyori:adventure-text-minimessage:4.0.0-SNAPSHOT")
 
     // Guice
-    api("com.google.inject:guice:4.2.3") {
+    api("com.google.inject:guice:5.0.1") {
         exclude(group = "com.google.guava")
     }
-    api("com.google.inject.extensions:guice-assistedinject:4.2.3") {
+    api("com.google.inject.extensions:guice-assistedinject:5.0.1") {
         exclude("com.google.inject", "guice")
     }
     compileOnlyApi("com.google.code.findbugs:annotations:3.0.1")
