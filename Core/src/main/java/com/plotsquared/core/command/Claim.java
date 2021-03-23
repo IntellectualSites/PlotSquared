@@ -118,6 +118,7 @@ public class Claim extends SubCommand {
                             TranslatableCaption.of("permission.cant_claim_more_plots"),
                             Template.of("amount", String.valueOf(grants))
                     );
+                    return false;
                 }
             }
 
