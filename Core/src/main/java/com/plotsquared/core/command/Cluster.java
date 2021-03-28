@@ -294,7 +294,9 @@ public class Cluster extends SubCommand {
                     }
                 }
                 DBFunc.delete(cluster);
-                player.sendMessage(TranslatableCaption.of("cluster.cluster_deleted"));
+                player.sendMessage(TranslatableCaption.of("cluster.cluster_deleted"), Template.of("cluster",
+                        String.valueOf(cluster)
+                ));
                 return true;
             }
             case "res":

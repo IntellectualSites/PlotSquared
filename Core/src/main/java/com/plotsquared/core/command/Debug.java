@@ -58,7 +58,7 @@ import java.util.stream.Stream;
 
 @CommandDeclaration(command = "debug",
         category = CommandCategory.DEBUG,
-        usage = "/plot debug [msg]",
+        usage = "/plot debug",
         permission = "plots.admin")
 public class Debug extends SubCommand {
 

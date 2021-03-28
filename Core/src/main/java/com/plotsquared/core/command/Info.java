@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -34,7 +35,17 @@ import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.HideInfoFlag;
+import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.TabCompletions;
 import net.kyori.adventure.text.minimessage.Template;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "info",
         aliases = "i",
@@ -151,6 +162,26 @@ public class Info extends SubCommand {
         }
         plot.format(info, player, full).thenAcceptAsync(player::sendMessage);
         return true;
+    }
+
+    @Override
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
+        final List<String> completions = new LinkedList<>();
+        if (Permissions.hasPermission(player, Permission.PERMISSION_AREA_INFO_FORCE)) {
+            completions.add("-f");
+        }
+
+        final List<Command> commands = completions.stream().filter(completion -> completion
+                .toLowerCase()
+                .startsWith(args[0].toLowerCase()))
+                .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
+                }).collect(Collectors.toCollection(LinkedList::new));
+
+        if (Permissions.hasPermission(player, Permission.PERMISSION_AREA_INFO_FORCE) && args[0].length() > 0) {
+            commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+        }
+
+        return commands;
     }
 
     private Caption getCaption(String string) {

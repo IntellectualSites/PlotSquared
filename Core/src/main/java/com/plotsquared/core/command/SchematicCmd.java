@@ -57,9 +57,9 @@ import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "schematic",
         permission = "plots.schematic",
-        aliases = {"sch", "schem"},
+        aliases = "schem",
         category = CommandCategory.SCHEMATIC,
-        usage = "/plot schematic <save | saveall | paste>")
+        usage = "/plot schematic <save | saveall | paste | list>")
 public class SchematicCmd extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
@@ -190,10 +190,10 @@ public class SchematicCmd extends SubCommand {
                     return false;
                 }
                 if (args.length != 2) {
-                    player.sendMessage(TranslatableCaption.of("schematic_exportall_world_args"));
+                    player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_world_args"));
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "Use /plot sch exportall area")
+                            Template.of("value", "Use /plot schematic exportall area")
                     );
                     return false;
                 }
