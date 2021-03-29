@@ -193,12 +193,8 @@ public class SchematicCmd extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_world_args"));
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "Use /plot schematic exportall area")
+                            Template.of("value", "Use /plot schematic exportall <area>")
                     );
-                    return false;
-                }
-                if (plot.getVolume() > Integer.MAX_VALUE) {
-                    player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
                     return false;
                 }
                 PlotArea area = this.plotAreaManager.getPlotAreaByString(args[1]);

@@ -153,7 +153,7 @@
   "schematics.schematic_exportall_finished": "<prefix><gold>Finished mass export.</gold>",
   "schematics.schematic_exportall_single_finished": "<prefix><gold>Finished export.</gold>",
   "schematic.schematic_exportall_world": "<prefix><red>Invalid world.</red>",
-  "schematics.plot_to_schem": "<dark_aqua>Plot</dark_aqua><dark_gray>-></dark_gray><dark_aqua>Schematic</dark_aqua><dark_gray>: </dark_gray><gray>Found </gray><red><amount></red><gray> plots...</gray>",
+  "schematics.plot_to_schem": "<dark_aqua>Plot</dark_aqua><dark_gray>-></dark_gray><dark_aqua>Schematic</dark_aqua><dark_gray>: </dark_gray><gray>Found </gray><gold><amount></gold><gray> plots...</gray>",
   "error.task_in_process": "<prefix><gold>Task is already running.</gold>",
   "titles.title_entered_plot": "<gold>Plot: <world>;<x>;<z></gold>",
   "titles.title_entered_plot_sub": "<dark_aqua>Owned by <owner></dark_aqua>",
