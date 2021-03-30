@@ -80,7 +80,8 @@ public class Copy extends SubCommand {
 
         plot1.getPlotModificationManager().copy(plot2, player).thenAccept(result -> {
             if (result) {
-                player.sendMessage(TranslatableCaption.of("move.copy_success"));
+                player.sendMessage(TranslatableCaption.of("move.copy_success"), Template.of("origin", String.valueOf(plot1)),
+                        Template.of("target", String.valueOf(plot2)));
             } else {
                 player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
             }
