@@ -49,13 +49,19 @@ public class SingleWorldListener implements Listener {
 
     private Method methodGetHandleChunk;
     private Field mustSave;
+    private boolean isTrueForNotSave = true;
 
     public SingleWorldListener(Plugin plugin) throws Exception {
         ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
         try {
-            this.mustSave = classChunk.getField("mustSave").getRealField();
+            if (PlotSquared.get().IMP.getServerVersion()[1] == 13) {
+                this.mustSave = classChunk.getField("mustSave").getRealField();
+                this.isTrueForNotSave = false;
+            } else {
+                this.mustSave = classChunk.getField("mustNotSave").getRealField();
+            }
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
