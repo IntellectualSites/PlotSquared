@@ -286,6 +286,8 @@ permissions:
     default: false
   plots.admin.command.clear:
     default: false
+  plots.admin.flight:
+    default: false
 
   plots.teleport.delay.bypass:
     default: false

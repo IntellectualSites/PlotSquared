@@ -186,15 +186,17 @@ public class PlotListener {
             }
 
             final FlyFlag.FlyStatus flyStatus = plot.getFlag(FlyFlag.class);
-            if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
-                boolean flight = player.getFlight();
-                GameMode gamemode = player.getGameMode();
-                if (flight != (gamemode == GameModes.CREATIVE || gamemode == GameModes.SPECTATOR)) {
-                    try (final MetaDataAccess<Boolean> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_FLIGHT)) {
-                        metaDataAccess.set(player.getFlight());
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_FLIGHT)) {
+                if (flyStatus != FlyFlag.FlyStatus.DEFAULT) {
+                    boolean flight = player.getFlight();
+                    GameMode gamemode = player.getGameMode();
+                    if (flight != (gamemode == GameModes.CREATIVE || gamemode == GameModes.SPECTATOR)) {
+                        try (final MetaDataAccess<Boolean> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_FLIGHT)) {
+                            metaDataAccess.set(player.getFlight());
+                        }
                     }
+                    player.setFlight(flyStatus == FlyFlag.FlyStatus.ENABLED);
                 }
-                player.setFlight(flyStatus == FlyFlag.FlyStatus.ENABLED);
             }
 
             final GameMode gameMode = plot.getFlag(GamemodeFlag.class);
