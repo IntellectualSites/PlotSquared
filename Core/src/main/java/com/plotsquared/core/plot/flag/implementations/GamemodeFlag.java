@@ -32,6 +32,9 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
 
     public static final GameMode DEFAULT = new GameMode("default");
@@ -113,6 +116,11 @@ public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
             default:
                 return GAMEMODE_FLAG_DEFAULT;
         }
+    }
+
+    @Override
+    public Collection<String> getTabCompletions() {
+        return Arrays.asList("survival", "creative", "adventure", "spectator");
     }
 
 }
