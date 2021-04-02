@@ -615,6 +615,7 @@ public final class FlagCommand extends Command {
             // Flag example
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_example"),
+                    Template.of("command", "/plot flag set"),
                     Template.of("flag", plotFlag.getName()),
                     Template.of("value", plotFlag.getExample())
             );
