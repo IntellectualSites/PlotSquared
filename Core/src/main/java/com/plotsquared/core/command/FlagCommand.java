@@ -352,7 +352,8 @@ public final class FlagCommand extends Command {
             return;
         }
         plot.setFlag(parsed);
-        player.sendMessage(TranslatableCaption.of("flag.flag_added"));
+        player.sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", String.valueOf(args[0])),
+                Template.of("value", String.valueOf(parsed)));
     }
 
     @CommandDeclaration(command = "add",
@@ -418,7 +419,8 @@ public final class FlagCommand extends Command {
             player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
             return;
         }
-        player.sendMessage(TranslatableCaption.of("flag.flag_added"));
+        player.sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", String.valueOf(event.getFlag())),
+                Template.of("value", String.valueOf(event.getFlag().getValue())));
     }
 
     @CommandDeclaration(command = "remove",
@@ -490,14 +492,16 @@ public final class FlagCommand extends Command {
             if (list.removeAll((List) parsedFlag.getValue())) {
                 if (list.isEmpty()) {
                     if (plot.removeFlag(flag)) {
-                        player.sendMessage(TranslatableCaption.of("flag.flag_removed"));
+                        player.sendMessage(TranslatableCaption.of("flag.flag_removed"), Template.of("flag", String.valueOf(flag)), Template.of(
+                                "value",
+                                String.valueOf(parsedFlag.getValue())
+                        ));
                         return;
                     } else {
                         player.sendMessage(TranslatableCaption.of("flag.flag_not_removed"));
                         return;
                     }
                 } else {
-                    // MainUtil.sendMessage(player, Permission.FLAG_REMOVED);
                     PlotFlag plotFlag = parsedFlag.createFlagInstance(list);
                     PlotFlagAddEvent addEvent = new PlotFlagAddEvent(plotFlag, plot);
                     if (addEvent.getEventResult() == Result.DENY) {
@@ -526,7 +530,9 @@ public final class FlagCommand extends Command {
                 return;
             }
         }
-        player.sendMessage(TranslatableCaption.of("flag.flag_removed"));
+        player.sendMessage(TranslatableCaption.of("flag.flag_removed"), Template.of("flag", args[0]), Template.of("value",
+                String.valueOf(flag)
+        ));
     }
 
     @CommandDeclaration(command = "list",
