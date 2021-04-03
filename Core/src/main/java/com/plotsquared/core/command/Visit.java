@@ -98,8 +98,13 @@ public class Visit extends Command {
             return;
         }
 
-        if (sortByArea != null) {
-            query.relativeToArea(sortByArea).withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
+        PlotArea relativeArea = sortByArea;
+        if (Settings.Teleport.PER_WORLD_VISIT && sortByArea == null) {
+            relativeArea = player.getApplicablePlotArea();
+        }
+
+        if (relativeArea != null) {
+            query.relativeToArea(relativeArea).withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
         } else {
             query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
         }

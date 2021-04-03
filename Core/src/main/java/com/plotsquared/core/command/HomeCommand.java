@@ -140,7 +140,7 @@ public class HomeCommand extends Command {
                         );
                         return CompletableFuture.completedFuture(false);
                     }
-                    query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
+                    sortBySettings(query, player);
                     break;
                 }
                 // either plot id or alias
@@ -202,7 +202,7 @@ public class HomeCommand extends Command {
                 query.withPlot(plot);
                 break;
             case 0:
-                query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
+                sortBySettings(query, player);
                 break;
         }
         if (basePlotOnly) {
@@ -210,6 +210,15 @@ public class HomeCommand extends Command {
         }
         home(player, query, page, confirm, whenDone);
         return CompletableFuture.completedFuture(true);
+    }
+
+    private void sortBySettings(PlotQuery plotQuery, PlotPlayer<?> player) {
+        if (Settings.Teleport.PER_WORLD_VISIT) {
+            plotQuery.relativeToArea(player.getApplicablePlotArea())
+                    .withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
+        } else {
+            plotQuery.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
+        }
     }
 
     @Override
