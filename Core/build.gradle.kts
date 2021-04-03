@@ -5,8 +5,12 @@ dependencies {
     compileOnlyApi("org.checkerframework:checker-qual:3.9.0")
 
     // Minecraft expectations
-    compileOnlyApi("com.google.guava:guava:21.0") // Minecraft uses v21.0
-    compileOnlyApi("com.google.code.gson:gson:2.8.0") // Minecraft uses v2.8.0
+    compileOnlyApi("com.google.guava:guava:21.0")  {
+        because("Minecraft uses v21.0")
+    }
+    compileOnlyApi("com.google.code.gson:gson:2.8.0") {
+        because("Minecraft uses 2.8.0")
+    }
 
     // Platform expectations
     compileOnlyApi("org.yaml:snakeyaml:1.26") // Some platforms provide this
