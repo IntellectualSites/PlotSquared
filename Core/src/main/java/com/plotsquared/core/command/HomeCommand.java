@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -119,7 +120,7 @@ public class HomeCommand extends Command {
                         Captions.NOT_A_NUMBER.send(player, identifier);
                         return CompletableFuture.completedFuture(false);
                     }
-                    query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
+                    sortBySettings(query, player);
                     break;
                 }
                 // either plot id or alias
@@ -178,7 +179,7 @@ public class HomeCommand extends Command {
                 query.withPlot(plot);
                 break;
             case 0:
-                query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
+                sortBySettings(query, player);
                 break;
         }
         if (basePlotOnly) {
@@ -186,6 +187,15 @@ public class HomeCommand extends Command {
         }
         home(player, query, page, confirm, whenDone);
         return CompletableFuture.completedFuture(true);
+    }
+
+    private void sortBySettings(PlotQuery plotQuery, PlotPlayer<?> player) {
+        if (Settings.Teleport.PER_WORLD_VISIT) {
+            plotQuery.relativeToArea(player.getApplicablePlotArea())
+                    .withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
+        } else {
+            plotQuery.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
+        }
     }
 
     @Override
