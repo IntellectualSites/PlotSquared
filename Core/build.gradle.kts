@@ -2,21 +2,23 @@ import java.time.format.DateTimeFormatter
 
 dependencies {
     // Expected everywhere.
-    compileOnlyApi("org.checkerframework:checker-qual:3.9.0")
+    compileOnlyApi("org.checkerframework:checker-qual:3.12.0")
 
     // Minecraft expectations
     compileOnlyApi("com.google.guava:guava:21.0")  {
-        because("Minecraft uses v21.0")
+        because("Minecraft uses 21.0")
     }
     compileOnlyApi("com.google.code.gson:gson:2.8.0") {
         because("Minecraft uses 2.8.0")
     }
 
     // Platform expectations
-    compileOnlyApi("org.yaml:snakeyaml:1.26") // Some platforms provide this
+    compileOnlyApi("org.yaml:snakeyaml:1.27") {
+        because("Bukkit uses 1.27")
+    }
 
     // Adventure stuff
-    api("net.kyori:adventure-api:4.3.0")
+    api("net.kyori:adventure-api:4.7.0")
     api("net.kyori:adventure-text-minimessage:4.0.0-SNAPSHOT")
 
     // Guice
@@ -29,15 +31,15 @@ dependencies {
     compileOnlyApi("com.google.code.findbugs:annotations:3.0.1")
 
     // Plugins
-    compileOnlyApi("com.sk89q.worldedit:worldedit-core:7.2.0") {
+    compileOnlyApi("com.sk89q.worldedit:worldedit-core:7.2.2") {
         exclude(group = "bukkit-classloader-check")
         exclude(group = "mockito-core")
         exclude(group = "dummypermscompat")
     }
-    testImplementation("com.sk89q.worldedit:worldedit-core:7.2.0")
+    testImplementation("com.sk89q.worldedit:worldedit-core:7.2.2")
 
     // Logging
-    api("org.slf4j:slf4j-api:1.7.25")
+    api("org.slf4j:slf4j-api:1.7.30")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1") {
         exclude(group = "org.slf4j")
     }
