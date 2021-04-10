@@ -202,7 +202,8 @@ public final class FlagCommand extends Command {
                     final StringComparison<PlotFlag<?, ?>> stringComparison =
                             new StringComparison<>(
                                     arg,
-                                    GlobalFlagContainer.getInstance().getFlagMap().values()
+                                    GlobalFlagContainer.getInstance().getFlagMap().values(),
+                                    PlotFlag::getName
                             );
                     final String best = stringComparison.getBestMatch();
                     if (best != null) {

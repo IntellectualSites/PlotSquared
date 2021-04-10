@@ -28,6 +28,8 @@ package com.plotsquared.core.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * String comparison library.
@@ -37,6 +39,7 @@ public class StringComparison<T> {
     private T bestMatch;
     private double match = Integer.MAX_VALUE;
     private T bestMatchObject;
+    private final Function<T, String> toString;
 
     /**
      * Constructor
@@ -45,17 +48,27 @@ public class StringComparison<T> {
      * @param objects Objects to compare
      */
     public StringComparison(String input, T[] objects) {
+        this(input, objects, Object::toString);
+    }
+
+    public StringComparison(String input, T[] objects, Function<T, String> toString) {
+        this.toString = toString;
         init(input, objects);
     }
 
     public StringComparison(String input, Collection<T> objects) {
-        init(input, (T[]) objects.toArray());
+        this(input, objects, Object::toString);
+    }
+
+    public StringComparison(String input, Collection<T> objects, Function<T, String> toString) {
+        this(input, (T[]) objects.toArray(), toString);
     }
 
     /**
      * You should call init(...) when you are ready to get a String comparison value.
      */
     public StringComparison() {
+        this.toString = Object::toString;
     }
 
     /**
@@ -122,10 +135,7 @@ public class StringComparison<T> {
     }
 
     public String getString(T o) {
-        if (o instanceof StringComparable) {
-            return ((StringComparable) o).getComparableString();
-        }
-        return o.toString();
+        return this.toString.apply(o);
     }
 
     /**
@@ -153,12 +163,6 @@ public class StringComparison<T> {
      */
     public ComparisonResult getBestMatchAdvanced() {
         return new ComparisonResult(this.match, this.bestMatch);
-    }
-
-    public interface StringComparable {
-
-        String getComparableString();
-
     }
 
 
