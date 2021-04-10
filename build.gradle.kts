@@ -1,13 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
-import net.minecrell.gradle.licenser.LicenseExtension
-import net.minecrell.gradle.licenser.Licenser
+import org.cadixdev.gradle.licenser.LicenseExtension
+import org.cadixdev.gradle.licenser.Licenser
 
 plugins {
     java
     `java-library`
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "6.1.0"
-    id("net.minecrell.licenser") version "0.4.1"
+    id("org.cadixdev.licenser") version "0.5.1"
     id("org.ajoberstar.grgit") version "4.1.0"
 
     eclipse
@@ -28,7 +28,6 @@ allprojects {
 
     repositories {
         mavenCentral()
-        jcenter()
 
         maven {
             name = "Sonatype OSS"
