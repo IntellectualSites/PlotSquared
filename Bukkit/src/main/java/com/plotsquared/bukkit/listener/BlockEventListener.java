@@ -289,7 +289,8 @@ public class BlockEventListener implements Listener {
                 event.setCancelled(true);
                 pp.sendMessage(
                         TranslatableCaption.of("height.height_limit"),
-                        Template.of("limit", String.valueOf(area.getMaxBuildHeight()))
+                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
+                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
                 );
             }
             if (!plot.hasOwner()) {
@@ -374,7 +375,8 @@ public class BlockEventListener implements Listener {
                 event.setCancelled(true);
                 plotPlayer.sendMessage(
                         TranslatableCaption.of("height.height_limit"),
-                        Template.of("limit", String.valueOf(area.getMaxBuildHeight()))
+                        Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
+                        Template.of("maxHeight", String.valueOf(area.getMaxBuildHeight()))
                 );
             }
             if (!plot.hasOwner()) {

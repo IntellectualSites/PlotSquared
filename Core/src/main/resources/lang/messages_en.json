@@ -56,7 +56,7 @@
   "worldedit.worldedit_bypass": "<prefix><gray><italic>To bypass your restrictions use </gray><dark_aqua><command></dark_aqua></italic>",
   "worldedit.worldedit_bypassed": "<prefix><gray>Currently bypassing WorldEdit restriction.</gray>",
   "gamemode.gamemode_was_bypassed": "<prefix><gold>You bypassed the gamemode (</gold><gray><gamemode></gray><gold>) <gold>set for </gold><gray><plot>.</gray>",
-  "height.height_limit": "<prefix><gold>This plot area has a height limit of </gold><gray><limit>.</gray>",
+  "height.height_limit": "<prefix><gold>This plot area has building height limits: Min height: </gold><gray><minHeight></gray><gold>, Max height: </gold><gray><maxHeight></gray>",
   "notification.notify_enter": "<prefix><gray><player> entered your plot (</gray><gold><plot></gold><gray>).</gray>",
   "notification.notify_leave": "<prefix><gray><player> left your plot (</gray><gold><plot></gold><gray>).</gray>",
   "swap.swap_overlap": "<prefix><red>The proposed areas are not allowed to overlap.</red>",

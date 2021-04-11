@@ -39,7 +39,7 @@ dependencies {
     testImplementation("com.sk89q.worldedit:worldedit-core:7.2.2")
 
     // Logging
-    api("org.slf4j:slf4j-api:1.7.30")
+    api("org.slf4j:slf4j-api:1.7.25")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1") {
         exclude(group = "org.slf4j")
     }
