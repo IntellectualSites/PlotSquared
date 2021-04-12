@@ -1115,17 +1115,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
                 break;
             }
-            case LEFT_CLICK_BLOCK: {
-                location = BukkitUtil.adapt(block.getLocation());
-                //eventType = PlayerBlockEventType.BREAK_BLOCK;
-                blocktype1 = BukkitAdapter.asBlockType(block.getType());
-                if (block.getType() == Material.DRAGON_EGG) {
-                    eventType = PlayerBlockEventType.TELEPORT_OBJECT;
-                    break;
-                }
-
-                return;
-            }
             default:
                 return;
         }
