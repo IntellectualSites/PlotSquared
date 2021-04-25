@@ -82,9 +82,10 @@ allprojects {
         testImplementation("junit:junit:4.13.2")
     }
 
-    configure<JavaPluginConvention> {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = sourceCompatibility
+    plugins.withId("java") {
+        the<JavaPluginExtension>().toolchain {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
     }
 
     configure<LicenseExtension> {
@@ -120,7 +121,7 @@ allprojects {
                             name.set("Alexander Söderberg")
                         }
                         developer {
-                            id.set("N0tMyFaultOG")
+                            id.set("NotMyFault")
                             name.set("NotMyFault")
                         }
                         developer {

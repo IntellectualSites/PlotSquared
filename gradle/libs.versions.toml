@@ -1,0 +1,95 @@
+[versions]
+checker-qual = "3.12.0"
+
+guava = "21.0"
+gson = "2.8.0"
+
+snakeyaml = "1.27"
+
+adventure-api = "4.7.0"
+adventure-text-minimessage = "4.0.0-SNAPSHOT"
+adventure-platform-bukkit = "4.0.0-SNAPSHOT"
+
+guice = "5.0.1"
+findbugs = "3.0.1"
+
+worldedit = "7.2.5"
+vault = "1.7"
+placeholderapi = "2.10.9"
+luckperms = "5.3"
+essentialsx = "2.18.2"
+hyperverse = "0.6.0-SNAPSHOT"
+
+slf4j-api = "1.7.25"
+log4j-slf4j-impl = "2.8.1"
+
+prtree = "1.7.0-SNAPSHOT"
+aopalliance = "1.0"
+pipeline = "1.4.0-SNAPSHOT"
+
+arkitektonika = "2.0-SNAPSHOT"
+paster = "1.0.2-SNAPSHOT"
+
+bstats = "2.2.1"
+
+paper = "1.16.5-R0.1-SNAPSHOT"
+paperlib = "1.0.6"
+
+mvdwapi = "3.1.1"
+squirrelid = "1.0.0-SNAPSHOT"
+serverlib = "1.0.1"
+http4j = "1.1-SNAPSHOT"
+
+[libraries]
+# Expected everywhere.
+checkerqual = { group = "org.checkerframework", name = "checker-qual", version.ref = "checker-qual" }
+
+# Minecraft expectations
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+
+# Platform expectations
+snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeyaml" }
+
+# Adventure
+adventure = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-api" }
+minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure-text-minimessage" }
+platform = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform-bukkit" }
+
+# Guice
+guice = { group = "com.google.inject", name = "guice", version.ref = "guice" }
+guiceassistedinject = { group = "com.google.inject.extensions", name = "guice-assistedinject", version.ref = "guice" }
+findbugs = { group = "com.google.code.findbugs", name = "annotations", version.ref = "findbugs" }
+
+# Plugins
+worldeditCore = { group = "com.sk89q.worldedit", name = "worldedit-core", version.ref = "worldedit" }
+worldeditBukkit = { group = "com.sk89q.worldedit", name = "worldedit-bukkit", version.ref = "worldedit" }
+vault = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
+placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
+luckperms = { group = "net.luckperms", name = "api", version.ref = "luckperms" }
+essentialsx = { group = "net.ess3", name = "EssentialsX", version.ref = "essentialsx" }
+hyperverse = { group = "se.hyperver.hyperverse", name = "Core", version.ref = "hyperverse" }
+
+# Logging
+slf4j = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j-api" }
+log4j = { group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version.ref = "log4j-slf4j-impl" }
+
+# Other libraries
+prtree = { group = "org.khelekore", name = "prtree", version.ref = "prtree" }
+aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopalliance" }
+pipeline = { group = "com.intellectualsites", name = "Pipeline", version.ref = "pipeline" }
+mvdwapi = { group = "be.maximvdw", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
+squirrelid = { group = "com.sk89q", name = "squirrelid", version.ref = "squirrelid" }
+serverlib = { group = "de.notmyfault", name = "serverlib", version.ref = "serverlib" }
+
+# Our libraries
+arkitektonika = { group = "com.intellectualsites.arkitektonika", name = "Arkitektonika-Client", version.ref = "arkitektonika" }
+http4j = { group = "com.intellectualsites.http", name = "HTTP4J", version.ref = "http4j" }
+paster = { group = "com.intellectualsites.paster", name = "Paster", version.ref = "paster" }
+
+# Metrics
+bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
+
+# Paper
+paper = { group = "com.destroystokyo.paper", name = "paper-api", version.ref = "paper" }
+paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
