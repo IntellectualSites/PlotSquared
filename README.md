@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://i.imgur.com/33Y65YL.png" width="300">
+    <img src="https://i.imgur.com/33Y65YL.png" width="150">
 </p>
 
 ---
@@ -25,10 +25,10 @@ is to provide a lag-free and smooth experience.
 
 ## Links
 
-* [Download](https://www.spigotmc.org/resources/plotsquared-v5.77506/)
+* [Download](https://www.spigotmc.org/resources/77506/)
 * [Discord](https://discord.gg/intellectualsites)
 * [Wiki](https://wiki.intellectualsites.com/plotsquared/home)
-* [Issues](https://issues.intellectualsites.com/projects/ps)
+* [Issues](https://github.com/IntellectualSites/PlotSquared/issues)
 * [Translations](https://intellectualsites.crowdin.com/plotsquared/)
 
 ### Developer Resources
