@@ -117,7 +117,6 @@ import com.plotsquared.core.uuid.CacheUUIDService;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
-import de.notmyfault.serverlib.ServerLib;
 import io.papermc.lib.PaperLib;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -141,6 +140,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.incendo.serverlib.ServerLib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -546,6 +546,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         checkJvm();
         // Check if we are in a safe environment
         ServerLib.checkUnsafeForks();
+        ServerLib.checkJavaLTS();
     }
 
     private void unload() {

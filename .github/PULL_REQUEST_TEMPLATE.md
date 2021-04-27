@@ -2,7 +2,7 @@
 <!--  Please describe which issue this Pull Request targets
 
 If there is no issue, please create one so we can look into it before approving your PR.
-You can do so here: https://issues.intellectualsites.com/projects/ps
+You can do so here: https://github.com/IntellectualSites/PlotSquared/issues
 -->
 
 **Fixes {Link to issue}**
