@@ -28,9 +28,6 @@ repositories {
     maven {
         name = "IntellectualSites 3rd Party"
         url = uri("https://mvn.intellectualsites.com/content/repositories/thirdparty")
-        content {
-            includeGroup("de.notmyfault")
-        }
     }
 }
 
@@ -64,7 +61,7 @@ dependencies {
 
     // Other libraries
     implementation("com.sk89q:squirrelid:1.0.0-SNAPSHOT") { isTransitive = false }
-    implementation("de.notmyfault:serverlib:1.0.1")
+    implementation("org.incendo.serverlib:ServerLib:2.1.0")
 
     // Our libraries
     implementation("com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT")
@@ -101,7 +98,7 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("com.intellectualsites.arkitektonika", "com.plotsquared.core.arkitektonika")
     relocate("com.intellectualsites.http", "com.plotsquared.core.http")
     relocate("com.intellectualsites.paster", "com.plotsquared.core.paster")
-    relocate("de.notmyfault:serverlib", "com.plotsquared.bukkit.serverlib")
+    relocate("org.incendo.serverlib", "com.plotsquared.bukkit.serverlib")
 
     // Get rid of all the libs which are 100% unused.
     minimize()
