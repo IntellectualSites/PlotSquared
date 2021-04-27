@@ -183,9 +183,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>de.notmyfault</groupId>
-      <artifactId>serverlib</artifactId>
-      <version>1.0.1</version>
+      <groupId>org.incendo.serverlib</groupId>
+      <artifactId>ServerLib</artifactId>
+      <version>2.1.0</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

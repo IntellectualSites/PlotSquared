@@ -118,7 +118,6 @@ import com.plotsquared.core.uuid.offline.OfflineModeUUIDService;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
-import de.notmyfault.serverlib.ServerLib;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.NonNull;
@@ -140,6 +139,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.incendo.serverlib.ServerLib;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -408,6 +408,7 @@ public final class BukkitMain extends JavaPlugin implements Listener, IPlotMain<
 
         // Check if we are in a safe environment
         ServerLib.checkUnsafeForks();
+        ServerLib.checkJavaLTS();
     }
 
     private void unload() {
