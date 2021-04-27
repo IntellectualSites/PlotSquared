@@ -37,7 +37,7 @@ paperlib = "1.0.6"
 
 mvdwapi = "3.1.1"
 squirrelid = "1.0.0-SNAPSHOT"
-serverlib = "1.0.1"
+serverlib = "2.1.0"
 http4j = "1.1-SNAPSHOT"
 
 [libraries]
@@ -80,7 +80,7 @@ aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopa
 pipeline = { group = "com.intellectualsites", name = "Pipeline", version.ref = "pipeline" }
 mvdwapi = { group = "be.maximvdw", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
 squirrelid = { group = "com.sk89q", name = "squirrelid", version.ref = "squirrelid" }
-serverlib = { group = "de.notmyfault", name = "serverlib", version.ref = "serverlib" }
+serverlib = { group = "org.incendo.serverlib", name = "ServerLib", version.ref = "serverlib" }
 
 # Our libraries
 arkitektonika = { group = "com.intellectualsites.arkitektonika", name = "Arkitektonika-Client", version.ref = "arkitektonika" }
