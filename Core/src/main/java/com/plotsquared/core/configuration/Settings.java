@@ -215,7 +215,7 @@ public class Settings extends Config {
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
 
-        @Comment("See: https://wiki.intellectualsites.com/en/plotsquared/optimization/plot-analysis for a description of each value.")
+        @Comment("See: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-analysis for a description of each value.")
         public static final class CALIBRATION {
 
             public int VARIETY = 0;
@@ -235,7 +235,7 @@ public class Settings extends Config {
 
 
     @Comment({"Chunk processor related settings",
-            "See https://wiki.intellectualsites.com/en/plotsquared/optimization/chunk-processor for more information."})
+            "See https://github.com/IntellectualSites/PlotSquared/wiki/Chunk-processor for more information."})
     public static class Chunk_Processor {
 
         @Comment("Auto trim will not save chunks which aren't claimed")
@@ -296,7 +296,7 @@ public class Settings extends Config {
         @Comment("Replace wall when merging")
         public static boolean MERGE_REPLACE_WALL = true;
         @Comment({"Blocks that may not be used in plot components",
-                "Checkout the wiki article regarding plot components before modifying: https://wiki.intellectualsites.com/en/plotsquared/installation/plot-components"})
+                "Checkout the wiki article regarding plot components before modifying: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-Components"})
         public static List<String>
                 INVALID_BLOCKS = Arrays.asList(
                 // Acacia Stuff
@@ -418,7 +418,7 @@ public class Settings extends Config {
 
 
     @Comment({"Schematic Settings",
-            "See https://wiki.intellectualsites.com/en/plotsquared/schematics/on-claim for more information."})
+            "See https://github.com/IntellectualSites/PlotSquared/wiki/Schematic-on-Claim for more information."})
     public static final class Schematics {
 
         @Comment(
@@ -530,7 +530,7 @@ public class Settings extends Config {
 
 
     @Comment({"Backup related settings",
-            "See https://wiki.intellectualsites.com/en/plotsquared/backups for more information."})
+            "See https://github.com/IntellectualSites/PlotSquared/wiki/Backups for more information."})
     public static final class Backup {
 
         @Comment("Automatically backup plots when destructive commands are performed, e.g. /plot clear")
@@ -728,7 +728,7 @@ public class Settings extends Config {
         public static boolean
                 PERSISTENT_ROAD_REGEN = false;
         @Comment({"Enable the `/plot component` preset GUI",
-                "Read more about components here: https://wiki.intellectualsites.com/en/plotsquared/installation/plot-components"})
+                "Read more about components here: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-Components"})
         public static boolean COMPONENT_PRESETS = true;
         @Comment("Enable per user locale")
         public static boolean PER_USER_LOCALE = false;

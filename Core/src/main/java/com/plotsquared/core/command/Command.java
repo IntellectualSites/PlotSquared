@@ -322,7 +322,7 @@ public abstract class Command {
         }
         if (this.allCommands.isEmpty()) {
             player.sendMessage(
-                    StaticCaption.of("Not Implemented: https://issues.intellectualsites.com/newIssue?project=PS"));
+                    StaticCaption.of("Not Implemented: https://github.com/IntellectualSites/PlotSquared/issues"));
             return CompletableFuture.completedFuture(false);
         }
         Command cmd = getCommand(args[0]);

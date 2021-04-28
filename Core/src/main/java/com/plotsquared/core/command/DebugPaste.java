@@ -115,7 +115,7 @@ public class DebugPaste extends SubCommand {
                 b.append("OS Arch: ").append(System.getProperty("os.arch")).append('\n');
                 b.append("# Okay :D Great. You are now ready to create your bug report!");
                 b.append(
-                        "\n# You can do so at https://issues.intellectualsites.com/projects/ps");
+                        "\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
                 b.append("\n# or via our Discord at https://discord.gg/intellectualsites");
 
                 final IncendoPaster incendoPaster = new IncendoPaster("plotsquared");
@@ -123,7 +123,7 @@ public class DebugPaste extends SubCommand {
 
                 try {
                     final File logFile =
-                            new File(PlotSquared.platform().getDirectory(), "../../logs/latest.log");
+                            new File("logs/latest.log");
                     if (Files.size(logFile.toPath()) > 14_000_000) {
                         throw new IOException(
                                 "The latest.log is larger than 14MB. Please reboot your server and submit a new paste.");
