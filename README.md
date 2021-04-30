@@ -27,14 +27,14 @@ is to provide a lag-free and smooth experience.
 
 * [Download](https://www.spigotmc.org/resources/77506/)
 * [Discord](https://discord.gg/intellectualsites)
-* [Wiki](https://wiki.intellectualsites.com/plotsquared/home)
+* [Wiki](https://github.com/IntellectualSites/PlotSquared/wiki)
 * [Issues](https://github.com/IntellectualSites/PlotSquared/issues)
 * [Translations](https://intellectualsites.crowdin.com/plotsquared/)
 
 ### Developer Resources
-* [API Documentation](https://wiki.intellectualsites.com/en/plotsquared/developer/development-portal)
-* [Event API](https://wiki.intellectualsites.com/en/plotsquared/developer/events)
-* [Flag API](https://wiki.intellectualsites.com/en/plotsquared/developer/flags)
+* [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/API-Documentation)
+* [Event API](https://github.com/IntellectualSites/PlotSquared/wiki/Events)
+* [Flag API](https://github.com/IntellectualSites/PlotSquared/wiki/API-Flag)
 
 # Building
 Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
