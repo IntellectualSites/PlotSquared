@@ -2,56 +2,56 @@ import java.time.format.DateTimeFormatter
 
 dependencies {
     // Expected everywhere.
-    compileOnlyApi("org.checkerframework:checker-qual:3.12.0")
+    compileOnlyApi(libs.checkerqual)
 
     // Minecraft expectations
-    compileOnlyApi("com.google.guava:guava:21.0")  {
+    compileOnlyApi(libs.guava) {
         because("Minecraft uses 21.0")
     }
-    compileOnlyApi("com.google.code.gson:gson:2.8.0") {
+    compileOnlyApi(libs.gson) {
         because("Minecraft uses 2.8.0")
     }
 
     // Platform expectations
-    compileOnlyApi("org.yaml:snakeyaml:1.27") {
+    compileOnlyApi(libs.snakeyaml) {
         because("Bukkit uses 1.27")
     }
 
-    // Adventure stuff
-    api("net.kyori:adventure-api:4.7.0")
-    api("net.kyori:adventure-text-minimessage:4.0.0-SNAPSHOT")
+    // Adventure
+    api(libs.adventure)
+    api(libs.minimessage)
 
     // Guice
-    api("com.google.inject:guice:5.0.1") {
+    api(libs.guice) {
         exclude(group = "com.google.guava")
     }
-    api("com.google.inject.extensions:guice-assistedinject:5.0.1") {
+    api(libs.guiceassistedinject) {
         exclude("com.google.inject", "guice")
     }
-    compileOnlyApi("com.google.code.findbugs:annotations:3.0.1")
+    compileOnlyApi(libs.findbugs)
 
     // Plugins
-    compileOnlyApi("com.sk89q.worldedit:worldedit-core:7.2.2") {
+    compileOnlyApi(libs.worldeditCore) {
         exclude(group = "bukkit-classloader-check")
         exclude(group = "mockito-core")
         exclude(group = "dummypermscompat")
     }
-    testImplementation("com.sk89q.worldedit:worldedit-core:7.2.2")
+    testImplementation(libs.worldeditCore)
 
     // Logging
-    api("org.slf4j:slf4j-api:1.7.25")
-    runtimeOnly("org.apache.logging.log4j:log4j-slf4j-impl:2.8.1") {
+    api(libs.slf4j)
+    runtimeOnly(libs.log4j) {
         exclude(group = "org.slf4j")
     }
 
     // Other libraries
-    api("org.khelekore:prtree:1.7.0-SNAPSHOT")
-    api("aopalliance:aopalliance:1.0")
-    api("com.intellectualsites:Pipeline:1.4.0-SNAPSHOT") {
+    api(libs.prtree)
+    api(libs.aopalliance)
+    api(libs.pipeline) {
         exclude(group = "com.google.guava")
     }
-    api("com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT")
-    api("com.intellectualsites.paster:Paster:1.0.2-SNAPSHOT")
+    api(libs.arkitektonika)
+    api(libs.paster)
 }
 
 tasks.processResources {

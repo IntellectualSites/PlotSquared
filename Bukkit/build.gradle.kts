@@ -32,44 +32,40 @@ repositories {
 }
 
 dependencies {
-    api(project(":PlotSquared-Core"))
-
-    //
-    // Implementation details
-    //
+    api(projects.plotSquaredCore)
 
     // Metrics
-    implementation("org.bstats:bstats-bukkit:2.2.1")
+    implementation(libs.bstats)
 
-    // Minecraft
-    compileOnlyApi("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
-    implementation("io.papermc:paperlib:1.0.6")
+    // Paper
+    compileOnlyApi(libs.paper)
+    implementation(libs.paperlib)
 
     // Plugins
-    compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.2") {
+    compileOnly(libs.worldeditBukkit) {
         exclude(group = "org.bukkit")
         exclude(group = "org.spigotmc")
     }
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+    compileOnly(libs.vault) {
         exclude(group = "org.bukkit")
     }
-    compileOnly("me.clip:placeholderapi:2.10.9")
-    compileOnly("net.luckperms:api:5.3")
-    compileOnly("net.ess3:EssentialsX:2.18.2")
-    compileOnly("se.hyperver.hyperverse:Core:0.6.0-SNAPSHOT") { isTransitive = false }
-    compileOnly("be.maximvdw:MVdWPlaceholderAPI:3.1.1") { isTransitive = false }
+    compileOnly(libs.placeholderapi)
+    compileOnly(libs.luckperms)
+    compileOnly(libs.essentialsx)
+    compileOnly(libs.hyperverse) { isTransitive = false }
+    compileOnly(libs.mvdwapi) { isTransitive = false }
 
     // Other libraries
-    implementation("com.sk89q:squirrelid:1.0.0-SNAPSHOT") { isTransitive = false }
-    implementation("org.incendo.serverlib:ServerLib:2.1.0")
+    implementation(libs.squirrelid) { isTransitive = false }
+    implementation(libs.serverlib)
 
     // Our libraries
-    implementation("com.intellectualsites.arkitektonika:Arkitektonika-Client:2.0-SNAPSHOT")
-    implementation("com.intellectualsites.http:HTTP4J:1.1-SNAPSHOT")
-    implementation("com.intellectualsites.paster:Paster:1.0.2-SNAPSHOT")
+    implementation(libs.arkitektonika)
+    implementation(libs.http4j)
+    implementation(libs.paster)
 
     // Adventure
-    implementation("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
+    implementation(libs.platform)
 }
 
 tasks.processResources {
