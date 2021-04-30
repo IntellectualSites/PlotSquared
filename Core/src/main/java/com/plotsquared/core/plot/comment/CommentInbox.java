@@ -38,7 +38,12 @@ public abstract class CommentInbox {
     @Override
     public abstract String toString();
 
-    public boolean canRead(Plot plot, PlotPlayer player) {
+    /**
+     * @param plot   the plot's inbox to read
+     * @param player the player trying to read the comment
+     * @return the inbox, otherwise {@code false} false
+     */
+    public boolean canRead(Plot plot, PlotPlayer<?> player) {
         if (Permissions.hasPermission(player, "plots.inbox.read." + toString(), true)) {
             return plot.isOwner(player.getUUID()) || Permissions
                     .hasPermission(player, "plots.inbox.read." + toString() + ".other", true);
@@ -46,7 +51,12 @@ public abstract class CommentInbox {
         return false;
     }
 
-    public boolean canWrite(Plot plot, PlotPlayer player) {
+    /**
+     * @param plot   the plot's inbox to write to
+     * @param player the player trying to write the comment
+     * @return true if the player can write a comment on the plot
+     */
+    public boolean canWrite(Plot plot, PlotPlayer<?> player) {
         if (plot == null) {
             return Permissions.hasPermission(player, "plots.inbox.write." + toString(), true);
         }
@@ -55,7 +65,13 @@ public abstract class CommentInbox {
                         .hasPermission(player, "plots.inbox.write." + toString() + ".other", true));
     }
 
-    public boolean canModify(Plot plot, PlotPlayer player) {
+    /**
+     * @param plot   the plot's inbox to write to
+     * @param player the player trying to modify the inbox
+     * @return true if the player can write a comment on the plot
+     */
+    @SuppressWarnings({"BooleanMethodIsAlwaysInverted"})
+    public boolean canModify(Plot plot, PlotPlayer<?> player) {
         if (Permissions.hasPermission(player, "plots.inbox.modify." + toString(), true)) {
             return plot.isOwner(player.getUUID()) || Permissions
                     .hasPermission(player, "plots.inbox.modify." + toString() + ".other", true);
@@ -74,12 +90,24 @@ public abstract class CommentInbox {
      */
     public abstract boolean getComments(Plot plot, RunnableVal<List<PlotComment>> whenDone);
 
+    /**
+     * @param plot    plot
+     * @param comment the comment to add
+     * @return success or not
+     */
     public abstract boolean addComment(Plot plot, PlotComment comment);
 
+    /**
+     * @param plot    plot
+     * @param comment the comment to remove
+     */
     public void removeComment(Plot plot, PlotComment comment) {
         DBFunc.removeComment(plot, comment);
     }
 
+    /**
+     * @param plot plot
+     */
     public void clearInbox(Plot plot) {
         DBFunc.clearInbox(plot, toString());
     }

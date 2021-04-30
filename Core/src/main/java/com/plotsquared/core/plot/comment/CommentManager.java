@@ -49,7 +49,7 @@ public class CommentManager {
 
     public static final HashMap<String, CommentInbox> inboxes = new HashMap<>();
 
-    public static void sendTitle(final PlotPlayer player, final Plot plot) {
+    public static void sendTitle(final PlotPlayer<?> player, final Plot plot) {
         if (!Settings.Enabled_Components.COMMENT_NOTIFIER || !plot.isOwner(player.getUUID())) {
             return;
         }
@@ -58,7 +58,7 @@ public class CommentManager {
             final AtomicInteger count = new AtomicInteger(0);
             final AtomicInteger size = new AtomicInteger(boxes.size());
             for (final CommentInbox inbox : inboxes.values()) {
-                inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
+                inbox.getComments(plot, new RunnableVal<>() {
                     @Override
                     public void run(List<PlotComment> value) {
                         int total;
@@ -87,14 +87,22 @@ public class CommentManager {
         }, TaskTime.seconds(1L));
     }
 
+    /**
+     * @param player The player the inbox belongs to
+     * @param inbox  the inbox
+     * @return the time in milliseconds when the player was last seen online
+     */
     public static long getTimestamp(PlotPlayer<?> player, String inbox) {
-        final MetaDataKey<Long> inboxKey = MetaDataKey.of(String.format("inbox:%s", inbox), new TypeLiteral<Long>() {
+        final MetaDataKey<Long> inboxKey = MetaDataKey.of(String.format("inbox:%s", inbox), new TypeLiteral<>() {
         });
         try (final MetaDataAccess<Long> inboxAccess = player.accessTemporaryMetaData(inboxKey)) {
             return inboxAccess.get().orElse(player.getLastPlayed());
         }
     }
 
+    /**
+     * @param inbox the inbox to add
+     */
     public static void addInbox(CommentInbox inbox) {
         inboxes.put(inbox.toString().toLowerCase(), inbox);
     }

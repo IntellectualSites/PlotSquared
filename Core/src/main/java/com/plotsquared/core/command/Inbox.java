@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
         requiredType = RequiredType.PLAYER)
 public class Inbox extends SubCommand {
 
-    public void displayComments(PlotPlayer player, List<PlotComment> oldComments, int page) {
+    public void displayComments(PlotPlayer<?> player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("comment.inbox_empty"));
             return;
@@ -102,7 +102,7 @@ public class Inbox extends SubCommand {
             }
             Template number = Template.of("number", String.valueOf(x));
             Template world = Template.of("world", comment.world);
-            Template plot_id = Template.of("plot_id", comment.id.getX() + "" + comment.id.getY());
+            Template plot_id = Template.of("plot_id", comment.id.getX() + ";" + comment.id.getY());
             Template commenter = Template.of("commenter", comment.senderName);
             Template commentTemplate = Template.of("comment", commentColored);
             builder.append(MINI_MESSAGE
@@ -133,7 +133,7 @@ public class Inbox extends SubCommand {
             sendUsage(player);
             for (final CommentInbox inbox : CommentManager.inboxes.values()) {
                 if (inbox.canRead(plot, player)) {
-                    if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
+                    if (!inbox.getComments(plot, new RunnableVal<>() {
                         @Override
                         public void run(List<PlotComment> value) {
                             if (value != null) {
@@ -179,7 +179,7 @@ public class Inbox extends SubCommand {
         }
         final MetaDataKey<Long> metaDataKey = MetaDataKey.of(
                 String.format("inbox:%s", inbox.toString()),
-                new TypeLiteral<Long>() {
+                new TypeLiteral<>() {
                 }
         );
         try (final MetaDataAccess<Long> metaDataAccess = player.accessTemporaryMetaData(metaDataKey)) {
@@ -217,7 +217,7 @@ public class Inbox extends SubCommand {
                         return false;
                     }
 
-                    if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
+                    if (!inbox.getComments(plot, new RunnableVal<>() {
                         @Override
                         public void run(List<PlotComment> value) {
                             if (index > value.size()) {
@@ -238,8 +238,6 @@ public class Inbox extends SubCommand {
                             } else {
                                 player.sendMessage(
                                         TranslatableCaption.of("comment.comment_removed_failure"));
-
-
                             }
                         }
                     })) {
@@ -254,12 +252,12 @@ public class Inbox extends SubCommand {
                     inbox.clearInbox(plot);
                     List<PlotComment> comments = plot.getPlotCommentContainer().getComments(inbox.toString());
                     if (!comments.isEmpty()) {
+                        player.sendMessage(
+                                TranslatableCaption.of("comment.comment_removed_success"),
+                                Template.of("value", String.valueOf(comments))
+                        );
                         plot.getPlotCommentContainer().removeComments(comments);
                     }
-                    player.sendMessage(
-                            TranslatableCaption.of("comment.comment_removed_success"),
-                            Template.of("value", "*")
-                    );
                     return true;
                 default:
                     try {
@@ -276,7 +274,7 @@ public class Inbox extends SubCommand {
             player.sendMessage(TranslatableCaption.of("comment.no_perm_inbox"));
             return false;
         }
-        if (!inbox.getComments(plot, new RunnableVal<List<PlotComment>>() {
+        if (!inbox.getComments(plot, new RunnableVal<>() {
             @Override
             public void run(List<PlotComment> value) {
                 displayComments(player, value, page);

@@ -43,7 +43,7 @@ public class InboxOwner extends CommentInbox {
             TaskManager.runTask(whenDone);
             return true;
         }
-        DBFunc.getComments(plot, toString(), new RunnableVal<List<PlotComment>>() {
+        DBFunc.getComments(plot, toString(), new RunnableVal<>() {
             @Override
             public void run(List<PlotComment> value) {
                 whenDone.value = value;

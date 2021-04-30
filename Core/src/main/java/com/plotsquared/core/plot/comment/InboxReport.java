@@ -36,7 +36,7 @@ public class InboxReport extends CommentInbox {
 
     @Override
     public boolean getComments(Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
-        DBFunc.getComments(plot, toString(), new RunnableVal<List<PlotComment>>() {
+        DBFunc.getComments(plot, toString(), new RunnableVal<>() {
             @Override
             public void run(List<PlotComment> value) {
                 whenDone.value = value;
