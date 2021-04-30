@@ -147,15 +147,9 @@ public class Inbox extends SubCommand {
                                     }
                                 }
                                 if (total != 0) {
-                                    String color;
-                                    if (unread > 0) {
-                                        color = "&c";
-                                    } else {
-                                        color = "";
-                                    }
                                     player.sendMessage(
                                             TranslatableCaption.of("comment.inbox_item"),
-                                            Template.of("value", color + inbox.toString() + " (" + total + '/' + unread + ')')
+                                            Template.of("value", inbox.toString() + " (" + total + '/' + unread + ')')
                                     );
                                     return;
                                 }
