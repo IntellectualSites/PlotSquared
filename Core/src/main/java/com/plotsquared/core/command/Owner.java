@@ -68,7 +68,7 @@ public class Owner extends SetCommand {
     }
 
     @Override
-    public boolean set(final PlotPlayer player, final Plot plot, String value) {
+    public boolean set(final PlotPlayer<?> player, final Plot plot, String value) {
         if (value == null || value.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("owner.set_owner_missing_player"));
             player.sendMessage(

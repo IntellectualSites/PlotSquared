@@ -30,14 +30,14 @@ import com.plotsquared.core.plot.Plot;
 
 public abstract class PlotPlayerEvent extends PlotEvent {
 
-    private final PlotPlayer plotPlayer;
+    private final PlotPlayer<?> plotPlayer;
 
-    public PlotPlayerEvent(PlotPlayer plotPlayer, Plot plot) {
+    public PlotPlayerEvent(PlotPlayer<?> plotPlayer, Plot plot) {
         super(plot);
         this.plotPlayer = plotPlayer;
     }
 
-    public PlotPlayer getPlotPlayer() {
+    public PlotPlayer<?> getPlotPlayer() {
         return this.plotPlayer;
     }
 

@@ -44,7 +44,7 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
      * @param from   Start location
      * @param plot   Plot to which the player was teleported
      */
-    public PlayerTeleportToPlotEvent(PlotPlayer player, Location from, Plot plot) {
+    public PlayerTeleportToPlotEvent(PlotPlayer<?> player, Location from, Plot plot) {
         super(player, plot);
         this.from = from;
     }

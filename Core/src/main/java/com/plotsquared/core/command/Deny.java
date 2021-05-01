@@ -138,7 +138,7 @@ public class Deny extends SubCommand {
                         if (!uuid.equals(DBFunc.EVERYONE)) {
                             handleKick(PlotSquared.platform().playerManager().getPlayerIfExists(uuid), plot);
                         } else {
-                            for (PlotPlayer plotPlayer : plot.getPlayersInPlot()) {
+                            for (PlotPlayer<?> plotPlayer : plot.getPlayersInPlot()) {
                                 // Ignore plot-owners
                                 if (plot.isAdded(plotPlayer.getUUID())) {
                                     continue;
@@ -156,11 +156,11 @@ public class Deny extends SubCommand {
     }
 
     @Override
-    public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 
-    private void handleKick(PlotPlayer player, Plot plot) {
+    private void handleKick(PlotPlayer<?> player, Plot plot) {
         if (player == null) {
             return;
         }

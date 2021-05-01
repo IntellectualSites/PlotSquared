@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public class PlayerPlotDeniedEvent extends PlotEvent {
 
-    private final PlotPlayer initiator;
+    private final PlotPlayer<?> initiator;
     private final boolean added;
     private final UUID player;
 
@@ -44,7 +44,7 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
      * @param player    Player that was denied/un-denied
      * @param added     true of add to deny list, false if removed
      */
-    public PlayerPlotDeniedEvent(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
+    public PlayerPlotDeniedEvent(PlotPlayer<?> initiator, Plot plot, UUID player, boolean added) {
         super(plot);
         this.initiator = initiator;
         this.added = added;
@@ -74,7 +74,7 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
      *
      * @return PlotPlayer
      */
-    public PlotPlayer getInitiator() {
+    public PlotPlayer<?> getInitiator() {
         return this.initiator;
     }
 

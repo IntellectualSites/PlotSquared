@@ -89,7 +89,7 @@ public class ChunkQueueCoordinator extends ScopedQueueCoordinator {
 
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
-        this.storeCache(x, y, z, pattern.apply(BlockVector3.at(x, y, z)).toImmutableState());
+        this.storeCache(x, y, z, pattern.applyBlock(BlockVector3.at(x, y, z)).toImmutableState());
         return true;
     }
 

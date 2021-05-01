@@ -96,7 +96,7 @@ public class Auto extends SubCommand {
     }
 
     public static boolean checkAllowedPlots(
-            PlotPlayer player, PlotArea plotarea,
+            PlotPlayer<?> player, PlotArea plotarea,
             @Nullable Integer allowedPlots, int sizeX, int sizeZ
     ) {
         if (allowedPlots == null) {

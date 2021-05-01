@@ -51,7 +51,7 @@ public class HelpPage {
         this.maxTemplate = Template.of("max", String.valueOf(maxPages + 1));
     }
 
-    public void render(PlotPlayer player) {
+    public void render(PlotPlayer<?> player) {
         if (this.helpObjects.size() < 1) {
             player.sendMessage(TranslatableCaption.of("invalid.not_valid_number"), Template.of("value", "(0)"));
         } else {

@@ -136,7 +136,7 @@ public class Remove extends SubCommand {
     }
 
     @Override
-    public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {

@@ -89,7 +89,7 @@ public class DebugRoadRegen extends SubCommand {
         }
     }
 
-    public boolean regenPlot(PlotPlayer player) {
+    public boolean regenPlot(PlotPlayer<?> player) {
         Location location = player.getLocation();
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -122,7 +122,7 @@ public class DebugRoadRegen extends SubCommand {
         return true;
     }
 
-    public boolean regenRegion(PlotPlayer player, String[] args) {
+    public boolean regenRegion(PlotPlayer<?> player, String[] args) {
         int height = 0;
         if (args.length == 1) {
             try {

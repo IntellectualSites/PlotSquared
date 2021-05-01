@@ -53,7 +53,7 @@ public class Desc extends SetCommand {
     }
 
     @Override
-    public boolean set(PlotPlayer player, Plot plot, String desc) {
+    public boolean set(PlotPlayer<?> player, Plot plot, String desc) {
         if (desc.isEmpty()) {
             PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plot
                     .getFlagContainer()

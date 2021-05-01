@@ -101,6 +101,6 @@ public abstract class ChunkManager {
     }
 
     @Deprecated
-    public abstract CompletableFuture loadChunk(String world, BlockVector2 loc, boolean force);
+    public abstract CompletableFuture<?> loadChunk(String world, BlockVector2 loc, boolean force);
 
 }

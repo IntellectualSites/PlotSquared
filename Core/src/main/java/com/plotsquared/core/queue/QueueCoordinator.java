@@ -199,6 +199,8 @@ public abstract class QueueCoordinator {
      * @param z     z coordinate
      * @param biome biome
      * @return success or not
+     *
+     * @deprecated Biomes now take XYZ, see {@code setBiome int x, int y, int z}
      */
     @Deprecated
     public abstract boolean setBiome(int x, int z, @NonNull BiomeType biome);

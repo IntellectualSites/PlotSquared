@@ -260,7 +260,7 @@ public class Merge extends SubCommand {
         java.util.Set<UUID> uuids = adjacent.getOwners();
         boolean isOnline = false;
         for (final UUID owner : uuids) {
-            final PlotPlayer accepter = PlotSquared.platform().playerManager().getPlayerIfExists(owner);
+            final PlotPlayer<?> accepter = PlotSquared.platform().playerManager().getPlayerIfExists(owner);
             if (!force && accepter == null) {
                 continue;
             }

@@ -75,7 +75,7 @@ public abstract class Command {
     private String permission;
     private boolean confirmation;
     private CommandCategory category;
-    private Argument[] arguments;
+    private Argument<?>[] arguments;
 
     public Command(
             Command parent, boolean isStatic, String id, String permission,
@@ -183,11 +183,11 @@ public abstract class Command {
         return this.required;
     }
 
-    public Argument[] getRequiredArguments() {
+    public Argument<?>[] getRequiredArguments() {
         return this.arguments;
     }
 
-    public void setRequiredArguments(Argument[] arguments) {
+    public void setRequiredArguments(Argument<?>[] arguments) {
         this.arguments = arguments;
     }
 
@@ -460,7 +460,7 @@ public abstract class Command {
         return cmd;
     }
 
-    public Command getCommand(Class clazz) {
+    public Command getCommand(Class<?> clazz) {
         for (Command cmd : this.allCommands) {
             if (cmd.getClass() == clazz) {
                 return cmd;

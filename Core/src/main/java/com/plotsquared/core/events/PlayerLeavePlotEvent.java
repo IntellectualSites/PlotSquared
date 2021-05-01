@@ -39,7 +39,7 @@ public class PlayerLeavePlotEvent extends PlotPlayerEvent {
      * @param player Player that left the plot
      * @param plot   Plot that was left
      */
-    public PlayerLeavePlotEvent(PlotPlayer player, Plot plot) {
+    public PlayerLeavePlotEvent(PlotPlayer<?> player, Plot plot) {
         super(player, plot);
     }
 

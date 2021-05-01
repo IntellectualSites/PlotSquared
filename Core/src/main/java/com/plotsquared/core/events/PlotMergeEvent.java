@@ -40,7 +40,7 @@ public final class PlotMergeEvent extends PlotPlayerEvent implements Cancellable
     private Direction dir;
     private int max;
     private Result eventResult;
-    private PlotPlayer player;
+    private final PlotPlayer<?> player;
 
     /**
      * PlotMergeEvent: Called when plots are merged
@@ -93,7 +93,7 @@ public final class PlotMergeEvent extends PlotPlayerEvent implements Cancellable
         this.max = max;
     }
 
-    public PlotPlayer getPlayer() {
+    public PlotPlayer<?> getPlayer() {
         return this.player;
     }
 

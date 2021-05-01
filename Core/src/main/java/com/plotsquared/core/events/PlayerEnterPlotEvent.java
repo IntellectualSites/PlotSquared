@@ -36,7 +36,7 @@ public class PlayerEnterPlotEvent extends PlotPlayerEvent {
      * @param player Player that entered the plot
      * @param plot   Plot that was entered
      */
-    public PlayerEnterPlotEvent(PlotPlayer player, Plot plot) {
+    public PlayerEnterPlotEvent(PlotPlayer<?> player, Plot plot) {
         super(player, plot);
     }
 

@@ -223,7 +223,7 @@ public class HomeCommand extends Command {
     }
 
     @Override
-    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
         switch (args.length - 1) {
             case 0:

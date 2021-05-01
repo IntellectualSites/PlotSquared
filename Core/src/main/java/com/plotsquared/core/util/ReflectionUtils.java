@@ -100,7 +100,7 @@ public class ReflectionUtils {
      * @param clazz class
      * @return RefClass based on passed class
      */
-    public static RefClass getRefClass(Class clazz) {
+    public static RefClass getRefClass(Class<?> clazz) {
         return new RefClass(clazz);
     }
 
@@ -133,11 +133,11 @@ public class ReflectionUtils {
          * @throws NoSuchMethodException if method not found
          */
         public RefMethod getMethod(String name, Object... types) throws NoSuchMethodException {
-            Class[] classes = new Class[types.length];
+            Class<?>[] classes = new Class[types.length];
             int i = 0;
             for (Object e : types) {
                 if (e instanceof Class) {
-                    classes[i++] = (Class) e;
+                    classes[i++] = (Class<?>) e;
                 } else if (e instanceof RefClass) {
                     classes[i++] = ((RefClass) e).getRealClass();
                 } else {
@@ -232,9 +232,9 @@ public class ReflectionUtils {
      */
     public static class RefConstructor {
 
-        private final Constructor constructor;
+        private final Constructor<?> constructor;
 
-        private RefConstructor(Constructor constructor) {
+        private RefConstructor(Constructor<?> constructor) {
             this.constructor = constructor;
             constructor.setAccessible(true);
         }

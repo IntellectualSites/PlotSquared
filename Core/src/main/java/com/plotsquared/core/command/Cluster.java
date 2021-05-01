@@ -462,7 +462,7 @@ public class Cluster extends SubCommand {
                                     // add the user if not added
                                     cluster.invited.add(uuid);
                                     DBFunc.setInvited(cluster, uuid);
-                                    final PlotPlayer otherPlayer =
+                                    final PlotPlayer<?> otherPlayer =
                                             PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                                     if (otherPlayer != null) {
                                         player.sendMessage(
@@ -538,7 +538,7 @@ public class Cluster extends SubCommand {
                                     cluster.invited.remove(uuid);
                                     DBFunc.removeInvited(cluster, uuid);
 
-                                    final PlotPlayer player2 =
+                                    final PlotPlayer<?> player2 =
                                             PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                                     if (player2 != null) {
                                         player.sendMessage(

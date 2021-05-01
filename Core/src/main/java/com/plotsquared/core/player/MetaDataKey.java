@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public final class MetaDataKey<T> {
 
-    private static final Map<String, MetaDataKey> keyMap = new HashMap<>();
+    private static final Map<String, MetaDataKey<?>> keyMap = new HashMap<>();
     private static final Object keyMetaData = new Object();
 
     private final String key;
@@ -82,7 +82,7 @@ public final class MetaDataKey<T> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final MetaDataKey lockKey = (MetaDataKey) o;
+        final MetaDataKey<?> lockKey = (MetaDataKey<?>) o;
         return Objects.equal(this.key, lockKey.key);
     }
 

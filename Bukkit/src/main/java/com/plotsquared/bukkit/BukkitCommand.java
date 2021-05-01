@@ -69,7 +69,7 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         if (!(commandSender instanceof Player)) {
             return null;
         }
-        PlotPlayer player = BukkitUtil.adapt((Player) commandSender);
+        PlotPlayer<?> player = BukkitUtil.adapt((Player) commandSender);
         if (args.length == 0) {
             return Collections.singletonList("plots");
         }

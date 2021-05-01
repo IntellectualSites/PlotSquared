@@ -99,7 +99,7 @@ public class SimpleBackupManager implements BackupManager {
     }
 
     @Override
-    public void automaticBackup(@Nullable PlotPlayer player, final @NonNull Plot plot, @NonNull Runnable whenDone) {
+    public void automaticBackup(@Nullable PlotPlayer<?> player, final @NonNull Plot plot, @NonNull Runnable whenDone) {
         final BackupProfile profile;
         if (!this.shouldAutomaticallyBackup() || (profile = getProfile(plot)) instanceof NullBackupProfile) {
             whenDone.run();

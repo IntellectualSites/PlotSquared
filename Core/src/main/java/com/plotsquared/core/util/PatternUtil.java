@@ -54,12 +54,12 @@ public class PatternUtil {
         if (pattern instanceof BlockPattern || pattern instanceof RandomPattern
                 || pattern instanceof BlockState || pattern instanceof BlockType
                 || pattern instanceof BaseBlock) {
-            return pattern.apply(BlockVector3.ZERO);
+            return pattern.applyBlock(BlockVector3.ZERO);
         }
-        return pattern.apply(BlockVector3.at(x, y, z));
+        return pattern.applyBlock(BlockVector3.at(x, y, z));
     }
 
-    public static Pattern parse(PlotPlayer plotPlayer, String input) {
+    public static Pattern parse(PlotPlayer<?> plotPlayer, String input) {
         return parse(plotPlayer, input, true);
     }
 
@@ -71,7 +71,7 @@ public class PatternUtil {
         return new ArrayList<>();
     }
 
-    public static Pattern parse(PlotPlayer plotPlayer, String input, boolean allowLegacy) {
+    public static Pattern parse(PlotPlayer<?> plotPlayer, String input, boolean allowLegacy) {
         ParserContext context = new ParserContext();
         if (plotPlayer != null) {
             Actor actor = plotPlayer.toActor();

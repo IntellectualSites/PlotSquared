@@ -716,7 +716,7 @@ public abstract class PlotArea {
      * @deprecated Use {@link #getPlots(UUID)}
      */
     @Deprecated
-    public Set<Plot> getPlots(final @NonNull PlotPlayer player) {
+    public Set<Plot> getPlots(final @NonNull PlotPlayer<?> player) {
         return getPlots(player.getUUID());
     }
 
@@ -872,7 +872,7 @@ public abstract class PlotArea {
         return this.plots.put(plot.getId(), plot) == null;
     }
 
-    public Plot getNextFreePlot(final PlotPlayer player, @Nullable PlotId start) {
+    public Plot getNextFreePlot(final PlotPlayer<?> player, @Nullable PlotId start) {
         int plots;
         PlotId center;
         PlotId min = getMin();
@@ -968,7 +968,7 @@ public abstract class PlotArea {
     }
 
     public @Nullable List<Plot> canClaim(
-            final @Nullable PlotPlayer player, final @NonNull PlotId pos1,
+            final @Nullable PlotPlayer<?> player, final @NonNull PlotId pos1,
             final @NonNull PlotId pos2
     ) {
         if (pos1.getX() == pos2.getX() && pos1.getY() == pos2.getY()) {

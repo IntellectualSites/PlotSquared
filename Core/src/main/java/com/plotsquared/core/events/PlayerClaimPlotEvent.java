@@ -42,7 +42,7 @@ public class PlayerClaimPlotEvent extends PlotPlayerEvent implements Cancellable
      * @param plot      Plot that was claimed
      * @param schematic The schematic defined or null
      */
-    public PlayerClaimPlotEvent(PlotPlayer player, Plot plot, @Nullable String schematic) {
+    public PlayerClaimPlotEvent(PlotPlayer<?> player, Plot plot, @Nullable String schematic) {
         super(player, plot);
         this.schematic = schematic;
     }

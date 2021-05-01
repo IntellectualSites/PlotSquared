@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public class PlayerPlotTrustedEvent extends PlotEvent {
 
-    private final PlotPlayer initiator;
+    private final PlotPlayer<?> initiator;
     private final boolean added;
     private final UUID player;
 
@@ -44,7 +44,7 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      * @param player    Player that was added/removed from the trusted list
      * @param added     true of the player was added, false if the player was removed
      */
-    public PlayerPlotTrustedEvent(PlotPlayer initiator, Plot plot, UUID player, boolean added) {
+    public PlayerPlotTrustedEvent(PlotPlayer<?> initiator, Plot plot, UUID player, boolean added) {
         super(plot);
         this.initiator = initiator;
         this.added = added;
@@ -74,7 +74,7 @@ public class PlayerPlotTrustedEvent extends PlotEvent {
      *
      * @return PlotPlayer
      */
-    public PlotPlayer getInitiator() {
+    public PlotPlayer<?> getInitiator() {
         return this.initiator;
     }
 

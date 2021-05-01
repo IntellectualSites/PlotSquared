@@ -118,7 +118,7 @@ public class Setup extends SubCommand {
     }
 
     @Override
-    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         SetupProcess process;
         try (final MetaDataAccess<SetupProcess> metaDataAccess =
                      player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SETUP)) {

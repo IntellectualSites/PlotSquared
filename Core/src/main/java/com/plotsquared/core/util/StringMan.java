@@ -312,7 +312,7 @@ public class StringMan {
             return null;
         }
         startsWith = startsWith.toLowerCase();
-        Iterator iterator = col.iterator();
+        Iterator<?> iterator = col.iterator();
         while (iterator.hasNext()) {
             Object item = iterator.next();
             if (item == null || !item.toString().toLowerCase().startsWith(startsWith)) {

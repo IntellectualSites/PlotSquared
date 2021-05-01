@@ -34,12 +34,12 @@ import java.util.UUID;
 
 public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEvent {
 
-    private final PlotPlayer initiator;
+    private final PlotPlayer<?> initiator;
     @Nullable
     private final UUID oldOwner;
     @Nullable
     private UUID newOwner;
-    private boolean hasOldOwner;
+    private final boolean hasOldOwner;
     private Result eventResult;
 
     /**
@@ -52,7 +52,7 @@ public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEv
      * @param hasOldOwner If the plot has an old owner
      */
     public PlotChangeOwnerEvent(
-            PlotPlayer initiator, Plot plot, @Nullable UUID oldOwner,
+            PlotPlayer<?> initiator, Plot plot, @Nullable UUID oldOwner,
             @Nullable UUID newOwner, boolean hasOldOwner
     ) {
         super(plot);
@@ -81,11 +81,11 @@ public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEv
     }
 
     /**
-     * Get the change-owner initator
+     * Get the change-owner initiator
      *
      * @return Player
      */
-    public PlotPlayer getInitiator() {
+    public PlotPlayer<?> getInitiator() {
         return this.initiator;
     }
 

@@ -121,6 +121,7 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  */
 public class Plot {
 
+
     public static final int MAX_HEIGHT = 256;
 
     private static final Logger logger = LoggerFactory.getLogger("P2/" + Plot.class.getSimpleName());
@@ -2134,7 +2135,7 @@ public class Plot {
      * @param player the claiming player
      * @return if the given player can claim the plot
      */
-    public boolean canClaim(@NonNull PlotPlayer player) {
+    public boolean canClaim(@NonNull PlotPlayer<?> player) {
         PlotCluster cluster = this.getCluster();
         if (cluster != null) {
             if (!cluster.isAdded(player.getUUID()) && !Permissions.hasPermission(player, "plots.admin.command.claim")) {

@@ -134,7 +134,7 @@ public class Config {
                 file.createNewFile();
             }
             try (PrintWriter writer = new PrintWriter(file)) {
-                Object instance = root.newInstance();
+                Object instance = root.getDeclaredConstructor().newInstance();
                 save(writer, root, instance, 0);
             }
         } catch (Throwable e) {
@@ -184,7 +184,7 @@ public class Config {
         return value != null ? value.toString() : "null";
     }
 
-    private static void save(PrintWriter writer, Class clazz, Object instance, int indent) {
+    private static void save(PrintWriter writer, Class<?> clazz, Object instance, int indent) {
         try {
             String lineSeparator = System.lineSeparator();
             String spacing = StringMan.repeat(" ", indent);
@@ -204,9 +204,9 @@ public class Config {
                     if (value == null && field.getType() != ConfigBlock.class) {
                         setAccessible(field);
                         Class<?>[] classes = clazz.getDeclaredClasses();
-                        for (Class current : classes) {
+                        for (Class<?> current : classes) {
                             if (StringMan.isEqual(current.getSimpleName(), field.getName())) {
-                                field.set(instance, current.newInstance());
+                                field.set(instance, current.getDeclaredConstructor().newInstance());
                                 break;
                             }
                         }
@@ -235,12 +235,12 @@ public class Config {
                     Field instanceField =
                             clazz.getDeclaredField(toFieldName(current.getSimpleName()));
                     setAccessible(instanceField);
-                    ConfigBlock value = (ConfigBlock) instanceField.get(instance);
+                    ConfigBlock value = (ConfigBlock<?>) instanceField.get(instance);
                     if (value == null) {
                         value = new ConfigBlock();
                         instanceField.set(instance, value);
                         for (String blockName : blockNames.value()) {
-                            value.put(blockName, current.newInstance());
+                            value.put(blockName, current.getDeclaredConstructor().newInstance());
                         }
                     }
                     // Save each instance
@@ -250,9 +250,8 @@ public class Config {
                         writer.write(spacing + "  " + toNodeName(key) + ":" + lineSeparator);
                         save(writer, current, entry.getValue(), indent + 4);
                     }
-                    continue;
                 } else {
-                    save(writer, current, current.newInstance(), indent + 2);
+                    save(writer, current, current.getDeclaredConstructor().newInstance(), indent + 2);
                 }
             }
         } catch (Throwable e) {
@@ -307,7 +306,7 @@ public class Config {
     private static Object getInstance(String[] split, Class<?> root) {
         try {
             Class<?> clazz = root == null ? MethodHandles.lookup().lookupClass() : root;
-            Object instance = clazz.newInstance();
+            Object instance = clazz.getDeclaredConstructor().newInstance();
             while (split.length > 0) {
                 if (split.length == 1) {
                     return instance;
@@ -326,7 +325,7 @@ public class Config {
                     if (instanceField.getType() != ConfigBlock.class) {
                         Object value = instanceField.get(instance);
                         if (value == null) {
-                            value = found.newInstance();
+                            value = found.getDeclaredConstructor().newInstance();
                             instanceField.set(instance, value);
                         }
                         clazz = found;
@@ -334,14 +333,14 @@ public class Config {
                         split = Arrays.copyOfRange(split, 1, split.length);
                         continue;
                     }
-                    ConfigBlock value = (ConfigBlock) instanceField.get(instance);
+                    ConfigBlock value = (ConfigBlock<?>) instanceField.get(instance);
                     if (value == null) {
                         value = new ConfigBlock();
                         instanceField.set(instance, value);
                     }
                     instance = value.get(split[1]);
                     if (instance == null) {
-                        instance = found.newInstance();
+                        instance = found.getDeclaredConstructor().newInstance();
                         value.put(split[1], instance);
                     }
                     clazz = found;
@@ -352,7 +351,7 @@ public class Config {
                 if (found != null) {
                     split = Arrays.copyOfRange(split, 1, split.length);
                     clazz = found;
-                    instance = clazz.newInstance();
+                    instance = clazz.getDeclaredConstructor().newInstance();
                     continue;
                 }
                 return null;

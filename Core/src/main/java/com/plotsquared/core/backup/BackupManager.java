@@ -45,7 +45,7 @@ public interface BackupManager {
      * @param plot     Plot to perform the automatic backup on
      * @param whenDone Action that runs when the automatic backup has been completed
      */
-    static void backup(@Nullable PlotPlayer player, final @NonNull Plot plot, @NonNull Runnable whenDone) {
+    static void backup(@Nullable PlotPlayer<?> player, final @NonNull Plot plot, @NonNull Runnable whenDone) {
         Objects.requireNonNull(PlotSquared.platform()).backupManager().automaticBackup(player, plot, whenDone);
     }
 
@@ -67,7 +67,7 @@ public interface BackupManager {
      * @param plot     Plot to perform the automatic backup on
      * @param whenDone Action that runs when the automatic backup has been completed
      */
-    void automaticBackup(@Nullable PlotPlayer player, final @NonNull Plot plot, @NonNull Runnable whenDone);
+    void automaticBackup(@Nullable PlotPlayer<?> player, final @NonNull Plot plot, @NonNull Runnable whenDone);
 
     /**
      * Get the directory in which backups are stored

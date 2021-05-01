@@ -86,7 +86,7 @@ public class DatabaseCommand extends SubCommand {
 
     public static void insertPlots(
             final SQLManager manager, final List<Plot> plots,
-            final PlotPlayer player
+            final PlotPlayer<?> player
     ) {
         TaskManager.runTaskAsync(() -> {
             try {

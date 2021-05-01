@@ -86,7 +86,7 @@ public class ListCmd extends SubCommand {
         this.econHandler = econHandler;
     }
 
-    private String[] getArgumentList(PlotPlayer player) {
+    private String[] getArgumentList(PlotPlayer<?> player) {
         List<String> args = new ArrayList<>();
         if (this.econHandler != null && Permissions.hasPermission(player, Permission.PERMISSION_LIST_FOR_SALE)) {
             args.add("forsale");

@@ -55,7 +55,7 @@ public class DenyTeleportFlag extends PlotFlag<DenyTeleportFlag.DeniedGroup, Den
         );
     }
 
-    public static boolean allowsTeleport(PlotPlayer player, Plot plot) {
+    public static boolean allowsTeleport(PlotPlayer<?> player, Plot plot) {
         final DeniedGroup value = plot.getFlag(DenyTeleportFlag.class);
         if (value == DeniedGroup.NONE) {
             return true;

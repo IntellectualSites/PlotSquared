@@ -70,6 +70,6 @@ public abstract class SetCommand extends SubCommand {
         return set(player, plot, StringMan.join(args, " "));
     }
 
-    public abstract boolean set(PlotPlayer player, Plot plot, String value);
+    public abstract boolean set(PlotPlayer<?> player, Plot plot, String value);
 
 }

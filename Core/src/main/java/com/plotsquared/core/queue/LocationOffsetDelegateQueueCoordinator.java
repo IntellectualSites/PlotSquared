@@ -82,7 +82,7 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
         final BlockVector3 blockVector3 = BlockVector3.at(x + blockX, y, z + blockZ);
-        return this.setBlock(x, y, z, pattern.apply(blockVector3));
+        return this.setBlock(x, y, z, pattern.applyBlock(blockVector3));
     }
 
     @Override

@@ -32,7 +32,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class PlotRateEvent extends PlotEvent implements CancellablePlotEvent {
 
-    private final PlotPlayer rater;
+    private final PlotPlayer<?> rater;
     @Nullable
     private Rating rating;
     private Result eventResult;
@@ -44,13 +44,13 @@ public class PlotRateEvent extends PlotEvent implements CancellablePlotEvent {
      * @param rating The rating being given
      * @param plot   The plot being rated
      */
-    public PlotRateEvent(PlotPlayer rater, @Nullable Rating rating, Plot plot) {
+    public PlotRateEvent(PlotPlayer<?> rater, @Nullable Rating rating, Plot plot) {
         super(plot);
         this.rater = rater;
         this.rating = rating;
     }
 
-    public PlotPlayer getRater() {
+    public PlotPlayer<?> getRater() {
         return this.rater;
     }
 

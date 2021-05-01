@@ -83,7 +83,7 @@ public class Set extends SubCommand {
             }
 
             @Override
-            public boolean set(PlotPlayer player, final Plot plot, String value) {
+            public boolean set(PlotPlayer<?> player, final Plot plot, String value) {
                 final PlotArea plotArea = player.getLocation().getPlotArea();
                 if (plotArea == null) {
                     return false;
@@ -190,7 +190,7 @@ public class Set extends SubCommand {
 
             @Override
             public Collection<Command> tab(
-                    final PlotPlayer player, final String[] args,
+                    final PlotPlayer<?> player, final String[] args,
                     final boolean space
             ) {
                 return TabCompletions.completePatterns(StringMan.join(args, ","));
@@ -198,7 +198,7 @@ public class Set extends SubCommand {
         };
     }
 
-    public boolean noArgs(PlotPlayer player) {
+    public boolean noArgs(PlotPlayer<?> player) {
         ArrayList<String> newValues = new ArrayList<>(Arrays.asList("biome", "alias", "home"));
         Plot plot = player.getCurrentPlot();
         if (plot != null) {

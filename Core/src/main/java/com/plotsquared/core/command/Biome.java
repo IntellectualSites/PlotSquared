@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 public class Biome extends SetCommand {
 
     @Override
-    public boolean set(final PlotPlayer player, final Plot plot, final String value) {
+    public boolean set(final PlotPlayer<?> player, final Plot plot, final String value) {
         BiomeType biome = null;
         try {
             biome = BiomeTypes.get(value.toLowerCase());

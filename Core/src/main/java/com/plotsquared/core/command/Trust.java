@@ -166,7 +166,7 @@ public class Trust extends Command {
     }
 
     @Override
-    public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 

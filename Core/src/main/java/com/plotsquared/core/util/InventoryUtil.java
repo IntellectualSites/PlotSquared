@@ -43,7 +43,7 @@ public abstract class InventoryUtil {
             final PlotItemStack item
     );
 
-    public abstract PlotItemStack[] getItems(final PlotPlayer player);
+    public abstract PlotItemStack[] getItems(final PlotPlayer<?> player);
 
     public abstract boolean isOpen(final PlotInventory plotInventory);
 

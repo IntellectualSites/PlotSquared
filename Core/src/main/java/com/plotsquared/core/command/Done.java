@@ -115,7 +115,7 @@ public class Done extends SubCommand {
         return true;
     }
 
-    private void finish(Plot plot, PlotPlayer player, boolean success) {
+    private void finish(Plot plot, PlotPlayer<?> player, boolean success) {
         if (!success) {
             player.sendMessage(TranslatableCaption.of("done.done_insufficient_complexity"));
             return;

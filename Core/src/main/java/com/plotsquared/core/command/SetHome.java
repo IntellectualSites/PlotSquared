@@ -41,7 +41,7 @@ import net.kyori.adventure.text.minimessage.Template;
 public class SetHome extends SetCommand {
 
     @Override
-    public boolean set(PlotPlayer player, Plot plot, String value) {
+    public boolean set(PlotPlayer<?> player, Plot plot, String value) {
         switch (value.toLowerCase()) {
             case "unset":
             case "reset":

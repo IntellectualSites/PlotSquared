@@ -130,7 +130,7 @@ public class Alias extends SubCommand {
     }
 
     @Override
-    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> commands = new ArrayList<>(2);
         if (args.length == 1) {
             if ("set".startsWith(args[0])) {
@@ -144,7 +144,7 @@ public class Alias extends SubCommand {
         return Collections.emptySet();
     }
 
-    private void setAlias(PlotPlayer player, Plot plot, String alias) {
+    private void setAlias(PlotPlayer<?> player, Plot plot, String alias) {
         if (alias.isEmpty()) {
             sendUsage(player);
         } else if (alias.length() >= 50) {

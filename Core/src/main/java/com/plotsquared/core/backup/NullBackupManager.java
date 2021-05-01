@@ -48,7 +48,7 @@ public class NullBackupManager implements BackupManager {
 
     @Override
     public void automaticBackup(
-            @Nullable PlotPlayer plotPlayer,
+            @Nullable PlotPlayer<?> plotPlayer,
             @NonNull Plot plot, @NonNull Runnable whenDone
     ) {
         whenDone.run();

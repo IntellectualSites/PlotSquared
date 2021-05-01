@@ -430,7 +430,7 @@ public class BukkitUtil extends WorldUtil {
 
     @Override
     @NonNegative
-    public double getHealth(final @NonNull PlotPlayer player) {
+    public double getHealth(final @NonNull PlotPlayer<?> player) {
         return Objects.requireNonNull(Bukkit.getPlayer(player.getUUID())).getHealth();
     }
 

@@ -73,7 +73,7 @@ public class Visit extends Command {
     }
 
     private void visit(
-            final @NonNull PlotPlayer player, final @NonNull PlotQuery query, final PlotArea sortByArea,
+            final @NonNull PlotPlayer<?> player, final @NonNull PlotQuery query, final PlotArea sortByArea,
             final RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone, int page
     ) {
         // We get the query once,
@@ -311,7 +311,7 @@ public class Visit extends Command {
     }
 
     @Override
-    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
         switch (args.length - 1) {
             case 0:

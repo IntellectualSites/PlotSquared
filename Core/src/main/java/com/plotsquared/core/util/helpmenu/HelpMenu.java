@@ -36,13 +36,13 @@ public class HelpMenu {
 
     private static final int PER_PAGE = 5;
 
-    private final PlotPlayer commandCaller;
+    private final PlotPlayer<?> commandCaller;
     private HelpPage page = new HelpPage(CommandCategory.INFO, 0, 0);
     private int maxPage;
     private CommandCategory commandCategory;
     private List<Command> commands;
 
-    public HelpMenu(PlotPlayer commandCaller) {
+    public HelpMenu(PlotPlayer<?> commandCaller) {
         this.commandCaller = commandCaller;
     }
 

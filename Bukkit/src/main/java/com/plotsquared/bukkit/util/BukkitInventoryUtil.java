@@ -138,7 +138,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
     }
 
     @Override
-    public PlotItemStack[] getItems(PlotPlayer player) {
+    public PlotItemStack[] getItems(PlotPlayer<?> player) {
         BukkitPlayer bp = (BukkitPlayer) player;
         PlayerInventory inv = bp.player.getInventory();
         return IntStream.range(0, 36).mapToObj(i -> getItem(inv.getItem(i)))

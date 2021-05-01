@@ -108,7 +108,7 @@ public class DebugExec extends SubCommand {
                         return true;
                     }
                     player.sendMessage(TranslatableCaption.of("debugexec.starting_task"));
-                    this.hybridUtils.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+                    this.hybridUtils.analyzePlot(plot, new RunnableVal<>() {
                         @Override
                         public void run(PlotAnalysis value) {
                             player.sendMessage(

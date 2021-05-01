@@ -51,7 +51,7 @@ public class Help extends Command {
     }
 
     @Override
-    public boolean canExecute(PlotPlayer player, boolean message) {
+    public boolean canExecute(PlotPlayer<?> player, boolean message) {
         return true;
     }
 
@@ -90,7 +90,7 @@ public class Help extends Command {
     }
 
     public CompletableFuture<Boolean> displayHelp(
-            final PlotPlayer player, final String catRaw,
+            final PlotPlayer<?> player, final String catRaw,
             final int page
     ) {
         return CompletableFuture.supplyAsync(() -> {
