@@ -586,6 +586,8 @@
   "flags.flag_error_stringlist": "<prefix>Flag value must be a string list.",
   "flags.flag_error_weather": "<prefix>Flag must be a weather: 'rain' or 'sun'.",
   "flags.flag_error_music": "<prefix>Flag value must be a valid music disc ID.",
+  "flags.area_flags": "<prefix><gray>Area flags: </gray><dark_aqua><flags></dark_aqua>",
+  "flags.road_flags": "<prefix><gray>Road flags: </gray><dark_aqua><flags></dark_aqua>",
   "commands.description.add": "<gray>Allow a user to build in a plot while the plot owner is online.</gray>",
   "commands.description.alias": "<gray>Set the plot alias.</gray>",
   "commands.description.area": "<gray>Create a new plot area.</gray>",

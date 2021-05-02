@@ -124,7 +124,6 @@ public abstract class PlotArea {
             new FlagContainer(GlobalFlagContainer.getInstance());
     private final YamlConfiguration worldConfiguration;
     private final GlobalBlockQueue globalBlockQueue;
-    private int maxPlotMembers = 128;
     private boolean autoMerge = false;
     private boolean allowSigns = true;
     private boolean miscSpawnUnowned = false;
@@ -325,7 +324,6 @@ public abstract class PlotArea {
         this.miscSpawnUnowned = config.getBoolean("misc_spawn_unowned");
         this.mobSpawnerSpawning = config.getBoolean("mob_spawner_spawning");
         this.autoMerge = config.getBoolean("plot.auto_merge");
-        this.maxPlotMembers = config.getInt("limits.max-members");
         this.allowSigns = config.getBoolean("plot.create_signs");
         String biomeString = config.getString("plot.biome");
         if (!biomeString.startsWith("minecraft:")) {
@@ -425,7 +423,7 @@ public abstract class PlotArea {
         Collection<PlotFlag<?, ?>> flagCollection = this.getFlagContainer().getFlagMap().values();
         flagsComponent = getFlagsComponent(flagsComponent, flagCollection);
         ConsolePlayer.getConsole().sendMessage(
-                StaticCaption.of("[P2] - area flags: <flags>"),
+                TranslatableCaption.of("flags.area_flags"),
                 Template.of("flags", flagsComponent)
         );
 
@@ -450,7 +448,7 @@ public abstract class PlotArea {
         Collection<PlotFlag<?, ?>> roadFlagCollection = this.getRoadFlagContainer().getFlagMap().values();
         roadFlagsComponent = getFlagsComponent(roadFlagsComponent, roadFlagCollection);
         ConsolePlayer.getConsole().sendMessage(
-                StaticCaption.of("[P2] - road flags: <flags>"),
+                TranslatableCaption.of("flags.road_flags"),
                 Template.of("flags", roadFlagsComponent)
         );
 
