@@ -316,7 +316,7 @@
   "info.server": "<gray>Server</gray>",
   "info.everyone": "<gray>Everyone</gray>",
   "info.infinite": "<gray>Infinite</gray>",
-  "info.plot_unowned": "<prefix><gray>The current plot must have an owner to perform this action.</gray>",
+  "info.plot_unowned": "<prefix><red>The current plot must have an owner to perform this action.</red>",
   "info.plot_info_unclaimed": "<prefix><gray>Plot <gold><plot></gold> is not yet claimed.</gray>",
   "info.plot_info_header": "<dark_gray><strikethrough>--------- <reset><gold>INFO </gold><dark_gray><strikethrough>---------</dark_gray><reset>",
   "info.plot_info_hidden": "<prefix><red>You cannot view the information about this plot.</red>",

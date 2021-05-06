@@ -42,6 +42,10 @@ public class SetHome extends SetCommand {
 
     @Override
     public boolean set(PlotPlayer<?> player, Plot plot, String value) {
+        if (!plot.hasOwner()) {
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            return false;
+        }
         switch (value.toLowerCase()) {
             case "unset":
             case "reset":
@@ -50,8 +54,9 @@ public class SetHome extends SetCommand {
                 Plot base = plot.getBasePlot(false);
                 base.setHome(null);
                 player.sendMessage(TranslatableCaption.of("position.position_unset"));
+                return true;
             }
-            case "":
+            case "": {
                 Plot base = plot.getBasePlot(false);
                 Location bottom = base.getBottomAbs();
                 Location location = player.getLocationFull();
@@ -60,6 +65,8 @@ public class SetHome extends SetCommand {
                 );
                 base.setHome(rel);
                 player.sendMessage(TranslatableCaption.of("position.position_set"));
+                return true;
+            }
             default:
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
