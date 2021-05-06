@@ -98,7 +98,7 @@ public class Buy extends Command {
             throw new CommandException(TranslatableCaption.of("economy.not_for_sale"));
         }
         checkTrue(
-                this.econHandler.getMoney(player) >= price,
+                this.econHandler.getMoney(player) >= price && this.econHandler.isSupported(),
                 TranslatableCaption.of("economy.cannot_afford_plot"),
                 Template.of("money", this.econHandler.format(price)),
                 Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))

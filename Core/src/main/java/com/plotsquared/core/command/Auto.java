@@ -312,13 +312,15 @@ public class Auto extends SubCommand {
                     player.getPlotCount(plotarea.getWorldName()));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
-                if (!force && this.econHandler.getMoney(player) < cost) {
+                if (!force && this.econHandler.getMoney(player) < cost && this.econHandler.isSupported()) {
                     player.sendMessage(
                             TranslatableCaption.of("economy.cannot_afford_plot"),
                             Template.of("money", this.econHandler.format(cost)),
                             Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
-                    return true;
+                } else {
+                    player.sendMessage(TranslatableCaption.of("economy.vault_not_found"));
+                    return false;
                 }
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(

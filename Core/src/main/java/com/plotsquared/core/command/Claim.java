@@ -151,12 +151,14 @@ public class Claim extends SubCommand {
                 PlotExpression costExr = area.getPrices().get("claim");
                 double cost = costExr.evaluate(currentPlots);
                 if (cost > 0d) {
-                    if (this.econHandler.getMoney(player) < cost) {
+                    if (this.econHandler.getMoney(player) < cost && this.econHandler.isSupported()) {
                         player.sendMessage(
                                 TranslatableCaption.of("economy.cannot_afford_plot"),
                                 Template.of("money", this.econHandler.format(cost)),
                                 Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                         );
+                    } else {
+                        player.sendMessage(TranslatableCaption.of("economy.vault_not_found"));
                         return false;
                     }
                     this.econHandler.withdrawMoney(player, cost);
