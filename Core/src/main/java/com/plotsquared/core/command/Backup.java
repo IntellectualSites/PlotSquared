@@ -142,14 +142,14 @@ public final class Backup extends Command {
         } else if (!plot.hasOwner()) {
             player.sendMessage(
                     TranslatableCaption.of("backups.backup_impossible"),
-                    Template.of("plot", "generic.generic_unowned")
+                    Template.of("plot", TranslatableCaption.of("generic.generic_unowned").getComponent(player))
             );
         } else if (plot.getVolume() > Integer.MAX_VALUE) {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
         } else if (plot.isMerged()) {
             player.sendMessage(
                     TranslatableCaption.of("backups.backup_impossible"),
-                    Template.of("plot", "generic.generic_merged")
+                    Template.of("plot", TranslatableCaption.of("generic.generic_merged").getComponent(player))
             );
         } else if (!plot.isOwner(player.getUUID()) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_BACKUP_OTHER)) {
@@ -162,7 +162,7 @@ public final class Backup extends Command {
             if (backupProfile instanceof NullBackupProfile) {
                 player.sendMessage(
                         TranslatableCaption.of("backups.backup_impossible"),
-                        Template.of("plot", "generic.generic_other")
+                        Template.of("plot", TranslatableCaption.of("generic.generic_other").getComponent(player))
                 );
             } else {
                 backupProfile.createBackup().whenComplete((backup, throwable) -> {
@@ -196,12 +196,12 @@ public final class Backup extends Command {
         } else if (!plot.hasOwner()) {
             player.sendMessage(
                     TranslatableCaption.of("backups.backup_impossible"),
-                    Template.of("plot", "generic.generic_unowned")
+                    Template.of("plot", TranslatableCaption.of("generic.generic_unowned").getComponent(player))
             );
         } else if (plot.isMerged()) {
             player.sendMessage(
                     TranslatableCaption.of("backups.backup_impossible"),
-                    Template.of("plot", "generic.generic_merged")
+                    Template.of("plot", TranslatableCaption.of("generic.generic_merged").getComponent(player))
             );
         } else if (plot.getVolume() > Integer.MAX_VALUE) {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
@@ -216,7 +216,7 @@ public final class Backup extends Command {
             if (backupProfile instanceof NullBackupProfile) {
                 player.sendMessage(
                         TranslatableCaption.of("backups.backup_impossible"),
-                        Template.of("plot", "generic.generic_other")
+                        Template.of("plot", TranslatableCaption.of("generic.generic_other").getComponent(player))
                 );
             } else {
                 backupProfile.listBackups().whenComplete((backups, throwable) -> {
@@ -267,12 +267,12 @@ public final class Backup extends Command {
         } else if (!plot.hasOwner()) {
             player.sendMessage(
                     TranslatableCaption.of("backups.backup_impossible"),
-                    Template.of("plot", "generic.generic_unowned")
+                    Template.of("plot", TranslatableCaption.of("generic.generic_unowned").getComponent(player))
             );
         } else if (plot.isMerged()) {
             player.sendMessage(
                     TranslatableCaption.of("backups.backup_impossible"),
-                    Template.of("plot", "generic.generic_merged")
+                    Template.of("plot", TranslatableCaption.of("generic.generic_merged").getComponent(player))
             );
         } else if (plot.getVolume() > Integer.MAX_VALUE) {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
@@ -302,7 +302,7 @@ public final class Backup extends Command {
             if (backupProfile instanceof NullBackupProfile) {
                 player.sendMessage(
                         TranslatableCaption.of("backups.backup_impossible"),
-                        Template.of("plot", "generic.generic_other")
+                        Template.of("plot", TranslatableCaption.of("generic.generic_other").getComponent(player))
                 );
             } else {
                 backupProfile.listBackups().whenComplete((backups, throwable) -> {
@@ -316,7 +316,8 @@ public final class Backup extends Command {
                         if (number < 1 || number > backups.size()) {
                             player.sendMessage(
                                     TranslatableCaption.of("backups.backup_impossible"),
-                                    Template.of("plot", "generic.generic_invalid_choice")
+                                    Template.of("plot",
+                                            TranslatableCaption.of("generic.generic_invalid_choice").getComponent(player))
                             );
                         } else {
                             final com.plotsquared.core.backup.Backup backup =
@@ -325,7 +326,7 @@ public final class Backup extends Command {
                                     .exists(backup.getFile())) {
                                 player.sendMessage(
                                         TranslatableCaption.of("backups.backup_impossible"),
-                                        Template.of("plot", "generic.generic_invalid_choice")
+                                        Template.of("plot", TranslatableCaption.of("generic.generic_invalid_choice").getComponent(player))
                                 );
                             } else {
                                 CmdConfirm.addPending(player, "/plot backup load " + number,

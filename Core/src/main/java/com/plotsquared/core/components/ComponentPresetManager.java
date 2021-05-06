@@ -249,7 +249,8 @@ public class ComponentPresetManager {
             }
             lore.add(MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
                     TranslatableCaption.of("preset.preset_lore_component").getComponent(player),
-                    Template.of("component", preset.getComponent().name().toLowerCase())
+                    Template.of("component", preset.getComponent().name().toLowerCase()),
+                    Template.of("prefix", TranslatableCaption.of("core.prefix").getComponent(player))
             )));
             lore.removeIf(String::isEmpty);
             if (!lore.isEmpty()) {
