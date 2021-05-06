@@ -67,7 +67,9 @@ public class Cluster extends SubCommand {
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
         if (args.length == 0) {
             // return arguments
-            player.sendMessage(TranslatableCaption.of("cluster.cluster_available_args"));
+            player.sendMessage(TranslatableCaption.of("cluster.cluster_available_args"),
+                    Template.of("list", "<dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>")
+            );
             return false;
         }
         String sub = args[0].toLowerCase();
@@ -241,7 +243,10 @@ public class Cluster extends SubCommand {
                         }
                     }
                 }
-                player.sendMessage(TranslatableCaption.of("cluster.cluster_added"));
+                player.sendMessage(
+                        TranslatableCaption.of("cluster.cluster_created"),
+                        Template.of("name", name)
+                );
                 return true;
             }
             case "disband":
@@ -294,7 +299,8 @@ public class Cluster extends SubCommand {
                     }
                 }
                 DBFunc.delete(cluster);
-                player.sendMessage(TranslatableCaption.of("cluster.cluster_deleted"), Template.of("cluster",
+                player.sendMessage(TranslatableCaption.of("cluster.cluster_deleted"), Template.of(
+                        "cluster",
                         String.valueOf(cluster)
                 ));
                 return true;
@@ -797,7 +803,7 @@ public class Cluster extends SubCommand {
             }
             case "sh":
             case "setspawn":
-            case "sethome":
+            case "sethome": {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_CLUSTER_SETHOME)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -840,8 +846,12 @@ public class Cluster extends SubCommand {
                         relative.getX() + "," + relative.getY() + "," + relative.getZ()
                 );
                 player.sendMessage(TranslatableCaption.of("position.position_set"));
+                return true;
+            }
         }
-        player.sendMessage(TranslatableCaption.of("cluster.cluster_available_args"));
+        player.sendMessage(TranslatableCaption.of("cluster.cluster_available_args"),
+                Template.of("list", "<dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>")
+        );
         return false;
     }
 
