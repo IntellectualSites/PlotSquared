@@ -26,7 +26,6 @@
 package com.plotsquared.core.plot.flag.types;
 
 import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
@@ -55,10 +54,7 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
     public F parse(@NonNull String input) throws FlagParseException {
         final N parsed = parseNumber(input);
         if (parsed.compareTo(minimum) < 0 || parsed.compareTo(maximum) > 0) {
-            throw new FlagParseException(this, input, TranslatableCaption.of("invalid.number_not_in_range"),
-                    Templates.of("min", minimum),
-                    Templates.of("max", maximum)
-            );
+            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_integer"));
         }
         return flagOf(parsed);
 

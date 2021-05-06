@@ -139,7 +139,7 @@ public final class FlagCommand extends Command {
                         TranslatableCaption.of("flag.flag_parse_error"),
                         Template.of("flag_name", flag.getName()),
                         Template.of("flag_value", e.getValue()),
-                        Templates.of(player, "error", e.getErrorMessage(), e.getTemplates())
+                        Template.of("error", e.getErrorMessage().getComponent(player))
                 );
                 return false;
             } catch (final Exception e) {
@@ -348,7 +348,7 @@ public final class FlagCommand extends Command {
                     TranslatableCaption.of("flag.flag_parse_error"),
                     Template.of("flag_name", plotFlag.getName()),
                     Template.of("flag_value", e.getValue()),
-                    Templates.of(player, "error", e.getErrorMessage(), e.getTemplates())
+                    Template.of("error", e.getErrorMessage().getComponent(player))
             );
             return;
         }
@@ -410,7 +410,7 @@ public final class FlagCommand extends Command {
                     TranslatableCaption.of("flag.flag_parse_error"),
                     Template.of("flag_name", plotFlag.getName()),
                     Template.of("flag_value", e.getValue()),
-                    Templates.of(player, "error", e.getErrorMessage(), e.getTemplates())
+                    Template.of("error", e.getErrorMessage().getComponent(player))
             );
             return;
         }
@@ -482,7 +482,7 @@ public final class FlagCommand extends Command {
                         TranslatableCaption.of("flag.flag_parse_error"),
                         Template.of("flag_name", flag.getName()),
                         Template.of("flag_value", e.getValue()),
-                        Templates.of(player, "error", e.getErrorMessage(), e.getTemplates())
+                        Template.of("error", String.valueOf(e.getErrorMessage()))
                 );
                 return;
             }

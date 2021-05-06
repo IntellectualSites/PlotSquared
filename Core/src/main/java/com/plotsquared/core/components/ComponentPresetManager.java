@@ -126,7 +126,7 @@ public class ComponentPresetManager {
                             "##wool",
                             0,
                             "",
-                            "<gold>D</gold><green>i</green><red>s</red><yellow>c</yellow><aqua>o</aqua><dark_green> F</dark_green><dark_aqua>l</dark_aqua><light_purple>o</light_purple><blue>o</blue><dark_red>r</dark_red>",
+                            "<rainbow:2>Disco Floor</rainbow>",
                             Arrays.asList("<gold>Spice up your plot floor</gold>"),
                             ItemTypes.YELLOW_WOOL
                     ));

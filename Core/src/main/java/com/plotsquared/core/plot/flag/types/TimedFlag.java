@@ -29,7 +29,6 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
@@ -52,16 +51,14 @@ public abstract class TimedFlag<T, F extends PlotFlag<TimedFlag.Timed<T>, F>>
             throw new FlagParseException(
                     this,
                     input,
-                    TranslatableCaption.of("invalid.not_a_number"),
-                    Template.of("value", split[0])
+                    TranslatableCaption.of("flags.flag_error_integer")
             );
         }
         if (interval < 1) {
             throw new FlagParseException(
                     this,
                     input,
-                    TranslatableCaption.of("invalid.number_not_positive"),
-                    Template.of("value", split[0])
+                    TranslatableCaption.of("flags.flag_error_integer")
             );
         }
         if (split.length == 1) {

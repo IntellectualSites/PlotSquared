@@ -68,8 +68,7 @@ public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag
             throw new FlagParseException(
                     this,
                     input,
-                    TranslatableCaption.of("invalid.not_a_number"),
-                    Template.of("value", input)
+                    TranslatableCaption.of("flags.flag_error_long")
             );
         }
     }
