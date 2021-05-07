@@ -42,7 +42,7 @@ import java.util.concurrent.CompletableFuture;
 @CommandDeclaration(command = "help",
         aliases = "?",
         category = CommandCategory.INFO,
-        usage = "help [category|#]",
+        usage = "help [category | #]",
         permission = "plots.use")
 public class Help extends Command {
 
