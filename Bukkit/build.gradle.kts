@@ -18,7 +18,7 @@ repositories {
 
     maven {
         name = "EssentialsX"
-        url = uri("https://ci.ender.zone/plugin/repository/everything/")
+        url = uri("https://repo.essentialsx.net/releases/")
     }
 
     maven {
