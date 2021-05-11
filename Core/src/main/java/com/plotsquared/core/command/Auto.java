@@ -289,7 +289,7 @@ public class Auto extends SubCommand {
                 player.sendMessage(
                         TranslatableCaption.of("schematics.schematic_invalid_named"),
                         Template.of("schemname", schematic),
-                        Template.of("reason", "non-existant")
+                        Template.of("reason", "non-existent")
                 );
                 return true;
             }

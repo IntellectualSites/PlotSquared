@@ -36,7 +36,6 @@ import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
@@ -1195,7 +1194,7 @@ public abstract class PlotArea {
      *
      * @param flag The flag type (Any instance of the flag)
      * @param <V>  The flag type (Any instance of the flag)
-     * @param <T>  flag valye type
+     * @param <T>  flag value type
      * @return The flag value
      */
     public <T, V extends PlotFlag<T, ?>> T getFlag(final V flag) {
@@ -1222,7 +1221,7 @@ public abstract class PlotArea {
      *
      * @param flag The flag type (Any instance of the flag)
      * @param <V>  The flag type (Any instance of the flag)
-     * @param <T>  flag valye type
+     * @param <T>  flag value type
      * @return The flag value
      */
     public <T, V extends PlotFlag<T, ?>> T getRoadFlag(final V flag) {
