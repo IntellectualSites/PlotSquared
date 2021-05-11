@@ -175,7 +175,7 @@ public class PlotListener {
                     for (UUID uuid : plot.getOwners()) {
                         final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
-                            player.sendMessage(
+                            owner.sendMessage(
                                     TranslatableCaption.of("notification.notify_enter"),
                                     Template.of("player", player.getName()),
                                     Template.of("plot", plot.getId().toString())
@@ -383,7 +383,7 @@ public class PlotListener {
                         for (UUID uuid : plot.getOwners()) {
                             final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                             if ((owner != null) && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
-                                player.sendMessage(
+                                owner.sendMessage(
                                         TranslatableCaption.of("notification.notify_leave"),
                                         Template.of("player", player.getName()),
                                         Template.of("plot", plot.getId().toString())
