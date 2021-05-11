@@ -294,8 +294,12 @@ permissions:
   plots.worldedit.bypass:
     default: false
   plots.gamemode.bypass:
-    default: op
+    default: false
   plots.confirm.bypass:
+    default: false
+  plots.flag.notify-enter.bypass:
+    default: false
+  plots.flag.notify-leave.bypass:
     default: false
 
   plots.permpack.basicflags:

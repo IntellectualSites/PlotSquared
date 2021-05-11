@@ -96,7 +96,10 @@ public class Done extends SubCommand {
             return false;
         }
         plot.addRunning();
-        player.sendMessage(TranslatableCaption.of("web.generating_link"), Template.of("plot", String.valueOf(plot.getId())));
+        player.sendMessage(
+                TranslatableCaption.of("web.generating_link"),
+                Template.of("plot", plot.getId().toString())
+        );
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
         if (ExpireManager.IMP == null || doneRequirements == null) {
             finish(plot, player, true);
