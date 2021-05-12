@@ -251,7 +251,7 @@ public abstract class RegionManager {
     public abstract void clearAllEntities(Location pos1, Location pos2);
 
     /**
-     * Swap two regions withn the same world
+     * Swap two regions within the same world
      *
      * @param pos1     position 1
      * @param pos2     position 2

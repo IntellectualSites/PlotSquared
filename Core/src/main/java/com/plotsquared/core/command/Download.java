@@ -128,14 +128,14 @@ public class Download extends SubCommand {
             player.sendMessage(TranslatableCaption.of("schematics.mca_file_size"));
             plot.addRunning();
             this.worldUtil.saveWorld(world);
-            this.worldUtil.upload(plot, null, null, new RunnableVal<URL>() {
+            this.worldUtil.upload(plot, null, null, new RunnableVal<>() {
                 @Override
                 public void run(URL url) {
                     plot.removeRunning();
                     if (url == null) {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generating_link_failed"),
-                                Template.of("plot", String.valueOf(plot.getId()))
+                                Template.of("plot", plot.getId().toString())
                         );
                         return;
                     }
@@ -146,7 +146,7 @@ public class Download extends SubCommand {
             sendUsage(player);
             return false;
         }
-        player.sendMessage(TranslatableCaption.of("web.generating_link"), Template.of("plot", String.valueOf(plot.getId())));
+        player.sendMessage(TranslatableCaption.of("web.generating_link"), Template.of("plot", plot.getId().toString()));
         return true;
     }
 
@@ -185,7 +185,7 @@ public class Download extends SubCommand {
             schematicHandler
                     .getCompoundTag(plot)
                     .whenComplete((compoundTag, throwable) -> {
-                        schematicHandler.upload(compoundTag, null, null, new RunnableVal<URL>() {
+                        schematicHandler.upload(compoundTag, null, null, new RunnableVal<>() {
                             @Override
                             public void run(URL value) {
                                 player.sendMessage(
@@ -205,7 +205,7 @@ public class Download extends SubCommand {
                     if (throwable != null || !result.isSuccess()) {
                         player.sendMessage(
                                 TranslatableCaption.of("web.generating_link_failed"),
-                                Template.of("plot", String.valueOf(plot.getId()))
+                                Template.of("plot", plot.getId().toString())
                         );
                     } else {
                         player.sendMessage(
