@@ -98,6 +98,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.CauldronLevelChangeEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.world.StructureGrowEvent;
@@ -477,6 +478,49 @@ public class BlockEventListener implements Listener {
                 }
                 break;
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onCauldronEmpty(CauldronLevelChangeEvent event) {
+        Entity entity = event.getEntity();
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(location);
+        // TODO Add flag to allow 1.17 dripstone-based machines if desired / rain-based automatic filling
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
+            BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
+            if (plot != null) {
+                if (!plot.hasOwner()) {
+                    if (Permissions
+                            .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
+                        return;
+                    }
+                } else if (!plot.isAdded(plotPlayer.getUUID())) {
+                    if (Permissions
+                            .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
+                        return;
+                    }
+                } else {
+                    return;
+                }
+            } else {
+                if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
+                    return;
+                }
+                if (this.worldEdit != null && plotPlayer.getAttribute("worldedit")) {
+                    if (player.getInventory().getItemInMainHand().getType() == Material
+                            .getMaterial(this.worldEdit.getConfiguration().wandItem)) {
+                        return;
+                    }
+                }
+            }
+        }
+
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
