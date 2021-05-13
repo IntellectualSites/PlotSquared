@@ -288,6 +288,10 @@ permissions:
     default: false
   plots.admin.flight:
     default: false
+  plots.admin.command.blocked-cmds.shared:
+    default: false
+  plots.admin.command.blocked-cmds.road:
+    default: false
 
   plots.teleport.delay.bypass:
     default: false
