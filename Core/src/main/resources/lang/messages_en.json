@@ -670,5 +670,9 @@
   "commands.description.trust": "<gray>Allow a user to build in a plot and use WorldEdit while the plot owner is offline.</gray>",
   "commands.description.unlink": "<gray>Unlink a mega-plot.</gray>",
   "commands.description.visit": "<gray>Visit someones plot.</gray>",
-  "commands.description.weanywhere": "<gray>Force bypass of WorldEdit restrictions.</gray>"
+  "commands.description.weanywhere": "<gray>Force bypass of WorldEdit restrictions.</gray>",
+  "plotjukebox.jukebox_header": "Plot Jukebox",
+  "plotjukebox.click_to_play": "<green>Click to play!</green>",
+  "plotjukebox.cancel_music": "<gold>Cancel music</gold>",
+  "plotjukebox.reset_music": "<red>Click to remove the music!</red>"
 }

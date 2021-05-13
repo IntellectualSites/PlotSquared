@@ -85,7 +85,7 @@ public class Music extends SubCommand {
             );
             return true;
         }
-        PlotInventory inv = new PlotInventory(this.inventoryUtil, player, 2, "Plot Jukebox") {
+        PlotInventory inv = new PlotInventory(this.inventoryUtil, player, 2, TranslatableCaption.of("plotjukebox.jukebox_header").getComponent(player)) {
             @Override
             public boolean onClick(int index) {
                 PlotItemStack item = getItem(index);
@@ -132,15 +132,15 @@ public class Music extends SubCommand {
 
         for (final String disc : DISCS) {
             final String name = String.format("<gold>%s</gold>", disc);
-            final String[] lore = {"<green>Click to play!</green>"};
+            final String[] lore = {TranslatableCaption.of("plotjukebox.click_to_play").getComponent(player)};
             final PlotItemStack item = new PlotItemStack(disc, 1, name, lore);
             inv.setItem(index++, item);
         }
 
         // Always add the cancel button
         // if (player.getMeta("music") != null) {
-        String name = "<gold>Cancel music</gold>";
-        String[] lore = {"<red>Click to remove the music!<reset>"};
+        String name = TranslatableCaption.of("plotjukebox.cancel_music").getComponent(player);
+        String[] lore = {TranslatableCaption.of("plotjukebox.reset_music").getComponent(player)};
         inv.setItem(index, new PlotItemStack("bedrock", 1, name, lore));
         // }
 
