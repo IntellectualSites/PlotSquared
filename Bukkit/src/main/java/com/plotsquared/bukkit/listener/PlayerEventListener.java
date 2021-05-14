@@ -51,6 +51,8 @@ import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.implementations.AnimalInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockedCmdsFlag;
 import com.plotsquared.core.plot.flag.implementations.ChatFlag;
+import com.plotsquared.core.plot.flag.implementations.DenyPortalTravelFlag;
+import com.plotsquared.core.plot.flag.implementations.DenyPortalsFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyTeleportFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.DropProtectionFlag;
@@ -131,12 +133,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -1687,6 +1691,50 @@ public class PlayerEventListener extends PlotListener implements Listener {
         BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
         // we're stripping the country code as we don't want to differ between countries
         player.setLocale(Locale.forLanguageTag(event.getLocale().substring(0, 2)));
+    }
+
+    @EventHandler
+    public void onPortalEnter(PlayerPortalEvent event) {
+        Location location = BukkitUtil.adapt(event.getPlayer().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (area.isRoadFlags() && area.getRoadFlag(DenyPortalTravelFlag.class)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (plot.getFlag(DenyPortalTravelFlag.class)) {
+            if (plot.getFlag(DenyPortalTravelFlag.class)) {
+                plot.debug(event.getPlayer().getName() + " did not travel thru a portal because of deny-portal-travel = true");
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPortalCreation(PortalCreateEvent event) {
+        Location location = BukkitUtil.adapt(event.getEntity().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (area.isRoadFlags() && area.getRoadFlag(DenyPortalsFlag.class)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (plot.getFlag(DenyPortalsFlag.class)) {
+            if (plot.getFlag(DenyPortalsFlag.class)) {
+                plot.debug(event.getEntity().getName() + " did not create a portal because of deny-portals = true");
+                event.setCancelled(true);
+            }
+        }
     }
 
 }

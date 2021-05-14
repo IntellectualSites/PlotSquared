@@ -38,6 +38,8 @@ import com.plotsquared.core.plot.flag.implementations.ChatFlag;
 import com.plotsquared.core.plot.flag.implementations.CoralDryFlag;
 import com.plotsquared.core.plot.flag.implementations.CropGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyExitFlag;
+import com.plotsquared.core.plot.flag.implementations.DenyPortalTravelFlag;
+import com.plotsquared.core.plot.flag.implementations.DenyPortalsFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyTeleportFlag;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.plot.flag.implementations.DeviceInteractFlag;
@@ -185,6 +187,8 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(PreventCreativeCopyFlag.PREVENT_CREATIVE_COPY_FALSE);
         this.addFlag(LeafDecayFlag.LEAF_DECAY_TRUE);
         this.addFlag(CropGrowFlag.CROP_GROW_TRUE);
+        this.addFlag(DenyPortalTravelFlag.DENY_PORTAL_TRAVEL_FALSE);
+        this.addFlag(DenyPortalsFlag.DENY_PORTALS_FALSE);
 
         // Enum Flags
         this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);
