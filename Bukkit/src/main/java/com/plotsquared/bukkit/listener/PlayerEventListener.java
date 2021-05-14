@@ -61,6 +61,7 @@ import com.plotsquared.core.plot.flag.implementations.HangingPlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.HostileInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.ItemDropFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepInventoryFlag;
+import com.plotsquared.core.plot.flag.implementations.LecternReadBookFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.PlayerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
@@ -136,6 +137,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
@@ -1732,6 +1734,28 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (plot.getFlag(DenyPortalsFlag.class)) {
             if (plot.getFlag(DenyPortalsFlag.class)) {
                 plot.debug(event.getEntity().getName() + " did not create a portal because of deny-portals = true");
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event) {
+        Location location = BukkitUtil.adapt(event.getPlayer().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (area.isRoadFlags() && area.getRoadFlag(LecternReadBookFlag.class)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (plot.getFlag(LecternReadBookFlag.class)) {
+            if (plot.getFlag(LecternReadBookFlag.class)) {
+                plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
                 event.setCancelled(true);
             }
         }

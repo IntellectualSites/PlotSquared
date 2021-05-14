@@ -72,6 +72,7 @@ import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepInventoryFlag;
 import com.plotsquared.core.plot.flag.implementations.KelpGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.LeafDecayFlag;
+import com.plotsquared.core.plot.flag.implementations.LecternReadBookFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscCapFlag;
@@ -189,6 +190,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(CropGrowFlag.CROP_GROW_TRUE);
         this.addFlag(DenyPortalTravelFlag.DENY_PORTAL_TRAVEL_FALSE);
         this.addFlag(DenyPortalsFlag.DENY_PORTALS_FALSE);
+        this.addFlag(LecternReadBookFlag.LECTERN_READ_BOOK_FALSE);
 
         // Enum Flags
         this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);
