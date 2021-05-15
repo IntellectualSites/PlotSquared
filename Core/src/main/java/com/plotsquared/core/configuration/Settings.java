@@ -167,9 +167,6 @@ public class Settings extends Config {
         Teleport.ON_CLEAR = config.getBoolean("teleport.on_clear", Teleport.ON_CLEAR);
         Teleport.ON_DELETE = config.getBoolean("teleport.on_delete", Teleport.ON_DELETE);
 
-        // WorldEdit
-        //WE_ALLOW_HELPER = config.getBoolean("worldedit.enable-for-helpers");
-
         // Chunk processor
         Enabled_Components.CHUNK_PROCESSOR =
                 config.getBoolean("chunk-processor.enabled", Enabled_Components.CHUNK_PROCESSOR);

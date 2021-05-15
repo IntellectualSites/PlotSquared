@@ -81,7 +81,7 @@ public class Rate extends SubCommand {
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
-                case "next": {
+                case "next" -> {
                     final List<Plot> plots = PlotQuery.newQuery().whereBasePlot().asList();
                     plots.sort((p1, p2) -> {
                         double v1 = 0;
@@ -115,7 +115,7 @@ public class Rate extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
                     return false;
                 }
-                case "purge": {
+                case "purge" -> {
                     final Plot plot = player.getCurrentPlot();
                     if (plot == null) {
                         player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
@@ -292,7 +292,7 @@ public class Rate extends SubCommand {
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 
-    private class MutableInt {
+    private static class MutableInt {
 
         private int value;
 

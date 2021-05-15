@@ -129,7 +129,7 @@ public class HomeCommand extends Command {
         PlotArea plotArea;
         boolean basePlotOnly = true;
         switch (args.length) {
-            case 1:
+            case 1 -> {
                 identifier = args[0];
                 if (MathMan.isInteger(identifier)) {
                     try {
@@ -160,8 +160,8 @@ public class HomeCommand extends Command {
                 }
                 // it wasn't a valid plot id, trying to find plot by alias
                 query.withAlias(identifier);
-                break;
-            case 2:
+            }
+            case 2 -> {
                 // we assume args[0] is a plot area and args[1] an identifier
                 plotArea = this.plotAreaManager.getPlotAreaByString(args[0]);
                 identifier = args[1];
@@ -201,10 +201,8 @@ public class HomeCommand extends Command {
                 // as the query already filters by owner, this is fine
                 basePlotOnly = false;
                 query.withPlot(plot);
-                break;
-            case 0:
-                sortBySettings(query, player);
-                break;
+            }
+            case 0 -> sortBySettings(query, player);
         }
         if (basePlotOnly) {
             query.whereBasePlot();
@@ -226,7 +224,7 @@ public class HomeCommand extends Command {
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
         switch (args.length - 1) {
-            case 0:
+            case 0 -> {
                 completions.addAll(
                         TabCompletions.completeAreas(args[0]));
                 if (args[0].isEmpty()) {
@@ -238,11 +236,9 @@ public class HomeCommand extends Command {
                 // complete more numbers from the already given input
                 completions.addAll(
                         TabCompletions.completeNumbers(args[0], 10, 999));
-                break;
-            case 1:
-                completions.addAll(
-                        TabCompletions.completeNumbers(args[1], 10, 999));
-                break;
+            }
+            case 1 -> completions.addAll(
+                    TabCompletions.completeNumbers(args[1], 10, 999));
         }
         return completions;
     }

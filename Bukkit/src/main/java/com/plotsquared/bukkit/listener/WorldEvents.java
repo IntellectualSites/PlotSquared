@@ -53,8 +53,7 @@ public class WorldEvents implements Listener {
     public void onWorldInit(WorldInitEvent event) {
         World world = event.getWorld();
         String name = world.getName();
-        if (this.plotAreaManager instanceof SinglePlotAreaManager) {
-            final SinglePlotAreaManager single = (SinglePlotAreaManager) this.plotAreaManager;
+        if (this.plotAreaManager instanceof final SinglePlotAreaManager single) {
             if (single.isWorld(name)) {
                 world.setKeepSpawnInMemory(false);
                 return;

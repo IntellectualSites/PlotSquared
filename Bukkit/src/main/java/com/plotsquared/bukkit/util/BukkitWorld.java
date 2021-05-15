@@ -87,10 +87,9 @@ public class BukkitWorld implements World<org.bukkit.World> {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof BukkitWorld)) {
+        if (!(o instanceof final BukkitWorld other)) {
             return false;
         }
-        final BukkitWorld other = (BukkitWorld) o;
         if (!other.canEqual(this)) {
             return false;
         }

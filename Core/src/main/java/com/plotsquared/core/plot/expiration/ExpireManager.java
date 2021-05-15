@@ -70,7 +70,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class ExpireManager {
 
     public static ExpireManager IMP;
-    private final Logger logger = LoggerFactory.getLogger("P2/" + ExpireManager.class);
     private final ConcurrentHashMap<UUID, Long> dates_cache;
     private final ConcurrentHashMap<UUID, Long> account_age_cache;
     private final EventDispatcher eventDispatcher;
@@ -195,7 +194,7 @@ public class ExpireManager {
     }
 
     public boolean runAutomatedTask() {
-        return runTask(new RunnableVal3<Plot, Runnable, Boolean>() {
+        return runTask(new RunnableVal3<>() {
             @Override
             public void run(Plot plot, Runnable runnable, Boolean confirm) {
                 if (confirm) {
@@ -346,10 +345,10 @@ public class ExpireManager {
                         }
                     }
                     final RunnableVal<PlotAnalysis> handleAnalysis =
-                            new RunnableVal<PlotAnalysis>() {
+                            new RunnableVal<>() {
                                 @Override
                                 public void run(final PlotAnalysis changed) {
-                                    passesComplexity(changed, expired, new RunnableVal<Boolean>() {
+                                    passesComplexity(changed, expired, new RunnableVal<>() {
                                         @Override
                                         public void run(Boolean confirmation) {
                                             expiredTask.run(
@@ -379,7 +378,7 @@ public class ExpireManager {
 
                     PlotAnalysis analysis = newPlot.getComplexity(null);
                     if (analysis != null) {
-                        passesComplexity(analysis, expired, new RunnableVal<Boolean>() {
+                        passesComplexity(analysis, expired, new RunnableVal<>() {
                             @Override
                             public void run(Boolean value) {
                                 doAnalysis.run();

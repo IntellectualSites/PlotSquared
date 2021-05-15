@@ -34,6 +34,7 @@ import com.plotsquared.core.plot.PlotArea;
         permission = "plots.chat",
         category = CommandCategory.CHAT,
         requiredType = RequiredType.PLAYER)
+@Deprecated
 public class Chat extends SubCommand {
 
     @Override

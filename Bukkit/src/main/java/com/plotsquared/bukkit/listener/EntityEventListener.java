@@ -111,8 +111,7 @@ public class EntityEventListener implements Listener {
 */
         if (!BukkitEntityUtil.entityDamage(damager, victim, event.getCause())) {
             if (event.isCancelled()) {
-                if (victim instanceof Ageable) {
-                    Ageable ageable = (Ageable) victim;
+                if (victim instanceof Ageable ageable) {
                     if (ageable.getAge() == -24000) {
                         ageable.setAge(0);
                         ageable.setAdult();

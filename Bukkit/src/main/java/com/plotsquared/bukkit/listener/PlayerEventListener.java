@@ -436,8 +436,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!vehicle.getPassengers().isEmpty()) {
                 Entity passenger = vehicle.getPassengers().get(0);
 
-                if (passenger instanceof Player) {
-                    final Player player = (Player) passenger;
+                if (passenger instanceof final Player player) {
                     // reset
                     if (moveTmp == null) {
                         moveTmp = new PlayerMoveEvent(null, from, to);
@@ -778,10 +777,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
 
         HumanEntity clicker = event.getWhoClicked();
-        if (!(clicker instanceof Player)) {
+        if (!(clicker instanceof Player player)) {
             return;
         }
-        Player player = (Player) clicker;
         BukkitPlayer pp = BukkitUtil.adapt(player);
         final PlotInventory inventory = PlotInventory.getOpenPlotInventory(pp);
         if (inventory != null && event.getRawSlot() == event.getSlot()) {
@@ -1029,7 +1027,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
         Block block = event.getClickedBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         Action action = event.getAction();
-        outer:
         switch (action) {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
@@ -1077,12 +1074,12 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (PaperLib.isPaper()) {
                     if (MaterialTags.SPAWN_EGGS.isTagged(type) || Material.EGG.equals(type)) {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
-                        break outer;
+                        break;
                     }
                 } else {
                     if (type.toString().toLowerCase().endsWith("egg")) {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
-                        break outer;
+                        break;
                     }
                 }
                 if (type.isEdible()) {
@@ -1090,34 +1087,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     return;
                 }
                 switch (type) {
-                    case ACACIA_BOAT:
-                    case BIRCH_BOAT:
-                    case CHEST_MINECART:
-                    case COMMAND_BLOCK_MINECART:
-                    case DARK_OAK_BOAT:
-                    case FURNACE_MINECART:
-                    case HOPPER_MINECART:
-                    case JUNGLE_BOAT:
-                    case MINECART:
-                    case OAK_BOAT:
-                    case SPRUCE_BOAT:
-                    case TNT_MINECART:
-                        eventType = PlayerBlockEventType.PLACE_VEHICLE;
-                        break outer;
-                    case FIREWORK_ROCKET:
-                    case FIREWORK_STAR:
-                        eventType = PlayerBlockEventType.SPAWN_MOB;
-                        break outer;
-                    case BOOK:
-                    case KNOWLEDGE_BOOK:
-                    case WRITABLE_BOOK:
-                    case WRITTEN_BOOK:
-                        eventType = PlayerBlockEventType.READ;
-                        break outer;
-                    case ARMOR_STAND:
+                    case ACACIA_BOAT, BIRCH_BOAT, CHEST_MINECART, COMMAND_BLOCK_MINECART, DARK_OAK_BOAT, FURNACE_MINECART, HOPPER_MINECART, JUNGLE_BOAT, MINECART, OAK_BOAT, SPRUCE_BOAT, TNT_MINECART -> eventType = PlayerBlockEventType.PLACE_VEHICLE;
+                    case FIREWORK_ROCKET, FIREWORK_STAR -> eventType = PlayerBlockEventType.SPAWN_MOB;
+                    case BOOK, KNOWLEDGE_BOOK, WRITABLE_BOOK, WRITTEN_BOOK -> eventType = PlayerBlockEventType.READ;
+                    case ARMOR_STAND -> {
                         location = BukkitUtil.adapt(block.getRelative(event.getBlockFace()).getLocation());
                         eventType = PlayerBlockEventType.PLACE_MISC;
-                        break outer;
+                    }
                 }
                 break;
             }
@@ -1231,10 +1207,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         HumanEntity closer = event.getPlayer();
-        if (!(closer instanceof Player)) {
+        if (!(closer instanceof Player player)) {
             return;
         }
-        Player player = (Player) closer;
         PlotInventory.removePlotInventoryOpen(BukkitUtil.adapt(player));
     }
 
@@ -1359,8 +1334,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
         Entity remover = event.getRemover();
-        if (remover instanceof Player) {
-            Player p = (Player) remover;
+        if (remover instanceof Player p) {
             Location location = BukkitUtil.adapt(event.getEntity().getLocation());
             PlotArea area = location.getPlotArea();
             if (area == null) {
@@ -1398,10 +1372,8 @@ public class PlayerEventListener extends PlotListener implements Listener {
                             + " could not break hanging entity because hanging-break = false");
                 }
             }
-        } else if (remover instanceof Projectile) {
-            Projectile p = (Projectile) remover;
-            if (p.getShooter() instanceof Player) {
-                Player shooter = (Player) p.getShooter();
+        } else if (remover instanceof Projectile p) {
+            if (p.getShooter() instanceof Player shooter) {
                 Location location = BukkitUtil.adapt(event.getEntity().getLocation());
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
@@ -1535,8 +1507,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             return;
         }
         Entity attacker = event.getAttacker();
-        if (attacker instanceof Player) {
-            Player p = (Player) attacker;
+        if (attacker instanceof Player p) {
             BukkitPlayer pp = BukkitUtil.adapt(p);
             Plot plot = area.getPlot(location);
             if (plot == null) {
@@ -1642,8 +1613,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent event) {
         LivingEntity ent = event.getEntity();
-        if (ent instanceof Player) {
-            Player player = (Player) ent;
+        if (ent instanceof Player player) {
             BukkitPlayer pp = BukkitUtil.adapt(player);
             Location location = pp.getLocation();
             PlotArea area = location.getPlotArea();

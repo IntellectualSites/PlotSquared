@@ -33,7 +33,7 @@ import java.util.Random;
 
 public class FlatRandomCollection<T> extends RandomCollection<T> {
 
-    private T[] values;
+    private final T[] values;
 
     public FlatRandomCollection(Map<T, Double> weights, Random random) {
         super(weights, random);

@@ -314,10 +314,8 @@ public class Visit extends Command {
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
         switch (args.length - 1) {
-            case 0:
-                completions.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
-                break;
-            case 1:
+            case 0 -> completions.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            case 1 -> {
                 completions.addAll(
                         TabCompletions.completeAreas(args[1]));
                 if (args[1].isEmpty()) {
@@ -328,8 +326,8 @@ public class Visit extends Command {
                 }
                 completions.addAll(
                         TabCompletions.completeNumbers(args[1], 10, 999));
-                break;
-            case 2:
+            }
+            case 2 -> {
                 if (args[2].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(
@@ -338,7 +336,7 @@ public class Visit extends Command {
                 }
                 completions.addAll(
                         TabCompletions.completeNumbers(args[2], 10, 999));
-                break;
+            }
         }
 
         return completions;

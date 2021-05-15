@@ -48,18 +48,11 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
 
     @Override
     public FlyFlag parse(final @NonNull String input) {
-        switch (input.toLowerCase()) {
-            case "true":
-            case "enabled":
-            case "allow":
-                return FLIGHT_FLAG_ENABLED;
-            case "false":
-            case "disabled":
-            case "disallow":
-                return FLIGHT_FLAG_DISABLED;
-            default:
-                return FLIGHT_FLAG_DEFAULT;
-        }
+        return switch (input.toLowerCase()) {
+            case "true", "enabled", "allow" -> FLIGHT_FLAG_ENABLED;
+            case "false", "disabled", "disallow" -> FLIGHT_FLAG_DISABLED;
+            default -> FLIGHT_FLAG_DEFAULT;
+        };
     }
 
     @Override

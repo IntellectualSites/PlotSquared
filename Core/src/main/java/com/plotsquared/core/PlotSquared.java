@@ -1077,22 +1077,15 @@ public class PlotSquared {
                 try {
                     String base = "worlds." + world + ".";
                     switch (key) {
-                        case "s":
-                        case "size":
-                            this.worldConfiguration.set(
-                                    base + "plot.size",
-                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
-                            );
-                            break;
-                        case "g":
-                        case "gap":
-                            this.worldConfiguration.set(
-                                    base + "road.width",
-                                    ConfigurationUtil.INTEGER.parseString(value).shortValue()
-                            );
-                            break;
-                        case "h":
-                        case "height":
+                        case "s", "size" -> this.worldConfiguration.set(
+                                base + "plot.size",
+                                ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                        );
+                        case "g", "gap" -> this.worldConfiguration.set(
+                                base + "road.width",
+                                ConfigurationUtil.INTEGER.parseString(value).shortValue()
+                        );
+                        case "h", "height" -> {
                             this.worldConfiguration.set(
                                     base + "road.height",
                                     ConfigurationUtil.INTEGER.parseString(value).shortValue()
@@ -1105,38 +1098,27 @@ public class PlotSquared {
                                     base + "wall.height",
                                     ConfigurationUtil.INTEGER.parseString(value).shortValue()
                             );
-                            break;
-                        case "f":
-                        case "floor":
-                            this.worldConfiguration.set(
-                                    base + "plot.floor",
-                                    ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
-                            );
-                            break;
-                        case "m":
-                        case "main":
-                            this.worldConfiguration.set(
-                                    base + "plot.filling",
-                                    ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
-                            );
-                            break;
-                        case "w":
-                        case "wall":
-                            this.worldConfiguration.set(
-                                    base + "wall.filling",
-                                    ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
-                            );
-                            break;
-                        case "b":
-                        case "border":
-                            this.worldConfiguration.set(
-                                    base + "wall.block",
-                                    ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
-                            );
-                            break;
-                        default:
+                        }
+                        case "f", "floor" -> this.worldConfiguration.set(
+                                base + "plot.floor",
+                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
+                        );
+                        case "m", "main" -> this.worldConfiguration.set(
+                                base + "plot.filling",
+                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
+                        );
+                        case "w", "wall" -> this.worldConfiguration.set(
+                                base + "wall.filling",
+                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
+                        );
+                        case "b", "border" -> this.worldConfiguration.set(
+                                base + "wall.block",
+                                ConfigurationUtil.BLOCK_BUCKET.parseString(value).toString()
+                        );
+                        default -> {
                             logger.error("Key not found: {}", element);
                             return false;
+                        }
                     }
                 } catch (Exception e) {
                     logger.error("Invalid value '{}' for arg '{}'", value, element);

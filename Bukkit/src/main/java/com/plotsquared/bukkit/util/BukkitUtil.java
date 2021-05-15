@@ -297,8 +297,7 @@ public class BukkitUtil extends WorldUtil {
         );
         try {
             return TaskManager.getPlatformImplementation().sync(() -> {
-                if (block.getState() instanceof Sign) {
-                    Sign sign = (Sign) block.getState();
+                if (block.getState() instanceof Sign sign) {
                     return sign.getLines();
                 }
                 return new String[0];
@@ -364,8 +363,7 @@ public class BukkitUtil extends WorldUtil {
                 block.setBlockData(sign, false);
             }
             final org.bukkit.block.BlockState blockstate = block.getState();
-            if (blockstate instanceof Sign) {
-                final Sign sign = (Sign) blockstate;
+            if (blockstate instanceof final Sign sign) {
                 for (int i = 0; i < lines.length; i++) {
                     sign.setLine(i, LEGACY_COMPONENT_SERIALIZER
                             .serialize(MINI_MESSAGE.parse(lines[i].getComponent(LocaleHolder.console()), replacements)));
@@ -454,23 +452,20 @@ public class BukkitUtil extends WorldUtil {
     public @NonNull Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final @NonNull String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
         switch (category) {
-            case "animal": {
+            case "animal" -> {
                 allowedInterfaces.add(IronGolem.class);
                 allowedInterfaces.add(Snowman.class);
                 allowedInterfaces.add(Animals.class);
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
             }
-            break;
-            case "tameable": {
+            case "tameable" -> {
                 allowedInterfaces.add(Tameable.class);
             }
-            break;
-            case "vehicle": {
+            case "vehicle" -> {
                 allowedInterfaces.add(Vehicle.class);
             }
-            break;
-            case "hostile": {
+            case "hostile" -> {
                 allowedInterfaces.add(Shulker.class);
                 allowedInterfaces.add(Monster.class);
                 allowedInterfaces.add(Boss.class);
@@ -479,20 +474,16 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Phantom.class);
                 allowedInterfaces.add(EnderCrystal.class);
             }
-            break;
-            case "hanging": {
+            case "hanging" -> {
                 allowedInterfaces.add(Hanging.class);
             }
-            break;
-            case "villager": {
+            case "villager" -> {
                 allowedInterfaces.add(NPC.class);
             }
-            break;
-            case "projectile": {
+            case "projectile" -> {
                 allowedInterfaces.add(Projectile.class);
             }
-            break;
-            case "other": {
+            case "other" -> {
                 allowedInterfaces.add(ArmorStand.class);
                 allowedInterfaces.add(FallingBlock.class);
                 allowedInterfaces.add(Item.class);
@@ -504,15 +495,12 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(EnderSignal.class);
                 allowedInterfaces.add(Firework.class);
             }
-            break;
-            case "player": {
+            case "player" -> {
                 allowedInterfaces.add(Player.class);
             }
-            break;
-            default: {
+            default -> {
                 logger.error("Unknown entity category requested: {}", category);
             }
-            break;
         }
         final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();
         outer:

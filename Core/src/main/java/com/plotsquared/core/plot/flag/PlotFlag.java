@@ -193,11 +193,10 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof PlotFlag)) {
+        if (!(o instanceof final PlotFlag<?, ?> other)) {
             return false;
         }
-        final PlotFlag<?, ?> other = (PlotFlag<?, ?>) o;
-        if (!other.canEqual((Object) this)) {
+        if (!other.canEqual(this)) {
             return false;
         }
         final Object this$value = this.getValue();

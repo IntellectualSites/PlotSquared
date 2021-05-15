@@ -105,7 +105,7 @@ public class Done extends SubCommand {
             finish(plot, player, true);
             plot.removeRunning();
         } else {
-            this.hybridUtils.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
+            this.hybridUtils.analyzePlot(plot, new RunnableVal<>() {
                 @Override
                 public void run(PlotAnalysis value) {
                     plot.removeRunning();

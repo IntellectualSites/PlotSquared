@@ -86,7 +86,7 @@ public class SchematicCmd extends SubCommand {
         }
         String arg = args[0].toLowerCase();
         switch (arg) {
-            case "paste": {
+            case "paste" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_PASTE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -179,10 +179,8 @@ public class SchematicCmd extends SubCommand {
                             }
                     );
                 });
-                break;
             }
-            case "saveall":
-            case "exportall": {
+            case "saveall", "exportall" -> {
                 Location loc = player.getLocation();
                 final Plot plot = loc.getPlotAbs();
                 if (!(player instanceof ConsolePlayer)) {
@@ -227,10 +225,8 @@ public class SchematicCmd extends SubCommand {
                             Template.of("amount", String.valueOf(plots.size()))
                     );
                 }
-                break;
             }
-            case "export":
-            case "save":
+            case "export", "save" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_SAVE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -272,8 +268,8 @@ public class SchematicCmd extends SubCommand {
                 } else {
                     player.sendMessage(TranslatableCaption.of("schematics.schematic_exportall_started"));
                 }
-                break;
-            case "list": {
+            }
+            case "list" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_SCHEMATIC_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -287,13 +283,10 @@ public class SchematicCmd extends SubCommand {
                         Template.of("list", string)
                 );
             }
-            break;
-            default:
-                player.sendMessage(
-                        TranslatableCaption.of("commandconfig.command_syntax"),
-                        Template.of("value", "Possible values: save, paste, exportall, list")
-                );
-                break;
+            default -> player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "Possible values: save, paste, exportall, list")
+            );
         }
         return true;
     }

@@ -64,7 +64,7 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     boolean Eblocked = false;
     private int count;
     private Extent parent;
-    private Map<Long, Integer[]> tileEntityCount = new HashMap<>();
+    private final Map<Long, Integer[]> tileEntityCount = new HashMap<>();
 
     public ProcessedWEExtent(
             String world,

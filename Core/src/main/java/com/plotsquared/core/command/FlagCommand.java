@@ -119,8 +119,7 @@ public final class FlagCommand extends Command {
                 }
             } catch (NumberFormatException ignore) {
             }
-        } else if (flag instanceof ListFlag) {
-            final ListFlag<?, ?> listFlag = (ListFlag<?, ?>) flag;
+        } else if (flag instanceof final ListFlag<?, ?> listFlag) {
             try {
                 PlotFlag<? extends List<?>, ?> parsedFlag = listFlag.parse(value);
                 for (final Object entry : parsedFlag.getValue()) {
@@ -295,7 +294,7 @@ public final class FlagCommand extends Command {
                                 }).collect(Collectors.toList());
                     }
                 }
-            } catch (final Exception e) {
+            } catch (final Exception ignored) {
             }
         }
         return tabOf(player, args, space);

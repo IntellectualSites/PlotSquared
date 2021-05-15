@@ -196,10 +196,7 @@ public class SQLManager implements AbstractDB {
         }
         TaskManager.runTaskAsync(() -> {
             long last = System.currentTimeMillis();
-            while (true) {
-                if (SQLManager.this.closed) {
-                    break;
-                }
+            while (!SQLManager.this.closed) {
                 boolean hasTask =
                         !globalTasks.isEmpty() || !playerTasks.isEmpty() || !plotTasks.isEmpty()
                                 || !clusterTasks.isEmpty();
@@ -685,7 +682,7 @@ public class SQLManager implements AbstractDB {
      * @param myList list of plots to be created
      */
     public void createTiers(ArrayList<UUIDPair> myList, final String tier, Runnable whenDone) {
-        StmtMod<UUIDPair> mod = new StmtMod<UUIDPair>() {
+        StmtMod<UUIDPair> mod = new StmtMod<>() {
             @Override
             public String getCreateMySQL(int size) {
                 return getCreateMySQL(size, SQLManager.this.CREATE_TIERS.replaceAll("%tier%", tier),
@@ -750,12 +747,10 @@ public class SQLManager implements AbstractDB {
                     e.printStackTrace();
                     continue;
                 }
-                if (Settings.DEBUG) {
-                    logger.info(
-                            "- Finished converting flag values for plot with entry ID: {}",
-                            plot.getId()
-                    );
-                }
+                logger.info(
+                        "- Finished converting flag values for plot with entry ID: {}",
+                        plot.getId()
+                );
             }
         } catch (final Exception e) {
             logger.error("Failed to store flag values", e);
@@ -770,7 +765,7 @@ public class SQLManager implements AbstractDB {
      * @param myList list of plots to be created
      */
     public void createPlots(List<Plot> myList, Runnable whenDone) {
-        StmtMod<Plot> mod = new StmtMod<Plot>() {
+        StmtMod<Plot> mod = new StmtMod<>() {
             @Override
             public String getCreateMySQL(int size) {
                 return getCreateMySQL(size, SQLManager.this.CREATE_PLOTS, 5);
@@ -1007,7 +1002,7 @@ public class SQLManager implements AbstractDB {
     }
 
     public void createEmptySettings(final ArrayList<Integer> myList, final Runnable whenDone) {
-        final StmtMod<Integer> mod = new StmtMod<Integer>() {
+        final StmtMod<Integer> mod = new StmtMod<>() {
             @Override
             public String getCreateMySQL(int size) {
                 return getCreateMySQL(size, SQLManager.this.CREATE_SETTINGS, 1);
@@ -1673,7 +1668,7 @@ public class SQLManager implements AbstractDB {
     }
 
     public void deleteRows(ArrayList<Integer> rowIds, final String table, final String column) {
-        setBulk(rowIds, new StmtMod<Integer>() {
+        setBulk(rowIds, new StmtMod<>() {
 
             @Override
             public String getCreateMySQL(int size) {
@@ -1786,13 +1781,10 @@ public class SQLManager implements AbstractDB {
                             String.format("%.1f", ((float) flagsProcessed / totalFlags) * 100)
                     );
                 }
-
-                if (Settings.DEBUG) {
-                    logger.info(
-                            "- Finished converting flags for plot with entry ID: {}",
-                            plotFlagEntry.getKey()
-                    );
-                }
+                logger.info(
+                        "- Finished converting flags for plot with entry ID: {}",
+                        plotFlagEntry.getKey()
+                );
             }
         } catch (final Exception e) {
             logger.error("Failed to store flag values", e);
@@ -1905,7 +1897,7 @@ public class SQLManager implements AbstractDB {
                             if (last != null) {
                                 if (Settings.Enabled_Components.DATABASE_PURGER) {
                                     toDelete.add(last.temp);
-                                } else if (Settings.DEBUG) {
+                                } else {
                                     logger.info(
                                             "Plot #{}({}) in `{}plot` is a duplicate."
                                                     + " Delete this plot or set `database-purger: true` in the settings.yml",
@@ -1942,7 +1934,7 @@ public class SQLManager implements AbstractDB {
                                 plot.getSettings().getRatings().put(user, r.getInt("rating"));
                             } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                                 toDelete.add(id);
-                            } else if (Settings.DEBUG) {
+                            } else {
                                 logger.info("Entry #{}({}) in `plot_rating` does not exist."
                                         + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                             }
@@ -1970,7 +1962,7 @@ public class SQLManager implements AbstractDB {
                             plot.getTrusted().add(user);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else if (Settings.DEBUG) {
+                        } else {
                             logger.info("Entry #{}({}) in `plot_helpers` does not exist."
                                     + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
@@ -1997,7 +1989,7 @@ public class SQLManager implements AbstractDB {
                             plot.getMembers().add(user);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else if (Settings.DEBUG) {
+                        } else {
                             logger.info("Entry #{}({}) in `plot_trusted` does not exist."
                                     + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
@@ -2024,7 +2016,7 @@ public class SQLManager implements AbstractDB {
                             plot.getDenied().add(user);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else if (Settings.DEBUG) {
+                        } else {
                             logger.info("Entry #{}({}) in `plot_denied` does not exist."
                                     + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
@@ -2065,7 +2057,7 @@ public class SQLManager implements AbstractDB {
                             }
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else if (Settings.DEBUG) {
+                        } else {
                             logger.info("Entry #{}({}) in `plot_flags` does not exist."
                                     + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
@@ -2076,12 +2068,10 @@ public class SQLManager implements AbstractDB {
                         for (final Map.Entry<Plot, Collection<PlotFlag<?, ?>>> plotFlagEntry : invalidFlags
                                 .entrySet()) {
                             for (final PlotFlag<?, ?> flag : plotFlagEntry.getValue()) {
-                                if (Settings.DEBUG) {
-                                    logger.info(
-                                            "Plot {} has an invalid flag ({}). A fix has been attempted",
-                                            plotFlagEntry.getKey(), flag.getName()
-                                    );
-                                }
+                                logger.info(
+                                        "Plot {} has an invalid flag ({}). A fix has been attempted",
+                                        plotFlagEntry.getKey(), flag.getName()
+                                );
                                 removeFlag(plotFlagEntry.getKey(), flag);
                             }
                         }
@@ -2122,7 +2112,7 @@ public class SQLManager implements AbstractDB {
                             plot.getSettings().setMerged(merged);
                         } else if (Settings.Enabled_Components.DATABASE_PURGER) {
                             toDelete.add(id);
-                        } else if (Settings.DEBUG) {
+                        } else {
                             logger.info("Entry #{}({}) in `plot_settings` does not exist."
                                     + " Create this plot or set `database-purger: true` in settings.yml", id, plot);
                         }
@@ -2295,71 +2285,66 @@ public class SQLManager implements AbstractDB {
      */
     @Override
     public void purgeIds(final Set<Integer> uniqueIds) {
-        addGlobalTask(new Runnable() {
-            @Override
-            public void run() {
-                if (!uniqueIds.isEmpty()) {
-                    try {
-                        ArrayList<Integer> uniqueIdsList = new ArrayList<>(uniqueIds);
-                        int size = uniqueIdsList.size();
-                        int packet = 990;
-                        int amount = size / packet;
-                        int count = 0;
-                        int last = -1;
-                        for (int j = 0; j <= amount; j++) {
-                            List<Integer> subList =
-                                    uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
-                            if (subList.isEmpty()) {
-                                break;
-                            }
-                            StringBuilder idstr2 = new StringBuilder();
-                            String stmt_prefix = "";
-                            for (Integer id : subList) {
-                                idstr2.append(stmt_prefix).append(id);
-                                stmt_prefix = " OR `id` = ";
-                            }
-                            stmt_prefix = "";
-                            StringBuilder idstr = new StringBuilder();
-                            for (Integer id : subList) {
-                                idstr.append(stmt_prefix).append(id);
-                                stmt_prefix = " OR `plot_plot_id` = ";
-                            }
-                            PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
-                                    "DELETE FROM `" + SQLManager.this.prefix
-                                            + "plot_helpers` WHERE `plot_plot_id` = " + idstr);
-                            stmt.executeUpdate();
-                            stmt.close();
-                            stmt = SQLManager.this.connection.prepareStatement(
-                                    "DELETE FROM `" + SQLManager.this.prefix
-                                            + "plot_denied` WHERE `plot_plot_id` = " + idstr);
-                            stmt.executeUpdate();
-                            stmt.close();
-                            stmt = SQLManager.this.connection.prepareStatement(
-                                    "DELETE FROM `" + SQLManager.this.prefix
-                                            + "plot_settings` WHERE `plot_plot_id` = " + idstr);
-                            stmt.executeUpdate();
-                            stmt.close();
-                            stmt = SQLManager.this.connection.prepareStatement(
-                                    "DELETE FROM `" + SQLManager.this.prefix
-                                            + "plot_trusted` WHERE `plot_plot_id` = " + idstr);
-                            stmt.executeUpdate();
-                            stmt.close();
-                            stmt = SQLManager.this.connection.prepareStatement(
-                                    "DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = "
-                                            + idstr2);
-                            stmt.executeUpdate();
-                            stmt.close();
-                            commit();
+        addGlobalTask(() -> {
+            if (!uniqueIds.isEmpty()) {
+                try {
+                    ArrayList<Integer> uniqueIdsList = new ArrayList<>(uniqueIds);
+                    int size = uniqueIdsList.size();
+                    int packet = 990;
+                    int amount = size / packet;
+                    int count = 0;
+                    int last = -1;
+                    for (int j = 0; j <= amount; j++) {
+                        List<Integer> subList =
+                                uniqueIdsList.subList(j * packet, Math.min(size, (j + 1) * packet));
+                        if (subList.isEmpty()) {
+                            break;
                         }
-                    } catch (SQLException e) {
-                        logger.error("Failed to purge plots", e);
-                        return;
+                        StringBuilder idstr2 = new StringBuilder();
+                        String stmt_prefix = "";
+                        for (Integer id : subList) {
+                            idstr2.append(stmt_prefix).append(id);
+                            stmt_prefix = " OR `id` = ";
+                        }
+                        stmt_prefix = "";
+                        StringBuilder idstr = new StringBuilder();
+                        for (Integer id : subList) {
+                            idstr.append(stmt_prefix).append(id);
+                            stmt_prefix = " OR `plot_plot_id` = ";
+                        }
+                        PreparedStatement stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix
+                                        + "plot_helpers` WHERE `plot_plot_id` = " + idstr);
+                        stmt.executeUpdate();
+                        stmt.close();
+                        stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix
+                                        + "plot_denied` WHERE `plot_plot_id` = " + idstr);
+                        stmt.executeUpdate();
+                        stmt.close();
+                        stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix
+                                        + "plot_settings` WHERE `plot_plot_id` = " + idstr);
+                        stmt.executeUpdate();
+                        stmt.close();
+                        stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix
+                                        + "plot_trusted` WHERE `plot_plot_id` = " + idstr);
+                        stmt.executeUpdate();
+                        stmt.close();
+                        stmt = SQLManager.this.connection.prepareStatement(
+                                "DELETE FROM `" + SQLManager.this.prefix + "plot` WHERE `id` = "
+                                        + idstr2);
+                        stmt.executeUpdate();
+                        stmt.close();
+                        commit();
                     }
-                }
-                if (Settings.DEBUG) {
-                    logger.info("Successfully purged {} plots", uniqueIds.size());
+                } catch (SQLException e) {
+                    logger.error("Failed to purge plots", e);
+                    return;
                 }
             }
+            logger.info("Successfully purged {} plots", uniqueIds.size());
         });
     }
 
@@ -2919,7 +2904,7 @@ public class SQLManager implements AbstractDB {
                     cluster = clusters.get(id);
                     if (cluster != null) {
                         cluster.helpers.add(user);
-                    } else if (Settings.DEBUG) {
+                    } else {
                         logger.warn("Cluster #{}({}) in cluster_helpers does not exist."
                                 + " Please create the cluster or remove this entry", id, cluster);
                     }
@@ -2938,7 +2923,7 @@ public class SQLManager implements AbstractDB {
                     cluster = clusters.get(id);
                     if (cluster != null) {
                         cluster.invited.add(user);
-                    } else if (Settings.DEBUG) {
+                    } else {
                         logger.warn("Cluster #{}({}) in cluster_helpers does not exist."
                                 + " Please create the cluster or remove this entry", id, cluster);
                     }
@@ -2973,7 +2958,7 @@ public class SQLManager implements AbstractDB {
                             merged[3 - i] = (m & 1 << i) != 0;
                         }
                         cluster.settings.setMerged(merged);
-                    } else if (Settings.DEBUG) {
+                    } else {
                         logger.warn("Cluster #{}({}) in cluster_helpers does not exist."
                                 + " Please create the cluster or remove this entry", id, cluster);
                     }
@@ -3446,7 +3431,7 @@ public class SQLManager implements AbstractDB {
 
     }
 
-    public abstract class UniqueStatement {
+    public abstract static class UniqueStatement {
 
         public final String method;
 
@@ -3468,7 +3453,7 @@ public class SQLManager implements AbstractDB {
 
     }
 
-    private class UUIDPair {
+    private static class UUIDPair {
 
         public final int id;
         public final UUID uuid;

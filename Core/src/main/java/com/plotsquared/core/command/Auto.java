@@ -162,7 +162,7 @@ public class Auto extends SubCommand {
         }
         plot.setOwnerAbs(player.getUUID());
 
-        final RunnableVal<Plot> runnableVal = new RunnableVal<Plot>() {
+        final RunnableVal<Plot> runnableVal = new RunnableVal<>() {
             {
                 this.value = plot;
             }
@@ -217,20 +217,21 @@ public class Auto extends SubCommand {
             try {
                 String[] split = args[0].split(",|;");
                 switch (split.length) {
-                    case 1:
+                    case 1 -> {
                         size_x = 1;
                         size_z = 1;
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         size_x = Integer.parseInt(split[0]);
                         size_z = Integer.parseInt(split[1]);
-                        break;
-                    default:
+                    }
+                    default -> {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
                                 Template.of("value", getUsage())
                         );
                         return true;
+                    }
                 }
                 if (size_x < 1 || size_z < 1) {
                     player.sendMessage(TranslatableCaption.of("error.plot_size"));

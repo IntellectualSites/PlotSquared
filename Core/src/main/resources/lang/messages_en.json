@@ -392,7 +392,6 @@
   "members.not_added_trusted": "<prefix><red>You must be added or trusted to the plot to run that command.</red>",
   "owner.set_owner": "<prefix><dark_aqua>You successfully set the plot owner.</dark_aqua>",
   "owner.set_owner_cancelled": "<prefix><red>The set owner action was cancelled.</red>",
-  "owner.set_owner_missing_player": "<prefix><red>You need to specify a new owner.</red>",
   "owner.now_owner": "<prefix><dark_aqua>You are now the plot owner of plot <plot>.</dark_aqua>",
   "signs.owner_sign_line_1": "<gold>ID: </gold><gray><id></gray>",
   "signs.owner_sign_line_2": "<gold>Owner:",

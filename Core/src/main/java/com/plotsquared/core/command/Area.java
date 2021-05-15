@@ -109,7 +109,6 @@ public class Area extends SubCommand {
     private final HybridPlotWorldFactory hybridPlotWorldFactory;
     private final SetupUtils setupUtils;
     private final WorldUtil worldUtil;
-    private final RegionManager regionManager;
     private final GlobalBlockQueue blockQueue;
 
     private final Map<UUID, Map<String, Object>> metaData = new HashMap<>();
@@ -122,7 +121,6 @@ public class Area extends SubCommand {
             final @NonNull HybridPlotWorldFactory hybridPlotWorldFactory,
             final @NonNull SetupUtils setupUtils,
             final @NonNull WorldUtil worldUtil,
-            final @NonNull RegionManager regionManager,
             final @NonNull GlobalBlockQueue blockQueue
     ) {
         this.plotAreaManager = plotAreaManager;
@@ -131,7 +129,6 @@ public class Area extends SubCommand {
         this.hybridPlotWorldFactory = hybridPlotWorldFactory;
         this.setupUtils = setupUtils;
         this.worldUtil = worldUtil;
-        this.regionManager = regionManager;
         this.blockQueue = blockQueue;
     }
 
@@ -142,7 +139,7 @@ public class Area extends SubCommand {
             return false;
         }
         switch (args[0].toLowerCase()) {
-            case "single":
+            case "single" -> {
                 if (player instanceof ConsolePlayer) {
                     player.sendMessage(RequiredType.CONSOLE.getErrorMessage());
                     return false;
@@ -195,14 +192,16 @@ public class Area extends SubCommand {
                 final BlockVector3 playerSelectionMax = playerSelectedRegion.getMaximumPoint();
                 // Create a new selection that spans the entire vertical range of the world
                 final CuboidRegion selectedRegion =
-                        new CuboidRegion(playerSelectedRegion.getWorld(),
+                        new CuboidRegion(
+                                playerSelectedRegion.getWorld(),
                                 BlockVector3.at(playerSelectionMin.getX(), 0, playerSelectionMin.getZ()),
                                 BlockVector3.at(playerSelectionMax.getX(), 255, playerSelectionMax.getZ())
                         );
                 // There's only one plot in the area...
                 final PlotId plotId = PlotId.of(1, 1);
                 final HybridPlotWorld hybridPlotWorld = this.hybridPlotWorldFactory
-                        .create(player.getLocation().getWorldName(),
+                        .create(
+                                player.getLocation().getWorldName(),
                                 args[1],
                                 Objects.requireNonNull(PlotSquared.platform()).defaultGenerator(),
                                 plotId,
@@ -292,9 +291,8 @@ public class Area extends SubCommand {
                 };
                 singleRun.run();
                 return true;
-            case "c":
-            case "setup":
-            case "create":
+            }
+            case "c", "setup", "create" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_CREATE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -311,7 +309,7 @@ public class Area extends SubCommand {
                         return false;
                     case 2:
                         switch (args[1].toLowerCase()) {
-                            case "pos1": { // Set position 1
+                            case "pos1" -> { // Set position 1
                                 HybridPlotWorld area = (HybridPlotWorld) metaData.computeIfAbsent(
                                         player.getUUID(),
                                         missingUUID -> new HashMap<>()
@@ -329,7 +327,8 @@ public class Area extends SubCommand {
                                         "area_pos1",
                                         location
                                 );
-                                player.sendMessage(TranslatableCaption.of("set.set_attribute"),
+                                player.sendMessage(
+                                        TranslatableCaption.of("set.set_attribute"),
                                         Template.of("attribute", "area_pos1"),
                                         Template.of("value", location.getX() + "," + location.getZ())
                                 );
@@ -339,7 +338,7 @@ public class Area extends SubCommand {
                                 );
                                 return true;
                             }
-                            case "pos2":  // Set position 2 and finish creation for type=2 (partial)
+                            case "pos2" -> {  // Set position 2 and finish creation for type=2 (partial)
                                 final HybridPlotWorld area =
                                         (HybridPlotWorld) metaData.computeIfAbsent(
                                                 player.getUUID(),
@@ -424,6 +423,7 @@ public class Area extends SubCommand {
                                     run.run();
                                 }
                                 return true;
+                            }
                         }
                     default: // Start creation
                         String[] split = args[1].split(":");
@@ -468,56 +468,42 @@ public class Area extends SubCommand {
                                 return false;
                             }
                             switch (pair[0].toLowerCase()) {
-                                case "s":
-                                case "size":
+                                case "s", "size" -> {
                                     pa.PLOT_WIDTH = Integer.parseInt(pair[1]);
                                     pa.SIZE = (short) (pa.PLOT_WIDTH + pa.ROAD_WIDTH);
-                                    break;
-                                case "g":
-                                case "gap":
+                                }
+                                case "g", "gap" -> {
                                     pa.ROAD_WIDTH = Integer.parseInt(pair[1]);
                                     pa.SIZE = (short) (pa.PLOT_WIDTH + pa.ROAD_WIDTH);
-                                    break;
-                                case "h":
-                                case "height":
+                                }
+                                case "h", "height" -> {
                                     int value = Integer.parseInt(pair[1]);
                                     pa.PLOT_HEIGHT = value;
                                     pa.ROAD_HEIGHT = value;
                                     pa.WALL_HEIGHT = value;
-                                    break;
-                                case "f":
-                                case "floor":
-                                    pa.TOP_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
-                                    break;
-                                case "m":
-                                case "main":
-                                    pa.MAIN_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
-                                    break;
-                                case "w":
-                                case "wall":
-                                    pa.WALL_FILLING = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
-                                    break;
-                                case "b":
-                                case "border":
-                                    pa.WALL_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
-                                    break;
-                                case "terrain":
+                                }
+                                case "f", "floor" -> pa.TOP_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                case "m", "main" -> pa.MAIN_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                case "w", "wall" -> pa.WALL_FILLING = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                case "b", "border" -> pa.WALL_BLOCK = ConfigurationUtil.BLOCK_BUCKET.parseString(pair[1]);
+                                case "terrain" -> {
                                     pa.setTerrain(PlotAreaTerrainType.fromString(pair[1])
                                             .orElseThrow(() -> new IllegalArgumentException(pair[1] + " is not a valid terrain.")));
                                     builder.terrainType(pa.getTerrain());
-                                    break;
-                                case "type":
+                                }
+                                case "type" -> {
                                     pa.setType(PlotAreaType.fromString(pair[1])
                                             .orElseThrow(() -> new IllegalArgumentException(pair[1] + " is not a valid type.")));
                                     builder.plotAreaType(pa.getType());
-                                    break;
-                                default:
+                                }
+                                default -> {
                                     player.sendMessage(
                                             TranslatableCaption.of("commandconfig.command_syntax_extended"),
                                             Template.of("value1", getCommandString()),
                                             Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
                                     );
                                     return false;
+                                }
                             }
                         }
                         if (pa.getType() != PlotAreaType.PARTIAL) {
@@ -566,7 +552,8 @@ public class Area extends SubCommand {
                                     TranslatableCaption.of("commandconfig.command_syntax"),
                                     Template.of("value", getUsage())
                             );
-                            player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                            player.sendMessage(
+                                    TranslatableCaption.of("commandconfig.command_syntax_extended"),
                                     Template.of("value1", getCommandString()),
                                     Template.of("value2", " create [world[:id]] [<modifier>=<value>]...")
                             );
@@ -590,8 +577,8 @@ public class Area extends SubCommand {
                         break;
                 }
                 return true;
-            case "i":
-            case "info": {
+            }
+            case "i", "info" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_INFO)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -601,18 +588,16 @@ public class Area extends SubCommand {
                 }
                 PlotArea area;
                 switch (args.length) {
-                    case 1:
-                        area = player.getApplicablePlotArea();
-                        break;
-                    case 2:
-                        area = this.plotAreaManager.getPlotAreaByString(args[1]);
-                        break;
-                    default:
-                        player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                    case 1 -> area = player.getApplicablePlotArea();
+                    case 2 -> area = this.plotAreaManager.getPlotAreaByString(args[1]);
+                    default -> {
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax_extended"),
                                 Template.of("value1", getCommandString()),
                                 Template.of("value2", " info [area]")
                         );
                         return false;
+                    }
                 }
                 if (area == null) {
                     if (args.length == 2) {
@@ -656,7 +641,8 @@ public class Area extends SubCommand {
                         "footer",
                         TranslatableCaption.of("info.plot_info_footer").getComponent(player)
                 );
-                player.sendMessage(TranslatableCaption.of("info.area_info_format"),
+                player.sendMessage(
+                        TranslatableCaption.of("info.area_info_format"),
                         headerTemplate,
                         nameTemplate,
                         typeTemplate,
@@ -670,8 +656,7 @@ public class Area extends SubCommand {
                 );
                 return true;
             }
-            case "l":
-            case "list":
+            case "l", "list" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_LIST)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -690,7 +675,8 @@ public class Area extends SubCommand {
                             break;
                         }
                     default:
-                        player.sendMessage(TranslatableCaption.of("commandconfig.command_syntax_extended"),
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax_extended"),
                                 Template.of("value1", getCommandString()),
                                 Template.of("value2", " list [#]")
                         );
@@ -724,7 +710,8 @@ public class Area extends SubCommand {
                         Template regionTemplate = Template.of("region", region);
                         Template generatorTemplate = Template.of("generator", generator);
                         String tooltip = MINI_MESSAGE.serialize(MINI_MESSAGE
-                                .parse(TranslatableCaption.of("info.area_list_tooltip").getComponent(player),
+                                .parse(
+                                        TranslatableCaption.of("info.area_list_tooltip").getComponent(player),
                                         claimedTemplate,
                                         usageTemplate,
                                         clustersTemplate,
@@ -739,7 +726,8 @@ public class Area extends SubCommand {
                         Template typeTemplate = Template.of("area_type", area.getType().name());
                         Template terrainTemplate = Template.of("area_terrain", area.getTerrain().name());
                         caption.set(TranslatableCaption.of("info.area_list_item"));
-                        caption.setTemplates(tooltipTemplate,
+                        caption.setTemplates(
+                                tooltipTemplate,
                                 visitcmdTemplate,
                                 numberTemplate,
                                 nameTemplate,
@@ -750,10 +738,8 @@ public class Area extends SubCommand {
                     }
                 }, "/plot area list", TranslatableCaption.of("list.area_list_header_paged"));
                 return true;
-            case "regen":
-            case "clear":
-            case "reset":
-            case "regenerate": {
+            }
+            case "regen", "clear", "reset", "regenerate" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_REGEN)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -786,11 +772,7 @@ public class Area extends SubCommand {
                 queue.enqueue();
                 return true;
             }
-            case "goto":
-            case "v":
-            case "teleport":
-            case "visit":
-            case "tp":
+            case "goto", "v", "teleport", "visit", "tp" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_AREA_TP)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -833,10 +815,11 @@ public class Area extends SubCommand {
                     );
                 }
                 return true;
-            case "delete":
-            case "remove":
+            }
+            case "delete", "remove" -> {
                 player.sendMessage(TranslatableCaption.of("single.worldcreation_location"));
                 return true;
+            }
         }
         sendUsage(player);
         return false;

@@ -255,7 +255,7 @@ public interface ConfigurationSection {
      * <p>If the path exists but is not a String, this will return false. If
      * the path does not exist, this will return false. If the path does not
      * exist but a default value has been specified, this will check if that
-     * defaultvalue is a String and return appropriately.
+     * default value is a String and return appropriately.
      *
      * @param path Path of the String to check.
      * @return Whether or not the specified path is a String.
