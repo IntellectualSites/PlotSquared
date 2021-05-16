@@ -367,7 +367,7 @@
   "list.comment_list_by_other": "<gray><comment></gray>",
   "list.clickable": "<gray> (interactive)</gray>",
   "list.area_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> areas</gold>",
-  "list.plot_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gray><gray>) </gray><gold>List of <amount> plots</gold>",
+  "list.plot_list_header_paged": "<gray>(Page </gray><gold><cur></gold><gray>/</gray><gold><max></gold><gray>) </gray><gold>List of <amount> plots</gold>",
   "list.plot_list_header": "<prefix><gold>List of <word> plots.</gold>",
   "list.page_turn": "<gold><click:run_command:<command1>><-</click></gold><dark_gray> | </dark_gray><gold><click:run_command:<command2>>-></click></gold><gray><clickable></gray>",
   "chat.plot_chat_spy_format": "<gray>[<gold>Plot Spy</gold>] [<gold><plot_id></gold>] <gold><sender></gold>: <gold><msg></gold></gray>",
