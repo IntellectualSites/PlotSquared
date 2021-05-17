@@ -481,36 +481,42 @@ public class BlockEventListener implements Listener {
             return;
         }
         Plot plot = area.getPlot(location);
-        // TODO Add flag to allow / deny 1.17 dripstone-based machines
-        // TODO Add flag to allow / deny modification by rain
-        if (entity instanceof Player player) {
-            BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-            if (plot != null) {
-                if (!plot.hasOwner()) {
-                    if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
-                        return;
+        // TODO Add flags for specific control over cauldron changes (rain, dripstone...)
+        switch (event.getReason()) {
+            case BANNER_WASH, ARMOR_WASH, EXTINGUISH -> {
+                if (entity instanceof Player player) {
+                    BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
+                    if (plot != null) {
+                        if (!plot.hasOwner()) {
+                            if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
+                                return;
+                            }
+                        } else if (!plot.isAdded(plotPlayer.getUUID())) {
+                            if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
+                                return;
+                            }
+                        } else {
+                            return;
+                        }
+                    } else {
+                        if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
+                            return;
+                        }
+                        if (this.worldEdit != null && plotPlayer.getAttribute("worldedit")) {
+                            if (player.getInventory().getItemInMainHand().getType() == Material
+                                    .getMaterial(this.worldEdit.getConfiguration().wandItem)) {
+                                return;
+                            }
+                        }
                     }
-                } else if (!plot.isAdded(plotPlayer.getUUID())) {
-                    if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
-                        return;
-                    }
-                } else {
-                    return;
                 }
-            } else {
-                if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
-                    return;
-                }
-                if (this.worldEdit != null && plotPlayer.getAttribute("worldedit")) {
-                    if (player.getInventory().getItemInMainHand().getType() == Material
-                            .getMaterial(this.worldEdit.getConfiguration().wandItem)) {
-                        return;
-                    }
-                }
+                event.setNewLevel(event.getOldLevel());
+            }
+            default -> {
+                // Bucket empty, Bucket fill, Bottle empty, Bottle fill are already handled in PlayerInteract event
+                // Evaporation or Unknown reasons do not need to be cancelled as they are considered natural causes
             }
         }
-
-        event.setNewLevel(event.getOldLevel());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
