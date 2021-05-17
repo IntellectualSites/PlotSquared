@@ -104,8 +104,9 @@ public class Music extends SubCommand {
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
-                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_removed"), Template.of("flag",
-                            String.valueOf(event.getFlag())
+                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_removed"),
+                            Template.of("flag", String.valueOf(event.getFlag())),
+                            Template.of("value", String.valueOf(event.getFlag().getValue())
                     ));
                 } else if (item.getName().toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)

@@ -40,6 +40,7 @@ import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -725,8 +726,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 player.sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
             }
         }
-        // TODO: Re-implement
-        // PlotSquared.debug(full);
+        if (Settings.Chat.LOG_PLOTCHAT_TO_CONSOLE) {
+            Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
+            Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
+            Template spysenderTemplate = Template.of("sender", sender);
+            Template spymessageTemplate = Template.of("msg", Component.text(message));
+            ConsolePlayer.getConsole().sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

@@ -79,7 +79,7 @@ public class Debug extends SubCommand {
         if (args.length == 0) {
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot debug <loadedchunks | debug-players | entitytypes | msg>")
+                    Template.of("value", "/plot debug <loadedchunks | player | debug-players | entitytypes | msg>")
             );
         }
         if (args.length > 0) {

@@ -509,6 +509,9 @@ public class Settings extends Config {
         @Comment("Should the chat be interactive?")
         public static boolean INTERACTIVE = true;
 
+        @Comment("Should the plot chat be logged to console?")
+        public static boolean LOG_PLOTCHAT_TO_CONSOLE = true;
+
     }
 
 
