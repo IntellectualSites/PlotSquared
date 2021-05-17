@@ -510,7 +510,11 @@ public class BlockEventListener implements Listener {
                         }
                     }
                 }
-                event.setNewLevel(event.getOldLevel());
+                if (event.getReason() == CauldronLevelChangeEvent.ChangeReason.EXTINGUISH) {
+                    if (event.getEntity() != null) {
+                        event.getEntity().setFireTicks(0);
+                    }
+                }
             }
             default -> {
                 // Bucket empty, Bucket fill, Bottle empty, Bottle fill are already handled in PlayerInteract event
