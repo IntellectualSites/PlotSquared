@@ -510,10 +510,8 @@ public class BlockEventListener implements Listener {
                         }
                     }
                 }
-                if (event.getReason() == CauldronLevelChangeEvent.ChangeReason.EXTINGUISH) {
-                    if (event.getEntity() != null) {
-                        event.getEntity().setFireTicks(0);
-                    }
+                if (event.getReason() == CauldronLevelChangeEvent.ChangeReason.EXTINGUISH && event.getEntity() != null) {
+                    event.getEntity().setFireTicks(0);
                 }
             }
             default -> {
