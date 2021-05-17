@@ -512,10 +512,10 @@ public class BlockEventListener implements Listener {
                 }
                 if (event.getReason() == CauldronLevelChangeEvent.ChangeReason.EXTINGUISH && event.getEntity() != null) {
                     event.getEntity().setFireTicks(0);
-                    event.setCancelled(true);
-                    // Though the players fire ticks are modified,
-                    // the cauldron water level change is cancelled and the event should represent that.
                 }
+                // Though the players fire ticks are modified,
+                // the cauldron water level change is cancelled and the event should represent that.
+                event.setCancelled(true);
             }
             default -> {
                 // Bucket empty, Bucket fill, Bottle empty, Bottle fill are already handled in PlayerInteract event
