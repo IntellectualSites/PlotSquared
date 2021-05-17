@@ -58,11 +58,11 @@ public abstract class CommentInbox {
      */
     public boolean canWrite(Plot plot, PlotPlayer<?> player) {
         if (plot == null) {
-            return Permissions.hasPermission(player, "plots.inbox.write." + toString(), true);
+            return Permissions.hasPermission(player, "plots.inbox.write." + this, true);
         }
-        return Permissions.hasPermission(player, "plots.inbox.write." + toString(), true) && (
+        return Permissions.hasPermission(player, "plots.inbox.write." + this, true) && (
                 plot.isOwner(player.getUUID()) || Permissions
-                        .hasPermission(player, "plots.inbox.write." + toString() + ".other", true));
+                        .hasPermission(player, "plots.inbox.write." + this + ".other", true));
     }
 
     /**
@@ -72,9 +72,9 @@ public abstract class CommentInbox {
      */
     @SuppressWarnings({"BooleanMethodIsAlwaysInverted"})
     public boolean canModify(Plot plot, PlotPlayer<?> player) {
-        if (Permissions.hasPermission(player, "plots.inbox.modify." + toString(), true)) {
+        if (Permissions.hasPermission(player, "plots.inbox.modify." + this, true)) {
             return plot.isOwner(player.getUUID()) || Permissions
-                    .hasPermission(player, "plots.inbox.modify." + toString() + ".other", true);
+                    .hasPermission(player, "plots.inbox.modify." + this + ".other", true);
         }
         return false;
     }

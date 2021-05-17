@@ -70,7 +70,6 @@ public class Owner extends SetCommand {
     @Override
     public boolean set(final PlotPlayer<?> player, final Plot plot, String value) {
         if (value == null || value.isEmpty()) {
-            player.sendMessage(TranslatableCaption.of("owner.set_owner_missing_player"));
             player.sendMessage(
                     TranslatableCaption.of("commandconfig.command_syntax"),
                     Template.of("value", "/plot setowner <owner>")
@@ -155,7 +154,7 @@ public class Owner extends SetCommand {
                         other.getPlotCount() :
                         other.getPlotCount(plot.getWorldName())) + size;
                 try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
-                    int grants = 0;
+                    int grants;
                     if (currentPlots >= other.getAllowedPlots()) {
                         if (metaDataAccess.isPresent()) {
                             grants = metaDataAccess.get().orElse(0);

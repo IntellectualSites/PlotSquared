@@ -49,18 +49,11 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
 
     @Override
     public LiquidFlowFlag parse(final @NonNull String input) {
-        switch (input.toLowerCase()) {
-            case "true":
-            case "enabled":
-            case "allow":
-                return LIQUID_FLOW_ENABLED;
-            case "false":
-            case "disabled":
-            case "disallow":
-                return LIQUID_FLOW_DISABLED;
-            default:
-                return LIQUID_FLOW_DEFAULT;
-        }
+        return switch (input.toLowerCase()) {
+            case "true", "enabled", "allow" -> LIQUID_FLOW_ENABLED;
+            case "false", "disabled", "disallow" -> LIQUID_FLOW_DISABLED;
+            default -> LIQUID_FLOW_DEFAULT;
+        };
     }
 
     @Override
@@ -83,14 +76,11 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
 
     @Override
     protected LiquidFlowFlag flagOf(final @NonNull FlowStatus value) {
-        switch (value) {
-            case ENABLED:
-                return LIQUID_FLOW_ENABLED;
-            case DISABLED:
-                return LIQUID_FLOW_DISABLED;
-            default:
-                return LIQUID_FLOW_DEFAULT;
-        }
+        return switch (value) {
+            case ENABLED -> LIQUID_FLOW_ENABLED;
+            case DISABLED -> LIQUID_FLOW_DISABLED;
+            default -> LIQUID_FLOW_DEFAULT;
+        };
     }
 
     @Override

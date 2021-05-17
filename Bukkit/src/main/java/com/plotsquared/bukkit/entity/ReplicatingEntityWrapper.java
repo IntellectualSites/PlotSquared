@@ -189,8 +189,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 AbstractHorse horse = (AbstractHorse) entity;
                 this.horse = new HorseStats();
                 this.horse.jump = horse.getJumpStrength();
-                if (horse instanceof ChestedHorse) {
-                    ChestedHorse horse1 = (ChestedHorse) horse;
+                if (horse instanceof ChestedHorse horse1) {
                     this.horse.chest = horse1.isCarryingChest();
                 }
                 //todo these horse features need fixing

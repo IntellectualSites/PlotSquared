@@ -76,27 +76,16 @@ public class ClassicPlotManager extends SquarePlotManager {
             @Nullable QueueCoordinator queue
     ) {
         final Optional<ClassicPlotManagerComponent> componentOptional = ClassicPlotManagerComponent.fromString(component);
-        if (componentOptional.isPresent()) {
-            switch (componentOptional.get()) {
-                case FLOOR:
-                    return setFloor(plotId, blocks, actor, queue);
-                case WALL:
-                    return setWallFilling(plotId, blocks, actor, queue);
-                case AIR:
-                    return setAir(plotId, blocks, actor, queue);
-                case MAIN:
-                    return setMain(plotId, blocks, actor, queue);
-                case MIDDLE:
-                    return setMiddle(plotId, blocks, queue);
-                case OUTLINE:
-                    return setOutline(plotId, blocks, actor, queue);
-                case BORDER:
-                    return setWall(plotId, blocks, actor, queue);
-                case ALL:
-                    return setAll(plotId, blocks, actor, queue);
-            }
-        }
-        return false;
+        return componentOptional.map(classicPlotManagerComponent -> switch (classicPlotManagerComponent) {
+            case FLOOR -> setFloor(plotId, blocks, actor, queue);
+            case WALL -> setWallFilling(plotId, blocks, actor, queue);
+            case AIR -> setAir(plotId, blocks, actor, queue);
+            case MAIN -> setMain(plotId, blocks, actor, queue);
+            case MIDDLE -> setMiddle(plotId, blocks, queue);
+            case OUTLINE -> setOutline(plotId, blocks, actor, queue);
+            case BORDER -> setWall(plotId, blocks, actor, queue);
+            case ALL -> setAll(plotId, blocks, actor, queue);
+        }).orElse(false);
     }
 
     @Override

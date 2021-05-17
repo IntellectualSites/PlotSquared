@@ -192,7 +192,7 @@ public class Template extends SubCommand {
         }
         final String world = args[1];
         switch (args[0].toLowerCase()) {
-            case "import": {
+            case "import" -> {
                 if (args.length != 3) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
@@ -245,7 +245,7 @@ public class Template extends SubCommand {
                 });
                 return true;
             }
-            case "export":
+            case "export" -> {
                 if (args.length != 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
@@ -276,8 +276,8 @@ public class Template extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("debugimportworlds.done"));
                 });
                 return true;
-            default:
-                sendUsage(player);
+            }
+            default -> sendUsage(player);
         }
         return false;
     }

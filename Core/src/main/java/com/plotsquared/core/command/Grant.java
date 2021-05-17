@@ -75,8 +75,7 @@ public class Grant extends Command {
         );
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
-            case "add":
-            case "check":
+            case "add", "check" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_GRANT.format(arg0))) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -111,7 +110,7 @@ public class Grant extends Command {
                                 }
                             }
                         } else {
-                            DBFunc.getPersistentMeta(uuid.getUuid(), new RunnableVal<Map<String, byte[]>>() {
+                            DBFunc.getPersistentMeta(uuid.getUuid(), new RunnableVal<>() {
                                 @Override
                                 public void run(Map<String, byte[]> value) {
                                     final byte[] array = value.get("grantedPlots");
@@ -148,6 +147,7 @@ public class Grant extends Command {
                     }
                 });
                 return CompletableFuture.completedFuture(true);
+            }
         }
         sendUsage(player);
         return CompletableFuture.completedFuture(true);

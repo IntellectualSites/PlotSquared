@@ -135,7 +135,7 @@ public class Clear extends Command {
                         player.sendMessage(
                                 TranslatableCaption.of("working.clearing_done"),
                                 Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
-                                Template.of("plot", String.valueOf(plot.getId()))
+                                Template.of("plot", plot.getId().toString())
                         );
                     });
                 });

@@ -288,14 +288,22 @@ permissions:
     default: false
   plots.admin.flight:
     default: false
+  plots.admin.command.blocked-cmds.shared:
+    default: false
+  plots.admin.command.blocked-cmds.road:
+    default: false
 
   plots.teleport.delay.bypass:
     default: false
   plots.worldedit.bypass:
     default: false
   plots.gamemode.bypass:
-    default: op
+    default: false
   plots.confirm.bypass:
+    default: false
+  plots.flag.notify-enter.bypass:
+    default: false
+  plots.flag.notify-leave.bypass:
     default: false
 
   plots.permpack.basicflags:

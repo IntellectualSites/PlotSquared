@@ -181,17 +181,13 @@ public final class PlotId {
      * @return Relative plot ID
      */
     public @NonNull PlotId getRelative(final @NonNull Direction direction) {
-        switch (direction) {
-            case NORTH:
-                return PlotId.of(this.getX(), this.getY() - 1);
-            case EAST:
-                return PlotId.of(this.getX() + 1, this.getY());
-            case SOUTH:
-                return PlotId.of(this.getX(), this.getY() + 1);
-            case WEST:
-                return PlotId.of(this.getX() - 1, this.getY());
-        }
-        return this;
+        return switch (direction) {
+            case NORTH -> PlotId.of(this.getX(), this.getY() - 1);
+            case EAST -> PlotId.of(this.getX() + 1, this.getY());
+            case SOUTH -> PlotId.of(this.getX(), this.getY() + 1);
+            case WEST -> PlotId.of(this.getX() - 1, this.getY());
+            default -> this;
+        };
     }
 
     @Override

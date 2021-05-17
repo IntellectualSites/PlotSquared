@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -43,9 +42,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @CommandDeclaration(command = "info",
         aliases = "i",
@@ -60,30 +57,16 @@ public class Info extends SubCommand {
         if (args.length > 0) {
             arg = args[0];
             switch (arg) {
-                case "trusted":
-                case "alias":
-                case "inv":
-                case "biome":
-                case "denied":
-                case "flags":
-                case "id":
-                case "size":
-                case "members":
-                case "creationdate":
-                case "seen":
-                case "owner":
-                case "rating":
-                case "likes":
-                    plot = Plot.getPlotFromString(player, null, false);
-                    break;
-                default:
+                case "trusted", "alias", "inv", "biome", "denied", "flags", "id", "size", "members", "creationdate", "seen", "owner", "rating", "likes" -> plot = Plot
+                        .getPlotFromString(player, null, false);
+                default -> {
                     plot = Plot.getPlotFromString(player, arg, false);
                     if (args.length == 2) {
                         arg = args[1];
                     } else {
                         arg = null;
                     }
-                    break;
+                }
             }
             if (plot == null) {
                 plot = player.getCurrentPlot();
@@ -185,36 +168,22 @@ public class Info extends SubCommand {
     }
 
     private Caption getCaption(String string) {
-        switch (string) {
-            case "trusted":
-                return TranslatableCaption.of("info.plot_info_trusted");
-            case "alias":
-                return TranslatableCaption.of("info.plot_info_alias");
-            case "biome":
-                return TranslatableCaption.of("info.plot_info_biome");
-            case "denied":
-                return TranslatableCaption.of("info.plot_info_denied");
-            case "flags":
-                return TranslatableCaption.of("info.plot_info_flags");
-            case "id":
-                return TranslatableCaption.of("info.plot_info_id");
-            case "size":
-                return TranslatableCaption.of("info.plot_info_size");
-            case "members":
-                return TranslatableCaption.of("info.plot_info_members");
-            case "owner":
-                return TranslatableCaption.of("info.plot_info_owner");
-            case "rating":
-                return TranslatableCaption.of("info.plot_info_rating");
-            case "likes":
-                return TranslatableCaption.of("info.plot_info_likes");
-            case "seen":
-                return TranslatableCaption.of("info.plot_info_seen");
-            case "creationdate":
-                return TranslatableCaption.of("info.plot_info_creationdate");
-            default:
-                return null;
-        }
+        return switch (string) {
+            case "trusted" -> TranslatableCaption.of("info.plot_info_trusted");
+            case "alias" -> TranslatableCaption.of("info.plot_info_alias");
+            case "biome" -> TranslatableCaption.of("info.plot_info_biome");
+            case "denied" -> TranslatableCaption.of("info.plot_info_denied");
+            case "flags" -> TranslatableCaption.of("info.plot_info_flags");
+            case "id" -> TranslatableCaption.of("info.plot_info_id");
+            case "size" -> TranslatableCaption.of("info.plot_info_size");
+            case "members" -> TranslatableCaption.of("info.plot_info_members");
+            case "owner" -> TranslatableCaption.of("info.plot_info_owner");
+            case "rating" -> TranslatableCaption.of("info.plot_info_rating");
+            case "likes" -> TranslatableCaption.of("info.plot_info_likes");
+            case "seen" -> TranslatableCaption.of("info.plot_info_seen");
+            case "creationdate" -> TranslatableCaption.of("info.plot_info_creationdate");
+            default -> null;
+        };
     }
 
 }

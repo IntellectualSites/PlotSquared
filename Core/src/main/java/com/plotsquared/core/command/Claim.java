@@ -132,7 +132,7 @@ public class Claim extends SubCommand {
                         player.sendMessage(
                                 TranslatableCaption.of("schematics.schematic_invalid_named"),
                                 Template.of("schemname", schematic),
-                                Template.of("reason", "non-existant")
+                                Template.of("reason", "non-existent")
                         );
                     }
                     if (!Permissions.hasPermission(player, Permission.PERMISSION_CLAIM_SCHEMATIC
@@ -151,15 +151,16 @@ public class Claim extends SubCommand {
                 PlotExpression costExr = area.getPrices().get("claim");
                 double cost = costExr.evaluate(currentPlots);
                 if (cost > 0d) {
-                    if (this.econHandler.getMoney(player) < cost && this.econHandler.isSupported()) {
+                    if (!this.econHandler.isSupported()) {
+                        player.sendMessage(TranslatableCaption.of("economy.vault_not_found"));
+                        return false;
+                    }
+                    if (this.econHandler.getMoney(player) < cost) {
                         player.sendMessage(
                                 TranslatableCaption.of("economy.cannot_afford_plot"),
                                 Template.of("money", this.econHandler.format(cost)),
                                 Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                         );
-                    } else {
-                        player.sendMessage(TranslatableCaption.of("economy.vault_not_found"));
-                        return false;
                     }
                     this.econHandler.withdrawMoney(player, cost);
                     player.sendMessage(

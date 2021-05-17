@@ -107,7 +107,7 @@ public class Trim extends SubCommand {
         StaticCaption.of(" - MCA #: " + result.value1.size());
         StaticCaption.of(" - CHUNKS: " + (result.value1.size() * 1024) + " (max)");
         StaticCaption.of(" - TIME ESTIMATE: 12 Parsecs");
-        TaskManager.getPlatformImplementation().objectTask(plots, new RunnableVal<Plot>() {
+        TaskManager.getPlatformImplementation().objectTask(plots, new RunnableVal<>() {
             @Override
             public void run(Plot plot) {
                 Location pos1 = plot.getCorners()[0];
@@ -147,7 +147,7 @@ public class Trim extends SubCommand {
         }
         Trim.TASK = true;
         final boolean regen = args.length == 2 && Boolean.parseBoolean(args[1]);
-        getTrimRegions(world, new RunnableVal2<Set<BlockVector2>, Set<BlockVector2>>() {
+        getTrimRegions(world, new RunnableVal2<>() {
             @Override
             public void run(Set<BlockVector2> viable, final Set<BlockVector2> nonViable) {
                 Runnable regenTask;
@@ -199,7 +199,7 @@ public class Trim extends SubCommand {
                                 }
                             }
                             final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
-                            TaskManager.getPlatformImplementation().objectTask(chunks, new RunnableVal<BlockVector2>() {
+                            TaskManager.getPlatformImplementation().objectTask(chunks, new RunnableVal<>() {
                                 @Override
                                 public void run(BlockVector2 value) {
                                     queue.regenChunk(value.getX(), value.getZ());

@@ -168,7 +168,7 @@ public class Set extends SubCommand {
                                 plot.removeRunning();
                                 player.sendMessage(
                                         TranslatableCaption.of("working.component_complete"),
-                                        Template.of("plot", String.valueOf(plot.getId()))
+                                        Template.of("plot", plot.getId().toString())
                                 );
                             });
                             if (Settings.QUEUE.NOTIFY_PROGRESS) {

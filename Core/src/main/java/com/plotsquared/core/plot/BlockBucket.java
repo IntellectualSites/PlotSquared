@@ -50,10 +50,10 @@ import java.util.regex.Matcher;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public final class BlockBucket implements ConfigurationSerializable {
 
-    private static java.util.regex.Pattern regex = java.util.regex.Pattern.compile(
+    private static final java.util.regex.Pattern regex = java.util.regex.Pattern.compile(
             "((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
     private boolean compiled;
-    private StringBuilder input;
+    private final StringBuilder input;
     private BlockState single;
     private Pattern pattern;
 
@@ -198,10 +198,9 @@ public final class BlockBucket implements ConfigurationSerializable {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof BlockBucket)) {
+        if (!(o instanceof final BlockBucket other)) {
             return false;
         }
-        final BlockBucket other = (BlockBucket) o;
         final Object this$input = this.input;
         final Object other$input = other.input;
         return Objects.equals(this$input, other$input);
@@ -247,10 +246,9 @@ public final class BlockBucket implements ConfigurationSerializable {
             if (o == this) {
                 return true;
             }
-            if (!(o instanceof Range)) {
+            if (!(o instanceof final Range other)) {
                 return false;
             }
-            final Range other = (Range) o;
             if (this.getMin() != other.getMin()) {
                 return false;
             }

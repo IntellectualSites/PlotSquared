@@ -82,12 +82,11 @@ public class Alias extends SubCommand {
         boolean permission;
         boolean admin;
         switch (args[0].toLowerCase()) {
-            case "set":
+            case "set" -> {
                 if (args.length != 2) {
                     sendUsage(player);
                     return false;
                 }
-
                 permission = isPermitted(player, Permission.PERMISSION_ALIAS_SET);
                 admin = isPermitted(player, Permission.PERMISSION_ADMIN_ALIAS_SET);
                 if (!admin && !owner) {
@@ -103,9 +102,8 @@ public class Alias extends SubCommand {
                             Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_SET))
                     );
                 }
-
-                break;
-            case "remove":
+            }
+            case "remove" -> {
                 permission = isPermitted(player, Permission.PERMISSION_ALIAS_REMOVE);
                 admin = isPermitted(player, Permission.PERMISSION_ADMIN_ALIAS_REMOVE);
                 if (!admin && !owner) {
@@ -120,10 +118,11 @@ public class Alias extends SubCommand {
                             Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE))
                     );
                 }
-                break;
-            default:
+            }
+            default -> {
                 sendUsage(player);
                 result = false;
+            }
         }
 
         return result;

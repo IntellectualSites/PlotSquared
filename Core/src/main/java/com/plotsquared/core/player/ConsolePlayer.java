@@ -58,7 +58,6 @@ import java.util.UUID;
 
 public class ConsolePlayer extends PlotPlayer<Actor> {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + ConsolePlayer.class.getSimpleName());
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static ConsolePlayer instance;
 

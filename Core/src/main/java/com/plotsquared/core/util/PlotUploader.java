@@ -173,7 +173,7 @@ public class PlotUploader {
         /**
          * Get whether this result is a success.
          *
-         * @return {@code true} if this is a sucessful result, {@code false} otherwise.
+         * @return {@code true} if this is a successful result, {@code false} otherwise.
          */
         public boolean isSuccess() {
             return success;

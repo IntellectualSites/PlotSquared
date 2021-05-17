@@ -135,7 +135,7 @@ public class BukkitSetupUtils extends SetupUtils {
         PlotAreaType type = builder.plotAreaType();
         String worldPath = "worlds." + builder.worldName();
         switch (type) {
-            case PARTIAL: {
+            case PARTIAL -> {
                 if (builder.areaName() != null) {
                     if (!this.worldConfiguration.contains(worldPath)) {
                         this.worldConfiguration.createSection(worldPath);
@@ -177,9 +177,8 @@ public class BukkitSetupUtils extends SetupUtils {
                 if (gen != null && gen.isFull()) {
                     builder.generatorName(null);
                 }
-                break;
             }
-            case AUGMENTED: {
+            case AUGMENTED -> {
                 if (!builder.plotManager().endsWith(":single")) {
                     if (!this.worldConfiguration.contains(worldPath)) {
                         this.worldConfiguration.createSection(worldPath);
@@ -207,9 +206,8 @@ public class BukkitSetupUtils extends SetupUtils {
                 if (gen != null && gen.isFull()) {
                     builder.generatorName(null);
                 }
-                break;
             }
-            case NORMAL: {
+            case NORMAL -> {
                 if (steps.length != 0) {
                     if (!this.worldConfiguration.contains(worldPath)) {
                         this.worldConfiguration.createSection(worldPath);
@@ -220,7 +218,6 @@ public class BukkitSetupUtils extends SetupUtils {
                         worldSection.set(step.getConstant(), step.getValue());
                     }
                 }
-                break;
             }
         }
 

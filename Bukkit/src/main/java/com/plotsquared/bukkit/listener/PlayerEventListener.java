@@ -40,6 +40,7 @@ import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
@@ -51,6 +52,8 @@ import com.plotsquared.core.plot.flag.FlagContainer;
 import com.plotsquared.core.plot.flag.implementations.AnimalInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.BlockedCmdsFlag;
 import com.plotsquared.core.plot.flag.implementations.ChatFlag;
+import com.plotsquared.core.plot.flag.implementations.DenyPortalTravelFlag;
+import com.plotsquared.core.plot.flag.implementations.DenyPortalsFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyTeleportFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.DropProtectionFlag;
@@ -59,6 +62,7 @@ import com.plotsquared.core.plot.flag.implementations.HangingPlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.HostileInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.ItemDropFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepInventoryFlag;
+import com.plotsquared.core.plot.flag.implementations.LecternReadBookFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.PlayerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
@@ -131,12 +135,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -430,8 +437,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             if (!vehicle.getPassengers().isEmpty()) {
                 Entity passenger = vehicle.getPassengers().get(0);
 
-                if (passenger instanceof Player) {
-                    final Player player = (Player) passenger;
+                if (passenger instanceof final Player player) {
                     // reset
                     if (moveTmp == null) {
                         moveTmp = new PlayerMoveEvent(null, from, to);
@@ -720,8 +726,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 player.sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
             }
         }
-        // TODO: Re-implement
-        // PlotSquared.debug(full);
+        if (Settings.Chat.LOG_PLOTCHAT_TO_CONSOLE) {
+            Caption spymsg = TranslatableCaption.of("chat.plot_chat_spy_format");
+            Template plotidTemplate = Template.of("plot_id", id.getX() + ";" + id.getY());
+            Template spysenderTemplate = Template.of("sender", sender);
+            Template spymessageTemplate = Template.of("msg", Component.text(message));
+            ConsolePlayer.getConsole().sendMessage(spymsg, plotidTemplate, spysenderTemplate, spymessageTemplate);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -772,10 +783,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
 
         HumanEntity clicker = event.getWhoClicked();
-        if (!(clicker instanceof Player)) {
+        if (!(clicker instanceof Player player)) {
             return;
         }
-        Player player = (Player) clicker;
         BukkitPlayer pp = BukkitUtil.adapt(player);
         final PlotInventory inventory = PlotInventory.getOpenPlotInventory(pp);
         if (inventory != null && event.getRawSlot() == event.getSlot()) {
@@ -1023,7 +1033,6 @@ public class PlayerEventListener extends PlotListener implements Listener {
         Block block = event.getClickedBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         Action action = event.getAction();
-        outer:
         switch (action) {
             case PHYSICAL: {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
@@ -1071,12 +1080,12 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 if (PaperLib.isPaper()) {
                     if (MaterialTags.SPAWN_EGGS.isTagged(type) || Material.EGG.equals(type)) {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
-                        break outer;
+                        break;
                     }
                 } else {
                     if (type.toString().toLowerCase().endsWith("egg")) {
                         eventType = PlayerBlockEventType.SPAWN_MOB;
-                        break outer;
+                        break;
                     }
                 }
                 if (type.isEdible()) {
@@ -1084,34 +1093,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     return;
                 }
                 switch (type) {
-                    case ACACIA_BOAT:
-                    case BIRCH_BOAT:
-                    case CHEST_MINECART:
-                    case COMMAND_BLOCK_MINECART:
-                    case DARK_OAK_BOAT:
-                    case FURNACE_MINECART:
-                    case HOPPER_MINECART:
-                    case JUNGLE_BOAT:
-                    case MINECART:
-                    case OAK_BOAT:
-                    case SPRUCE_BOAT:
-                    case TNT_MINECART:
-                        eventType = PlayerBlockEventType.PLACE_VEHICLE;
-                        break outer;
-                    case FIREWORK_ROCKET:
-                    case FIREWORK_STAR:
-                        eventType = PlayerBlockEventType.SPAWN_MOB;
-                        break outer;
-                    case BOOK:
-                    case KNOWLEDGE_BOOK:
-                    case WRITABLE_BOOK:
-                    case WRITTEN_BOOK:
-                        eventType = PlayerBlockEventType.READ;
-                        break outer;
-                    case ARMOR_STAND:
+                    case ACACIA_BOAT, BIRCH_BOAT, CHEST_MINECART, COMMAND_BLOCK_MINECART, DARK_OAK_BOAT, FURNACE_MINECART, HOPPER_MINECART, JUNGLE_BOAT, MINECART, OAK_BOAT, SPRUCE_BOAT, TNT_MINECART -> eventType = PlayerBlockEventType.PLACE_VEHICLE;
+                    case FIREWORK_ROCKET, FIREWORK_STAR -> eventType = PlayerBlockEventType.SPAWN_MOB;
+                    case BOOK, KNOWLEDGE_BOOK, WRITABLE_BOOK, WRITTEN_BOOK -> eventType = PlayerBlockEventType.READ;
+                    case ARMOR_STAND -> {
                         location = BukkitUtil.adapt(block.getRelative(event.getBlockFace()).getLocation());
                         eventType = PlayerBlockEventType.PLACE_MISC;
-                        break outer;
+                    }
                 }
                 break;
             }
@@ -1225,10 +1213,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         HumanEntity closer = event.getPlayer();
-        if (!(closer instanceof Player)) {
+        if (!(closer instanceof Player player)) {
             return;
         }
-        Player player = (Player) closer;
         PlotInventory.removePlotInventoryOpen(BukkitUtil.adapt(player));
     }
 
@@ -1353,8 +1340,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
         Entity remover = event.getRemover();
-        if (remover instanceof Player) {
-            Player p = (Player) remover;
+        if (remover instanceof Player p) {
             Location location = BukkitUtil.adapt(event.getEntity().getLocation());
             PlotArea area = location.getPlotArea();
             if (area == null) {
@@ -1392,10 +1378,8 @@ public class PlayerEventListener extends PlotListener implements Listener {
                             + " could not break hanging entity because hanging-break = false");
                 }
             }
-        } else if (remover instanceof Projectile) {
-            Projectile p = (Projectile) remover;
-            if (p.getShooter() instanceof Player) {
-                Player shooter = (Player) p.getShooter();
+        } else if (remover instanceof Projectile p) {
+            if (p.getShooter() instanceof Player shooter) {
                 Location location = BukkitUtil.adapt(event.getEntity().getLocation());
                 PlotArea area = location.getPlotArea();
                 if (area == null) {
@@ -1529,8 +1513,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
             return;
         }
         Entity attacker = event.getAttacker();
-        if (attacker instanceof Player) {
-            Player p = (Player) attacker;
+        if (attacker instanceof Player p) {
             BukkitPlayer pp = BukkitUtil.adapt(p);
             Plot plot = area.getPlot(location);
             if (plot == null) {
@@ -1636,8 +1619,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent event) {
         LivingEntity ent = event.getEntity();
-        if (ent instanceof Player) {
-            Player player = (Player) ent;
+        if (ent instanceof Player player) {
             BukkitPlayer pp = BukkitUtil.adapt(player);
             Location location = pp.getLocation();
             PlotArea area = location.getPlotArea();
@@ -1687,6 +1669,72 @@ public class PlayerEventListener extends PlotListener implements Listener {
         BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
         // we're stripping the country code as we don't want to differ between countries
         player.setLocale(Locale.forLanguageTag(event.getLocale().substring(0, 2)));
+    }
+
+    @EventHandler
+    public void onPortalEnter(PlayerPortalEvent event) {
+        Location location = BukkitUtil.adapt(event.getPlayer().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (area.isRoadFlags() && area.getRoadFlag(DenyPortalTravelFlag.class)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (plot.getFlag(DenyPortalTravelFlag.class)) {
+            if (plot.getFlag(DenyPortalTravelFlag.class)) {
+                plot.debug(event.getPlayer().getName() + " did not travel thru a portal because of deny-portal-travel = true");
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPortalCreation(PortalCreateEvent event) {
+        Location location = BukkitUtil.adapt(event.getEntity().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (area.isRoadFlags() && area.getRoadFlag(DenyPortalsFlag.class)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (plot.getFlag(DenyPortalsFlag.class)) {
+            if (plot.getFlag(DenyPortalsFlag.class)) {
+                plot.debug(event.getEntity().getName() + " did not create a portal because of deny-portals = true");
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event) {
+        Location location = BukkitUtil.adapt(event.getPlayer().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = location.getOwnedPlot();
+        if (plot == null) {
+            if (area.isRoadFlags() && area.getRoadFlag(LecternReadBookFlag.class)) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+        if (plot.getFlag(LecternReadBookFlag.class)) {
+            if (plot.getFlag(LecternReadBookFlag.class)) {
+                plot.debug(event.getPlayer().getName() + " could not take the book because of lectern-read-book = true");
+                event.setCancelled(true);
+            }
+        }
     }
 
 }

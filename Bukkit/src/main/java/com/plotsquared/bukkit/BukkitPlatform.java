@@ -68,7 +68,6 @@ import com.plotsquared.bukkit.uuid.SquirrelIdUUIDService;
 import com.plotsquared.core.PlotPlatform;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.command.WE_Anywhere;
 import com.plotsquared.core.components.ComponentPresetManager;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -162,7 +161,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static com.plotsquared.bukkit.util.JavaVersionCheck.checkJvm;
 import static com.plotsquared.core.util.PremiumVerification.getDownloadID;
 import static com.plotsquared.core.util.PremiumVerification.getResourceID;
 import static com.plotsquared.core.util.PremiumVerification.getUserID;
@@ -321,9 +319,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             try {
                 logger.info("{} hooked into WorldEdit", this.pluginName());
                 WorldEdit.getInstance().getEventBus().register(this.injector().getInstance(WESubscriber.class));
-                if (Settings.Enabled_Components.COMMANDS) {
-                    new WE_Anywhere();
-                }
             } catch (Throwable e) {
                 logger.error(
                         "Incompatible version of WorldEdit, please upgrade: https://builds.enginehub.org/job/worldedit?branch=master");
@@ -542,10 +537,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
         }, 100L, 100L);
 
-        // Check whether the server runs on 11 or greater
-        checkJvm();
         // Check if we are in a safe environment
         ServerLib.checkUnsafeForks();
+        // Check whether the server runs on 16 or greater
         ServerLib.checkJavaLTS();
     }
 
@@ -947,8 +941,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS) {
                                 Location location = entity.getLocation();
                                 if (BukkitUtil.adapt(location).isPlotRoad()) {
-                                    if (entity instanceof LivingEntity) {
-                                        LivingEntity livingEntity = (LivingEntity) entity;
+                                    if (entity instanceof LivingEntity livingEntity) {
                                         if ((Settings.Enabled_Components.KILL_OWNED_ROAD_MOBS || !livingEntity.isLeashed())
                                                 || !entity.hasMetadata("keep")) {
                                             Entity passenger = entity.getPassenger();
@@ -976,7 +969,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     }
                                 }
                             }
-                            continue;
                         }
                     }
                 }

@@ -206,9 +206,7 @@ public class Purge extends SubCommand {
                 "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
         boolean finalClear = clear;
         Runnable run = () -> {
-            if (Settings.DEBUG) {
-                logger.info("Calculating plots to purge, please wait...");
-            }
+            logger.info("Calculating plots to purge, please wait...");
             HashSet<Integer> ids = new HashSet<>();
             Iterator<Plot> iterator = toDelete.iterator();
             AtomicBoolean cleared = new AtomicBoolean(true);
@@ -223,9 +221,7 @@ public class Purge extends SubCommand {
                                 ids.add(plot.temp);
                                 if (finalClear) {
                                     plot.getPlotModificationManager().clear(false, true, player, () -> {
-                                        if (Settings.DEBUG) {
-                                            logger.info("Plot {} cleared by purge", plot.getId());
-                                        }
+                                        logger.info("Plot {} cleared by purge", plot.getId());
                                     });
                                 } else {
                                     plot.getPlotModificationManager().removeSign();

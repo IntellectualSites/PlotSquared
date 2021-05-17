@@ -84,7 +84,7 @@ public class Condense extends SubCommand {
             return false;
         }
         switch (args[1].toLowerCase()) {
-            case "start": {
+            case "start" -> {
                 if (args.length == 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
@@ -216,7 +216,7 @@ public class Condense extends SubCommand {
                 TaskManager.runTaskAsync(run);
                 return true;
             }
-            case "stop":
+            case "stop" -> {
                 if (!Condense.TASK) {
                     player.sendMessage(TranslatableCaption.of("condense.task_stopped"));
                     return false;
@@ -224,7 +224,8 @@ public class Condense extends SubCommand {
                 Condense.TASK = false;
                 player.sendMessage(TranslatableCaption.of("condense.task_stopped"));
                 return true;
-            case "info":
+            }
+            case "info" -> {
                 if (args.length == 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
@@ -267,6 +268,7 @@ public class Condense extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("condense.eta"));
                 player.sendMessage(TranslatableCaption.of("condense.radius_measured"));
                 return true;
+            }
         }
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),

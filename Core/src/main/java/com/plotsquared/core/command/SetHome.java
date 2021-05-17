@@ -47,16 +47,13 @@ public class SetHome extends SetCommand {
             return false;
         }
         switch (value.toLowerCase()) {
-            case "unset":
-            case "reset":
-            case "remove":
-            case "none": {
+            case "unset", "reset", "remove", "none" -> {
                 Plot base = plot.getBasePlot(false);
                 base.setHome(null);
                 player.sendMessage(TranslatableCaption.of("position.position_unset"));
                 return true;
             }
-            case "": {
+            case "" -> {
                 Plot base = plot.getBasePlot(false);
                 Location bottom = base.getBottomAbs();
                 Location location = player.getLocationFull();
@@ -67,12 +64,13 @@ public class SetHome extends SetCommand {
                 player.sendMessage(TranslatableCaption.of("position.position_set"));
                 return true;
             }
-            default:
+            default -> {
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
                         Template.of("value", "Use /plot set home [none]")
                 );
                 return false;
+            }
         }
     }
 

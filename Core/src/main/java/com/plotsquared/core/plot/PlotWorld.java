@@ -106,10 +106,9 @@ public abstract class PlotWorld {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof PlotWorld)) {
+        if (!(o instanceof final PlotWorld other)) {
             return false;
         }
-        final PlotWorld other = (PlotWorld) o;
         if (!other.canEqual(this)) {
             return false;
         }

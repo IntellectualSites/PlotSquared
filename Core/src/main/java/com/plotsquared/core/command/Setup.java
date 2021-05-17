@@ -61,7 +61,7 @@ public class Setup extends SubCommand {
 
     public void displayGenerators(PlotPlayer<?> player) {
         StringBuilder message = new StringBuilder();
-        message.append("<gold>What generator do you want?</gold>");
+        message.append(TranslatableCaption.of("setup.choose_generator").getComponent(player));
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
             if (entry.getKey().equals(PlotSquared.platform().pluginName())) {
                 message.append("\n<dark_gray> - </dark_gray><dark_green>").append(entry.getKey()).append(

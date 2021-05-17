@@ -44,8 +44,8 @@ public enum Direction {
     ;
 
 
-    private int index;
-    private String name;
+    private final int index;
+    private final String name;
 
     Direction(int index, String name) {
 

@@ -144,11 +144,10 @@ public class HybridUtils {
 
             final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
 
-            if (!(area instanceof HybridPlotWorld)) {
+            if (!(area instanceof HybridPlotWorld hpw)) {
                 return;
             }
 
-            HybridPlotWorld hpw = (HybridPlotWorld) area;
             ChunkQueueCoordinator chunk = new ChunkQueueCoordinator(bot, top, false);
             hpw.getGenerator().generateChunk(chunk, hpw);
 
@@ -352,7 +351,7 @@ public class HybridUtils {
                 }
                 CuboidRegion region = zones.poll();
                 final Runnable task = this;
-                analyzeRegion(origin.getWorldName(), region, new RunnableVal<PlotAnalysis>() {
+                analyzeRegion(origin.getWorldName(), region, new RunnableVal<>() {
                     @Override
                     public void run(PlotAnalysis value) {
                         analysis.add(value);
@@ -431,13 +430,11 @@ public class HybridUtils {
                         BlockVector2 chunk = iter.next();
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend);
-                        if (!regenedRoad && Settings.DEBUG) {
+                        if (!regenedRoad) {
                             logger.info("Failed to regenerate roads");
                         }
                     }
-                    if (Settings.DEBUG) {
-                        logger.info("Cancelled road task");
-                    }
+                    logger.info("Cancelled road task");
                     return;
                 }
                 count.incrementAndGet();
@@ -459,10 +456,8 @@ public class HybridUtils {
                                     Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
-                                    if (Settings.DEBUG) {
-                                        logger.info("Updating .mcr: {}, {} (approx 1024 chunks)", loc.getX(), loc.getZ());
-                                        logger.info("- Remaining: {}", HybridUtils.regions.size());
-                                    }
+                                    logger.info("Updating .mcr: {}, {} (approx 1024 chunks)", loc.getX(), loc.getZ());
+                                    logger.info("- Remaining: {}", HybridUtils.regions.size());
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
                                 }
@@ -475,7 +470,7 @@ public class HybridUtils {
                                         final BlockVector2 chunk = iterator.next();
                                         iterator.remove();
                                         boolean regenedRoads = regenerateRoad(area, chunk, extend);
-                                        if (!regenedRoads && Settings.DEBUG) {
+                                        if (!regenedRoads) {
                                             logger.info("Failed to regenerate road");
                                         }
                                     }

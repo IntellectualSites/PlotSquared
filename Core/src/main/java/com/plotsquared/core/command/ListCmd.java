@@ -192,7 +192,7 @@ public class ListCmd extends SubCommand {
         };
 
         switch (arg) {
-            case "mine":
+            case "mine" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_MINE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -206,8 +206,8 @@ public class ListCmd extends SubCommand {
                         .ownedBy(player)
                         .whereBasePlot()
                         .withSortingStrategy(SortingStrategy.SORT_BY_TEMP));
-                break;
-            case "shared":
+            }
+            case "shared" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_SHARED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -219,8 +219,8 @@ public class ListCmd extends SubCommand {
                         .newQuery()
                         .withMember(player.getUUID())
                         .thatPasses(plot -> !plot.isOwnerAbs(player.getUUID())));
-                break;
-            case "world":
+            }
+            case "world" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_WORLD)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -236,8 +236,8 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().inWorld(world));
-                break;
-            case "expired":
+            }
+            case "expired" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_EXPIRED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -250,8 +250,8 @@ public class ListCmd extends SubCommand {
                 } else {
                     plotConsumer.accept(PlotQuery.newQuery().expiredPlots());
                 }
-                break;
-            case "area":
+            }
+            case "area" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_AREA)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -271,8 +271,8 @@ public class ListCmd extends SubCommand {
                 } else {
                     plotConsumer.accept(PlotQuery.newQuery().inArea(area));
                 }
-                break;
-            case "all":
+            }
+            case "all" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_ALL)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -281,8 +281,8 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().allPlots());
-                break;
-            case "done":
+            }
+            case "done" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_DONE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -296,8 +296,8 @@ public class ListCmd extends SubCommand {
                         .allPlots()
                         .thatPasses(DoneFlag::isDone)
                         .withSortingStrategy(SortingStrategy.SORT_BY_DONE));
-                break;
-            case "top":
+            }
+            case "top" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_TOP)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -307,8 +307,8 @@ public class ListCmd extends SubCommand {
                 }
                 sort[0] = false;
                 plotConsumer.accept(PlotQuery.newQuery().allPlots().withSortingStrategy(SortingStrategy.SORT_BY_RATING));
-                break;
-            case "forsale":
+            }
+            case "forsale" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_FOR_SALE)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -320,8 +320,8 @@ public class ListCmd extends SubCommand {
                     break;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().allPlots().thatPasses(plot -> plot.getFlag(PriceFlag.class) > 0));
-                break;
-            case "unowned":
+            }
+            case "unowned" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_UNOWNED)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -330,8 +330,8 @@ public class ListCmd extends SubCommand {
                     return false;
                 }
                 plotConsumer.accept(PlotQuery.newQuery().allPlots().thatPasses(plot -> plot.getOwner() == null));
-                break;
-            case "fuzzy":
+            }
+            case "fuzzy" -> {
                 if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_FUZZY)) {
                     player.sendMessage(
                             TranslatableCaption.of("permission.no_permission"),
@@ -354,8 +354,8 @@ public class ListCmd extends SubCommand {
                 }
                 sort[0] = false;
                 plotConsumer.accept(PlotQuery.newQuery().plotsBySearch(term));
-                break;
-            default:
+            }
+            default -> {
                 if (this.plotAreaManager.hasPlotArea(args[0])) {
                     if (!Permissions.hasPermission(player, Permission.PERMISSION_LIST_WORLD)) {
                         player.sendMessage(
@@ -374,7 +374,6 @@ public class ListCmd extends SubCommand {
                     plotConsumer.accept(PlotQuery.newQuery().inWorld(args[0]));
                     break;
                 }
-
                 PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                     if (throwable instanceof TimeoutException) {
                         player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
@@ -403,6 +402,7 @@ public class ListCmd extends SubCommand {
                         }
                     }
                 });
+            }
         }
 
         return true;
@@ -411,7 +411,7 @@ public class ListCmd extends SubCommand {
     public void displayPlots(final PlotPlayer<?> player, List<Plot> plots, int pageSize, int page, String[] args) {
         // Header
         plots.removeIf(plot -> !plot.isBasePlot());
-        this.paginate(player, plots, pageSize, page, new RunnableVal3<Integer, Plot, CaptionHolder>() {
+        this.paginate(player, plots, pageSize, page, new RunnableVal3<>() {
             @Override
             public void run(Integer i, Plot plot, CaptionHolder caption) {
                 Caption color;

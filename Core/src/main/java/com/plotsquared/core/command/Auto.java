@@ -162,7 +162,7 @@ public class Auto extends SubCommand {
         }
         plot.setOwnerAbs(player.getUUID());
 
-        final RunnableVal<Plot> runnableVal = new RunnableVal<Plot>() {
+        final RunnableVal<Plot> runnableVal = new RunnableVal<>() {
             {
                 this.value = plot;
             }
@@ -217,20 +217,21 @@ public class Auto extends SubCommand {
             try {
                 String[] split = args[0].split(",|;");
                 switch (split.length) {
-                    case 1:
+                    case 1 -> {
                         size_x = 1;
                         size_z = 1;
-                        break;
-                    case 2:
+                    }
+                    case 2 -> {
                         size_x = Integer.parseInt(split[0]);
                         size_z = Integer.parseInt(split[1]);
-                        break;
-                    default:
+                    }
+                    default -> {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
                                 Template.of("value", getUsage())
                         );
                         return true;
+                    }
                 }
                 if (size_x < 1 || size_z < 1) {
                     player.sendMessage(TranslatableCaption.of("error.plot_size"));
@@ -289,7 +290,7 @@ public class Auto extends SubCommand {
                 player.sendMessage(
                         TranslatableCaption.of("schematics.schematic_invalid_named"),
                         Template.of("schemname", schematic),
-                        Template.of("reason", "non-existant")
+                        Template.of("reason", "non-existent")
                 );
                 return true;
             }
@@ -312,15 +313,16 @@ public class Auto extends SubCommand {
                     player.getPlotCount(plotarea.getWorldName()));
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
-                if (!force && this.econHandler.getMoney(player) < cost && this.econHandler.isSupported()) {
+                if (!this.econHandler.isSupported()) {
+                    player.sendMessage(TranslatableCaption.of("economy.vault_not_found"));
+                    return false;
+                }
+                if (!force && this.econHandler.getMoney(player) < cost) {
                     player.sendMessage(
                             TranslatableCaption.of("economy.cannot_afford_plot"),
                             Template.of("money", this.econHandler.format(cost)),
                             Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
-                } else {
-                    player.sendMessage(TranslatableCaption.of("economy.vault_not_found"));
-                    return false;
                 }
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(

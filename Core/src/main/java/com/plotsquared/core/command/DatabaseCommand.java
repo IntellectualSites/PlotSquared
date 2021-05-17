@@ -132,7 +132,7 @@ public class DatabaseCommand extends SubCommand {
             Database implementation;
             String prefix = "";
             switch (args[0].toLowerCase()) {
-                case "import":
+                case "import" -> {
                     if (args.length < 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
@@ -210,7 +210,8 @@ public class DatabaseCommand extends SubCommand {
                             () -> player.sendMessage(TranslatableCaption.of("database.conversion_done"))
                     );
                     return true;
-                case "mysql":
+                }
+                case "mysql" -> {
                     if (args.length < 6) {
                         player.sendMessage(StaticCaption.of(
                                 "/plot database mysql [host] [port] [username] [password] [database] {prefix}"));
@@ -224,18 +225,19 @@ public class DatabaseCommand extends SubCommand {
                         prefix = args[6];
                     }
                     implementation = new MySQL(host, port, database, username, password);
-                    break;
-                case "sqlite":
+                }
+                case "sqlite" -> {
                     if (args.length < 2) {
                         player.sendMessage(StaticCaption.of("/plot database sqlite [file]"));
                     }
                     File sqliteFile =
                             FileUtils.getFile(PlotSquared.platform().getDirectory(), args[1] + ".db");
                     implementation = new SQLite(sqliteFile);
-                    break;
-                default:
+                }
+                default -> {
                     player.sendMessage(StaticCaption.of("/plot database [sqlite/mysql]"));
                     return false;
+                }
             }
             try {
                 SQLManager manager = new SQLManager(

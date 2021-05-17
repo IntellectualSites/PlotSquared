@@ -39,6 +39,10 @@ import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CommandDeclaration(command = "debugroadregen",
         usage = DebugRoadRegen.USAGE,
@@ -110,7 +114,7 @@ public class DebugRoadRegen extends SubCommand {
                 ;
                 player.sendMessage(
                         TranslatableCaption.of("debugroadregen.regen_done"),
-                        Template.of("value", String.valueOf(plot.getId()))
+                        Template.of("value", plot.getId().toString())
                 );
                 player.sendMessage(
                         TranslatableCaption.of("debugroadregen.regen_all"),
@@ -171,6 +175,14 @@ public class DebugRoadRegen extends SubCommand {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
+        return Stream.of("plot", "region")
+                .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
+                .map(value -> new Command(null, false, value, "plots.debugroadregen", RequiredType.NONE, null) {
+                }).collect(Collectors.toList());
     }
 
 }

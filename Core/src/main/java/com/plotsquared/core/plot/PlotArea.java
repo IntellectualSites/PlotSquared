@@ -36,7 +36,6 @@ import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
-import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
@@ -356,26 +355,10 @@ public abstract class PlotArea {
         this.minBuildHeight = config.getInt("world.min_height");
 
         switch (config.getString("world.gamemode").toLowerCase()) {
-            case "creative":
-            case "c":
-            case "1":
-                this.gameMode = GameModes.CREATIVE;
-                break;
-            case "adventure":
-            case "a":
-            case "2":
-                this.gameMode = GameModes.ADVENTURE;
-                break;
-            case "spectator":
-            case "3":
-                this.gameMode = GameModes.SPECTATOR;
-                break;
-            case "survival":
-            case "s":
-            case "0":
-            default:
-                this.gameMode = GameModes.SURVIVAL;
-                break;
+            case "creative", "c", "1" -> this.gameMode = GameModes.CREATIVE;
+            case "adventure", "a", "2" -> this.gameMode = GameModes.ADVENTURE;
+            case "spectator", "3" -> this.gameMode = GameModes.SPECTATOR;
+            default -> this.gameMode = GameModes.SURVIVAL;
         }
 
         String homeNonMembers = config.getString("home.nonmembers");
@@ -1115,7 +1098,7 @@ public abstract class PlotArea {
 
     public void addCluster(final @Nullable PlotCluster plotCluster) {
         if (this.clusters == null) {
-            this.clusters = new QuadMap<PlotCluster>(Integer.MAX_VALUE, 0, 0, 62) {
+            this.clusters = new QuadMap<>(Integer.MAX_VALUE, 0, 0, 62) {
                 @Override
                 public CuboidRegion getRegion(PlotCluster value) {
                     BlockVector2 pos1 = BlockVector2.at(value.getP1().getX(), value.getP1().getY());
@@ -1195,7 +1178,7 @@ public abstract class PlotArea {
      *
      * @param flag The flag type (Any instance of the flag)
      * @param <V>  The flag type (Any instance of the flag)
-     * @param <T>  flag valye type
+     * @param <T>  flag value type
      * @return The flag value
      */
     public <T, V extends PlotFlag<T, ?>> T getFlag(final V flag) {
@@ -1222,7 +1205,7 @@ public abstract class PlotArea {
      *
      * @param flag The flag type (Any instance of the flag)
      * @param <V>  The flag type (Any instance of the flag)
-     * @param <T>  flag valye type
+     * @param <T>  flag value type
      * @return The flag value
      */
     public <T, V extends PlotFlag<T, ?>> T getRoadFlag(final V flag) {

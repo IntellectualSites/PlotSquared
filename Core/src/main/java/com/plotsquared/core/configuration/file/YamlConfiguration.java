@@ -81,13 +81,11 @@ public class YamlConfiguration extends FileConfiguration {
                     dest = new File(file.getAbsolutePath() + "_broken_" + i++);
                 }
                 Files.copy(file.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                if (Settings.DEBUG) {
-                    logger.error("Could not read: {}", file);
-                    logger.error("Renamed to: {}", file);
-                    logger.error("============ Full stacktrace ============");
-                    ex.printStackTrace();
-                    logger.error("=========================================");
-                }
+                logger.error("Could not read: {}", file);
+                logger.error("Renamed to: {}", file);
+                logger.error("============ Full stacktrace ============");
+                ex.printStackTrace();
+                logger.error("=========================================");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -117,7 +115,7 @@ public class YamlConfiguration extends FileConfiguration {
 
         Map<?, ?> input;
         try {
-            input = (Map<?, ?>) yaml.load(contents);
+            input = yaml.load(contents);
         } catch (YAMLException e) {
             throw new InvalidConfigurationException(e);
         } catch (ClassCastException ignored) {
@@ -183,8 +181,7 @@ public class YamlConfiguration extends FileConfiguration {
         if (options().copyHeader()) {
             Configuration def = getDefaults();
 
-            if (def instanceof FileConfiguration) {
-                FileConfiguration fileDefaults = (FileConfiguration) def;
+            if (def instanceof FileConfiguration fileDefaults) {
                 String defaultsHeader = fileDefaults.buildHeader();
 
                 if ((defaultsHeader != null) && !defaultsHeader.isEmpty()) {

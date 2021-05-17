@@ -263,32 +263,20 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     @Override
     public void setWeather(final @NonNull PlotWeather weather) {
         switch (weather) {
-            case CLEAR:
-                this.player.setPlayerWeather(WeatherType.CLEAR);
-                break;
-            case RAIN:
-                this.player.setPlayerWeather(WeatherType.DOWNFALL);
-                break;
-            case RESET:
-            default:
-                this.player.resetPlayerWeather();
-                break;
+            case CLEAR -> this.player.setPlayerWeather(WeatherType.CLEAR);
+            case RAIN -> this.player.setPlayerWeather(WeatherType.DOWNFALL);
+            default -> this.player.resetPlayerWeather();
         }
     }
 
     @Override
     public com.sk89q.worldedit.world.gamemode.GameMode getGameMode() {
-        switch (this.player.getGameMode()) {
-            case ADVENTURE:
-                return ADVENTURE;
-            case CREATIVE:
-                return CREATIVE;
-            case SPECTATOR:
-                return SPECTATOR;
-            case SURVIVAL:
-            default:
-                return SURVIVAL;
-        }
+        return switch (this.player.getGameMode()) {
+            case ADVENTURE -> ADVENTURE;
+            case CREATIVE -> CREATIVE;
+            case SPECTATOR -> SPECTATOR;
+            default -> SURVIVAL;
+        };
     }
 
     @Override
@@ -372,14 +360,11 @@ public class BukkitPlayer extends PlotPlayer<Player> {
     }
 
     public PlayerTeleportEvent.TeleportCause getTeleportCause(final @NonNull TeleportCause cause) {
-        switch (cause) {
-            case COMMAND:
-                return PlayerTeleportEvent.TeleportCause.COMMAND;
-            case PLUGIN:
-                return PlayerTeleportEvent.TeleportCause.PLUGIN;
-            default:
-                return PlayerTeleportEvent.TeleportCause.UNKNOWN;
-        }
+        return switch (cause) {
+            case COMMAND -> PlayerTeleportEvent.TeleportCause.COMMAND;
+            case PLUGIN -> PlayerTeleportEvent.TeleportCause.PLUGIN;
+            default -> PlayerTeleportEvent.TeleportCause.UNKNOWN;
+        };
     }
 
 }

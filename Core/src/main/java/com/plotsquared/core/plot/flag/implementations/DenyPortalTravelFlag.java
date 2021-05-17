@@ -23,55 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.events;
+package com.plotsquared.core.plot.flag.implementations;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-/**
- * Enum for {@link CancellablePlotEvent}.
- * <p>
- * DENY: do not allow the event to happen
- * ALLOW: allow the event to continue as normal, subject to standard checks
- * FORCE: force the event to occur, even if normal checks would deny.
- * WARNING: this may have unintended consequences! Make sure you study the appropriate code before using!
- */
-public enum Result {
+public class DenyPortalTravelFlag extends BooleanFlag<DenyPortalTravelFlag> {
 
-    DENY(0),
-    ACCEPT(1),
-    FORCE(2);
+    public static final DenyPortalTravelFlag DENY_PORTAL_TRAVEL_TRUE = new DenyPortalTravelFlag(true);
+    public static final DenyPortalTravelFlag DENY_PORTAL_TRAVEL_FALSE = new DenyPortalTravelFlag(false);
 
-    private static final Map<Integer, Result> map = new HashMap<>();
-
-    static {
-        for (Result eventResult : Result.values()) {
-            map.put(eventResult.value, eventResult);
-        }
+    private DenyPortalTravelFlag(final boolean value) {
+        super(value, TranslatableCaption.of("flags.flag_description_deny_portal_travel"));
     }
 
-    private final int value;
-
-    Result(int value) {
-        this.value = value;
+    @Override
+    protected DenyPortalTravelFlag flagOf(final @NonNull Boolean value) {
+        return value ? DENY_PORTAL_TRAVEL_TRUE : DENY_PORTAL_TRAVEL_FALSE;
     }
 
-    /**
-     * Obtain the Result enum associated with the int value
-     *
-     * @param eventResult the int value
-     * @return the corresponding Result
-     */
-    public static Result valueOf(int eventResult) {
-        return map.get(eventResult);
-    }
-
-    /**
-     * Get int value of enum
-     *
-     * @return integer value
-     */
-    public int getValue() {
-        return value;
-    }
 }

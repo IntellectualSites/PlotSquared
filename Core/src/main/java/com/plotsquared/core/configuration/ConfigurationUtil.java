@@ -45,7 +45,7 @@ import java.util.function.Supplier;
  */
 public class ConfigurationUtil {
 
-    public static final SettingValue<Integer> INTEGER = new SettingValue<Integer>("INTEGER") {
+    public static final SettingValue<Integer> INTEGER = new SettingValue<>("INTEGER") {
         @Override
         public boolean validateValue(String string) {
             try {
@@ -61,7 +61,7 @@ public class ConfigurationUtil {
             return Integer.parseInt(string);
         }
     };
-    public static final SettingValue<Boolean> BOOLEAN = new SettingValue<Boolean>("BOOLEAN") {
+    public static final SettingValue<Boolean> BOOLEAN = new SettingValue<>("BOOLEAN") {
         @Override
         public boolean validateValue(String string) {
             //noinspection ResultOfMethodCallIgnored
@@ -74,7 +74,7 @@ public class ConfigurationUtil {
             return Boolean.parseBoolean(string);
         }
     };
-    public static final SettingValue<BiomeType> BIOME = new SettingValue<BiomeType>("BIOME") {
+    public static final SettingValue<BiomeType> BIOME = new SettingValue<>("BIOME") {
         @Override
         public boolean validateValue(String string) {
             try {
@@ -94,7 +94,7 @@ public class ConfigurationUtil {
     };
 
     public static final SettingValue<BlockBucket> BLOCK_BUCKET =
-            new SettingValue<BlockBucket>("BLOCK_BUCKET") {
+            new SettingValue<>("BLOCK_BUCKET") {
 
                 @Override
                 public BlockBucket parseString(final String string) {
