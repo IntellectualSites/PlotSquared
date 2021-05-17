@@ -7,7 +7,7 @@ plugins {
     `java-library`
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("org.cadixdev.licenser") version "0.5.1"
+    id("org.cadixdev.licenser") version "0.6.0"
     id("org.ajoberstar.grgit") version "4.1.0"
 
     eclipse
@@ -90,9 +90,9 @@ allprojects {
     }
 
     configure<LicenseExtension> {
-        header = rootProject.file("HEADER.txt")
+        header.set(resources.text.fromFile(file("HEADER.txt")))
         include("**/*.java")
-        newLine = false
+        newLine.set(false)
     }
 
     java {
