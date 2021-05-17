@@ -90,7 +90,7 @@ allprojects {
     }
 
     configure<LicenseExtension> {
-        header.set(resources.text.fromFile(file("HEADER.txt")))
+        header(rootProject.file("HEADER.txt"))
         include("**/*.java")
         newLine.set(false)
     }
