@@ -489,19 +489,18 @@ public class BlockEventListener implements Listener {
             return;
         }
         Plot plot = area.getPlot(location);
-        // TODO Add flag to allow 1.17 dripstone-based machines if desired / rain-based automatic filling
+        // TODO Add flag to allow / deny 1.17 dripstone-based machines
+        // TODO Add flag to allow / deny modification by rain
         if (entity instanceof Player) {
             Player player = (Player) entity;
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
             if (plot != null) {
                 if (!plot.hasOwner()) {
-                    if (Permissions
-                            .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
+                    if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
                         return;
                     }
                 } else if (!plot.isAdded(plotPlayer.getUUID())) {
-                    if (Permissions
-                            .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
+                    if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                         return;
                     }
                 } else {
@@ -520,7 +519,7 @@ public class BlockEventListener implements Listener {
             }
         }
 
-        event.setCancelled(true);
+        event.setNewLevel(event.getOldLevel());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
