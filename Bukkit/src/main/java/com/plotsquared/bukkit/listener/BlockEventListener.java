@@ -491,8 +491,7 @@ public class BlockEventListener implements Listener {
         Plot plot = area.getPlot(location);
         // TODO Add flag to allow / deny 1.17 dripstone-based machines
         // TODO Add flag to allow / deny modification by rain
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
             if (plot != null) {
                 if (!plot.hasOwner()) {
