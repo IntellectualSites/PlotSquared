@@ -175,8 +175,8 @@ public interface AutoService extends Service<AutoService.AutoQuery, List<Plot>> 
                     );
                     final List<Plot> plots =
                             autoQuery.getPlotArea().canClaim(autoQuery.getPlayer(), start, end);
+                    autoQuery.getPlotArea().setMeta("lastPlot", start); // set entry point for next try
                     if (plots != null && !plots.isEmpty()) {
-                        autoQuery.getPlotArea().setMeta("lastPlot", start);
                         for (final Plot plot : plots) {
                             if (plotCandidateCache.getIfPresent(plot.getId()) != null) {
                                 continue outer;
