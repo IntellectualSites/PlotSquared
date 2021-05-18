@@ -315,7 +315,7 @@ public class EntityEventListener implements Listener {
             PlotArea area = location.getPlotArea();
             if (area != null) {
                 Plot plot = area.getOwnedPlot(location);
-                if (plot != null && plot.getFlag(MobPlaceFlag.class)) {
+                if (plot != null && !plot.getFlag(MobPlaceFlag.class)) {
                     plot.debug(e.getType() + " could not change block because mob-place = false");
                     return;
                 }
