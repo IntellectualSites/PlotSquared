@@ -98,6 +98,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.CauldronLevelChangeEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.world.StructureGrowEvent;
@@ -243,22 +244,13 @@ public class BlockEventListener implements Listener {
             default:
                 if (Settings.Redstone.DETECT_INVALID_EDGE_PISTONS) {
                     switch (block.getType()) {
-                        case PISTON:
-                        case STICKY_PISTON:
+                        case PISTON, STICKY_PISTON -> {
                             org.bukkit.block.data.Directional piston = (org.bukkit.block.data.Directional) block.getBlockData();
                             switch (piston.getFacing()) {
-                                case EAST:
-                                    location = location.add(1, 0, 0);
-                                    break;
-                                case SOUTH:
-                                    location = location.add(-1, 0, 0);
-                                    break;
-                                case WEST:
-                                    location = location.add(0, 0, 1);
-                                    break;
-                                case NORTH:
-                                    location = location.add(0, 0, -1);
-                                    break;
+                                case EAST -> location = location.add(1, 0, 0);
+                                case SOUTH -> location = location.add(-1, 0, 0);
+                                case WEST -> location = location.add(0, 0, 1);
+                                case NORTH -> location = location.add(0, 0, -1);
                             }
                             Plot newPlot = area.getOwnedPlotAbs(location);
                             if (!plot.equals(newPlot)) {
@@ -266,6 +258,7 @@ public class BlockEventListener implements Listener {
                                 plot.debug("Prevented piston update because of invalid edge piston detection");
                                 return;
                             }
+                        }
                     }
                 }
                 break;
@@ -479,6 +472,58 @@ public class BlockEventListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onCauldronEmpty(CauldronLevelChangeEvent event) {
+        Entity entity = event.getEntity();
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getPlot(location);
+        // TODO Add flags for specific control over cauldron changes (rain, dripstone...)
+        switch (event.getReason()) {
+            case BANNER_WASH, ARMOR_WASH, EXTINGUISH -> {
+                if (entity instanceof Player player) {
+                    BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
+                    if (plot != null) {
+                        if (!plot.hasOwner()) {
+                            if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_UNOWNED)) {
+                                return;
+                            }
+                        } else if (!plot.isAdded(plotPlayer.getUUID())) {
+                            if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
+                                return;
+                            }
+                        } else {
+                            return;
+                        }
+                    } else {
+                        if (Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_INTERACT_ROAD)) {
+                            return;
+                        }
+                        if (this.worldEdit != null && plotPlayer.getAttribute("worldedit")) {
+                            if (player.getInventory().getItemInMainHand().getType() == Material
+                                    .getMaterial(this.worldEdit.getConfiguration().wandItem)) {
+                                return;
+                            }
+                        }
+                    }
+                }
+                if (event.getReason() == CauldronLevelChangeEvent.ChangeReason.EXTINGUISH && event.getEntity() != null) {
+                    event.getEntity().setFireTicks(0);
+                }
+                // Though the players fire ticks are modified,
+                // the cauldron water level change is cancelled and the event should represent that.
+                event.setCancelled(true);
+            }
+            default -> {
+                // Bucket empty, Bucket fill, Bottle empty, Bottle fill are already handled in PlayerInteract event
+                // Evaporation or Unknown reasons do not need to be cancelled as they are considered natural causes
+            }
+        }
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         if (event instanceof EntityBlockFormEvent) {
@@ -548,8 +593,7 @@ public class BlockEventListener implements Listener {
         }
         boolean allowed = plot.getFlag(flag);
         Entity entity = event.getEntity();
-        if (entity instanceof Player) {
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
                 if (allowed) {
@@ -889,37 +933,7 @@ public class BlockEventListener implements Listener {
     public void onBlockDispense(BlockDispenseEvent event) {
         Material type = event.getItem().getType();
         switch (type) {
-            case SHULKER_BOX:
-            case WHITE_SHULKER_BOX:
-            case ORANGE_SHULKER_BOX:
-            case MAGENTA_SHULKER_BOX:
-            case LIGHT_BLUE_SHULKER_BOX:
-            case YELLOW_SHULKER_BOX:
-            case LIME_SHULKER_BOX:
-            case PINK_SHULKER_BOX:
-            case GRAY_SHULKER_BOX:
-            case LIGHT_GRAY_SHULKER_BOX:
-            case CYAN_SHULKER_BOX:
-            case PURPLE_SHULKER_BOX:
-            case BLUE_SHULKER_BOX:
-            case BROWN_SHULKER_BOX:
-            case GREEN_SHULKER_BOX:
-            case RED_SHULKER_BOX:
-            case BLACK_SHULKER_BOX:
-            case CARVED_PUMPKIN:
-            case WITHER_SKELETON_SKULL:
-            case FLINT_AND_STEEL:
-            case BONE_MEAL:
-            case SHEARS:
-            case GLASS_BOTTLE:
-            case GLOWSTONE:
-            case COD_BUCKET:
-            case PUFFERFISH_BUCKET:
-            case SALMON_BUCKET:
-            case TROPICAL_FISH_BUCKET:
-            case BUCKET:
-            case WATER_BUCKET:
-            case LAVA_BUCKET: {
+            case SHULKER_BOX, WHITE_SHULKER_BOX, ORANGE_SHULKER_BOX, MAGENTA_SHULKER_BOX, LIGHT_BLUE_SHULKER_BOX, YELLOW_SHULKER_BOX, LIME_SHULKER_BOX, PINK_SHULKER_BOX, GRAY_SHULKER_BOX, LIGHT_GRAY_SHULKER_BOX, CYAN_SHULKER_BOX, PURPLE_SHULKER_BOX, BLUE_SHULKER_BOX, BROWN_SHULKER_BOX, GREEN_SHULKER_BOX, RED_SHULKER_BOX, BLACK_SHULKER_BOX, CARVED_PUMPKIN, WITHER_SKELETON_SKULL, FLINT_AND_STEEL, BONE_MEAL, SHEARS, GLASS_BOTTLE, GLOWSTONE, COD_BUCKET, PUFFERFISH_BUCKET, SALMON_BUCKET, TROPICAL_FISH_BUCKET, BUCKET, WATER_BUCKET, LAVA_BUCKET -> {
                 if (event.getBlock().getType() == Material.DROPPER) {
                     return;
                 }
@@ -1100,8 +1114,7 @@ public class BlockEventListener implements Listener {
                     if (ignitingEntity instanceof Fireball) {
                         Projectile fireball = (Projectile) ignitingEntity;
                         Location location = null;
-                        if (fireball.getShooter() instanceof Entity) {
-                            Entity shooter = (Entity) fireball.getShooter();
+                        if (fireball.getShooter() instanceof Entity shooter) {
                             location = BukkitUtil.adapt(shooter.getLocation());
                         } else if (fireball.getShooter() instanceof BlockProjectileSource) {
                             Block shooter =

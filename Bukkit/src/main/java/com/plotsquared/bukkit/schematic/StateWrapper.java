@@ -177,19 +177,11 @@ public class StateWrapper {
         }
         org.bukkit.block.BlockState state = block.getState();
         switch (getId()) {
-            case "chest":
-            case "beacon":
-            case "brewingstand":
-            case "dispenser":
-            case "dropper":
-            case "furnace":
-            case "hopper":
-            case "shulkerbox":
-                if (!(state instanceof Container)) {
+            case "chest", "beacon", "brewingstand", "dispenser", "dropper", "furnace", "hopper", "shulkerbox" -> {
+                if (!(state instanceof Container container)) {
                     return false;
                 }
                 List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
-                Container container = (Container) state;
                 Inventory inv = container.getSnapshotInventory();
                 for (Tag itemTag : itemsTag) {
                     CompoundTag itemComp = (CompoundTag) itemTag;
@@ -206,9 +198,9 @@ public class StateWrapper {
                 }
                 container.update(true, false);
                 return true;
-            case "sign":
-                if (state instanceof Sign) {
-                    Sign sign = (Sign) state;
+            }
+            case "sign" -> {
+                if (state instanceof Sign sign) {
                     sign.setLine(0, jsonToColourCode(tag.getString("Text1")));
                     sign.setLine(1, jsonToColourCode(tag.getString("Text2")));
                     sign.setLine(2, jsonToColourCode(tag.getString("Text3")));
@@ -217,6 +209,7 @@ public class StateWrapper {
                     return true;
                 }
                 return false;
+            }
         }
         return false;
     }
@@ -225,8 +218,7 @@ public class StateWrapper {
         if (this.tag != null) {
             return this.tag;
         }
-        if (this.state instanceof InventoryHolder) {
-            InventoryHolder inv = (InventoryHolder) this.state;
+        if (this.state instanceof InventoryHolder inv) {
             ItemStack[] contents = inv.getInventory().getContents();
             Map<String, Tag> values = new HashMap<>();
             values.put("Items", new ListTag(CompoundTag.class, serializeInventory(contents)));

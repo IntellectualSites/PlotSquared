@@ -25,9 +25,6 @@
  */
 package com.plotsquared.core.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * plot functions
  *
@@ -35,9 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public class MainUtil {
-
-    private static final Logger logger =
-            LoggerFactory.getLogger("P2/" + MainUtil.class.getSimpleName());
 
     /**
      * Cache of mapping x,y,z coordinates to the chunk array<br>

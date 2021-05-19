@@ -44,7 +44,7 @@ import java.util.function.Consumer;
 
 public class SinglePlot extends Plot {
 
-    private Set<CuboidRegion> regions = Collections.singleton(
+    private final Set<CuboidRegion> regions = Collections.singleton(
             new CuboidRegion(
                     BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE),
                     BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE)

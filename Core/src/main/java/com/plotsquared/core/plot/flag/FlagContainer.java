@@ -340,10 +340,9 @@ public class FlagContainer {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof FlagContainer)) {
+        if (!(o instanceof final FlagContainer other)) {
             return false;
         }
-        final FlagContainer other = (FlagContainer) o;
         if (!other.canEqual(this)) {
             return false;
         }

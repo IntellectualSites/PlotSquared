@@ -184,7 +184,7 @@ public class MainCommand extends Command {
             }
         }
         try {
-            getInstance().execute(player, args, new RunnableVal3<Command, Runnable, Runnable>() {
+            getInstance().execute(player, args, new RunnableVal3<>() {
                 @Override
                 public void run(final Command cmd, final Runnable success, final Runnable failure) {
                     if (cmd.hasConfirmation(player)) {
@@ -222,7 +222,7 @@ public class MainCommand extends Command {
                         success.run();
                     }
                 }
-            }, new RunnableVal2<Command, CommandResult>() {
+            }, new RunnableVal2<>() {
                 @Override
                 public void run(Command cmd, CommandResult result) {
                     // Post command stuff!?
@@ -281,7 +281,7 @@ public class MainCommand extends Command {
             }
             if (args.length >= 2 && !args[0].isEmpty() && args[0].charAt(0) == '-') {
                 if ("f".equals(args[0].substring(1))) {
-                    confirm = new RunnableVal3<Command, Runnable, Runnable>() {
+                    confirm = new RunnableVal3<>() {
                         @Override
                         public void run(Command cmd, Runnable success, Runnable failure) {
                             if (area != null && PlotSquared.platform().econHandler().isEnabled(area)) {

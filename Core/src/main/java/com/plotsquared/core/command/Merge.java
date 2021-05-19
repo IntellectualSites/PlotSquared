@@ -74,23 +74,13 @@ public class Merge extends SubCommand {
     public static String direction(float yaw) {
         yaw = yaw / 90;
         int i = Math.round(yaw);
-        switch (i) {
-            case -4:
-            case 0:
-            case 4:
-                return "SOUTH";
-            case -1:
-            case 3:
-                return "EAST";
-            case -2:
-            case 2:
-                return "NORTH";
-            case -3:
-            case 1:
-                return "WEST";
-            default:
-                return "";
-        }
+        return switch (i) {
+            case -4, 0, 4 -> "SOUTH";
+            case -1, 3 -> "EAST";
+            case -2, 2 -> "NORTH";
+            case -3, 1 -> "WEST";
+            default -> "";
+        };
     }
 
     @Override
@@ -112,18 +102,10 @@ public class Merge extends SubCommand {
         Direction direction = null;
         if (args.length == 0) {
             switch (direction(player.getLocationFull().getYaw())) {
-                case "NORTH":
-                    direction = Direction.NORTH;
-                    break;
-                case "EAST":
-                    direction = Direction.EAST;
-                    break;
-                case "SOUTH":
-                    direction = Direction.SOUTH;
-                    break;
-                case "WEST":
-                    direction = Direction.WEST;
-                    break;
+                case "NORTH" -> direction = Direction.NORTH;
+                case "EAST" -> direction = Direction.EAST;
+                case "SOUTH" -> direction = Direction.SOUTH;
+                case "WEST" -> direction = Direction.WEST;
             }
         } else {
             for (int i = 0; i < values.length; i++) {

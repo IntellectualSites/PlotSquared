@@ -587,9 +587,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
                 owned.getPlotModificationManager().deletePlot(null, null);
-                if (Settings.DEBUG) {
-                    logger.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
-                }
+                logger.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
             }
         }
         if (ExpireManager.IMP != null) {
@@ -636,7 +634,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     public void populatePersistentMetaMap() {
         if (Settings.Enabled_Components.PERSISTENT_META) {
-            DBFunc.getPersistentMeta(getUUID(), new RunnableVal<Map<String, byte[]>>() {
+            DBFunc.getPersistentMeta(getUUID(), new RunnableVal<>() {
                 @Override
                 public void run(Map<String, byte[]> value) {
                     try {
@@ -928,10 +926,9 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof PlotPlayer)) {
+        if (!(obj instanceof final PlotPlayer<?> other)) {
             return false;
         }
-        final PlotPlayer<?> other = (PlotPlayer<?>) obj;
         return this.getUUID().equals(other.getUUID());
     }
 

@@ -135,7 +135,7 @@ public final class BlockUtil {
      * Deserialize a serialized {@link BlockState}
      *
      * @param map Serialized block state
-     * @return Deserialized block state, or {@code null} if the map is
+     * @return Deserialized block state, or {@code null} if the map is
      *         not a properly serialized block state
      */
     public static @Nullable BlockState deserialize(final @NonNull Map<String, Object> map) {

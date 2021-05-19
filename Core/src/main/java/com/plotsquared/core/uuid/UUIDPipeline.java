@@ -176,7 +176,7 @@ public class UUIDPipeline {
         } catch (TimeoutException ignored) {
             // This is completely valid, we just don't care anymore
             if (Settings.DEBUG) {
-                logger.warn("(UUID) Request for {} timed out", username);
+                logger.warn("(UUID) Request for {} timed out. Rate limit.", username);
             }
         }
         return null;
@@ -201,7 +201,7 @@ public class UUIDPipeline {
         } catch (TimeoutException ignored) {
             // This is completely valid, we just don't care anymore
             if (Settings.DEBUG) {
-                logger.warn("(UUID) Request for {} timed out", uuid);
+                logger.warn("(UUID) Request for {} timed out. Rate limit.", uuid);
             }
         }
         return null;

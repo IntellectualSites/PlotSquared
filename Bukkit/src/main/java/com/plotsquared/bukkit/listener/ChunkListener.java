@@ -259,7 +259,7 @@ public class ChunkListener implements Listener {
 
     private void cleanChunk(final Chunk chunk) {
         TaskManager.index.incrementAndGet();
-        final Integer currentIndex = TaskManager.index.get();
+        final int currentIndex = TaskManager.index.get();
         PlotSquaredTask task = TaskManager.runTaskRepeat(() -> {
             if (!chunk.isLoaded()) {
                 Objects.requireNonNull(TaskManager.removeTask(currentIndex)).cancel();

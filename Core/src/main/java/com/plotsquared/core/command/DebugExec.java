@@ -93,7 +93,7 @@ public class DebugExec extends SubCommand {
         if (args.length > 0) {
             String arg = args[0].toLowerCase();
             switch (arg) {
-                case "analyze": {
+                case "analyze" -> {
                     Plot plot = player.getCurrentPlot();
                     if (plot == null) {
                         player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
@@ -103,7 +103,7 @@ public class DebugExec extends SubCommand {
                     if (analysis != null) {
                         player.sendMessage(
                                 TranslatableCaption.of("debugexec.changes_column"),
-                                Template.of("value", String.valueOf(analysis.changes / 1.0))
+                                Template.of("value", String.valueOf(analysis.changes))
                         );
                         return true;
                     }
@@ -119,7 +119,7 @@ public class DebugExec extends SubCommand {
                     });
                     return true;
                 }
-                case "calibrate-analysis":
+                case "calibrate-analysis" -> {
                     if (args.length != 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
@@ -144,7 +144,8 @@ public class DebugExec extends SubCommand {
                             threshold
                     );
                     return true;
-                case "start-expire":
+                }
+                case "start-expire" -> {
                     if (ExpireManager.IMP == null) {
                         ExpireManager.IMP = new ExpireManager(this.eventDispatcher);
                     }
@@ -154,14 +155,16 @@ public class DebugExec extends SubCommand {
                         player.sendMessage(TranslatableCaption.of("debugexec.expiry_already_started"));
                     }
                     return true;
-                case "stop-expire":
+                }
+                case "stop-expire" -> {
                     if (ExpireManager.IMP == null || !ExpireManager.IMP.cancelTask()) {
                         player.sendMessage(TranslatableCaption.of("debugexec.task_halted"));
                     } else {
                         player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
                     }
                     return true;
-                case "remove-flag":
+                }
+                case "remove-flag" -> {
                     if (args.length != 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
@@ -186,7 +189,8 @@ public class DebugExec extends SubCommand {
                             Template.of("value", flag)
                     );
                     return true;
-                case "start-rgar": {
+                }
+                case "start-rgar" -> {
                     if (args.length != 2) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
@@ -214,7 +218,7 @@ public class DebugExec extends SubCommand {
                     }
                     return true;
                 }
-                case "stop-rgar":
+                case "stop-rgar" -> {
                     if (!HybridUtils.UPDATE) {
                         player.sendMessage(TranslatableCaption.of("debugexec.task_not_running"));
                         return false;
@@ -222,6 +226,7 @@ public class DebugExec extends SubCommand {
                     HybridUtils.UPDATE = false;
                     player.sendMessage(TranslatableCaption.of("debugexec.task_cancelled"));
                     return true;
+                }
             }
         }
         player.sendMessage(StaticCaption.of("<prefix><gold>Possible sub commands: </gold><gray>/plot debugexec <"

@@ -100,7 +100,7 @@ public class Like extends SubCommand {
         final UUID uuid = player.getUUID();
         if (args.length == 1) {
             switch (args[0].toLowerCase()) {
-                case "next": {
+                case "next" -> {
                     final List<Plot> plots = PlotQuery.newQuery().whereBasePlot().asList();
                     plots.sort((p1, p2) -> {
                         double v1 = getLikesPercentage(p1);
@@ -122,7 +122,7 @@ public class Like extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
                     return true;
                 }
-                case "purge": {
+                case "purge" -> {
                     final Plot plot = player.getCurrentPlot();
                     if (plot == null) {
                         player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));

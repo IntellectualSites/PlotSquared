@@ -111,8 +111,7 @@ public class EntityEventListener implements Listener {
 */
         if (!BukkitEntityUtil.entityDamage(damager, victim, event.getCause())) {
             if (event.isCancelled()) {
-                if (victim instanceof Ageable) {
-                    Ageable ageable = (Ageable) victim;
+                if (victim instanceof Ageable ageable) {
                     if (ageable.getAge() == -24000) {
                         ageable.setAge(0);
                         ageable.setAdult();
@@ -316,7 +315,7 @@ public class EntityEventListener implements Listener {
             PlotArea area = location.getPlotArea();
             if (area != null) {
                 Plot plot = area.getOwnedPlot(location);
-                if (plot != null && plot.getFlag(MobPlaceFlag.class)) {
+                if (plot != null && !plot.getFlag(MobPlaceFlag.class)) {
                     plot.debug(e.getType() + " could not change block because mob-place = false");
                     return;
                 }

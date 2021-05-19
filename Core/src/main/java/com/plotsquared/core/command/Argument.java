@@ -29,7 +29,7 @@ import com.plotsquared.core.plot.PlotId;
 
 public abstract class Argument<T> {
 
-    public static final Argument<Integer> Integer = new Argument<Integer>("int", 16) {
+    public static final Argument<Integer> Integer = new Argument<>("int", 16) {
         @Override
         public Integer parse(String in) {
             Integer value = null;
@@ -40,7 +40,7 @@ public abstract class Argument<T> {
             return value;
         }
     };
-    public static final Argument<Boolean> Boolean = new Argument<Boolean>("boolean", true) {
+    public static final Argument<Boolean> Boolean = new Argument<>("boolean", true) {
         @Override
         public Boolean parse(String in) {
             Boolean value = null;
@@ -54,21 +54,21 @@ public abstract class Argument<T> {
             return value;
         }
     };
-    public static final Argument<String> String = new Argument<String>("String", "Example") {
+    public static final Argument<String> String = new Argument<>("String", "Example") {
         @Override
         public String parse(String in) {
             return in;
         }
     };
     public static final Argument<String> PlayerName =
-            new Argument<String>("PlayerName", "<player | *>") {
+            new Argument<>("PlayerName", "<player | *>") {
                 @Override
                 public String parse(String in) {
                     return in.length() <= 16 ? in : null;
                 }
             };
     public static final Argument<PlotId> PlotID =
-            new Argument<PlotId>("PlotID", PlotId.of(-6, 3)) {
+            new Argument<>("PlotID", PlotId.of(-6, 3)) {
                 @Override
                 public PlotId parse(String in) {
                     return PlotId.fromString(in);

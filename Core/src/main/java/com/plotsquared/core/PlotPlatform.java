@@ -233,7 +233,7 @@ public interface PlotPlatform<P> extends LocaleHolder {
     }
 
     /**
-     * Get the {@link SetupUtils} implementation for the platform
+     * Get the {@link SetupUtils} implementation for the platform
      *
      * @return Setup utils
      */

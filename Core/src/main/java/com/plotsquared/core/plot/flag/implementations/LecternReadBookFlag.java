@@ -23,23 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.command;
+package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-@CommandDeclaration(command = "weanywhere",
-        permission = "plots.worldedit.bypass",
-        aliases = {"wea"},
-        usage = "/plot weanywhere",
-        requiredType = RequiredType.NONE,
-        category = CommandCategory.ADMINISTRATION)
-@Deprecated
-public class WE_Anywhere extends SubCommand {
+public class LecternReadBookFlag extends BooleanFlag<LecternReadBookFlag> {
+
+    public static final LecternReadBookFlag LECTERN_READ_BOOK_TRUE = new LecternReadBookFlag(true);
+    public static final LecternReadBookFlag LECTERN_READ_BOOK_FALSE = new LecternReadBookFlag(false);
+
+    private LecternReadBookFlag(final boolean value) {
+        super(value, TranslatableCaption.of("flags.flag_description_lectern_read_book"));
+    }
 
     @Override
-    public boolean onCommand(PlotPlayer<?> player, String[] arguments) {
-        MainCommand.getInstance().toggle.worldedit(this, player, new String[0], null, null);
-        return true;
+    protected LecternReadBookFlag flagOf(final @NonNull Boolean value) {
+        return value ? LECTERN_READ_BOOK_TRUE : LECTERN_READ_BOOK_FALSE;
     }
 
 }

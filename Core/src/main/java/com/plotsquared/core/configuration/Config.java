@@ -170,12 +170,11 @@ public class Config {
             }
             StringBuilder m = new StringBuilder();
             for (Object obj : listValue) {
-                m.append(System.lineSeparator() + spacing + "- " + toYamlString(obj, spacing));
+                m.append(System.lineSeparator()).append(spacing).append("- ").append(toYamlString(obj, spacing));
             }
             return m.toString();
         }
-        if (value instanceof String) {
-            String stringValue = (String) value;
+        if (value instanceof String stringValue) {
             if (stringValue.isEmpty()) {
                 return "''";
             }
@@ -448,7 +447,7 @@ public class Config {
     @Ignore // This is not part of the config
     public static class ConfigBlock<T> {
 
-        private HashMap<String, T> INSTANCES = new HashMap<>();
+        private final HashMap<String, T> INSTANCES = new HashMap<>();
 
         public T get(String key) {
             return INSTANCES.get(key);

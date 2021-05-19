@@ -45,7 +45,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 @SuppressWarnings("unused")
 public class SingleWorldListener implements Listener {
 
-    private Method methodGetHandleChunk;
+    private final Method methodGetHandleChunk;
     private Field mustSave;
     private boolean isTrueForNotSave = true;
 

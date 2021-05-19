@@ -144,8 +144,7 @@ public class BukkitEntityUtil {
         Player player;
         if (damager instanceof Player) { // attacker is player
             player = (Player) damager;
-        } else if (damager instanceof Projectile) {
-            Projectile projectile = (Projectile) damager;
+        } else if (damager instanceof Projectile projectile) {
             ProjectileSource shooter = projectile.getShooter();
             if (shooter instanceof Player) { // shooter is player
                 player = (Player) shooter;

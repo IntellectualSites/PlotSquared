@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 public class PlotInventory {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotInventory.class.getSimpleName());
-
     private final PlotPlayer<?> player;
     private final int lines;
     private final PlotItemStack[] items;

@@ -54,20 +54,11 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
 
     @Override
     public WeatherFlag parse(@NonNull String input) {
-        switch (input.toLowerCase()) {
-            case "rain":
-            case "storm":
-            case "on":
-            case "lightning":
-            case "thunder":
-                return flagOf(PlotWeather.RAIN);
-            case "clear":
-            case "off":
-            case "sun":
-                return flagOf(PlotWeather.CLEAR);
-            default:
-                return flagOf(PlotWeather.RESET);
-        }
+        return switch (input.toLowerCase()) {
+            case "rain" -> flagOf(PlotWeather.RAIN);
+            case "clear" -> flagOf(PlotWeather.CLEAR);
+            default -> flagOf(PlotWeather.RESET);
+        };
     }
 
     @Override
@@ -82,25 +73,22 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
 
     @Override
     public String getExample() {
-        return "storm";
+        return "rain";
     }
 
     @Override
     protected WeatherFlag flagOf(@NonNull PlotWeather value) {
-        switch (value) {
-            case RAIN:
-                return PLOT_WEATHER_FLAG_RAIN;
-            case CLEAR:
-                return PLOT_WEATHER_FLAG_CLEAR;
-            default:
-                return PLOT_WEATHER_FLAG_OFF;
-        }
+        return switch (value) {
+            case RAIN -> PLOT_WEATHER_FLAG_RAIN;
+            case CLEAR -> PLOT_WEATHER_FLAG_CLEAR;
+            default -> PLOT_WEATHER_FLAG_OFF;
+        };
     }
 
     @Override
     public Collection<String> getTabCompletions() {
         return Arrays
-                .asList("rain", "storm", "on", "lightning", "thunder", "clear", "off", "sun", "reset");
+                .asList("clear", "rain");
     }
 
 }

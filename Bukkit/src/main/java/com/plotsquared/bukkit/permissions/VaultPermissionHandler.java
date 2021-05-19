@@ -65,8 +65,7 @@ public class VaultPermissionHandler implements PermissionHandler {
     public Optional<PermissionProfile> getPermissionProfile(
             @NonNull PlotPlayer<?> playerPlotPlayer
     ) {
-        if (playerPlotPlayer instanceof BukkitPlayer) {
-            final BukkitPlayer bukkitPlayer = (BukkitPlayer) playerPlotPlayer;
+        if (playerPlotPlayer instanceof final BukkitPlayer bukkitPlayer) {
             return Optional.of(new VaultPermissionProfile(bukkitPlayer.getPlatformPlayer()));
         } else if (playerPlotPlayer instanceof ConsolePlayer) {
             return Optional.of(ConsolePermissionProfile.INSTANCE);

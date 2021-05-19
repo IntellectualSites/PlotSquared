@@ -55,10 +55,9 @@ public class UUIDMapping {
         if (o == this) {
             return true;
         }
-        if (!(o instanceof UUIDMapping)) {
+        if (!(o instanceof final UUIDMapping other)) {
             return false;
         }
-        final UUIDMapping other = (UUIDMapping) o;
         if (!other.canEqual(this)) {
             return false;
         }

@@ -167,9 +167,6 @@ public class Settings extends Config {
         Teleport.ON_CLEAR = config.getBoolean("teleport.on_clear", Teleport.ON_CLEAR);
         Teleport.ON_DELETE = config.getBoolean("teleport.on_delete", Teleport.ON_DELETE);
 
-        // WorldEdit
-        //WE_ALLOW_HELPER = config.getBoolean("worldedit.enable-for-helpers");
-
         // Chunk processor
         Enabled_Components.CHUNK_PROCESSOR =
                 config.getBoolean("chunk-processor.enabled", Enabled_Components.CHUNK_PROCESSOR);
@@ -511,6 +508,9 @@ public class Settings extends Config {
 
         @Comment("Should the chat be interactive?")
         public static boolean INTERACTIVE = true;
+
+        @Comment("Should the plot chat be logged to console?")
+        public static boolean LOG_PLOTCHAT_TO_CONSOLE = true;
 
     }
 

@@ -55,14 +55,11 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
                 return flagOf(value);
             }
         }
-        switch (input.toLowerCase()) {
-            case "true":
-                return flagOf(true);
-            case "false":
-                return flagOf(false);
-            default:
-                return flagOf(TimeUtil.timeToSec(input) * 1000 + System.currentTimeMillis());
-        }
+        return switch (input.toLowerCase()) {
+            case "true" -> flagOf(true);
+            case "false" -> flagOf(false);
+            default -> flagOf(TimeUtil.timeToSec(input) * 1000 + System.currentTimeMillis());
+        };
     }
 
     @Override

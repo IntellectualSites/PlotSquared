@@ -65,26 +65,13 @@ public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
 
     @Override
     public GamemodeFlag parse(@NonNull String input) throws FlagParseException {
-        switch (input) {
-            case "creative":
-            case "c":
-            case "1":
-                return flagOf(GameModes.CREATIVE);
-            case "adventure":
-            case "a":
-            case "2":
-                return flagOf(GameModes.ADVENTURE);
-            case "spectator":
-            case "sp":
-            case "3":
-                return flagOf(GameModes.SPECTATOR);
-            case "survival":
-            case "s":
-            case "0":
-                return flagOf(GameModes.SURVIVAL);
-            default:
-                return flagOf(DEFAULT);
-        }
+        return switch (input) {
+            case "creative", "c", "1" -> flagOf(GameModes.CREATIVE);
+            case "adventure", "a", "2" -> flagOf(GameModes.ADVENTURE);
+            case "spectator", "sp", "3" -> flagOf(GameModes.SPECTATOR);
+            case "survival", "s", "0" -> flagOf(GameModes.SURVIVAL);
+            default -> flagOf(DEFAULT);
+        };
     }
 
     @Override
@@ -104,18 +91,13 @@ public class GamemodeFlag extends PlotFlag<GameMode, GamemodeFlag> {
 
     @Override
     protected GamemodeFlag flagOf(@NonNull GameMode value) {
-        switch (value.getId()) {
-            case "creative":
-                return GAMEMODE_FLAG_CREATIVE;
-            case "adventure":
-                return GAMEMODE_FLAG_ADVENTURE;
-            case "spectator":
-                return GAMEMODE_FLAG_SPECTATOR;
-            case "survival":
-                return GAMEMODE_FLAG_SURVIVAL;
-            default:
-                return GAMEMODE_FLAG_DEFAULT;
-        }
+        return switch (value.getId()) {
+            case "creative" -> GAMEMODE_FLAG_CREATIVE;
+            case "adventure" -> GAMEMODE_FLAG_ADVENTURE;
+            case "spectator" -> GAMEMODE_FLAG_SPECTATOR;
+            case "survival" -> GAMEMODE_FLAG_SURVIVAL;
+            default -> GAMEMODE_FLAG_DEFAULT;
+        };
     }
 
     @Override

@@ -51,7 +51,6 @@ class YamlRepresenter extends Representer {
 
     }
 
-
     private class RepresentConfigurationSerializable extends RepresentMap {
 
         @Override
