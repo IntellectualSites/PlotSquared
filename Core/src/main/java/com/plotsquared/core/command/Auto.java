@@ -322,6 +322,7 @@ public class Auto extends SubCommand {
                             Template.of("money", this.econHandler.format(cost)),
                             Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
                     );
+                    return false;
                 }
                 this.econHandler.withdrawMoney(player, cost);
                 player.sendMessage(
