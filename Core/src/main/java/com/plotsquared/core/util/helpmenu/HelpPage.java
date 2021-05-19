@@ -53,7 +53,7 @@ public class HelpPage {
 
     public void render(PlotPlayer<?> player) {
         if (this.helpObjects.size() < 1) {
-            player.sendMessage(TranslatableCaption.of("invalid.not_valid_number"), Template.of("value", "(0)"));
+            player.sendMessage(TranslatableCaption.of("help.no_permission"));
         } else {
             Template header = Template.of("header", TranslatableCaption.of("help.help_header").getComponent(player));
             Template page_header = Template.of(
