@@ -197,7 +197,7 @@
   "commandconfig.subcommand_set_options_header_only": "<prefix><gray>Possible Values: ",
   "commandconfig.command_syntax": "<prefix><gold>Usage: </gold><gray><value></gray>",
   "commandconfig.command_syntax_extended": "<prefix><gold>Usage: </gold><gray><value1> <value2></gray>",
-  "commandconfig.flag_tutorial_usage": "<prefix><gold>Have an admin set the flag: </gold><gray><flag></gray>",
+  "commandconfig.flag_tutorial_usage": "<prefix><red>The plot flag </red><gold><flag></gold><red> is not set preventing you from performing this action.</red>",
   "invalid.component_illegal_block": "<prefix><red>You are not allowed to generate a component containing the block <gray><value></gray></red>",
   "invalid.not_valid_block": "<prefix><red><value></red>",
   "invalid.not_allowed_block": "<prefix><red>That block is not allowed: <gray><value></gray></red>",
