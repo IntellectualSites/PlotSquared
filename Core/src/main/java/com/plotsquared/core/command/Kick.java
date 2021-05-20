@@ -133,7 +133,7 @@ public class Kick extends SubCommand {
                         return;
                     }
                     Location spawn = this.worldUtil.getSpawn(location.getWorldName());
-                    player.sendMessage(TranslatableCaption.of("kick.you_got_kicked"));
+                    player2.sendMessage(TranslatableCaption.of("kick.you_got_kicked"));
                     if (plot.equals(spawn.getPlot())) {
                         Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
                         if (plot.equals(newSpawn.getPlot())) {
