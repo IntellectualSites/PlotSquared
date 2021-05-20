@@ -843,7 +843,12 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     /**
-     * Sends an actionbar to the player on plot entry.
+     * This method is explicitly used for sending an ActionBar
+     * to a player when they enter a plot.
+     *
+     * This method will serve no purposes in other locations
+     * of the project.
+     *
      * This takes in two captions as it will internally merge
      * the captions together to send as a single component.
      *
