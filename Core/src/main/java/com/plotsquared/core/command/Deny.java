@@ -180,7 +180,9 @@ public class Deny extends SubCommand {
             Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
-                player.sendMessage(TranslatableCaption.of("deny.you_got_denied"));
+                // Use string based message here for legacy uses
+                player.kick("You got kicked from the plot! This server did not set up a loaded spawn, so you got " +
+                        "kicked from the server.");
             } else {
                 player.teleport(newSpawn);
             }
