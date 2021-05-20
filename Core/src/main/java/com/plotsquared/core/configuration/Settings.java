@@ -59,7 +59,7 @@ public class Settings extends Config {
     @Comment("Plot titles fading out (duration in ticks)")
     public static int TITLES_FADE_OUT = 20;
     @Comment("Show the plot titles as an actionbar?")
-    public static boolean TITLES_AS_ACTIOBAR = false;
+    public static boolean TITLES_AS_ACTIONBAR = false;
 
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;

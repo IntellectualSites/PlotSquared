@@ -306,7 +306,7 @@ public class PlotListener {
 
                             Consumer<String> userConsumer;
 
-                            if (Settings.TITLES_AS_ACTIOBAR) {
+                            if (Settings.TITLES_AS_ACTIONBAR) {
                                 userConsumer = user -> player.sendPlotEntryBar(header, subHeader, plotTemplate, worldTemplate,
                                         ownerTemplate);
                             } else {
