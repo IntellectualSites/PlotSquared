@@ -65,6 +65,7 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.title.Title;
@@ -839,6 +840,27 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         );
         getAudience().showTitle(Title
                 .title(titleComponent, subtitleComponent, times));
+    }
+
+    /**
+     * Sends an actionbar to the player on plot entry.
+     * This takes in two captions as it will internally merge
+     * the captions together to send as a single component.
+     *
+     * @param header Header
+     * @param subHeader Subheader
+     * @param replacements Variable replacements
+     */
+    public void sendPlotEntryBar(
+            final @NonNull Caption header, final @NonNull Caption subHeader,
+            final @NonNull Template... replacements
+    ) {
+        final Component titleComponent = MiniMessage.get().parse(header.getComponent(this), replacements);
+        final Component subtitleComponent =
+                MiniMessage.get().parse(subHeader.getComponent(this), replacements);
+
+        getAudience().sendActionBar(
+                titleComponent.append(Component.text(" | ").color(NamedTextColor.GRAY)).append(subtitleComponent));
     }
 
     @Override

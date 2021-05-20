@@ -303,8 +303,17 @@ public class PlotListener {
                             Template plotTemplate = Template.of("plot", lastPlot.getId().toString());
                             Template worldTemplate = Template.of("world", player.getLocation().getWorldName());
                             Template ownerTemplate = Template.of("owner", owner);
-                            final Consumer<String> userConsumer = user -> player
-                                    .sendTitle(header, subHeader, plotTemplate, worldTemplate, ownerTemplate);
+
+                            Consumer<String> userConsumer;
+
+                            if (Settings.TITLES_AS_ACTIOBAR) {
+                                userConsumer = user -> player.sendPlotEntryBar(header, subHeader, plotTemplate, worldTemplate,
+                                        ownerTemplate);
+                            } else {
+                                userConsumer = user -> player
+                                        .sendTitle(header, subHeader, plotTemplate, worldTemplate, ownerTemplate);
+                            }
+
                             UUID uuid = plot.getOwner();
                             if (uuid == null) {
                                 userConsumer.accept("Unknown");
