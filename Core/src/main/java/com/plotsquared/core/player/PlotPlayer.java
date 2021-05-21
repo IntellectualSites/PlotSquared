@@ -65,7 +65,6 @@ import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.item.ItemType;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.title.Title;
