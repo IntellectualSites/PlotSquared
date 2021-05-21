@@ -30,10 +30,12 @@ import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.BlockUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.PlayerManager;
@@ -337,6 +339,7 @@ public class BukkitUtil extends WorldUtil {
             final @NonNull Template... replacements
     ) {
         ensureLoaded(location.getWorldName(), location.getX(), location.getZ(), chunk -> {
+            PlotArea area = location.getPlotArea();
             final World world = getWorld(location.getWorldName());
             final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
             //        block.setType(Material.AIR);
@@ -353,7 +356,7 @@ public class BukkitUtil extends WorldUtil {
                 if (PlotSquared.platform().serverVersion()[1] == 13) {
                     block.setType(Material.valueOf("WALL_SIGN"), false);
                 } else {
-                    block.setType(Material.valueOf("OAK_WALL_SIGN"), false);
+                    block.setType(Material.valueOf(area.signMaterial()), false);
                 }
                 if (!(block.getBlockData() instanceof WallSign)) {
                     throw new RuntimeException("Something went wrong generating a sign");
@@ -459,12 +462,8 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(WaterMob.class);
                 allowedInterfaces.add(Ambient.class);
             }
-            case "tameable" -> {
-                allowedInterfaces.add(Tameable.class);
-            }
-            case "vehicle" -> {
-                allowedInterfaces.add(Vehicle.class);
-            }
+            case "tameable" -> allowedInterfaces.add(Tameable.class);
+            case "vehicle" -> allowedInterfaces.add(Vehicle.class);
             case "hostile" -> {
                 allowedInterfaces.add(Shulker.class);
                 allowedInterfaces.add(Monster.class);
@@ -474,15 +473,9 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Phantom.class);
                 allowedInterfaces.add(EnderCrystal.class);
             }
-            case "hanging" -> {
-                allowedInterfaces.add(Hanging.class);
-            }
-            case "villager" -> {
-                allowedInterfaces.add(NPC.class);
-            }
-            case "projectile" -> {
-                allowedInterfaces.add(Projectile.class);
-            }
+            case "hanging" -> allowedInterfaces.add(Hanging.class);
+            case "villager" -> allowedInterfaces.add(NPC.class);
+            case "projectile" -> allowedInterfaces.add(Projectile.class);
             case "other" -> {
                 allowedInterfaces.add(ArmorStand.class);
                 allowedInterfaces.add(FallingBlock.class);
@@ -495,12 +488,8 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(EnderSignal.class);
                 allowedInterfaces.add(Firework.class);
             }
-            case "player" -> {
-                allowedInterfaces.add(Player.class);
-            }
-            default -> {
-                logger.error("Unknown entity category requested: {}", category);
-            }
+            case "player" -> allowedInterfaces.add(Player.class);
+            default -> logger.error("Unknown entity category requested: {}", category);
         }
         final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();
         outer:
