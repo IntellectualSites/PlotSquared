@@ -843,29 +843,17 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     /**
-     * This method is explicitly used for sending an ActionBar
-     * to a player when they enter a plot.
+     * Method designed to send an ActionBar to a player.
      *
-     * This method will serve no purposes in other locations
-     * of the project.
-     *
-     * This takes in two captions as it will internally merge
-     * the captions together to send as a single component.
-     *
-     * @param header Header
-     * @param subHeader Subheader
+     * @param caption Caption
      * @param replacements Variable replacements
      */
-    public void sendPlotEntryBar(
-            final @NonNull Caption header, final @NonNull Caption subHeader,
+    public void sendActionBar(
+            final @NonNull Caption caption,
             final @NonNull Template... replacements
     ) {
-        final Component titleComponent = MiniMessage.get().parse(header.getComponent(this), replacements);
-        final Component subtitleComponent =
-                MiniMessage.get().parse(subHeader.getComponent(this), replacements);
-
-        getAudience().sendActionBar(
-                titleComponent.append(Component.text(" | ").color(NamedTextColor.GRAY)).append(subtitleComponent));
+        final Component component = MiniMessage.get().parse(caption.getComponent(this), replacements);
+        getAudience().sendActionBar(component);
     }
 
     @Override
