@@ -609,6 +609,16 @@ public class Settings extends Config {
         public static boolean USE_LIKES = false;
         @Comment("Rating categories")
         public static List<String> CATEGORIES = new ArrayList<>();
+        @Comment("The blocks to use for the rating GUI if categories are set above")
+        public static String BLOCK_0 = "brown_wool";
+        public static String BLOCK_1 = "red_wool";
+        public static String BLOCK_2 = "orange_wool";
+        public static String BLOCK_3 = "yellow_wool";
+        public static String BLOCK_4 = "lime_wool";
+        public static String BLOCK_5 = "cyan_wool";
+        public static String BLOCK_6 = "blue_wool";
+        public static String BLOCK_7 = "purple_wool";
+        public static String BLOCK_8 = "magenta_wool";
 
     }
 
