@@ -395,8 +395,8 @@ public class Area extends SubCommand {
                                     final String world = this.setupUtils.setupWorld(builder);
                                     if (this.worldUtil.isWorld(world)) {
                                         PlotSquared.get().loadWorld(world, null);
-                                        player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                         player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
+                                        player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                         if (area.getTerrain() != PlotAreaTerrainType.ALL) {
                                             QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
                                             queue.setChunkConsumer(chunk -> AugmentedUtils.generate(
@@ -525,8 +525,8 @@ public class Area extends SubCommand {
                                 builder.generatorName(PlotSquared.platform().pluginName());
                                 String world = this.setupUtils.setupWorld(builder);
                                 if (this.worldUtil.isWorld(world)) {
-                                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                     player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
+                                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                 } else {
                                     player.sendMessage(
                                             TranslatableCaption.of("errors.error_create"),
