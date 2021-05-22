@@ -341,7 +341,6 @@ public class BukkitUtil extends WorldUtil {
             PlotArea area = location.getPlotArea();
             final World world = getWorld(location.getWorldName());
             final Block block = world.getBlockAt(location.getX(), location.getY(), location.getZ());
-            //        block.setType(Material.AIR);
             final Material type = block.getType();
             if (type != Material.LEGACY_SIGN && type != Material.LEGACY_WALL_SIGN) {
                 BlockFace facing = BlockFace.EAST;
@@ -353,7 +352,7 @@ public class BukkitUtil extends WorldUtil {
                     facing = BlockFace.SOUTH;
                 }
                 if (PlotSquared.platform().serverVersion()[1] == 13) {
-                    block.setType(Material.valueOf("WALL_SIGN"), false);
+                    block.setType(Material.valueOf(area.legacySignMaterial()), false);
                 } else {
                     block.setType(Material.valueOf(area.signMaterial()), false);
                 }
