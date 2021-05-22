@@ -28,7 +28,6 @@ package com.plotsquared.core.plot.flag.types;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
-import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag<Long, F> {
