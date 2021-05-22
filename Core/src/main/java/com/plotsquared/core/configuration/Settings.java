@@ -190,7 +190,6 @@ public class Settings extends Config {
 
         // Miscellaneous
         DEBUG = config.getBoolean("debug", DEBUG);
-        Chat.INTERACTIVE = config.getBoolean("chat.fancy", Chat.INTERACTIVE);
 
         Enabled_Components.DATABASE_PURGER =
                 config.getBoolean("auto-purge", Enabled_Components.DATABASE_PURGER);
@@ -505,9 +504,6 @@ public class Settings extends Config {
 
     @Comment("Chat related settings")
     public static final class Chat {
-
-        @Comment("Should the chat be interactive?")
-        public static boolean INTERACTIVE = true;
 
         @Comment("Should the plot chat be logged to console?")
         public static boolean LOG_PLOTCHAT_TO_CONSOLE = true;
