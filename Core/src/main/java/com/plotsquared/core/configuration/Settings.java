@@ -58,6 +58,11 @@ public class Settings extends Config {
     public static int TITLES_STAY = 50;
     @Comment("Plot titles fading out (duration in ticks)")
     public static int TITLES_FADE_OUT = 20;
+    @Comment({"Changes the notification method on plot entry from Title + SubTitle -> ActionBar.",
+    "The message still sent to the player is pulled from the lang key \"titles.title_entered_plot\".",
+    "If you would like to still show the owner of the plot, append the contents of \"titles.title_entered_plot_sub\" onto the " +
+            "former lang key."})
+    public static boolean TITLES_AS_ACTIONBAR = false;
 
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;

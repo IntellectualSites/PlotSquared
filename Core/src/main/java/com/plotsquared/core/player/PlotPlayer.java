@@ -841,6 +841,38 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
                 .title(titleComponent, subtitleComponent, times));
     }
 
+    /**
+     * Method designed to send an ActionBar to a player.
+     *
+     * @param caption Caption
+     * @param replacements Variable replacements
+     */
+    public void sendActionBar(
+            final @NonNull Caption caption,
+            final @NonNull Template... replacements
+    ) {
+        String message;
+        try {
+            message = caption.getComponent(this);
+        } catch (final CaptionMap.NoSuchCaptionException exception) {
+            // This sends feedback to the player
+            message = NON_EXISTENT_CAPTION + ((TranslatableCaption) caption).getKey();
+            // And this also prints it to the console
+            exception.printStackTrace();
+        }
+        if (message.isEmpty()) {
+            return;
+        }
+        // Replace placeholders, etc
+        message = CaptionUtility.format(this, message)
+                .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
+                .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
+
+
+        final Component component = MiniMessage.get().parse(message, replacements);
+        getAudience().sendActionBar(component);
+    }
+
     @Override
     public void sendMessage(
             final @NonNull Caption caption,
