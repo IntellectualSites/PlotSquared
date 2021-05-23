@@ -55,7 +55,6 @@ import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
-import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.SetupUtils;
@@ -396,8 +395,8 @@ public class Area extends SubCommand {
                                     final String world = this.setupUtils.setupWorld(builder);
                                     if (this.worldUtil.isWorld(world)) {
                                         PlotSquared.get().loadWorld(world, null);
-                                        player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                         player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
+                                        player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                         if (area.getTerrain() != PlotAreaTerrainType.ALL) {
                                             QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
                                             queue.setChunkConsumer(chunk -> AugmentedUtils.generate(
@@ -526,8 +525,8 @@ public class Area extends SubCommand {
                                 builder.generatorName(PlotSquared.platform().pluginName());
                                 String world = this.setupUtils.setupWorld(builder);
                                 if (this.worldUtil.isWorld(world)) {
-                                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                     player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
+                                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                                 } else {
                                     player.sendMessage(
                                             TranslatableCaption.of("errors.error_create"),

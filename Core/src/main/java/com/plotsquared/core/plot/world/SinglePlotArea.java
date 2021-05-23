@@ -29,6 +29,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.generator.GridPlotWorld;
 import com.plotsquared.core.generator.SingleWorldGenerator;
@@ -181,7 +182,7 @@ public class SinglePlotArea extends GridPlotWorld {
     @Override
     public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[]{
-                new ConfigurationNode("void", this.VOID, "Void world", ConfigurationUtil.BOOLEAN)};
+                new ConfigurationNode("void", this.VOID, TranslatableCaption.of("setup.singleplotarea_void_world"), ConfigurationUtil.BOOLEAN)};
     }
 
     @Nullable

@@ -33,6 +33,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.configuration.serialization.ConfigurationSerialization;
 import com.plotsquared.core.generator.ClassicPlotManagerComponent;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotInventory;
@@ -159,7 +160,7 @@ public class ComponentPresetManager {
         } else if (!plot.hasOwner()) {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return null;
-        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID())) {
+        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID()) && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMPONENTS_OTHER)) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return null;
         } else if (plot.getVolume() > Integer.MAX_VALUE) {

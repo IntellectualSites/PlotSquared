@@ -28,7 +28,6 @@ package com.plotsquared.core.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**

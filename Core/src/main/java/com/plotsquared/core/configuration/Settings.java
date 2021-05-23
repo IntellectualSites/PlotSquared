@@ -195,7 +195,6 @@ public class Settings extends Config {
 
         // Miscellaneous
         DEBUG = config.getBoolean("debug", DEBUG);
-        Chat.INTERACTIVE = config.getBoolean("chat.fancy", Chat.INTERACTIVE);
 
         Enabled_Components.DATABASE_PURGER =
                 config.getBoolean("auto-purge", Enabled_Components.DATABASE_PURGER);
@@ -511,9 +510,6 @@ public class Settings extends Config {
     @Comment("Chat related settings")
     public static final class Chat {
 
-        @Comment("Should the chat be interactive?")
-        public static boolean INTERACTIVE = true;
-
         @Comment("Should the plot chat be logged to console?")
         public static boolean LOG_PLOTCHAT_TO_CONSOLE = true;
 
@@ -614,6 +610,16 @@ public class Settings extends Config {
         public static boolean USE_LIKES = false;
         @Comment("Rating categories")
         public static List<String> CATEGORIES = new ArrayList<>();
+        @Comment("The blocks to use for the rating GUI if categories are set above")
+        public static String BLOCK_0 = "brown_wool";
+        public static String BLOCK_1 = "red_wool";
+        public static String BLOCK_2 = "orange_wool";
+        public static String BLOCK_3 = "yellow_wool";
+        public static String BLOCK_4 = "lime_wool";
+        public static String BLOCK_5 = "cyan_wool";
+        public static String BLOCK_6 = "blue_wool";
+        public static String BLOCK_7 = "purple_wool";
+        public static String BLOCK_8 = "magenta_wool";
 
     }
 

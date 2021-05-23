@@ -189,6 +189,8 @@ permissions:
     default: false
   plots.template:
     default: false
+  plots.components:
+    default: false
 
   plots.admin:
     default: false
@@ -291,6 +293,8 @@ permissions:
   plots.admin.command.blocked-cmds.shared:
     default: false
   plots.admin.command.blocked-cmds.road:
+    default: false
+  plots.admin.components.other:
     default: false
 
   plots.teleport.delay.bypass:

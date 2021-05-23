@@ -202,7 +202,8 @@ public enum Permission {
     PERMISSION_ADMIN_ALLOW_UNSAFE("plots.admin.unsafe"),
     PERMISSION_ADMIN_DEBUG_OTHER("plots.admin.debug.other"),
     PERMISSION_RATE("plots.rate"),
-    PERMISSION_ADMIN_FLIGHT("plots.admin.flight");
+    PERMISSION_ADMIN_FLIGHT("plots.admin.flight"),
+    PERMISSION_ADMIN_COMPONENTS_OTHER("plots.admin.component.other");
     //</editor-fold>
 
     private final String text;
