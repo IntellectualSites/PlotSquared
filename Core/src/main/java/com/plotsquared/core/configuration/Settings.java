@@ -47,17 +47,6 @@ public class Settings extends Config {
     @Comment({"Show additional information in console. It helps us at IntellectualSites to find out more about an issue.",
             "Leave it off if you don't need it, it can spam your console."})
     public static boolean DEBUG = true;
-    @Comment({"The big text that appears when you enter a plot.",
-            "For a single plot set `/plot flag set titles false` to disable it.", "For just you run `/plot toggle titles` to disable it.",
-            "For all plots: Add `titles: false` in the worlds.yml flags block to disable it."})
-    public static boolean
-            TITLES = true;
-    @Comment("Plot titles fading in (duration in ticks)")
-    public static int TITLES_FADE_IN = 10;
-    @Comment("Plot titles being shown (duration in ticks)")
-    public static int TITLES_STAY = 50;
-    @Comment("Plot titles fading out (duration in ticks)")
-    public static int TITLES_FADE_OUT = 20;
 
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;
@@ -152,9 +141,6 @@ public class Settings extends Config {
         Ratings.CATEGORIES = config.contains("ratings.categories") ?
                 config.getStringList("ratings.categories") :
                 Ratings.CATEGORIES;
-
-        // Titles
-        TITLES = config.getBoolean("titles", TITLES);
 
         // Update Notifications
         Enabled_Components.UPDATE_NOTIFICATIONS =
@@ -508,6 +494,10 @@ public class Settings extends Config {
         @Comment("Should the plot chat be logged to console?")
         public static boolean LOG_PLOTCHAT_TO_CONSOLE = true;
 
+        @Comment({"Whether an action bar message should be send over a chat message for notification purposes such for the ",
+                "notify-enter, notify-leave, greeting or farewell flag."})
+        public static boolean NOTIFICATION_AS_ACTIONBAR = false;
+
     }
 
 
@@ -676,6 +666,27 @@ public class Settings extends Config {
 
     }
 
+    @Comment("Settings related to plot titles")
+    public static final class Titles {
+
+        @Comment({"The big text that appears when you enter a plot.",
+                "For a single plot set `/plot flag set titles false` to disable it.", "For just you run `/plot toggle titles` to disable it.",
+                "For all plots: Add `titles: false` in the worlds.yml flags block to disable it."})
+        public static boolean DISPLAY_TITLES = true;
+        @Comment("Plot titles fading in (duration in ticks)")
+        public static int TITLES_FADE_IN = 10;
+        @Comment("Plot titles being shown (duration in ticks)")
+        public static int TITLES_STAY = 50;
+        @Comment("Plot titles fading out (duration in ticks)")
+        public static int TITLES_FADE_OUT = 20;
+        @Comment({"Changes the notification method on plot entry from Title + SubTitle -> ActionBar.",
+                "The message still sent to the player is pulled from the lang key \"titles.title_entered_plot\".",
+                "If you would like to still show the owner of the plot, append the contents of \"titles.title_entered_plot_sub\" onto the " +
+                        "former lang key."})
+        public static boolean TITLES_AS_ACTIONBAR = false;
+
+    }
+
 
     @Comment({"Enable or disable parts of the plugin",
             "Note: A cache will use some memory if enabled"})
@@ -732,7 +743,7 @@ public class Settings extends Config {
         public static boolean EXTERNAL_PLACEHOLDERS = true;
         @Comment("Make road regeneration persistent across restarts")
         public static boolean
-                PERSISTENT_ROAD_REGEN = false;
+                PERSISTENT_ROAD_REGEN = true;
         @Comment({"Enable the `/plot component` preset GUI",
                 "Read more about components here: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-Components"})
         public static boolean COMPONENT_PRESETS = true;
@@ -758,14 +769,6 @@ public class Settings extends Config {
         );
         @Comment("Whether PlotSquared should hook into MvDWPlaceholderAPI or not")
         public static boolean USE_MVDWAPI = true;
-        @Comment({"Changes the notification method on plot entry from Title + SubTitle -> ActionBar.",
-                "The message still sent to the player is pulled from the lang key \"titles.title_entered_plot\".",
-                "If you would like to still show the owner of the plot, append the contents of \"titles.title_entered_plot_sub\" onto the " +
-                        "former lang key."})
-        public static boolean TITLES_AS_ACTIONBAR = false;
-        @Comment({"Whether an action bar message should be send over a chat message for notification purposes such for the ",
-                "notify-enter, notify-leave, greeting or farewell flag."})
-        public static boolean NOTIFICATION_AS_ACTIONBAR = false;
 
     }
 

@@ -164,14 +164,14 @@ public class PlotListener {
             final TitlesFlag.TitlesFlagValue titleFlag = plot.getFlag(TitlesFlag.class);
             final boolean titles;
             if (titleFlag == TitlesFlag.TitlesFlagValue.NONE) {
-                titles = Settings.TITLES;
+                titles = Settings.Titles.DISPLAY_TITLES;
             } else {
                 titles = titleFlag == TitlesFlag.TitlesFlagValue.TRUE;
             }
 
             final String greeting = plot.getFlag(GreetingFlag.class);
             if (!greeting.isEmpty()) {
-                if (!Settings.Enabled_Components.NOTIFICATION_AS_ACTIONBAR) {
+                if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                     plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendMessage);
                 } else {
                     plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendActionBar);
@@ -186,7 +186,7 @@ public class PlotListener {
                             Caption caption = TranslatableCaption.of("notification.notify_enter");
                             Template playerTemplate = Template.of("player", player.getName());
                             Template plotTemplate = Template.of("plot", plot.getId().toString());
-                            if (!Settings.Enabled_Components.NOTIFICATION_AS_ACTIONBAR) {
+                            if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                                 owner.sendMessage(caption, playerTemplate, plotTemplate);
                             } else {
                                 owner.sendActionBar(caption, playerTemplate, plotTemplate);
@@ -312,7 +312,7 @@ public class PlotListener {
                             Template ownerTemplate = Template.of("owner", owner);
 
                             final Consumer<String> userConsumer = user -> {
-                                if (Settings.Enabled_Components.TITLES_AS_ACTIONBAR) {
+                                if (Settings.Titles.TITLES_AS_ACTIONBAR) {
                                     player.sendActionBar(header, plotTemplate, worldTemplate, ownerTemplate);
                                 } else {
                                     player.sendTitle(header, subHeader, plotTemplate, worldTemplate, ownerTemplate);
@@ -392,7 +392,7 @@ public class PlotListener {
 
                 final String farewell = plot.getFlag(FarewellFlag.class);
                 if (!farewell.isEmpty()) {
-                    if (!Settings.Enabled_Components.NOTIFICATION_AS_ACTIONBAR) {
+                    if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                         plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendMessage);
                     } else {
                         plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendActionBar);
@@ -407,7 +407,7 @@ public class PlotListener {
                                 Caption caption = TranslatableCaption.of("notification.notify_leave");
                                 Template playerTemplate = Template.of("player", player.getName());
                                 Template plotTemplate = Template.of("plot", plot.getId().toString());
-                                if (!Settings.Enabled_Components.NOTIFICATION_AS_ACTIONBAR) {
+                                if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                                     owner.sendMessage(caption, playerTemplate, plotTemplate);
                                 } else {
                                     owner.sendActionBar(caption, playerTemplate, plotTemplate);
