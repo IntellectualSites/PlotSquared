@@ -46,7 +46,7 @@ public class Settings extends Config {
 
     @Comment({"Show additional information in console. It helps us at IntellectualSites to find out more about an issue.",
             "Leave it off if you don't need it, it can spam your console."})
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
     @Comment({"The big text that appears when you enter a plot.",
             "For a single plot set `/plot flag set titles false` to disable it.", "For just you run `/plot toggle titles` to disable it.",
             "For all plots: Add `titles: false` in the worlds.yml flags block to disable it."})
@@ -58,11 +58,6 @@ public class Settings extends Config {
     public static int TITLES_STAY = 50;
     @Comment("Plot titles fading out (duration in ticks)")
     public static int TITLES_FADE_OUT = 20;
-    @Comment({"Changes the notification method on plot entry from Title + SubTitle -> ActionBar.",
-    "The message still sent to the player is pulled from the lang key \"titles.title_entered_plot\".",
-    "If you would like to still show the owner of the plot, append the contents of \"titles.title_entered_plot_sub\" onto the " +
-            "former lang key."})
-    public static boolean TITLES_AS_ACTIONBAR = false;
 
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;
@@ -663,7 +658,7 @@ public class Settings extends Config {
         @Comment({"Time to wait in ms before beginning to notify player or console of progress.",
                 "Prevent needless notification of progress for short queues."})
         public static int NOTIFY_WAIT = 5000;
-        @Comment({"How lighitng should be handled by the queue. Modes:",
+        @Comment({"How lighting should be handled by the queue. Modes:",
                 "  - 0 - Do not do any lighting (fastest)",
                 "  - 1 - Only execute lighting where blocks with light values are placed",
                 "  - 2 - Only execute lighting where blocks with light values are placed or removed/replaced",
@@ -723,7 +718,7 @@ public class Settings extends Config {
         public static boolean KILL_ROAD_VEHICLES = false;
         @Comment("Notify a player of any missed plot comments upon plot entry")
         public static boolean
-                COMMENT_NOTIFIER = false;
+                COMMENT_NOTIFIER = true;
         @Comment("Let players claim entire worlds with PlotSquared")
         public static boolean WORLDS =
                 false;
@@ -763,6 +758,14 @@ public class Settings extends Config {
         );
         @Comment("Whether PlotSquared should hook into MvDWPlaceholderAPI or not")
         public static boolean USE_MVDWAPI = true;
+        @Comment({"Changes the notification method on plot entry from Title + SubTitle -> ActionBar.",
+                "The message still sent to the player is pulled from the lang key \"titles.title_entered_plot\".",
+                "If you would like to still show the owner of the plot, append the contents of \"titles.title_entered_plot_sub\" onto the " +
+                        "former lang key."})
+        public static boolean TITLES_AS_ACTIONBAR = false;
+        @Comment({"Whether an action bar message should be send over a chat message for notification purposes such for the ",
+                "notify-enter, notify-leave, greeting or farewell flag."})
+        public static boolean NOTIFICATION_AS_ACTIONBAR = false;
 
     }
 

@@ -311,7 +311,7 @@ permissions:
     default: false
 
   plots.permpack.basicflags:
-    default: op
+    default: false
     children:
       plots.set.flag: true
       plots.flag: true
@@ -360,7 +360,7 @@ permissions:
       plots.set.flag.price.*: true
       plots.set.flag.no-worldedit.*: true
   plots.permpack.basicinbox:
-    default: op
+    default: false
     children:
       plots.inbox.read.public: true
       plots.inbox.modify.public: true
@@ -373,7 +373,7 @@ permissions:
       plots.comment: true
       plots.inbox: true
   plots.permpack.wilderness:
-    default: op
+    default: false
     children:
       plots.admin.interact.unowned: true
       plots.admin.destroy.unowned: true
@@ -382,7 +382,7 @@ permissions:
       plots.admin.vehicle.break.unowned: true
       plots.admin.pve.unowned: true
   plots.permpack.basic:
-    default: op
+    default: false
     children:
       plots.use: true
       plots.info: true

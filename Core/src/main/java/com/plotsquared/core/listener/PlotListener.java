@@ -171,7 +171,11 @@ public class PlotListener {
 
             final String greeting = plot.getFlag(GreetingFlag.class);
             if (!greeting.isEmpty()) {
-                plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendMessage);
+                if (!Settings.Enabled_Components.NOTIFICATION_AS_ACTIONBAR) {
+                    plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendMessage);
+                } else {
+                    plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendActionBar);
+                }
             }
 
             if (plot.getFlag(NotifyEnterFlag.class)) {
@@ -179,11 +183,14 @@ public class PlotListener {
                     for (UUID uuid : plot.getOwners()) {
                         final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
-                            owner.sendMessage(
-                                    TranslatableCaption.of("notification.notify_enter"),
-                                    Template.of("player", player.getName()),
-                                    Template.of("plot", plot.getId().toString())
-                            );
+                            Caption caption = TranslatableCaption.of("notification.notify_enter");
+                            Template playerTemplate = Template.of("player", player.getName());
+                            Template plotTemplate = Template.of("plot", plot.getId().toString());
+                            if (!Settings.Enabled_Components.NOTIFICATION_AS_ACTIONBAR) {
+                                owner.sendMessage(caption, playerTemplate, plotTemplate);
+                            } else {
+                                owner.sendActionBar(caption, playerTemplate, plotTemplate);
+                            }
                         }
                     }
                 }
@@ -305,7 +312,7 @@ public class PlotListener {
                             Template ownerTemplate = Template.of("owner", owner);
 
                             final Consumer<String> userConsumer = user -> {
-                                if (Settings.TITLES_AS_ACTIONBAR) {
+                                if (Settings.Enabled_Components.TITLES_AS_ACTIONBAR) {
                                     player.sendActionBar(header, plotTemplate, worldTemplate, ownerTemplate);
                                 } else {
                                     player.sendTitle(header, subHeader, plotTemplate, worldTemplate, ownerTemplate);
@@ -385,7 +392,11 @@ public class PlotListener {
 
                 final String farewell = plot.getFlag(FarewellFlag.class);
                 if (!farewell.isEmpty()) {
-                    plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendMessage);
+                    if (!Settings.Enabled_Components.NOTIFICATION_AS_ACTIONBAR) {
+                        plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendMessage);
+                    } else {
+                        plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendActionBar);
+                    }
                 }
 
                 if (plot.getFlag(NotifyLeaveFlag.class)) {
@@ -393,11 +404,14 @@ public class PlotListener {
                         for (UUID uuid : plot.getOwners()) {
                             final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                             if ((owner != null) && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
-                                owner.sendMessage(
-                                        TranslatableCaption.of("notification.notify_leave"),
-                                        Template.of("player", player.getName()),
-                                        Template.of("plot", plot.getId().toString())
-                                );
+                                Caption caption = TranslatableCaption.of("notification.notify_leave");
+                                Template playerTemplate = Template.of("player", player.getName());
+                                Template plotTemplate = Template.of("plot", plot.getId().toString());
+                                if (!Settings.Enabled_Components.NOTIFICATION_AS_ACTIONBAR) {
+                                    owner.sendMessage(caption, playerTemplate, plotTemplate);
+                                } else {
+                                    owner.sendActionBar(caption, playerTemplate, plotTemplate);
+                                }
                             }
                         }
                     }
