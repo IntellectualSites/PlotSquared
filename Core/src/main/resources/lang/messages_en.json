@@ -269,7 +269,6 @@
   "expiry.expired_options_clicky": "<gold><num> <are_or_is> expired: </gold><click:run_command:<list_cmd>><hover:show_text:\"<list_cmd>\"><gray><plot></gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_del>><hover:show_text:\"<cmd_del>\"><gray>Delete this (<cmd_del>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_keep_1d>><hover:show_text:\"<cmd_keep_1d>\"><gray>Remind later (<cmd_keep_1d>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_keep>><hover:show_text:\"<cmd_keep>\"><gray>Keep this (<cmd_keep>)</gray></hover></click>\n<dark_gray> - </dark_gray><click:run_command:<cmd_no_show_expir>><hover:show_text:\"<cmd_no_show_expir>\"><gray>Don't show me this (<cmd_no_show_expir>)</gray></hover></click>",
   "debugimportworlds.single_plot_area": "<prefix><red>Must be a single plot area.</red>",
   "debugimportworlds.world_container": "<prefix><red>World container must be configured to be a separate directory to your base files.</red>",
-  "debugimportworlds.done": "<prefix><gold>Done!</gold>",
   "debugroadregen.regen_done": "<prefix><gold>Regenerating plot south/east roads: </gold><gray><value></gray>\n<dark_gray> - </dark_gray><gold>Result: </gold><green>Success!</green>",
   "debugroadregen.regen_all": "<prefix><gray>To regen all roads: </gray><gold><value></gold>",
   "schematics.schematic_road_created": "<prefix><gold>Saved new road schematic. To test the schematic, fly to a few other plots and run <command>.</gold>",
