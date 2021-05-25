@@ -258,7 +258,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     /**
      * Get the total number of allowed plots
-     * Possibly relevant: (To increment the player's allowed plots, see the example script on the wiki)
      *
      * @return number of allowed plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
