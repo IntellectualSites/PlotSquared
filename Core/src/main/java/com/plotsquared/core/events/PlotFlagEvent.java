@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
@@ -29,6 +29,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 
 public abstract class PlotFlagEvent extends PlotEvent {
+
     private final PlotFlag<?, ?> flag;
 
     protected PlotFlagEvent(Plot plot, PlotFlag<?, ?> flag) {
@@ -44,4 +45,5 @@ public abstract class PlotFlagEvent extends PlotEvent {
     public PlotFlag<?, ?> getFlag() {
         return flag;
     }
+
 }

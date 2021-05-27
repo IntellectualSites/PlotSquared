@@ -21,18 +21,16 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
 
-import lombok.Getter;
-import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-@Getter
 public abstract class EntityWrapper {
 
     protected final float yaw;
@@ -43,7 +41,7 @@ public abstract class EntityWrapper {
     public double y;
     public double z;
 
-    EntityWrapper(@NonNull final Entity entity) {
+    EntityWrapper(final @NonNull Entity entity) {
         this.entity = entity;
         this.type = entity.getType();
 
@@ -55,12 +53,42 @@ public abstract class EntityWrapper {
         this.pitch = location.getPitch();
     }
 
-    @SuppressWarnings("deprecation") @Override public String toString() {
+    @SuppressWarnings("deprecation")
+    @Override
+    public String toString() {
         return String.format("[%s, x=%s, y=%s, z=%s]", type.getName(), x, y, z);
     }
 
     public abstract Entity spawn(World world, int xOffset, int zOffset);
 
     public abstract void saveEntity();
+
+    public float getYaw() {
+        return this.yaw;
+    }
+
+    public float getPitch() {
+        return this.pitch;
+    }
+
+    public Entity getEntity() {
+        return this.entity;
+    }
+
+    public EntityType getType() {
+        return this.type;
+    }
+
+    public double getX() {
+        return this.x;
+    }
+
+    public double getY() {
+        return this.y;
+    }
+
+    public double getZ() {
+        return this.z;
+    }
 
 }

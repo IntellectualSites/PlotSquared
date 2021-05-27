@@ -21,47 +21,63 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Inject;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "unlink",
-    aliases = {"u", "unmerge"},
-    description = "Unlink a mega-plot",
-    usage = "/plot unlink [createroads]",
-    requiredType = RequiredType.PLAYER,
-    category = CommandCategory.SETTINGS,
-    confirmation = true)
+        aliases = {"u", "unmerge"},
+        usage = "/plot unlink [createroads]",
+        requiredType = RequiredType.PLAYER,
+        category = CommandCategory.SETTINGS,
+        confirmation = true)
 public class Unlink extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    private final EventDispatcher eventDispatcher;
+
+    @Inject
+    public Unlink(final @NonNull EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
-            return !sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            return false;
+        }
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            return false;
         }
         if (!plot.isMerged()) {
-            return sendMessage(player, Captions.UNLINK_IMPOSSIBLE);
+            player.sendMessage(TranslatableCaption.of("merge.unlink_impossible"));
         }
         final boolean createRoad;
         if (args.length != 0) {
             if (args.length != 1 || !StringMan.isEqualIgnoreCaseToAny(args[0], "true", "false")) {
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                sendUsage(player);
                 return false;
             }
             createRoad = Boolean.parseBoolean(args[0]);
@@ -69,24 +85,28 @@ public class Unlink extends SubCommand {
             createRoad = true;
         }
 
-        PlotUnlinkEvent event = PlotSquared.get().getEventDispatcher()
-            .callUnlink(plot.getArea(), plot, createRoad, createRoad,
-                PlotUnlinkEvent.REASON.PLAYER_COMMAND);
+        PlotUnlinkEvent event = this.eventDispatcher
+                .callUnlink(plot.getArea(), plot, createRoad, createRoad,
+                        PlotUnlinkEvent.REASON.PLAYER_COMMAND
+                );
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Unlink");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Unlink")
+            );
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_UNLINK)) {
-            return sendMessage(player, Captions.NO_PLOT_PERMS);
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_UNLINK)) {
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
         }
         Runnable runnable = () -> {
-            if (!plot.unlinkPlot(createRoad, createRoad)) {
-                MainUtil.sendMessage(player, Captions.UNMERGE_CANCELLED);
+            if (!plot.getPlotModificationManager().unlinkPlot(createRoad, createRoad)) {
+                player.sendMessage(TranslatableCaption.of("merge.unmerge_cancelled"));
                 return;
             }
-            MainUtil.sendMessage(player, Captions.UNLINK_SUCCESS);
+            player.sendMessage(TranslatableCaption.of("merge.unlink_success"));
         };
         if (hasConfirmation(player)) {
             CmdConfirm.addPending(player, "/plot unlink " + plot.getId(), runnable);
@@ -95,4 +115,5 @@ public class Unlink extends SubCommand {
         }
         return true;
     }
+
 }

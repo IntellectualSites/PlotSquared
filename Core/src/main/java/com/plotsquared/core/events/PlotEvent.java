@@ -21,12 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class PlotEvent {
 
@@ -51,7 +51,7 @@ public abstract class PlotEvent {
      *
      * @return the event class name
      */
-    @NotNull public String getEventName() {
+    public @NonNull String getEventName() {
         if (name == null) {
             name = getClass().getSimpleName();
         }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.setup;
 
@@ -32,22 +32,26 @@ import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.util.SetupUtils;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
-@Accessors(fluent = true)
 public class PlotAreaBuilder {
-    @Getter @Setter private String generatorName;
-    @Getter @Setter private String plotManager;
-    @Getter @Setter private PlotAreaType plotAreaType;
-    @Getter @Setter private PlotAreaTerrainType terrainType;
-    @Getter @Setter private String worldName;
-    @Getter @Setter private String areaName;
-    @Getter private PlotId minimumId;
-    @Getter private PlotId maximumId;
-    @Getter @Setter private SettingsNodesWrapper settingsNodesWrapper;
-    @Getter @Setter private SetupUtils setupManager;
+
+    private String generatorName;
+    private String plotManager;
+    private PlotAreaType plotAreaType;
+    private PlotAreaTerrainType terrainType;
+    private String worldName;
+    private String areaName;
+    private PlotId minimumId;
+    private PlotId maximumId;
+    private SettingsNodesWrapper settingsNodesWrapper;
+    private SetupUtils setupManager;
+
+    private PlotAreaBuilder() {
+    }
+
+    public static PlotAreaBuilder newBuilder() {
+        return new PlotAreaBuilder();
+    }
 
     public static PlotAreaBuilder ofPlotArea(PlotArea area) {
         return new PlotAreaBuilder()
@@ -56,7 +60,7 @@ public class PlotAreaBuilder {
                 .plotAreaType(area.getType())
                 .terrainType(area.getTerrain())
                 .generatorName(area.getGenerator().getName())
-                .plotManager(PlotSquared.imp().getPluginName())
+                .plotManager(PlotSquared.platform().pluginName())
                 .minimumId(area.getMin())
                 .maximumId(area.getMax())
                 .settingsNodesWrapper(new SettingsNodesWrapper(area.getSettingNodes(), null));
@@ -77,6 +81,86 @@ public class PlotAreaBuilder {
             throw new IllegalStateException("maxId <= minId");
         }
         this.maximumId = maximumId;
+        return this;
+    }
+
+    public String generatorName() {
+        return this.generatorName;
+    }
+
+    public String plotManager() {
+        return this.plotManager;
+    }
+
+    public PlotAreaType plotAreaType() {
+        return this.plotAreaType;
+    }
+
+    public PlotAreaTerrainType terrainType() {
+        return this.terrainType;
+    }
+
+    public String worldName() {
+        return this.worldName;
+    }
+
+    public String areaName() {
+        return this.areaName;
+    }
+
+    public PlotId minimumId() {
+        return this.minimumId;
+    }
+
+    public PlotId maximumId() {
+        return this.maximumId;
+    }
+
+    public SettingsNodesWrapper settingsNodesWrapper() {
+        return this.settingsNodesWrapper;
+    }
+
+    public SetupUtils setupManager() {
+        return this.setupManager;
+    }
+
+    public PlotAreaBuilder generatorName(String generatorName) {
+        this.generatorName = generatorName;
+        return this;
+    }
+
+    public PlotAreaBuilder plotManager(String plotManager) {
+        this.plotManager = plotManager;
+        return this;
+    }
+
+    public PlotAreaBuilder plotAreaType(PlotAreaType plotAreaType) {
+        this.plotAreaType = plotAreaType;
+        return this;
+    }
+
+    public PlotAreaBuilder terrainType(PlotAreaTerrainType terrainType) {
+        this.terrainType = terrainType;
+        return this;
+    }
+
+    public PlotAreaBuilder worldName(String worldName) {
+        this.worldName = worldName;
+        return this;
+    }
+
+    public PlotAreaBuilder areaName(String areaName) {
+        this.areaName = areaName;
+        return this;
+    }
+
+    public PlotAreaBuilder settingsNodesWrapper(SettingsNodesWrapper settingsNodesWrapper) {
+        this.settingsNodesWrapper = settingsNodesWrapper;
+        return this;
+    }
+
+    public PlotAreaBuilder setupManager(SetupUtils setupManager) {
+        this.setupManager = setupManager;
         return this;
     }
 

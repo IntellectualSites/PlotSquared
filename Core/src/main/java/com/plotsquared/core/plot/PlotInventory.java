@@ -21,53 +21,62 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
-import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.InventoryUtil;
-import lombok.NonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PlotInventory {
 
-    private static final String META_KEY = "inventory";
-    public final PlotPlayer<?> player;
-    public final int size;
+    private final PlotPlayer<?> player;
+    private final int lines;
     private final PlotItemStack[] items;
+    private final InventoryUtil inventoryUtil;
     private String title;
     private boolean open = false;
 
-    public PlotInventory(PlotPlayer<?> player) {
-        this.size = 4;
-        this.title = null;
-        this.player = player;
-        this.items = InventoryUtil.manager.getItems(player);
-    }
-
-    public PlotInventory(PlotPlayer<?> player, int size, String name) {
-        this.size = size;
+    public PlotInventory(
+            final @NonNull InventoryUtil inventoryUtil,
+            PlotPlayer<?> player, int lines, String name
+    ) {
+        this.lines = lines;
         this.title = name == null ? "" : name;
         this.player = player;
-        this.items = new PlotItemStack[size * 9];
+        this.items = new PlotItemStack[lines * 9];
+        this.inventoryUtil = inventoryUtil;
     }
 
-    public static boolean hasPlotInventoryOpen(@NonNull final PlotPlayer<?> plotPlayer) {
+    public static boolean hasPlotInventoryOpen(final @NonNull PlotPlayer<?> plotPlayer) {
         return getOpenPlotInventory(plotPlayer) != null;
     }
 
-    public static PlotInventory getOpenPlotInventory(@NonNull final PlotPlayer<?> plotPlayer) {
-        return plotPlayer.getMeta(META_KEY, null);
+    public static PlotInventory getOpenPlotInventory(final @NonNull PlotPlayer<?> plotPlayer) {
+        try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
+                PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
+            return inventoryAccess.get().orElse(null);
+        }
     }
 
-    public static void setPlotInventoryOpen(@NonNull final PlotPlayer<?> plotPlayer,
-        @NonNull final PlotInventory plotInventory) {
-        plotPlayer.setMeta(META_KEY, plotInventory);
+    public static void setPlotInventoryOpen(
+            final @NonNull PlotPlayer<?> plotPlayer,
+            final @NonNull PlotInventory plotInventory
+    ) {
+        try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
+                PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
+            inventoryAccess.set(plotInventory);
+        }
     }
 
-    public static void removePlotInventoryOpen(@NonNull final PlotPlayer<?>plotPlayer) {
-        plotPlayer.deleteMeta(META_KEY);
+    public static void removePlotInventoryOpen(final @NonNull PlotPlayer<?> plotPlayer) {
+        try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
+                PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
+            inventoryAccess.remove();
+        }
     }
 
     public boolean onClick(int index) {
@@ -78,13 +87,10 @@ public class PlotInventory {
         if (this.title == null) {
             return;
         }
-        if (hasPlotInventoryOpen(player)) {
-            PlotSquared.debug(String.format("Failed to open plot inventory for %s "
-                + "because the player already has an open plot inventory", player.getName()));
-        } else {
+        if (!hasPlotInventoryOpen(getPlayer())) {
             this.open = true;
-            setPlotInventoryOpen(player, this);
-            InventoryUtil.manager.open(this);
+            setPlotInventoryOpen(getPlayer(), this);
+            this.inventoryUtil.open(this);
         }
     }
 
@@ -92,14 +98,14 @@ public class PlotInventory {
         if (this.title == null) {
             return;
         }
-        removePlotInventoryOpen(player);
-        InventoryUtil.manager.close(this);
+        removePlotInventoryOpen(getPlayer());
+        this.inventoryUtil.close(this);
         this.open = false;
     }
 
     public void setItem(int index, PlotItemStack item) {
         this.items[index] = item;
-        InventoryUtil.manager.setItem(this, index, item);
+        this.inventoryUtil.setItem(this, index, item);
     }
 
     public PlotItemStack getItem(int index) {
@@ -131,6 +137,14 @@ public class PlotInventory {
 
     public boolean isOpen() {
         return this.open;
+    }
+
+    public PlotPlayer<?> getPlayer() {
+        return player;
+    }
+
+    public int getLines() {
+        return lines;
     }
 
 }

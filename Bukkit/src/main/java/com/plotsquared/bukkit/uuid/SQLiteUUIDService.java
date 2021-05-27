@@ -21,16 +21,16 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.database.SQLite;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -51,7 +51,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
 
     public SQLiteUUIDService(final String fileName) {
         this.sqlite =
-            new SQLite(MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), fileName));
+                new SQLite(FileUtils.getFile(PlotSquared.platform().getDirectory(), fileName));
         try {
             this.sqlite.openConnection();
         } catch (ClassNotFoundException | SQLException e) {
@@ -59,7 +59,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         }
 
         try (PreparedStatement stmt = getConnection().prepareStatement(
-            "CREATE TABLE IF NOT EXISTS `usercache` (uuid VARCHAR(32) NOT NULL, username VARCHAR(32) NOT NULL, PRIMARY KEY (uuid))")) {
+                "CREATE TABLE IF NOT EXISTS `usercache` (uuid VARCHAR(32) NOT NULL, username VARCHAR(32) NOT NULL, PRIMARY KEY (uuid))")) {
             stmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,10 +72,11 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         }
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
         try (final PreparedStatement statement = getConnection()
-            .prepareStatement("SELECT `username` FROM `usercache` WHERE `uuid` = ?")) {
+                .prepareStatement("SELECT `username` FROM `usercache` WHERE `uuid` = ?")) {
             for (final UUID uuid : uuids) {
                 statement.setString(1, uuid.toString());
                 try (final ResultSet resultSet = statement.executeQuery()) {
@@ -90,16 +91,19 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         return mappings;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(@NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         try (final PreparedStatement statement = getConnection()
-            .prepareStatement("SELECT `uuid` FROM `usercache` WHERE `username` = ?")) {
+                .prepareStatement("SELECT `uuid` FROM `usercache` WHERE `username` = ?")) {
             for (final String username : usernames) {
                 statement.setString(1, username);
                 try (final ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        mappings.add(new UUIDMapping(UUID.fromString(resultSet.getString("uuid")),
-                            username));
+                        mappings.add(new UUIDMapping(
+                                UUID.fromString(resultSet.getString("uuid")),
+                                username
+                        ));
                     }
                 }
             }
@@ -109,9 +113,10 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         return mappings;
     }
 
-    @Override public void accept(final List<UUIDMapping> uuidWrappers) {
+    @Override
+    public void accept(final List<UUIDMapping> uuidWrappers) {
         try (final PreparedStatement statement = getConnection()
-            .prepareStatement("INSERT OR REPLACE INTO `usercache` (`uuid`, `username`) VALUES(?, ?)")) {
+                .prepareStatement("INSERT OR REPLACE INTO `usercache` (`uuid`, `username`) VALUES(?, ?)")) {
             for (final UUIDMapping mapping : uuidWrappers) {
                 statement.setString(1, mapping.getUuid().toString());
                 statement.setString(2, mapping.getUsername());
@@ -127,7 +132,7 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
      *
      * @return All read mappings
      */
-    @NotNull public List<UUIDMapping> getAll() {
+    public @NonNull List<UUIDMapping> getAll() {
         final List<UUIDMapping> mappings = new LinkedList<>();
         try (final PreparedStatement statement = getConnection().prepareStatement("SELECT * FROM `usercache`")) {
             try (final ResultSet resultSet = statement.executeQuery()) {

@@ -21,57 +21,71 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Inject;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "leave",
-    description = "Removes self from being trusted or a member of the plot",
-    permission = "plots.leave",
-    usage = "/plot leave",
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.leave",
+        usage = "/plot leave",
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.PLAYER)
 public class Leave extends Command {
-    public Leave() {
+
+    private final EventDispatcher eventDispatcher;
+
+    @Inject
+    public Leave(final @NonNull EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
+        this.eventDispatcher = eventDispatcher;
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
-        checkTrue(plot.hasOwner(), Captions.PLOT_UNOWNED);
-        checkTrue(plot.isAdded(player.getUUID()), Captions.NOT_ADDED_TRUSTED);
-        checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
+        checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
+        checkTrue(plot.isAdded(player.getUUID()), TranslatableCaption.of("members.not_added_trusted"));
         if (plot.isOwner(player.getUUID())) {
-            checkTrue(plot.hasOwner(), Captions.ALREADY_OWNER);
+            player.sendMessage(TranslatableCaption.of("member.plot_cant_leave_owner"));
             // TODO setowner, other
         } else {
             UUID uuid = player.getUUID();
             if (plot.isAdded(uuid)) {
                 if (plot.removeTrusted(uuid)) {
-                    PlotSquared.get().getEventDispatcher().callTrusted(player, plot, uuid, false);
+                    this.eventDispatcher.callTrusted(player, plot, uuid, false);
                 }
                 if (plot.removeMember(uuid)) {
-                    PlotSquared.get().getEventDispatcher().callMember(player, plot, uuid, false);
+                    this.eventDispatcher.callMember(player, plot, uuid, false);
                 }
-                MainUtil.sendMessage(player, Captions.PLOT_LEFT, player.getName());
+                player.sendMessage(
+                        TranslatableCaption.of("member.plot_left"),
+                        Template.of("player", player.getName())
+                );
             } else {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, 1);
+                player.sendMessage(
+                        TranslatableCaption.of("errors.invalid_player"),
+                        Template.of("value", String.valueOf(1))
+                );
             }
         }
         return CompletableFuture.completedFuture(true);
     }
+
 }

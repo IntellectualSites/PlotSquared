@@ -21,29 +21,35 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.expiration;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.plot.PlotFilter;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.query.PlotQuery;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ExpiryTask {
+
     private final Settings.Auto_Clear settings;
+    private final PlotAreaManager plotAreaManager;
     private long cutoffThreshold = Long.MIN_VALUE;
 
-    public ExpiryTask(Settings.Auto_Clear settings) {
+    public ExpiryTask(final Settings.Auto_Clear settings, final @NonNull PlotAreaManager plotAreaManager) {
         this.settings = settings;
+        this.plotAreaManager = plotAreaManager;
     }
 
     public Settings.Auto_Clear getSettings() {
@@ -52,7 +58,7 @@ public class ExpiryTask {
 
     public boolean allowsArea(PlotArea area) {
         return settings.WORLDS.contains(area.toString()) || settings.WORLDS
-            .contains(area.getWorldName()) || settings.WORLDS.contains("*");
+                .contains(area.getWorldName()) || settings.WORLDS.contains("*");
     }
 
     public boolean applies(PlotArea area) {
@@ -62,8 +68,8 @@ public class ExpiryTask {
             }
             Set<Plot> plots = null;
             if (cutoffThreshold != Long.MAX_VALUE
-                && area.getPlots().size() > settings.REQUIRED_PLOTS
-                || (plots = getPlotsToCheck()).size() > settings.REQUIRED_PLOTS) {
+                    && area.getPlots().size() > settings.REQUIRED_PLOTS
+                    || (plots = getPlotsToCheck()).size() > settings.REQUIRED_PLOTS) {
                 // calculate cutoff
                 if (cutoffThreshold == Long.MIN_VALUE) {
                     plots = plots != null ? plots : getPlotsToCheck();
@@ -74,8 +80,8 @@ public class ExpiryTask {
                         diff = settings.REQUIRED_PLOTS - plots.size();
                     }
                     List<Long> entireList =
-                        plots.stream().map(plot -> ExpireManager.IMP.getAge(plot))
-                            .collect(Collectors.toList());
+                            plots.stream().map(plot -> ExpireManager.IMP.getAge(plot))
+                                    .collect(Collectors.toList());
                     List<Long> top = new ArrayList<>(diff + 1);
                     if (diff > 1000) {
                         Collections.sort(entireList);
@@ -119,11 +125,13 @@ public class ExpiryTask {
     }
 
     public Set<Plot> getPlotsToCheck() {
-        return PlotSquared.get().getPlots(new PlotFilter() {
-            @Override public boolean allowsArea(PlotArea area) {
-                return ExpiryTask.this.allowsArea(area);
+        final Collection<PlotArea> areas = new LinkedList<>();
+        for (final PlotArea plotArea : this.plotAreaManager.getAllPlotAreas()) {
+            if (this.allowsArea(plotArea)) {
+                areas.add(plotArea);
             }
-        });
+        }
+        return PlotQuery.newQuery().inAreas(areas).asSet();
     }
 
     public boolean applies(long diff) {

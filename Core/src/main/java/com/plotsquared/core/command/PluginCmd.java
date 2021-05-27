@@ -21,36 +21,45 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.PremiumVerification;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "plugin",
-    permission = "plots.use",
-    description = "Show plugin information",
-    usage = "/plot plugin",
-    aliases = "version",
-    category = CommandCategory.INFO)
+        permission = "plots.use",
+        usage = "/plot plugin",
+        aliases = "version",
+        category = CommandCategory.INFO)
 public class PluginCmd extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        TaskManager.IMP.taskAsync(() -> {
-            MainUtil.sendMessage(player, String.format(
-                "$2>> $1&l" + PlotSquared.imp().getPluginName() + " $2($1Version$2: $1%s$2)",
-                PlotSquared.get().getVersion()));
-            MainUtil.sendMessage(player,
-                "$2>> $1&lAuthors$2: $1Citymonstret $2& $1Empire92 $2& $1MattBDev $2& $1dordsor21 $2& $1NotMyFault $2& $1SirYwell");
-            MainUtil.sendMessage(player,
-                "$2>> $1&lWiki$2: $1https://github.com/IntellectualSites/PlotSquared/wiki");
-            MainUtil
-                .sendMessage(player, "$2>> $1&lPremium$2: $1" + PremiumVerification.isPremium());
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+        TaskManager.getPlatformImplementation().taskAsync(() -> {
+            player.sendMessage(
+                    StaticCaption.of("<gray>>> </gray><gold><bold>" + PlotSquared
+                            .platform()
+                            .pluginName() + " <reset><gray>(<gold>Version</gold><gray>: </gray><gold><version></gold><gray>)</gray>"),
+                    Template.of("version", String.valueOf(PlotSquared.get().getVersion()))
+            );
+            player.sendMessage(StaticCaption.of(
+                    "<gray>>> </gray><gold><bold>Authors<reset><gray>: </gray><gold>Citymonstret </gold><gray>& </gray><gold>Empire92 </gold><gray>& </gray><gold>MattBDev </gold><gray>& </gray><gold>dordsor21 </gold><gray>& </gray><gold>NotMyFault </gold><gray>& </gray><gold>SirYwell</gold>"));
+            player.sendMessage(StaticCaption.of(
+                    "<gray>>> </gray><gold><bold>Wiki<reset><gray>: </gray><gold><click:open_url:https://github.com/IntellectualSites/PlotSquared/wiki>https://github.com/IntellectualSites/PlotSquared/wiki</gold>"));
+            player.sendMessage(StaticCaption.of(
+                    "<gray>>> </gray><gold><bold>Discord<reset><gray>: </gray><gold><click:open_url:https://discord.gg/intellectualsites>https://discord.gg/intellectualsites</gold>"));
+            player.sendMessage(
+                    StaticCaption.of("<gray>>> </gray><gold><bold>Premium<reset><gray>: <gold><value></gold>"),
+                    Template.of("value", String.valueOf(PremiumVerification.isPremium()))
+            );
         });
         return true;
     }
+
 }

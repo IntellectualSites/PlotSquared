@@ -21,21 +21,23 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.function.Predicate;
 
-@FunctionalInterface interface PlotFilter extends Predicate<Plot> {
+@FunctionalInterface
+interface PlotFilter extends Predicate<Plot> {
 
-    @Override default boolean test(@NotNull final Plot plot) {
+    @Override
+    default boolean test(final @NonNull Plot plot) {
         return this.accepts(plot);
     }
 
-    boolean accepts(@NotNull final Plot plot);
+    boolean accepts(final @NonNull Plot plot);
 
 }

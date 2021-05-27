@@ -21,24 +21,26 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.UUID;
 
 class MemberFilter implements PlotFilter {
 
-    @NotNull private final UUID uuid;
+    @NonNull
+    private final UUID uuid;
 
-    MemberFilter(@NotNull final UUID uuid) {
+    MemberFilter(final @NonNull UUID uuid) {
         this.uuid = uuid;
     }
 
-    @Override public boolean accepts(@NotNull final Plot plot) {
+    @Override
+    public boolean accepts(final @NonNull Plot plot) {
         return plot.isAdded(uuid);
     }
 

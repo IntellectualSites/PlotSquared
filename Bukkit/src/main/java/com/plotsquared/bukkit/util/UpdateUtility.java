@@ -21,21 +21,23 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.PlotVersion;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -44,6 +46,8 @@ import java.net.URL;
 
 public class UpdateUtility implements Listener {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + UpdateUtility.class.getSimpleName());
+
     public static PlotVersion internalVersion;
     public static String spigotVersion;
     public static boolean hasUpdate;
@@ -51,6 +55,7 @@ public class UpdateUtility implements Listener {
     public final JavaPlugin javaPlugin;
     private boolean notify = true;
 
+    @Inject
     public UpdateUtility(final JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
         internalVersion = PlotSquared.get().getVersion();
@@ -60,34 +65,31 @@ public class UpdateUtility implements Listener {
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(this.javaPlugin, () -> {
             try {
                 HttpsURLConnection connection = (HttpsURLConnection) new URL(
-                    "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
-                    .openConnection();
+                        "https://api.spigotmc.org/simple/0.1/index.php?action=getResource&id=77506")
+                        .openConnection();
                 connection.setRequestMethod("GET");
                 JsonObject result = (new JsonParser())
-                    .parse(new JsonReader(new InputStreamReader(connection.getInputStream())))
-                    .getAsJsonObject();
+                        .parse(new JsonReader(new InputStreamReader(connection.getInputStream())))
+                        .getAsJsonObject();
                 spigotVersion = result.get("current_version").getAsString();
             } catch (IOException e) {
-                PlotSquared.log(Captions.PREFIX + "&cUnable to check for updates because: " + e);
+                logger.error("Unable to check for updates. Error: {}", e.getMessage());
                 return;
             }
 
             if (internalVersion.isLaterVersion(spigotVersion)) {
-                PlotSquared
-                    .log(Captions.PREFIX + "&6There appears to be a PlotSquared update available!");
-                PlotSquared.log(
-                    Captions.PREFIX + "&6You are running version " + internalVersion.versionString()
-                        + ", &6latest version is " + spigotVersion);
-                PlotSquared
-                    .log(Captions.PREFIX + "&6https://www.spigotmc.org/resources/77506/updates");
+                logger.info("There appears to be a PlotSquared update available!");
+                logger.info("You are running version {}, the latest version is {}",
+                        internalVersion.versionString(), spigotVersion
+                );
+                logger.info("https://www.spigotmc.org/resources/77506/updates");
                 hasUpdate = true;
                 if (Settings.UpdateChecker.NOTIFY_ONCE) {
                     cancelTask();
                 }
             } else if (notify) {
                 notify = false;
-                PlotSquared.log(Captions.PREFIX
-                    + "Congratulations! You are running the latest PlotSquared version.");
+                logger.info("Congratulations! You are running the latest PlotSquared version");
             }
         }, 0L, Settings.UpdateChecker.POLL_RATE * 60 * 20);
     }
@@ -95,4 +97,5 @@ public class UpdateUtility implements Listener {
     private void cancelTask() {
         Bukkit.getScheduler().runTaskLater(javaPlugin, () -> task.cancel(), 20L);
     }
+
 }

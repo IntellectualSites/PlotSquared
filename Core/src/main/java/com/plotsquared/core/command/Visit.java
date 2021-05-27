@@ -21,28 +21,32 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.query.SortingStrategy;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import com.plotsquared.core.uuid.UUIDMapping;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,31 +57,31 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "visit",
-    permission = "plots.visit",
-    description = "Visit someones plot",
-    usage = "/plot visit <player>|<alias>|<plot> [area]|[#] [#]",
-    aliases = {"v", "tp", "teleport", "goto", "warp"},
-    requiredType = RequiredType.PLAYER,
-    category = CommandCategory.TELEPORT)
+        permission = "plots.visit",
+        usage = "/plot visit <player> | <alias> | <plot> [area]|[#] [#]",
+        aliases = {"v", "tp", "teleport", "goto", "warp"},
+        requiredType = RequiredType.PLAYER,
+        category = CommandCategory.TELEPORT)
 public class Visit extends Command {
 
-    public Visit() {
+    private final PlotAreaManager plotAreaManager;
+
+    @Inject
+    public Visit(final @NonNull PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
+        this.plotAreaManager = plotAreaManager;
     }
 
-    private void visit(@NotNull final PlotPlayer player, @NotNull final PlotQuery query, final PlotArea sortByArea,
-        final RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone) {
-        this.visit(player, query, sortByArea, confirm, whenDone, 1);
-    }
-
-    private void visit(@NotNull final PlotPlayer player, @NotNull final PlotQuery query, final PlotArea sortByArea,
-        final RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone, int page) {
+    private void visit(
+            final @NonNull PlotPlayer<?> player, final @NonNull PlotQuery query, final PlotArea sortByArea,
+            final RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone, int page
+    ) {
         // We get the query once,
         // then we get it another time further on
         final List<Plot> unsorted = query.asList();
 
         if (unsorted.isEmpty()) {
-            Captions.FOUND_NO_PLOTS.send(player);
+            player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
             return;
         }
 
@@ -90,7 +94,8 @@ public class Visit extends Command {
         }
 
         if (page < 1 || page > unsorted.size()) {
-            MainUtil.sendMessage(player, String.format("(1, %d)", unsorted.size()));
+            // TODO: Huh?
+            // MainUtil.sendMessage(player, String.format("(1, %d)", unsorted.size()));
             return;
         }
 
@@ -109,30 +114,54 @@ public class Visit extends Command {
 
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_UNOWNED)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_UNOWNED);
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_UNOWNED)) {
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Templates.of("node", "plots.visit.unowned")
+                );
                 return;
             }
         } else if (plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OWNED) && !Permissions
-                .hasPermission(player, Captions.PERMISSION_HOME)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OWNED);
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OWNED) && !Permissions
+                    .hasPermission(player, Permission.PERMISSION_HOME)) {
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Templates.of("node", "plots.visit.owned")
+                );
                 return;
             }
         } else if (plot.isAdded(player.getUUID())) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_SHARED)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_SHARED);
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_SHARED)) {
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Templates.of("node", "plots.visit.shared")
+                );
                 return;
             }
         } else {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_VISIT_OTHER)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_VISIT_OTHER);
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_OTHER)) {
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Templates.of("node", "plots.visit.other")
+                );
                 return;
             }
             if (!plot.getFlag(UntrustedVisitFlag.class) && !Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_ADMIN_VISIT_UNTRUSTED);
+                    .hasPermission(player, Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Templates.of("node", "plots.admin.visit.untrusted")
+                );
                 return;
+            }
+            if (plot.isDenied(player.getUUID())) {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_VISIT_DENIED)) {
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_VISIT_DENIED))
+                    );
+                    return;
+                }
             }
         }
 
@@ -146,10 +175,12 @@ public class Visit extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player,
-        String[] args,
-        final RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player,
+            String[] args,
+            final RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
         if (args.length == 1 && args[0].contains(":")) {
             args = args[0].split(":");
         }
@@ -162,43 +193,63 @@ public class Visit extends Command {
             // /p v <user> <area> <page>
             case 3:
                 if (!MathMan.isInteger(args[2])) {
-                    Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
-                    Captions.COMMAND_SYNTAX.send(player, getUsage());
+                    player.sendMessage(
+                            TranslatableCaption.of("invalid.not_valid_number"),
+                            Templates.of("value", "(1, ∞)")
+                    );
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Templates.of("value", getUsage())
+                    );
                     return CompletableFuture.completedFuture(false);
                 }
                 page = Integer.parseInt(args[2]);
-            // /p v <name> <area> [page]
-            // /p v <name> [page]
+                // /p v <name> <area> [page]
+                // /p v <name> [page]
             case 2:
                 if (page != Integer.MIN_VALUE || !MathMan.isInteger(args[1])) {
-                    sortByArea = PlotSquared.get().getPlotAreaByString(args[1]);
+                    sortByArea = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
-                        Captions.NOT_VALID_NUMBER.send(player, "(1, ∞)");
-                        Captions.COMMAND_SYNTAX.send(player, getUsage());
+                        player.sendMessage(
+                                TranslatableCaption.of("invalid.not_valid_number"),
+                                Templates.of("value", "(1, ∞)")
+                        );
+                        player.sendMessage(
+                                TranslatableCaption.of("commandconfig.command_syntax"),
+                                Templates.of("value", getUsage())
+                        );
                         return CompletableFuture.completedFuture(false);
                     }
 
                     final PlotArea finalSortByArea = sortByArea;
                     int finalPage1 = page;
-                    MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+                    PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
                         if (throwable instanceof TimeoutException) {
-                            Captions.FETCHING_PLAYERS_TIMEOUT.send(player);
+                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                         } else if (throwable != null || uuids.size() != 1) {
-                            Captions.COMMAND_SYNTAX.send(player, getUsage());
+                            player.sendMessage(
+                                    TranslatableCaption.of("commandconfig.command_syntax"),
+                                    Templates.of("value", getUsage())
+                            );
                         } else {
-                            final UUIDMapping mapping = uuids.toArray(new UUIDMapping[0])[0];
-                            this.visit(player, PlotQuery.newQuery()
-                                    .thatPasses(plot -> plot.isOwner(mapping.getUuid())),
-                                    finalSortByArea, confirm, whenDone, finalPage1);
+                            final UUID uuid = uuids.toArray(new UUID[0])[0];
+                            this.visit(
+                                    player,
+                                    PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(),
+                                    finalSortByArea,
+                                    confirm,
+                                    whenDone,
+                                    finalPage1
+                            );
                         }
                     });
                     break;
                 }
                 page = Integer.parseInt(args[1]);
-            // /p v <name> [page]
-            // /p v <uuid> [page]
-            // /p v <plot> [page]
-            // /p v <alias>
+                // /p v <name> [page]
+                // /p v <uuid> [page]
+                // /p v <plot> [page]
+                // /p v <alias>
             case 1:
                 final String[] finalArgs = args;
                 int finalPage = page;
@@ -206,24 +257,41 @@ public class Visit extends Command {
                     PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
                             // The request timed out
-                            MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
-                        } else if (uuid != null && !PlotSquared.get().hasPlot(uuid)) {
+                            player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
+                        } else if (uuid != null && !PlotQuery.newQuery().ownedBy(uuid).anyMatch()) {
                             // It was a valid UUID but the player has no plots
-                            MainUtil.sendMessage(player, Captions.PLAYER_NO_PLOTS);
+                            player.sendMessage(TranslatableCaption.of("errors.player_no_plots"));
                         } else if (uuid == null) {
                             // player not found, so we assume it's an alias if no page was provided
                             if (finalPage == Integer.MIN_VALUE) {
-                                this.visit(player, PlotQuery.newQuery().withAlias(finalArgs[0]), player.getApplicablePlotArea(), confirm, whenDone, 1);
+                                this.visit(
+                                        player,
+                                        PlotQuery.newQuery().withAlias(finalArgs[0]),
+                                        player.getApplicablePlotArea(),
+                                        confirm,
+                                        whenDone,
+                                        1
+                                );
                             } else {
-                                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, finalArgs[0]);
+                                player.sendMessage(
+                                        TranslatableCaption.of("errors.invalid_player"),
+                                        Template.of("value", finalArgs[0])
+                                );
                             }
                         } else {
-                            this.visit(player, PlotQuery.newQuery().thatPasses(plot -> plot.isOwner(uuid)).whereBasePlot(), null, confirm, whenDone, finalPage);
+                            this.visit(
+                                    player,
+                                    PlotQuery.newQuery().ownedBy(uuid).whereBasePlot(),
+                                    null,
+                                    confirm,
+                                    whenDone,
+                                    finalPage
+                            );
                         }
                     });
                 } else {
                     // Try to parse a plot
-                    final Plot plot = MainUtil.getPlotFromString(player, finalArgs[0], true);
+                    final Plot plot = Plot.getPlotFromString(player, finalArgs[0], true);
                     if (plot != null) {
                         this.visit(player, PlotQuery.newQuery().withPlot(plot), null, confirm, whenDone, 1);
                     }
@@ -231,7 +299,10 @@ public class Visit extends Command {
                 break;
             case 0:
                 // /p v is invalid
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+                player.sendMessage(
+                        TranslatableCaption.of("commandconfig.command_syntax"),
+                        Templates.of("value", getUsage())
+                );
                 return CompletableFuture.completedFuture(false);
             default:
         }
@@ -239,13 +310,12 @@ public class Visit extends Command {
         return CompletableFuture.completedFuture(true);
     }
 
-    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    @Override
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
         switch (args.length - 1) {
-            case 0:
-                completions.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
-                break;
-            case 1:
+            case 0 -> completions.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            case 1 -> {
                 completions.addAll(
                         TabCompletions.completeAreas(args[1]));
                 if (args[1].isEmpty()) {
@@ -256,8 +326,8 @@ public class Visit extends Command {
                 }
                 completions.addAll(
                         TabCompletions.completeNumbers(args[1], 10, 999));
-                break;
-            case 2:
+            }
+            case 2 -> {
                 if (args[2].isEmpty()) {
                     // if no input is given, only suggest 1 - 3
                     completions.addAll(
@@ -266,9 +336,36 @@ public class Visit extends Command {
                 }
                 completions.addAll(
                         TabCompletions.completeNumbers(args[2], 10, 999));
-                break;
+            }
         }
 
         return completions;
     }
+
+    private void completeNumbers(final List<Command> commands, final String arg, final int start) {
+        for (int i = 0; i < 100; i++) {
+            final String command = Integer.toString(start + 1);
+            if (!command.toLowerCase().startsWith(arg.toLowerCase())) {
+                continue;
+            }
+            commands.add(new Command(this, false, command, "",
+                    RequiredType.NONE, CommandCategory.TELEPORT
+            ) {
+            });
+        }
+    }
+
+    private void completeAreas(final List<Command> commands, final String arg) {
+        for (final PlotArea area : this.plotAreaManager.getAllPlotAreas()) {
+            final String areaName = area.getWorldName() + ";" + area.getId();
+            if (!areaName.toLowerCase().startsWith(arg.toLowerCase())) {
+                continue;
+            }
+            commands.add(new Command(this, false, area.getWorldName() + ";" + area.getId(), "",
+                    RequiredType.NONE, CommandCategory.TELEPORT
+            ) {
+            });
+        }
+    }
+
 }

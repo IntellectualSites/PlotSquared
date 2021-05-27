@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
@@ -36,7 +36,8 @@ public class PlayerEnterPlotEvent extends PlotPlayerEvent {
      * @param player Player that entered the plot
      * @param plot   Plot that was entered
      */
-    public PlayerEnterPlotEvent(PlotPlayer player, Plot plot) {
+    public PlayerEnterPlotEvent(PlotPlayer<?> player, Plot plot) {
         super(player, plot);
     }
+
 }

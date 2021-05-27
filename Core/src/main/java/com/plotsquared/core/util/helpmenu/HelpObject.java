@@ -21,41 +21,51 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.helpmenu;
 
 import com.plotsquared.core.command.Argument;
 import com.plotsquared.core.command.Command;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
 
 public class HelpObject {
 
-    private final String _rendered;
+    static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
-    public HelpObject(final Command command, final String label) {
-        _rendered = StringMan.replaceAll(Captions.HELP_ITEM.getTranslated(), "%usage%",
-            command.getUsage().replaceAll("\\{label\\}", label), "[%alias%]",
-            !command.getAliases().isEmpty() ?
-                "(" + StringMan.join(command.getAliases(), "|") + ")" :
-                "", "%desc%", command.getDescription(), "%arguments%",
-            buildArgumentList(command.getRequiredArguments()), "{label}", label);
+    private final String rendered;
+
+    public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
+        rendered = MINI_MESSAGE.serialize(MINI_MESSAGE.parse(
+                TranslatableCaption.of("help.help_item").getComponent(audience),
+                Template.of("usage", command.getUsage().replace("{label}", label)),
+                Template.of("alias", command.getAliases().isEmpty() ? "" : StringMan.join(command.getAliases(), " | ")),
+                Templates.of(audience, "desc", command.getDescription()),
+                Template.of("arguments", buildArgumentList(command.getRequiredArguments())),
+                Template.of("label", label)
+        ));
     }
 
-    @Override public String toString() {
-        return _rendered;
+    @Override
+    public String toString() {
+        return rendered;
     }
 
-    private String buildArgumentList(final Argument[] arguments) {
+    private String buildArgumentList(final Argument<?>[] arguments) {
         if (arguments == null) {
             return "";
         }
         final StringBuilder builder = new StringBuilder();
         for (final Argument<?> argument : arguments) {
             builder.append("[").append(argument.getName()).append(" (")
-                .append(argument.getExample()).append(")],");
+                    .append(argument.getExample()).append(")],");
         }
         return arguments.length > 0 ? builder.substring(0, builder.length() - 1) : "";
     }
+
 }

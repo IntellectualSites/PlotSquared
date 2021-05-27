@@ -21,22 +21,21 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.location.Location;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import lombok.EqualsAndHashCode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * A world that contains plots
  */
-@EqualsAndHashCode
 public abstract class PlotWorld {
 
     private final String world;
@@ -46,7 +45,7 @@ public abstract class PlotWorld {
      *
      * @param world World name
      */
-    protected PlotWorld(@NotNull final String world) {
+    protected PlotWorld(final @NonNull String world) {
         this.world = world;
     }
 
@@ -57,14 +56,14 @@ public abstract class PlotWorld {
      * @param location Location
      * @return Containing plot area, or null
      */
-    @Nullable public abstract PlotArea getArea(@NotNull final Location location);
+    public @Nullable abstract PlotArea getArea(final @NonNull Location location);
 
     /**
      * Get all plot areas in the world
      *
      * @return All plot areas in the world
      */
-    @NotNull public abstract Collection<PlotArea> getAreas();
+    public @NonNull abstract Collection<PlotArea> getAreas();
 
     /**
      * Get all plot areas in a specified region
@@ -72,15 +71,16 @@ public abstract class PlotWorld {
      * @param region Region
      * @return All areas in the region
      */
-    @NotNull public abstract Collection<PlotArea> getAreasInRegion(
-        @NotNull final CuboidRegion region);
+    public @NonNull abstract Collection<PlotArea> getAreasInRegion(
+            final @NonNull CuboidRegion region
+    );
 
     /**
      * Register a new area in the world
      *
      * @param area Plot area
      */
-    public void addArea(@NotNull final PlotArea area) {
+    public void addArea(final @NonNull PlotArea area) {
         throw new UnsupportedOperationException("This world type does not allow adding new areas");
     }
 
@@ -89,7 +89,7 @@ public abstract class PlotWorld {
      *
      * @param area Plot area
      */
-    public void removeArea(@NotNull final PlotArea area) {
+    public void removeArea(final @NonNull PlotArea area) {
         throw new UnsupportedOperationException("This world type does not allow removing areas");
     }
 
@@ -100,6 +100,33 @@ public abstract class PlotWorld {
      */
     public String getWorld() {
         return this.world;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof final PlotWorld other)) {
+            return false;
+        }
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        final Object this$world = this.getWorld();
+        final Object other$world = other.getWorld();
+        return Objects.equals(this$world, other$world);
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof PlotWorld;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $world = this.getWorld();
+        result = result * PRIME + ($world == null ? 43 : $world.hashCode());
+        return result;
     }
 
 }

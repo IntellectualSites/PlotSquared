@@ -21,23 +21,25 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Templates;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.TaskManager;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,16 +50,20 @@ import java.util.concurrent.TimeUnit;
 /**
  * {@inheritDoc}
  */
-@RequiredArgsConstructor public class SimpleBackupManager implements BackupManager {
+@Singleton
+public class SimpleBackupManager implements BackupManager {
 
-    @Getter private final Path backupPath;
+    private final Path backupPath;
     private final boolean automaticBackup;
-    @Getter private final int backupLimit;
+    private final int backupLimit;
     private final Cache<PlotCacheKey, BackupProfile> backupProfileCache = CacheBuilder.newBuilder()
-        .expireAfterAccess(3, TimeUnit.MINUTES).build();
+            .expireAfterAccess(3, TimeUnit.MINUTES).build();
+    private final PlayerBackupProfileFactory playerBackupProfileFactory;
 
-    public SimpleBackupManager() throws Exception {
-        this.backupPath = Objects.requireNonNull(PlotSquared.imp()).getDirectory().toPath().resolve("backups");
+    @Inject
+    public SimpleBackupManager(final @NonNull PlayerBackupProfileFactory playerBackupProfileFactory) throws Exception {
+        this.playerBackupProfileFactory = playerBackupProfileFactory;
+        this.backupPath = Objects.requireNonNull(PlotSquared.platform()).getDirectory().toPath().resolve("backups");
         if (!Files.exists(backupPath)) {
             Files.createDirectory(backupPath);
         }
@@ -65,12 +71,26 @@ import java.util.concurrent.TimeUnit;
         this.backupLimit = Settings.Backup.BACKUP_LIMIT;
     }
 
-    @Override @NotNull public BackupProfile getProfile(@NotNull final Plot plot) {
-        if (plot.hasOwner() && !plot.isMerged()) {
+    public SimpleBackupManager(
+            final Path backupPath, final boolean automaticBackup,
+            final int backupLimit, final PlayerBackupProfileFactory playerBackupProfileFactory
+    ) {
+        this.backupPath = backupPath;
+        this.automaticBackup = automaticBackup;
+        this.backupLimit = backupLimit;
+        this.playerBackupProfileFactory = playerBackupProfileFactory;
+    }
+
+    @Override
+    public @NonNull BackupProfile getProfile(final @NonNull Plot plot) {
+        if (plot.hasOwner()) {
             try {
-                return backupProfileCache.get(new PlotCacheKey(plot), () -> new PlayerBackupProfile(plot.getOwnerAbs(), plot, this));
+                return backupProfileCache.get(
+                        new PlotCacheKey(plot),
+                        () -> this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot)
+                );
             } catch (ExecutionException e) {
-                final BackupProfile profile = new PlayerBackupProfile(plot.getOwnerAbs(), plot, this);
+                final BackupProfile profile = this.playerBackupProfileFactory.create(plot.getOwnerAbs(), plot);
                 this.backupProfileCache.put(new PlotCacheKey(plot), profile);
                 return profile;
             }
@@ -78,39 +98,60 @@ import java.util.concurrent.TimeUnit;
         return new NullBackupProfile();
     }
 
-    @Override public void automaticBackup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone) {
+    @Override
+    public void automaticBackup(@Nullable PlotPlayer<?> player, final @NonNull Plot plot, @NonNull Runnable whenDone) {
         final BackupProfile profile;
         if (!this.shouldAutomaticallyBackup() || (profile = getProfile(plot)) instanceof NullBackupProfile) {
             whenDone.run();
         } else {
             if (player != null) {
-                Captions.BACKUP_AUTOMATIC_STARTED.send(player);
+                player.sendMessage(
+                        TranslatableCaption.of("backups.backup_automatic_started"),
+                        Template.of("plot", plot.getId().toString())
+                );
             }
             profile.createBackup().whenComplete((backup, throwable) -> {
-               if (throwable != null) {
-                   if (player != null) {
-                       Captions.BACKUP_AUTOMATIC_FAILURE.send(player, throwable.getMessage());
-                   }
-                   throwable.printStackTrace();
-               } else {
-                   if (player != null) {
-                       Captions.BACKUP_AUTOMATIC_FINISHED.send(player);
-                       TaskManager.runTaskAsync(whenDone);
-                   }
-               }
+                if (throwable != null) {
+                    if (player != null) {
+                        player.sendMessage(
+                                TranslatableCaption.of("backups.backup_automatic_failure"),
+                                Templates.of("reason", throwable.getMessage())
+                        );
+                    }
+                    throwable.printStackTrace();
+                } else {
+                    if (player != null) {
+                        player.sendMessage(TranslatableCaption.of("backups.backup_automatic_finished"));
+                        TaskManager.runTaskAsync(whenDone);
+                    }
+                }
             });
         }
     }
 
-    @Override public boolean shouldAutomaticallyBackup() {
+    @Override
+    public boolean shouldAutomaticallyBackup() {
         return this.automaticBackup;
     }
 
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE) private static final class PlotCacheKey {
+    public Path getBackupPath() {
+        return this.backupPath;
+    }
+
+    public int getBackupLimit() {
+        return this.backupLimit;
+    }
+
+    private static final class PlotCacheKey {
 
         private final Plot plot;
 
-        @Override public boolean equals(final Object o) {
+        private PlotCacheKey(Plot plot) {
+            this.plot = plot;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
             if (this == o) {
                 return true;
             }
@@ -119,13 +160,15 @@ import java.util.concurrent.TimeUnit;
             }
             final PlotCacheKey that = (PlotCacheKey) o;
             return Objects.equals(plot.getArea(), that.plot.getArea())
-                && Objects.equals(plot.getId(), that.plot.getId())
-                && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
+                    && Objects.equals(plot.getId(), that.plot.getId())
+                    && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return Objects.hash(plot.getArea(), plot.getId(), plot.getOwnerAbs());
         }
+
     }
 
 }

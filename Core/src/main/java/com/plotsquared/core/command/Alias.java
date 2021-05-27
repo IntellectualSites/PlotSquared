@@ -21,20 +21,21 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.query.PlotQuery;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,31 +44,35 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "alias",
-    permission = "plots.alias",
-    description = "Set the plot name",
-    usage = "/plot alias <set|remove> <alias>",
-    aliases = {"setalias", "sa", "name", "rename", "setname", "seta", "nameplot"},
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.alias",
+        usage = "/plot alias <set | remove> <alias>",
+        aliases = {"setalias", "sa", "name", "rename", "setname", "seta", "nameplot"},
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER)
 public class Alias extends SubCommand {
-    private static final Command SET_COMMAND = new Command(null, false, "set", null, RequiredType.NONE, null) {};
-    private static final Command REMOVE_COMMAND = new Command(null, false, "remove", null, RequiredType.NONE, null) {};
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    private static final Command SET_COMMAND = new Command(null, false, "set", null, RequiredType.NONE, null) {
+    };
+    private static final Command REMOVE_COMMAND = new Command(null, false, "remove", null, RequiredType.NONE, null) {
+    };
+
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
         if (args.length == 0) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return false;
         }
 
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
 
         if (!plot.hasOwner()) {
-            sendMessage(player, Captions.PLOT_NOT_CLAIMED);
+            player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             return false;
         }
 
@@ -77,52 +82,54 @@ public class Alias extends SubCommand {
         boolean permission;
         boolean admin;
         switch (args[0].toLowerCase()) {
-            case "set":
+            case "set" -> {
                 if (args.length != 2) {
-                    Captions.COMMAND_SYNTAX.send(player, getUsage());
+                    sendUsage(player);
                     return false;
                 }
-
-                permission = isPermitted(player, Captions.PERMISSION_ALIAS_SET)
-                        || isPermitted(player, Captions.PERMISSION_ALIAS_SET_OBSOLETE);
-                admin = isPermitted(player, Captions.PERMISSION_ADMIN_ALIAS_SET);
+                permission = isPermitted(player, Permission.PERMISSION_ALIAS_SET);
+                admin = isPermitted(player, Permission.PERMISSION_ADMIN_ALIAS_SET);
                 if (!admin && !owner) {
-                    MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                    player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
                 if (permission) { // is either admin or owner
                     setAlias(player, plot, args[1]);
                     return true;
                 } else {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_ALIAS_SET.getTranslated());
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_SET))
+                    );
                 }
-
-                break;
-            case "remove":
-                permission = isPermitted(player, Captions.PERMISSION_ALIAS_REMOVE);
-                admin = isPermitted(player, Captions.PERMISSION_ADMIN_ALIAS_REMOVE);
+            }
+            case "remove" -> {
+                permission = isPermitted(player, Permission.PERMISSION_ALIAS_REMOVE);
+                admin = isPermitted(player, Permission.PERMISSION_ADMIN_ALIAS_REMOVE);
                 if (!admin && !owner) {
-                    MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                    player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
                 if (permission) {
                     result = removeAlias(player, plot);
                 } else {
-                    MainUtil.sendMessage(player, Captions.NO_PERMISSION,
-                            Captions.PERMISSION_ALIAS_REMOVE.getTranslated());
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE))
+                    );
                 }
-                break;
-            default:
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+            }
+            default -> {
+                sendUsage(player);
                 result = false;
+            }
         }
 
         return result;
     }
 
     @Override
-    public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> commands = new ArrayList<>(2);
         if (args.length == 1) {
             if ("set".startsWith(args[0])) {
@@ -136,37 +143,36 @@ public class Alias extends SubCommand {
         return Collections.emptySet();
     }
 
-    private void setAlias(PlotPlayer player, Plot plot, String alias) {
+    private void setAlias(PlotPlayer<?> player, Plot plot, String alias) {
         if (alias.isEmpty()) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
         } else if (alias.length() >= 50) {
-            MainUtil.sendMessage(player, Captions.ALIAS_TOO_LONG);
-        } else if (alias.contains(" ")) {
-            Captions.NOT_VALID_VALUE.send(player);
+            player.sendMessage(TranslatableCaption.of("alias.alias_too_long"));
         } else if (MathMan.isInteger(alias)) {
-            Captions.NOT_VALID_VALUE.send(player);
+            player.sendMessage(TranslatableCaption.of("flag.not_valid_value")); // TODO this is obviously wrong
         } else {
             if (PlotQuery.newQuery().inArea(plot.getArea())
                     .withAlias(alias)
                     .anyMatch()) {
-                MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
+                player.sendMessage(TranslatableCaption.of("alias.alias_is_taken"));
                 return;
             }
             if (Settings.UUID.OFFLINE) {
                 plot.setAlias(alias);
-                MainUtil.sendMessage(player,
-                        Captions.ALIAS_SET_TO.getTranslated().replaceAll("%alias%", alias));
+                player.sendMessage(TranslatableCaption.of("alias.alias_set_to"), Template.of("alias", alias));
                 return;
             }
             PlotSquared.get().getImpromptuUUIDPipeline().getSingle(alias, ((uuid, throwable) -> {
                 if (throwable instanceof TimeoutException) {
-                    MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                    player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                 } else if (uuid != null) {
-                    MainUtil.sendMessage(player, Captions.ALIAS_IS_TAKEN);
+                    player.sendMessage(TranslatableCaption.of("alias.alias_is_taken"));
                 } else {
                     plot.setAlias(alias);
-                    MainUtil.sendMessage(player,
-                        Captions.ALIAS_SET_TO.getTranslated().replaceAll("%alias%", alias));
+                    player.sendMessage(
+                            TranslatableCaption.of("alias.alias_set_to"),
+                            Template.of("alias", alias)
+                    );
                 }
             }));
         }
@@ -174,11 +180,15 @@ public class Alias extends SubCommand {
 
     private boolean removeAlias(PlotPlayer<?> player, Plot plot) {
         plot.setAlias(null);
-        MainUtil.sendMessage(player, Captions.ALIAS_REMOVED.getTranslated());
+        player.sendMessage(
+                TranslatableCaption.of("permission.no_permission"),
+                Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE))
+        );
         return true;
     }
 
-    private boolean isPermitted(PlotPlayer<?> player, Captions caption) {
-        return Permissions.hasPermission(player, caption);
+    private boolean isPermitted(PlotPlayer<?> player, Permission permission) {
+        return Permissions.hasPermission(player, permission);
     }
+
 }

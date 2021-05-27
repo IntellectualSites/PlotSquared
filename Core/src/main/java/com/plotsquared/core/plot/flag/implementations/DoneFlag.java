@@ -21,15 +21,15 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag {
 
@@ -38,31 +38,36 @@ public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag
      *
      * @param value Flag value
      */
-    public DoneFlag(@NotNull String value) {
-        super(value, Captions.NONE, Captions.NONE);
+    public DoneFlag(@NonNull String value) {
+        super(value, TranslatableCaption.of("info.none"), TranslatableCaption.of("info.none"));
     }
 
     public static boolean isDone(final Plot plot) {
         return !plot.getFlag(DoneFlag.class).isEmpty();
     }
 
-    @Override public DoneFlag parse(@NotNull String input) {
+    @Override
+    public DoneFlag parse(@NonNull String input) {
         return flagOf(input);
     }
 
-    @Override public DoneFlag merge(@NotNull String newValue) {
+    @Override
+    public DoneFlag merge(@NonNull String newValue) {
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "";
     }
 
-    @Override protected DoneFlag flagOf(@NotNull String value) {
+    @Override
+    protected DoneFlag flagOf(@NonNull String value) {
         return new DoneFlag(value);
     }
 

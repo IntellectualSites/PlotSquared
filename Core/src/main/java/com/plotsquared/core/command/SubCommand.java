@@ -21,11 +21,10 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
@@ -35,30 +34,29 @@ import java.util.concurrent.CompletableFuture;
 /**
  * SubCommand class
  *
+ * @see Command#Command(Command, boolean)
  * @deprecated In favor of normal Command class
- * @see Command#Command(Command, boolean) 
  */
 public abstract class SubCommand extends Command {
+
     public SubCommand() {
         super(MainCommand.getInstance(), true);
     }
 
-    public SubCommand(Argument... arguments) {
+    public SubCommand(Argument<?>... arguments) {
         this();
         setRequiredArguments(arguments);
     }
 
-    public static boolean sendMessage(PlotPlayer player, Captions message, Object... args) {
-        message.send(player, args);
-        return true;
-    }
-
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) {
         return CompletableFuture.completedFuture(onCommand(player, args));
     }
 
     public abstract boolean onCommand(PlotPlayer<?> player, String[] args);
+
 }

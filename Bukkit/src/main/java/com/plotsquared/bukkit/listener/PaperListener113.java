@@ -21,16 +21,19 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import net.kyori.adventure.text.minimessage.Template;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.Bed;
@@ -50,8 +53,14 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.Structure;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PaperListener113 extends PaperListener {
+
+    @Inject
+    public PaperListener113(@NonNull PlotAreaManager plotAreaManager) {
+        super(plotAreaManager);
+    }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
@@ -59,25 +68,27 @@ public class PaperListener113 extends PaperListener {
             return;
         }
         BlockState state = event.getBlock().getState(false);
-        if (!(state instanceof Banner || state instanceof Beacon || state instanceof Bed
-                || state instanceof CommandBlock || state instanceof Comparator || state instanceof Conduit
-                || state instanceof Container || state instanceof CreatureSpawner || state instanceof DaylightDetector
-                || state instanceof EnchantingTable || state instanceof EnderChest || state instanceof EndGateway
-                || state instanceof Jukebox || state instanceof Sign || state instanceof Skull
-                || state instanceof Structure)) {
+        if (!(state instanceof Banner || state instanceof Beacon || state instanceof Bed || state instanceof CommandBlock
+                || state instanceof Comparator || state instanceof Conduit || state instanceof Container || state instanceof CreatureSpawner
+                || state instanceof DaylightDetector || state instanceof EnchantingTable || state instanceof EnderChest || state instanceof EndGateway
+                || state instanceof Jukebox || state instanceof Sign || state instanceof Skull || state instanceof Structure)) {
             return;
         }
-        final Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+        final Location location = BukkitUtil.adapt(event.getBlock().getLocation());
         final PlotArea plotArea = location.getPlotArea();
         if (plotArea == null) {
             return;
         }
         final int tileEntityCount = event.getBlock().getChunk().getTileEntities(false).length;
         if (tileEntityCount >= Settings.Chunk_Processor.MAX_TILES) {
-            final PlotPlayer<?> plotPlayer = BukkitUtil.getPlayer(event.getPlayer());
-            Captions.TILE_ENTITY_CAP_REACHED.send(plotPlayer, Settings.Chunk_Processor.MAX_TILES);
+            final PlotPlayer<?> plotPlayer = BukkitUtil.adapt(event.getPlayer());
+            plotPlayer.sendMessage(
+                    TranslatableCaption.of("errors.tile_entity_cap_reached"),
+                    Template.of("amount", String.valueOf(Settings.Chunk_Processor.MAX_TILES))
+            );
             event.setCancelled(true);
             event.setBuild(false);
         }
     }
+
 }

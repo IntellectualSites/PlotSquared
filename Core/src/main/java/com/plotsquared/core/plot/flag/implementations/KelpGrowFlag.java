@@ -21,13 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class KelpGrowFlag extends BooleanFlag<KelpGrowFlag> {
 
@@ -35,10 +35,11 @@ public class KelpGrowFlag extends BooleanFlag<KelpGrowFlag> {
     public static final KelpGrowFlag KELP_GROW_FALSE = new KelpGrowFlag(false);
 
     private KelpGrowFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_KELP_GROW);
+        super(value, TranslatableCaption.of("flags.flag_description_kelp_grow"));
     }
 
-    @Override protected KelpGrowFlag flagOf(@NotNull Boolean value) {
+    @Override
+    protected KelpGrowFlag flagOf(@NonNull Boolean value) {
         return value ? KELP_GROW_TRUE : KELP_GROW_FALSE;
     }
 

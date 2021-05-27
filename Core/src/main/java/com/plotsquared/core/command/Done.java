@@ -21,73 +21,96 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotDoneEvent;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.generator.HybridUtils;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.expiration.ExpireManager;
 import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "done",
-    aliases = {"submit"},
-    description = "Mark a plot as done",
-    permission = "plots.done",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.NONE)
+        aliases = {"submit"},
+        permission = "plots.done",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.NONE)
 public class Done extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    private final EventDispatcher eventDispatcher;
+    private final HybridUtils hybridUtils;
+
+    @Inject
+    public Done(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull HybridUtils hybridUtils
+    ) {
+        this.eventDispatcher = eventDispatcher;
+        this.hybridUtils = hybridUtils;
+    }
+
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if ((plot == null) || !plot.hasOwner()) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
-        PlotDoneEvent event = PlotSquared.get().getEventDispatcher().callDone(plot);
+        PlotDoneEvent event = this.eventDispatcher.callDone(plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Done");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Done")
+            );
             return true;
         }
         boolean force = event.getEventResult() == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DONE)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DONE)) {
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         if (DoneFlag.isDone(plot)) {
-            MainUtil.sendMessage(player, Captions.DONE_ALREADY_DONE);
+            player.sendMessage(TranslatableCaption.of("done.done_already_done"));
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
         plot.addRunning();
-        MainUtil.sendMessage(player, Captions.GENERATING_LINK);
+        player.sendMessage(
+                TranslatableCaption.of("web.generating_link"),
+                Template.of("plot", plot.getId().toString())
+        );
         final Settings.Auto_Clear doneRequirements = Settings.AUTO_CLEAR.get("done");
         if (ExpireManager.IMP == null || doneRequirements == null) {
             finish(plot, player, true);
             plot.removeRunning();
         } else {
-            HybridUtils.manager.analyzePlot(plot, new RunnableVal<PlotAnalysis>() {
-                @Override public void run(PlotAnalysis value) {
+            this.hybridUtils.analyzePlot(plot, new RunnableVal<>() {
+                @Override
+                public void run(PlotAnalysis value) {
                     plot.removeRunning();
                     boolean result =
-                        value.getComplexity(doneRequirements) <= doneRequirements.THRESHOLD;
+                            value.getComplexity(doneRequirements) <= doneRequirements.THRESHOLD;
                     finish(plot, player, result);
                 }
             });
@@ -95,20 +118,21 @@ public class Done extends SubCommand {
         return true;
     }
 
-    private void finish(Plot plot, PlotPlayer pp, boolean success) {
+    private void finish(Plot plot, PlotPlayer<?> player, boolean success) {
         if (!success) {
-            MainUtil.sendMessage(pp, Captions.DONE_INSUFFICIENT_COMPLEXITY);
+            player.sendMessage(TranslatableCaption.of("done.done_insufficient_complexity"));
             return;
         }
         long flagValue = System.currentTimeMillis() / 1000;
         PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(DoneFlag.class)
-            .createFlagInstance(Long.toString(flagValue));
+                .createFlagInstance(Long.toString(flagValue));
         PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(pp, Captions.EVENT_DENIED, "Done flag addition");
+            player.sendMessage(TranslatableCaption.of("events.event_denied"));
             return;
         }
         plot.setFlag(plotFlag);
-        MainUtil.sendMessage(pp, Captions.DONE_SUCCESS);
+        player.sendMessage(TranslatableCaption.of("done.done_success"));
     }
+
 }

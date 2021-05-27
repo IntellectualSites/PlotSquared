@@ -21,22 +21,60 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.TabCompletions;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "dislike",
-    permission = "plots.dislike",
-    description = "Dislike the plot",
-    usage = "/plot dislike [next|purge]",
-    category = CommandCategory.INFO,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.dislike",
+        usage = "/plot dislike [next|purge]",
+        category = CommandCategory.INFO,
+        requiredType = RequiredType.PLAYER)
 public class Dislike extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        return Like.handleLike(player, args, false);
+    private final Like like;
+
+    @Inject
+    public Dislike(final @NonNull Like like) {
+        this.like = like;
+    }
+
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        return this.like.handleLike(player, args, false);
+    }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_PURGE_RATINGS)) {
+                completions.add("purge");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, Permission.PERMISSION_RATE) && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 
 }

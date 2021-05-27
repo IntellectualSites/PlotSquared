@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag;
 
@@ -36,7 +36,10 @@ import com.plotsquared.core.plot.flag.implementations.BlockedCmdsFlag;
 import com.plotsquared.core.plot.flag.implementations.BreakFlag;
 import com.plotsquared.core.plot.flag.implementations.ChatFlag;
 import com.plotsquared.core.plot.flag.implementations.CoralDryFlag;
+import com.plotsquared.core.plot.flag.implementations.CropGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyExitFlag;
+import com.plotsquared.core.plot.flag.implementations.DenyPortalTravelFlag;
+import com.plotsquared.core.plot.flag.implementations.DenyPortalsFlag;
 import com.plotsquared.core.plot.flag.implementations.DenyTeleportFlag;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.plot.flag.implementations.DeviceInteractFlag;
@@ -68,6 +71,8 @@ import com.plotsquared.core.plot.flag.implementations.ItemDropFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepFlag;
 import com.plotsquared.core.plot.flag.implementations.KeepInventoryFlag;
 import com.plotsquared.core.plot.flag.implementations.KelpGrowFlag;
+import com.plotsquared.core.plot.flag.implementations.LeafDecayFlag;
+import com.plotsquared.core.plot.flag.implementations.LecternReadBookFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscBreakFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscCapFlag;
@@ -105,9 +110,8 @@ import com.plotsquared.core.plot.flag.implementations.VehicleUseFlag;
 import com.plotsquared.core.plot.flag.implementations.VillagerInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.VineGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
-import lombok.Getter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -115,13 +119,7 @@ import java.util.Map;
 
 public final class GlobalFlagContainer extends FlagContainer {
 
-    @Getter private static GlobalFlagContainer instance;
-
-    public static void setup() {
-        Preconditions.checkState(instance == null, "Cannot setup the container twice");
-        instance = new GlobalFlagContainer();
-    }
-
+    private static GlobalFlagContainer instance;
     private static Map<String, Class<?>> stringClassMap;
 
     private GlobalFlagContainer() {
@@ -188,6 +186,11 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(MiscInteractFlag.MISC_INTERACT_FALSE);
         this.addFlag(KeepInventoryFlag.KEEP_INVENTORY_FALSE);
         this.addFlag(PreventCreativeCopyFlag.PREVENT_CREATIVE_COPY_FALSE);
+        this.addFlag(LeafDecayFlag.LEAF_DECAY_TRUE);
+        this.addFlag(CropGrowFlag.CROP_GROW_TRUE);
+        this.addFlag(DenyPortalTravelFlag.DENY_PORTAL_TRAVEL_FALSE);
+        this.addFlag(DenyPortalsFlag.DENY_PORTALS_FALSE);
+        this.addFlag(LecternReadBookFlag.LECTERN_READ_BOOK_FALSE);
 
         // Enum Flags
         this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);
@@ -229,24 +232,35 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(new DoneFlag(""));
     }
 
-    @Override public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
+    public static void setup() {
+        Preconditions.checkState(instance == null, "Cannot setup the container twice");
+        instance = new GlobalFlagContainer();
+    }
+
+    public static GlobalFlagContainer getInstance() {
+        return GlobalFlagContainer.instance;
+    }
+
+    @Override
+    public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
         final PlotFlag<?, ?> flag = super.getFlagErased(flagClass);
         if (flag != null) {
             return flag;
         } else {
             throw new IllegalStateException(String.format("Unrecognized flag '%s'. All flag types"
-                + " must be present in the global flag container.", flagClass.getSimpleName()));
+                    + " must be present in the global flag container.", flagClass.getSimpleName()));
         }
     }
 
-    @Nonnull @Override
+    @NonNull
+    @Override
     public <V, T extends PlotFlag<V, ?>> T getFlag(Class<? extends T> flagClass) {
         final PlotFlag<?, ?> flag = super.getFlag(flagClass);
         if (flag != null) {
             return castUnsafe(flag);
         } else {
             throw new IllegalStateException(String.format("Unrecognized flag '%s'. All flag types"
-                + " must be present in the global flag container.", flagClass.getSimpleName()));
+                    + " must be present in the global flag container.", flagClass.getSimpleName()));
         }
     }
 

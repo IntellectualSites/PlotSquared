@@ -21,11 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
 
-import org.jetbrains.annotations.NotNull;
+import com.plotsquared.core.player.PlotPlayer;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -38,7 +40,7 @@ public interface BackupProfile {
      *
      * @return Future that will be completed with available backups
      */
-    @NotNull CompletableFuture<List<Backup>> listBackups();
+    @NonNull CompletableFuture<List<Backup>> listBackups();
 
     /**
      * Remove all backups stored for this profile
@@ -51,7 +53,7 @@ public interface BackupProfile {
      *
      * @return Folder that contains the backups for this profile
      */
-    @NotNull Path getBackupDirectory();
+    @NonNull Path getBackupDirectory();
 
     /**
      * Create a backup of the plot. If the profile is at the
@@ -59,14 +61,15 @@ public interface BackupProfile {
      *
      * @return Future that completes with the created backup.
      */
-    @NotNull CompletableFuture<Backup> createBackup();
+    @NonNull CompletableFuture<Backup> createBackup();
 
     /**
      * Restore a backup
      *
      * @param backup Backup to restore
+     * @param player The player restoring the backup
      * @return Future that completes when the backup has finished
      */
-    @NotNull CompletableFuture<Void> restoreBackup(@NotNull final Backup backup);
+    @NonNull CompletableFuture<Void> restoreBackup(final @NonNull Backup backup, @Nullable PlotPlayer<?> player);
 
 }

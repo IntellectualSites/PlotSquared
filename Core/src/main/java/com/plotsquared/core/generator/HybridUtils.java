@@ -21,11 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.Result;
@@ -40,11 +40,11 @@ import com.plotsquared.core.plot.expiration.PlotAnalysis;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
-import com.plotsquared.core.queue.ChunkBlockQueue;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.queue.ChunkQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
+import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
@@ -52,7 +52,7 @@ import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import com.sk89q.jnbt.CompoundTag;
+import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -61,6 +61,9 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -74,7 +77,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class HybridUtils {
+public class HybridUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + HybridUtils.class.getSimpleName());
 
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
@@ -83,13 +88,33 @@ public abstract class HybridUtils {
     public static PlotArea area;
     public static boolean UPDATE = false;
 
-    public static boolean regeneratePlotWalls(final PlotArea area) {
-        PlotManager plotManager = area.getPlotManager();
-        return plotManager.regenerateAllPlotWalls();
+    private final PlotAreaManager plotAreaManager;
+    private final ChunkManager chunkManager;
+    private final GlobalBlockQueue blockQueue;
+    private final WorldUtil worldUtil;
+    private final SchematicHandler schematicHandler;
+
+    @Inject
+    public HybridUtils(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull ChunkManager chunkManager,
+            final @NonNull GlobalBlockQueue blockQueue,
+            final @NonNull WorldUtil worldUtil,
+            final @NonNull SchematicHandler schematicHandler
+    ) {
+        this.plotAreaManager = plotAreaManager;
+        this.chunkManager = chunkManager;
+        this.blockQueue = blockQueue;
+        this.worldUtil = worldUtil;
+        this.schematicHandler = schematicHandler;
     }
 
-    public void analyzeRegion(final String world, final CuboidRegion region,
-        final RunnableVal<PlotAnalysis> whenDone) {
+    public void regeneratePlotWalls(final PlotArea area) {
+        PlotManager plotManager = area.getPlotManager();
+        plotManager.regenerateAllPlotWalls(null);
+    }
+
+    public void analyzeRegion(final String world, final CuboidRegion region, final RunnableVal<PlotAnalysis> whenDone) {
         // int diff, int variety, int vertices, int rotation, int height_sd
         /*
          * diff: compare to base by looping through all blocks
@@ -103,8 +128,6 @@ public abstract class HybridUtils {
          *
          */
         TaskManager.runTaskAsync(() -> {
-            final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
-
             final BlockVector3 bot = region.getMinimumPoint();
             final BlockVector3 top = region.getMaximumPoint();
 
@@ -116,18 +139,16 @@ public abstract class HybridUtils {
             final int cbz = bz >> 4;
             final int ctx = tx >> 4;
             final int ctz = tz >> 4;
-            MainUtil.initCache();
             final int width = tx - bx + 1;
             final int length = tz - bz + 1;
 
-            PlotArea area = PlotSquared.get().getPlotArea(world, null);
+            final PlotArea area = this.plotAreaManager.getPlotArea(world, null);
 
-            if (!(area instanceof HybridPlotWorld)) {
+            if (!(area instanceof HybridPlotWorld hpw)) {
                 return;
             }
 
-            HybridPlotWorld hpw = (HybridPlotWorld) area;
-            ChunkBlockQueue chunk = new ChunkBlockQueue(bot, top, false);
+            ChunkQueueCoordinator chunk = new ChunkQueueCoordinator(bot, top, false);
             hpw.getGenerator().generateChunk(chunk, hpw);
 
             final BlockState[][][] oldBlocks = chunk.getBlocks();
@@ -136,6 +157,55 @@ public abstract class HybridUtils {
 
             System.gc();
             System.gc();
+
+            QueueCoordinator queue = area.getQueue();
+            queue.addReadChunks(region.getChunks());
+            queue.setChunkConsumer(blockVector2 -> {
+                int X = blockVector2.getX();
+                int Z = blockVector2.getZ();
+                int minX;
+                if (X == cbx) {
+                    minX = bx & 15;
+                } else {
+                    minX = 0;
+                }
+                int minZ;
+                if (Z == cbz) {
+                    minZ = bz & 15;
+                } else {
+                    minZ = 0;
+                }
+                int maxX;
+                if (X == ctx) {
+                    maxX = tx & 15;
+                } else {
+                    maxX = 16;
+                }
+                int maxZ;
+                if (Z == ctz) {
+                    maxZ = tz & 15;
+                } else {
+                    maxZ = 16;
+                }
+
+                int chunkBlockX = X << 4;
+                int chunkBlockZ = Z << 4;
+
+                int xb = chunkBlockX - bx;
+                int zb = chunkBlockZ - bz;
+                for (int x = minX; x <= maxX; x++) {
+                    int xx = chunkBlockX + x;
+                    for (int z = minZ; z <= maxZ; z++) {
+                        int zz = chunkBlockZ + z;
+                        for (int y = 0; y < 256; y++) {
+                            BlockState block = queue.getBlock(xx, y, zz);
+                            int xr = xb + x;
+                            int zr = zb + z;
+                            newBlocks[y][xr][zr] = block;
+                        }
+                    }
+                }
+            });
 
             final Runnable run = () -> TaskManager.runTaskAsync(() -> {
                 int size = width * length;
@@ -163,30 +233,23 @@ public abstract class HybridUtils {
                                 } else {
                                     // check vertices
                                     // modifications_adjacent
-                                    if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1
-                                        && y < 255) {
-                                        if (newBlocks[y - 1][x][z].getBlockType().getMaterial()
-                                            .isAir()) {
+                                    if (x > 0 && z > 0 && y > 0 && x < width - 1 && z < length - 1 && y < 255) {
+                                        if (newBlocks[y - 1][x][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x - 1][z].getBlockType().getMaterial()
-                                            .isAir()) {
+                                        if (newBlocks[y][x - 1][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x][z - 1].getBlockType().getMaterial()
-                                            .isAir()) {
+                                        if (newBlocks[y][x][z - 1].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y + 1][x][z].getBlockType().getMaterial()
-                                            .isAir()) {
+                                        if (newBlocks[y + 1][x][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x + 1][z].getBlockType().getMaterial()
-                                            .isAir()) {
+                                        if (newBlocks[y][x + 1][z].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
-                                        if (newBlocks[y][x][z + 1].getBlockType().getMaterial()
-                                            .isAir()) {
+                                        if (newBlocks[y][x][z + 1].getBlockType().getMaterial().isAir()) {
                                             faces[i]++;
                                         }
                                     }
@@ -225,58 +288,8 @@ public abstract class HybridUtils {
                 whenDone.value = analysis;
                 whenDone.run();
             });
-            System.gc();
-            MainUtil.initCache();
-            Location botLoc = new Location(world, bot.getX(), bot.getY(), bot.getZ());
-            Location topLoc = new Location(world, top.getX(), top.getY(), top.getZ());
-            ChunkManager.chunkTask(botLoc, topLoc, new RunnableVal<int[]>() {
-                @Override public void run(int[] value) {
-                    int X = value[0];
-                    int Z = value[1];
-                    int minX;
-                    if (X == cbx) {
-                        minX = bx & 15;
-                    } else {
-                        minX = 0;
-                    }
-                    int minZ;
-                    if (Z == cbz) {
-                        minZ = bz & 15;
-                    } else {
-                        minZ = 0;
-                    }
-                    int maxX;
-                    if (X == ctx) {
-                        maxX = tx & 15;
-                    } else {
-                        maxX = 16;
-                    }
-                    int maxZ;
-                    if (Z == ctz) {
-                        maxZ = tz & 15;
-                    } else {
-                        maxZ = 16;
-                    }
-
-                    int cbx = X << 4;
-                    int cbz = Z << 4;
-
-                    int xb = cbx - bx;
-                    int zb = cbz - bz;
-                    for (int x = minX; x <= maxX; x++) {
-                        int xx = cbx + x;
-                        for (int z = minZ; z <= maxZ; z++) {
-                            int zz = cbz + z;
-                            for (int y = 0; y < 256; y++) {
-                                BlockState block = queue.getBlock(xx, y, zz);
-                                int xr = xb + x;
-                                int zr = zb + z;
-                                newBlocks[y][xr][zr] = block;
-                            }
-                        }
-                    }
-                }
-            }, () -> TaskManager.runTaskAsync(run), 5);
+            queue.setCompleteTask(run);
+            queue.enqueue();
         });
     }
 
@@ -284,7 +297,8 @@ public abstract class HybridUtils {
         final ArrayDeque<CuboidRegion> zones = new ArrayDeque<>(origin.getRegions());
         final ArrayList<PlotAnalysis> analysis = new ArrayList<>();
         Runnable run = new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 if (zones.isEmpty()) {
                     if (!analysis.isEmpty()) {
                         whenDone.value = new PlotAnalysis();
@@ -325,9 +339,8 @@ public abstract class HybridUtils {
                     result.add(whenDone.value.data_sd);
                     result.add(whenDone.value.air_sd);
                     result.add(whenDone.value.variety_sd);
-                    PlotFlag<?, ?> plotFlag =
-                        GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class)
-                            .createFlagInstance(result);
+                    PlotFlag<?, ?> plotFlag = GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class).createFlagInstance(
+                            result);
                     PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, origin);
                     if (event.getEventResult() == Result.DENY) {
                         return;
@@ -338,10 +351,11 @@ public abstract class HybridUtils {
                 }
                 CuboidRegion region = zones.poll();
                 final Runnable task = this;
-                analyzeRegion(origin.getWorldName(), region, new RunnableVal<PlotAnalysis>() {
-                    @Override public void run(PlotAnalysis value) {
+                analyzeRegion(origin.getWorldName(), region, new RunnableVal<>() {
+                    @Override
+                    public void run(PlotAnalysis value) {
                         analysis.add(value);
-                        TaskManager.runTaskLater(task, 1);
+                        TaskManager.runTaskLater(task, TaskTime.ticks(1L));
                     }
                 });
             }
@@ -349,15 +363,13 @@ public abstract class HybridUtils {
         run.run();
     }
 
-    public int checkModified(LocalBlockQueue queue, int x1, int x2, int y1, int y2, int z1, int z2,
-        BlockState[] blocks) {
+    public int checkModified(QueueCoordinator queue, int x1, int x2, int y1, int y2, int z1, int z2, BlockState[] blocks) {
         int count = 0;
         for (int y = y1; y <= y2; y++) {
             for (int x = x1; x <= x2; x++) {
                 for (int z = z1; z <= z2; z++) {
                     BlockState block = queue.getBlock(x, y, z);
-                    boolean same =
-                        Arrays.stream(blocks).anyMatch(p -> WorldUtil.IMP.isBlockSame(block, p));
+                    boolean same = Arrays.stream(blocks).anyMatch(p -> this.worldUtil.isBlockSame(block, p));
                     if (!same) {
                         count++;
                     }
@@ -384,7 +396,7 @@ public abstract class HybridUtils {
             return false;
         }
         HybridUtils.UPDATE = true;
-        Set<BlockVector2> regions = RegionManager.manager.getChunkChunks(area.getWorldName());
+        Set<BlockVector2> regions = this.worldUtil.getChunkChunks(area.getWorldName());
         return scheduleRoadUpdate(area, regions, extend, new HashSet<>());
     }
 
@@ -398,15 +410,20 @@ public abstract class HybridUtils {
         return scheduleRoadUpdate(plot.getArea(), regions, extend, new HashSet<>());
     }
 
-    public boolean scheduleRoadUpdate(final PlotArea area, Set<BlockVector2> regions,
-        final int extend, Set<BlockVector2> chunks) {
+    public boolean scheduleRoadUpdate(
+            final PlotArea area,
+            Set<BlockVector2> regions,
+            final int extend,
+            Set<BlockVector2> chunks
+    ) {
         HybridUtils.regions = regions;
         HybridUtils.area = area;
         HybridUtils.height = extend;
         HybridUtils.chunks = chunks;
         final AtomicInteger count = new AtomicInteger(0);
         TaskManager.runTask(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 if (!UPDATE) {
                     Iterator<BlockVector2> iter = chunks.iterator();
                     while (iter.hasNext()) {
@@ -414,23 +431,21 @@ public abstract class HybridUtils {
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend);
                         if (!regenedRoad) {
-                            PlotSquared.debug("Failed to regenerate roads.");
+                            logger.info("Failed to regenerate roads");
                         }
-                        ChunkManager.manager.unloadChunk(area.getWorldName(), chunk, true);
                     }
-                    PlotSquared.debug("Cancelled road task");
+                    logger.info("Cancelled road task");
                     return;
                 }
                 count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
-                    PlotSquared.debug("PROGRESS: " + 100 * (2048 - chunks.size()) / 2048 + "%");
+                    logger.info("Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
                 }
                 if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
-                    PlotSquared.debug("Regenerating plot walls");
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    PlotSquared.log("Finished road conversion");
+                    logger.info("Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
@@ -438,35 +453,28 @@ public abstract class HybridUtils {
                         try {
                             if (chunks.size() < 1024) {
                                 if (!HybridUtils.regions.isEmpty()) {
-                                    Iterator<BlockVector2> iterator =
-                                        HybridUtils.regions.iterator();
+                                    Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
-                                    PlotSquared.debug(
-                                        "Updating .mcr: " + loc.getX() + ", " + loc.getZ()
-                                            + " (approx 1024 chunks)");
-                                    PlotSquared
-                                        .debug(" - Remaining: " + HybridUtils.regions.size());
+                                    logger.info("Updating .mcr: {}, {} (approx 1024 chunks)", loc.getX(), loc.getZ());
+                                    logger.info("- Remaining: {}", HybridUtils.regions.size());
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
                                 }
                             }
                             if (!chunks.isEmpty()) {
-                                TaskManager.IMP.sync(new RunnableVal<Object>() {
-                                    @Override public void run(Object value) {
-                                        long start = System.currentTimeMillis();
-                                        Iterator<BlockVector2> iterator = chunks.iterator();
-                                        while (System.currentTimeMillis() - start < 20 && !chunks
-                                            .isEmpty()) {
-                                            final BlockVector2 chunk = iterator.next();
-                                            iterator.remove();
-                                            boolean regenedRoads =
-                                                regenerateRoad(area, chunk, extend);
-                                            if (!regenedRoads) {
-                                                PlotSquared.debug("Failed to regenerate road.");
-                                            }
+                                TaskManager.getPlatformImplementation().sync(() -> {
+                                    long start = System.currentTimeMillis();
+                                    Iterator<BlockVector2> iterator = chunks.iterator();
+                                    while (System.currentTimeMillis() - start < 20 && !chunks.isEmpty()) {
+                                        final BlockVector2 chunk = iterator.next();
+                                        iterator.remove();
+                                        boolean regenedRoads = regenerateRoad(area, chunk, extend);
+                                        if (!regenedRoads) {
+                                            logger.info("Failed to regenerate road");
                                         }
                                     }
+                                    return null;
                                 });
                             }
                         } catch (Exception e) {
@@ -474,22 +482,13 @@ public abstract class HybridUtils {
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
-                            PlotSquared.debug(
-                                "[ERROR] Could not update '" + area.getWorldName() + "/region/r."
-                                    + loc.getX() + "." + loc.getZ() + ".mca' (Corrupt chunk?)");
-                            int sx = loc.getX() << 5;
-                            int sz = loc.getZ() << 5;
-                            for (int x = sx; x < sx + 32; x++) {
-                                for (int z = sz; z < sz + 32; z++) {
-                                    ChunkManager.manager
-                                        .unloadChunk(area.getWorldName(), BlockVector2.at(x, z),
-                                            true);
-                                }
-                            }
-                            PlotSquared.debug(" - Potentially skipping 1024 chunks");
-                            PlotSquared.debug(" - TODO: recommend chunkster if corrupt");
+                            logger.error("Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
+                                    area.getWorldHash(),
+                                    loc.getX(),
+                                    loc.getZ()
+                            );
                         }
-                        GlobalBlockQueue.IMP.addEmptyTask(() -> TaskManager.runTaskLater(task, 20));
+                        TaskManager.runTaskLater(task, TaskTime.seconds(1L));
                     });
                 }
             }
@@ -499,7 +498,7 @@ public abstract class HybridUtils {
 
     public boolean setupRoadSchematic(Plot plot) {
         final String world = plot.getWorldName();
-        final LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
+        final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
@@ -514,37 +513,31 @@ public abstract class HybridUtils {
         int tz = sz - 1;
         int ty = get_ey(plotManager, queue, sx, ex, bz, tz, sy);
 
-        Set<CuboidRegion> sideRoad = new HashSet<>(
-            Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez)));
-        final Set<CuboidRegion> intersection = new HashSet<>(
-            Collections.singletonList(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz)));
+        final Set<CuboidRegion> sideRoad = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez));
+        final Set<CuboidRegion> intersection = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz));
 
-        final String dir =
-            "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot.getArea()
+        final String dir = "schematics" + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot
+                .getArea()
                 .toString() + File.separator;
 
-        SchematicHandler.manager.getCompoundTag(world, sideRoad, new RunnableVal<CompoundTag>() {
-            @Override public void run(CompoundTag value) {
-                SchematicHandler.manager.save(value, dir + "sideroad.schem");
-                SchematicHandler.manager
-                    .getCompoundTag(world, intersection, new RunnableVal<CompoundTag>() {
-                        @Override public void run(CompoundTag value) {
-                            SchematicHandler.manager.save(value, dir + "intersection.schem");
-                            plotworld.ROAD_SCHEMATIC_ENABLED = true;
-                            try {
-                                plotworld.setupSchematics();
-                            } catch (SchematicHandler.UnsupportedFormatException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-            }
-        });
+        this.schematicHandler.getCompoundTag(world, sideRoad)
+                .whenComplete((compoundTag, throwable) -> {
+                    schematicHandler.save(compoundTag, dir + "sideroad.schem");
+                    schematicHandler.getCompoundTag(world, intersection)
+                            .whenComplete((c, t) -> {
+                                schematicHandler.save(c, dir + "intersection.schem");
+                                plotworld.ROAD_SCHEMATIC_ENABLED = true;
+                                try {
+                                    plotworld.setupSchematics();
+                                } catch (SchematicHandler.UnsupportedFormatException e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                });
         return true;
     }
 
-    public int get_ey(final PlotManager pm, LocalBlockQueue queue, int sx, int ex, int sz, int ez,
-        int sy) {
+    public int get_ey(final PlotManager pm, QueueCoordinator queue, int sx, int ex, int sz, int ez, int sy) {
         int ey = sy;
         for (int x = sx; x <= ex; x++) {
             for (int z = sz; z <= ez; z++) {
@@ -587,9 +580,9 @@ public abstract class HybridUtils {
         z -= plotWorld.ROAD_OFFSET_Z;
         final int finalX = x;
         final int finalZ = z;
-        LocalBlockQueue queue = GlobalBlockQueue.IMP.getNewQueue(plotWorld.getWorldName(), false);
+        QueueCoordinator queue = this.blockQueue.getNewQueue(worldUtil.getWeWorld(plotWorld.getWorldName()));
         if (id1 == null || id2 == null || id1 != id2) {
-            ChunkManager.manager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
+            this.chunkManager.loadChunk(area.getWorldName(), chunk, false).thenRun(() -> {
                 if (id1 != null) {
                     Plot p1 = area.getPlotAbs(id1);
                     if (p1 != null && p1.hasOwner() && p1.isMerged()) {
@@ -615,8 +608,11 @@ public abstract class HybridUtils {
                         }
                         boolean condition;
                         if (toCheck.get()) {
-                            condition = manager.getPlotId(finalX + X + plotWorld.ROAD_OFFSET_X, 1,
-                                finalZ + Z + plotWorld.ROAD_OFFSET_Z) == null;
+                            condition = manager.getPlotId(
+                                    finalX + X + plotWorld.ROAD_OFFSET_X,
+                                    1,
+                                    finalZ + Z + plotWorld.ROAD_OFFSET_Z
+                            ) == null;
                         } else {
                             boolean gx = absX > plotWorld.PATH_WIDTH_LOWER;
                             boolean gz = absZ > plotWorld.PATH_WIDTH_LOWER;
@@ -630,27 +626,38 @@ public abstract class HybridUtils {
                             int maxY = Math.max(extend, blocks.length);
                             for (int y = 0; y < maxY; y++) {
                                 if (y > blocks.length - 1) {
-                                    queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X, minY + y,
-                                        finalZ + Z + plotWorld.ROAD_OFFSET_Z, WEExtent.AIRBASE);
+                                    queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X,
+                                            minY + y,
+                                            finalZ + Z + plotWorld.ROAD_OFFSET_Z,
+                                            WEExtent.AIRBASE
+                                    );
                                 } else {
                                     BaseBlock block = blocks[y];
                                     if (block != null) {
-                                        queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X,
-                                            minY + y, finalZ + Z + plotWorld.ROAD_OFFSET_Z, block);
+                                        queue.setBlock(
+                                                finalX + X + plotWorld.ROAD_OFFSET_X,
+                                                minY + y,
+                                                finalZ + Z + plotWorld.ROAD_OFFSET_Z,
+                                                block
+                                        );
                                     } else {
                                         queue.setBlock(finalX + X + plotWorld.ROAD_OFFSET_X,
-                                            minY + y, finalZ + Z + plotWorld.ROAD_OFFSET_Z,
-                                            WEExtent.AIRBASE);
+                                                minY + y,
+                                                finalZ + Z + plotWorld.ROAD_OFFSET_Z,
+                                                WEExtent.AIRBASE
+                                        );
                                     }
                                 }
                             }
                             BiomeType biome = plotWorld.G_SCH_B.get(MathMan.pair(absX, absZ));
                             if (biome != null) {
-                                queue.setBiome(finalX + X + plotWorld.ROAD_OFFSET_X,
-                                    finalZ + Z + plotWorld.ROAD_OFFSET_Z, biome);
+                                queue.setBiome(finalX + X + plotWorld.ROAD_OFFSET_X, finalZ + Z + plotWorld.ROAD_OFFSET_Z, biome);
                             } else {
-                                queue.setBiome(finalX + X + plotWorld.ROAD_OFFSET_X,
-                                    finalZ + Z + plotWorld.ROAD_OFFSET_Z, plotWorld.getPlotBiome());
+                                queue.setBiome(
+                                        finalX + X + plotWorld.ROAD_OFFSET_X,
+                                        finalZ + Z + plotWorld.ROAD_OFFSET_Z,
+                                        plotWorld.getPlotBiome()
+                                );
                             }
                         }
                     }
@@ -661,4 +668,5 @@ public abstract class HybridUtils {
         }
         return false;
     }
+
 }

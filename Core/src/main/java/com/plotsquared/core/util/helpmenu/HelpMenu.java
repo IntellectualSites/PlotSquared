@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.helpmenu;
 
@@ -36,13 +36,13 @@ public class HelpMenu {
 
     private static final int PER_PAGE = 5;
 
-    private final PlotPlayer commandCaller;
+    private final PlotPlayer<?> commandCaller;
     private HelpPage page = new HelpPage(CommandCategory.INFO, 0, 0);
     private int maxPage;
     private CommandCategory commandCategory;
     private List<Command> commands;
 
-    public HelpMenu(PlotPlayer commandCaller) {
+    public HelpMenu(PlotPlayer<?> commandCaller) {
         this.commandCaller = commandCaller;
     }
 
@@ -53,7 +53,7 @@ public class HelpMenu {
 
     public HelpMenu getCommands() {
         this.commands =
-            MainCommand.getInstance().getCommands(this.commandCategory, this.commandCaller);
+                MainCommand.getInstance().getCommands(this.commandCategory, this.commandCaller);
         return this;
     }
 
@@ -67,7 +67,7 @@ public class HelpMenu {
         return this;
     }
 
-    public HelpMenu generatePage(int currentPage, String label) {
+    public HelpMenu generatePage(int currentPage, String label, PlotPlayer<?> audience) {
         if (currentPage > this.maxPage) {
             currentPage = this.maxPage;
         }
@@ -77,7 +77,7 @@ public class HelpMenu {
         this.page = new HelpPage(this.commandCategory, currentPage, this.maxPage);
         int max = Math.min((currentPage * PER_PAGE) + (PER_PAGE - 1), this.commands.size());
         for (int i = currentPage * PER_PAGE; i < max; i++) {
-            this.page.addHelpItem(new HelpObject(this.commands.get(i), label));
+            this.page.addHelpItem(new HelpObject(this.commands.get(i), label, audience));
         }
         return this;
     }

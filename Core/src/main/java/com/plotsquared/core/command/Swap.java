@@ -21,79 +21,87 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
 
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(usage = "/plot swap <X;Z>",
-    command = "swap",
-    description = "Swap two plots",
-    aliases = {"switch"},
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.PLAYER)
+        command = "swap",
+        aliases = {"switch"},
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.PLAYER)
 public class Swap extends SubCommand {
 
     @Override
-    public CompletableFuture<Boolean> execute(PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) {
+    public CompletableFuture<Boolean> execute(
+            PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
-            return CompletableFuture
-                .completedFuture(!MainUtil.sendMessage(player, Captions.NOT_IN_PLOT));
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return CompletableFuture.completedFuture(false);
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                .hasPermission(player, Permission.PERMISSION_ADMIN)) {
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return CompletableFuture.completedFuture(false);
         }
         if (args.length != 1) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return CompletableFuture.completedFuture(false);
         }
-        Plot plot2 = MainUtil.getPlotFromString(player, args[0], true);
+        Plot plot2 = Plot.getPlotFromString(player, args[0], true);
         if (plot2 == null) {
             return CompletableFuture.completedFuture(false);
         }
         if (plot1.equals(plot2)) {
-            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, "/plot copy <X;Z>");
+            player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot copy <X;Z>")
+            );
             return CompletableFuture.completedFuture(false);
         }
         if (!plot1.getArea().isCompatible(plot2.getArea())) {
-            Captions.PLOTWORLD_INCOMPATIBLE.send(player);
+            player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
             return CompletableFuture.completedFuture(false);
         }
         if (plot1.isMerged() || plot2.isMerged()) {
-            Captions.SWAP_MERGED.send(player);
+            player.sendMessage(TranslatableCaption.of("swap.swap_merged"));
             return CompletableFuture.completedFuture(false);
         }
 
-        return plot1.move(plot2, () -> {
+        return plot1.getPlotModificationManager().move(plot2, player, () -> {
         }, true).thenApply(result -> {
             if (result) {
-                MainUtil.sendMessage(player, Captions.SWAP_SUCCESS);
+                player.sendMessage(TranslatableCaption.of("swap.swap_success"), Template.of("origin", String.valueOf(plot1)),
+                        Template.of("target", String.valueOf(plot2)));
                 return true;
             } else {
-                MainUtil.sendMessage(player, Captions.SWAP_OVERLAP);
+                player.sendMessage(TranslatableCaption.of("swap.swap_overlap"));
                 return false;
             }
         });
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         return true;
     }
+
 }

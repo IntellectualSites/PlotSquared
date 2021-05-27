@@ -21,19 +21,25 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.PlotVersion;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlotVersionTest {
 
-    @Test public void tryParse() {
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotVersionTest.class.getSimpleName());
+
+    @Test
+    public void tryParse() {
         //These are all random values chosen to form the test class.
         PlotVersion version = new PlotVersion("4.340", "f06903f", "19.08.05");
-        System.out.println(version.versionString);
+        logger.info(version.versionString);
 
     }
+
 }

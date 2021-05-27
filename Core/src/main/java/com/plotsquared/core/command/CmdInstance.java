@@ -21,11 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
 public class CmdInstance {
+
     public final Runnable command;
     public final long timestamp;
 
@@ -33,4 +34,5 @@ public class CmdInstance {
         this.command = command;
         timestamp = System.currentTimeMillis();
     }
+
 }

@@ -21,13 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class SnowMeltFlag extends BooleanFlag<SnowMeltFlag> {
 
@@ -35,10 +35,11 @@ public class SnowMeltFlag extends BooleanFlag<SnowMeltFlag> {
     public static final SnowMeltFlag SNOW_MELT_FALSE = new SnowMeltFlag(false);
 
     private SnowMeltFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_SNOW_MELT);
+        super(value, TranslatableCaption.of("flags.flag_description_snow_melt"));
     }
 
-    @Override protected SnowMeltFlag flagOf(@NotNull Boolean value) {
+    @Override
+    protected SnowMeltFlag flagOf(@NonNull Boolean value) {
         return value ? SNOW_MELT_TRUE : SNOW_MELT_FALSE;
     }
 

@@ -21,18 +21,18 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.util.BlockUtil;
 import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,15 +40,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
-    extends ListFlag<BlockTypeWrapper, F> {
+        extends ListFlag<BlockTypeWrapper, F> {
 
     public static boolean skipCategoryVerification = false;
 
     protected BlockTypeListFlag(List<BlockTypeWrapper> blockTypeList, Caption description) {
-        super(blockTypeList, Captions.FLAG_CATEGORY_BLOCK_LIST, description);
+        super(blockTypeList, TranslatableCaption.of("flags.flag_category_block_list"), description);
     }
 
-    @Override public F parse(@NotNull String input) throws FlagParseException {
+    @Override
+    public F parse(@NonNull String input) throws FlagParseException {
         final List<BlockTypeWrapper> parsedBlocks = new ArrayList<>();
         final String[] split = input.replaceAll("\\s+", "").split(",(?![^\\(\\[]*[\\]\\)])");
         if (split.length == 0) {
@@ -70,24 +71,26 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         return this.flagOf(parsedBlocks);
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "air,grass_block";
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         final Collection<String> tabCompletions = new ArrayList<>();
         tabCompletions.addAll(
-            BlockType.REGISTRY.keySet().stream().map(val -> val.replace("minecraft:", ""))
-                .collect(Collectors.toList()));
+                BlockType.REGISTRY.keySet().stream().map(val -> val.replace("minecraft:", ""))
+                        .collect(Collectors.toList()));
         tabCompletions.addAll(
-            BlockCategory.REGISTRY.keySet().stream().map(val -> "#" + val.replace("minecraft:", ""))
-                .collect(Collectors.toList()));
+                BlockCategory.REGISTRY.keySet().stream().map(val -> "#" + val.replace("minecraft:", ""))
+                        .collect(Collectors.toList()));
         return tabCompletions;
     }
 
     private BlockTypeWrapper getCategory(final String blockString) throws FlagParseException {
         if (!blockString.startsWith("#")) {
-            throw new FlagParseException(this, blockString, Captions.FLAG_ERROR_INVALID_BLOCK);
+            throw new FlagParseException(this, blockString, TranslatableCaption.of("flags.flag_error_invalid_block"));
         }
         String categoryId = blockString.substring(1);
         BlockTypeWrapper blockTypeWrapper;
@@ -96,7 +99,7 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         } else {
             BlockCategory blockCategory = BlockCategory.REGISTRY.get(categoryId);
             if (blockCategory == null) {
-                throw new FlagParseException(this, blockString, Captions.FLAG_ERROR_INVALID_BLOCK);
+                throw new FlagParseException(this, blockString, TranslatableCaption.of("flags.flag_error_invalid_block"));
             }
             blockTypeWrapper = BlockTypeWrapper.get(blockCategory);
         }

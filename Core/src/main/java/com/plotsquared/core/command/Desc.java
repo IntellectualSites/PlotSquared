@@ -21,53 +21,72 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Inject;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.EventDispatcher;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(command = "setdescription",
-    permission = "plots.set.desc",
-    description = "Set the plot description",
-    usage = "/plot desc <description>",
-    aliases = {"desc", "setdesc", "setd", "description"},
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+        permission = "plots.set.desc",
+        usage = "/plot desc <description>",
+        aliases = {"desc", "setdesc", "setd", "description"},
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER)
 public class Desc extends SetCommand {
 
-    @Override public boolean set(PlotPlayer player, Plot plot, String desc) {
+    private final EventDispatcher eventDispatcher;
+
+    @Inject
+    public Desc(final @NonNull EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+
+    @Override
+    public boolean set(PlotPlayer<?> player, Plot plot, String desc) {
         if (desc.isEmpty()) {
-            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
-                .callFlagRemove(plot.getFlagContainer().getFlag(DescriptionFlag.class), plot);
+            PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plot
+                    .getFlagContainer()
+                    .getFlag(DescriptionFlag.class), plot);
             if (event.getEventResult() == Result.DENY) {
-                sendMessage(player, Captions.EVENT_DENIED, "Description removal");
+                player.sendMessage(
+                        TranslatableCaption.of("events.event_denied"),
+                        Template.of("value", "Description removal")
+                );
                 return false;
             }
             plot.removeFlag(event.getFlag());
-            MainUtil.sendMessage(player, Captions.DESC_UNSET);
+            player.sendMessage(TranslatableCaption.of("desc.desc_unset"));
             return true;
         }
-        PlotFlagAddEvent event = PlotSquared.get().getEventDispatcher().callFlagAdd(
-            plot.getFlagContainer().getFlag(DescriptionFlag.class).createFlagInstance(desc), plot);
+        PlotFlagAddEvent event = this.eventDispatcher.callFlagAdd(plot
+                .getFlagContainer()
+                .getFlag(DescriptionFlag.class)
+                .createFlagInstance(desc), plot);
         if (event.getEventResult() == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Description set");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Description set")
+            );
             return false;
         }
         boolean result = plot.setFlag(event.getFlag());
         if (!result) {
-            MainUtil.sendMessage(player, Captions.FLAG_NOT_ADDED);
+            player.sendMessage(TranslatableCaption.of("flag.flag_not_added"));
             return false;
         }
-        MainUtil.sendMessage(player, Captions.DESC_SET);
+        player.sendMessage(TranslatableCaption.of("desc.desc_set"));
         return true;
     }
+
 }

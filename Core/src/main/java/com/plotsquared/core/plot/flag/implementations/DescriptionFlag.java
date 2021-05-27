@@ -21,39 +21,48 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class DescriptionFlag extends PlotFlag<String, DescriptionFlag> {
 
     public static final DescriptionFlag DESCRIPTION_FLAG_EMPTY = new DescriptionFlag("");
 
-    protected DescriptionFlag(@NotNull String value) {
-        super(value, Captions.FLAG_CATEGORY_STRING, Captions.FLAG_DESCRIPTION_DESCRIPTION);
+    protected DescriptionFlag(@NonNull String value) {
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_string"),
+                TranslatableCaption.of("flags.flag_description_description")
+        );
     }
 
-    @Override public DescriptionFlag parse(@NotNull String input) {
+    @Override
+    public DescriptionFlag parse(@NonNull String input) {
         return flagOf(input);
     }
 
-    @Override public DescriptionFlag merge(@NotNull String newValue) {
+    @Override
+    public DescriptionFlag merge(@NonNull String newValue) {
         return flagOf(this.getValue() + " " + newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "&6This is my plot!";
     }
 
-    @Override protected DescriptionFlag flagOf(@NotNull String value) {
+    @Override
+    protected DescriptionFlag flagOf(@NonNull String value) {
         return new DescriptionFlag(value);
     }
 

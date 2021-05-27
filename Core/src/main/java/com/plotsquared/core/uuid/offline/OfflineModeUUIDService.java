@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid.offline;
 
@@ -29,7 +29,7 @@ import com.google.common.base.Charsets;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,18 +42,21 @@ import java.util.UUID;
  */
 public class OfflineModeUUIDService implements UUIDService {
 
-    @NotNull protected final UUID getFromUsername(@NotNull String username) {
+    @NonNull
+    protected final UUID getFromUsername(@NonNull String username) {
         if (Settings.UUID.FORCE_LOWERCASE) {
             username = username.toLowerCase(Locale.ENGLISH);
         }
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(Charsets.UTF_8));
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
+    @Override
+    public @NonNull List<@NonNull UUIDMapping> getNames(final @NonNull List<@NonNull UUID> uuids) {
         return Collections.emptyList();
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull List<String> usernames) {
+    @Override
+    public @NonNull List<@NonNull UUIDMapping> getUUIDs(@NonNull List<@NonNull String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         for (final String username : usernames) {
             mappings.add(new UUIDMapping(getFromUsername(username), username));

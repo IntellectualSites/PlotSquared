@@ -21,26 +21,30 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid;
 
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Thrown by {@link ServiceError} when something goes wrong
  */
 public class ServiceError extends RuntimeException {
 
-    public ServiceError(@NotNull final String message) {
+    public ServiceError(final @NonNull String message) {
         super(message);
     }
 
-    public ServiceError(@NotNull final String message, @NotNull final Throwable cause) {
+    public ServiceError(
+            final @NonNull String message,
+            final @NonNull Throwable cause
+    ) {
         super(message, cause);
     }
 
-    @Override public Throwable fillInStackTrace() {
+    @Override
+    public Throwable fillInStackTrace() {
         return this;
     }
 

@@ -21,86 +21,118 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.Expression;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 
 @CommandDeclaration(command = "delete",
-    permission = "plots.delete",
-    description = "Delete the plot you stand on",
-    usage = "/plot delete",
-    aliases = {"dispose", "del"},
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE,
-    confirmation = true)
+        permission = "plots.delete",
+        usage = "/plot delete",
+        aliases = {"dispose", "del"},
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE,
+        confirmation = true)
 public class Delete extends SubCommand {
 
-    // Note: To delete a specific plot use /plot <plot> delete
-    // The syntax also works with any command: /plot <plot> <command>
+    private final EventDispatcher eventDispatcher;
+    private final EconHandler econHandler;
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Inject
+    public Delete(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull EconHandler econHandler
+    ) {
+        this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
+    }
+
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
-            return !sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
+            return false;
         }
-        Result eventResult =
-            PlotSquared.get().getEventDispatcher().callDelete(plot).getEventResult();
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
+            return false;
+        }
+        Result eventResult = this.eventDispatcher.callDelete(plot).getEventResult();
         if (eventResult == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Delete");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Delete")
+            );
             return true;
         }
         boolean force = eventResult == Result.FORCE;
         if (!force && !plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DELETE)) {
-            return !sendMessage(player, Captions.NO_PLOT_PERMS);
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DELETE)) {
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+            return false;
         }
         final PlotArea plotArea = plot.getArea();
         final java.util.Set<Plot> plots = plot.getConnectedPlots();
         final int currentPlots = Settings.Limit.GLOBAL ?
-            player.getPlotCount() :
-            player.getPlotCount(location.getWorld());
+                player.getPlotCount() :
+                player.getPlotCount(location.getWorldName());
         Runnable run = () -> {
             if (plot.getRunning() > 0) {
-                MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+                player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 return;
             }
             final long start = System.currentTimeMillis();
-            boolean result = plot.deletePlot(() -> {
+            if (Settings.Teleport.ON_DELETE) {
+                plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+                });
+            }
+            boolean result = plot.getPlotModificationManager().deletePlot(player, () -> {
                 plot.removeRunning();
-                if ((EconHandler.getEconHandler() != null) && plotArea.useEconomy()) {
-                    Expression<Double> valueExr = plotArea.getPrices().get("sell");
-                    double value = plots.size() * valueExr.evaluate((double) currentPlots);
+                if (this.econHandler.isEnabled(plotArea)) {
+                    PlotExpression valueExr = plotArea.getPrices().get("sell");
+                    double value = plots.size() * valueExr.evaluate(currentPlots);
                     if (value > 0d) {
-                        EconHandler.getEconHandler().depositMoney(player, value);
-                        sendMessage(player, Captions.ADDED_BALANCE, String.valueOf(value));
+                        this.econHandler.depositMoney(player, value);
+                        player.sendMessage(
+                                TranslatableCaption.of("economy.added_balance"),
+                                Template.of("money", this.econHandler.format(value))
+                        );
                     }
                 }
-                MainUtil.sendMessage(player, Captions.DELETING_DONE,
-                    System.currentTimeMillis() - start);
+                player.sendMessage(
+                        TranslatableCaption.of("working.deleting_done"),
+                        Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
+                        Template.of("plot", plot.getId().toString())
+                );
             });
             if (result) {
                 plot.addRunning();
             } else {
-                MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+                player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             }
         };
         if (hasConfirmation(player)) {
@@ -110,4 +142,5 @@ public class Delete extends SubCommand {
         }
         return true;
     }
+
 }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.file;
 
@@ -41,7 +41,9 @@ public class YamlConstructor extends SafeConstructor {
     }
 
     private class ConstructCustomObject extends ConstructYamlMap {
-        @Override public Object construct(final Node node) {
+
+        @Override
+        public Object construct(final Node node) {
             if (node.isTwoStepsConstruction()) {
                 throw new YAMLException("Unexpected referential mapping structure. Node: " + node);
             }
@@ -64,8 +66,11 @@ public class YamlConstructor extends SafeConstructor {
             return raw;
         }
 
-        @Override public void construct2ndStep(final Node node, final Object object) {
+        @Override
+        public void construct2ndStep(final Node node, final Object object) {
             throw new YAMLException("Unexpected referential mapping structure. Node: " + node);
         }
+
     }
+
 }

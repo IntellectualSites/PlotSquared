@@ -21,32 +21,41 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
 import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import com.plotsquared.core.uuid.UUIDMapping;
+import net.kyori.adventure.text.minimessage.Template;
 
-import java.util.UUID;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 @CommandDeclaration(command = "grant",
-    category = CommandCategory.CLAIMING,
-    usage = "/plot grant <check|add> [player]",
-    permission = "plots.grant",
-    requiredType = RequiredType.NONE)
+        category = CommandCategory.CLAIMING,
+        usage = "/plot grant <check | add> [player]",
+        permission = "plots.grant",
+        requiredType = RequiredType.NONE)
 public class Grant extends Command {
 
     public Grant() {
@@ -54,66 +63,124 @@ public class Grant extends Command {
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        checkTrue(args.length >= 1 && args.length <= 2, Captions.COMMAND_SYNTAX, getUsage());
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
+        checkTrue(
+                args.length >= 1 && args.length <= 2,
+                TranslatableCaption.of("commandconfig.command_syntax"),
+                Template.of("value", "/plot grant <check | add> [player]")
+        );
         final String arg0 = args[0].toLowerCase();
         switch (arg0) {
-            case "add":
-            case "check":
-                if (!Permissions.hasPermission(player, CaptionUtility
-                    .format(player, Captions.PERMISSION_GRANT.getTranslated(), arg0))) {
-                    Captions.NO_PERMISSION.send(player, CaptionUtility
-                        .format(player, Captions.PERMISSION_GRANT.getTranslated(), arg0));
+            case "add", "check" -> {
+                if (!Permissions.hasPermission(player, Permission.PERMISSION_GRANT.format(arg0))) {
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of("node", Permission.PERMISSION_GRANT.format(arg0))
+                    );
                     return CompletableFuture.completedFuture(false);
                 }
                 if (args.length > 2) {
                     break;
                 }
-                MainUtil.getUUIDsFromString(args[1], (uuids, throwable) -> {
+                PlayerManager.getUUIDsFromString(args[1], (uuids, throwable) -> {
                     if (throwable instanceof TimeoutException) {
-                        MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                        player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                     } else if (throwable != null || uuids.size() != 1) {
-                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER);
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Template.of("value", String.valueOf(uuids))
+                        );
                     } else {
                         final UUIDMapping uuid = uuids.toArray(new UUIDMapping[0])[0];
-                        MainUtil.getPersistentMeta(uuid.getUuid(),
-                            "grantedPlots", new RunnableVal<byte[]>() {
-                            @Override public void run(byte[] array) {
-                                if (arg0.equals("check")) { // check
-                                    int granted;
-                                    if (array == null) {
-                                        granted = 0;
-                                    } else {
-                                        granted = Ints.fromByteArray(array);
-                                    }
-                                    Captions.GRANTED_PLOTS.send(player, granted);
-                                } else { // add
-                                    int amount;
-                                    if (array == null) {
-                                        amount = 1;
-                                    } else {
-                                        amount = 1 + Ints.fromByteArray(array);
-                                    }
-                                    boolean replace = array != null;
-                                    String key = "grantedPlots";
-                                    byte[] rawData = Ints.toByteArray(amount);
-
-                                    PlotPlayer online = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid.getUuid());
-                                    if (online != null) {
-                                        online.setPersistentMeta(key, rawData);
-                                    } else {
-                                        DBFunc.addPersistentMeta(uuid.getUuid(), key, rawData, replace);
-                                    }
+                        PlotPlayer<?> pp = PlotSquared.platform().playerManager().getPlayerIfExists(uuid.getUuid());
+                        if (pp != null) {
+                            try (final MetaDataAccess<Integer> access = pp.accessPersistentMetaData(
+                                    PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                                if (args[0].equalsIgnoreCase("check")) {
+                                    player.sendMessage(
+                                            TranslatableCaption.of("grants.granted_plots"),
+                                            Template.of("amount", String.valueOf(access.get().orElse(0)))
+                                    );
+                                } else {
+                                    access.set(access.get().orElse(0) + 1);
                                 }
                             }
-                        });
+                        } else {
+                            DBFunc.getPersistentMeta(uuid.getUuid(), new RunnableVal<>() {
+                                @Override
+                                public void run(Map<String, byte[]> value) {
+                                    final byte[] array = value.get("grantedPlots");
+                                    if (arg0.equals("check")) { // check
+                                        int granted;
+                                        if (array == null) {
+                                            granted = 0;
+                                        } else {
+                                            granted = Ints.fromByteArray(array);
+                                        }
+                                        player.sendMessage(
+                                                TranslatableCaption.of("grants.granted_plots"),
+                                                Template.of("amount", String.valueOf(granted))
+                                        );
+                                    } else { // add
+                                        int amount;
+                                        if (array == null) {
+                                            amount = 1;
+                                        } else {
+                                            amount = 1 + Ints.fromByteArray(array);
+                                        }
+                                        boolean replace = array != null;
+                                        String key = "grantedPlots";
+                                        byte[] rawData = Ints.toByteArray(amount);
+                                        DBFunc.addPersistentMeta(uuid.getUuid(), key, rawData, replace);
+                                        player.sendMessage(
+                                                TranslatableCaption.of("grants.added"),
+                                                Template.of("grants", String.valueOf(amount))
+                                        );
+                                    }
+                                }
+                            });
+                        }
                     }
                 });
                 return CompletableFuture.completedFuture(true);
+            }
         }
-        Captions.COMMAND_SYNTAX.send(player, getUsage());
+        sendUsage(player);
         return CompletableFuture.completedFuture(true);
     }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, Permission.PERMISSION_GRANT_ADD)) {
+                completions.add("add");
+            }
+            if (Permissions.hasPermission(player, Permission.PERMISSION_GRANT_CHECK)) {
+                completions.add("check");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(
+                            null,
+                            true,
+                            completion,
+                            "",
+                            RequiredType.NONE,
+                            CommandCategory.ADMINISTRATION
+                    ) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, Permission.PERMISSION_GRANT_SINGLE) && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+    }
+
 }

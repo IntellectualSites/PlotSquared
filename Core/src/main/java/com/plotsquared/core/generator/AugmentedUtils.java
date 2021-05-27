@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
@@ -31,17 +31,16 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.queue.AreaBoundDelegateLocalBlockQueue;
-import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.queue.LocationOffsetDelegateLocalBlockQueue;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.AreaBoundDelegateQueueCoordinator;
+import com.plotsquared.core.queue.LocationOffsetDelegateQueueCoordinator;
+import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Set;
 
@@ -55,8 +54,13 @@ public class AugmentedUtils {
         enabled = true;
     }
 
-    public static boolean generate(@Nullable Object chunkObject, @NotNull final String world,
-        final int chunkX, final int chunkZ, LocalBlockQueue queue) {
+    public static boolean generate(
+            @Nullable Object chunkObject,
+            final @NonNull String world,
+            final int chunkX,
+            final int chunkZ,
+            QueueCoordinator queue
+    ) {
         if (!enabled) {
             return false;
         }
@@ -68,10 +72,11 @@ public class AugmentedUtils {
         // entire chunk
         CuboidRegion region = RegionUtil.createRegion(blockX, blockX + 15, blockZ, blockZ + 15);
         // Query for plot areas in the chunk
-        Set<PlotArea> areas = PlotSquared.get().getPlotAreas(world, region);
+        final Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world, region);
         if (areas.isEmpty()) {
             return false;
         }
+        boolean enqueue = false;
         boolean generationResult = false;
         for (final PlotArea area : areas) {
             // A normal plot world may not contain any clusters
@@ -81,16 +86,22 @@ public class AugmentedUtils {
             }
             // This means that full vanilla generation is used
             // so we do not interfere
-            if (area.getTerrain() == PlotAreaTerrainType.ALL) {
+            if (area.getTerrain() == PlotAreaTerrainType.ALL || !area.contains(blockX, blockZ)) {
                 continue;
             }
             IndependentPlotGenerator generator = area.getGenerator();
             // Mask
             if (queue == null) {
-                queue = GlobalBlockQueue.IMP.getNewQueue(world, false);
-                queue.setChunkObject(chunkObject);
+                enqueue = true;
+                queue = PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared
+                        .platform()
+                        .worldUtil()
+                        .getWeWorld(world));
+                if (chunkObject != null) {
+                    queue.setChunkObject(chunkObject);
+                }
             }
-            LocalBlockQueue primaryMask;
+            QueueCoordinator primaryMask;
             // coordinates
             int relativeBottomX;
             int relativeBottomZ;
@@ -103,14 +114,13 @@ public class AugmentedUtils {
                 relativeTopX = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);
                 relativeTopZ = Math.min(15, area.getRegion().getMaximumPoint().getZ() - blockZ);
 
-                primaryMask = new AreaBoundDelegateLocalBlockQueue(area, queue);
+                primaryMask = new AreaBoundDelegateQueueCoordinator(area, queue);
             } else {
                 relativeBottomX = relativeBottomZ = 0;
                 relativeTopX = relativeTopZ = 15;
                 primaryMask = queue;
             }
-
-            LocalBlockQueue secondaryMask;
+            QueueCoordinator secondaryMask;
             BlockState air = BlockTypes.AIR.getDefaultState();
             if (area.getTerrain() == PlotAreaTerrainType.ROAD) {
                 PlotManager manager = area.getPlotManager();
@@ -134,8 +144,7 @@ public class AugmentedUtils {
                     continue;
                 }
                 generationResult = true;
-                secondaryMask = new LocationOffsetDelegateLocalBlockQueue(canPlace, blockX, blockZ,
-                    primaryMask);
+                secondaryMask = new LocationOffsetDelegateQueueCoordinator(canPlace, blockX, blockZ, primaryMask);
             } else {
                 secondaryMask = primaryMask;
                 for (int x = relativeBottomX; x <= relativeTopX; x++) {
@@ -147,20 +156,26 @@ public class AugmentedUtils {
                 }
                 generationResult = true;
             }
-            primaryMask.setChunkObject(chunkObject);
-            primaryMask.setForceSync(true);
-            secondaryMask.setChunkObject(chunkObject);
-            secondaryMask.setForceSync(true);
+            if (chunkObject != null) {
+                primaryMask.setChunkObject(chunkObject);
+            }
+            if (chunkObject != null) {
+                secondaryMask.setChunkObject(chunkObject);
+            }
 
-            ScopedLocalBlockQueue scoped =
-                new ScopedLocalBlockQueue(secondaryMask, new Location(world, blockX, 0, blockZ),
-                    new Location(world, blockX + 15, 255, blockZ + 15));
+            ScopedQueueCoordinator scoped =
+                    new ScopedQueueCoordinator(
+                            secondaryMask,
+                            Location.at(world, blockX, 0, blockZ),
+                            Location.at(world, blockX + 15, 255, blockZ + 15)
+                    );
             generator.generateChunk(scoped, area);
             generator.populateChunk(scoped, area);
+            scoped.setForceSync(true);
+            scoped.enqueue();
         }
-        if (queue != null) {
-            queue.setForceSync(true);
-            queue.flush();
+        if (enqueue) {
+            queue.enqueue();
         }
         return generationResult;
     }

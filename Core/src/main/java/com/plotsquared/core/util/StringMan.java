@@ -21,12 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.configuration.Caption;
-import org.jetbrains.annotations.NotNull;
+import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.Caption;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -78,7 +79,7 @@ public class StringMan {
             return (String) obj;
         }
         if (obj instanceof Caption) {
-            return ((Caption) obj).getTranslated();
+            return ((Caption) obj).getComponent(PlotSquared.platform());
         }
         if (obj.getClass().isArray()) {
             StringBuilder result = new StringBuilder();
@@ -148,7 +149,7 @@ public class StringMan {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             if ((c < 0x30) || ((c >= 0x3a) && (c <= 0x40)) || ((c > 0x5a) && (c <= 0x60)) || (c
-                > 0x7a)) {
+                    > 0x7a)) {
                 return false;
             }
         }
@@ -266,7 +267,7 @@ public class StringMan {
         return false;
     }
 
-    public static boolean isEqualIgnoreCaseToAny(@NotNull String a, String... args) {
+    public static boolean isEqualIgnoreCaseToAny(@NonNull String a, String... args) {
         for (String arg : args) {
             if (a.equalsIgnoreCase(arg)) {
                 return true;
@@ -286,7 +287,7 @@ public class StringMan {
 
     public static boolean isEqualIgnoreCase(String a, String b) {
         return (a == b) || ((a != null) && (b != null) && (a.length() == b.length()) && a
-            .equalsIgnoreCase(b));
+                .equalsIgnoreCase(b));
     }
 
     public static String repeat(String s, int n) {
@@ -311,7 +312,7 @@ public class StringMan {
             return null;
         }
         startsWith = startsWith.toLowerCase();
-        Iterator iterator = col.iterator();
+        Iterator<?> iterator = col.iterator();
         while (iterator.hasNext()) {
             Object item = iterator.next();
             if (item == null || !item.toString().toLowerCase().startsWith(startsWith)) {
@@ -320,4 +321,5 @@ public class StringMan {
         }
         return col;
     }
+
 }

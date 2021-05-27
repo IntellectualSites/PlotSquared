@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.world;
 
@@ -32,8 +32,8 @@ import com.plotsquared.core.util.PlotAreaConverter;
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.PRTree;
 import org.khelekore.prtree.SimpleMBR;
@@ -60,11 +60,12 @@ public class ScatteredPlotWorld extends PlotWorld {
      *
      * @param world World name
      */
-    public ScatteredPlotWorld(@NotNull final String world) {
+    public ScatteredPlotWorld(final @NonNull String world) {
         super(world);
     }
 
-    @Override @Nullable public PlotArea getArea(@NotNull final Location location) {
+    @Override
+    public @Nullable PlotArea getArea(final @NonNull Location location) {
         if (this.areas.isEmpty()) {
             return null;
         }
@@ -78,21 +79,25 @@ public class ScatteredPlotWorld extends PlotWorld {
         return null;
     }
 
-    @Override @NotNull public Collection<PlotArea> getAreas() {
+    @Override
+    public @NonNull Collection<PlotArea> getAreas() {
         return Collections.unmodifiableCollection(this.areas);
     }
 
-    @Override public void addArea(@NotNull final PlotArea area) {
+    @Override
+    public void addArea(final @NonNull PlotArea area) {
         this.areas.add(area);
         this.buildTree();
     }
 
-    @Override public void removeArea(@NotNull final PlotArea area) {
+    @Override
+    public void removeArea(final @NonNull PlotArea area) {
         this.areas.remove(area);
         this.buildTree();
     }
 
-    @Override @NotNull public Collection<PlotArea> getAreasInRegion(@NotNull final CuboidRegion region) {
+    @Override
+    public @NonNull Collection<PlotArea> getAreasInRegion(final @NonNull CuboidRegion region) {
         if (this.areas.isEmpty()) {
             return Collections.emptyList();
         }

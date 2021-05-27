@@ -21,15 +21,14 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.StringMan;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,18 +36,21 @@ import java.util.List;
 
 public abstract class ListFlag<V, F extends PlotFlag<List<V>, F>> extends PlotFlag<List<V>, F> {
 
-    public ListFlag(final List<V> valueList, final Captions category, final Caption description) {
+    public ListFlag(final List<V> valueList, final Caption category, final Caption description) {
         super(Collections.unmodifiableList(valueList), category, description);
     }
 
-    @Override public F merge(@NotNull List<V> newValue) {
+    @Override
+    public F merge(@NonNull List<V> newValue) {
         final List<V> mergedList = new ArrayList<>();
         mergedList.addAll(getValue());
         mergedList.addAll(newValue);
         return this.flagOf(mergedList);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return StringMan.join(this.getValue(), ",");
     }
+
 }

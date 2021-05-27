@@ -21,14 +21,15 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.file;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Configuration;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.InvalidConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -45,6 +46,9 @@ import java.util.Map;
  * Note that this implementation is not synchronized.
  */
 public class YamlConfiguration extends FileConfiguration {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + YamlConfiguration.class.getSimpleName());
+
     private static final String COMMENT_PREFIX = "# ";
     private static final String BLANK_CONFIG = "{}\n";
     private final DumperOptions yamlOptions = new DumperOptions();
@@ -76,11 +80,11 @@ public class YamlConfiguration extends FileConfiguration {
                     dest = new File(file.getAbsolutePath() + "_broken_" + i++);
                 }
                 Files.copy(file.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                PlotSquared.debug("&dCould not read: &7" + file);
-                PlotSquared.debug("&dRenamed to: &7" + dest.getName());
-                PlotSquared.debug("&c============ Full stacktrace ============");
+                logger.error("Could not read: {}", file);
+                logger.error("Renamed to: {}", file);
+                logger.error("============ Full stacktrace ============");
                 ex.printStackTrace();
-                PlotSquared.debug("&c=========================================");
+                logger.error("=========================================");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -89,7 +93,8 @@ public class YamlConfiguration extends FileConfiguration {
         return config;
     }
 
-    @Override public String saveToString() {
+    @Override
+    public String saveToString() {
         yamlOptions.setIndent(options().indent());
         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -104,11 +109,12 @@ public class YamlConfiguration extends FileConfiguration {
         return header + dump;
     }
 
-    @Override public void loadFromString(String contents) throws InvalidConfigurationException {
+    @Override
+    public void loadFromString(String contents) throws InvalidConfigurationException {
 
         Map<?, ?> input;
         try {
-            input = (Map<?, ?>) yaml.load(contents);
+            input = yaml.load(contents);
         } catch (YAMLException e) {
             throw new InvalidConfigurationException(e);
         } catch (ClassCastException ignored) {
@@ -167,14 +173,14 @@ public class YamlConfiguration extends FileConfiguration {
         return result.toString();
     }
 
-    @Override protected String buildHeader() {
+    @Override
+    protected String buildHeader() {
         String header = options().header();
 
         if (options().copyHeader()) {
             Configuration def = getDefaults();
 
-            if (def instanceof FileConfiguration) {
-                FileConfiguration fileDefaults = (FileConfiguration) def;
+            if (def instanceof FileConfiguration fileDefaults) {
                 String defaultsHeader = fileDefaults.buildHeader();
 
                 if ((defaultsHeader != null) && !defaultsHeader.isEmpty()) {
@@ -204,11 +210,13 @@ public class YamlConfiguration extends FileConfiguration {
         return builder.toString();
     }
 
-    @Override public YamlConfigurationOptions options() {
+    @Override
+    public YamlConfigurationOptions options() {
         if (options == null) {
             options = new YamlConfigurationOptions(this);
         }
 
         return (YamlConfigurationOptions) options;
     }
+
 }

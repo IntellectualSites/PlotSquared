@@ -21,19 +21,31 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.location;
 
 public enum Direction {
-    ALL(-1, "all"), NORTH(0, "north"), EAST(1, "east"), SOUTH(2, "south"), WEST(3,
-        "west"), NORTHEAST(4, "northeast"), SOUTHEAST(5, "southeast"), SOUTHWEST(6,
-        "southwest"), NORTHWEST(7, "northwest"),
+    ALL(-1, "all"),
+    NORTH(0, "north"),
+    EAST(1, "east"),
+    SOUTH(2, "south"),
+    WEST(
+            3,
+            "west"
+    ),
+    NORTHEAST(4, "northeast"),
+    SOUTHEAST(5, "southeast"),
+    SOUTHWEST(
+            6,
+            "southwest"
+    ),
+    NORTHWEST(7, "northwest"),
     ;
 
 
-    private int index;
-    private String name;
+    private final int index;
+    private final String name;
 
     Direction(int index, String name) {
 

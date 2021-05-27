@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.file;
 
@@ -34,6 +34,7 @@ import com.plotsquared.core.configuration.MemoryConfigurationOptions;
  * FileConfiguration}.
  */
 public class FileConfigurationOptions extends MemoryConfigurationOptions {
+
     private String header = null;
     private boolean copyHeader = true;
 
@@ -41,11 +42,13 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
         super(configuration);
     }
 
-    @Override public FileConfiguration configuration() {
+    @Override
+    public FileConfiguration configuration() {
         return (FileConfiguration) super.configuration();
     }
 
-    @Override public FileConfigurationOptions copyDefaults(boolean value) {
+    @Override
+    public FileConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
@@ -132,4 +135,5 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
 
         return this;
     }
+
 }

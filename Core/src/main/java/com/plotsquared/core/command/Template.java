@@ -21,54 +21,87 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
+import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.InvalidConfigurationException;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.events.TeleportCause;
+import com.plotsquared.core.inject.annotations.WorldConfig;
+import com.plotsquared.core.inject.annotations.WorldFile;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotManager;
-import com.plotsquared.core.queue.GlobalBlockQueue;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
 import com.plotsquared.core.util.FileBytes;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.FileUtils;
+import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SetupUtils;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @CommandDeclaration(command = "template",
-    permission = "plots.admin",
-    description = "Create or use a world template",
-    usage = "/plot template [import|export] <world> <template>",
-    category = CommandCategory.ADMINISTRATION)
+        permission = "plots.admin",
+        usage = "/plot template [import | export] <world> <template>",
+        category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
+
+    private final PlotAreaManager plotAreaManager;
+    private final YamlConfiguration worldConfiguration;
+    private final File worldFile;
+    private final SetupUtils setupUtils;
+    private final WorldUtil worldUtil;
+
+    @Inject
+    public Template(
+            final @NonNull PlotAreaManager plotAreaManager,
+            @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            @WorldFile final @NonNull File worldFile,
+            final @NonNull SetupUtils setupUtils,
+            final @NonNull WorldUtil worldUtil
+    ) {
+        this.plotAreaManager = plotAreaManager;
+        this.worldConfiguration = worldConfiguration;
+        this.worldFile = worldFile;
+        this.setupUtils = setupUtils;
+        this.worldUtil = worldUtil;
+    }
 
     public static boolean extractAllFiles(String world, String template) {
         try {
             File folder =
-                MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+                    FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
             if (!folder.exists()) {
                 return false;
             }
-            File output = PlotSquared.get().IMP.getDirectory();
+            File output = PlotSquared.platform().getDirectory();
             if (!output.exists()) {
                 output.mkdirs();
             }
@@ -79,9 +112,9 @@ public class Template extends SubCommand {
                 while (ze != null) {
                     if (!ze.isDirectory()) {
                         String name = ze.getName().replace('\\', File.separatorChar)
-                            .replace('/', File.separatorChar);
+                                .replace('/', File.separatorChar);
                         File newFile = new File(
-                            (output + File.separator + name).replaceAll("__TEMP_DIR__", world));
+                                (output + File.separator + name).replaceAll("__TEMP_DIR__", world));
                         File parent = newFile.getParentFile();
                         if (parent != null) {
                             parent.mkdirs();
@@ -105,10 +138,12 @@ public class Template extends SubCommand {
     }
 
     public static byte[] getBytes(PlotArea plotArea) {
-        ConfigurationSection section =
-            PlotSquared.get().worlds.getConfigurationSection("worlds." + plotArea.getWorldName());
+        ConfigurationSection section = PlotSquared
+                .get()
+                .getWorldConfiguration()
+                .getConfigurationSection("worlds." + plotArea.getWorldName());
         YamlConfiguration config = new YamlConfiguration();
-        String generator = SetupUtils.manager.getGenerator(plotArea);
+        String generator = PlotSquared.platform().setupUtils().getGenerator(plotArea);
         if (generator != null) {
             config.set("generator.plugin", generator);
         }
@@ -119,12 +154,11 @@ public class Template extends SubCommand {
     }
 
     public static void zipAll(String world, Set<FileBytes> files) throws IOException {
-        File output =
-            MainUtil.getFile(PlotSquared.get().IMP.getDirectory(), Settings.Paths.TEMPLATES);
+        File output = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(
-            output + File.separator + world + ".template");
-            ZipOutputStream zos = new ZipOutputStream(fos)) {
+                output + File.separator + world + ".template");
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
 
             for (FileBytes file : files) {
                 ZipEntry ze = new ZipEntry(file.path);
@@ -135,77 +169,96 @@ public class Template extends SubCommand {
         }
     }
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("export")) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot template export <world>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template export <world>")
+                    );
                     return true;
                 } else if (args[0].equalsIgnoreCase("import")) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot template import <world> <template>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template import <world> <template>")
+                    );
                     return true;
                 }
             }
-            MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX, getUsage());
+            sendUsage(player);
             return true;
         }
         final String world = args[1];
         switch (args[0].toLowerCase()) {
-            case "import": {
+            case "import" -> {
                 if (args.length != 3) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot template import <world> <template>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template import <world> <template>")
+                    );
                     return false;
                 }
-                if (PlotSquared.get().hasPlotArea(world)) {
-                    MainUtil.sendMessage(player, Captions.SETUP_WORLD_TAKEN, world);
+                if (this.plotAreaManager.hasPlotArea(world)) {
+                    player.sendMessage(
+                            TranslatableCaption.of("setup.setup_world_taken"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", world)
+                    );
                     return false;
                 }
                 boolean result = extractAllFiles(world, args[2]);
                 if (!result) {
-                    MainUtil
-                        .sendMessage(player, "&cInvalid template file: " + args[2] + ".template");
+                    player.sendMessage(
+                            TranslatableCaption.of("template.invalid_template"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", args[2])
+                    );
                     return false;
                 }
-                File worldFile = MainUtil.getFile(PlotSquared.get().IMP.getDirectory(),
-                    Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml");
+                File worldFile = FileUtils.getFile(
+                        PlotSquared.platform().getDirectory(),
+                        Settings.Paths.TEMPLATES + File.separator + "tmp-data.yml"
+                );
                 YamlConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldFile);
-                PlotSquared.get().worlds.set("worlds." + world, worldConfig.get(""));
+                this.worldConfiguration.set("worlds." + world, worldConfig.get(""));
                 try {
-                    PlotSquared.get().worlds.save(PlotSquared.get().worldsFile);
-                    PlotSquared.get().worlds.load(PlotSquared.get().worldsFile);
+                    this.worldConfiguration.save(this.worldFile);
+                    this.worldConfiguration.load(this.worldFile);
                 } catch (InvalidConfigurationException | IOException e) {
                     e.printStackTrace();
                 }
                 String manager =
-                    worldConfig.getString("generator.plugin", PlotSquared.imp().getPluginName());
+                        worldConfig.getString("generator.plugin", PlotSquared.platform().pluginName());
                 String generator = worldConfig.getString("generator.init", manager);
-                PlotAreaBuilder builder = new PlotAreaBuilder()
-                        .plotAreaType(MainUtil.getType(worldConfig))
-                        .terrainType(MainUtil.getTerrain(worldConfig))
+                PlotAreaBuilder builder = PlotAreaBuilder.newBuilder()
+                        .plotAreaType(ConfigurationUtil.getType(worldConfig))
+                        .terrainType(ConfigurationUtil.getTerrain(worldConfig))
                         .plotManager(manager)
                         .generatorName(generator)
                         .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                         .worldName(world);
 
-                SetupUtils.manager.setupWorld(builder);
-                GlobalBlockQueue.IMP.addEmptyTask(() -> {
-                    MainUtil.sendMessage(player, "Done!");
-                    player.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
+                this.setupUtils.setupWorld(builder);
+                TaskManager.runTask(() -> {
+                    player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
+                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                 });
                 return true;
             }
-            case "export":
+            case "export" -> {
                 if (args.length != 2) {
-                    MainUtil.sendMessage(player, Captions.COMMAND_SYNTAX,
-                        "/plot template export <world>");
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", "/plot template export <world>")
+                    );
                     return false;
                 }
-                final PlotArea area = PlotSquared.get().getPlotAreaByString(world);
+                final PlotArea area = this.plotAreaManager.getPlotAreaByString(world);
                 if (area == null) {
-                    MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_WORLD);
+                    player.sendMessage(
+                            TranslatableCaption.of("errors.not_valid_plot_world"),
+                            net.kyori.adventure.text.minimessage.Template.of("value", args[1])
+                    );
                     return false;
                 }
                 final PlotManager manager = area.getPlotManager();
@@ -214,15 +267,49 @@ public class Template extends SubCommand {
                         manager.exportTemplate();
                     } catch (Exception e) { // Must recover from any exception thrown a third party template manager
                         e.printStackTrace();
-                        MainUtil.sendMessage(player, "Failed: " + e.getMessage());
+                        player.sendMessage(
+                                TranslatableCaption.of("template.template_failed"),
+                                net.kyori.adventure.text.minimessage.Template.of("value", e.getMessage())
+                        );
                         return;
                     }
-                    MainUtil.sendMessage(player, "Done!");
+                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                 });
                 return true;
-            default:
-                Captions.COMMAND_SYNTAX.send(player, getUsage());
+            }
+            default -> sendUsage(player);
         }
         return false;
     }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE_EXPORT)) {
+                completions.add("export");
+            }
+            if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE_IMPORT)) {
+                completions.add("import");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(
+                            null,
+                            true,
+                            completion,
+                            "",
+                            RequiredType.NONE,
+                            CommandCategory.ADMINISTRATION
+                    ) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, Permission.PERMISSION_TEMPLATE) && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+    }
+
 }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
 
@@ -67,29 +67,34 @@ public class MySQL extends Database {
         this.connection = null;
     }
 
-    @Override public Connection forceConnection() throws SQLException {
+    @Override
+    public Connection forceConnection() throws SQLException {
         this.connection = DriverManager.getConnection(
-            "jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?"
-                + StringMan.join(Storage.MySQL.PROPERTIES, "&"), this.user, this.password);
+                "jdbc:mysql://" + this.hostname + ':' + this.port + '/' + this.database + "?"
+                        + StringMan.join(Storage.MySQL.PROPERTIES, "&"), this.user, this.password);
         return this.connection;
     }
 
-    @Override public Connection openConnection() throws SQLException {
+    @Override
+    public Connection openConnection() throws SQLException {
         if (checkConnection()) {
             return this.connection;
         }
         return forceConnection();
     }
 
-    @Override public boolean checkConnection() throws SQLException {
+    @Override
+    public boolean checkConnection() throws SQLException {
         return (this.connection != null) && !this.connection.isClosed();
     }
 
-    @Override public Connection getConnection() {
+    @Override
+    public Connection getConnection() {
         return this.connection;
     }
 
-    @Override public boolean closeConnection() throws SQLException {
+    @Override
+    public boolean closeConnection() throws SQLException {
         if (this.connection == null) {
             return false;
         }
@@ -98,7 +103,8 @@ public class MySQL extends Database {
         return true;
     }
 
-    @Override public ResultSet querySQL(String query) throws SQLException {
+    @Override
+    public ResultSet querySQL(String query) throws SQLException {
         if (checkConnection()) {
             openConnection();
         }
@@ -107,7 +113,8 @@ public class MySQL extends Database {
         }
     }
 
-    @Override public int updateSQL(String query) throws SQLException {
+    @Override
+    public int updateSQL(String query) throws SQLException {
         if (checkConnection()) {
             openConnection();
         }
@@ -115,4 +122,5 @@ public class MySQL extends Database {
             return statement.executeUpdate(query);
         }
     }
+
 }

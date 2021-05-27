@@ -21,14 +21,15 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings.Enabled_Components;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.StringMan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -46,14 +47,16 @@ import java.util.Map;
 
 public class Config {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + Config.class.getSimpleName());
+
     /**
      * Get the value for a node<br>
      * Probably throws some error if you try to get a non existent key
      *
-     * @param key
-     * @param root
-     * @param <T>
-     * @return
+     * @param key  configuration key
+     * @param root configuration class
+     * @param <T>  value type
+     * @return value
      */
     public static <T> T get(String key, Class<?> root) {
         String[] split = key.split("\\.");
@@ -68,7 +71,6 @@ public class Config {
                 }
             }
         }
-        PlotSquared.debug("Failed to get config option: " + key);
         return null;
     }
 
@@ -78,7 +80,7 @@ public class Config {
      *
      * @param key   config node
      * @param value value
-     * @param root
+     * @param root  configuration class
      */
     public static void set(String key, Object value, Class<? extends Config> root) {
         String[] split = key.split("\\.");
@@ -95,15 +97,13 @@ public class Config {
                     }
                     field.set(instance, value);
                     return;
-                } catch (Throwable e) {
-                    PlotSquared.debug(
-                        "Invalid configuration value: " + key + ": " + value + " in " + root
-                            .getSimpleName());
+                } catch (final Throwable e) {
+                    logger.error("Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
                     e.printStackTrace();
                 }
             }
         }
-        PlotSquared.debug("Failed to set config option: " + key + ": " + value + " | " + instance);
+        logger.error("Failed to set config option '{}: {}' | {}", key, value, instance);
     }
 
     public static boolean load(File file, Class<? extends Config> root) {
@@ -124,8 +124,8 @@ public class Config {
     /**
      * Set all values in the file (load first to avoid overwriting)
      *
-     * @param file
-     * @param root
+     * @param file file
+     * @param root configuration file class
      */
     public static void save(File file, Class<? extends Config> root) {
         try {
@@ -134,7 +134,7 @@ public class Config {
                 file.createNewFile();
             }
             try (PrintWriter writer = new PrintWriter(file)) {
-                Object instance = root.newInstance();
+                Object instance = root.getDeclaredConstructor().newInstance();
                 save(writer, root, instance, 0);
             }
         } catch (Throwable e) {
@@ -145,8 +145,8 @@ public class Config {
     /**
      * Get the static fields in a section.
      *
-     * @param clazz
-     * @return
+     * @param clazz config section
+     * @return map or string against object of static fields
      */
     public static Map<String, Object> getFields(Class<Enabled_Components> clazz) {
         HashMap<String, Object> map = new HashMap<>();
@@ -170,12 +170,11 @@ public class Config {
             }
             StringBuilder m = new StringBuilder();
             for (Object obj : listValue) {
-                m.append(System.lineSeparator() + spacing + "- " + toYamlString(obj, spacing));
+                m.append(System.lineSeparator()).append(spacing).append("- ").append(toYamlString(obj, spacing));
             }
             return m.toString();
         }
-        if (value instanceof String) {
-            String stringValue = (String) value;
+        if (value instanceof String stringValue) {
             if (stringValue.isEmpty()) {
                 return "''";
             }
@@ -184,7 +183,7 @@ public class Config {
         return value != null ? value.toString() : "null";
     }
 
-    private static void save(PrintWriter writer, Class clazz, Object instance, int indent) {
+    private static void save(PrintWriter writer, Class<?> clazz, Object instance, int indent) {
         try {
             String lineSeparator = System.lineSeparator();
             String spacing = StringMan.repeat(" ", indent);
@@ -204,16 +203,16 @@ public class Config {
                     if (value == null && field.getType() != ConfigBlock.class) {
                         setAccessible(field);
                         Class<?>[] classes = clazz.getDeclaredClasses();
-                        for (Class current : classes) {
+                        for (Class<?> current : classes) {
                             if (StringMan.isEqual(current.getSimpleName(), field.getName())) {
-                                field.set(instance, current.newInstance());
+                                field.set(instance, current.getDeclaredConstructor().newInstance());
                                 break;
                             }
                         }
                     }
                 } else {
                     writer.write(spacing + toNodeName(field.getName() + ": ") + toYamlString(
-                        field.get(instance), spacing) + lineSeparator);
+                            field.get(instance), spacing) + lineSeparator);
                 }
             }
             for (Class<?> current : clazz.getClasses()) {
@@ -233,26 +232,25 @@ public class Config {
                 BlockName blockNames = current.getAnnotation(BlockName.class);
                 if (blockNames != null) {
                     Field instanceField =
-                        clazz.getDeclaredField(toFieldName(current.getSimpleName()));
+                            clazz.getDeclaredField(toFieldName(current.getSimpleName()));
                     setAccessible(instanceField);
-                    ConfigBlock value = (ConfigBlock) instanceField.get(instance);
+                    ConfigBlock value = (ConfigBlock<?>) instanceField.get(instance);
                     if (value == null) {
                         value = new ConfigBlock();
                         instanceField.set(instance, value);
                         for (String blockName : blockNames.value()) {
-                            value.put(blockName, current.newInstance());
+                            value.put(blockName, current.getDeclaredConstructor().newInstance());
                         }
                     }
                     // Save each instance
                     for (Map.Entry<String, Object> entry : ((Map<String, Object>) value.getRaw())
-                        .entrySet()) {
+                            .entrySet()) {
                         String key = entry.getKey();
                         writer.write(spacing + "  " + toNodeName(key) + ":" + lineSeparator);
                         save(writer, current, entry.getValue(), indent + 4);
                     }
-                    continue;
                 } else {
-                    save(writer, current, current.newInstance(), indent + 2);
+                    save(writer, current, current.getDeclaredConstructor().newInstance(), indent + 2);
                 }
             }
         } catch (Throwable e) {
@@ -288,10 +286,14 @@ public class Config {
             Field field = instance.getClass().getField(toFieldName(split[split.length - 1]));
             setAccessible(field);
             return field;
-        } catch (Throwable e) {
-            PlotSquared.debug(
-                "Invalid config field: " + StringMan.join(split, ".") + " for " + toNodeName(
-                    instance.getClass().getSimpleName()));
+        } catch (final Throwable e) {
+            logger.error("Invalid config field: {} for {}. It's likely you are in the process of updating from an older major " +
+                            "release of PlotSquared. The entries named can be removed safely from the settings.yml. They are " +
+                            "likely no longer in use, moved to a different location or have been merged with other " +
+                            "configuration options. Check the changelog for more information.",
+                    StringMan.join(split, "."), toNodeName(instance.getClass().getSimpleName())
+            );
+            e.printStackTrace();
             return null;
         }
     }
@@ -306,7 +308,7 @@ public class Config {
     private static Object getInstance(String[] split, Class<?> root) {
         try {
             Class<?> clazz = root == null ? MethodHandles.lookup().lookupClass() : root;
-            Object instance = clazz.newInstance();
+            Object instance = clazz.getDeclaredConstructor().newInstance();
             while (split.length > 0) {
                 if (split.length == 1) {
                     return instance;
@@ -325,7 +327,7 @@ public class Config {
                     if (instanceField.getType() != ConfigBlock.class) {
                         Object value = instanceField.get(instance);
                         if (value == null) {
-                            value = found.newInstance();
+                            value = found.getDeclaredConstructor().newInstance();
                             instanceField.set(instance, value);
                         }
                         clazz = found;
@@ -333,14 +335,14 @@ public class Config {
                         split = Arrays.copyOfRange(split, 1, split.length);
                         continue;
                     }
-                    ConfigBlock value = (ConfigBlock) instanceField.get(instance);
+                    ConfigBlock value = (ConfigBlock<?>) instanceField.get(instance);
                     if (value == null) {
                         value = new ConfigBlock();
                         instanceField.set(instance, value);
                     }
                     instance = value.get(split[1]);
                     if (instance == null) {
-                        instance = found.newInstance();
+                        instance = found.getDeclaredConstructor().newInstance();
                         value.put(split[1], instance);
                     }
                     clazz = found;
@@ -351,7 +353,7 @@ public class Config {
                 if (found != null) {
                     split = Arrays.copyOfRange(split, 1, split.length);
                     clazz = found;
-                    instance = clazz.newInstance();
+                    instance = clazz.getDeclaredConstructor().newInstance();
                     continue;
                 }
                 return null;
@@ -397,6 +399,7 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     public @interface Create {
+
     }
 
 
@@ -406,6 +409,7 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     public @interface Final {
+
     }
 
 
@@ -415,7 +419,9 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface Comment {
+
         String[] value();
+
     }
 
 
@@ -425,7 +431,9 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface BlockName {
+
         String[] value();
+
     }
 
 
@@ -435,13 +443,14 @@ public class Config {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface Ignore {
+
     }
 
 
     @Ignore // This is not part of the config
     public static class ConfigBlock<T> {
 
-        private HashMap<String, T> INSTANCES = new HashMap<>();
+        private final HashMap<String, T> INSTANCES = new HashMap<>();
 
         public T get(String key) {
             return INSTANCES.get(key);
@@ -462,5 +471,7 @@ public class Config {
         private Map<String, T> getRaw() {
             return INSTANCES;
         }
+
     }
+
 }

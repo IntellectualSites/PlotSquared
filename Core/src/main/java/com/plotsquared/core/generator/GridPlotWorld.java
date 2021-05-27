@@ -21,20 +21,27 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
+import com.plotsquared.core.configuration.file.YamlConfiguration;
+import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import org.jetbrains.annotations.NotNull;
+import com.plotsquared.core.queue.GlobalBlockQueue;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class GridPlotWorld extends PlotArea {
 
     public short SIZE;
 
-    public GridPlotWorld(String worldName, String id, @NotNull IndependentPlotGenerator generator,
-        PlotId min, PlotId max) {
-        super(worldName, id, generator, min, max);
+    public GridPlotWorld(
+            String worldName, String id, @NonNull IndependentPlotGenerator generator,
+            PlotId min, PlotId max, @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
+            final @NonNull GlobalBlockQueue blockQueue
+    ) {
+        super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
     }
+
 }

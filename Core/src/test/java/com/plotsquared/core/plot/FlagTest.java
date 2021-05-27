@@ -21,37 +21,45 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
 import com.plotsquared.core.database.AbstractDBTest;
 import com.plotsquared.core.database.DBFunc;
+import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.UseFlag;
 import com.sk89q.worldedit.world.item.ItemType;
 import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
 public class FlagTest {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + FlagTest.class.getSimpleName());
+
     private ItemType testBlock;
 
-    @Before public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         //EventUtil.manager = new EventUtilTest();
         DBFunc.dbManager = new AbstractDBTest();
     }
 
 //    @Test public void flagTest() throws Exception {
-//        Plot plot = new Plot(null, new PlotId(0, 0));
+//        Plot plot = new Plot(null, PlotId.of(0, 0));
 //        plot.owner = UUID.fromString("84499644-ad72-454b-a19d-f28c28df382b");
 //        //plot.setFlag(use, use.parseValue("33,33:1,6:4")); //TODO fix this so FlagTest will run during compile
 //        Optional<? extends Collection> flag = plot.getFlag(use);
 //        if (flag.isPresent()) {
-//            System.out.println(Flags.USE.valueToString(flag.get()));
+//            logger.info(Flags.USE.valueToString(flag.get()));
 //            testBlock = ItemTypes.BONE_BLOCK;
 //            flag.get().add(testBlock);
 //        }
-//        flag.ifPresent(collection -> System.out.println(Flags.USE.valueToString(collection)));
+//        flag.ifPresent(collection -> logger.info(Flags.USE.valueToString(collection)));
 //        Optional<Set<BlockType>> flag2 = plot.getFlag(Flags.USE);
 //        if (flag2.isPresent()) {
 //            //   assertThat(flag2.get(), (Matcher<? super Set<BlockType>>) IsCollectionContaining.hasItem(testBlock));
@@ -60,4 +68,11 @@ public class FlagTest {
 //            assertEquals(flag.get(), flag2.get());
 //        }
 //    }
+
+    @Test
+    public void testFlagName() {
+        String flagName = PlotFlag.getFlagName(UseFlag.class);
+        assertEquals("use", flagName);
+    }
+
 }

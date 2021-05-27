@@ -21,16 +21,16 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.MathMan;
-import org.jetbrains.annotations.NotNull;
+import com.plotsquared.core.util.TimeUtil;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class KeepFlag extends PlotFlag<Object, KeepFlag> {
 
@@ -41,30 +41,29 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
      *
      * @param value Flag value
      */
-    protected KeepFlag(@NotNull Object value) {
-        super(value, Captions.FLAG_CATEGORY_MIXED, Captions.FLAG_DESCRIPTION_KEEP);
+    protected KeepFlag(@NonNull Object value) {
+        super(value, TranslatableCaption.of("flags.flag_category_mixed"), TranslatableCaption.of("flags.flag_description_keep"));
     }
 
-    @Override public KeepFlag parse(@NotNull String input) throws FlagParseException {
+    @Override
+    public KeepFlag parse(@NonNull String input) throws FlagParseException {
         if (MathMan.isInteger(input)) {
             final long value = Long.parseLong(input);
             if (value < 0) {
-                throw new FlagParseException(this, input, Captions.FLAG_ERROR_KEEP);
+                throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_keep"));
             } else {
                 return flagOf(value);
             }
         }
-        switch (input.toLowerCase()) {
-            case "true":
-                return flagOf(true);
-            case "false":
-                return flagOf(false);
-            default:
-                return flagOf(MainUtil.timeToSec(input) * 1000 + System.currentTimeMillis());
-        }
+        return switch (input.toLowerCase()) {
+            case "true" -> flagOf(true);
+            case "false" -> flagOf(false);
+            default -> flagOf(TimeUtil.timeToSec(input) * 1000 + System.currentTimeMillis());
+        };
     }
 
-    @Override public KeepFlag merge(@NotNull Object newValue) {
+    @Override
+    public KeepFlag merge(@NonNull Object newValue) {
         if (newValue.equals(true)) {
             return flagOf(true);
         } else if (newValue.equals(false)) {
@@ -85,15 +84,18 @@ public class KeepFlag extends PlotFlag<Object, KeepFlag> {
         }
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return getValue().toString();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "3w 4d 2h";
     }
 
-    @Override protected KeepFlag flagOf(@NotNull Object value) {
+    @Override
+    protected KeepFlag flagOf(@NonNull Object value) {
         return new KeepFlag(value);
     }
 

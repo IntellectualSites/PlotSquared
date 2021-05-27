@@ -21,98 +21,150 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotChangeOwnerEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 @CommandDeclaration(command = "setowner",
-    permission = "plots.set.owner",
-    description = "Set the plot owner",
-    usage = "/plot setowner <player>",
-    aliases = {"owner", "so", "seto"},
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE,
-    confirmation = true)
+        permission = "plots.set.owner",
+        usage = "/plot setowner <player>",
+        aliases = {"owner", "so", "seto"},
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE,
+        confirmation = true)
 public class Owner extends SetCommand {
 
-    @Override public boolean set(final PlotPlayer player, final Plot plot, String value) {
+    private final EventDispatcher eventDispatcher;
+
+    @Inject
+    public Owner(final @NonNull EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+
+    @Override
+    public boolean set(final PlotPlayer<?> player, final Plot plot, String value) {
         if (value == null || value.isEmpty()) {
-            Captions.SET_OWNER_MISSING_PLAYER.send(player);
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot setowner <owner>")
+            );
             return false;
         }
         Set<Plot> plots = plot.getConnectedPlots();
 
         final Consumer<UUID> uuidConsumer = uuid -> {
             if (uuid == null && !value.equalsIgnoreCase("none") && !value.equalsIgnoreCase("null")
-                && !value.equalsIgnoreCase("-")) {
-                Captions.INVALID_PLAYER.send(player, value);
+                    && !value.equalsIgnoreCase("-")) {
+                player.sendMessage(
+                        TranslatableCaption.of("errors.invalid_player"),
+                        Template.of("value", value)
+                );
                 return;
             }
-            PlotChangeOwnerEvent event = PlotSquared.get().getEventDispatcher()
-                .callOwnerChange(player, plot, plot.hasOwner() ? plot.getOwnerAbs() : null, uuid,
-                    plot.hasOwner());
+            PlotChangeOwnerEvent event = this.eventDispatcher.callOwnerChange(player,
+                    plot,
+                    plot.hasOwner() ? plot.getOwnerAbs() : null,
+                    uuid,
+                    plot.hasOwner()
+            );
             if (event.getEventResult() == Result.DENY) {
-                sendMessage(player, Captions.EVENT_DENIED, "Owner change");
+                player.sendMessage(
+                        TranslatableCaption.of("events.event_denied"),
+                        Template.of("value", "Owner change")
+                );
                 return;
             }
             uuid = event.getNewOwner();
             boolean force = event.getEventResult() == Result.FORCE;
             if (uuid == null) {
                 if (!force && !Permissions
-                    .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER.getTranslated(),
-                        true)) {
+                        .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER,
+                                true
+                        )) {
                     return;
                 }
-                PlotUnlinkEvent unlinkEvent = PlotSquared.get().getEventDispatcher()
-                    .callUnlink(plot.getArea(), plot, false, false, PlotUnlinkEvent.REASON.NEW_OWNER);
+                PlotUnlinkEvent unlinkEvent = this.eventDispatcher.callUnlink(
+                        plot.getArea(),
+                        plot,
+                        false,
+                        false,
+                        PlotUnlinkEvent.REASON.NEW_OWNER
+                );
                 if (unlinkEvent.getEventResult() == Result.DENY) {
-                    sendMessage(player, Captions.EVENT_DENIED, "Unlink on owner change");
+                    player.sendMessage(
+                            TranslatableCaption.of("events.event_denied"),
+                            Template.of("value", "Unlink on owner change")
+                    );
                     return;
                 }
-                plot.unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
+                plot.getPlotModificationManager().unlinkPlot(unlinkEvent.isCreateRoad(), unlinkEvent.isCreateRoad());
                 Set<Plot> connected = plot.getConnectedPlots();
                 for (Plot current : connected) {
                     current.unclaim();
-                    current.removeSign();
+                    current.getPlotModificationManager().removeSign();
                 }
-                MainUtil.sendMessage(player, Captions.SET_OWNER);
+                player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                 return;
             }
-            final PlotPlayer other = PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuid);
+            final PlotPlayer<?> other = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
             if (plot.isOwner(uuid)) {
-                Captions.ALREADY_OWNER.send(player, MainUtil.getName(uuid));
+                player.sendMessage(
+                        TranslatableCaption.of("member.already_owner"),
+                        Template.of("player", PlayerManager.getName(uuid))
+                );
                 return;
             }
             if (!force && !Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
+                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
                 if (other == null) {
-                    Captions.INVALID_PLAYER_OFFLINE.send(player, value);
+                    player.sendMessage(
+                            TranslatableCaption.of("invalid_player_offline"),
+                            Template.of("player", PlayerManager.getName(uuid))
+                    );
                     return;
                 }
                 int size = plots.size();
                 int currentPlots = (Settings.Limit.GLOBAL ?
-                    other.getPlotCount() :
-                    other.getPlotCount(plot.getWorldName())) + size;
-                if (currentPlots > other.getAllowedPlots()) {
-                    sendMessage(player, Captions.CANT_TRANSFER_MORE_PLOTS);
-                    return;
+                        other.getPlotCount() :
+                        other.getPlotCount(plot.getWorldName())) + size;
+                try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
+                    int grants;
+                    if (currentPlots >= other.getAllowedPlots()) {
+                        if (metaDataAccess.isPresent()) {
+                            grants = metaDataAccess.get().orElse(0);
+                            if (grants <= 0) {
+                                metaDataAccess.remove();
+                                player.sendMessage(TranslatableCaption.of("permission.cant_transfer_more_plots"));
+                                return;
+                            }
+                        }
+                    }
                 }
             }
             final UUID finalUUID = uuid;
@@ -120,16 +172,19 @@ public class Owner extends SetCommand {
                 final boolean removeDenied = plot.isDenied(finalUUID);
                 Runnable run = () -> {
                     if (plot.setOwner(finalUUID, player)) {
-                        if (removeDenied)
+                        if (removeDenied) {
                             plot.removeDenied(finalUUID);
-                        plot.setSign(finalName);
-                        MainUtil.sendMessage(player, Captions.SET_OWNER);
+                        }
+                        plot.getPlotModificationManager().setSign(finalName);
+                        player.sendMessage(TranslatableCaption.of("owner.set_owner"));
                         if (other != null) {
-                            MainUtil.sendMessage(other, Captions.NOW_OWNER,
-                                plot.getArea() + ";" + plot.getId());
+                            other.sendMessage(
+                                    TranslatableCaption.of("owner.now_owner"),
+                                    Template.of("plot", plot.getArea() + ";" + plot.getId())
+                            );
                         }
                     } else {
-                        MainUtil.sendMessage(player, Captions.SET_OWNER_CANCELLED);
+                        player.sendMessage(TranslatableCaption.of("owner.set_owner_cancelled"));
                     }
                 };
                 if (hasConfirmation(player)) {
@@ -150,4 +205,10 @@ public class Owner extends SetCommand {
         }
         return true;
     }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+    }
+
 }

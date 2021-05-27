@@ -21,11 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
 
 import com.plotsquared.core.PlotSquared;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +42,8 @@ import java.sql.Statement;
  */
 public class SQLite extends Database {
 
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + SQLite.class.getSimpleName());
+
     private final String dbLocation;
     private Connection connection;
 
@@ -52,19 +56,20 @@ public class SQLite extends Database {
         this.dbLocation = dbLocation.getAbsolutePath();
     }
 
-    @Override public Connection openConnection() throws SQLException, ClassNotFoundException {
+    @Override
+    public Connection openConnection() throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             return this.connection;
         }
-        if (!PlotSquared.get().IMP.getDirectory().exists()) {
-            PlotSquared.get().IMP.getDirectory().mkdirs();
+        if (!PlotSquared.platform().getDirectory().exists()) {
+            PlotSquared.platform().getDirectory().mkdirs();
         }
         File file = new File(this.dbLocation);
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException ignored) {
-                PlotSquared.debug("&cUnable to create database!");
+                logger.error("Unable to create database");
             }
         }
         Class.forName("org.sqlite.JDBC");
@@ -72,15 +77,18 @@ public class SQLite extends Database {
         return this.connection;
     }
 
-    @Override public boolean checkConnection() throws SQLException {
+    @Override
+    public boolean checkConnection() throws SQLException {
         return (this.connection != null) && !this.connection.isClosed();
     }
 
-    @Override public Connection getConnection() {
+    @Override
+    public Connection getConnection() {
         return this.connection;
     }
 
-    @Override public boolean closeConnection() throws SQLException {
+    @Override
+    public boolean closeConnection() throws SQLException {
         if (this.connection == null) {
             return false;
         }
@@ -89,7 +97,8 @@ public class SQLite extends Database {
         return true;
     }
 
-    @Override public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
+    @Override
+    public ResultSet querySQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
@@ -98,7 +107,8 @@ public class SQLite extends Database {
         }
     }
 
-    @Override public int updateSQL(String query) throws SQLException, ClassNotFoundException {
+    @Override
+    public int updateSQL(String query) throws SQLException, ClassNotFoundException {
         if (checkConnection()) {
             openConnection();
         }
@@ -107,9 +117,11 @@ public class SQLite extends Database {
         }
     }
 
-    @Override public Connection forceConnection() throws SQLException, ClassNotFoundException {
+    @Override
+    public Connection forceConnection() throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
         this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.dbLocation);
         return this.connection;
     }
+
 }

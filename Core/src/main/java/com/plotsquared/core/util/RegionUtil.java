@@ -21,25 +21,69 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
+import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class RegionUtil {
+
+    public static @NonNull Location[] getCorners(
+            final @NonNull String world,
+            final @NonNull CuboidRegion region
+    ) {
+        final BlockVector3 min = region.getMinimumPoint();
+        final BlockVector3 max = region.getMaximumPoint();
+        return new Location[]{Location.at(world, min), Location.at(world, max)};
+    }
+
+    public static @NonNull Location[] getCorners(String world, Collection<CuboidRegion> regions) {
+        CuboidRegion aabb = getAxisAlignedBoundingBox(regions);
+        return getCorners(world, aabb);
+    }
+
+    /**
+     * Create a minimum {@link CuboidRegion} containing all given regions.
+     *
+     * @param regions The regions the bounding box should contain.
+     * @return a CuboidRegion that contains all given regions.
+     */
+    public static @NonNull CuboidRegion getAxisAlignedBoundingBox(Iterable<CuboidRegion> regions) {
+        Iterator<CuboidRegion> iterator = regions.iterator();
+        if (!iterator.hasNext()) {
+            throw new IllegalArgumentException("No regions given");
+        }
+        CuboidRegion next = iterator.next();
+        BlockVector3 min = next.getMinimumPoint();
+        BlockVector3 max = next.getMaximumPoint();
+
+        while (iterator.hasNext()) {
+            next = iterator.next();
+            // as max >= min, this is enough to check
+            min = min.getMinimum(next.getMinimumPoint());
+            max = max.getMaximum(next.getMaximumPoint());
+        }
+        return new CuboidRegion(min, max);
+    }
+
     public static CuboidRegion createRegion(int pos1x, int pos2x, int pos1z, int pos2z) {
         return createRegion(pos1x, pos2x, 0, Plot.MAX_HEIGHT - 1, pos1z, pos2z);
     }
 
-    public static CuboidRegion createRegion(int pos1x, int pos2x, int pos1y, int pos2y, int pos1z,
-        int pos2z) {
+    public static CuboidRegion createRegion(
+            int pos1x, int pos2x, int pos1y, int pos2y, int pos1z,
+            int pos2z
+    ) {
         BlockVector3 pos1 = BlockVector3.at(pos1x, pos1y, pos1z);
         BlockVector3 pos2 = BlockVector3.at(pos2x, pos2y, pos2z);
         return new CuboidRegion(pos1, pos2);
@@ -55,10 +99,10 @@ public class RegionUtil {
         BlockVector3 min = region.getMinimumPoint();
         BlockVector3 max = region.getMaximumPoint();
         return x >= min.getX() && x <= max.getX() && z >= min.getZ() && z <= max.getZ() && y >= min
-            .getY() && y <= max.getY();
+                .getY() && y <= max.getY();
     }
 
-    @NotNull public static Rectangle2D toRectangle(@NotNull final CuboidRegion region) {
+    public static @NonNull Rectangle2D toRectangle(final @NonNull CuboidRegion region) {
         final BlockVector2 min = region.getMinimumPoint().toBlockVector2();
         final BlockVector2 max = region.getMaximumPoint().toBlockVector2();
         return new Rectangle2D.Double(min.getX(), min.getZ(), max.getX(), max.getZ());
@@ -73,6 +117,7 @@ public class RegionUtil {
         BlockVector3 otherMax = other.getMaximumPoint();
 
         return otherMin.getX() <= regionMax.getX() && otherMax.getX() >= regionMin.getX()
-            && otherMin.getZ() <= regionMax.getZ() && otherMax.getZ() >= regionMin.getZ();
+                && otherMin.getZ() <= regionMax.getZ() && otherMax.getZ() >= regionMin.getZ();
     }
+
 }

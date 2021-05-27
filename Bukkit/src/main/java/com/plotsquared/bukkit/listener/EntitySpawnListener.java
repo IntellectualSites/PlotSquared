@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
@@ -54,40 +54,44 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
 public class EntitySpawnListener implements Listener {
 
     private final static String KEY = "P2";
     private static boolean ignoreTP = false;
+    private static boolean hasPlotArea = false;
+    private static String areaName = null;
 
     public static void testNether(final Entity entity) {
-        @NotNull World world = entity.getWorld();
-        if (world.getEnvironment() != World.Environment.NETHER
-            && world.getEnvironment() != World.Environment.THE_END) {
+        @NonNull World world = entity.getWorld();
+        if (world.getEnvironment() != World.Environment.NETHER && world.getEnvironment() != World.Environment.THE_END) {
             return;
         }
         test(entity);
     }
 
     public static void testCreate(final Entity entity) {
-        @NotNull World world = entity.getWorld();
-        if (!PlotSquared.get().hasPlotArea(entity.getWorld().getName())) {
+        @NonNull World world = entity.getWorld();
+        if (areaName == world.getName()) {
+        } else {
+            areaName = world.getName();
+            hasPlotArea = PlotSquared.get().getPlotAreaManager().hasPlotArea(areaName);
+        }
+        if (!hasPlotArea) {
             return;
         }
         test(entity);
     }
 
     public static void test(Entity entity) {
-        @NotNull World world = entity.getWorld();
+        @NonNull World world = entity.getWorld();
         List<MetadataValue> meta = entity.getMetadata(KEY);
         if (meta.isEmpty()) {
-            if (PlotSquared.get().hasPlotArea(world.getName())) {
-                entity.setMetadata(KEY,
-                    new FixedMetadataValue((Plugin) PlotSquared.get().IMP, entity.getLocation()));
+            if (PlotSquared.get().getPlotAreaManager().hasPlotArea(world.getName())) {
+                entity.setMetadata(KEY, new FixedMetadataValue((Plugin) PlotSquared.platform(), entity.getLocation()));
             }
         } else {
             org.bukkit.Location origin = (org.bukkit.Location) meta.get(0).value();
@@ -121,7 +125,7 @@ public class EntitySpawnListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void creatureSpawnEvent(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
-        Location location = BukkitUtil.getLocation(entity.getLocation());
+        Location location = BukkitUtil.adapt(entity.getLocation());
         PlotArea area = location.getPlotArea();
         if (!location.isPlotArea()) {
             return;
@@ -158,32 +162,36 @@ public class EntitySpawnListener implements Listener {
                 }
             case SHULKER:
                 if (!entity.hasMetadata("shulkerPlot")) {
-                    entity.setMetadata("shulkerPlot",
-                        new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot.getId()));
+                    entity.setMetadata("shulkerPlot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot.getId()));
                 }
         }
     }
 
-    @EventHandler public void onChunkLoad(ChunkLoadEvent event) {
-        @NotNull Chunk chunk = event.getChunk();
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
+        @NonNull Chunk chunk = event.getChunk();
         for (final Entity entity : chunk.getEntities()) {
             testCreate(entity);
         }
     }
 
-    @EventHandler public void onVehicle(VehicleUpdateEvent event) {
+    @EventHandler
+    public void onVehicle(VehicleUpdateEvent event) {
         testNether(event.getVehicle());
     }
 
-    @EventHandler public void onVehicle(VehicleCreateEvent event) {
+    @EventHandler
+    public void onVehicle(VehicleCreateEvent event) {
         testCreate(event.getVehicle());
     }
 
-    @EventHandler public void onVehicle(VehicleBlockCollisionEvent event) {
+    @EventHandler
+    public void onVehicle(VehicleBlockCollisionEvent event) {
         testNether(event.getVehicle());
     }
 
-    @EventHandler public void onTeleport(EntityTeleportEvent event) {
+    @EventHandler
+    public void onTeleport(EntityTeleportEvent event) {
         Entity ent = event.getEntity();
         if (ent instanceof Vehicle || ent instanceof ArmorStand) {
             testNether(event.getEntity());
@@ -195,9 +203,11 @@ public class EntitySpawnListener implements Listener {
         testNether(event.getVehicle());
     }
 
-    @EventHandler public void spawn(CreatureSpawnEvent event) {
+    @EventHandler
+    public void spawn(CreatureSpawnEvent event) {
         if (event.getEntityType() == EntityType.ARMOR_STAND) {
             testCreate(event.getEntity());
         }
     }
+
 }

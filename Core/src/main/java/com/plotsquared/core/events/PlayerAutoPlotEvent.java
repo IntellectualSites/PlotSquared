@@ -21,26 +21,23 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEvent {
 
+    private final PlotPlayer<?> player;
+    private final PlotArea plotArea;
     private Result eventResult;
     private String schematic;
-    @Getter private PlotPlayer player;
-    @Getter private PlotArea plotArea;
-    @Getter @Setter private int size_x;
-    @Getter @Setter private int size_z;
+    private int size_x;
+    private int size_z;
 
     /**
      * PlayerAutoPlotEvent: called when a player attempts to auto claim a plot.
@@ -51,8 +48,10 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      * @param size_x    The size of the auto area
      * @param size_z    The size of the auto area
      */
-    public PlayerAutoPlotEvent(PlotPlayer player, PlotArea plotArea, @Nullable String schematic,
-        int size_x, int size_z) {
+    public PlayerAutoPlotEvent(
+            PlotPlayer<?> player, PlotArea plotArea, @Nullable String schematic,
+            int size_x, int size_z
+    ) {
         super(null);
         this.player = player;
         this.plotArea = plotArea;
@@ -66,22 +65,51 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
      *
      * @return schematic string
      */
-    @Nullable public String getSchematic() {
+    public @Nullable String getSchematic() {
         return this.schematic;
     }
 
     /**
      * Set the schematic string used in the claim.
+     *
+     * @param schematic the schematic name
      */
     public void setSchematic(String schematic) {
         this.schematic = schematic;
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
+    public PlotPlayer<?> getPlayer() {
+        return this.player;
+    }
+
+    public PlotArea getPlotArea() {
+        return this.plotArea;
+    }
+
+    public int getSize_x() {
+        return this.size_x;
+    }
+
+    public void setSize_x(int size_x) {
+        this.size_x = size_x;
+    }
+
+    public int getSize_z() {
+        return this.size_z;
+    }
+
+    public void setSize_z(int size_z) {
+        this.size_z = size_z;
+    }
+
 }

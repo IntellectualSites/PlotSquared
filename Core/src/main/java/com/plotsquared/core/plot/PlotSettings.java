@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
 
@@ -29,8 +29,6 @@ import com.google.common.collect.ImmutableList;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.plot.comment.PlotComment;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,19 +47,19 @@ public class PlotSettings {
     /**
      * Merged plots.
      */
-    @Getter private boolean[] merged = new boolean[] {false, false, false, false};
+    private boolean[] merged = new boolean[]{false, false, false, false};
     /**
      * Plot alias.
      */
-    @Getter @Setter private String alias = "";
+    private String alias = "";
     /**
      * The ratings for a plot.
      */
-    @Setter private HashMap<UUID, Integer> ratings;
+    private HashMap<UUID, Integer> ratings;
     /**
      * Plot comments.
      */
-    @Setter private List<PlotComment> comments = null;
+    private List<PlotComment> comments = null;
     /**
      * Home Position.
      */
@@ -77,15 +75,15 @@ public class PlotSettings {
         return this.merged[direction];
     }
 
-    public void setMerged(boolean[] merged) {
-        this.merged = merged;
-    }
-
     public Map<UUID, Integer> getRatings() {
         if (this.ratings == null) {
             this.ratings = new HashMap<>();
         }
         return this.ratings;
+    }
+
+    public void setRatings(HashMap<UUID, Integer> ratings) {
+        this.ratings = ratings;
     }
 
     public boolean setMerged(int direction, boolean merged) {
@@ -116,19 +114,20 @@ public class PlotSettings {
 
     public void setPosition(BlockLoc position) {
         if (position != null && position.getX() == 0 && position.getY() == 0
-            && position.getZ() == 0) {
+                && position.getZ() == 0) {
             position = null;
         }
         this.position = position;
     }
 
-    @SuppressWarnings({"UnstableApiUsage"}) public List<PlotComment> getComments(String inbox) {
+    @SuppressWarnings({"UnstableApiUsage"})
+    public List<PlotComment> getComments(String inbox) {
         if (this.comments == null) {
             return Collections.emptyList();
         }
 
         return this.comments.stream().filter(comment -> comment.inbox.equals(inbox))
-            .collect(ImmutableList.toImmutableList());
+                .collect(ImmutableList.toImmutableList());
     }
 
     boolean removeComment(PlotComment comment) {
@@ -148,4 +147,25 @@ public class PlotSettings {
         }
         this.comments.add(comment);
     }
+
+    public boolean[] getMerged() {
+        return this.merged;
+    }
+
+    public void setMerged(boolean[] merged) {
+        this.merged = merged;
+    }
+
+    public String getAlias() {
+        return this.alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public void setComments(List<PlotComment> comments) {
+        this.comments = comments;
+    }
+
 }

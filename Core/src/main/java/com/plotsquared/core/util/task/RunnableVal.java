@@ -21,11 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.task;
 
 public abstract class RunnableVal<T> implements Runnable {
+
     public T value;
 
     public RunnableVal() {
@@ -35,9 +36,11 @@ public abstract class RunnableVal<T> implements Runnable {
         this.value = value;
     }
 
-    @Override public void run() {
+    @Override
+    public void run() {
         run(this.value);
     }
 
     public abstract void run(T value);
+
 }

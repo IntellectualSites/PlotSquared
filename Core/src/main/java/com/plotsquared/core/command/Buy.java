@@ -21,86 +21,127 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
 import com.plotsquared.core.util.EconHandler;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @CommandDeclaration(command = "buy",
-    description = "Buy the plot you are standing on",
-    usage = "/plot buy",
-    permission = "plots.buy",
-    category = CommandCategory.CLAIMING,
-    requiredType = RequiredType.NONE)
+        usage = "/plot buy",
+        permission = "plots.buy",
+        category = CommandCategory.CLAIMING,
+        requiredType = RequiredType.NONE)
 public class Buy extends Command {
 
-    public Buy() {
+    private final EventDispatcher eventDispatcher;
+    private final EconHandler econHandler;
+
+    @Inject
+    public Buy(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull EconHandler econHandler
+    ) {
         super(MainCommand.getInstance(), true);
+        this.eventDispatcher = eventDispatcher;
+        this.econHandler = econHandler;
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        final RunnableVal2<Command, CommandResult> whenDone) {
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            final RunnableVal2<Command, CommandResult> whenDone
+    ) {
 
-        check(EconHandler.getEconHandler(), Captions.ECON_DISABLED);
+        PlotArea area = player.getPlotAreaAbs();
+        check(area, TranslatableCaption.of("errors.not_in_plot_world"));
+        check(this.econHandler.isEnabled(area), TranslatableCaption.of("economy.econ_disabled"));
         final Plot plot;
         if (args.length != 0) {
-            checkTrue(args.length == 1, Captions.COMMAND_SYNTAX, getUsage());
-            plot = check(MainUtil.getPlotFromString(player, args[0], true), null);
+            if (args.length != 1) {
+                sendUsage(player);
+                return CompletableFuture.completedFuture(false);
+            }
+            plot = check(Plot.getPlotFromString(player, args[0], true), null);
         } else {
-            plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
+            plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         }
-        checkTrue(plot.hasOwner(), Captions.PLOT_UNOWNED);
-        checkTrue(!plot.isOwner(player.getUUID()), Captions.CANNOT_BUY_OWN);
+        checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
+        checkTrue(!plot.isOwner(player.getUUID()), TranslatableCaption.of("economy.cannot_buy_own"));
         Set<Plot> plots = plot.getConnectedPlots();
-        checkTrue(player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
-            Captions.CANT_CLAIM_MORE_PLOTS);
+        checkTrue(
+                player.getPlotCount() + plots.size() <= player.getAllowedPlots(),
+                TranslatableCaption.of("permission.cant_claim_more_plots"),
+                Template.of("amount", String.valueOf(player.getAllowedPlots()))
+        );
         double price = plot.getFlag(PriceFlag.class);
         if (price <= 0) {
-            throw new CommandException(Captions.NOT_FOR_SALE);
+            throw new CommandException(TranslatableCaption.of("economy.not_for_sale"));
         }
-        checkTrue(player.getMoney() >= price, Captions.CANNOT_AFFORD_PLOT);
-        player.withdraw(price);
+        checkTrue(this.econHandler.isSupported(),
+                TranslatableCaption.of("economy.vault_not_found")
+        );
+        checkTrue(
+                this.econHandler.getMoney(player) >= price,
+                TranslatableCaption.of("economy.cannot_afford_plot"),
+                Template.of("money", this.econHandler.format(price)),
+                Template.of("balance", this.econHandler.format(this.econHandler.getMoney(player)))
+        );
+        this.econHandler.withdrawMoney(player, price);
         // Failure
         // Success
         confirm.run(this, () -> {
-            Captions.REMOVED_BALANCE.send(player, price);
+            player.sendMessage(
+                    TranslatableCaption.of("economy.removed_balance"),
+                    Template.of("money", this.econHandler.format(price))
+            );
 
-            EconHandler.getEconHandler().depositMoney(PlotSquared.imp().getPlayerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
+            this.econHandler.depositMoney(PlotSquared.platform().playerManager().getOfflinePlayer(plot.getOwnerAbs()), price);
 
-            PlotPlayer owner = PlotSquared.imp().getPlayerManager().getPlayerIfExists(plot.getOwnerAbs());
+            PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {
-                Captions.PLOT_SOLD.send(owner, plot.getId(), player.getName(), price);
+                owner.sendMessage(
+                        TranslatableCaption.of("economy.plot_sold"),
+                        Template.of("plot", plot.getId().toString()),
+                        Template.of("player", player.getName()),
+                        Template.of("price", this.econHandler.format(price))
+                );
             }
             PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(PriceFlag.class);
-            PlotFlagRemoveEvent event =
-                PlotSquared.get().getEventDispatcher().callFlagRemove(plotFlag, plot);
+            PlotFlagRemoveEvent event = this.eventDispatcher.callFlagRemove(plotFlag, plot);
             if (event.getEventResult() != Result.DENY) {
                 plot.removeFlag(event.getFlag());
             }
             plot.setOwner(player.getUUID());
-            Captions.CLAIMED.send(player);
+            player.sendMessage(
+                    TranslatableCaption.of("working.claimed"),
+                    Template.of("plot", plot.getId().toString())
+            );
             whenDone.run(Buy.this, CommandResult.SUCCESS);
         }, () -> {
-            player.deposit(price);
+            this.econHandler.depositMoney(player, price);
             whenDone.run(Buy.this, CommandResult.FAILURE);
         });
         return CompletableFuture.completedFuture(true);
     }
+
 }

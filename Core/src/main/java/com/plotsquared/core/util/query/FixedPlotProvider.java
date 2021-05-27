@@ -21,12 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,11 +35,12 @@ class FixedPlotProvider implements PlotProvider {
 
     private final Plot plot;
 
-    FixedPlotProvider(@NotNull final Plot plot) {
+    FixedPlotProvider(final @NonNull Plot plot) {
         this.plot = plot;
     }
 
-    @Override public Collection<Plot> getPlots() {
+    @Override
+    public Collection<Plot> getPlots() {
         return Collections.singleton(plot);
     }
 

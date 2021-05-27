@@ -21,44 +21,46 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.CaptionUtility;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.StringMan;
+import net.kyori.adventure.text.minimessage.Template;
 
 public abstract class SetCommand extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
-            if (!Permissions.hasPermission(player, CaptionUtility
-                .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
-                        getFullId()));
-                MainUtil.sendMessage(player, Captions.PLOT_NOT_CLAIMED);
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                );
+                player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                 return false;
             }
         }
         if (!plot.isOwner(player.getUUID())) {
-            if (!Permissions.hasPermission(player, CaptionUtility
-                .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(), getFullId()))) {
-                MainUtil.sendMessage(player, Captions.NO_PERMISSION, CaptionUtility
-                    .format(player, Captions.PERMISSION_ADMIN_COMMAND.getTranslated(),
-                        getFullId()));
-                MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))) {
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", Permission.PERMISSION_ADMIN_COMMAND.format(getFullId()))
+                );
+                player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                 return false;
             }
         }
@@ -68,6 +70,6 @@ public abstract class SetCommand extends SubCommand {
         return set(player, plot, StringMan.join(args, " "));
     }
 
-    public abstract boolean set(PlotPlayer player, Plot plot, String value);
+    public abstract boolean set(PlotPlayer<?> player, Plot plot, String value);
 
 }

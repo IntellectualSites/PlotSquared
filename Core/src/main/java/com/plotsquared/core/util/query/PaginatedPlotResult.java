@@ -21,13 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +40,7 @@ public final class PaginatedPlotResult {
     private final List<Plot> plots;
     private final int pageSize;
 
-    PaginatedPlotResult(@NotNull final List<Plot> plots, final int pageSize) {
+    PaginatedPlotResult(final @NonNull List<Plot> plots, final int pageSize) {
         this.plots = plots;
         this.pageSize = pageSize;
     }

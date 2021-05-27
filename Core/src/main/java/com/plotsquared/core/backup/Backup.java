@@ -21,14 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,11 +35,18 @@ import java.nio.file.Path;
  * Object representing a plot backup. This does not actually contain the
  * backup itself, it is just a pointer to an available backup
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE) @Getter public class Backup {
+public class Backup {
 
     private final BackupProfile owner;
     private final long creationTime;
-    @Nullable private final Path file;
+    @Nullable
+    private final Path file;
+
+    Backup(final BackupProfile owner, final long creationTime, final Path file) {
+        this.owner = owner;
+        this.creationTime = creationTime;
+        this.file = file;
+    }
 
     /**
      * Delete the backup
@@ -55,6 +59,18 @@ import java.nio.file.Path;
                 e.printStackTrace();
             }
         }
+    }
+
+    public BackupProfile getOwner() {
+        return this.owner;
+    }
+
+    public long getCreationTime() {
+        return this.creationTime;
+    }
+
+    public @Nullable Path getFile() {
+        return this.file;
     }
 
 }

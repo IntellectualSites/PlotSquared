@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.generator;
 
@@ -29,37 +29,45 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.location.ChunkWrapper;
 import com.plotsquared.core.plot.PlotArea;
-import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.queue.LocalBlockQueue;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.queue.QueueCoordinator;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Random;
 
 final class BlockStatePopulator extends BlockPopulator {
 
     private final IndependentPlotGenerator plotGenerator;
-    private LocalBlockQueue queue;
+    private final PlotAreaManager plotAreaManager;
 
-    public BlockStatePopulator(IndependentPlotGenerator plotGenerator) {
+    private QueueCoordinator queue;
+
+    public BlockStatePopulator(
+            final @NonNull IndependentPlotGenerator plotGenerator,
+            final @NonNull PlotAreaManager plotAreaManager
+    ) {
         this.plotGenerator = plotGenerator;
+        this.plotAreaManager = plotAreaManager;
     }
 
     @Override
-    public void populate(@NotNull final World world, @NotNull final Random random,
-        @NotNull final Chunk source) {
+    public void populate(final @NonNull World world, final @NonNull Random random, final @NonNull Chunk source) {
         if (this.queue == null) {
-            this.queue = GlobalBlockQueue.IMP.getNewQueue(world.getName(), false);
+            this.queue = PlotSquared.platform().globalBlockQueue().getNewQueue(new BukkitWorld(world));
         }
-        final PlotArea area = PlotSquared.get().getPlotArea(world.getName(), null);
-        final ChunkWrapper wrap =
-            new ChunkWrapper(area.getWorldName(), source.getX(), source.getZ());
-        final ScopedLocalBlockQueue chunk = this.queue.getForChunk(wrap.x, wrap.z);
+        final PlotArea area = this.plotAreaManager.getPlotArea(world.getName(), null);
+        if (area == null) {
+            return;
+        }
+        final ChunkWrapper wrap = new ChunkWrapper(area.getWorldName(), source.getX(), source.getZ());
+        final ScopedQueueCoordinator chunk = this.queue.getForChunk(wrap.x, wrap.z);
         if (this.plotGenerator.populateChunk(chunk, area)) {
-            this.queue.flush();
+            this.queue.enqueue();
         }
     }
 

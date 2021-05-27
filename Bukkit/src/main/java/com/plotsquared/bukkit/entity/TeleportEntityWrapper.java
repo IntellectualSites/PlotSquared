@@ -21,11 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
 
-import com.plotsquared.bukkit.BukkitMain;
+import com.plotsquared.bukkit.BukkitPlatform;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -44,7 +44,8 @@ public class TeleportEntityWrapper extends EntityWrapper {
         super(entity);
     }
 
-    @Override public Entity spawn(final World world, final int xOffset, final int zOffset) {
+    @Override
+    public Entity spawn(final World world, final int xOffset, final int zOffset) {
         if (!getEntity().getLocation().getChunk().equals(oldLocation.getChunk())) {
             final Location oldLocation = this.oldLocation.clone();
             oldLocation.add(xOffset, 0, xOffset);
@@ -53,12 +54,13 @@ public class TeleportEntityWrapper extends EntityWrapper {
             getEntity().setInvulnerable(invulnerableOld);
             getEntity().setFireTicks(fireTicksOld);
             getEntity().setTicksLived(livingTicksOld);
-            getEntity().removeMetadata("ps-tmp-teleport", BukkitMain.getPlugin(BukkitMain.class));
+            getEntity().removeMetadata("ps-tmp-teleport", BukkitPlatform.getPlugin(BukkitPlatform.class));
         }
         return getEntity();
     }
 
-    @Override public void saveEntity() {
+    @Override
+    public void saveEntity() {
         if (getEntity().hasMetadata("ps-tmp-teleport")) {
             this.oldLocation = (Location) this.getEntity().getMetadata("ps-tmp-teleport").get(0);
         } else {
@@ -67,9 +69,9 @@ public class TeleportEntityWrapper extends EntityWrapper {
 
         // To account for offsets in the chunk manager
         this.oldLocation = oldLocation.clone();
-        this.oldLocation.setX(this.x);
-        this.oldLocation.setY(this.y);
-        this.oldLocation.setZ(this.z);
+        this.oldLocation.setX(this.getX());
+        this.oldLocation.setY(this.getY());
+        this.oldLocation.setZ(this.getZ());
 
         this.gravityOld = this.getEntity().hasGravity();
         this.getEntity().setGravity(false);
@@ -77,11 +79,13 @@ public class TeleportEntityWrapper extends EntityWrapper {
         this.getEntity().setInvulnerable(true);
         this.fireTicksOld = this.getEntity().getFireTicks();
         this.livingTicksOld = this.getEntity().getTicksLived();
-        this.getEntity().setMetadata("ps-tmp-teleport",
-            new FixedMetadataValue(BukkitMain.getPlugin(BukkitMain.class), oldLocation));
+        this.getEntity().setMetadata(
+                "ps-tmp-teleport",
+                new FixedMetadataValue(BukkitPlatform.getPlugin(BukkitPlatform.class), oldLocation)
+        );
         final Chunk newChunk = getNewChunk();
         this.getEntity().teleport(
-            new Location(newChunk.getWorld(), newChunk.getX() << 4, 5000, newChunk.getZ() << 4));
+                new Location(newChunk.getWorld(), newChunk.getX() << 4, 5000, newChunk.getZ() << 4));
     }
 
     private Chunk getNewChunk() {
@@ -115,4 +119,5 @@ public class TeleportEntityWrapper extends EntityWrapper {
     private Chunk getChunkRelative(final Chunk chunk, final int dx, final int dz) {
         return chunk.getWorld().getChunkAt(chunk.getX() + dx, chunk.getZ() + dz);
     }
+
 }

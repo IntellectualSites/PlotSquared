@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.listener;
 
@@ -54,36 +54,43 @@ public class WEExtent extends AbstractDelegateExtent {
         this.mask = mask;
     }
 
-    @Override public boolean setBlock(BlockVector3 location, BlockStateHolder block)
-        throws WorldEditException {
+    @Override
+    public boolean setBlock(BlockVector3 location, BlockStateHolder block)
+            throws WorldEditException {
         return WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())
-            && super.setBlock(location, block);
+                && super.setBlock(location, block);
     }
 
-    @Override public Entity createEntity(Location location, BaseEntity entity) {
+    @Override
+    public Entity createEntity(Location location, BaseEntity entity) {
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
-            location.getBlockZ())) {
+                location.getBlockZ()
+        )) {
             return super.createEntity(location, entity);
         }
         return null;
     }
 
-    @Override public boolean setBiome(BlockVector2 position, BiomeType biome) {
+    @Override
+    public boolean setBiome(BlockVector2 position, BiomeType biome) {
         return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
-            .setBiome(position, biome);
+                .setBiome(position, biome);
     }
 
-    @Override public BlockState getBlock(BlockVector3 location) {
+    @Override
+    public BlockState getBlock(BlockVector3 location) {
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
             return super.getBlock(location);
         }
         return AIRSTATE;
     }
 
-    @Override public BaseBlock getFullBlock(BlockVector3 location) {
+    @Override
+    public BaseBlock getFullBlock(BlockVector3 location) {
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
             return super.getFullBlock(location);
         }
         return AIRBASE;
     }
+
 }

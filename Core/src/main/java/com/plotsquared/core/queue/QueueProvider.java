@@ -21,29 +21,35 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
 
+import com.plotsquared.core.PlotSquared;
+import com.sk89q.worldedit.world.World;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class QueueProvider {
-    public static QueueProvider of(final Class<? extends LocalBlockQueue> primary,
-        final Class<? extends LocalBlockQueue> fallback) {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotSquared.class.getSimpleName());
+
+    public static QueueProvider of(final @NonNull Class<? extends QueueCoordinator> primary) {
         return new QueueProvider() {
 
-            private boolean failed = false;
-
-            @Override public LocalBlockQueue getNewQueue(String world) {
-                if (!failed) {
-                    try {
-                        return (LocalBlockQueue) primary.getConstructors()[0].newInstance(world);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        failed = true;
-                    }
-                }
+            @Override
+            public QueueCoordinator getNewQueue(@NonNull World world) {
                 try {
-                    return (LocalBlockQueue) fallback.getConstructors()[0].newInstance(world);
+                    return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
                 } catch (Throwable e) {
+                    logger.error("Error creating Queue: {} - Does it have the correct constructor(s)?", primary.getName());
+                    if (!primary.getName().contains("com.plotsquared")) {
+                        logger.error(
+                                "It looks like {} is a custom queue. Please look for a plugin in its classpath and report to them.",
+                                primary.getSimpleName()
+                        );
+                    }
                     e.printStackTrace();
                 }
                 return null;
@@ -51,5 +57,12 @@ public abstract class QueueProvider {
         };
     }
 
-    public abstract LocalBlockQueue getNewQueue(String world);
+    /**
+     * Get a queue for the given world
+     *
+     * @param world world
+     * @return new QueueCoordinator
+     */
+    public abstract QueueCoordinator getNewQueue(@NonNull World world);
+
 }

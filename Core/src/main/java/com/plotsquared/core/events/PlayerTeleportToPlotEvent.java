@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
@@ -44,7 +44,7 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
      * @param from   Start location
      * @param plot   Plot to which the player was teleported
      */
-    public PlayerTeleportToPlotEvent(PlotPlayer player, Location from, Plot plot) {
+    public PlayerTeleportToPlotEvent(PlotPlayer<?> player, Location from, Plot plot) {
         super(player, plot);
         this.from = from;
     }
@@ -58,11 +58,14 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
         return this.from;
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
 }

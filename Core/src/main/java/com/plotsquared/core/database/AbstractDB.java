@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
 
@@ -32,7 +32,7 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.task.RunnableVal;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -345,7 +345,7 @@ public interface AbstractDB {
      *
      * @param plot The Plot to get comments from
      */
-    void getComments(@NotNull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
+    void getComments(@NonNull Plot plot, String inbox, RunnableVal<List<PlotComment>> whenDone);
 
     void createPlotAndSettings(Plot plot, Runnable whenDone);
 
@@ -383,4 +383,5 @@ public interface AbstractDB {
     void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max);
 
     void updateTables(int[] oldVersion);
+
 }

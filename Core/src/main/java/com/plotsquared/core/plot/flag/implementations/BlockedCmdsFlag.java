@@ -21,14 +21,14 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.ListFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,22 +37,26 @@ import java.util.List;
 public class BlockedCmdsFlag extends ListFlag<String, BlockedCmdsFlag> {
 
     public static final BlockedCmdsFlag BLOCKED_CMDS_FLAG_NONE =
-        new BlockedCmdsFlag(Collections.emptyList());
+            new BlockedCmdsFlag(Collections.emptyList());
 
     protected BlockedCmdsFlag(List<String> valueList) {
-        super(valueList, Captions.FLAG_CATEGORY_STRING_LIST,
-            Captions.FLAG_DESCRIPTION_BLOCKED_CMDS);
+        super(valueList, TranslatableCaption.of("flags.flag_category_string_list"),
+                TranslatableCaption.of("flags.flag_description_blocked_cmds")
+        );
     }
 
-    @Override public BlockedCmdsFlag parse(@NotNull String input) throws FlagParseException {
+    @Override
+    public BlockedCmdsFlag parse(@NonNull String input) throws FlagParseException {
         return flagOf(Arrays.asList(input.split(",")));
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "gamemode survival, spawn";
     }
 
-    @Override protected BlockedCmdsFlag flagOf(@NotNull List<String> value) {
+    @Override
+    protected BlockedCmdsFlag flagOf(@NonNull List<String> value) {
         return new BlockedCmdsFlag(value);
 
     }

@@ -21,107 +21,200 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlotUploader;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.StringMan;
+import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal;
-import com.sk89q.jnbt.CompoundTag;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@CommandDeclaration(usage = "/plot download [schematic|world]",
-    command = "download",
-    aliases = {"dl"},
-    category = CommandCategory.SCHEMATIC,
-    requiredType = RequiredType.NONE,
-    description = "Download your plot",
-    permission = "plots.download")
+@CommandDeclaration(usage = "/plot download [schem | world]",
+        command = "download",
+        aliases = {"dl"},
+        category = CommandCategory.SCHEMATIC,
+        requiredType = RequiredType.NONE,
+        permission = "plots.download")
 public class Download extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
-        String world = player.getLocation().getWorld();
-        if (!PlotSquared.get().hasPlotArea(world)) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT_WORLD);
+    private final PlotAreaManager plotAreaManager;
+    private final PlotUploader plotUploader;
+    @NonNull
+    private final SchematicHandler schematicHandler;
+    private final WorldUtil worldUtil;
+
+    @Inject
+    public Download(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull PlotUploader plotUploader,
+            final @NonNull SchematicHandler schematicHandler,
+            final @NonNull WorldUtil worldUtil
+    ) {
+        this.plotAreaManager = plotAreaManager;
+        this.plotUploader = plotUploader;
+        this.schematicHandler = schematicHandler;
+        this.worldUtil = worldUtil;
+    }
+
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+        String world = player.getLocation().getWorldName();
+        if (!this.plotAreaManager.hasPlotArea(world)) {
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
+            return false;
         }
         final Plot plot = player.getCurrentPlot();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         if ((Settings.Done.REQUIRED_FOR_DOWNLOAD && (!DoneFlag.isDone(plot))) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
-            MainUtil.sendMessage(player, Captions.DONE_NOT_DONE);
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DOWNLOAD)) {
+            player.sendMessage(TranslatableCaption.of("done.done_not_done"));
             return false;
         }
         if ((!plot.isOwner(player.getUUID())) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         if (plot.getRunning() > 0) {
-            MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+            player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
         if (args.length == 0 || (args.length == 1 && StringMan
-            .isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
+                .isEqualIgnoreCaseToAny(args[0], "sch", "schem", "schematic"))) {
             if (plot.getVolume() > Integer.MAX_VALUE) {
-                Captions.SCHEMATIC_TOO_LARGE.send(player);
+                player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
                 return false;
             }
             plot.addRunning();
-            SchematicHandler.manager.getCompoundTag(plot, new RunnableVal<CompoundTag>() {
-                @Override public void run(CompoundTag value) {
-                    plot.removeRunning();
-                    SchematicHandler.manager.upload(value, null, null, new RunnableVal<URL>() {
-                        @Override public void run(URL url) {
-                            if (url == null) {
-                                MainUtil.sendMessage(player, Captions.GENERATING_LINK_FAILED);
-                                return;
-                            }
-                            MainUtil.sendMessage(player, url.toString());
-                        }
-                    });
-                }
-            });
+            upload(player, plot);
         } else if (args.length == 1 && StringMan
-            .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
-            if (!Permissions.hasPermission(player, Captions.PERMISSION_DOWNLOAD_WORLD)) {
-                Captions.NO_PERMISSION.send(player, Captions.PERMISSION_DOWNLOAD_WORLD);
+                .isEqualIgnoreCaseToAny(args[0], "mcr", "world", "mca")) {
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
+                player.sendMessage(
+                        TranslatableCaption.of("permission.no_permission"),
+                        Template.of("node", Permission.PERMISSION_DOWNLOAD_WORLD.toString())
+                );
                 return false;
             }
-            MainUtil.sendMessage(player, Captions.MCA_FILE_SIZE);
+            player.sendMessage(TranslatableCaption.of("schematics.mca_file_size"));
             plot.addRunning();
-            WorldUtil.IMP.saveWorld(world);
-            WorldUtil.IMP.upload(plot, null, null, new RunnableVal<URL>() {
-                @Override public void run(URL url) {
+            this.worldUtil.saveWorld(world);
+            this.worldUtil.upload(plot, null, null, new RunnableVal<>() {
+                @Override
+                public void run(URL url) {
                     plot.removeRunning();
                     if (url == null) {
-                        MainUtil.sendMessage(player, Captions.GENERATING_LINK_FAILED);
+                        player.sendMessage(
+                                TranslatableCaption.of("web.generating_link_failed"),
+                                Template.of("plot", plot.getId().toString())
+                        );
                         return;
                     }
-                    MainUtil.sendMessage(player, url.toString());
+                    player.sendMessage(TranslatableCaption.of("web.generation_link_success"), Template.of("url", url.toString()));
                 }
             });
         } else {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            sendUsage(player);
             return false;
         }
-        MainUtil.sendMessage(player, Captions.GENERATING_LINK);
+        player.sendMessage(TranslatableCaption.of("web.generating_link"), Template.of("plot", plot.getId().toString()));
         return true;
     }
+
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
+        if (args.length == 1) {
+            final List<String> completions = new LinkedList<>();
+            if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD)) {
+                completions.add("schem");
+            }
+            if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD_WORLD)) {
+                completions.add("world");
+            }
+            final List<Command> commands = completions.stream().filter(completion -> completion
+                    .toLowerCase()
+                    .startsWith(args[0].toLowerCase()))
+                    .map(completion -> new Command(
+                            null,
+                            true,
+                            completion,
+                            "",
+                            RequiredType.NONE,
+                            CommandCategory.ADMINISTRATION
+                    ) {
+                    }).collect(Collectors.toCollection(LinkedList::new));
+            if (Permissions.hasPermission(player, Permission.PERMISSION_DOWNLOAD) && args[0].length() > 0) {
+                commands.addAll(TabCompletions.completePlayers(args[0], Collections.emptyList()));
+            }
+            return commands;
+        }
+        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+    }
+
+    private void upload(PlotPlayer<?> player, Plot plot) {
+        if (Settings.Web.LEGACY_WEBINTERFACE) {
+            schematicHandler
+                    .getCompoundTag(plot)
+                    .whenComplete((compoundTag, throwable) -> {
+                        schematicHandler.upload(compoundTag, null, null, new RunnableVal<>() {
+                            @Override
+                            public void run(URL value) {
+                                player.sendMessage(
+                                        TranslatableCaption.of("web.generation_link_success"),
+                                        Template.of("download", value.toString()),
+                                        Template.of("delete", "Not available")
+                                );
+                                player.sendMessage(StaticCaption.of(value.toString()));
+                            }
+                        });
+                    });
+            return;
+        }
+        // TODO legacy support
+        this.plotUploader.upload(plot)
+                .whenComplete((result, throwable) -> {
+                    if (throwable != null || !result.isSuccess()) {
+                        player.sendMessage(
+                                TranslatableCaption.of("web.generating_link_failed"),
+                                Template.of("plot", plot.getId().toString())
+                        );
+                    } else {
+                        player.sendMessage(
+                                TranslatableCaption.of("web.generation_link_success"),
+                                Template.of("download", result.getDownloadUrl()),
+                                Template.of("delete", result.getDeletionUrl())
+                        );
+                    }
+                });
+    }
+
 }

@@ -21,44 +21,61 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class FeedFlag extends TimedFlag<Integer, FeedFlag> {
+
     public static final FeedFlag FEED_NOTHING = new FeedFlag(new Timed<>(0, 0));
 
-    public FeedFlag(@NotNull Timed<Integer> value) {
-        super(value, 1, Captions.FLAG_DESCRIPTION_FEED);
+    public FeedFlag(@NonNull Timed<Integer> value) {
+        super(value, 1, TranslatableCaption.of("flags.flag_description_feed"));
     }
 
-    @Override protected Integer parseValue(String input) throws FlagParseException {
+    @Override
+    protected Integer parseValue(String input) throws FlagParseException {
         int parsed;
         try {
             parsed = Integer.parseInt(input);
         } catch (Throwable throwable) {
-            throw new FlagParseException(this, input, Captions.NOT_A_NUMBER, input);
+            throw new FlagParseException(
+                    this,
+                    input,
+                    TranslatableCaption.of("invalid.not_a_number"),
+                    Template.of("value", input)
+            );
         }
         if (parsed < 1) {
-            throw new FlagParseException(this, input, Captions.NUMBER_NOT_POSITIVE, parsed);
+            throw new FlagParseException(
+                    this,
+                    input,
+                    TranslatableCaption.of("invalid.number_not_positive"),
+                    Template.of("value", String.valueOf(parsed))
+            );
         }
         return parsed;
     }
 
-    @Override protected Integer mergeValue(Integer other) {
+    @Override
+    protected Integer mergeValue(Integer other) {
         return this.getValue().getValue() + other;
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "10 5";
     }
 
-    @Override protected FeedFlag flagOf(@NotNull Timed<Integer> value) {
+    @Override
+    protected FeedFlag flagOf(@NonNull Timed<Integer> value) {
         return new FeedFlag(value);
     }
+
 }

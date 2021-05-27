@@ -21,33 +21,45 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockTypes;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class SingleWorldGenerator extends IndependentPlotGenerator {
-    private Location bedrock1 = new Location(null, 0, 0, 0);
-    private Location bedrock2 = new Location(null, 15, 0, 15);
-    private Location dirt1 = new Location(null, 0, 1, 0);
-    private Location dirt2 = new Location(null, 15, 2, 15);
-    private Location grass1 = new Location(null, 0, 3, 0);
-    private Location grass2 = new Location(null, 15, 3, 15);
 
-    @Override public String getName() {
+    private static final Location bedrock1 = Location.at("", 0, 0, 0);
+    private static final Location bedrock2 = Location.at("", 15, 0, 15);
+    private static final Location dirt1 = Location.at("", 0, 1, 0);
+    private static final Location dirt2 = Location.at("", 15, 2, 15);
+    private static final Location grass1 = Location.at("", 0, 3, 0);
+    private static final Location grass2 = Location.at("", 15, 3, 15);
+
+    private final PlotAreaManager plotAreaManager;
+
+    @Inject
+    public SingleWorldGenerator(final @NonNull PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
+    @Override
+    public String getName() {
         return "PlotSquared:single";
     }
 
-    @Override public void generateChunk(ScopedLocalBlockQueue result, PlotArea settings) {
+    @Override
+    public void generateChunk(ScopedQueueCoordinator result, PlotArea settings) {
         SinglePlotArea area = (SinglePlotArea) settings;
         if (area.VOID) {
             Location min = result.getMin();
@@ -62,11 +74,13 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
         result.fillBiome(BiomeTypes.PLAINS);
     }
 
-    @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-        return ((SinglePlotAreaManager) PlotSquared.get().getPlotAreaManager()).getArea();
+    @Override
+    public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
+        return ((SinglePlotAreaManager) this.plotAreaManager).getArea();
     }
 
-    @Override public void initialize(PlotArea area) {
-
+    @Override
+    public void initialize(PlotArea area) {
     }
+
 }

@@ -21,21 +21,16 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.location;
 
 import com.plotsquared.core.util.StringMan;
-import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.Nullable;
-
-//todo better description needed
-
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * (x,y,z) or (x,z) representation for PlotSquared (hence the "Plot" prefix)
  */
-@AllArgsConstructor
 public final class PlotLoc {
 
     private final int x;
@@ -52,7 +47,13 @@ public final class PlotLoc {
         this(x, -1, z);
     }
 
-    @Nullable public static PlotLoc fromString(final String input) {
+    public PlotLoc(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public static @Nullable PlotLoc fromString(final String input) {
         if (input == null || "side".equalsIgnoreCase(input)) {
             return null;
         } else if (StringMan.isEqualIgnoreCaseToAny(input, "center", "middle")) {
@@ -64,10 +65,11 @@ public final class PlotLoc {
                     return new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
                 } else if (split.length == 3) {
                     return new PlotLoc(Integer.parseInt(split[0]), Integer.parseInt(split[1]),
-                        Integer.parseInt(split[2]));
+                            Integer.parseInt(split[2])
+                    );
                 } else {
                     throw new IllegalArgumentException(
-                        String.format("Unable to deserialize: %s", input));
+                            String.format("Unable to deserialize: %s", input));
                 }
             } catch (NumberFormatException ignored) {
                 return null;
@@ -87,23 +89,26 @@ public final class PlotLoc {
         return this.z;
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = (prime * result) + this.x;
-        result = (prime * result) + this.y;
-        result = (prime * result) + this.z;
+        result = (prime * result) + this.getX();
+        result = (prime * result) + this.getY();
+        result = (prime * result) + this.getZ();
         return result;
     }
 
-    @Override public String toString() {
-        if (this.y == -1) {
+    @Override
+    public String toString() {
+        if (this.getY() == -1) {
             return String.format("%d,%d", x, z);
         }
         return String.format("%d,%d,%d", x, y, z);
     }
 
-    @Override public boolean equals(final Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -111,6 +116,8 @@ public final class PlotLoc {
             return false;
         }
         final PlotLoc other = (PlotLoc) obj;
-        return (this.x == other.x) && (this.y == other.y) && (this.z == other.z);
+        return (this.getX() == other.getX()) && (this.getY() ==
+                other.getY()) && (this.getZ() == other.getZ());
     }
+
 }

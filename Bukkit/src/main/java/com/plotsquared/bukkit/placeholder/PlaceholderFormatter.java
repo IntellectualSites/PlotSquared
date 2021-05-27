@@ -21,20 +21,22 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.placeholder;
 
 import com.plotsquared.bukkit.player.BukkitPlayer;
-import com.plotsquared.core.configuration.ChatFormatter;
+import com.plotsquared.core.configuration.caption.ChatFormatter;
 import com.plotsquared.core.player.PlotPlayer;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PlaceholderFormatter implements ChatFormatter {
 
-    @Override public void format(final ChatContext context) {
-        final PlotPlayer recipient = context.getRecipient();
+    @Override
+    public void format(final @NonNull ChatContext context) {
+        final PlotPlayer<?> recipient = context.getRecipient();
         if (recipient instanceof BukkitPlayer) {
             if (context.isRawOutput()) {
                 context.setMessage(context.getMessage().replace('%', '\u2010'));

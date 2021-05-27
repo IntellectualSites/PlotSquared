@@ -21,35 +21,35 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.TaskManager;
 
 @CommandDeclaration(command = "confirm",
-    permission = "plots.use",
-    description = "Confirm an action",
-    category = CommandCategory.INFO)
+        permission = "plots.confirm",
+        category = CommandCategory.INFO)
 public class Confirm extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
         CmdInstance command = CmdConfirm.getPending(player);
         if (command == null) {
-            MainUtil.sendMessage(player, Captions.FAILED_CONFIRM);
+            player.sendMessage(TranslatableCaption.of("confirm.failed_confirm"));
             return false;
         }
         CmdConfirm.removePending(player);
         if ((System.currentTimeMillis() - command.timestamp)
-            > Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS * 1000) {
-            MainUtil.sendMessage(player, Captions.EXPIRED_CONFIRM);
+                > Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS * 1000) {
+            player.sendMessage(TranslatableCaption.of("confirm.expired_confirm"));
             return false;
         }
-        TaskManager.runTask(command.command);
+        TaskManager.runTaskAsync(command.command);
         return true;
     }
+
 }

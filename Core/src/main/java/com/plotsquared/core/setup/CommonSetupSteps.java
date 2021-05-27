@@ -21,27 +21,26 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.setup;
 
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Caption;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.generator.GeneratorWrapper;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotAreaTerrainType;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.StringMan;
-import com.plotsquared.core.util.WorldUtil;
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,47 +48,36 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.plotsquared.core.util.MainUtil.sendMessage;
-
 public enum CommonSetupSteps implements SetupStep {
-    CHOOSE_GENERATOR(Captions.SETUP_INIT) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
+    CHOOSE_GENERATOR(TranslatableCaption.of("setup.setup_init")) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
             if (!SetupUtils.generators.containsKey(arg)) {
-                String prefix = "\n&8 - &7";
-                sendMessage(plotPlayer, Captions.SETUP_WORLD_GENERATOR_ERROR + prefix + StringMan
-                        .join(SetupUtils.generators.keySet(), prefix)
-                        .replaceAll(PlotSquared.imp().getPluginName(),
-                                "&2" + PlotSquared.imp().getPluginName()));
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_generator_error"));
                 return this; // invalid input -> same setup step
             }
             builder.generatorName(arg);
             return CommonSetupSteps.CHOOSE_PLOT_AREA_TYPE; // proceed with next step
         }
 
-        @NotNull @Override public Collection<String> getSuggestions() {
+
+        @Override
+        public Collection<String> getSuggestions() {
             return Collections.unmodifiableSet(SetupUtils.generators.keySet());
         }
 
-        @Nullable @Override public String getDefaultValue() {
-            return PlotSquared.imp().getPluginName();
+        @Nullable
+        @Override
+        public String getDefaultValue() {
+            return PlotSquared.platform().pluginName();
         }
     },
-    CHOOSE_PLOT_AREA_TYPE(PlotAreaType.class, Captions.SETUP_WORLD_TYPE) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
-            boolean withNormal = SetupUtils.generators.get(builder.generatorName()).isFull();
+    CHOOSE_PLOT_AREA_TYPE(PlotAreaType.class, TranslatableCaption.of("setup.setup_world_type")) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
             Optional<PlotAreaType> plotAreaType = PlotAreaType.fromString(arg);
             if (!plotAreaType.isPresent()) {
-                MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_TYPE_ERROR);
-                PlotAreaType.getDescriptionMap().forEach((type, caption) -> {
-                    if (!withNormal && type == PlotAreaType.NORMAL) {
-                        return; // skip
-                    }
-                    String color = type == PlotAreaType.NORMAL ? "&2" : "&7";
-                    MainUtil.sendMessage(plotPlayer, "&8 - " + color + type
-                            + " &8-&7 " + caption.getTranslated());
-                });
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_type_error"));
                 return this;
             }
             builder.plotAreaType(plotAreaType.get());
@@ -110,8 +98,8 @@ public enum CommonSetupSteps implements SetupStep {
                     SetupUtils.generators.get(builder.plotManager()).getPlotGenerator()
                             .processAreaSetup(builder);
                 } else {
-                    builder.plotManager(PlotSquared.imp().getPluginName());
-                    MainUtil.sendMessage(plotPlayer, Captions.SETUP_WRONG_GENERATOR);
+                    builder.plotManager(PlotSquared.platform().pluginName());
+                    plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_generator_error"));
                     builder.settingsNodesWrapper(CommonSetupSteps.wrap(builder.plotManager()));
                     // TODO why is processSetup not called here?
                 }
@@ -123,20 +111,22 @@ public enum CommonSetupSteps implements SetupStep {
             }
         }
 
-        @Nullable @Override public String getDefaultValue() {
+        @Nullable
+        @Override
+        public String getDefaultValue() {
             return PlotAreaType.NORMAL.toString();
         }
     },
-    CHOOSE_AREA_ID(Captions.SETUP_AREA_NAME) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+    CHOOSE_AREA_ID(TranslatableCaption.of("setup.setup_area_name")) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             if (!StringMan.isAlphanumericUnd(argument)) {
-                MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_NON_ALPHANUMERICAL);
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_area_non_alphanumerical"));
                 return this;
             }
-            for (PlotArea area : PlotSquared.get().getPlotAreas()) {
+            for (PlotArea area : PlotSquared.get().getPlotAreaManager().getAllPlotAreas()) {
                 if (area.getId() != null && area.getId().equalsIgnoreCase(argument)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_INVALID_ID);
+                    plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_area_invalid_id"));
                     return this;
                 }
             }
@@ -144,55 +134,59 @@ public enum CommonSetupSteps implements SetupStep {
             return CHOOSE_MINIMUM_PLOT_ID;
         }
 
-        @Nullable @Override public String getDefaultValue() {
+        @Nullable
+        @Override
+        public String getDefaultValue() {
             return null;
         }
     },
-    CHOOSE_MINIMUM_PLOT_ID(Captions.SETUP_AREA_MIN_PLOT_ID) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+    CHOOSE_MINIMUM_PLOT_ID(TranslatableCaption.of("setup.setup_area_min_plot_id")) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             try {
                 builder.minimumId(PlotId.fromString(argument));
             } catch (IllegalArgumentException ignored) {
-                MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_MIN_PLOT_ID_ERROR);
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_area_min_plot_id_error"));
                 return this;
             } catch (IllegalStateException ignored) {
-                MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_PLOT_ID_GREATER_THAN_MINIMUM);
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_area_plot_id_greater_than_minimum"));
                 return this;
             }
             return CHOOSE_MAXIMUM_PLOT_ID;
         }
 
-        @Override public String getDefaultValue() {
+        @Override
+        public String getDefaultValue() {
             return "0;0";
         }
     },
-    CHOOSE_MAXIMUM_PLOT_ID(Captions.SETUP_AREA_MAX_PLOT_ID) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+    CHOOSE_MAXIMUM_PLOT_ID(TranslatableCaption.of("setup.setup_area_max_plot_id")) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             try {
                 builder.maximumId(PlotId.fromString(argument));
             } catch (IllegalArgumentException ignored) {
-                MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_MAX_PLOT_ID_ERROR);
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_area_max_plot_id_error"));
                 return this;
             } catch (IllegalStateException ignored) {
-                MainUtil.sendMessage(plotPlayer, Captions.SETUP_AREA_PLOT_ID_GREATER_THAN_MINIMUM);
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_area_plot_id_greater_than_minimum"));
                 return this;
             }
             return CHOOSE_TERRAIN_TYPE;
         }
 
-        @Override public String getDefaultValue() {
+        @Override
+        public String getDefaultValue() {
             return "0;0";
         }
     },
-    CHOOSE_TERRAIN_TYPE(PlotAreaTerrainType.class, Captions.SETUP_PARTIAL_AREA) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+    CHOOSE_TERRAIN_TYPE(PlotAreaTerrainType.class, TranslatableCaption.of("setup.setup_partial_area")) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             Optional<PlotAreaTerrainType> optTerrain;
             if (!(optTerrain = PlotAreaTerrainType.fromString(argument))
                     .isPresent()) {
-                MainUtil.sendMessage(plotPlayer, Captions.SETUP_PARTIAL_AREA_ERROR, Captions.SETUP_PARTIAL_AREA);
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_partial_area_error"));
                 return this;
             }
             builder.terrainType(optTerrain.get());
@@ -203,71 +197,74 @@ public enum CommonSetupSteps implements SetupStep {
             return wrapper.getFirstStep();
         }
 
-        @Nullable @Override public String getDefaultValue() {
+        @Nullable
+        @Override
+        public String getDefaultValue() {
             return PlotAreaTerrainType.NONE.toString();
         }
     },
-    CHOOSE_WORLD_NAME(Captions.SETUP_WORLD_NAME) {
-
-        @Override public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
+    CHOOSE_WORLD_NAME(TranslatableCaption.of("setup.setup_world_name")) {
+        @Override
+        public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
             if (!isValidWorldName(argument)) {
-                MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_NAME_FORMAT + argument);
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_name_format"));
                 return this;
             }
-            if (WorldUtil.IMP.isWorld(argument)) {
-                if (PlotSquared.get().hasPlotArea(argument)) {
-                    MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_NAME_TAKEN);
+            if (PlotSquared.platform().worldUtil().isWorld(argument)) {
+                if (PlotSquared.get().getPlotAreaManager().hasPlotArea(argument)) {
+                    plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_taken"));
                     return this;
                 }
-                MainUtil.sendMessage(plotPlayer, Captions.SETUP_WORLD_APPLY_PLOTSQUARED);
+                plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_apply_plotsquared"));
             }
             builder.worldName(argument);
-            plotPlayer.deleteMeta("setup");
+            try (final MetaDataAccess<SetupProcess> setupAccess = plotPlayer.accessTemporaryMetaData(
+                    PlayerMetaDataKeys.TEMPORARY_SETUP)) {
+                setupAccess.remove();
+            }
             String world;
             if (builder.setupManager() == null) {
-                world = SetupUtils.manager.setupWorld(builder);
+                world = PlotSquared.platform().injector().getInstance(SetupUtils.class).setupWorld(builder);
             } else {
                 world = builder.setupManager().setupWorld(builder);
             }
             try {
-                plotPlayer.teleport(WorldUtil.IMP.getSpawn(world), TeleportCause.COMMAND);
+                plotPlayer.teleport(PlotSquared.platform().worldUtil().getSpawn(world), TeleportCause.COMMAND);
             } catch (Exception e) {
-                plotPlayer.sendMessage("&cAn error occurred. See console for more information");
+                plotPlayer.sendMessage(TranslatableCaption.of("errors.error_console"));
                 e.printStackTrace();
             }
-            sendMessage(plotPlayer, Captions.SETUP_FINISHED, builder.worldName());
+            plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_finished"));
             return null;
         }
 
-        @Nullable @Override public String getDefaultValue() {
+        @Nullable
+        @Override
+        public String getDefaultValue() {
             return null;
         }
     };
 
-    @Getter @NotNull private final Collection<String> suggestions;
+    @NonNull
+    private final Collection<String> suggestions;
     private final Caption description;
 
     /**
-     *
      * @param suggestions the input suggestions for this step
      * @param description the caption describing this step
      */
-    CommonSetupSteps(@NotNull Collection<String> suggestions, @NotNull Caption description) {
+    CommonSetupSteps(@NonNull Collection<String> suggestions, @NonNull Caption description) {
         this.suggestions = suggestions;
         this.description = description;
     }
 
-    CommonSetupSteps(@NotNull Caption description) {
+    CommonSetupSteps(@NonNull Caption description) {
         this.description = description;
         this.suggestions = Collections.emptyList();
     }
 
-    <E extends Enum<E>> CommonSetupSteps(@NotNull Class<E> argumentType, Caption description) {
+    <E extends Enum<E>> CommonSetupSteps(@NonNull Class<E> argumentType, Caption description) {
         this(enumToStrings(argumentType), description);
-    }
-
-    @Override public void announce(PlotPlayer<?> plotPlayer) {
-        MainUtil.sendMessage(plotPlayer, this.description);
     }
 
     private static <E extends Enum<E>> Collection<String> enumToStrings(Class<E> type) {
@@ -281,8 +278,15 @@ public enum CommonSetupSteps implements SetupStep {
     }
 
     private static boolean isValidWorldName(String s) {
-        return s.chars().allMatch((i) -> {
-            return i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 65 && i <= 90 || i >= 48 && i <= 57 || i == 46;
-        });
+        return s.chars().allMatch((i) -> i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 65 && i <= 90 || i >= 48 && i <= 57 || i == 46);
+    }
+
+    @Override
+    public void announce(PlotPlayer<?> plotPlayer) {
+        plotPlayer.sendMessage(this.description);
+    }
+
+    public @NonNull Collection<String> getSuggestions() {
+        return this.suggestions;
     }
 }

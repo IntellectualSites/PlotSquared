@@ -21,36 +21,54 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.task.TaskManager;
+import com.plotsquared.core.util.task.TaskTime;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class CmdConfirm {
 
-    public static CmdInstance getPending(PlotPlayer<?> player) {
-        return player.getMeta("cmdConfirm");
+    public static @Nullable CmdInstance getPending(PlotPlayer<?> player) {
+        try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
+                PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
+            return metaDataAccess.get().orElse(null);
+        }
     }
 
     public static void removePending(PlotPlayer<?> player) {
-        player.deleteMeta("cmdConfirm");
+        try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
+                PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
+            metaDataAccess.remove();
+        }
     }
 
-    public static void addPending(final PlotPlayer<?> player, String commandStr,
-        final Runnable runnable) {
+    public static void addPending(
+            final PlotPlayer<?> player, String commandStr,
+            final Runnable runnable
+    ) {
         removePending(player);
         if (commandStr != null) {
-            MainUtil.sendMessage(player, Captions.REQUIRES_CONFIRM, commandStr);
+            player.sendMessage(
+                    TranslatableCaption.of("confirm.requires_confirm"),
+                    Template.of("command", commandStr),
+                    Template.of("value", "/plot confirm")
+            );
         }
-        TaskManager.runTaskLater(new Runnable() {
-            @Override public void run() {
-                CmdInstance cmd = new CmdInstance(runnable);
-                player.setMeta("cmdConfirm", cmd);
+        TaskManager.runTaskLater(() -> {
+            CmdInstance cmd = new CmdInstance(runnable);
+            try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
+                    PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
+                metaDataAccess.set(cmd);
             }
-        }, 1);
+        }, TaskTime.ticks(1L));
     }
+
 }

@@ -21,25 +21,22 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.placeholders;
 
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.player.PlotPlayer;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A placeholder is a keyed value that gets replaced by a {@link PlotPlayer player}-specific value at runtime
  */
-@EqualsAndHashCode(of = "key") @ToString(of = "key")
 public abstract class Placeholder {
 
     private final String key;
 
-    public Placeholder(@NotNull final String key) {
+    public Placeholder(final @NonNull String key) {
         this.key = Preconditions.checkNotNull(key, "Key may not be null");
     }
 
@@ -49,14 +46,14 @@ public abstract class Placeholder {
      * @param player Player
      * @return Placeholder value. Return {@code ""} if no placeholder value can be returned
      */
-    @NotNull public abstract String getValue(@NotNull final PlotPlayer<?> player);
+    public @NonNull abstract String getValue(final @NonNull PlotPlayer<?> player);
 
     /**
      * Get the placeholder key
      *
      * @return Placeholder key
      */
-    @NotNull public final String getKey() {
+    public @NonNull final String getKey() {
         return this.key;
     }
 

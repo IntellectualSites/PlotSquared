@@ -21,12 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
 
@@ -54,8 +54,10 @@ public interface PlatformWorldManager<T> {
      * @param generator World generator
      * @return Created world
      */
-    @Nullable T handleWorldCreation(@NotNull final String worldName,
-        @Nullable final String generator);
+    @Nullable T handleWorldCreation(
+            final @NonNull String worldName,
+            final @Nullable String generator
+    );
 
     /**
      * Get the implementation name

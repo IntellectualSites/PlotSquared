@@ -21,19 +21,34 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
 
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
+import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 class GlobalPlotProvider implements PlotProvider {
 
-    @Override public Collection<Plot> getPlots() {
-        return PlotSquared.get().getPlots();
+    private final PlotAreaManager plotAreaManager;
+
+    GlobalPlotProvider(final @NonNull PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
+    @Override
+    public Collection<Plot> getPlots() {
+        final Set<Plot> plots = new HashSet<>();
+        for (final PlotArea plotArea : this.plotAreaManager.getAllPlotAreas()) {
+            plots.addAll(plotArea.getPlots());
+        }
+        return plots;
     }
 
 }

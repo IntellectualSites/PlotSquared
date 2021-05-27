@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
 
@@ -29,7 +29,8 @@ import com.plotsquared.core.plot.Plot;
 
 import java.util.Collection;
 
-@FunctionalInterface interface PlotProvider {
+@FunctionalInterface
+interface PlotProvider {
 
     Collection<Plot> getPlots();
 

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.file;
 
@@ -35,21 +35,25 @@ public class YamlConfigurationOptions extends FileConfigurationOptions {
         super(configuration);
     }
 
-    @Override public YamlConfiguration configuration() {
+    @Override
+    public YamlConfiguration configuration() {
         return (YamlConfiguration) super.configuration();
     }
 
-    @Override public YamlConfigurationOptions copyDefaults(boolean value) {
+    @Override
+    public YamlConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
 
-    @Override public YamlConfigurationOptions header(String value) {
+    @Override
+    public YamlConfigurationOptions header(String value) {
         super.header(value);
         return this;
     }
 
-    @Override public YamlConfigurationOptions copyHeader(boolean value) {
+    @Override
+    public YamlConfigurationOptions copyHeader(boolean value) {
         super.copyHeader(value);
         return this;
     }

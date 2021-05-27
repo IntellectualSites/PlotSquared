@@ -21,22 +21,34 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.task;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 
-@RequiredArgsConstructor
 public class ObjectTaskRunnable<T> implements Runnable {
+
+    private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
 
     private final Iterator<T> iterator;
     private final RunnableVal<T> task;
-    private final Runnable whenDone;
 
-    @Override public void run() {
+    public ObjectTaskRunnable(
+            final Iterator<T> iterator,
+            final RunnableVal<T> task
+    ) {
+        this.iterator = iterator;
+        this.task = task;
+    }
+
+    public CompletableFuture<Void> getCompletionFuture() {
+        return this.completionFuture;
+    }
+
+    @Override
+    public void run() {
         long start = System.currentTimeMillis();
         boolean hasNext;
         while ((hasNext = iterator.hasNext()) && System.currentTimeMillis() - start < 5) {
@@ -44,9 +56,9 @@ public class ObjectTaskRunnable<T> implements Runnable {
             task.run();
         }
         if (!hasNext) {
-            TaskManager.runTaskLater(whenDone, 1);
+            completionFuture.complete(null);
         } else {
-            TaskManager.runTaskLater(this, 1);
+            TaskManager.runTaskLater(this, TaskTime.ticks(1L));
         }
     }
 

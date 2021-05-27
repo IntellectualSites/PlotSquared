@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
@@ -29,7 +29,6 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.util.ReflectionUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -37,7 +36,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -47,16 +45,16 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 @SuppressWarnings("unused")
 public class SingleWorldListener implements Listener {
 
-    private Method methodGetHandleChunk;
+    private final Method methodGetHandleChunk;
     private Field mustSave;
     private boolean isTrueForNotSave = true;
 
-    public SingleWorldListener(Plugin plugin) throws Exception {
+    public SingleWorldListener() throws Exception {
         ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
         try {
-            if (PlotSquared.get().IMP.getServerVersion()[1] == 13) {
+            if (PlotSquared.platform().serverVersion()[1] == 13) {
                 this.mustSave = classChunk.getField("mustSave").getRealField();
                 this.isTrueForNotSave = false;
             } else {
@@ -65,14 +63,13 @@ public class SingleWorldListener implements Listener {
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
-        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     public void markChunkAsClean(Chunk chunk) {
         try {
             Object nmsChunk = methodGetHandleChunk.invoke(chunk);
             if (mustSave != null) {
-                this.mustSave.set(nmsChunk, false);
+                this.mustSave.set(nmsChunk, isTrueForNotSave);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -98,7 +95,8 @@ public class SingleWorldListener implements Listener {
     //        handle(event);
     //    }
 
-    @EventHandler(priority = EventPriority.LOWEST) public void onChunkLoad(ChunkLoadEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onChunkLoad(ChunkLoadEvent event) {
         handle(event);
     }
 
@@ -107,8 +105,7 @@ public class SingleWorldListener implements Listener {
         int separator = 0;
         for (int i = 0; i < len; i++) {
             switch (worldName.charAt(i)) {
-                case ',':
-                case ';':
+                case '_':
                     separator++;
                     break;
                 case '-':
@@ -129,4 +126,5 @@ public class SingleWorldListener implements Listener {
         }
         return separator == 1;
     }
+
 }

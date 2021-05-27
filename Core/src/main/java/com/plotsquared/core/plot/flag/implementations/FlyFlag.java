@@ -21,13 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,40 +39,42 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
     public static final FlyFlag FLIGHT_FLAG_DEFAULT = new FlyFlag(FlyStatus.DEFAULT);
 
     protected FlyFlag(final FlyStatus value) {
-        super(value, Captions.FLAG_CATEGORY_BOOLEAN, Captions.FLAG_DESCRIPTION_FLIGHT);
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_boolean"),
+                TranslatableCaption.of("flags.flag_description_flight")
+        );
     }
 
-    @Override public FlyFlag parse(@NotNull final String input) {
-        switch (input.toLowerCase()) {
-            case "true":
-            case "enabled":
-            case "allow":
-                return FLIGHT_FLAG_ENABLED;
-            case "false":
-            case "disabled":
-            case "disallow":
-                return FLIGHT_FLAG_DISABLED;
-            default:
-                return FLIGHT_FLAG_DEFAULT;
-        }
+    @Override
+    public FlyFlag parse(final @NonNull String input) {
+        return switch (input.toLowerCase()) {
+            case "true", "enabled", "allow" -> FLIGHT_FLAG_ENABLED;
+            case "false", "disabled", "disallow" -> FLIGHT_FLAG_DISABLED;
+            default -> FLIGHT_FLAG_DEFAULT;
+        };
     }
 
-    @Override public FlyFlag merge(@NotNull final FlyStatus newValue) {
+    @Override
+    public FlyFlag merge(final @NonNull FlyStatus newValue) {
         if (newValue == FlyStatus.ENABLED || this.getValue() == FlyStatus.ENABLED) {
             return FLIGHT_FLAG_ENABLED;
         }
         return flagOf(newValue);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return this.getValue().name().toLowerCase();
     }
 
-    @Override public String getExample() {
+    @Override
+    public String getExample() {
         return "true";
     }
 
-    @Override protected FlyFlag flagOf(@NotNull final FlyStatus value) {
+    @Override
+    protected FlyFlag flagOf(final @NonNull FlyStatus value) {
         switch (value) {
             case ENABLED:
                 return FLIGHT_FLAG_ENABLED;
@@ -83,12 +85,15 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
         }
     }
 
-    @Override public Collection<String> getTabCompletions() {
+    @Override
+    public Collection<String> getTabCompletions() {
         return Arrays.asList("true", "false", "default");
     }
 
     public enum FlyStatus {
-        ENABLED, DISABLED, DEFAULT
+        ENABLED,
+        DISABLED,
+        DEFAULT
     }
 
 }

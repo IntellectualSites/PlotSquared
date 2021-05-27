@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.placeholders;
 
@@ -29,20 +29,21 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class PlotFlagPlaceholder extends PlotSpecificPlaceholder {
 
     private final PlotFlag<?, ?> flag;
     private final boolean local;
 
-    public PlotFlagPlaceholder(@NotNull final PlotFlag<?, ?> flag, final boolean local) {
-        super(String.format("currentplot_%sflag_%s", local ? "local": "", flag.getName()));
+    public PlotFlagPlaceholder(final @NonNull PlotFlag<?, ?> flag, final boolean local) {
+        super(String.format("currentplot_%sflag_%s", local ? "local" : "", flag.getName()));
         this.flag = flag;
         this.local = local;
     }
 
-    @Override @NotNull public String getValue(@NotNull final PlotPlayer<?> player, @NotNull final Plot plot) {
+    @Override
+    public @NonNull String getValue(final @NonNull PlotPlayer<?> player, final @NonNull Plot plot) {
         return this.getFlagValue(plot, this.flag.getName(), !this.local);
     }
 
@@ -57,7 +58,8 @@ public final class PlotFlagPlaceholder extends PlotSpecificPlaceholder {
      * @param inherit  Define if it returns only the flag set on the current plot or also inherited flags
      * @return The value of flag serialized in string
      */
-    @NotNull private String getFlagValue(@NotNull final Plot plot, @NotNull final String flagName, final boolean inherit) {
+    @NonNull
+    private String getFlagValue(final @NonNull Plot plot, final @NonNull String flagName, final boolean inherit) {
         if (flagName.isEmpty()) {
             return "";
         }

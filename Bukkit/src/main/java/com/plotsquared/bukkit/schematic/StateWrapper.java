@@ -21,12 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.schematic;
 
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.configuration.Captions;
 import com.sk89q.jnbt.ByteTag;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.ListTag;
@@ -36,6 +35,7 @@ import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.blocks.BaseItemStack;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.item.ItemType;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
@@ -66,105 +66,103 @@ public class StateWrapper {
 
     public static String jsonToColourCode(String str) {
         str = str.replace("{\"extra\":", "").replace("],\"text\":\"\"}", "]")
-            .replace("[{\"color\":\"black\",\"text\":\"", "&0")
-            .replace("[{\"color\":\"dark_blue\",\"text\":\"", "&1")
-            .replace("[{\"color\":\"dark_green\",\"text\":\"", "&2")
-            .replace("[{\"color\":\"dark_aqua\",\"text\":\"", "&3")
-            .replace("[{\"color\":\"dark_red\",\"text\":\"", "&4")
-            .replace("[{\"color\":\"dark_purple\",\"text\":\"", "&5")
-            .replace("[{\"color\":\"gold\",\"text\":\"", "&6")
-            .replace("[{\"color\":\"gray\",\"text\":\"", "&7")
-            .replace("[{\"color\":\"dark_gray\",\"text\":\"", "&8")
-            .replace("[{\"color\":\"blue\",\"text\":\"", "&9")
-            .replace("[{\"color\":\"green\",\"text\":\"", "&a")
-            .replace("[{\"color\":\"aqua\",\"text\":\"", "&b")
-            .replace("[{\"color\":\"red\",\"text\":\"", "&c")
-            .replace("[{\"color\":\"light_purple\",\"text\":\"", "&d")
-            .replace("[{\"color\":\"yellow\",\"text\":\"", "&e")
-            .replace("[{\"color\":\"white\",\"text\":\"", "&f")
-            .replace("[{\"obfuscated\":true,\"text\":\"", "&k")
-            .replace("[{\"bold\":true,\"text\":\"", "&l")
-            .replace("[{\"strikethrough\":true,\"text\":\"", "&m")
-            .replace("[{\"underlined\":true,\"text\":\"", "&n")
-            .replace("[{\"italic\":true,\"text\":\"", "&o").replace("[{\"color\":\"black\",", "&0")
-            .replace("[{\"color\":\"dark_blue\",", "&1")
-            .replace("[{\"color\":\"dark_green\",", "&2")
-            .replace("[{\"color\":\"dark_aqua\",", "&3").replace("[{\"color\":\"dark_red\",", "&4")
-            .replace("[{\"color\":\"dark_purple\",", "&5").replace("[{\"color\":\"gold\",", "&6")
-            .replace("[{\"color\":\"gray\",", "&7").replace("[{\"color\":\"dark_gray\",", "&8")
-            .replace("[{\"color\":\"blue\",", "&9").replace("[{\"color\":\"green\",", "&a")
-            .replace("[{\"color\":\"aqua\",", "&b").replace("[{\"color\":\"red\",", "&c")
-            .replace("[{\"color\":\"light_purple\",", "&d").replace("[{\"color\":\"yellow\",", "&e")
-            .replace("[{\"color\":\"white\",", "&f").replace("[{\"obfuscated\":true,", "&k")
-            .replace("[{\"bold\":true,", "&l").replace("[{\"strikethrough\":true,", "&m")
-            .replace("[{\"underlined\":true,", "&n").replace("[{\"italic\":true,", "&o")
-            .replace("{\"color\":\"black\",\"text\":\"", "&0")
-            .replace("{\"color\":\"dark_blue\",\"text\":\"", "&1")
-            .replace("{\"color\":\"dark_green\",\"text\":\"", "&2")
-            .replace("{\"color\":\"dark_aqua\",\"text\":\"", "&3")
-            .replace("{\"color\":\"dark_red\",\"text\":\"", "&4")
-            .replace("{\"color\":\"dark_purple\",\"text\":\"", "&5")
-            .replace("{\"color\":\"gold\",\"text\":\"", "&6")
-            .replace("{\"color\":\"gray\",\"text\":\"", "&7")
-            .replace("{\"color\":\"dark_gray\",\"text\":\"", "&8")
-            .replace("{\"color\":\"blue\",\"text\":\"", "&9")
-            .replace("{\"color\":\"green\",\"text\":\"", "&a")
-            .replace("{\"color\":\"aqua\",\"text\":\"", "&b")
-            .replace("{\"color\":\"red\",\"text\":\"", "&c")
-            .replace("{\"color\":\"light_purple\",\"text\":\"", "&d")
-            .replace("{\"color\":\"yellow\",\"text\":\"", "&e")
-            .replace("{\"color\":\"white\",\"text\":\"", "&f")
-            .replace("{\"obfuscated\":true,\"text\":\"", "&k")
-            .replace("{\"bold\":true,\"text\":\"", "&l")
-            .replace("{\"strikethrough\":true,\"text\":\"", "&m")
-            .replace("{\"underlined\":true,\"text\":\"", "&n")
-            .replace("{\"italic\":true,\"text\":\"", "&o").replace("{\"color\":\"black\",", "&0")
-            .replace("{\"color\":\"dark_blue\",", "&1").replace("{\"color\":\"dark_green\",", "&2")
-            .replace("{\"color\":\"dark_aqua\",", "&3").replace("{\"color\":\"dark_red\",", "&4")
-            .replace("{\"color\":\"dark_purple\",", "&5").replace("{\"color\":\"gold\",", "&6")
-            .replace("{\"color\":\"gray\",", "&7").replace("{\"color\":\"dark_gray\",", "&8")
-            .replace("{\"color\":\"blue\",", "&9").replace("{\"color\":\"green\",", "&a")
-            .replace("{\"color\":\"aqua\",", "&b").replace("{\"color\":\"red\",", "&c")
-            .replace("{\"color\":\"light_purple\",", "&d").replace("{\"color\":\"yellow\",", "&e")
-            .replace("{\"color\":\"white\",", "&f").replace("{\"obfuscated\":true,", "&k")
-            .replace("{\"bold\":true,", "&l").replace("{\"strikethrough\":true,", "&m")
-            .replace("{\"underlined\":true,", "&n").replace("{\"italic\":true,", "&o")
-            .replace("\"color\":\"black\",\"text\":\"", "&0")
-            .replace("\"color\":\"dark_blue\",\"text\":\"", "&1")
-            .replace("\"color\":\"dark_green\",\"text\":\"", "&2")
-            .replace("\"color\":\"dark_aqua\",\"text\":\"", "&3")
-            .replace("\"color\":\"dark_red\",\"text\":\"", "&4")
-            .replace("\"color\":\"dark_purple\",\"text\":\"", "&5")
-            .replace("\"color\":\"gold\",\"text\":\"", "&6")
-            .replace("\"color\":\"gray\",\"text\":\"", "&7")
-            .replace("\"color\":\"dark_gray\",\"text\":\"", "&8")
-            .replace("\"color\":\"blue\",\"text\":\"", "&9")
-            .replace("\"color\":\"green\",\"text\":\"", "&a")
-            .replace("\"color\":\"aqua\",\"text\":\"", "&b")
-            .replace("\"color\":\"red\",\"text\":\"", "&c")
-            .replace("\"color\":\"light_purple\",\"text\":\"", "&d")
-            .replace("\"color\":\"yellow\",\"text\":\"", "&e")
-            .replace("\"color\":\"white\",\"text\":\"", "&f")
-            .replace("\"obfuscated\":true,\"text\":\"", "&k")
-            .replace("\"bold\":true,\"text\":\"", "&l")
-            .replace("\"strikethrough\":true,\"text\":\"", "&m")
-            .replace("\"underlined\":true,\"text\":\"", "&n")
-            .replace("\"italic\":true,\"text\":\"", "&o").replace("\"color\":\"black\",", "&0")
-            .replace("\"color\":\"dark_blue\",", "&1").replace("\"color\":\"dark_green\",", "&2")
-            .replace("\"color\":\"dark_aqua\",", "&3").replace("\"color\":\"dark_red\",", "&4")
-            .replace("\"color\":\"dark_purple\",", "&5").replace("\"color\":\"gold\",", "&6")
-            .replace("\"color\":\"gray\",", "&7").replace("\"color\":\"dark_gray\",", "&8")
-            .replace("\"color\":\"blue\",", "&9").replace("\"color\":\"green\",", "&a")
-            .replace("\"color\":\"aqua\",", "&b").replace("\"color\":\"red\",", "&c")
-            .replace("\"color\":\"light_purple\",", "&d").replace("\"color\":\"yellow\",", "&e")
-            .replace("\"color\":\"white\",", "&f").replace("\"obfuscated\":true,", "&k")
-            .replace("\"bold\":true,", "&l").replace("\"strikethrough\":true,", "&m")
-            .replace("\"underlined\":true,", "&n").replace("\"italic\":true,", "&o")
-            .replace("[{\"text\":\"", "&0").replace("{\"text\":\"", "&0").replace("\"},", "")
-            .replace("\"}]", "").replace("\"}", "");
-        for (Entry<String, String> entry : Captions.replacements.entrySet()) {
-            str = str.replace(entry.getKey(), entry.getValue());
-        }
+                .replace("[{\"color\":\"black\",\"text\":\"", "&0")
+                .replace("[{\"color\":\"dark_blue\",\"text\":\"", "&1")
+                .replace("[{\"color\":\"dark_green\",\"text\":\"", "&2")
+                .replace("[{\"color\":\"dark_aqua\",\"text\":\"", "&3")
+                .replace("[{\"color\":\"dark_red\",\"text\":\"", "&4")
+                .replace("[{\"color\":\"dark_purple\",\"text\":\"", "&5")
+                .replace("[{\"color\":\"gold\",\"text\":\"", "&6")
+                .replace("[{\"color\":\"gray\",\"text\":\"", "&7")
+                .replace("[{\"color\":\"dark_gray\",\"text\":\"", "&8")
+                .replace("[{\"color\":\"blue\",\"text\":\"", "&9")
+                .replace("[{\"color\":\"green\",\"text\":\"", "&a")
+                .replace("[{\"color\":\"aqua\",\"text\":\"", "&b")
+                .replace("[{\"color\":\"red\",\"text\":\"", "&c")
+                .replace("[{\"color\":\"light_purple\",\"text\":\"", "&d")
+                .replace("[{\"color\":\"yellow\",\"text\":\"", "&e")
+                .replace("[{\"color\":\"white\",\"text\":\"", "&f")
+                .replace("[{\"obfuscated\":true,\"text\":\"", "&k")
+                .replace("[{\"bold\":true,\"text\":\"", "&l")
+                .replace("[{\"strikethrough\":true,\"text\":\"", "&m")
+                .replace("[{\"underlined\":true,\"text\":\"", "&n")
+                .replace("[{\"italic\":true,\"text\":\"", "&o").replace("[{\"color\":\"black\",", "&0")
+                .replace("[{\"color\":\"dark_blue\",", "&1")
+                .replace("[{\"color\":\"dark_green\",", "&2")
+                .replace("[{\"color\":\"dark_aqua\",", "&3").replace("[{\"color\":\"dark_red\",", "&4")
+                .replace("[{\"color\":\"dark_purple\",", "&5").replace("[{\"color\":\"gold\",", "&6")
+                .replace("[{\"color\":\"gray\",", "&7").replace("[{\"color\":\"dark_gray\",", "&8")
+                .replace("[{\"color\":\"blue\",", "&9").replace("[{\"color\":\"green\",", "&a")
+                .replace("[{\"color\":\"aqua\",", "&b").replace("[{\"color\":\"red\",", "&c")
+                .replace("[{\"color\":\"light_purple\",", "&d").replace("[{\"color\":\"yellow\",", "&e")
+                .replace("[{\"color\":\"white\",", "&f").replace("[{\"obfuscated\":true,", "&k")
+                .replace("[{\"bold\":true,", "&l").replace("[{\"strikethrough\":true,", "&m")
+                .replace("[{\"underlined\":true,", "&n").replace("[{\"italic\":true,", "&o")
+                .replace("{\"color\":\"black\",\"text\":\"", "&0")
+                .replace("{\"color\":\"dark_blue\",\"text\":\"", "&1")
+                .replace("{\"color\":\"dark_green\",\"text\":\"", "&2")
+                .replace("{\"color\":\"dark_aqua\",\"text\":\"", "&3")
+                .replace("{\"color\":\"dark_red\",\"text\":\"", "&4")
+                .replace("{\"color\":\"dark_purple\",\"text\":\"", "&5")
+                .replace("{\"color\":\"gold\",\"text\":\"", "&6")
+                .replace("{\"color\":\"gray\",\"text\":\"", "&7")
+                .replace("{\"color\":\"dark_gray\",\"text\":\"", "&8")
+                .replace("{\"color\":\"blue\",\"text\":\"", "&9")
+                .replace("{\"color\":\"green\",\"text\":\"", "&a")
+                .replace("{\"color\":\"aqua\",\"text\":\"", "&b")
+                .replace("{\"color\":\"red\",\"text\":\"", "&c")
+                .replace("{\"color\":\"light_purple\",\"text\":\"", "&d")
+                .replace("{\"color\":\"yellow\",\"text\":\"", "&e")
+                .replace("{\"color\":\"white\",\"text\":\"", "&f")
+                .replace("{\"obfuscated\":true,\"text\":\"", "&k")
+                .replace("{\"bold\":true,\"text\":\"", "&l")
+                .replace("{\"strikethrough\":true,\"text\":\"", "&m")
+                .replace("{\"underlined\":true,\"text\":\"", "&n")
+                .replace("{\"italic\":true,\"text\":\"", "&o").replace("{\"color\":\"black\",", "&0")
+                .replace("{\"color\":\"dark_blue\",", "&1").replace("{\"color\":\"dark_green\",", "&2")
+                .replace("{\"color\":\"dark_aqua\",", "&3").replace("{\"color\":\"dark_red\",", "&4")
+                .replace("{\"color\":\"dark_purple\",", "&5").replace("{\"color\":\"gold\",", "&6")
+                .replace("{\"color\":\"gray\",", "&7").replace("{\"color\":\"dark_gray\",", "&8")
+                .replace("{\"color\":\"blue\",", "&9").replace("{\"color\":\"green\",", "&a")
+                .replace("{\"color\":\"aqua\",", "&b").replace("{\"color\":\"red\",", "&c")
+                .replace("{\"color\":\"light_purple\",", "&d").replace("{\"color\":\"yellow\",", "&e")
+                .replace("{\"color\":\"white\",", "&f").replace("{\"obfuscated\":true,", "&k")
+                .replace("{\"bold\":true,", "&l").replace("{\"strikethrough\":true,", "&m")
+                .replace("{\"underlined\":true,", "&n").replace("{\"italic\":true,", "&o")
+                .replace("\"color\":\"black\",\"text\":\"", "&0")
+                .replace("\"color\":\"dark_blue\",\"text\":\"", "&1")
+                .replace("\"color\":\"dark_green\",\"text\":\"", "&2")
+                .replace("\"color\":\"dark_aqua\",\"text\":\"", "&3")
+                .replace("\"color\":\"dark_red\",\"text\":\"", "&4")
+                .replace("\"color\":\"dark_purple\",\"text\":\"", "&5")
+                .replace("\"color\":\"gold\",\"text\":\"", "&6")
+                .replace("\"color\":\"gray\",\"text\":\"", "&7")
+                .replace("\"color\":\"dark_gray\",\"text\":\"", "&8")
+                .replace("\"color\":\"blue\",\"text\":\"", "&9")
+                .replace("\"color\":\"green\",\"text\":\"", "&a")
+                .replace("\"color\":\"aqua\",\"text\":\"", "&b")
+                .replace("\"color\":\"red\",\"text\":\"", "&c")
+                .replace("\"color\":\"light_purple\",\"text\":\"", "&d")
+                .replace("\"color\":\"yellow\",\"text\":\"", "&e")
+                .replace("\"color\":\"white\",\"text\":\"", "&f")
+                .replace("\"obfuscated\":true,\"text\":\"", "&k")
+                .replace("\"bold\":true,\"text\":\"", "&l")
+                .replace("\"strikethrough\":true,\"text\":\"", "&m")
+                .replace("\"underlined\":true,\"text\":\"", "&n")
+                .replace("\"italic\":true,\"text\":\"", "&o").replace("\"color\":\"black\",", "&0")
+                .replace("\"color\":\"dark_blue\",", "&1").replace("\"color\":\"dark_green\",", "&2")
+                .replace("\"color\":\"dark_aqua\",", "&3").replace("\"color\":\"dark_red\",", "&4")
+                .replace("\"color\":\"dark_purple\",", "&5").replace("\"color\":\"gold\",", "&6")
+                .replace("\"color\":\"gray\",", "&7").replace("\"color\":\"dark_gray\",", "&8")
+                .replace("\"color\":\"blue\",", "&9").replace("\"color\":\"green\",", "&a")
+                .replace("\"color\":\"aqua\",", "&b").replace("\"color\":\"red\",", "&c")
+                .replace("\"color\":\"light_purple\",", "&d").replace("\"color\":\"yellow\",", "&e")
+                .replace("\"color\":\"white\",", "&f").replace("\"obfuscated\":true,", "&k")
+                .replace("\"bold\":true,", "&l").replace("\"strikethrough\":true,", "&m")
+                .replace("\"underlined\":true,", "&n").replace("\"italic\":true,", "&o")
+                .replace("[{\"text\":\"", "&0").replace("{\"text\":\"", "&0").replace("\"},", "")
+                .replace("\"}]", "").replace("\"}", "");
+        str = ChatColor.translateAlternateColorCodes('&', str);
         return str;
     }
 
@@ -179,19 +177,11 @@ public class StateWrapper {
         }
         org.bukkit.block.BlockState state = block.getState();
         switch (getId()) {
-            case "chest":
-            case "beacon":
-            case "brewingstand":
-            case "dispenser":
-            case "dropper":
-            case "furnace":
-            case "hopper":
-            case "shulkerbox":
-                if (!(state instanceof Container)) {
+            case "chest", "beacon", "brewingstand", "dispenser", "dropper", "furnace", "hopper", "shulkerbox" -> {
+                if (!(state instanceof Container container)) {
                     return false;
                 }
                 List<Tag> itemsTag = this.tag.getListTag("Items").getValue();
-                Container container = (Container) state;
                 Inventory inv = container.getSnapshotInventory();
                 for (Tag itemTag : itemsTag) {
                     CompoundTag itemComp = (CompoundTag) itemTag;
@@ -208,9 +198,9 @@ public class StateWrapper {
                 }
                 container.update(true, false);
                 return true;
-            case "sign":
-                if (state instanceof Sign) {
-                    Sign sign = (Sign) state;
+            }
+            case "sign" -> {
+                if (state instanceof Sign sign) {
                     sign.setLine(0, jsonToColourCode(tag.getString("Text1")));
                     sign.setLine(1, jsonToColourCode(tag.getString("Text2")));
                     sign.setLine(2, jsonToColourCode(tag.getString("Text3")));
@@ -219,6 +209,7 @@ public class StateWrapper {
                     return true;
                 }
                 return false;
+            }
         }
         return false;
     }
@@ -227,8 +218,7 @@ public class StateWrapper {
         if (this.tag != null) {
             return this.tag;
         }
-        if (this.state instanceof InventoryHolder) {
-            InventoryHolder inv = (InventoryHolder) this.state;
+        if (this.state instanceof InventoryHolder inv) {
             ItemStack[] contents = inv.getInventory().getContents();
             Map<String, Tag> values = new HashMap<>();
             values.put("Items", new ListTag(CompoundTag.class, serializeInventory(contents)));

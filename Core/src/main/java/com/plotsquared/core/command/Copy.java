@@ -21,59 +21,73 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.Permissions;
+import net.kyori.adventure.text.minimessage.Template;
 
 @CommandDeclaration(command = "copy",
-    permission = "plots.copy",
-    aliases = {"copypaste"},
-    category = CommandCategory.CLAIMING,
-    description = "Copy a plot",
-    usage = "/plot copy <X;Z>",
-    requiredType = RequiredType.NONE)
+        permission = "plots.copy",
+        aliases = {"copypaste"},
+        category = CommandCategory.CLAIMING,
+        usage = "/plot copy <X;Z>",
+        requiredType = RequiredType.NONE)
 public class Copy extends SubCommand {
 
-    @Override public boolean onCommand(final PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
         Plot plot1 = location.getPlotAbs();
         if (plot1 == null) {
-            return !MainUtil.sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot1.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN.getTranslated())) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                .hasPermission(player, Permission.PERMISSION_ADMIN.toString())) {
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
         if (args.length != 1) {
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot copy <X;Z>")
+            );
             return false;
         }
-        Plot plot2 = MainUtil.getPlotFromString(player, args[0], true);
+        Plot plot2 = Plot.getPlotFromString(player, args[0], true);
         if (plot2 == null) {
             return false;
         }
         if (plot1.equals(plot2)) {
-            MainUtil.sendMessage(player, Captions.NOT_VALID_PLOT_ID);
-            Captions.COMMAND_SYNTAX.send(player, getUsage());
+            player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
+            player.sendMessage(
+                    TranslatableCaption.of("commandconfig.command_syntax"),
+                    Template.of("value", "/plot copy <X;Z>")
+            );
             return false;
         }
         if (!plot1.getArea().isCompatible(plot2.getArea())) {
-            Captions.PLOTWORLD_INCOMPATIBLE.send(player);
+            player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
             return false;
         }
-        if (plot1.copy(plot2, () -> MainUtil.sendMessage(player, Captions.COPY_SUCCESS))) {
-            return true;
-        } else {
-            MainUtil.sendMessage(player, Captions.REQUIRES_UNOWNED);
-            return false;
-        }
+
+        plot1.getPlotModificationManager().copy(plot2, player).thenAccept(result -> {
+            if (result) {
+                player.sendMessage(TranslatableCaption.of("move.copy_success"), Template.of("origin", String.valueOf(plot1)),
+                        Template.of("target", String.valueOf(plot2)));
+            } else {
+                player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
+            }
+        });
+
+        return true;
     }
+
 }

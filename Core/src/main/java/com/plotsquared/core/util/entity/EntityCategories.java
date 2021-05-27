@@ -21,9 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.entity;
+
+import com.plotsquared.core.PlotSquared;
 
 /**
  * A collection of {@link EntityCategory entity categories}
@@ -48,7 +50,7 @@ public class EntityCategories {
     public static final EntityCategory PLAYER = register("player");
 
     public static EntityCategory register(final String id) {
-        final EntityCategory entityCategory = new EntityCategory(id);
+        final EntityCategory entityCategory = new EntityCategory(PlotSquared.platform().worldUtil(), id);
         EntityCategory.REGISTRY.register(entityCategory.getId(), entityCategory);
         return entityCategory;
     }

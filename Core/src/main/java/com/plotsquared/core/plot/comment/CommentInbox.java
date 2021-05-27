@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.comment;
 
@@ -35,29 +35,46 @@ import java.util.List;
 
 public abstract class CommentInbox {
 
-    @Override public abstract String toString();
+    @Override
+    public abstract String toString();
 
-    public boolean canRead(Plot plot, PlotPlayer player) {
+    /**
+     * @param plot   the plot's inbox to read
+     * @param player the player trying to read the comment
+     * @return the inbox, otherwise {@code false} false
+     */
+    public boolean canRead(Plot plot, PlotPlayer<?> player) {
         if (Permissions.hasPermission(player, "plots.inbox.read." + toString(), true)) {
             return plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.read." + toString() + ".other", true);
+                    .hasPermission(player, "plots.inbox.read." + toString() + ".other", true);
         }
         return false;
     }
 
-    public boolean canWrite(Plot plot, PlotPlayer player) {
+    /**
+     * @param plot   the plot's inbox to write to
+     * @param player the player trying to write the comment
+     * @return true if the player can write a comment on the plot
+     */
+    public boolean canWrite(Plot plot, PlotPlayer<?> player) {
         if (plot == null) {
-            return Permissions.hasPermission(player, "plots.inbox.write." + toString(), true);
+            return Permissions.hasPermission(player, "plots.inbox.write." + this, true);
         }
-        return Permissions.hasPermission(player, "plots.inbox.write." + toString(), true) && (
-            plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.write." + toString() + ".other", true));
+        return Permissions.hasPermission(player, "plots.inbox.write." + this, true) && (
+                plot.isOwner(player.getUUID()) || Permissions
+                        .hasPermission(player, "plots.inbox.write." + this + ".other", true));
     }
 
-    public boolean canModify(Plot plot, PlotPlayer player) {
-        if (Permissions.hasPermission(player, "plots.inbox.modify." + toString(), true)) {
+    /**
+     * @param plot   the plot's inbox to write to
+     * @param player the player trying to modify the inbox
+     * @return true if the player can write a comment on the plot
+     */
+    @SuppressWarnings({"BooleanMethodIsAlwaysInverted"})
+    public boolean canModify(Plot plot, PlotPlayer<?> player) {
+        if (Permissions.hasPermission(player, "plots.inbox.modify." + this, true)) {
             return plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, "plots.inbox.modify." + toString() + ".other", true);
+                    .hasPermission(player, "plots.inbox.modify." + this + ".other", true);
         }
         return false;
     }
@@ -67,19 +84,32 @@ public abstract class CommentInbox {
      * The `whenDone` parameter should be executed when it's done fetching the comments.
      * The value should be set to List of comments
      *
-     * @param plot
-     * @param whenDone
-     * @return
+     * @param plot     plot
+     * @param whenDone task to run when comments are obtained
+     * @return success or not
      */
     public abstract boolean getComments(Plot plot, RunnableVal<List<PlotComment>> whenDone);
 
+    /**
+     * @param plot    plot
+     * @param comment the comment to add
+     * @return success or not
+     */
     public abstract boolean addComment(Plot plot, PlotComment comment);
 
+    /**
+     * @param plot    plot
+     * @param comment the comment to remove
+     */
     public void removeComment(Plot plot, PlotComment comment) {
         DBFunc.removeComment(plot, comment);
     }
 
+    /**
+     * @param plot plot
+     */
     public void clearInbox(Plot plot) {
         DBFunc.clearInbox(plot, toString());
     }
+
 }

@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
 
@@ -44,22 +44,30 @@ public class Storage extends Config {
 
     @Comment("MySQL section")
     public static final class MySQL {
-        @Comment("Should MySQL be used?") public static boolean USE = false;
+
+        @Comment("Should MySQL be used?")
+        public static boolean USE = false;
         public static String HOST = "localhost";
         public static String PORT = "3306";
         public static String USER = "root";
         public static String PASSWORD = "password";
         public static String DATABASE = "plot_db";
 
-        @Comment("Set additional properties: https://goo.gl/wngtN8") public static List<String>
-            PROPERTIES = new ArrayList<>(Collections.singletonList("useSSL=false"));
+        @Comment("Set additional properties: https://goo.gl/wngtN8")
+        public static List<String>
+                PROPERTIES = new ArrayList<>(Collections.singletonList("useSSL=false"));
+
     }
 
 
     @Comment("SQLite section")
     public static final class SQLite {
-        @Comment("Should SQLite be used?") public static boolean USE = true;
-        @Comment("The file to use") public static String DB = "storage";
+
+        @Comment("Should SQLite be used?")
+        public static boolean USE = true;
+        @Comment("The file to use")
+        public static String DB = "storage";
+
     }
 
 }

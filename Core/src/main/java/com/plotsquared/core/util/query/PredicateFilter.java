@@ -21,12 +21,12 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
 
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.function.Predicate;
 
@@ -34,11 +34,12 @@ class PredicateFilter implements PlotFilter {
 
     private final Predicate<Plot> predicate;
 
-    PredicateFilter(@NotNull final Predicate<Plot> predicate) {
+    PredicateFilter(final @NonNull Predicate<Plot> predicate) {
         this.predicate = predicate;
     }
 
-    @Override public boolean accepts(@NotNull final Plot plot) {
+    @Override
+    public boolean accepts(final @NonNull Plot plot) {
         return predicate.test(plot);
     }
 

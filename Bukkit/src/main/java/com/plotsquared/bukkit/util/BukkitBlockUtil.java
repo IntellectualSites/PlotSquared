@@ -21,30 +21,16 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockState;
-import com.sk89q.worldedit.world.item.ItemType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-import java.util.function.Supplier;
-
 public class BukkitBlockUtil {
-    public static Supplier<ItemType> supplyItem(Block block) {
-        return new Supplier<ItemType>() {
-            @Override public ItemType get() {
-                return BukkitAdapter.asItemType(block.getType());
-            }
-        };
-    }
-
-    public static Supplier<ItemType> supplyItem(Material type) {
-        return () -> BukkitAdapter.asItemType(type);
-    }
 
     public static BlockState get(Block block) {
         return get(block.getType());
@@ -53,4 +39,5 @@ public class BukkitBlockUtil {
     public static BlockState get(Material material) {
         return BukkitAdapter.asBlockType(material).getDefaultState();
     }
+
 }

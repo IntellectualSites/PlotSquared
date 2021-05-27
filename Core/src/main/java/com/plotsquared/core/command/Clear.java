@@ -21,99 +21,126 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.PlotSquared;
+import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.Result;
+import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.AnalysisFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.queue.GlobalBlockQueue;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
+import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.plotsquared.core.command.SubCommand.sendMessage;
-
 @CommandDeclaration(command = "clear",
-    description = "Clear the plot you stand on",
-    requiredType = RequiredType.NONE,
-    permission = "plots.clear",
-    category = CommandCategory.APPEARANCE,
-    usage = "/plot clear",
-    aliases = "reset",
-    confirmation = true)
+        requiredType = RequiredType.NONE,
+        permission = "plots.clear",
+        category = CommandCategory.APPEARANCE,
+        usage = "/plot clear",
+        aliases = "reset",
+        confirmation = true)
 public class Clear extends Command {
 
-    // Note: To clear a specific plot use /plot <plot> clear
-    // The syntax also works with any command: /plot <plot> <command>
+    private final EventDispatcher eventDispatcher;
+    private final GlobalBlockQueue blockQueue;
 
-    public Clear() {
+    @Inject
+    public Clear(
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull GlobalBlockQueue blockQueue
+    ) {
         super(MainCommand.getInstance(), true);
+        this.eventDispatcher = eventDispatcher;
+        this.blockQueue = blockQueue;
     }
 
     @Override
-    public CompletableFuture<Boolean> execute(final PlotPlayer<?> player, String[] args,
-        RunnableVal3<Command, Runnable, Runnable> confirm,
-        RunnableVal2<Command, CommandResult> whenDone) throws CommandException {
-        checkTrue(args.length == 0, Captions.COMMAND_SYNTAX, getUsage());
-        final Plot plot = check(player.getCurrentPlot(), Captions.NOT_IN_PLOT);
-        Result eventResult =
-            PlotSquared.get().getEventDispatcher().callClear(plot).getEventResult();
+    public CompletableFuture<Boolean> execute(
+            final PlotPlayer<?> player, String[] args,
+            RunnableVal3<Command, Runnable, Runnable> confirm,
+            RunnableVal2<Command, CommandResult> whenDone
+    ) throws CommandException {
+        if (args.length != 0) {
+            sendUsage(player);
+            return CompletableFuture.completedFuture(false);
+        }
+        final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
+        Result eventResult = this.eventDispatcher.callClear(plot).getEventResult();
         if (eventResult == Result.DENY) {
-            sendMessage(player, Captions.EVENT_DENIED, "Clear");
+            player.sendMessage(
+                    TranslatableCaption.of("events.event_denied"),
+                    Template.of("value", "Clear")
+            );
+            return CompletableFuture.completedFuture(true);
+        }
+        if (plot.getVolume() > Integer.MAX_VALUE) {
+            player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return CompletableFuture.completedFuture(true);
         }
         boolean force = eventResult == Result.FORCE;
-        checkTrue(force || plot.isOwner(player.getUUID()) || Permissions
-                .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_CLEAR),
-            Captions.NO_PLOT_PERMS);
-        checkTrue(plot.getRunning() == 0, Captions.WAIT_FOR_TIMER);
+        checkTrue(
+                force || plot.isOwner(player.getUUID()) || Permissions
+                        .hasPermission(player, "plots.admin.command.clear"),
+                TranslatableCaption.of("permission.no_plot_perms")
+        );
+        checkTrue(plot.getRunning() == 0, TranslatableCaption.of("errors.wait_for_timer"));
         checkTrue(force || !Settings.Done.RESTRICT_BUILDING || !DoneFlag.isDone(plot) || Permissions
-            .hasPermission(player, Captions.PERMISSION_CONTINUE), Captions.DONE_ALREADY_DONE);
+                .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
         confirm.run(this, () -> {
+            if (Settings.Teleport.ON_CLEAR) {
+                plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
+                });
+            }
             BackupManager.backup(player, plot, () -> {
                 final long start = System.currentTimeMillis();
-                boolean result = plot.clear(true, false, () -> {
-                    plot.unlink();
-                    GlobalBlockQueue.IMP.addEmptyTask(() -> {
+                boolean result = plot.getPlotModificationManager().clear(true, false, player, () -> {
+                    plot.getPlotModificationManager().unlink();
+                    TaskManager.runTask(() -> {
                         plot.removeRunning();
                         // If the state changes, then mark it as no longer done
                         if (DoneFlag.isDone(plot)) {
                             PlotFlag<?, ?> plotFlag =
-                                plot.getFlagContainer().getFlag(DoneFlag.class);
-                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
-                                .callFlagRemove(plotFlag, plot);
+                                    plot.getFlagContainer().getFlag(DoneFlag.class);
+                            PlotFlagRemoveEvent event = this.eventDispatcher
+                                    .callFlagRemove(plotFlag, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
                             }
                         }
                         if (!plot.getFlag(AnalysisFlag.class).isEmpty()) {
                             PlotFlag<?, ?> plotFlag =
-                                plot.getFlagContainer().getFlag(AnalysisFlag.class);
-                            PlotFlagRemoveEvent event = PlotSquared.get().getEventDispatcher()
-                                .callFlagRemove(plotFlag, plot);
+                                    plot.getFlagContainer().getFlag(AnalysisFlag.class);
+                            PlotFlagRemoveEvent event = this.eventDispatcher
+                                    .callFlagRemove(plotFlag, plot);
                             if (event.getEventResult() != Result.DENY) {
                                 plot.removeFlag(event.getFlag());
                             }
                         }
-                        MainUtil.sendMessage(player, Captions.CLEARING_DONE,
-                            "" + (System.currentTimeMillis() - start));
+                        player.sendMessage(
+                                TranslatableCaption.of("working.clearing_done"),
+                                Template.of("amount", String.valueOf(System.currentTimeMillis() - start)),
+                                Template.of("plot", plot.getId().toString())
+                        );
                     });
                 });
                 if (!result) {
-                    MainUtil.sendMessage(player, Captions.WAIT_FOR_TIMER);
+                    player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                 } else {
                     plot.addRunning();
                 }
@@ -121,4 +148,5 @@ public class Clear extends Command {
         }, null);
         return CompletableFuture.completedFuture(true);
     }
+
 }

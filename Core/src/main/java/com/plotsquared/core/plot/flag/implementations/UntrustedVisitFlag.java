@@ -21,23 +21,24 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class UntrustedVisitFlag extends BooleanFlag<UntrustedVisitFlag> {
 
     public static final UntrustedVisitFlag UNTRUSTED_VISIT_FLAG_TRUE = new UntrustedVisitFlag(true);
 
     protected UntrustedVisitFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_UNTRUSTED);
+        super(value, TranslatableCaption.of("flags.flag_description_untrusted"));
     }
 
-    @Override protected UntrustedVisitFlag flagOf(@NotNull Boolean value) {
+    @Override
+    protected UntrustedVisitFlag flagOf(@NonNull Boolean value) {
         return new UntrustedVisitFlag(value);
     }
 

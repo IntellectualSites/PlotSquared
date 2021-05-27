@@ -21,23 +21,25 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
 
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.UUID;
 
 public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEvent {
 
-    private final PlotPlayer initiator;
-    @Nullable private final UUID oldOwner;
-    @Nullable private UUID newOwner;
-    private boolean hasOldOwner;
+    private final PlotPlayer<?> initiator;
+    @Nullable
+    private final UUID oldOwner;
+    @Nullable
+    private UUID newOwner;
+    private final boolean hasOldOwner;
     private Result eventResult;
 
     /**
@@ -49,8 +51,10 @@ public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEv
      * @param newOwner    The new owner of the plot or null
      * @param hasOldOwner If the plot has an old owner
      */
-    public PlotChangeOwnerEvent(PlotPlayer initiator, Plot plot, @Nullable UUID oldOwner,
-        @Nullable UUID newOwner, boolean hasOldOwner) {
+    public PlotChangeOwnerEvent(
+            PlotPlayer<?> initiator, Plot plot, @Nullable UUID oldOwner,
+            @Nullable UUID newOwner, boolean hasOldOwner
+    ) {
         super(plot);
         this.initiator = initiator;
         this.newOwner = newOwner;
@@ -77,11 +81,11 @@ public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEv
     }
 
     /**
-     * Get the change-owner initator
+     * Get the change-owner initiator
      *
      * @return Player
      */
-    public PlotPlayer getInitiator() {
+    public PlotPlayer<?> getInitiator() {
         return this.initiator;
     }
 
@@ -90,7 +94,7 @@ public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEv
      *
      * @return UUID
      */
-    @Nullable public UUID getOldOwner() {
+    public @Nullable UUID getOldOwner() {
         return this.oldOwner;
     }
 
@@ -99,7 +103,7 @@ public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEv
      *
      * @return UUID
      */
-    @Nullable public UUID getNewOwner() {
+    public @Nullable UUID getNewOwner() {
         return this.newOwner;
     }
 
@@ -122,11 +126,14 @@ public class PlotChangeOwnerEvent extends PlotEvent implements CancellablePlotEv
         return this.hasOldOwner;
     }
 
-    @Override public Result getEventResult() {
+    @Override
+    public Result getEventResult() {
         return eventResult;
     }
 
-    @Override public void setEventResult(Result e) {
+    @Override
+    public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
 }

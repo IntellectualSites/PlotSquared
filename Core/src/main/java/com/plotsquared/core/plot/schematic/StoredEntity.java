@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.schematic;
 
@@ -64,15 +64,18 @@ abstract class StoredEntity implements Entity {
         return entity;
     }
 
-    @Override public BaseEntity getState() {
+    @Override
+    public BaseEntity getState() {
         return new BaseEntity(entity);
     }
 
-    @Override public Location getLocation() {
+    @Override
+    public Location getLocation() {
         return location;
     }
 
-    @Override public Extent getExtent() {
+    @Override
+    public Extent getExtent() {
         return location.getExtent();
     }
 

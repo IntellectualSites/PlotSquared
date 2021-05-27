@@ -21,43 +21,32 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
-import com.plotsquared.core.IPlotMain;
-import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
-import org.jetbrains.annotations.Nullable;
+import com.plotsquared.core.plot.PlotArea;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class EconHandler {
 
     /**
-     * @deprecated This will be removed in the future,
-     * call {@link IPlotMain#getEconomyHandler()} instead.
-     */
-    @Deprecated @Nullable public static EconHandler manager;
-
-    /**
-     * Initialize the economy handler using {@link IPlotMain#getEconomyHandler()}
-     * @deprecated Call {@link #init} instead or use {@link IPlotMain#getEconomyHandler()}
-     * which does this already.
-     */
-    @Deprecated public static void initializeEconHandler() {
-        manager = PlotSquared.get().IMP.getEconomyHandler();
-    }
-
-    /**
-     * Return the econ handler instance, if one exists
+     * Returns an econ handler that:
+     * <ul>
+     *     <li>Returns {@code false} on {@link #isEnabled(PlotArea)}</li>
+     *     <li>Returns {@link Double#MIN_VALUE} on {@link #getBalance(PlotPlayer)}</li>
+     *     <li>Doesn't do anything for {@link #withdrawMoney(PlotPlayer, double)},
+     *          {@link #depositMoney(OfflinePlotPlayer, double)}
+     *          {@link #depositMoney(PlotPlayer, double)}</li>
+     * </ul>
      *
-     * @return Economy handler instance
-     * @deprecated Call {@link IPlotMain#getEconomyHandler()} instead
+     * @return A null econ handler
      */
-    @Deprecated @Nullable public static EconHandler getEconHandler() {
-        manager = PlotSquared.get().IMP.getEconomyHandler();
-        return manager;
+    public static EconHandler nullEconHandler() {
+        return new NullEconHandler();
     }
 
     public abstract boolean init();
@@ -78,14 +67,72 @@ public abstract class EconHandler {
     public abstract void depositMoney(OfflinePlotPlayer player, double amount);
 
     /**
-     * @deprecated Use {@link PermHandler#hasPermission(String, String, String)} instead
+     * Returns whether economy is enabled in the given plot area or not.
+     * Implementations should only return true if {@link #isSupported()} returns
+     * true too.
+     *
+     * @param plotArea the plot area to check
+     * @return {@code true} if economy is enabled on the given plot area, {@code false} otherwise.
      */
-    @Deprecated public abstract boolean hasPermission(String world, String player, String perm);
+    public abstract boolean isEnabled(PlotArea plotArea);
 
     /**
-     * @deprecated Use {@link PermHandler#hasPermission(String, String)} instead
+     * Formats the given balance into a human-readable number.
+     *
+     * @param balance the balance to format.
+     * @return the balance as formatted string.
      */
-    @Deprecated public boolean hasPermission(String player, String perm) {
-        return hasPermission(null, player, perm);
+    public abstract @NonNull String format(double balance);
+
+    /**
+     * Returns whether economy is supported by the server or not.
+     *
+     * @return {@code true} if economy is supported, {@code false} otherwise.
+     */
+    public abstract boolean isSupported();
+
+    private static final class NullEconHandler extends EconHandler {
+
+        @Override
+        public boolean init() {
+            return false;
+        }
+
+        @Override
+        public double getBalance(PlotPlayer<?> player) {
+            return Double.MIN_VALUE;
+        }
+
+        @Override
+        public void withdrawMoney(PlotPlayer<?> player, double amount) {
+
+        }
+
+        @Override
+        public void depositMoney(PlotPlayer<?> player, double amount) {
+
+        }
+
+        @Override
+        public void depositMoney(OfflinePlotPlayer player, double amount) {
+
+        }
+
+        @Override
+        public boolean isEnabled(PlotArea plotArea) {
+            return false;
+        }
+
+        @Override
+        public @NonNull String format(double balance) {
+            return "";
+        }
+
+        @Override
+        public boolean isSupported() {
+            return false;
+        }
+
     }
+
 }

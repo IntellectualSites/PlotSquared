@@ -21,13 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class TamedInteractFlag extends BooleanFlag<TamedInteractFlag> {
 
@@ -35,10 +35,11 @@ public class TamedInteractFlag extends BooleanFlag<TamedInteractFlag> {
     public static final TamedInteractFlag TAMED_INTERACT_FALSE = new TamedInteractFlag(false);
 
     private TamedInteractFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_TAMED_INTERACT);
+        super(value, TranslatableCaption.of("flags.flag_description_tamed_interact"));
     }
 
-    @Override protected TamedInteractFlag flagOf(@NotNull Boolean value) {
+    @Override
+    protected TamedInteractFlag flagOf(@NonNull Boolean value) {
         return value ? TAMED_INTERACT_TRUE : TAMED_INTERACT_FALSE;
     }
 

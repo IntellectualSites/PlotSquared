@@ -21,13 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class AnimalAttackFlag extends BooleanFlag<AnimalAttackFlag> {
 
@@ -35,10 +35,11 @@ public class AnimalAttackFlag extends BooleanFlag<AnimalAttackFlag> {
     public static final AnimalAttackFlag ANIMAL_ATTACK_FALSE = new AnimalAttackFlag(false);
 
     private AnimalAttackFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_ANIMAL_ATTACK);
+        super(value, TranslatableCaption.of("flags.flag_description_animal_attack"));
     }
 
-    @Override protected AnimalAttackFlag flagOf(@NotNull Boolean value) {
+    @Override
+    protected AnimalAttackFlag flagOf(@NonNull Boolean value) {
         return value ? ANIMAL_ATTACK_TRUE : ANIMAL_ATTACK_FALSE;
     }
 

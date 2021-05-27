@@ -21,15 +21,15 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.nio.file.Path;
 import java.util.Objects;
@@ -38,15 +38,15 @@ public interface BackupManager {
 
     /**
      * This will perform an automatic backup of the plot iff the plot has an owner,
-     * automatic backups are enabled and the plot is not merged.
+     * automatic backups are enabled.
      * Otherwise it will complete immediately.
      *
      * @param player   Player that triggered the backup
      * @param plot     Plot to perform the automatic backup on
      * @param whenDone Action that runs when the automatic backup has been completed
      */
-    static void backup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone) {
-        Objects.requireNonNull(PlotSquared.imp()).getBackupManager().automaticBackup(player, plot, whenDone);
+    static void backup(@Nullable PlotPlayer<?> player, final @NonNull Plot plot, @NonNull Runnable whenDone) {
+        Objects.requireNonNull(PlotSquared.platform()).backupManager().automaticBackup(player, plot, whenDone);
     }
 
     /**
@@ -56,25 +56,25 @@ public interface BackupManager {
      * @param plot Plot to get the backup profile for
      * @return Backup profile
      */
-    @NotNull BackupProfile getProfile(@NotNull final Plot plot);
+    @NonNull BackupProfile getProfile(final @NonNull Plot plot);
 
     /**
      * This will perform an automatic backup of the plot iff the plot has an owner,
-     * automatic backups are enabled and the plot is not merged.
+     * automatic backups are enabled.
      * Otherwise it will complete immediately.
      *
      * @param player   Player that triggered the backup
      * @param plot     Plot to perform the automatic backup on
      * @param whenDone Action that runs when the automatic backup has been completed
      */
-    void automaticBackup(@Nullable PlotPlayer player, @NotNull final Plot plot, @NotNull Runnable whenDone);
+    void automaticBackup(@Nullable PlotPlayer<?> player, final @NonNull Plot plot, @NonNull Runnable whenDone);
 
     /**
      * Get the directory in which backups are stored
      *
      * @return Backup directory path
      */
-    @NotNull Path getBackupPath();
+    @NonNull Path getBackupPath();
 
     /**
      * Get the maximum amount of backups that may be stored for

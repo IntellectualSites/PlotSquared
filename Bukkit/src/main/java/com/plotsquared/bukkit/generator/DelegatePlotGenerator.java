@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.generator;
 
@@ -31,15 +31,14 @@ import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
-import com.plotsquared.core.queue.ScopedLocalBlockQueue;
+import com.plotsquared.core.queue.ScopedQueueCoordinator;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Range;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Random;
 
@@ -53,18 +52,22 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
         this.world = world;
     }
 
-    @Override public void initialize(PlotArea area) {
+    @Override
+    public void initialize(PlotArea area) {
     }
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return this.chunkGenerator.getClass().getName();
     }
 
-    @Override public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
-        return PlotSquared.get().IMP.getDefaultGenerator().getNewPlotArea(world, id, min, max);
+    @Override
+    public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
+        return PlotSquared.platform().defaultGenerator().getNewPlotArea(world, id, min, max);
     }
 
-    @Override public void generateChunk(final ScopedLocalBlockQueue result, PlotArea settings) {
+    @Override
+    public void generateChunk(final ScopedQueueCoordinator result, PlotArea settings) {
         World world = BukkitUtil.getWorld(this.world);
         Location min = result.getMin();
         int chunkX = min.getX() >> 4;
@@ -73,22 +76,23 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
         try {
             ChunkGenerator.BiomeGrid grid = new ChunkGenerator.BiomeGrid() {
                 @Override
-                public void setBiome(@Range(from = 0, to = 15) int x,
-                    @Range(from = 0, to = 15) int z, @NotNull Biome biome) {
+                public void setBiome(int x, int z, @NonNull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
                 }
 
                 //do not annotate with Override until we discontinue support for 1.4.4
-                public void setBiome(int x, int y, int z, @NotNull Biome biome) {
+                public void setBiome(int x, int y, int z, @NonNull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
 
                 }
 
-                @Override @NotNull public Biome getBiome(int x, int z) {
+                @Override
+                public @NonNull Biome getBiome(int x, int z) {
                     return Biome.FOREST;
                 }
 
-                @Override public @NotNull Biome getBiome(int x, int y, int z) {
+                @Override
+                public @NonNull Biome getBiome(int x, int y, int z) {
                     return Biome.FOREST;
                 }
             };

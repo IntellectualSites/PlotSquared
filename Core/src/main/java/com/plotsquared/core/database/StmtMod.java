@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
 
@@ -48,7 +48,7 @@ public abstract class StmtMod<T> {
     public String getCreateSQLite(int size, String query, int params) {
         String modParams = StringMan.repeat(",?", params).substring(1);
         return IntStream.range(0, size - 1).mapToObj(i -> "UNION SELECT " + modParams + ' ')
-            .collect(Collectors.joining("", query, ""));
+                .collect(Collectors.joining("", query, ""));
     }
 
     public abstract String getCreateSQLite(int size);
@@ -60,4 +60,5 @@ public abstract class StmtMod<T> {
     public abstract void setSQLite(PreparedStatement stmt, int i, T obj) throws SQLException;
 
     public abstract void setSQL(PreparedStatement stmt, T obj) throws SQLException;
+
 }

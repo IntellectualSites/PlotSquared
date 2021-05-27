@@ -21,34 +21,36 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.plotsquared.core.PlotSquared;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Container type for {@link PlotFlag plot flags}.
  */
-@EqualsAndHashCode(of = "flagMap") public class FlagContainer {
+public class FlagContainer {
+
+    private static final Logger logger = LoggerFactory.getLogger("P2/" + FlagContainer.class.getSimpleName());
 
     private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
     private final PlotFlagUpdateHandler plotFlagUpdateHandler;
     private final Collection<PlotFlagUpdateHandler> updateSubscribers = new ArrayList<>();
-    @Setter private FlagContainer parentContainer;
+    private FlagContainer parentContainer;
 
     /**
      * Construct a new flag container with an optional parent container and update handler.
@@ -62,8 +64,10 @@ import java.util.Map;
      * @param plotFlagUpdateHandler Event handler that will be called whenever a plot flag is
      *                              added, removed or updated in this flag container.
      */
-    public FlagContainer(@Nullable final FlagContainer parentContainer,
-        @Nullable PlotFlagUpdateHandler plotFlagUpdateHandler) {
+    public FlagContainer(
+            final @Nullable FlagContainer parentContainer,
+            @Nullable PlotFlagUpdateHandler plotFlagUpdateHandler
+    ) {
         this.parentContainer = parentContainer;
         this.plotFlagUpdateHandler = plotFlagUpdateHandler;
         if (!(this instanceof GlobalFlagContainer)) {
@@ -81,7 +85,7 @@ import java.util.Map;
      *                        and can set this parameter to null. If this is not a top level
      *                        flag container, the parent should not be null.
      */
-    public FlagContainer(@Nullable final FlagContainer parentContainer) {
+    public FlagContainer(final @Nullable FlagContainer parentContainer) {
         this(parentContainer, null);
     }
 
@@ -95,8 +99,10 @@ import java.util.Map;
      * @param <T>  Flag type
      * @return Casted flag
      */
-    @SuppressWarnings("ALL") public static <V, T extends PlotFlag<V, ?>> T castUnsafe(
-        final PlotFlag<?, ?> flag) {
+    @SuppressWarnings("ALL")
+    public static <V, T extends PlotFlag<V, ?>> T castUnsafe(
+            final PlotFlag<?, ?> flag
+    ) {
         return (T) flag;
     }
 
@@ -105,11 +111,16 @@ import java.util.Map;
      *
      * @return Parent container, if it exists
      */
-    @Nullable public FlagContainer getParentContainer() {
+    public @Nullable FlagContainer getParentContainer() {
         return this.parentContainer;
     }
 
-    @SuppressWarnings("unused") protected Map<Class<?>, PlotFlag<?, ?>> getInternalPlotFlagMap() {
+    public void setParentContainer(FlagContainer parentContainer) {
+        this.parentContainer = parentContainer;
+    }
+
+    @SuppressWarnings("unused")
+    protected Map<Class<?>, PlotFlag<?, ?>> getInternalPlotFlagMap() {
         return this.flagMap;
     }
 
@@ -126,12 +137,16 @@ import java.util.Map;
      * Add a flag to the container
      *
      * @param flag Flag to add
+     * @param <T>  flag type
+     * @param <V>  flag value type
      * @see #addAll(Collection) to add multiple flags
      */
     public <V, T extends PlotFlag<V, ?>> void addFlag(final T flag) {
         try {
-            Preconditions.checkState(flag.getName().length() <= 64,
-                "flag name may not be more than 64 characters. Check: " + flag.getName());
+            Preconditions.checkState(
+                    flag.getName().length() <= 64,
+                    "flag name may not be more than 64 characters. Check: " + flag.getName()
+            );
             final PlotFlag<?, ?> oldInstance = this.flagMap.put(flag.getClass(), flag);
             final PlotFlagUpdateType plotFlagUpdateType;
             if (oldInstance != null) {
@@ -143,13 +158,11 @@ import java.util.Map;
                 this.plotFlagUpdateHandler.handle(flag, plotFlagUpdateType);
             }
             this.updateSubscribers
-                .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
+                    .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
         } catch (IllegalStateException e) {
-            PlotSquared.log(String.format(
-                "Flag '%s' (class: '%s') could not be added to the container"
-                    + " because the flag name exceeded the allowed limit of 64 characters."
-                    + " Please tell the developer of that flag to fix this.", flag.getName(),
-                flag.getClass().getName()));
+            logger.info("Flag {} (class '{}') could not be added to the container because the "
+                    + "flag name exceeded the allowed limit of 64 characters. Please tell the developer "
+                    + "of the flag to fix this.", flag.getName(), flag.getClass().getName());
             e.printStackTrace();
         }
     }
@@ -158,6 +171,9 @@ import java.util.Map;
      * Remove a flag from the container
      *
      * @param flag Flag to remove
+     * @param <T>  flag type
+     * @param <V>  flag value type
+     * @return value of flag removed
      */
     public <V, T extends PlotFlag<V, ?>> V removeFlag(final T flag) {
         final Object value = this.flagMap.remove(flag.getClass());
@@ -165,7 +181,7 @@ import java.util.Map;
             this.plotFlagUpdateHandler.handle(flag, PlotFlagUpdateType.FLAG_REMOVED);
         }
         this.updateSubscribers
-            .forEach(subscriber -> subscriber.handle(flag, PlotFlagUpdateType.FLAG_REMOVED));
+                .forEach(subscriber -> subscriber.handle(flag, PlotFlagUpdateType.FLAG_REMOVED));
         if (value == null) {
             return null;
         } else {
@@ -224,6 +240,7 @@ import java.util.Map;
      * with wildcard generic types.
      *
      * @param flagClass The {@link PlotFlag} class.
+     * @return the plot flag
      */
     public PlotFlag<?, ?> getFlagErased(Class<?> flagClass) {
         final PlotFlag<?, ?> flag = this.flagMap.get(flagClass);
@@ -267,7 +284,7 @@ import java.util.Map;
      * @param <T>       Flag type
      * @return The flag instance, if it exists in this container, else null.
      */
-    @Nullable public <V, T extends PlotFlag<V, ?>> T queryLocal(final Class<?> flagClass) {
+    public @Nullable <V, T extends PlotFlag<V, ?>> T queryLocal(final Class<?> flagClass) {
         final PlotFlag<?, ?> localFlag = this.flagMap.get(flagClass);
         if (localFlag == null) {
             return null;
@@ -284,14 +301,16 @@ import java.util.Map;
      * @param plotFlagUpdateHandler The update handler which will react to changes.
      * @see PlotFlagUpdateType Plot flag update types
      */
-    public void subscribe(@NotNull final PlotFlagUpdateHandler plotFlagUpdateHandler) {
+    public void subscribe(final @NonNull PlotFlagUpdateHandler plotFlagUpdateHandler) {
         this.updateSubscribers.add(plotFlagUpdateHandler);
     }
 
-    private void handleUnknowns(final PlotFlag<?, ?> flag,
-        final PlotFlagUpdateType plotFlagUpdateType) {
+    private void handleUnknowns(
+            final PlotFlag<?, ?> flag,
+            final PlotFlagUpdateType plotFlagUpdateType
+    ) {
         if (plotFlagUpdateType != PlotFlagUpdateType.FLAG_REMOVED && this.unknownFlags
-            .containsKey(flag.getName())) {
+                .containsKey(flag.getName())) {
             final String value = this.unknownFlags.remove(flag.getName());
             if (value != null) {
                 try {
@@ -317,6 +336,33 @@ import java.util.Map;
         this.unknownFlags.put(flagName.toLowerCase(Locale.ENGLISH), value);
     }
 
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof final FlagContainer other)) {
+            return false;
+        }
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        final Object this$flagMap = this.getFlagMap();
+        final Object other$flagMap = other.getFlagMap();
+        return Objects.equals(this$flagMap, other$flagMap);
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof FlagContainer;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final Object $flagMap = this.getFlagMap();
+        result = result * PRIME + ($flagMap == null ? 43 : $flagMap.hashCode());
+        return result;
+    }
+
     /**
      * Update event types used in {@link PlotFlagUpdateHandler}.
      */
@@ -340,7 +386,8 @@ import java.util.Map;
     /**
      * Handler for update events in {@link FlagContainer flag containers}.
      */
-    @FunctionalInterface public interface PlotFlagUpdateHandler {
+    @FunctionalInterface
+    public interface PlotFlagUpdateHandler {
 
         /**
          * Act on the flag update event

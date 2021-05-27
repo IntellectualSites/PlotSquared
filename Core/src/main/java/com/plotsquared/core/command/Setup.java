@@ -21,18 +21,23 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.GeneratorWrapper;
+import com.plotsquared.core.player.MetaDataAccess;
+import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.setup.SetupProcess;
 import com.plotsquared.core.setup.SetupStep;
-import com.plotsquared.core.util.MainUtil;
 import com.plotsquared.core.util.SetupUtils;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,65 +46,84 @@ import java.util.List;
 import java.util.Map.Entry;
 
 @CommandDeclaration(command = "setup",
-    permission = "plots.admin.command.setup",
-    description = "Setup wizard for plot worlds",
-    usage = "/plot setup",
-    aliases = {"create"},
-    category = CommandCategory.ADMINISTRATION)
+        permission = "plots.admin.command.setup",
+        usage = "/plot setup",
+        aliases = {"create"},
+        category = CommandCategory.ADMINISTRATION)
 public class Setup extends SubCommand {
+
+    private final SetupUtils setupUtils;
+
+    @Inject
+    public Setup(final @NonNull SetupUtils setupUtils) {
+        this.setupUtils = setupUtils;
+    }
 
     public void displayGenerators(PlotPlayer<?> player) {
         StringBuilder message = new StringBuilder();
-        message.append("&6What generator do you want?");
+        message.append(TranslatableCaption.of("setup.choose_generator").getComponent(player));
         for (Entry<String, GeneratorWrapper<?>> entry : SetupUtils.generators.entrySet()) {
-            if (entry.getKey().equals(PlotSquared.imp().getPluginName())) {
-                message.append("\n&8 - &2").append(entry.getKey()).append(" (Default Generator)");
+            if (entry.getKey().equals(PlotSquared.platform().pluginName())) {
+                message.append("\n<dark_gray> - </dark_gray><dark_green>").append(entry.getKey()).append(
+                        " (Default Generator)</dark_green>");
             } else if (entry.getValue().isFull()) {
-                message.append("\n&8 - &7").append(entry.getKey()).append(" (Plot Generator)");
+                message.append("\n<dark_gray> - </dark_gray><gray>").append(entry.getKey()).append(" (Plot Generator)</gray>");
             } else {
-                message.append("\n&8 - &7").append(entry.getKey()).append(" (Unknown structure)");
+                message.append("\n<dark_gray> - </dark_gray><gray>").append(entry.getKey()).append(" (Unknown structure)</gray>");
             }
         }
-        MainUtil.sendMessage(player, message.toString());
+        player.sendMessage(StaticCaption.of(message.toString()));
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        SetupProcess process = player.getMeta("setup");
-        if (process == null) {
-            if (args.length > 0) {
-                MainUtil.sendMessage(player, Captions.SETUP_NOT_STARTED);
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        try (final MetaDataAccess<SetupProcess> metaDataAccess =
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SETUP)) {
+            SetupProcess process = metaDataAccess.get().orElse(null);
+            if (process == null) {
+                if (args.length > 0) {
+                    player.sendMessage(TranslatableCaption.of("setup.setup_not_started"));
+                    player.sendMessage(
+                            TranslatableCaption.of("commandconfig.command_syntax"),
+                            Template.of("value", "Use /plot setup to start a setup process.")
+                    );
+                    return true;
+                }
+                process = new SetupProcess();
+                metaDataAccess.set(process);
+                this.setupUtils.updateGenerators();
+                SetupStep step = process.getCurrentStep();
+                step.announce(player);
+                displayGenerators(player);
                 return true;
             }
-            process = new SetupProcess();
-            player.setMeta("setup", process);
-            SetupUtils.manager.updateGenerators();
-            SetupStep step = process.getCurrentStep();
-            step.announce(player);
-            displayGenerators(player);
+            if (args.length == 1) {
+                if ("back".equalsIgnoreCase(args[0])) {
+                    process.back();
+                    process.getCurrentStep().announce(player);
+                } else if ("cancel".equalsIgnoreCase(args[0])) {
+                    metaDataAccess.remove();
+                    player.sendMessage(TranslatableCaption.of("setup.setup_cancelled"));
+                } else {
+                    process.handleInput(player, args[0]);
+                    if (process.getCurrentStep() != null) {
+                        process.getCurrentStep().announce(player);
+                    }
+                }
+            } else {
+                process.getCurrentStep().announce(player);
+            }
             return true;
         }
-        if (args.length == 1) {
-            if ("back".equalsIgnoreCase(args[0])) {
-                process.back();
-                process.getCurrentStep().announce(player);
-            } else if ("cancel".equalsIgnoreCase(args[0])) {
-                player.deleteMeta("setup");
-                MainUtil.sendMessage(player, Captions.SETUP_CANCELLED);
-            } else {
-                process.handleInput(player, args[0]);
-                if (process.getCurrentStep() != null) {
-                    process.getCurrentStep().announce(player);
-                }
-            }
-        } else {
-            process.getCurrentStep().announce(player);
-        }
-        return true;
-
     }
 
-    @Override public Collection<Command> tab(PlotPlayer player, String[] args, boolean space) {
-        SetupProcess process = (SetupProcess) player.getMeta("setup"); // TODO use generics -> auto cast
+    @Override
+    public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
+        SetupProcess process;
+        try (final MetaDataAccess<SetupProcess> metaDataAccess =
+                     player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SETUP)) {
+            process = metaDataAccess.get().orElse(null);
+        }
         if (process == null) {
             return Collections.emptyList();
         }
@@ -116,7 +140,9 @@ public class Setup extends SubCommand {
 
     private void tryAddSubCommand(String subCommand, String argument, List<Command> suggestions) {
         if (!argument.isEmpty() && subCommand.startsWith(argument)) {
-            suggestions.add(new Command(null, false, subCommand, "", RequiredType.NONE, null) {});
+            suggestions.add(new Command(null, false, subCommand, "", RequiredType.NONE, null) {
+            });
         }
     }
+
 }

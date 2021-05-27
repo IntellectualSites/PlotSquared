@@ -21,11 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -35,20 +35,23 @@ import com.plotsquared.core.plot.Plot;
  * @author manuelgu, altered by Citymonstret
  */
 @CommandDeclaration(command = "middle",
-    aliases = {"center", "centre"},
-    description = "Teleports you to the center of the plot",
-    usage = "/plot middle",
-    category = CommandCategory.TELEPORT,
-    requiredType = RequiredType.PLAYER)
+        aliases = {"center", "centre"},
+        usage = "/plot middle",
+        category = CommandCategory.TELEPORT,
+        requiredType = RequiredType.PLAYER)
 public class Middle extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] arguments) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] arguments) {
         Location location = player.getLocation();
         Plot plot = location.getPlot();
         if (plot == null) {
-            return sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         plot.getCenter(center -> player.teleport(center, TeleportCause.COMMAND));
+        player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
         return true;
     }
+
 }

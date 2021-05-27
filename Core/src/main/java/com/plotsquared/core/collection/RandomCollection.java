@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.collection;
 
@@ -31,6 +31,7 @@ import java.util.Random;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class RandomCollection<T> {
+
     protected Random random;
 
     public RandomCollection(Map<T, Double> weights, Random random) {
@@ -55,4 +56,5 @@ public abstract class RandomCollection<T> {
     }
 
     public abstract T next();
+
 }

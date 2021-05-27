@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
 
@@ -32,7 +32,9 @@ import com.plotsquared.core.plot.PlotManager;
  * A plot manager where plots tessellate in a grid formation symmetrical about x=z.
  */
 public abstract class GridPlotManager extends PlotManager {
+
     public GridPlotManager(PlotArea plotArea) {
         super(plotArea);
     }
+
 }

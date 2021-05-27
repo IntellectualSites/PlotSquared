@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
 
@@ -94,4 +94,5 @@ public abstract class Database {
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
     public abstract int updateSQL(String query) throws SQLException, ClassNotFoundException;
+
 }

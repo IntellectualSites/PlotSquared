@@ -21,13 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class InstabreakFlag extends BooleanFlag<InstabreakFlag> {
 
@@ -35,10 +35,11 @@ public class InstabreakFlag extends BooleanFlag<InstabreakFlag> {
     public static final InstabreakFlag INSTABREAK_FALSE = new InstabreakFlag(false);
 
     private InstabreakFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_INSTABREAK);
+        super(value, TranslatableCaption.of("flags.flag_description_instabreak"));
     }
 
-    @Override protected InstabreakFlag flagOf(@NotNull Boolean value) {
+    @Override
+    protected InstabreakFlag flagOf(@NonNull Boolean value) {
         return value ? INSTABREAK_TRUE : INSTABREAK_FALSE;
     }
 

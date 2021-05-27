@@ -21,13 +21,13 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class CoralDryFlag extends BooleanFlag<CoralDryFlag> {
 
@@ -35,10 +35,11 @@ public class CoralDryFlag extends BooleanFlag<CoralDryFlag> {
     public static final CoralDryFlag CORAL_DRY_FALSE = new CoralDryFlag(false);
 
     private CoralDryFlag(boolean value) {
-        super(value, Captions.FLAG_DESCRIPTION_CORAL_DRY);
+        super(value, TranslatableCaption.of("flags.flag_description_coral_dry"));
     }
 
-    @Override protected CoralDryFlag flagOf(@NotNull Boolean value) {
+    @Override
+    protected CoralDryFlag flagOf(@NonNull Boolean value) {
         return value ? CORAL_DRY_TRUE : CORAL_DRY_FALSE;
     }
 

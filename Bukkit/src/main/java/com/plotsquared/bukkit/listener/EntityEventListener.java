@@ -21,10 +21,11 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
@@ -36,6 +37,7 @@ import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.flag.implementations.MobPlaceFlag;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -59,6 +61,7 @@ import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -66,13 +69,23 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class EntityEventListener implements Listener {
 
+    private final PlotAreaManager plotAreaManager;
     private float lastRadius;
+
+    @Inject
+    public EntityEventListener(final @NonNull PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
         EntityDamageByEntityEvent eventChange =
-            new EntityDamageByEntityEvent(event.getCombuster(), event.getEntity(),
-                EntityDamageEvent.DamageCause.FIRE_TICK, event.getDuration());
+                new EntityDamageByEntityEvent(
+                        event.getCombuster(),
+                        event.getEntity(),
+                        EntityDamageEvent.DamageCause.FIRE_TICK,
+                        event.getDuration()
+                );
         onEntityDamageByEntityEvent(eventChange);
         if (eventChange.isCancelled()) {
             event.setCancelled(true);
@@ -82,8 +95,8 @@ public class EntityEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         Entity damager = event.getDamager();
-        Location location = BukkitUtil.getLocation(damager);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+        Location location = BukkitUtil.adapt(damager.getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
         Entity victim = event.getEntity();
@@ -98,8 +111,7 @@ public class EntityEventListener implements Listener {
 */
         if (!BukkitEntityUtil.entityDamage(damager, victim, event.getCause())) {
             if (event.isCancelled()) {
-                if (victim instanceof Ageable) {
-                    Ageable ageable = (Ageable) victim;
+                if (victim instanceof Ageable ageable) {
                     if (ageable.getAge() == -24000) {
                         ageable.setAge(0);
                         ageable.setAdult();
@@ -113,7 +125,7 @@ public class EntityEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void creatureSpawnEvent(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
-        Location location = BukkitUtil.getLocation(entity.getLocation());
+        Location location = BukkitUtil.adapt(entity.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -189,10 +201,10 @@ public class EntityEventListener implements Listener {
         Block block = event.getBlock();
         World world = block.getWorld();
         String worldName = world.getName();
-        if (!PlotSquared.get().hasPlotArea(worldName)) {
+        if (!this.plotAreaManager.hasPlotArea(worldName)) {
             return;
         }
-        Location location = BukkitUtil.getLocation(block.getLocation());
+        Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -220,16 +232,16 @@ public class EntityEventListener implements Listener {
                 entity.remove();
             }
         } else if (event.getTo() == Material.AIR) {
-            event.getEntity()
-                .setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot));
+            event.getEntity().setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH) public void onDamage(EntityDamageEvent event) {
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDamage(EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
             return;
         }
-        Location location = BukkitUtil.getLocation(event.getEntity());
+        Location location = BukkitUtil.adapt(event.getEntity().getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -242,19 +254,18 @@ public class EntityEventListener implements Listener {
             return;
         }
         if (plot.getFlag(InvincibleFlag.class)) {
-            plot.debug(
-                event.getEntity().getName() + " could not take damage because invincible = true");
+            plot.debug(event.getEntity().getName() + " could not take damage because invincible = true");
             event.setCancelled(true);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBigBoom(EntityExplodeEvent event) {
-        Location location = BukkitUtil.getLocation(event.getLocation());
+        Location location = BukkitUtil.adapt(event.getLocation());
         PlotArea area = location.getPlotArea();
         boolean plotArea = location.isPlotArea();
         if (!plotArea) {
-            if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+            if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
                 return;
             }
             return;
@@ -270,14 +281,11 @@ public class EntityEventListener implements Listener {
                     origin = (Plot) meta.get(0).value();
                 }
                 if (this.lastRadius != 0) {
-                    List<Entity> nearby = event.getEntity()
-                        .getNearbyEntities(this.lastRadius, this.lastRadius, this.lastRadius);
+                    List<Entity> nearby = event.getEntity().getNearbyEntities(this.lastRadius, this.lastRadius, this.lastRadius);
                     for (Entity near : nearby) {
-                        if (near instanceof TNTPrimed || near.getType()
-                            .equals(EntityType.MINECART_TNT)) {
+                        if (near instanceof TNTPrimed || near.getType().equals(EntityType.MINECART_TNT)) {
                             if (!near.hasMetadata("plot")) {
-                                near.setMetadata("plot",
-                                    new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot));
+                                near.setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
                             }
                         }
                     }
@@ -286,9 +294,8 @@ public class EntityEventListener implements Listener {
                 Iterator<Block> iterator = event.blockList().iterator();
                 while (iterator.hasNext()) {
                     Block block = iterator.next();
-                    location = BukkitUtil.getLocation(block.getLocation());
-                    if (!area.contains(location.getX(), location.getZ()) || (origin != null
-                        && !origin.equals(area.getOwnedPlot(location)))) {
+                    location = BukkitUtil.adapt(block.getLocation());
+                    if (!area.contains(location.getX(), location.getZ()) || !origin.equals(area.getOwnedPlot(location))) {
                         iterator.remove();
                     }
                 }
@@ -304,29 +311,28 @@ public class EntityEventListener implements Listener {
     public void onPeskyMobsChangeTheWorldLikeWTFEvent(EntityChangeBlockEvent event) {
         Entity e = event.getEntity();
         if (!(e instanceof FallingBlock)) {
-            Location location = BukkitUtil.getLocation(event.getBlock().getLocation());
+            Location location = BukkitUtil.adapt(event.getBlock().getLocation());
             PlotArea area = location.getPlotArea();
             if (area != null) {
                 Plot plot = area.getOwnedPlot(location);
-                if (plot != null && plot.getFlag(MobPlaceFlag.class)) {
-                    return;
-                }
-                if (plot != null) {
+                if (plot != null && !plot.getFlag(MobPlaceFlag.class)) {
                     plot.debug(e.getType() + " could not change block because mob-place = false");
+                    return;
                 }
                 event.setCancelled(true);
             }
         }
     }
 
-    @EventHandler public void onPrime(ExplosionPrimeEvent event) {
+    @EventHandler
+    public void onPrime(ExplosionPrimeEvent event) {
         this.lastRadius = event.getRadius() + 1;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVehicleCreate(VehicleCreateEvent event) {
         Vehicle entity = event.getVehicle();
-        Location location = BukkitUtil.getLocation(entity);
+        Location location = BukkitUtil.adapt(entity.getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
@@ -337,8 +343,8 @@ public class EntityEventListener implements Listener {
             return;
         }
         if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
-            entity
-                .setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.get().IMP, plot));
+            entity.setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
         }
     }
+
 }

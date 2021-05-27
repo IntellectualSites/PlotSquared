@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.entity;
 
@@ -39,17 +39,20 @@ import java.util.Set;
 public class EntityCategory extends Category<EntityType> implements Keyed {
 
     public static final NamespacedRegistry<EntityCategory> REGISTRY =
-        new NamespacedRegistry<>("entity type");
+            new NamespacedRegistry<>("entity type");
 
+    private final WorldUtil worldUtil;
     private final String key;
 
-    protected EntityCategory(final String id) {
+    protected EntityCategory(final WorldUtil worldUtil, final String id) {
         super("plotsquared:" + id);
         this.key = id;
+        this.worldUtil = worldUtil;
     }
 
-    @Override protected Set<EntityType> load() {
-        return WorldUtil.IMP.getTypesInCategory(this.key);
+    @Override
+    protected Set<EntityType> load() {
+        return this.worldUtil.getTypesInCategory(this.key);
     }
 
 }

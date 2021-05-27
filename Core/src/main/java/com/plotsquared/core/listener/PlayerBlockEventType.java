@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.listener;
 
@@ -36,7 +36,8 @@ public enum PlayerBlockEventType {
     TELEPORT_OBJECT,
 
     // armor stands
-    PLACE_MISC, PLACE_VEHICLE,
+    PLACE_MISC,
+    PLACE_VEHICLE,
 
     // armor stands
     INTERACT_BLOCK, // blocks

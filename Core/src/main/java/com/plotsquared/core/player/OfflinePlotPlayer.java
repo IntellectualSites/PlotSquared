@@ -21,13 +21,15 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.player;
 
+import com.plotsquared.core.permissions.PermissionHolder;
+
 import java.util.UUID;
 
-public interface OfflinePlotPlayer {
+public interface OfflinePlotPlayer extends PermissionHolder {
 
     /**
      * Gets the {@code UUID} of this player
@@ -40,16 +42,8 @@ public interface OfflinePlotPlayer {
      * Gets the time in milliseconds when the player was last seen online.
      *
      * @return the time in milliseconds when last online
-     * @deprecated This method may be inconsistent across platforms. The javadoc may be wrong depending on which platform is used.
      */
-    @SuppressWarnings("DeprecatedIsStillUsed") @Deprecated long getLastPlayed();
-
-    /**
-     * Checks if this player is online.
-     *
-     * @return {@code true} if this player is online
-     */
-    boolean isOnline();
+    long getLastPlayed();
 
     /**
      * Gets the name of this player.
@@ -57,4 +51,5 @@ public interface OfflinePlotPlayer {
      * @return the player name
      */
     String getName();
+
 }

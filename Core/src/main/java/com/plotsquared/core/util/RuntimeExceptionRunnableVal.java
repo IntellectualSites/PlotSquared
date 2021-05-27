@@ -21,22 +21,26 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
 
 import com.plotsquared.core.util.task.RunnableVal;
-import lombok.RequiredArgsConstructor;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@RequiredArgsConstructor
 public class RuntimeExceptionRunnableVal<T> extends RunnableVal<RuntimeException> {
 
     private final RunnableVal<T> function;
     private final AtomicBoolean running;
 
-    @Override public void run(RuntimeException value) {
+    public RuntimeExceptionRunnableVal(final RunnableVal<T> function, final AtomicBoolean running) {
+        this.function = function;
+        this.running = running;
+    }
+
+    @Override
+    public void run(RuntimeException value) {
         try {
             function.run();
         } catch (RuntimeException e) {

@@ -21,19 +21,20 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
 
+import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
-import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotHandler;
+import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.Permissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -49,15 +50,23 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @SuppressWarnings("unused")
 public class ProjectileEventListener implements Listener {
 
+    private final PlotAreaManager plotAreaManager;
+
+    @Inject
+    public ProjectileEventListener(final @NonNull PlotAreaManager plotAreaManager) {
+        this.plotAreaManager = plotAreaManager;
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPotionSplash(LingeringPotionSplashEvent event) {
         Projectile entity = event.getEntity();
-        Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+        Location location = BukkitUtil.adapt(entity.getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
         if (!this.onProjectileHit(event)) {
@@ -68,8 +77,8 @@ public class ProjectileEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPotionSplash(PotionSplashEvent event) {
         ThrownPotion damager = event.getPotion();
-        Location location = BukkitUtil.getLocation(damager);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+        Location location = BukkitUtil.adapt(damager.getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
         int count = 0;
@@ -84,7 +93,8 @@ public class ProjectileEventListener implements Listener {
         }
     }
 
-    @EventHandler public void onProjectileLaunch(ProjectileLaunchEvent event) {
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
         Projectile entity = event.getEntity();
         if (!(entity instanceof ThrownPotion)) {
             return;
@@ -93,11 +103,11 @@ public class ProjectileEventListener implements Listener {
         if (!(shooter instanceof Player)) {
             return;
         }
-        Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+        Location location = BukkitUtil.adapt(entity.getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return;
         }
-        PlotPlayer<Player> pp = BukkitUtil.getPlayer((Player) shooter);
+        PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
         if (plot != null && !plot.isAdded(pp.getUUID())) {
             entity.remove();
@@ -105,11 +115,12 @@ public class ProjectileEventListener implements Listener {
         }
     }
 
-    @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "cos it's not... dum IntelliJ"}) @EventHandler
+    @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "cos it's not... dum IntelliJ"})
+    @EventHandler
     public boolean onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
-        Location location = BukkitUtil.getLocation(entity);
-        if (!PlotSquared.get().hasPlotArea(location.getWorld())) {
+        Location location = BukkitUtil.adapt(entity.getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
             return true;
         }
         PlotArea area = location.getPlotArea();
@@ -119,16 +130,16 @@ public class ProjectileEventListener implements Listener {
         Plot plot = area.getPlot(location);
         ProjectileSource shooter = entity.getShooter();
         if (shooter instanceof Player) {
-            PlotPlayer<?> pp = BukkitUtil.getPlayer((Player) shooter);
+            PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
             if (plot == null) {
-                if (!Permissions.hasPermission(pp, Captions.PERMISSION_PROJECTILE_UNOWNED)) {
+                if (!Permissions.hasPermission(pp, Permission.PERMISSION_PROJECTILE_UNOWNED)) {
                     entity.remove();
                     return false;
                 }
                 return true;
             }
             if (plot.isAdded(pp.getUUID()) || Permissions
-                .hasPermission(pp, Captions.PERMISSION_PROJECTILE_OTHER)) {
+                    .hasPermission(pp, Permission.PERMISSION_PROJECTILE_OTHER)) {
                 return true;
             }
             entity.remove();
@@ -140,7 +151,7 @@ public class ProjectileEventListener implements Listener {
                 return false;
             }
             Location sLoc =
-                BukkitUtil.getLocation(((BlockProjectileSource) shooter).getBlock().getLocation());
+                    BukkitUtil.adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
             if (!area.contains(sLoc.getX(), sLoc.getZ())) {
                 entity.remove();
                 return false;
@@ -153,4 +164,5 @@ public class ProjectileEventListener implements Listener {
         }
         return true;
     }
+
 }

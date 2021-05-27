@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.world;
 
@@ -29,8 +29,8 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,23 +42,26 @@ public class StandardPlotWorld extends PlotWorld {
 
     private final PlotArea area;
 
-    public StandardPlotWorld(@NotNull final String world, @Nullable final PlotArea area) {
+    public StandardPlotWorld(final @NonNull String world, final @Nullable PlotArea area) {
         super(world);
         this.area = area;
     }
 
-    @Override @Nullable public PlotArea getArea(@NotNull final Location location) {
+    @Override
+    public @Nullable PlotArea getArea(final @NonNull Location location) {
         return this.area;
     }
 
-    @Override @NotNull public Collection<PlotArea> getAreas() {
+    @Override
+    public @NonNull Collection<PlotArea> getAreas() {
         if (this.area == null) {
             return Collections.emptyList();
         }
         return Collections.singletonList(this.area);
     }
 
-    @Override @NotNull public Collection<PlotArea> getAreasInRegion(@NotNull final CuboidRegion region) {
+    @Override
+    public @NonNull Collection<PlotArea> getAreasInRegion(final @NonNull CuboidRegion region) {
         return this.getAreas();
     }
 

@@ -21,84 +21,124 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
+import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.TabCompletions;
 import com.plotsquared.core.util.WorldUtil;
-import com.plotsquared.core.uuid.UUIDMapping;
 import com.sk89q.worldedit.world.gamemode.GameModes;
+import net.kyori.adventure.text.minimessage.Template;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "deny",
-    aliases = {"d", "ban"},
-    description = "Deny a user from entering a plot",
-    usage = "/plot deny <player|*>",
-    category = CommandCategory.SETTINGS,
-    requiredType = RequiredType.PLAYER)
+        aliases = {"d", "ban"},
+        usage = "/plot deny <player | *>",
+        category = CommandCategory.SETTINGS,
+        requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
 
-    public Deny() {
+    private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
+    private final WorldUtil worldUtil;
+
+    @Inject
+    public Deny(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher,
+            final @NonNull WorldUtil worldUtil
+    ) {
         super(Argument.PlayerName);
+        this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
+        this.worldUtil = worldUtil;
     }
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
 
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
+        final Plot currentPlot = player.getCurrentPlot();
+        int size = currentPlot.getDenied().size();
         if (plot == null) {
-            return !sendMessage(player, Captions.NOT_IN_PLOT);
+            player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
+            return false;
         }
         if (!plot.hasOwner()) {
-            MainUtil.sendMessage(player, Captions.PLOT_UNOWNED);
+            player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return false;
         }
         if (!plot.isOwner(player.getUUID()) && !Permissions
-            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DENY)) {
-            MainUtil.sendMessage(player, Captions.NO_PLOT_PERMS);
+                .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY)) {
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
 
-        MainUtil.getUUIDsFromString(args[0], (uuids, throwable) -> {
+        if (!(player.hasPermission("plots.deny." + size) || Permissions.hasPermission(
+                player,
+                Permission.PERMISSION_ADMIN_COMMAND_DENY
+        ))) {
+            player.sendMessage(
+                    TranslatableCaption.of("members.plot_max_members_denied"),
+                    Template.of("amount", String.valueOf(size))
+            );
+        }
+
+        PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
-                MainUtil.sendMessage(player, Captions.FETCHING_PLAYERS_TIMEOUT);
+                player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
             } else if (throwable != null || uuids.isEmpty()) {
-                MainUtil.sendMessage(player, Captions.INVALID_PLAYER, args[0]);
+                player.sendMessage(
+                        TranslatableCaption.of("errors.invalid_player"),
+                        Template.of("value", args[0])
+                );
             } else {
-                for (UUIDMapping uuidMapping : uuids) {
-                    if (uuidMapping.getUuid() == DBFunc.EVERYONE && !(
-                        Permissions.hasPermission(player, Captions.PERMISSION_DENY_EVERYONE) || Permissions
-                            .hasPermission(player, Captions.PERMISSION_ADMIN_COMMAND_DENY))) {
-                        MainUtil.sendMessage(player, Captions.INVALID_PLAYER, uuidMapping.getUsername());
-                    } else if (plot.isOwner(uuidMapping.getUuid())) {
-                        MainUtil.sendMessage(player, Captions.CANT_REMOVE_OWNER, uuidMapping.getUsername());
+                for (UUID uuid : uuids) {
+                    if (uuid == DBFunc.EVERYONE && !(
+                            Permissions.hasPermission(player, Permission.PERMISSION_DENY_EVERYONE) || Permissions
+                                    .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_DENY))) {
+                        player.sendMessage(
+                                TranslatableCaption.of("errors.invalid_player"),
+                                Template.of("value", args[0])
+                        );
+                    } else if (plot.isOwner(uuid)) {
+                        player.sendMessage(TranslatableCaption.of("deny.cant_remove_owner"));
                         return;
-                    } else if (plot.getDenied().contains(uuidMapping.getUuid())) {
-                        MainUtil.sendMessage(player, Captions.ALREADY_ADDED, uuidMapping.getUsername());
+                    } else if (plot.getDenied().contains(uuid)) {
+                        player.sendMessage(
+                                TranslatableCaption.of("member.already_added"),
+                                Template.of("player", PlayerManager.getName(uuid))
+                        );
                         return;
                     } else {
-                        if (uuidMapping.getUuid() != DBFunc.EVERYONE) {
-                            plot.removeMember(uuidMapping.getUuid());
-                            plot.removeTrusted(uuidMapping.getUuid());
+                        if (uuid != DBFunc.EVERYONE) {
+                            plot.removeMember(uuid);
+                            plot.removeTrusted(uuid);
                         }
-                        plot.addDenied(uuidMapping.getUuid());
-                        PlotSquared.get().getEventDispatcher().callDenied(player, plot, uuidMapping.getUuid(), true);
-                        if (!uuidMapping.getUuid().equals(DBFunc.EVERYONE)) {
-                            handleKick(PlotSquared.imp().getPlayerManager().getPlayerIfExists(uuidMapping.getUuid()), plot);
+                        plot.addDenied(uuid);
+                        this.eventDispatcher.callDenied(player, plot, uuid, true);
+                        if (!uuid.equals(DBFunc.EVERYONE)) {
+                            handleKick(PlotSquared.platform().playerManager().getPlayerIfExists(uuid), plot);
                         } else {
-                            for (PlotPlayer plotPlayer : plot.getPlayersInPlot()) {
+                            for (PlotPlayer<?> plotPlayer : plot.getPlayersInPlot()) {
                                 // Ignore plot-owners
                                 if (plot.isAdded(plotPlayer.getUUID())) {
                                     continue;
@@ -108,18 +148,19 @@ public class Deny extends SubCommand {
                         }
                     }
                 }
-                MainUtil.sendMessage(player, Captions.DENIED_ADDED);
+                player.sendMessage(TranslatableCaption.of("deny.denied_added"));
             }
         });
 
         return true;
     }
 
-    @Override public Collection<Command> tab(final PlotPlayer player, final String[] args, final boolean space) {
+    @Override
+    public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
     }
 
-    private void handleKick(PlotPlayer player, Plot plot) {
+    private void handleKick(PlotPlayer<?> player, Plot plot) {
         if (player == null) {
             return;
         }
@@ -133,14 +174,15 @@ public class Deny extends SubCommand {
             player.stopSpectating();
         }
         Location location = player.getLocation();
-        Location spawn = WorldUtil.IMP.getSpawn(location.getWorld());
-        MainUtil.sendMessage(player, Captions.YOU_GOT_DENIED);
+        Location spawn = this.worldUtil.getSpawn(location.getWorldName());
+        player.sendMessage(TranslatableCaption.of("deny.you_got_denied"));
         if (plot.equals(spawn.getPlot())) {
-            Location newSpawn =
-                WorldUtil.IMP.getSpawn(PlotSquared.get().getPlotAreaManager().getAllWorlds()[0]);
+            Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
                 // Kick from server if you can't be teleported to spawn
-                player.kick(Captions.YOU_GOT_DENIED.getTranslated());
+                // Use string based message here for legacy uses
+                player.kick("You got kicked from the plot! This server did not set up a loaded spawn, so you got " +
+                        "kicked from the server.");
             } else {
                 player.teleport(newSpawn);
             }
@@ -148,4 +190,5 @@ public class Deny extends SubCommand {
             player.teleport(spawn);
         }
     }
+
 }

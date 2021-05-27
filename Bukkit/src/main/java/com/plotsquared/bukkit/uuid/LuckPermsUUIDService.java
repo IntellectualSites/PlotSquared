@@ -21,7 +21,7 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
 
@@ -31,7 +31,7 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,21 +53,24 @@ public class LuckPermsUUIDService implements UUIDService {
         }
     }
 
-    @Override @NotNull public List<UUIDMapping> getNames(@NotNull final List<UUID> uuids) {
-       final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
-       final UserManager userManager = this.luckPerms.getUserManager();
-       for (final UUID uuid : uuids) {
-           try {
-               final String username = userManager.lookupUsername(uuid).get();
-               if (username != null) {
-                   mappings.add(new UUIDMapping(uuid, username));
-               }
-           } catch (final Exception ignored) {}
-       }
-       return mappings;
+    @Override
+    public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
+        final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
+        final UserManager userManager = this.luckPerms.getUserManager();
+        for (final UUID uuid : uuids) {
+            try {
+                final String username = userManager.lookupUsername(uuid).get();
+                if (username != null) {
+                    mappings.add(new UUIDMapping(uuid, username));
+                }
+            } catch (final Exception ignored) {
+            }
+        }
+        return mappings;
     }
 
-    @Override @NotNull public List<UUIDMapping> getUUIDs(@NotNull final List<String> usernames) {
+    @Override
+    public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
         final UserManager userManager = this.luckPerms.getUserManager();
         for (final String username : usernames) {
@@ -76,7 +79,8 @@ public class LuckPermsUUIDService implements UUIDService {
                 if (username != null) {
                     mappings.add(new UUIDMapping(uuid, username));
                 }
-            } catch (final Exception ignored) {}
+            } catch (final Exception ignored) {
+            }
         }
         return mappings;
     }

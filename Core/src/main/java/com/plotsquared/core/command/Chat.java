@@ -21,28 +21,32 @@
  *     GNU General Public License for more details.
  *
  *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
 
-import com.plotsquared.core.configuration.Captions;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.util.MainUtil;
+import com.plotsquared.core.plot.PlotArea;
 
 @CommandDeclaration(command = "chat",
-    description = "Toggles plot chat on or off",
-    usage = "/plot chat",
-    permission = "plots.chat",
-    category = CommandCategory.CHAT,
-    requiredType = RequiredType.PLAYER)
+        usage = "/plot chat",
+        permission = "plots.chat",
+        category = CommandCategory.CHAT,
+        requiredType = RequiredType.PLAYER)
+@Deprecated
 public class Chat extends SubCommand {
 
-    @Override public boolean onCommand(PlotPlayer<?> player, String[] args) {
+    @Override
+    public boolean onCommand(PlotPlayer<?> player, String[] args) {
+        PlotArea area = player.getPlotAreaAbs();
+        check(area, TranslatableCaption.of("errors.not_in_plot_world"));
         if (player.getPlotAreaAbs().isForcingPlotChat()) {
-            MainUtil.sendMessage(player, Captions.PLOT_CHAT_FORCED);
+            player.sendMessage(TranslatableCaption.of("chat.plot_chat_forced"));
             return true;
         }
         MainCommand.getInstance().toggle.chat(this, player, args, null, null);
         return true;
     }
+
 }
