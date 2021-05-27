@@ -179,11 +179,18 @@ public class Alias extends SubCommand {
     }
 
     private boolean removeAlias(PlotPlayer<?> player, Plot plot) {
+        String alias = plot.getAlias();
+        if (!plot.getAlias().isEmpty()) {
+            player.sendMessage(
+                    TranslatableCaption.of("alias.alias_removed"),
+                    Template.of("alias", alias)
+            );
+        } else {
+            player.sendMessage(
+                    TranslatableCaption.of("alias.no_alias_set")
+            );
+        }
         plot.setAlias(null);
-        player.sendMessage(
-                TranslatableCaption.of("permission.no_permission"),
-                Template.of("node", String.valueOf(Permission.PERMISSION_ALIAS_REMOVE))
-        );
         return true;
     }
 
