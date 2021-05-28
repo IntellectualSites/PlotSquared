@@ -28,7 +28,6 @@ package com.plotsquared.core.plot;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-import com.sk89q.worldedit.world.registry.LegacyMapper;
 
 public class PlotItemStack {
 
@@ -36,26 +35,6 @@ public class PlotItemStack {
     private final String name;
     private final String[] lore;
     private final ItemType type;
-
-    /**
-     * @param id     Legacy numerical item ID
-     * @param data   Legacy numerical item data
-     * @param amount Amount of items in the stack
-     * @param name   The display name of the item stack
-     * @param lore   The item stack lore
-     * @deprecated Use {@link #PlotItemStack(String, int, String, String...)}
-     */
-    @Deprecated
-    public PlotItemStack(
-            final int id, final short data, final int amount,
-            final String name, final String... lore
-    ) {
-
-        this.amount = amount;
-        this.name = name;
-        this.lore = lore;
-        this.type = LegacyMapper.getInstance().getItemFromLegacy(id, data);
-    }
 
     /**
      * @param id     String ID

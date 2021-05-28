@@ -258,7 +258,6 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     /**
      * Get the total number of allowed plots
-     * Possibly relevant: (To increment the player's allowed plots, see the example script on the wiki)
      *
      * @return number of allowed plots within the scope (globally, or in the player's current world as defined in the settings.yml)
      */
@@ -811,7 +810,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
             final @NonNull Caption title, final @NonNull Caption subtitle,
             final @NonNull Template... replacements
     ) {
-        sendTitle(title, subtitle, Settings.TITLES_FADE_IN, Settings.TITLES_STAY, Settings.TITLES_FADE_OUT, replacements);
+        sendTitle(title, subtitle, Settings.Titles.TITLES_FADE_IN, Settings.Titles.TITLES_STAY, Settings.Titles.TITLES_FADE_OUT, replacements);
     }
 
     /**
@@ -833,12 +832,44 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         final Component subtitleComponent =
                 MiniMessage.get().parse(subtitle.getComponent(this), replacements);
         final Title.Times times = Title.Times.of(
-                Duration.of(Settings.TITLES_FADE_IN * 50L, ChronoUnit.MILLIS),
-                Duration.of(Settings.TITLES_STAY * 50L, ChronoUnit.MILLIS),
-                Duration.of(Settings.TITLES_FADE_OUT * 50L, ChronoUnit.MILLIS)
+                Duration.of(Settings.Titles.TITLES_FADE_IN * 50L, ChronoUnit.MILLIS),
+                Duration.of(Settings.Titles.TITLES_STAY * 50L, ChronoUnit.MILLIS),
+                Duration.of(Settings.Titles.TITLES_FADE_OUT * 50L, ChronoUnit.MILLIS)
         );
         getAudience().showTitle(Title
                 .title(titleComponent, subtitleComponent, times));
+    }
+
+    /**
+     * Method designed to send an ActionBar to a player.
+     *
+     * @param caption Caption
+     * @param replacements Variable replacements
+     */
+    public void sendActionBar(
+            final @NonNull Caption caption,
+            final @NonNull Template... replacements
+    ) {
+        String message;
+        try {
+            message = caption.getComponent(this);
+        } catch (final CaptionMap.NoSuchCaptionException exception) {
+            // This sends feedback to the player
+            message = NON_EXISTENT_CAPTION + ((TranslatableCaption) caption).getKey();
+            // And this also prints it to the console
+            exception.printStackTrace();
+        }
+        if (message.isEmpty()) {
+            return;
+        }
+        // Replace placeholders, etc
+        message = CaptionUtility.format(this, message)
+                .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
+                .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
+
+
+        final Component component = MiniMessage.get().parse(message, replacements);
+        getAudience().sendActionBar(component);
     }
 
     @Override

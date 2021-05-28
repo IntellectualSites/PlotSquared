@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.configuration;
 
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.world.block.BlockState;
@@ -41,20 +42,20 @@ public class ConfigurationNode {
 
     private final String constant;
     private final Object defaultValue;
-    private final String description;
+    private final Caption description;
     private final ConfigurationUtil.SettingValue<?> type;
     private final Collection<String> suggestions;
     private Object value;
 
     public ConfigurationNode(
-            String constant, Object defaultValue, String description,
+            String constant, Object defaultValue, Caption description,
             ConfigurationUtil.SettingValue<?> type
     ) {
         this(constant, defaultValue, description, type, new ArrayList<>());
     }
 
     public ConfigurationNode(
-            String constant, Object defaultValue, String description,
+            String constant, Object defaultValue, Caption description,
             ConfigurationUtil.SettingValue<?> type, Collection<String> suggestions
     ) {
         this.constant = constant;
@@ -120,7 +121,7 @@ public class ConfigurationNode {
         return this.constant;
     }
 
-    public String getDescription() {
+    public Caption getDescription() {
         return this.description;
     }
 

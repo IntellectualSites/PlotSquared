@@ -1365,7 +1365,7 @@ public class PlotSquared {
     public boolean setupConfigs() {
         File folder = new File(this.platform.getDirectory(), "config");
         if (!folder.exists() && !folder.mkdirs()) {
-            logger.error("Failed to create the /plugins/PlotSquared/config folder. Please create it manually");
+            logger.error("Failed to create the {} config folder. Please create it manually", this.platform.getDirectory());
         }
         try {
             this.worldsFile = new File(folder, "worlds.yml");

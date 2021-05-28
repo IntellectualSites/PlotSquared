@@ -27,8 +27,8 @@ package com.plotsquared.core.listener;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
-import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.events.PlotFlagRemoveEvent;
@@ -63,6 +63,7 @@ import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.Permissions;
+import com.plotsquared.core.util.PlayerManager;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.world.gamemode.GameMode;
@@ -76,7 +77,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -164,14 +164,18 @@ public class PlotListener {
             final TitlesFlag.TitlesFlagValue titleFlag = plot.getFlag(TitlesFlag.class);
             final boolean titles;
             if (titleFlag == TitlesFlag.TitlesFlagValue.NONE) {
-                titles = Settings.TITLES;
+                titles = Settings.Titles.DISPLAY_TITLES;
             } else {
                 titles = titleFlag == TitlesFlag.TitlesFlagValue.TRUE;
             }
 
             final String greeting = plot.getFlag(GreetingFlag.class);
             if (!greeting.isEmpty()) {
-                plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendMessage);
+                if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
+                    plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendMessage);
+                } else {
+                    plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendActionBar);
+                }
             }
 
             if (plot.getFlag(NotifyEnterFlag.class)) {
@@ -179,11 +183,14 @@ public class PlotListener {
                     for (UUID uuid : plot.getOwners()) {
                         final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                         if (owner != null && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
-                            owner.sendMessage(
-                                    TranslatableCaption.of("notification.notify_enter"),
-                                    Template.of("player", player.getName()),
-                                    Template.of("plot", plot.getId().toString())
-                            );
+                            Caption caption = TranslatableCaption.of("notification.notify_enter");
+                            Template playerTemplate = Template.of("player", player.getName());
+                            Template plotTemplate = Template.of("plot", plot.getId().toString());
+                            if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
+                                owner.sendMessage(caption, playerTemplate, plotTemplate);
+                            } else {
+                                owner.sendActionBar(caption, playerTemplate, plotTemplate);
+                            }
                         }
                     }
                 }
@@ -296,16 +303,22 @@ public class PlotListener {
                             lastPlot = lastPlotAccess.get().orElse(null);
                         }
                         if ((lastPlot != null) && plot.getId().equals(lastPlot.getId()) && plot.hasOwner()) {
-                            final Consumer<String> userConsumer = user -> player
-                                    .sendTitle(TranslatableCaption.of("titles.title_entered_plot"),
-                                            TranslatableCaption.of("titles.title_entered_plot_sub"),
-                                            Templates.of("x", lastPlot.getId().getX()),
-                                            Templates.of("z", lastPlot.getId().getY()),
-                                            Templates.of("world", Objects.requireNonNull(plot.getArea().getId(), "Unknown")),
-                                            Templates.of("greeting", greeting),
-                                            Templates.of("alias", plot.getAlias()),
-                                            Templates.of("owner", user)
-                                    );
+                            final UUID plotOwner = plot.getOwnerAbs();
+                            String owner = PlayerManager.getName(plotOwner, false);
+                            Caption header = TranslatableCaption.of("titles.title_entered_plot");
+                            Caption subHeader = TranslatableCaption.of("titles.title_entered_plot_sub");
+                            Template plotTemplate = Template.of("plot", lastPlot.getId().toString());
+                            Template worldTemplate = Template.of("world", player.getLocation().getWorldName());
+                            Template ownerTemplate = Template.of("owner", owner);
+
+                            final Consumer<String> userConsumer = user -> {
+                                if (Settings.Titles.TITLES_AS_ACTIONBAR) {
+                                    player.sendActionBar(header, plotTemplate, worldTemplate, ownerTemplate);
+                                } else {
+                                    player.sendTitle(header, subHeader, plotTemplate, worldTemplate, ownerTemplate);
+                                }
+                            };
+
                             UUID uuid = plot.getOwner();
                             if (uuid == null) {
                                 userConsumer.accept("Unknown");
@@ -379,7 +392,11 @@ public class PlotListener {
 
                 final String farewell = plot.getFlag(FarewellFlag.class);
                 if (!farewell.isEmpty()) {
-                    plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendMessage);
+                    if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
+                        plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendMessage);
+                    } else {
+                        plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendActionBar);
+                    }
                 }
 
                 if (plot.getFlag(NotifyLeaveFlag.class)) {
@@ -387,11 +404,14 @@ public class PlotListener {
                         for (UUID uuid : plot.getOwners()) {
                             final PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                             if ((owner != null) && !owner.getUUID().equals(player.getUUID()) && owner.canSee(player)) {
-                                owner.sendMessage(
-                                        TranslatableCaption.of("notification.notify_leave"),
-                                        Template.of("player", player.getName()),
-                                        Template.of("plot", plot.getId().toString())
-                                );
+                                Caption caption = TranslatableCaption.of("notification.notify_leave");
+                                Template playerTemplate = Template.of("player", player.getName());
+                                Template plotTemplate = Template.of("plot", plot.getId().toString());
+                                if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
+                                    owner.sendMessage(caption, playerTemplate, plotTemplate);
+                                } else {
+                                    owner.sendActionBar(caption, playerTemplate, plotTemplate);
+                                }
                             }
                         }
                     }

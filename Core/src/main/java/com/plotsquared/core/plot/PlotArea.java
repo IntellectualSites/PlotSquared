@@ -154,6 +154,8 @@ public abstract class PlotArea {
     private CuboidRegion region;
     private ConcurrentHashMap<String, Object> meta;
     private QuadMap<PlotCluster> clusters;
+    private String signMaterial = "OAK_WALL_SIGN";
+    private String legacySignMaterial = "WALL_SIGN";
 
     public PlotArea(
             final @NonNull String worldName, final @Nullable String id,
@@ -324,6 +326,11 @@ public abstract class PlotArea {
         this.mobSpawnerSpawning = config.getBoolean("mob_spawner_spawning");
         this.autoMerge = config.getBoolean("plot.auto_merge");
         this.allowSigns = config.getBoolean("plot.create_signs");
+        if (PlotSquared.platform().serverVersion()[1] == 13) {
+            this.legacySignMaterial = config.getString("plot.legacy_sign_material");
+        } else {
+            this.signMaterial = config.getString("plot.sign_material");
+        }
         String biomeString = config.getString("plot.biome");
         if (!biomeString.startsWith("minecraft:")) {
             biomeString = "minecraft:" + biomeString;
@@ -484,6 +491,11 @@ public abstract class PlotArea {
         options.put("mob_spawner_spawning", this.isMobSpawnerSpawning());
         options.put("plot.auto_merge", this.isAutoMerge());
         options.put("plot.create_signs", this.allowSigns());
+        if (PlotSquared.platform().serverVersion()[1] == 13) {
+            options.put("plot.legacy_sign_material", this.legacySignMaterial);
+        } else {
+            options.put("plot.sign_material", this.signMaterial());
+        }
         options.put("plot.biome", "minecraft:forest");
         options.put("schematic.on_claim", this.isSchematicOnClaim());
         options.put("schematic.file", this.getSchematicFile());
@@ -1161,6 +1173,28 @@ public abstract class PlotArea {
     }
 
     /**
+     * Get the plot sign material.
+     *
+     * @return the sign material.
+     */
+    public String signMaterial() {
+        return signMaterial;
+    }
+
+    /**
+     * Get the legacy plot sign material before wall signs used a "wall" stance.
+     *
+     * @return the legacy sign material.
+     * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
+     * will be removed without replacement in favor of {@link #signMaterial()}
+     * once we remove the support for 1.13.
+     */
+    @Deprecated
+    public String legacySignMaterial() {
+        return legacySignMaterial;
+    }
+
+    /**
      * Get the value associated with the specified flag. This will look at
      * the default values stored in {@link GlobalFlagContainer}.
      *
@@ -1276,6 +1310,15 @@ public abstract class PlotArea {
 
     public boolean isSpawnEggs() {
         return this.spawnEggs;
+    }
+
+    public String getSignMaterial() {
+        return this.signMaterial;
+    }
+
+    @Deprecated
+    public String getLegacySignMaterial() {
+        return this.legacySignMaterial;
     }
 
     public boolean isSpawnCustom() {

@@ -46,18 +46,7 @@ public class Settings extends Config {
 
     @Comment({"Show additional information in console. It helps us at IntellectualSites to find out more about an issue.",
             "Leave it off if you don't need it, it can spam your console."})
-    public static boolean DEBUG = false;
-    @Comment({"The big text that appears when you enter a plot.",
-            "For a single plot set `/plot flag set titles false` to disable it.", "For just you run `/plot toggle titles` to disable it.",
-            "For all plots: Add `titles: false` in the worlds.yml flags block to disable it."})
-    public static boolean
-            TITLES = true;
-    @Comment("Plot titles fading in (duration in ticks)")
-    public static int TITLES_FADE_IN = 10;
-    @Comment("Plot titles being shown (duration in ticks)")
-    public static int TITLES_STAY = 50;
-    @Comment("Plot titles fading out (duration in ticks)")
-    public static int TITLES_FADE_OUT = 20;
+    public static boolean DEBUG = true;
 
     @Create // This value will be generated automatically
     public static ConfigBlock<Auto_Clear> AUTO_CLEAR = null;
@@ -153,9 +142,6 @@ public class Settings extends Config {
                 config.getStringList("ratings.categories") :
                 Ratings.CATEGORIES;
 
-        // Titles
-        TITLES = config.getBoolean("titles", TITLES);
-
         // Update Notifications
         Enabled_Components.UPDATE_NOTIFICATIONS =
                 config.getBoolean("update-notifications", Enabled_Components.UPDATE_NOTIFICATIONS);
@@ -190,7 +176,6 @@ public class Settings extends Config {
 
         // Miscellaneous
         DEBUG = config.getBoolean("debug", DEBUG);
-        Chat.INTERACTIVE = config.getBoolean("chat.fancy", Chat.INTERACTIVE);
 
         Enabled_Components.DATABASE_PURGER =
                 config.getBoolean("auto-purge", Enabled_Components.DATABASE_PURGER);
@@ -506,11 +491,12 @@ public class Settings extends Config {
     @Comment("Chat related settings")
     public static final class Chat {
 
-        @Comment("Should the chat be interactive?")
-        public static boolean INTERACTIVE = true;
-
         @Comment("Should the plot chat be logged to console?")
         public static boolean LOG_PLOTCHAT_TO_CONSOLE = true;
+
+        @Comment({"Whether an action bar message should be send over a chat message for notification purposes such for the ",
+                "notify-enter, notify-leave, greeting or farewell flag."})
+        public static boolean NOTIFICATION_AS_ACTIONBAR = false;
 
     }
 
@@ -609,6 +595,16 @@ public class Settings extends Config {
         public static boolean USE_LIKES = false;
         @Comment("Rating categories")
         public static List<String> CATEGORIES = new ArrayList<>();
+        @Comment("The blocks to use for the rating GUI if categories are set above")
+        public static String BLOCK_0 = "brown_wool";
+        public static String BLOCK_1 = "red_wool";
+        public static String BLOCK_2 = "orange_wool";
+        public static String BLOCK_3 = "yellow_wool";
+        public static String BLOCK_4 = "lime_wool";
+        public static String BLOCK_5 = "cyan_wool";
+        public static String BLOCK_6 = "blue_wool";
+        public static String BLOCK_7 = "purple_wool";
+        public static String BLOCK_8 = "magenta_wool";
 
     }
 
@@ -652,7 +648,7 @@ public class Settings extends Config {
         @Comment({"Time to wait in ms before beginning to notify player or console of progress.",
                 "Prevent needless notification of progress for short queues."})
         public static int NOTIFY_WAIT = 5000;
-        @Comment({"How lighitng should be handled by the queue. Modes:",
+        @Comment({"How lighting should be handled by the queue. Modes:",
                 "  - 0 - Do not do any lighting (fastest)",
                 "  - 1 - Only execute lighting where blocks with light values are placed",
                 "  - 2 - Only execute lighting where blocks with light values are placed or removed/replaced",
@@ -667,6 +663,27 @@ public class Settings extends Config {
         @Comment({"The time in seconds how long tab completions should remain in cache.",
                 "0 will disable caching. Lower values may be less performant."})
         public static int CACHE_EXPIRATION = 15;
+
+    }
+
+    @Comment("Settings related to plot titles")
+    public static final class Titles {
+
+        @Comment({"The big text that appears when you enter a plot.",
+                "For a single plot set `/plot flag set titles false` to disable it.", "For just you run `/plot toggle titles` to disable it.",
+                "For all plots: Add `titles: false` in the worlds.yml flags block to disable it."})
+        public static boolean DISPLAY_TITLES = true;
+        @Comment("Plot titles fading in (duration in ticks)")
+        public static int TITLES_FADE_IN = 10;
+        @Comment("Plot titles being shown (duration in ticks)")
+        public static int TITLES_STAY = 50;
+        @Comment("Plot titles fading out (duration in ticks)")
+        public static int TITLES_FADE_OUT = 20;
+        @Comment({"Changes the notification method on plot entry from Title + SubTitle -> ActionBar.",
+                "The message still sent to the player is pulled from the lang key \"titles.title_entered_plot\".",
+                "If you would like to still show the owner of the plot, append the contents of \"titles.title_entered_plot_sub\" onto the " +
+                        "former lang key."})
+        public static boolean TITLES_AS_ACTIONBAR = false;
 
     }
 
@@ -712,7 +729,7 @@ public class Settings extends Config {
         public static boolean KILL_ROAD_VEHICLES = false;
         @Comment("Notify a player of any missed plot comments upon plot entry")
         public static boolean
-                COMMENT_NOTIFIER = false;
+                COMMENT_NOTIFIER = true;
         @Comment("Let players claim entire worlds with PlotSquared")
         public static boolean WORLDS =
                 false;
@@ -726,7 +743,7 @@ public class Settings extends Config {
         public static boolean EXTERNAL_PLACEHOLDERS = true;
         @Comment("Make road regeneration persistent across restarts")
         public static boolean
-                PERSISTENT_ROAD_REGEN = false;
+                PERSISTENT_ROAD_REGEN = true;
         @Comment({"Enable the `/plot component` preset GUI",
                 "Read more about components here: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-Components"})
         public static boolean COMPONENT_PRESETS = true;

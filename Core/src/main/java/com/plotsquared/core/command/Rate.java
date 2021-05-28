@@ -177,17 +177,6 @@ public class Rate extends SubCommand {
                                             TranslatableCaption.of("ratings.rating_applied"),
                                             Template.of("plot", plot.getId().toString())
                                     );
-                                    if (Permissions
-                                            .hasPermission(this.getPlayer(), Permission.PERMISSION_COMMENT)) {
-                                        Command command =
-                                                MainCommand.getInstance().getCommand(Comment.class);
-                                        if (command != null) {
-                                            getPlayer().sendMessage(
-                                                    TranslatableCaption.of("tutorial.comment_this"),
-                                                    Template.of("plot", "/plot rate")
-                                            );
-                                        }
-                                    }
                                 }
                                 return false;
                             }
@@ -195,15 +184,15 @@ public class Rate extends SubCommand {
                             return true;
                         }
                     };
-                    inventory.setItem(0, new PlotItemStack(35, (short) 12, 0, "0/8"));
-                    inventory.setItem(1, new PlotItemStack(35, (short) 14, 1, "1/8"));
-                    inventory.setItem(2, new PlotItemStack(35, (short) 1, 2, "2/8"));
-                    inventory.setItem(3, new PlotItemStack(35, (short) 4, 3, "3/8"));
-                    inventory.setItem(4, new PlotItemStack(35, (short) 5, 4, "4/8"));
-                    inventory.setItem(5, new PlotItemStack(35, (short) 9, 5, "5/8"));
-                    inventory.setItem(6, new PlotItemStack(35, (short) 11, 6, "6/8"));
-                    inventory.setItem(7, new PlotItemStack(35, (short) 10, 7, "7/8"));
-                    inventory.setItem(8, new PlotItemStack(35, (short) 2, 8, "8/8"));
+                    inventory.setItem(0, new PlotItemStack(Settings.Ratings.BLOCK_0, 0, "0/8"));
+                    inventory.setItem(1, new PlotItemStack(Settings.Ratings.BLOCK_1, 1, "1/8"));
+                    inventory.setItem(2, new PlotItemStack(Settings.Ratings.BLOCK_2, 2, "2/8"));
+                    inventory.setItem(3, new PlotItemStack(Settings.Ratings.BLOCK_3, 3, "3/8"));
+                    inventory.setItem(4, new PlotItemStack(Settings.Ratings.BLOCK_4, 4, "4/8"));
+                    inventory.setItem(5, new PlotItemStack(Settings.Ratings.BLOCK_5, 5, "5/8"));
+                    inventory.setItem(6, new PlotItemStack(Settings.Ratings.BLOCK_6, 6, "6/8"));
+                    inventory.setItem(7, new PlotItemStack(Settings.Ratings.BLOCK_7, 7, "7/8"));
+                    inventory.setItem(8, new PlotItemStack(Settings.Ratings.BLOCK_8, 8, "8/8"));
                     inventory.openInventory();
                 }
             };

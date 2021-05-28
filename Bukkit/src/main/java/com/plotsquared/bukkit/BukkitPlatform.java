@@ -175,7 +175,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
     static {
         try {
-            Settings.load(new File("plugins/PlotSquared/config/settings.yml"));
+            Settings.load(new File(PlotSquared.platform().getDirectory(), "settings.yml"));
         } catch (Throwable ignored) {
         }
     }

@@ -287,7 +287,10 @@ public class Config {
             setAccessible(field);
             return field;
         } catch (final Throwable e) {
-            logger.error("Invalid config field: {} for {}",
+            logger.error("Invalid config field: {} for {}. It's likely you are in the process of updating from an older major " +
+                            "release of PlotSquared. The entries named can be removed safely from the settings.yml. They are " +
+                            "likely no longer in use, moved to a different location or have been merged with other " +
+                            "configuration options. Check the changelog for more information.",
                     StringMan.join(split, "."), toNodeName(instance.getClass().getSimpleName())
             );
             e.printStackTrace();

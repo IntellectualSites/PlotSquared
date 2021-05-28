@@ -85,7 +85,7 @@ public class SettingsNodeStep implements SetupStep {
         plotPlayer.sendMessage(
                 TranslatableCaption.of("setup.setup_step"),
                 Template.of("step", String.valueOf(this.getId() + 1)),
-                Template.of("description", this.configurationNode.getDescription()),
+                Template.of("description", this.configurationNode.getDescription().getComponent(plotPlayer)),
                 Template.of("type", this.configurationNode.getType().getType()),
                 Template.of("value", String.valueOf(this.configurationNode.getDefaultValue()))
         );

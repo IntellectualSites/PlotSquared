@@ -240,8 +240,8 @@ public class Template extends SubCommand {
 
                 this.setupUtils.setupWorld(builder);
                 TaskManager.runTask(() -> {
-                    player.sendMessage(TranslatableCaption.of("debugimportworlds.done"));
                     player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND);
+                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                 });
                 return true;
             }
@@ -273,7 +273,7 @@ public class Template extends SubCommand {
                         );
                         return;
                     }
-                    player.sendMessage(TranslatableCaption.of("debugimportworlds.done"));
+                    player.sendMessage(TranslatableCaption.of("setup.setup_finished"));
                 });
                 return true;
             }
