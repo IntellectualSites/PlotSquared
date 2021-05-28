@@ -1103,6 +1103,17 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 }
                 break;
             }
+            case LEFT_CLICK_BLOCK: {
+                Material blockType = block.getType();
+
+                // todo: when the code above is rearranged, it would be great to beautify this as well.
+                // will code this as a temporary, specific bug fix (for dragon eggs)
+                if (blockType != Material.DRAGON_EGG) return;
+
+                eventType = PlayerBlockEventType.INTERACT_BLOCK;
+                blocktype1 = BukkitAdapter.asBlockType(block.getType());
+                break;
+            }
             default:
                 return;
         }
