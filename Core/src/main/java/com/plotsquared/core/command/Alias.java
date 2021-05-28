@@ -154,7 +154,10 @@ public class Alias extends SubCommand {
             if (PlotQuery.newQuery().inArea(plot.getArea())
                     .withAlias(alias)
                     .anyMatch()) {
-                player.sendMessage(TranslatableCaption.of("alias.alias_is_taken"));
+                player.sendMessage(
+                        TranslatableCaption.of("alias.alias_is_taken"),
+                        Template.of("alias", alias)
+                );
                 return;
             }
             if (Settings.UUID.OFFLINE) {
@@ -166,7 +169,10 @@ public class Alias extends SubCommand {
                 if (throwable instanceof TimeoutException) {
                     player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                 } else if (uuid != null) {
-                    player.sendMessage(TranslatableCaption.of("alias.alias_is_taken"));
+                    player.sendMessage(
+                            TranslatableCaption.of("alias.alias_is_taken"),
+                            Template.of("alias", alias)
+                    );
                 } else {
                     plot.setAlias(alias);
                     player.sendMessage(

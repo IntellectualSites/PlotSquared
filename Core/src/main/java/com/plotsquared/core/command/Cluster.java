@@ -170,7 +170,10 @@ public class Cluster extends SubCommand {
                 // check if name is taken
                 String name = args[1];
                 if (area.getCluster(name) != null) {
-                    player.sendMessage(TranslatableCaption.of("alias.alias_is_taken"));
+                    player.sendMessage(
+                            TranslatableCaption.of("alias.alias_is_taken"),
+                            Template.of("alias", name)
+                    );
                     return false;
                 }
                 if (pos2.getX() < pos1.getX() || pos2.getY() < pos1.getY()) {
