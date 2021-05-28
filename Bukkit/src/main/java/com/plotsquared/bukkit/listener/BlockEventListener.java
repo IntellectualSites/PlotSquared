@@ -761,9 +761,24 @@ public class BlockEventListener implements Listener {
         Location tLocation = BukkitUtil.adapt(to.getLocation());
         PlotArea area = tLocation.getPlotArea();
         if (area == null) {
+            if (from.getType() == Material.DRAGON_EGG && fromArea != null) {
+                event.setCancelled(true);
+            }
             return;
         }
         Plot plot = area.getOwnedPlot(tLocation);
+
+        if (from.getType() == Material.DRAGON_EGG && fromArea != null) {
+            final Plot fromPlot = fromArea.getOwnedPlot(fLocation);
+
+            if (fromPlot != null || plot != null) {
+                if ((fromPlot == null || !fromPlot.equals(plot)) && (plot == null || !plot.equals(fromPlot))) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+
         if (plot != null) {
             if (!area.contains(fLocation.getX(), fLocation.getZ()) || !Objects.equals(plot, area.getOwnedPlot(fLocation))) {
                 event.setCancelled(true);
