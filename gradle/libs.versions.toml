@@ -32,6 +32,7 @@ paster = "1.0.2-SNAPSHOT"
 
 bstats = "2.2.1"
 
+# Remember to update Paper javadoc version in the bukkit module!
 paper = "1.16.5-R0.1-SNAPSHOT"
 paperlib = "1.0.6"
 

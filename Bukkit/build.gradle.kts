@@ -101,3 +101,10 @@ tasks.named<ShadowJar>("shadowJar") {
 
     mergeServiceFiles()
 }
+
+tasks {
+    withType<Javadoc> {
+        val opt = options as StandardJavadocDocletOptions
+        opt.links("https://papermc.io/javadocs/paper/1.16")
+    }
+}
