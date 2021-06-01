@@ -81,7 +81,10 @@ public class Target extends SubCommand {
             return false;
         }
         target.getCenter(player::setCompassTarget);
-        player.sendMessage(TranslatableCaption.of("compass.compass_target"));
+        player.sendMessage(
+                TranslatableCaption.of("compass.compass_target"),
+                Template.of("target", target.toString())
+        );
         return true;
     }
 

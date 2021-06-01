@@ -112,8 +112,11 @@ public class Move extends SubCommand {
         return plot1.getPlotModificationManager().move(plot2, player, () -> {
         }, false).thenApply(result -> {
             if (result) {
-                player.sendMessage(TranslatableCaption.of("move.move_success"), Template.of("origin", String.valueOf(plot1)),
-                        Template.of("target", String.valueOf(plot2)));
+                player.sendMessage(
+                        TranslatableCaption.of("move.move_success"),
+                        Template.of("origin", plot1.toString()),
+                        Template.of("target", plot2.toString())
+                );
                 return true;
             } else {
                 player.sendMessage(TranslatableCaption.of("move.requires_unowned"));

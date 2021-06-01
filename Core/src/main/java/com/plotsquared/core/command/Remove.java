@@ -45,7 +45,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 @CommandDeclaration(command = "remove",
-        aliases = {"r", "untrust", "ut", "undeny", "unban", "ud"},
+        aliases = {"r", "untrust", "ut", "undeny", "unban", "ud", "pardon"},
         usage = "/plot remove <player | *>",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE,

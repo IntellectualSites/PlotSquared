@@ -277,26 +277,10 @@ public abstract class Command {
             player.sendMessage(msg.get(), msg.getTemplates());
         }
         // Send the footer
-        if (page < totalPages && page > 0) { // Back | Next
-            Template command1 = Template.of("command1", baseCommand + " " + page);
-            Template command2 = Template.of("command2", baseCommand + " " + (page + 2));
-            Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
-            player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
-            return;
-        }
-        if (page == 0 && totalPages != 0) { // Next
-            Template command1 = Template.of("command1", "");
-            Template command2 = Template.of("command2", baseCommand + " " + (page + 2));
-            Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
-            player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
-            return;
-        }
-        if (totalPages != 0) { // Back
-            Template command1 = Template.of("command1", "");
-            Template command2 = Template.of("command2", "");
-            Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
-            player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
-        }
+        Template command1 = Template.of("command1", baseCommand + " " + page);
+        Template command2 = Template.of("command2", baseCommand + " " + (page + 2));
+        Template clickable = Template.of("clickable", TranslatableCaption.of("list.clickable").getComponent(player));
+        player.sendMessage(TranslatableCaption.of("list.page_turn"), command1, command2, clickable);
     }
 
     /**
