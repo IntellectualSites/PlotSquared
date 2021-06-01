@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.command;
 
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
@@ -59,6 +60,7 @@ public class CmdConfirm {
             player.sendMessage(
                     TranslatableCaption.of("confirm.requires_confirm"),
                     Template.of("command", commandStr),
+                    Template.of("timeout", String.valueOf(Settings.Confirmation.CONFIRMATION_TIMEOUT_SECONDS)),
                     Template.of("value", "/plot confirm")
             );
         }
