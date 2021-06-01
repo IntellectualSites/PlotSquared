@@ -246,4 +246,8 @@ tasks {
             }
         }
     }
+
+    build {
+        dependsOn(aggregatedJavadocs)
+    }
 }
