@@ -76,6 +76,7 @@ subprojects {
     }
 }
 
+val javadocDir = rootDir.resolve("docs").resolve("javadoc").resolve(project.name)
 allprojects {
     dependencies {
         // Tests
@@ -173,7 +174,6 @@ allprojects {
         }
     }
 
-    val javadocDir = rootDir.resolve("docs").resolve("javadoc").resolve(project.name)
     tasks {
         named<Delete>("clean") {
             doFirst {
@@ -215,5 +215,39 @@ allprojects {
         named("build") {
             dependsOn(named("shadowJar"))
         }
+    }
+}
+
+tasks {
+    val aggregatedJavadocs = create<Javadoc>("aggregatedJavadocs") {
+        title = "${project.name} ${project.version} API"
+        setDestinationDir(javadocDir)
+        options.destinationDirectory = javadocDir
+
+        doFirst {
+            javadocDir.deleteRecursively()
+        }
+    }.also {
+        it.group = "Documentation"
+        it.description = "Generate javadocs from all child projects as if it was a single project"
+    }
+
+    subprojects.forEach { subProject ->
+        subProject.afterEvaluate {
+            subProject.tasks.withType<Javadoc>().forEach { task ->
+                aggregatedJavadocs.source += task.source
+                aggregatedJavadocs.classpath += task.classpath
+                aggregatedJavadocs.excludes += task.excludes
+                aggregatedJavadocs.includes += task.includes
+
+                val rootOptions = aggregatedJavadocs.options as StandardJavadocDocletOptions
+                val subOptions = task.options as StandardJavadocDocletOptions
+                rootOptions.links(*subOptions.links.orEmpty().minus(rootOptions.links.orEmpty()).toTypedArray())
+            }
+        }
+    }
+
+    build {
+        dependsOn(aggregatedJavadocs)
     }
 }
