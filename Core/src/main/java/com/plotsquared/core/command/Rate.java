@@ -184,7 +184,7 @@ public class Rate extends SubCommand {
                             return true;
                         }
                     };
-                    inventory.setItem(0, new PlotItemStack(Settings.Ratings.BLOCK_0, 0, "0/8"));
+                    inventory.setItem(0, new PlotItemStack(Settings.Ratings.BLOCK_0, 1, "0/8"));
                     inventory.setItem(1, new PlotItemStack(Settings.Ratings.BLOCK_1, 1, "1/8"));
                     inventory.setItem(2, new PlotItemStack(Settings.Ratings.BLOCK_2, 2, "2/8"));
                     inventory.setItem(3, new PlotItemStack(Settings.Ratings.BLOCK_3, 3, "3/8"));
