@@ -279,19 +279,22 @@ public class BukkitEntityUtil {
                 if (isPlot) {
                     if (plot.getFlag(AnimalAttackFlag.class) || plot.getFlag(PveFlag.class) || plot
                             .isAdded(plotPlayer.getUUID())) {
-                        plot.debug(player.getName() + " could not attack " + entityType
-                                + " because pve = false OR animal-attack = false");
                         return true;
                     }
                 } else if (roadFlags && (area.getRoadFlag(AnimalAttackFlag.class) || area
                         .getFlag(PveFlag.class))) {
-                    if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
-                        plotPlayer.sendMessage(
-                                TranslatableCaption.of("permission.no_permission_event"),
-                                Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
-                        );
-                        return false;
+                    return true;
+                }
+                if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_PVE + "." + stub)) {
+                    plotPlayer.sendMessage(
+                            TranslatableCaption.of("permission.no_permission_event"),
+                            Template.of("node", Permission.PERMISSION_ADMIN_PVE + "." + stub)
+                    );
+                    if (plot != null) {
+                        plot.debug(player.getName() + " could not attack " + entityType
+                                + " because pve = false OR animal-attack = false");
                     }
+                    return false;
                 }
             } else if (EntityCategories.VEHICLE
                     .contains(entityType)) { // Vehicles are managed in vehicle destroy event
