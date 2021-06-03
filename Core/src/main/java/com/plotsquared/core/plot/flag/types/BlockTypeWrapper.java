@@ -33,8 +33,8 @@ import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ import java.util.Map;
  */
 public class BlockTypeWrapper {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + BlockTypeWrapper.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BlockTypeWrapper.class.getSimpleName());
 
     private static final Map<BlockType, BlockTypeWrapper> blockTypes = new HashMap<>();
     private static final Map<String, BlockTypeWrapper> blockCategories = new HashMap<>();
@@ -145,7 +145,7 @@ public class BlockTypeWrapper {
             this.blockCategory = BlockCategory.REGISTRY.get(this.blockCategoryId);
             if (this.blockCategory == null && !BlockCategory.REGISTRY.values().isEmpty()) {
                 if (Settings.DEBUG) {
-                    logger.info("- Block category #{} does not exist", this.blockCategoryId);
+                    LOGGER.info("- Block category #{} does not exist", this.blockCategoryId);
                 }
                 this.blockCategory = new NullBlockCategory(this.blockCategoryId);
             }

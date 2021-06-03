@@ -33,12 +33,12 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public abstract class SquarePlotWorld extends GridPlotWorld {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + SquarePlotWorld.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquarePlotWorld.class.getSimpleName());
 
     public int PLOT_WIDTH = 42;
     public int ROAD_WIDTH = 7;
@@ -61,7 +61,7 @@ public abstract class SquarePlotWorld extends GridPlotWorld {
     public void loadConfiguration(ConfigurationSection config) {
         if (!config.contains("plot.height")) {
             if (Settings.DEBUG) {
-                logger.info(" - Configuration is null? ({})", config.getCurrentPath());
+                LOGGER.info("- Configuration is null? ({})", config.getCurrentPath());
             }
 
         }

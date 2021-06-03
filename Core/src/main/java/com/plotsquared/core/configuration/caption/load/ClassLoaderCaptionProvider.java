@@ -27,8 +27,8 @@ package com.plotsquared.core.configuration.caption.load;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +42,7 @@ import static com.plotsquared.core.configuration.caption.load.CaptionLoader.load
 
 final class ClassLoaderCaptionProvider implements DefaultCaptionProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + ClassLoaderCaptionProvider.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ClassLoaderCaptionProvider.class.getSimpleName());
     private final ClassLoader classLoader;
     private final Function<@NonNull Locale, @NonNull String> urlProvider;
 
@@ -60,14 +60,14 @@ final class ClassLoaderCaptionProvider implements DefaultCaptionProvider {
         try {
             final InputStream stream = this.classLoader.getResourceAsStream(url);
             if (stream == null) {
-                logger.warn("No resource for locale '{}' found", locale);
+                LOGGER.warn("No resource for locale '{}' found", locale);
                 return null;
             }
             try (final BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
                 return loadFromReader(reader);
             }
         } catch (final IOException e) {
-            logger.error("Unable to load language resource", e);
+            LOGGER.error("Unable to load language resource", e);
             return null;
         }
     }

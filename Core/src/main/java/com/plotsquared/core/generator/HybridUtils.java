@@ -62,8 +62,8 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -79,7 +79,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class HybridUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + HybridUtils.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridUtils.class.getSimpleName());
 
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
@@ -431,21 +431,21 @@ public class HybridUtils {
                         iter.remove();
                         boolean regenedRoad = regenerateRoad(area, chunk, extend);
                         if (!regenedRoad) {
-                            logger.info("Failed to regenerate roads");
+                            LOGGER.info("Failed to regenerate roads");
                         }
                     }
-                    logger.info("Cancelled road task");
+                    LOGGER.info("Cancelled road task");
                     return;
                 }
                 count.incrementAndGet();
                 if (count.intValue() % 20 == 0) {
-                    logger.info("Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
+                    LOGGER.info("Progress: {}%", 100 * (2048 - chunks.size()) / 2048);
                 }
                 if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
                     regeneratePlotWalls(area);
 
                     HybridUtils.UPDATE = false;
-                    logger.info("Finished road conversion");
+                    LOGGER.info("Finished road conversion");
                     // CANCEL TASK
                 } else {
                     final Runnable task = this;
@@ -456,8 +456,8 @@ public class HybridUtils {
                                     Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                                     BlockVector2 loc = iterator.next();
                                     iterator.remove();
-                                    logger.info("Updating .mcr: {}, {} (approx 1024 chunks)", loc.getX(), loc.getZ());
-                                    logger.info("- Remaining: {}", HybridUtils.regions.size());
+                                    LOGGER.info("Updating .mcr: {}, {} (approx 1024 chunks)", loc.getX(), loc.getZ());
+                                    LOGGER.info("- Remaining: {}", HybridUtils.regions.size());
                                     chunks.addAll(getChunks(loc));
                                     System.gc();
                                 }
@@ -471,7 +471,7 @@ public class HybridUtils {
                                         iterator.remove();
                                         boolean regenedRoads = regenerateRoad(area, chunk, extend);
                                         if (!regenedRoads) {
-                                            logger.info("Failed to regenerate road");
+                                            LOGGER.info("Failed to regenerate road");
                                         }
                                     }
                                     return null;
@@ -482,7 +482,7 @@ public class HybridUtils {
                             Iterator<BlockVector2> iterator = HybridUtils.regions.iterator();
                             BlockVector2 loc = iterator.next();
                             iterator.remove();
-                            logger.error("Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
+                            LOGGER.error("Error! Could not update '{}/region/r.{}.{}.mca' (Corrupt chunk?)",
                                     area.getWorldHash(),
                                     loc.getX(),
                                     loc.getZ()

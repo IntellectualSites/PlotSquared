@@ -34,8 +34,8 @@ import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.query.PlotQuery;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlotAnalysis {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotAnalysis.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotAnalysis.class.getSimpleName());
 
     public static boolean running = false;
     public int changes;
@@ -97,11 +97,11 @@ public class PlotAnalysis {
      */
     public static void calcOptimalModifiers(final Runnable whenDone, final double threshold) {
         if (running) {
-            logger.info("Calibration task already in progress!");
+            LOGGER.info("Calibration task already in progress!");
             return;
         }
         if (threshold <= 0 || threshold >= 1) {
-            logger.info("Invalid threshold provided! (Cannot be 0 or 100 as then there's no point in calibrating)");
+            LOGGER.info("Invalid threshold provided! (Cannot be 0 or 100 as then there's no point in calibrating)");
             return;
         }
         running = true;
@@ -110,7 +110,7 @@ public class PlotAnalysis {
             @Override
             public void run() {
                 Iterator<Plot> iterator = plots.iterator();
-                logger.info("- Reducing {} plots to those with sufficient data", plots.size());
+                LOGGER.info("- Reducing {} plots to those with sufficient data", plots.size());
                 while (iterator.hasNext()) {
                     Plot plot = iterator.next();
                     if (plot.getSettings().getRatings() == null || plot.getSettings().getRatings()
@@ -122,14 +122,14 @@ public class PlotAnalysis {
                 }
 
                 if (plots.size() < 3) {
-                    logger.info("Calibration cancelled due to insufficient comparison data, please try again later");
+                    LOGGER.info("Calibration cancelled due to insufficient comparison data, please try again later");
                     running = false;
                     for (Plot plot : plots) {
                         plot.removeRunning();
                     }
                     return;
                 }
-                logger.info("- Analyzing plot contents (this may take a while)");
+                LOGGER.info("- Analyzing plot contents (this may take a while)");
 
                 int[] changes = new int[plots.size()];
                 int[] faces = new int[plots.size()];
@@ -154,7 +154,7 @@ public class PlotAnalysis {
                         ratings[i] = (int) (
                                 (plot.getAverageRating() + plot.getSettings().getRatings().size())
                                         * 100);
-                        logger.info(" | {} (rating) {}", plot, ratings[i]);
+                        LOGGER.info(" | {} (rating) {}", plot, ratings[i]);
 
                     }
                 });
@@ -166,7 +166,7 @@ public class PlotAnalysis {
                     if (queuePlot == null) {
                         break;
                     }
-                    logger.info(" | {}", queuePlot);
+                    LOGGER.info(" | {}", queuePlot);
 
                     final Object lock = new Object();
                     TaskManager.runTask(new Runnable() {
@@ -199,7 +199,7 @@ public class PlotAnalysis {
                     }
                 }
 
-                logger.info(" - Waiting on plot rating thread: {}%", mi.intValue() * 100 / plots.size());
+                LOGGER.info("- Waiting on plot rating thread: {}%", mi.intValue() * 100 / plots.size());
 
                 try {
                     ratingAnalysis.join();
@@ -207,11 +207,11 @@ public class PlotAnalysis {
                     e.printStackTrace();
                 }
 
-                logger.info(" - Processing and grouping single plot analysis for bulk processing");
+                LOGGER.info("- Processing and grouping single plot analysis for bulk processing");
 
                 for (int i = 0; i < plots.size(); i++) {
                     Plot plot = plots.get(i);
-                    logger.info(" | {}", plot);
+                    LOGGER.info("| {}", plot);
 
                     PlotAnalysis analysis = plot.getComplexity(null);
 
@@ -228,16 +228,16 @@ public class PlotAnalysis {
                     variety_sd[i] = analysis.variety_sd;
                 }
 
-                logger.info(" - Calculating rankings");
+                LOGGER.info("- Calculating rankings");
 
                 int[] rankRatings = rank(ratings);
                 int n = rankRatings.length;
 
                 int optimalIndex = (int) Math.round((1 - threshold) * (n - 1));
 
-                logger.info(" - Calculating rank correlation: ");
-                logger.info(" - The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
-                logger.info(" - The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
+                LOGGER.info("- Calculating rank correlation: ");
+                LOGGER.info("- The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
+                LOGGER.info("- The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
 
                 Settings.Auto_Clear settings = new Settings.Auto_Clear();
 
@@ -250,7 +250,7 @@ public class PlotAnalysis {
                         0 :
                         (int) (factorChanges * 1000 / MathMan.getMean(changes));
 
-                logger.info(" - | changes {}", factorChanges);
+                LOGGER.info("- | changes {}", factorChanges);
 
                 int[] rankFaces = rank(faces);
                 int[] sdFaces = getSD(rankFaces, rankRatings);
@@ -260,7 +260,7 @@ public class PlotAnalysis {
                 settings.CALIBRATION.FACES =
                         factorFaces == 1 ? 0 : (int) (factorFaces * 1000 / MathMan.getMean(faces));
 
-                logger.info(" - | faces {}", factorFaces);
+                LOGGER.info("- | faces {}", factorFaces);
 
                 int[] rankData = rank(data);
                 int[] sdData = getSD(rankData, rankRatings);
@@ -270,7 +270,7 @@ public class PlotAnalysis {
                 settings.CALIBRATION.DATA =
                         factor_data == 1 ? 0 : (int) (factor_data * 1000 / MathMan.getMean(data));
 
-                logger.info(" - | data {}", factor_data);
+                LOGGER.info("- | data {}", factor_data);
 
                 int[] rank_air = rank(air);
                 int[] sd_air = getSD(rank_air, rankRatings);
@@ -280,7 +280,7 @@ public class PlotAnalysis {
                 settings.CALIBRATION.AIR =
                         factor_air == 1 ? 0 : (int) (factor_air * 1000 / MathMan.getMean(air));
 
-                logger.info("- | air {}", factor_air);
+                LOGGER.info("- | air {}", factor_air);
 
 
                 int[] rank_variety = rank(variety);
@@ -292,7 +292,7 @@ public class PlotAnalysis {
                         0 :
                         (int) (factor_variety * 1000 / MathMan.getMean(variety));
 
-                logger.info("- | variety {}", factor_variety);
+                LOGGER.info("- | variety {}", factor_variety);
 
                 int[] rank_changes_sd = rank(changes_sd);
                 int[] sd_changes_sd = getSD(rank_changes_sd, rankRatings);
@@ -303,7 +303,7 @@ public class PlotAnalysis {
                         0 :
                         (int) (factor_changes_sd * 1000 / MathMan.getMean(changes_sd));
 
-                logger.info(" - | changed_sd {}", factor_changes_sd);
+                LOGGER.info("- | changed_sd {}", factor_changes_sd);
 
                 int[] rank_faces_sd = rank(faces_sd);
                 int[] sd_faces_sd = getSD(rank_faces_sd, rankRatings);
@@ -314,7 +314,7 @@ public class PlotAnalysis {
                         0 :
                         (int) (factor_faces_sd * 1000 / MathMan.getMean(faces_sd));
 
-                logger.info(" - | faced_sd {}", factor_faces_sd);
+                LOGGER.info("- | faced_sd {}", factor_faces_sd);
 
                 int[] rank_data_sd = rank(data_sd);
                 int[] sd_data_sd = getSD(rank_data_sd, rankRatings);
@@ -325,7 +325,7 @@ public class PlotAnalysis {
                         0 :
                         (int) (factor_data_sd * 1000 / MathMan.getMean(data_sd));
 
-                logger.info(" - | data_sd {}", factor_data_sd);
+                LOGGER.info("- | data_sd {}", factor_data_sd);
 
                 int[] rank_air_sd = rank(air_sd);
                 int[] sd_air_sd = getSD(rank_air_sd, rankRatings);
@@ -335,7 +335,7 @@ public class PlotAnalysis {
                 settings.CALIBRATION.AIR_SD =
                         factor_air_sd == 1 ? 0 : (int) (factor_air_sd * 1000 / MathMan.getMean(air_sd));
 
-                logger.info(" - | air_sd {}", factor_air_sd);
+                LOGGER.info("- | air_sd {}", factor_air_sd);
 
                 int[] rank_variety_sd = rank(variety_sd);
                 int[] sd_variety_sd = getSD(rank_variety_sd, rankRatings);
@@ -346,11 +346,11 @@ public class PlotAnalysis {
                         0 :
                         (int) (factor_variety_sd * 1000 / MathMan.getMean(variety_sd));
 
-                logger.info(" - | variety_sd {}", factor_variety_sd);
+                LOGGER.info("- | variety_sd {}", factor_variety_sd);
 
                 int[] complexity = new int[n];
 
-                logger.info("Calculating threshold");
+                LOGGER.info("Calculating threshold");
 
                 int max = 0;
                 int min = 0;
@@ -380,7 +380,7 @@ public class PlotAnalysis {
                     logln("Correlation: ");
                     logln(getCC(n, sum(square(getSD(rankComplexity, rankRatings)))));
                     if (optimalComplexity == Integer.MAX_VALUE) {
-                        logger.info("Insufficient data to determine correlation! {} | {}",
+                        LOGGER.info("Insufficient data to determine correlation! {} | {}",
                                     optimalIndex, n
                             );
                         running = false;
@@ -399,21 +399,21 @@ public class PlotAnalysis {
                 }
 
                 // Save calibration
-                logger.info(" Saving calibration");
+                LOGGER.info("Saving calibration");
                 Settings.AUTO_CLEAR.put("auto-calibrated", settings);
                 Settings.save(PlotSquared.get().getWorldsFile());
                 running = false;
                 for (Plot plot : plots) {
                     plot.removeRunning();
                 }
-                logger.info(" Done!");
+                LOGGER.info("Done!");
                 whenDone.run();
             }
         });
     }
 
     public static void logln(Object obj) {
-        logger.info("" + log(obj));
+        LOGGER.info("" + log(obj));
     }
 
     public static String log(Object obj) {

@@ -54,8 +54,8 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ import static com.plotsquared.core.plot.Plot.MAX_HEIGHT;
  */
 public final class PlotModificationManager {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotModificationManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotModificationManager.class.getSimpleName());
 
     private final Plot plot;
     private final ProgressSubscriberFactory subscriberFactory;
@@ -504,7 +504,7 @@ public final class PlotModificationManager {
             });
             return true;
         }
-        logger.info(
+        LOGGER.info(
                 "Failed to add plot {} to plot area {}",
                 this.plot.getId().toCommaSeparatedString(),
                 this.plot.getArea().toString()

@@ -43,8 +43,8 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -53,7 +53,7 @@ import java.util.Set;
 
 public class ProcessedWEExtent extends AbstractDelegateExtent {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + ProcessedWEExtent.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ProcessedWEExtent.class.getSimpleName());
 
     private final Set<CuboidRegion> mask;
     private final String world;

@@ -36,8 +36,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -46,7 +46,7 @@ import java.net.URL;
 
 public class UpdateUtility implements Listener {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + UpdateUtility.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + UpdateUtility.class.getSimpleName());
 
     public static PlotVersion internalVersion;
     public static String spigotVersion;
@@ -73,23 +73,23 @@ public class UpdateUtility implements Listener {
                         .getAsJsonObject();
                 spigotVersion = result.get("current_version").getAsString();
             } catch (IOException e) {
-                logger.error("Unable to check for updates. Error: {}", e.getMessage());
+                LOGGER.error("Unable to check for updates. Error: {}", e.getMessage());
                 return;
             }
 
             if (internalVersion.isLaterVersion(spigotVersion)) {
-                logger.info("There appears to be a PlotSquared update available!");
-                logger.info("You are running version {}, the latest version is {}",
+                LOGGER.info("There appears to be a PlotSquared update available!");
+                LOGGER.info("You are running version {}, the latest version is {}",
                         internalVersion.versionString(), spigotVersion
                 );
-                logger.info("https://www.spigotmc.org/resources/77506/updates");
+                LOGGER.info("https://www.spigotmc.org/resources/77506/updates");
                 hasUpdate = true;
                 if (Settings.UpdateChecker.NOTIFY_ONCE) {
                     cancelTask();
                 }
             } else if (notify) {
                 notify = false;
-                logger.info("Congratulations! You are running the latest PlotSquared version");
+                LOGGER.info("Congratulations! You are running the latest PlotSquared version");
             }
         }, 0L, Settings.UpdateChecker.POLL_RATE * 60 * 20);
     }

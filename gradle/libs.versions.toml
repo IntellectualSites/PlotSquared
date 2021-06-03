@@ -20,8 +20,7 @@ luckperms = "5.3"
 essentialsx = "2.18.2"
 hyperverse = "0.6.0-SNAPSHOT"
 
-slf4j-api = "1.7.30"
-log4j-slf4j-impl = "2.8.1"
+log4j-api = "2.8.1"
 
 prtree = "1.7.0-SNAPSHOT"
 aopalliance = "1.0"
@@ -71,8 +70,7 @@ essentialsx = { group = "net.ess3", name = "EssentialsX", version.ref = "essenti
 hyperverse = { group = "se.hyperver.hyperverse", name = "Core", version.ref = "hyperverse" }
 
 # Logging
-slf4j = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j-api" }
-log4j = { group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version.ref = "log4j-slf4j-impl" }
+log4j = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j-api" }
 
 # Other libraries
 prtree = { group = "org.khelekore", name = "prtree", version.ref = "prtree" }

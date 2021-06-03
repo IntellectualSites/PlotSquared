@@ -33,8 +33,8 @@ import com.plotsquared.core.plot.BlockBucket;
 import com.sk89q.worldedit.world.block.BlockState;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,7 +48,7 @@ import java.util.Map;
 public final class LegacyConverter {
 
     public static final String CONFIGURATION_VERSION = "post_flattening";
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + LegacyConverter.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + LegacyConverter.class.getSimpleName());
     private static final HashMap<String, ConfigurationType> TYPE_MAP = new HashMap<>();
 
     static {

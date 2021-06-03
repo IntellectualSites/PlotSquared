@@ -55,8 +55,8 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -67,7 +67,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 @SuppressWarnings("unused")
 public class ChunkListener implements Listener {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + ChunkListener.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ChunkListener.class.getSimpleName());
 
     private final PlotAreaManager plotAreaManager;
 

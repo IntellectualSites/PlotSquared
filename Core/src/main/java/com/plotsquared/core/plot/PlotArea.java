@@ -72,8 +72,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ import java.util.function.Consumer;
  */
 public abstract class PlotArea {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotArea.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotArea.class.getSimpleName());
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
 
@@ -199,7 +199,7 @@ public abstract class PlotArea {
                 try {
                     flags.add(flagInstance.parse(split[1]));
                 } catch (final FlagParseException e) {
-                    logger.warn(
+                    LOGGER.warn(
                             "Failed to parse default flag with key '{}' and value '{}'. "
                                     + "Reason: {}. This flag will not be added as a default flag.",
                             e.getFlag().getName(),

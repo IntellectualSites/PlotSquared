@@ -39,9 +39,7 @@ dependencies {
     testImplementation(libs.worldeditCore)
 
     // Logging
-    api(libs.slf4j)
-    runtimeOnly(libs.log4j) {
-        exclude(group = "org.slf4j")
+    compileOnlyApi(libs.log4j) {
         because("Minecraft uses 2.8.1")
     }
 

@@ -73,8 +73,8 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -114,7 +114,7 @@ import java.util.zip.GZIPOutputStream;
 
 public abstract class SchematicHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + SchematicHandler.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SchematicHandler.class.getSimpleName());
     private static final Gson GSON = new Gson();
     public static SchematicHandler manager;
     private final WorldUtil worldUtil;
@@ -260,7 +260,7 @@ public abstract class SchematicHandler {
                                 TaskManager.runTaskAsync(() -> {
                                     boolean result = save(compoundTag, directory + File.separator + name + ".schem");
                                     if (!result) {
-                                        logger.error("Failed to save {}", plot.getId());
+                                        LOGGER.error("Failed to save {}", plot.getId());
                                     }
                                     TaskManager.runTask(THIS);
                                 });

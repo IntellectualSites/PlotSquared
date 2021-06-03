@@ -49,8 +49,8 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.util.Collection;
@@ -58,7 +58,7 @@ import java.util.Set;
 
 public abstract class RegionManager {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + RegionManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + RegionManager.class.getSimpleName());
 
     public static RegionManager manager = null;
     private final WorldUtil worldUtil;
@@ -100,7 +100,7 @@ public abstract class RegionManager {
             for (BlockVector2 loc : chunks) {
                 String directory = world + File.separator + "region" + File.separator + "r." + loc.getX() + "." + loc.getZ() + ".mca";
                 File file = new File(PlotSquared.platform().worldContainer(), directory);
-                logger.info("- Deleting file: {} (max 1024 chunks)", file.getName());
+                LOGGER.info("- Deleting file: {} (max 1024 chunks)", file.getName());
                 if (file.exists()) {
                     file.delete();
                 }

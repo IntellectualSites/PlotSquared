@@ -28,8 +28,8 @@ package com.plotsquared.core.configuration.file;
 import com.plotsquared.core.configuration.Configuration;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.InvalidConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -47,7 +47,7 @@ import java.util.Map;
  */
 public class YamlConfiguration extends FileConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + YamlConfiguration.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + YamlConfiguration.class.getSimpleName());
 
     private static final String COMMENT_PREFIX = "# ";
     private static final String BLANK_CONFIG = "{}\n";
@@ -80,11 +80,11 @@ public class YamlConfiguration extends FileConfiguration {
                     dest = new File(file.getAbsolutePath() + "_broken_" + i++);
                 }
                 Files.copy(file.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                logger.error("Could not read: {}", file);
-                logger.error("Renamed to: {}", file);
-                logger.error("============ Full stacktrace ============");
+                LOGGER.error("Could not read: {}", file);
+                LOGGER.error("Renamed to: {}", file);
+                LOGGER.error("============ Full stacktrace ============");
                 ex.printStackTrace();
-                logger.error("=========================================");
+                LOGGER.error("=========================================");
             } catch (IOException e) {
                 e.printStackTrace();
             }

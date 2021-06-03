@@ -49,8 +49,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +68,7 @@ import java.util.stream.Collectors;
 public class ComponentPresetManager {
 
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + ComponentPresetManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ComponentPresetManager.class.getSimpleName());
 
     private final List<ComponentPreset> presets;
     private final String guiName;
@@ -84,7 +84,7 @@ public class ComponentPresetManager {
         final File oldLocation = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "components.yml");
         final File folder = new File(Objects.requireNonNull(PlotSquared.platform()).getDirectory(), "config");
         if (!folder.exists() && !folder.mkdirs()) {
-            logger.error("Failed to create the /plugins/PlotSquared/config folder. Please create it manually");
+            LOGGER.error("Failed to create the /plugins/PlotSquared/config folder. Please create it manually");
         }
         if (oldLocation.exists()) {
             Path oldLoc = Paths.get(PlotSquared.platform().getDirectory() + "/components.yml");
@@ -94,7 +94,7 @@ public class ComponentPresetManager {
         try {
             this.componentsFile = new File(folder, "components.yml");
             if (!this.componentsFile.exists() && !this.componentsFile.createNewFile()) {
-                logger.error("Could not create the components.yml file. Please create 'components.yml' manually.");
+                LOGGER.error("Could not create the components.yml file. Please create 'components.yml' manually.");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,7 +109,7 @@ public class ComponentPresetManager {
             try {
                 yamlConfiguration.save(this.componentsFile);
             } catch (IOException e) {
-                logger.error("Failed to save default values to components.yml", e);
+                LOGGER.error("Failed to save default values to components.yml", e);
             }
         }
         this.guiName = yamlConfiguration.getString("title", "&6Plot Components");
@@ -135,7 +135,7 @@ public class ComponentPresetManager {
             try {
                 yamlConfiguration.save(this.componentsFile);
             } catch (final IOException e) {
-                logger.error("Failed to save default values to components.yml", e);
+                LOGGER.error("Failed to save default values to components.yml", e);
             }
             this.presets = defaultPreset;
         }

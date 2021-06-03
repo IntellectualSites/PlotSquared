@@ -37,8 +37,8 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +47,7 @@ import java.util.Set;
 
 public class ContentMap {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + ContentMap.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ContentMap.class.getSimpleName());
 
     final Set<EntityWrapper> entities;
     final Map<PlotLoc, BaseBlock[]> allBlocks;
@@ -128,7 +128,7 @@ public class ContentMap {
             try {
                 entity.spawn(world, xOffset, zOffset);
             } catch (Exception e) {
-                logger.error("Failed to restore entity", e);
+                LOGGER.error("Failed to restore entity", e);
             }
         }
         this.entities.clear();

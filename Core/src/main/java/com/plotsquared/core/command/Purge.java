@@ -41,8 +41,8 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.uuid.UUIDMapping;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +59,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
         confirmation = true)
 public class Purge extends SubCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + Purge.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Purge.class.getSimpleName());
 
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
@@ -205,7 +205,7 @@ public class Purge extends SubCommand {
                 "/plot purge " + StringMan.join(args, " ") + " (" + toDelete.size() + " plots)";
         boolean finalClear = clear;
         Runnable run = () -> {
-            logger.info("Calculating plots to purge, please wait...");
+            LOGGER.info("Calculating plots to purge, please wait...");
             HashSet<Integer> ids = new HashSet<>();
             Iterator<Plot> iterator = toDelete.iterator();
             AtomicBoolean cleared = new AtomicBoolean(true);
@@ -220,7 +220,7 @@ public class Purge extends SubCommand {
                                 ids.add(plot.temp);
                                 if (finalClear) {
                                     plot.getPlotModificationManager().clear(false, true, player, () -> {
-                                        logger.info("Plot {} cleared by purge", plot.getId());
+                                        LOGGER.info("Plot {} cleared by purge", plot.getId());
                                     });
                                 } else {
                                     plot.getPlotModificationManager().removeSign();
@@ -230,7 +230,7 @@ public class Purge extends SubCommand {
                                     Purge.this.plotListener.plotEntry(pp, plot);
                                 }
                             } catch (NullPointerException e) {
-                                logger.error("NullPointer during purge detected. This is likely"
+                                LOGGER.error("NullPointer during purge detected. This is likely"
                                         + " because you are deleting a world that has been removed", e);
                             }
                         }

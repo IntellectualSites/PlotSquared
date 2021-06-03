@@ -140,8 +140,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.serverlib.ServerLib;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -170,7 +170,7 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 @Singleton
 public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitPlatform.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitPlatform.class.getSimpleName());
     private static final int BSTATS_ID = 1404;
 
     static {
@@ -276,12 +276,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
 
         if (PremiumVerification.isPremium()) {
-            logger.info("PlotSquared version licensed to Spigot user {}", getUserID());
-            logger.info("https://www.spigotmc.org/resources/{}", getResourceID());
-            logger.info("Download ID: {}", getDownloadID());
-            logger.info("Thanks for supporting us :)");
+            LOGGER.info("PlotSquared version licensed to Spigot user {}", getUserID());
+            LOGGER.info("https://www.spigotmc.org/resources/{}", getResourceID());
+            LOGGER.info("Download ID: {}", getDownloadID());
+            LOGGER.info("Thanks for supporting us :)");
         } else {
-            logger.info("Couldn't verify purchase :(");
+            LOGGER.info("Couldn't verify purchase :(");
         }
 
         // Database
@@ -293,7 +293,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         if (!plotSquared.getConfigurationVersion().equalsIgnoreCase("v5")) {
             // Perform upgrade
             if (DBFunc.dbManager.convertFlags()) {
-                logger.info("Flags were converted successfully!");
+                LOGGER.info("Flags were converted successfully!");
                 // Update the config version
                 try {
                     plotSquared.setConfigurationVersion("v5");
@@ -317,10 +317,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         // WorldEdit
         if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
             try {
-                logger.info("{} hooked into WorldEdit", this.pluginName());
+                LOGGER.info("{} hooked into WorldEdit", this.pluginName());
                 WorldEdit.getInstance().getEventBus().register(this.injector().getInstance(WESubscriber.class));
             } catch (Throwable e) {
-                logger.error(
+                LOGGER.error(
                         "Incompatible version of WorldEdit, please upgrade: https://builds.enginehub.org/job/worldedit?branch=master");
             }
         }
@@ -368,7 +368,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             try {
                 injector().getInstance(ComponentPresetManager.class);
             } catch (final Exception e) {
-                logger.error("Failed to initialize the preset system", e);
+                LOGGER.error("Failed to initialize the preset system", e);
             }
         }
 
@@ -391,15 +391,18 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         continue;
                     }
                     if (!worldUtil.isWorld(world) && !world.equals("*")) {
-                        logger.warn(
-                                "`{}` was not properly loaded - {} will now try to load it properly",
-                                world,
-                                this.pluginName()
-                        );
-                        logger.warn(
-                                " - Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
-                        logger.warn(" - Your world management plugin may be faulty (or non existent)");
-                        logger.warn(" This message may also be a false positive and could be ignored.");
+                        if (Settings.DEBUG) {
+                            LOGGER.warn(
+                                    "`{}` was not properly loaded - {} will now try to load it properly",
+                                    world,
+                                    this.pluginName()
+                            );
+                            LOGGER.warn(
+                                    "- Are you trying to delete this world? Remember to remove it from the worlds.yml, bukkit.yml and multiverse worlds.yml");
+                            LOGGER.warn("- Your world management plugin may be faulty (or non existent)");
+                            LOGGER.warn("- The named world is not a plot world");
+                            LOGGER.warn("This message may also be a false positive and could be ignored.");
+                        }
                         this.setGenerator(world);
                     }
                 }
@@ -419,7 +422,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             final OfflineModeUUIDService offlineModeUUIDService = new OfflineModeUUIDService();
             this.impromptuPipeline.registerService(offlineModeUUIDService);
             this.backgroundPipeline.registerService(offlineModeUUIDService);
-            logger.info("(UUID) Using the offline mode UUID service");
+            LOGGER.info("(UUID) Using the offline mode UUID service");
         }
 
         if (Settings.UUID.SERVICE_BUKKIT) {
@@ -442,7 +445,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final LuckPermsUUIDService luckPermsUUIDService;
         if (Settings.UUID.SERVICE_LUCKPERMS && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
-            logger.info("(UUID) Using LuckPerms as a complementary UUID service");
+            LOGGER.info("(UUID) Using LuckPerms as a complementary UUID service");
         } else {
             luckPermsUUIDService = null;
         }
@@ -450,7 +453,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         final EssentialsUUIDService essentialsUUIDService;
         if (Settings.UUID.SERVICE_ESSENTIALSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
-            logger.info("(UUID) Using EssentialsX as a complementary UUID service");
+            LOGGER.info("(UUID) Using EssentialsX as a complementary UUID service");
         } else {
             essentialsUUIDService = null;
         }
@@ -461,7 +464,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 this.impromptuPipeline.registerService(paperUUIDService);
                 this.backgroundPipeline.registerService(paperUUIDService);
-                logger.info("(UUID) Using Paper as a complementary UUID service");
+                LOGGER.info("(UUID) Using Paper as a complementary UUID service");
             }
 
             this.impromptuPipeline.registerService(sqLiteUUIDService);
@@ -511,7 +514,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
                 ChatFormatter.formatters.add(injector().getInstance(PlaceholderFormatter.class));
             }
-            logger.info("PlotSquared hooked into PlaceholderAPI");
+            LOGGER.info("PlotSquared hooked into PlaceholderAPI");
         }
 
         this.startMetrics();
@@ -597,7 +600,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         final Chunk[] chunks = world.getLoadedChunks();
                         if (chunks.length == 0) {
                             if (!Bukkit.unloadWorld(world, true)) {
-                                logger.warn("Failed to unload {}", world.getName());
+                                LOGGER.warn("Failed to unload {}", world.getName());
                             }
                             return;
                         } else {
@@ -649,7 +652,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
         });
 
-        logger.info("(UUID) {} UUIDs will be cached", uuidQueue.size());
+        LOGGER.info("(UUID) {} UUIDs will be cached", uuidQueue.size());
 
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
             // Begin by reading all the SQLite cache at once
@@ -657,7 +660,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             // Now fetch names for all known UUIDs
             final int totalSize = uuidQueue.size();
             int read = 0;
-            logger.info("(UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
+            LOGGER.info("(UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
             final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
 
             // Used to indicate that the second retrieval has been attempted
@@ -665,7 +668,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
             while (!uuidQueue.isEmpty() || !uuidList.isEmpty()) {
                 if (!uuidList.isEmpty() && secondRun) {
-                    logger.warn("(UUID) Giving up on last batch. Fetching new batch instead");
+                    LOGGER.warn("(UUID) Giving up on last batch. Fetching new batch instead");
                     uuidList.clear();
                 }
                 if (uuidList.isEmpty()) {
@@ -689,13 +692,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     // Print progress
                     final double percentage = ((double) read / (double) totalSize) * 100.0D;
                     if (Settings.DEBUG) {
-                        logger.info("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
+                        LOGGER.info("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
                     }
                 } catch (final InterruptedException | ExecutionException e) {
-                    logger.error("(UUID) Failed to retrieve last batch. Will try again", e);
+                    LOGGER.error("(UUID) Failed to retrieve last batch. Will try again", e);
                 }
             }
-            logger.info("(UUID) PlotSquared has cached all UUIDs");
+            LOGGER.info("(UUID) PlotSquared has cached all UUIDs");
         }, 10, TimeUnit.SECONDS);
     }
 
@@ -1092,7 +1095,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     SetGenCB.setGenerator(BukkitUtil.getWorld(worldName));
                 }
             } catch (final Exception e) {
-                logger.error("Failed to reload world: {} | {}", world, e.getMessage());
+                LOGGER.error("Failed to reload world: {} | {}", world, e.getMessage());
                 Bukkit.getServer().unloadWorld(world, false);
                 return;
             }
@@ -1195,7 +1198,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         for (final String language : languages) {
             if (!new File(new File(this.getDataFolder(), "lang"), String.format("messages_%s.json", language)).exists()) {
                 this.saveResource(String.format("lang/messages_%s.json", language), false);
-                logger.info("Copied language file 'messages_{}.json'", language);
+                LOGGER.info("Copied language file 'messages_{}.json'", language);
             }
         }
     }

@@ -98,8 +98,8 @@ import org.bukkit.entity.WaterMob;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -117,7 +117,7 @@ public class BukkitUtil extends WorldUtil {
     public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitPlatform.getPlugin(BukkitPlatform.class));
     public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + BukkitUtil.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitUtil.class.getSimpleName());
     private final Collection<BlockType> tileEntityTypes = new HashSet<>();
 
     /**
@@ -388,7 +388,7 @@ public class BukkitUtil extends WorldUtil {
     ) {
         final World world = getWorld(worldName);
         if (world == null) {
-            logger.warn("An error occurred while setting the biome because the world was null", new RuntimeException());
+            LOGGER.warn("An error occurred while setting the biome because the world was null", new RuntimeException());
             return;
         }
         final Biome biome = BukkitAdapter.adapt(biomeType);
@@ -487,7 +487,7 @@ public class BukkitUtil extends WorldUtil {
                 allowedInterfaces.add(Firework.class);
             }
             case "player" -> allowedInterfaces.add(Player.class);
-            default -> logger.error("Unknown entity category requested: {}", category);
+            default -> LOGGER.error("Unknown entity category requested: {}", category);
         }
         final Set<com.sk89q.worldedit.world.entity.EntityType> types = new HashSet<>();
         outer:

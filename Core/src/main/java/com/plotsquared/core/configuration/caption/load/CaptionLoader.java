@@ -33,8 +33,8 @@ import com.plotsquared.core.configuration.caption.LocalizedCaptionMap;
 import com.plotsquared.core.configuration.caption.PerUserLocaleCaptionMap;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -61,7 +61,7 @@ import java.util.stream.Stream;
  */
 public final class CaptionLoader {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + CaptionLoader.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + CaptionLoader.class.getSimpleName());
 
     private static final Gson GSON;
 
@@ -89,7 +89,7 @@ public final class CaptionLoader {
         try {
             temp = this.captionProvider.loadDefaults(internalLocale);
         } catch (Exception e) {
-            logger.error("Failed to load default messages", e);
+            LOGGER.error("Failed to load default messages", e);
             temp = Collections.emptyMap();
         }
         this.defaultMessages = temp;
@@ -159,9 +159,9 @@ public final class CaptionLoader {
     private static void save(final Path file, final Map<String, String> content) {
         try (final BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
             GSON.toJson(content, writer);
-            logger.info("Saved {} with new content", file.getFileName());
+            LOGGER.info("Saved {} with new content", file.getFileName());
         } catch (final IOException e) {
-            logger.error("Failed to save caption file '{}'", file.getFileName().toString(), e);
+            LOGGER.error("Failed to save caption file '{}'", file.getFileName().toString(), e);
         }
     }
 
@@ -183,10 +183,10 @@ public final class CaptionLoader {
                     final CaptionMap localeMap = loadSingle(file);
                     localeMaps.put(localeMap.getLocale(), localeMap);
                 } catch (Exception e) {
-                    logger.error("Failed to load language file '{}'", file.getFileName().toString(), e);
+                    LOGGER.error("Failed to load language file '{}'", file.getFileName().toString(), e);
                 }
             }
-            logger.info("Loaded {} message files. Loaded Languages: {}", localeMaps.size(), localeMaps.keySet());
+            LOGGER.info("Loaded {} message files. Loaded Languages: {}", localeMaps.size(), localeMaps.keySet());
             return new PerUserLocaleCaptionMap(localeMaps);
         }
     }
