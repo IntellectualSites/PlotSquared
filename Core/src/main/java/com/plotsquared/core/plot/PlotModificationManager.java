@@ -361,10 +361,12 @@ public final class PlotModificationManager {
                     current.getPlotModificationManager().setSign(PlayerManager.getName(current.getOwnerAbs()));
                 }
             }));
-            queue.enqueue();
         }
         if (createRoad) {
             manager.finishPlotUnlink(ids, queue);
+        }
+        if (queue != null) {
+            queue.enqueue();
         }
         return true;
     }
