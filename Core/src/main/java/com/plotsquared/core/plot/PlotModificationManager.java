@@ -569,7 +569,7 @@ public final class PlotModificationManager {
             }
             visited.add(current);
             Set<Plot> plots;
-            if ((dir == Direction.ALL || dir == Direction.NORTH) && !this.plot.isMerged(Direction.NORTH)) {
+            if ((dir == Direction.ALL || dir == Direction.NORTH) && !current.isMerged(Direction.NORTH)) {
                 Plot other = current.getRelative(Direction.NORTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
@@ -603,7 +603,7 @@ public final class PlotModificationManager {
                     }
                 }
             }
-            if (max >= 0 && (dir == Direction.ALL || dir == Direction.SOUTH) && !this.plot.isMerged(Direction.SOUTH)) {
+            if (max >= 0 && (dir == Direction.ALL || dir == Direction.SOUTH) && !current.isMerged(Direction.SOUTH)) {
                 Plot other = current.getRelative(Direction.SOUTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
@@ -620,7 +620,7 @@ public final class PlotModificationManager {
                     }
                 }
             }
-            if (max >= 0 && (dir == Direction.ALL || dir == Direction.WEST) && !this.plot.isMerged(Direction.WEST)) {
+            if (max >= 0 && (dir == Direction.ALL || dir == Direction.WEST) && !current.isMerged(Direction.WEST)) {
                 Plot other = current.getRelative(Direction.WEST);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
@@ -637,12 +637,12 @@ public final class PlotModificationManager {
                     }
                 }
             }
-            if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
-            }
-            if (queue.size() > 0) {
-                queue.enqueue();
-            }
+        }
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+        }
+        if (queue.size() > 0) {
+            queue.enqueue();
         }
         return toReturn;
     }
