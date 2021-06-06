@@ -32,9 +32,9 @@ is to provide a lag-free and smooth experience.
 * [Translations](https://intellectualsites.crowdin.com/plotsquared/)
 
 ### Developer Resources
-* [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/API-Documentation)
-* [Event API](https://github.com/IntellectualSites/PlotSquared/wiki/Events)
-* [Flag API](https://github.com/IntellectualSites/PlotSquared/wiki/API-Flag)
+* [API Documentation](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/API-Documentation)
+* [Event API](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Events)
+* [Flag API](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/API-Flag)
 
 # Building
 Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
