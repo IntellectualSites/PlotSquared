@@ -107,7 +107,6 @@ public class MainCommand extends Command {
             new Music();
             new DebugRoadRegen();
             new Trust();
-            new DebugExec();
             new FlagCommand();
             new Target();
             new Move();
@@ -139,6 +138,10 @@ public class MainCommand extends Command {
             // Referenced commands
             instance.toggle = new Toggle();
             instance.help = new Help(instance);
+
+            if (!Settings.Enabled_Components.DISABLE_NASHORN_SCRIPT_ENGINE) {
+                new DebugExec();
+            }
         }
         return instance;
     }

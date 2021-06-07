@@ -109,8 +109,10 @@ public class DebugExec extends SubCommand {
     }
 
     public ScriptEngine getEngine() {
-        if (this.engine == null) {
-            init();
+        if (!Settings.Enabled_Components.DISABLE_NASHORN_SCRIPT_ENGINE) {
+            if (this.engine == null) {
+                init();
+            }
         }
         return this.engine;
     }

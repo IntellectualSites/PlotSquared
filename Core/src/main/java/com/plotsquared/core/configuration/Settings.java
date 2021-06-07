@@ -593,6 +593,12 @@ public class Settings extends Config {
         public static List<String> TAB_COMPLETED_ALIASES = Arrays.asList("plot", "plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap");
         @Comment("Whether PlotSquared should hook into MvDWPlaceholderAPI or not")
         public static boolean USE_MVDWAPI = true;
+        @Comment({"Whether the Nashorn scripting engine should be enabled or not. Disabling this will ensure compatibility with Java 15+ by sacrificing scripting via Nashorn.",
+        "This is a temporary option going to be removed within the next major release (1.17/v6) where this issue has been addressed sanely without sacrifices but allowing you to update your Java version beforehand without loosing half of PlotSquared's commands.",
+        "By setting the following to true you eliminate:",
+        " - The functionality to use javascript in the worlds.yml prices' section",
+        " - The `/plot debugexec` command"})
+        public static boolean DISABLE_NASHORN_SCRIPT_ENGINE = false;
     }
 
 }
