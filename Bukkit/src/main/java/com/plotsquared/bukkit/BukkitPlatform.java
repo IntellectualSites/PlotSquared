@@ -258,6 +258,20 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
 
+        // FAWE
+        if (Settings.FAWE_Components.FAWE_HOOK) {
+            Plugin fawe = getServer().getPluginManager().getPlugin("FastAsyncWorldEdit");
+            if (fawe != null) {
+                try {
+                    Class.forName("com.boydti.fawe.bukkit.regions.plotsquared.FaweQueueCoordinator");
+                    faweHook = true;
+                } catch (Exception ignored) {
+                    LOGGER.error("Incompatible version of FAWE to enable hook, please upgrade: https://ci.athion" +
+                            ".net/job/FastAsyncWorldEdit-P2-V6/");
+                }
+            }
+        }
+
         // We create the injector after PlotSquared has been initialized, so that we have access
         // to generated instances and settings
         this.injector = Guice
@@ -323,20 +337,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             } catch (Throwable e) {
                 LOGGER.error(
                         "Incompatible version of WorldEdit, please upgrade: https://builds.enginehub.org/job/worldedit?branch=master");
-            }
-        }
-
-        // FAWE
-        if (Settings.FAWE_Components.FAWE_HOOK) {
-            Plugin fawe = getServer().getPluginManager().getPlugin("FastAsyncWorldEdit");
-            if (fawe != null) {
-                try {
-                    Class.forName("com.boydti.fawe.bukkit.regions.plotsquared.FaweQueueCoordinator");
-                    faweHook = true;
-                } catch (Exception ignored) {
-                    LOGGER.error("Incompatible version of FAWE to enable hook, please upgrade: https://ci.athion" +
-                            ".net/job/FastAsyncWorldEdit-P2-V6/");
-                }
             }
         }
 
