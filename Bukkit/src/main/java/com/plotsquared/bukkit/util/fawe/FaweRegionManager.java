@@ -67,10 +67,10 @@ public class FaweRegionManager extends BukkitRegionManager {
             final @NonNull Pattern blocks,
             int minY,
             int maxY,
-            @org.checkerframework.checker.nullness.qual.Nullable PlotPlayer<?> actor,
-            @org.checkerframework.checker.nullness.qual.Nullable QueueCoordinator queue
+            @Nullable PlotPlayer<?> actor,
+            @Nullable QueueCoordinator queue
     ) {
-        return delegate.setCuboids(area, regions, blocks, minY, maxY);
+        return delegate.setCuboids(area, regions, blocks, minY, maxY, queue.getCompleteTask());
     }
 
     @Override

@@ -263,6 +263,12 @@ public class HybridPlotManager extends ClassicPlotManager {
             enqueue = true;
             queue = hybridPlotWorld.getQueue();
         }
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+        }
+        if (whenDone != null) {
+            queue.setCompleteTask(whenDone);
+        }
         if (!canRegen) {
             queue.setCuboid(pos1.withY(0), pos2.withY(0), bedrock);
             // Each component has a different layer
@@ -274,12 +280,6 @@ public class HybridPlotManager extends ClassicPlotManager {
             queue.setRegenRegion(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()));
         }
         pastePlotSchematic(queue, pos1, pos2);
-        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
-        }
-        if (whenDone != null) {
-            queue.setCompleteTask(whenDone);
-        }
         return !enqueue || queue.enqueue();
     }
 

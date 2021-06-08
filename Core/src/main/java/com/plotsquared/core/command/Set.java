@@ -161,9 +161,6 @@ public class Set extends SubCommand {
                         BackupManager.backup(player, plot, () -> {
                             plot.addRunning();
                             QueueCoordinator queue = plotArea.getQueue();
-                            for (final Plot current : plot.getConnectedPlots()) {
-                                current.getPlotModificationManager().setComponent(component, pattern, player, queue);
-                            }
                             queue.setCompleteTask(() -> {
                                 plot.removeRunning();
                                 player.sendMessage(
@@ -178,6 +175,9 @@ public class Set extends SubCommand {
                                                 .injector()
                                                 .getInstance(ProgressSubscriberFactory.class)
                                                 .createWithActor(player));
+                            }
+                            for (final Plot current : plot.getConnectedPlots()) {
+                                current.getPlotModificationManager().setComponent(component, pattern, player, queue);
                             }
                             queue.enqueue();
                             player.sendMessage(TranslatableCaption.of("working.generating_component"));
