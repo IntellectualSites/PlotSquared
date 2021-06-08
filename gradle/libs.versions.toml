@@ -6,7 +6,7 @@ gson = "2.8.0"
 
 snakeyaml = "1.27"
 
-adventure-api = "4.7.0"
+adventure-api = "4.8.0"
 adventure-text-minimessage = "4.1.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.0-SNAPSHOT"
 
