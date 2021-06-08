@@ -41,7 +41,10 @@ import com.plotsquared.bukkit.util.BukkitInventoryUtil;
 import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.bukkit.util.BukkitSetupUtils;
 import com.plotsquared.bukkit.util.BukkitUtil;
+import com.plotsquared.bukkit.util.fawe.FaweRegionManager;
+import com.plotsquared.bukkit.util.fawe.FaweSchematicHandler;
 import com.plotsquared.core.PlotPlatform;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.generator.HybridGen;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
@@ -99,10 +102,15 @@ public class BukkitModule extends AbstractModule {
         install(new FactoryModuleBuilder()
                 .implement(ProgressSubscriber.class, DefaultProgressSubscriber.class)
                 .build(ProgressSubscriberFactory.class));
-        bind(GlobalBlockQueue.class).toInstance(new GlobalBlockQueue(QueueProvider.of(BukkitQueueCoordinator.class)));
         bind(ChunkManager.class).to(BukkitChunkManager.class);
-        bind(RegionManager.class).to(BukkitRegionManager.class);
-        bind(SchematicHandler.class).to(BukkitSchematicHandler.class);
+        if (PlotSquared.platform().isFaweHooking()) {
+            bind(SchematicHandler.class).to(FaweSchematicHandler.class);
+            bind(RegionManager.class).to(FaweRegionManager.class);
+        } else {
+            bind(SchematicHandler.class).to(BukkitSchematicHandler.class);
+            bind(RegionManager.class).to(BukkitRegionManager.class);
+        }
+        bind(GlobalBlockQueue.class).toInstance(new GlobalBlockQueue(QueueProvider.of(BukkitQueueCoordinator.class)));
         if (Settings.Enabled_Components.WORLDS) {
             bind(PlotAreaManager.class).to(SinglePlotAreaManager.class);
             try {

@@ -186,6 +186,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private Method methodUnloadChunk0;
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
+    private boolean faweHook = false;
     private EconHandler econ;
 
     private Injector injector;
@@ -317,11 +318,25 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         // WorldEdit
         if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
             try {
-                LOGGER.info("{} hooked into WorldEdit", this.pluginName());
                 WorldEdit.getInstance().getEventBus().register(this.injector().getInstance(WESubscriber.class));
+                LOGGER.info("{} hooked into WorldEdit", this.pluginName());
             } catch (Throwable e) {
                 LOGGER.error(
                         "Incompatible version of WorldEdit, please upgrade: https://builds.enginehub.org/job/worldedit?branch=master");
+            }
+        }
+
+        // FAWE
+        if (Settings.FAWE_Components.FAWE_HOOK) {
+            Plugin fawe = getServer().getPluginManager().getPlugin("FastAsyncWorldEdit");
+            if (fawe != null) {
+                try {
+                    Class.forName("com.boydti.fawe.bukkit.regions.plotsquared.FaweQueueCoordinator");
+                    faweHook = true;
+                } catch (Exception ignored) {
+                    LOGGER.error("Incompatible version of FAWE to enable hook, please upgrade: https://ci.athion" +
+                            ".net/job/FastAsyncWorldEdit-P2-V6/");
+                }
             }
         }
 
@@ -1207,6 +1222,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override
     public String toLegacyPlatformString(final @NonNull Component component) {
         return LegacyComponentSerializer.legacyAmpersand().serialize(component);
+    }
+
+    @Override
+    public boolean isFaweHooking() {
+        return faweHook;
     }
 
 }
