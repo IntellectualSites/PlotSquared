@@ -107,11 +107,7 @@ public class DebugRoadRegen extends SubCommand {
         } else {
             PlotManager manager = area.getPlotManager();
             QueueCoordinator queue = area.getQueue();
-            manager.createRoadEast(plot, queue);
-            manager.createRoadSouth(plot, queue);
-            manager.createRoadSouthEast(plot, queue);
             queue.setCompleteTask(() -> {
-                ;
                 player.sendMessage(
                         TranslatableCaption.of("debugroadregen.regen_done"),
                         Template.of("value", plot.getId().toString())
@@ -121,6 +117,9 @@ public class DebugRoadRegen extends SubCommand {
                         Template.of("value", "/plot regenallroads")
                 );
             });
+            manager.createRoadEast(plot, queue);
+            manager.createRoadSouth(plot, queue);
+            manager.createRoadSouthEast(plot, queue);
             queue.enqueue();
         }
         return true;

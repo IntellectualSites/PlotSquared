@@ -222,6 +222,7 @@ public class ComponentPresetManager {
                 BackupManager.backup(getPlayer(), plot, () -> {
                     plot.addRunning();
                     QueueCoordinator queue = plot.getArea().getQueue();
+                    queue.setCompleteTask(plot::removeRunning);
                     for (Plot current : plot.getConnectedPlots()) {
                         current.getPlotModificationManager().setComponent(
                                 componentPreset.getComponent().name(),
@@ -230,7 +231,6 @@ public class ComponentPresetManager {
                                 queue
                         );
                     }
-                    queue.setCompleteTask(plot::removeRunning);
                     queue.enqueue();
                     getPlayer().sendMessage(TranslatableCaption.of("working.generating_component"));
                 });
