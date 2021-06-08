@@ -25,7 +25,6 @@
  */
 package com.plotsquared.core.command;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
