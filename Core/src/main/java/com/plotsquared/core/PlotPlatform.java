@@ -323,4 +323,13 @@ public interface PlotPlatform<P> extends LocaleHolder {
      */
     @NonNull String toLegacyPlatformString(@NonNull Component component);
 
+    /**
+     * Returns if the FAWE-P2 hook is active/enabled
+     *
+     * @return status of FAWE-P2 hook
+     */
+    default boolean isFaweHooking() {
+        return false;
+    }
+
 }

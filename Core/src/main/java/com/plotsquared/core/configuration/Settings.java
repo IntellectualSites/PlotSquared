@@ -608,6 +608,17 @@ public class Settings extends Config {
 
     }
 
+    @Comment("Enable or disable all of or parts of the FAWE-P2 hook")
+    public static final class FAWE_Components {
+
+        @Comment("Use FAWE for queue handling.")
+        public static boolean FAWE_HOOK = true;
+        public static boolean CUBOIDS = true;
+        public static boolean CLEAR = true;
+        public static boolean COPY_AND_SWAP = true;
+        public static boolean SET_BIOME = true;
+
+    }
 
     @Comment("Enable or disable parts of the plugin specific to using Paper")
     public static final class Paper_Components {
