@@ -61,10 +61,8 @@ public class Leave extends Command {
     ) throws CommandException {
         final Plot plot = check(player.getCurrentPlot(), TranslatableCaption.of("errors.not_in_plot"));
         checkTrue(plot.hasOwner(), TranslatableCaption.of("info.plot_unowned"));
-        checkTrue(plot.isAdded(player.getUUID()), TranslatableCaption.of("members.not_added_trusted"));
         if (plot.isOwner(player.getUUID())) {
             player.sendMessage(TranslatableCaption.of("member.plot_cant_leave_owner"));
-            // TODO setowner, other
         } else {
             UUID uuid = player.getUUID();
             if (plot.isAdded(uuid)) {
@@ -80,8 +78,7 @@ public class Leave extends Command {
                 );
             } else {
                 player.sendMessage(
-                        TranslatableCaption.of("errors.invalid_player"),
-                        Template.of("value", String.valueOf(1))
+                        TranslatableCaption.of("members.not_added_trusted")
                 );
             }
         }
