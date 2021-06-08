@@ -32,9 +32,9 @@ import com.plotsquared.core.configuration.caption.CaptionMap;
 import com.plotsquared.core.configuration.caption.LocalizedCaptionMap;
 import com.plotsquared.core.configuration.caption.PerUserLocaleCaptionMap;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -76,15 +76,18 @@ public final class CaptionLoader {
     private final Locale defaultLocale;
     private final Function<Path, Locale> localeExtractor;
     private final DefaultCaptionProvider captionProvider;
+    private final String namespace;
 
     private CaptionLoader(
             final @NonNull Locale internalLocale,
             final @NonNull Function<@NonNull Path, @NonNull Locale> localeExtractor,
-            final @NonNull DefaultCaptionProvider captionProvider
+            final @NonNull DefaultCaptionProvider captionProvider,
+            final @NonNull String namespace
     ) {
         this.defaultLocale = internalLocale;
         this.localeExtractor = localeExtractor;
         this.captionProvider = captionProvider;
+        this.namespace = namespace;
         Map<String, String> temp;
         try {
             temp = this.captionProvider.loadDefaults(internalLocale);
@@ -107,9 +110,10 @@ public final class CaptionLoader {
     public static @NonNull CaptionLoader of(
             final @NonNull Locale internalLocale,
             final @NonNull Function<@NonNull Path, @NonNull Locale> localeExtractor,
-            final @NonNull DefaultCaptionProvider captionProvider
+            final @NonNull DefaultCaptionProvider captionProvider,
+            final @NonNull String namespace
     ) {
-        return new CaptionLoader(internalLocale, localeExtractor, captionProvider);
+        return new CaptionLoader(internalLocale, localeExtractor, captionProvider, namespace);
     }
 
     /**
@@ -209,7 +213,10 @@ public final class CaptionLoader {
                 save(file, map); // update the file using the modified map
             }
             return new LocalizedCaptionMap(locale, map.entrySet().stream()
-                    .collect(Collectors.toMap(entry -> TranslatableCaption.of(entry.getKey()), Map.Entry::getValue)));
+                    .collect(Collectors.toMap(
+                            entry -> TranslatableCaption.of(this.namespace, entry.getKey()),
+                            Map.Entry::getValue)
+                    ));
         }
     }
 

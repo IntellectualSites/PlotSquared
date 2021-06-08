@@ -186,7 +186,8 @@ public class PlotSquared {
                 DefaultCaptionProvider.forClassLoaderFormatString(
                         this.getClass().getClassLoader(),
                         "lang/messages_%s.json"
-                )
+                ),
+                TranslatableCaption.DEFAULT_NAMESPACE
         ); // the path in our jar file
         // Load caption map
         try {
@@ -1534,7 +1535,8 @@ public class PlotSquared {
     }
 
     /**
-     * Register a caption map
+     * Register a caption map. The namespace needs be equal to the namespace used for
+     * the {@link TranslatableCaption}s inside the map.
      *
      * @param namespace  Namespace
      * @param captionMap Map instance
