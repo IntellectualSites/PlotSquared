@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.TypeLiteral;
 import com.plotsquared.core.configuration.caption.StaticCaption;
+import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.MetaDataAccess;
@@ -196,8 +197,9 @@ public class Inbox extends SubCommand {
                     if (args.length != 3) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot inbox " + inbox.toString() + " delete <index>")
+                                Template.of("value", "/plot inbox " + inbox + " delete <index>")
                         );
+                        return true;
                     }
                     final int index;
                     try {
@@ -205,14 +207,14 @@ public class Inbox extends SubCommand {
                         if (index < 1) {
                             player.sendMessage(
                                     TranslatableCaption.of("comment.not_valid_inbox_index"),
-                                    Template.of("number", index + "")
+                                    Templates.of("number", index)
                             );
                             return false;
                         }
                     } catch (NumberFormatException ignored) {
                         player.sendMessage(
                                 TranslatableCaption.of("commandconfig.command_syntax"),
-                                Template.of("value", "/plot inbox " + inbox.toString() + " delete <index>")
+                                Template.of("value", "/plot inbox " + inbox + " delete <index>")
                         );
                         return false;
                     }
@@ -223,7 +225,7 @@ public class Inbox extends SubCommand {
                             if (index > value.size()) {
                                 player.sendMessage(
                                         TranslatableCaption.of("comment.not_valid_inbox_index"),
-                                        Template.of("number", index + "")
+                                        Templates.of("number", index)
                                 );
                                 return;
                             }

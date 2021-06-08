@@ -2508,8 +2508,8 @@ public class SQLManager implements AbstractDB {
                         PlotComment comment =
                                 new PlotComment(world, id, msg, sender, inbox, timestamp);
                         comments.add(comment);
-                        whenDone.value = comments;
                     }
+                    whenDone.value = comments;
                 }
                 TaskManager.runTask(whenDone);
             }
