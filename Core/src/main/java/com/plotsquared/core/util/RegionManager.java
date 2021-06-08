@@ -47,10 +47,10 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.File;
 import java.util.Collection;
@@ -206,7 +206,7 @@ public abstract class RegionManager {
         final com.sk89q.worldedit.world.World newWorld = worldUtil.getWeWorld(newPos.getWorldName());
         final QueueCoordinator copyFrom = blockQueue.getNewQueue(oldWorld);
         final BasicQueueCoordinator copyTo = (BasicQueueCoordinator) blockQueue.getNewQueue(newWorld);
-        copyFromTo(pos1, pos2, relX, relZ, oldWorld, copyFrom, copyTo, false);
+        setCopyFromToConsumer(pos1, pos2, relX, relZ, oldWorld, copyFrom, copyTo, false);
         copyFrom.setCompleteTask(copyTo::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             copyFrom.addProgressSubscriber(subscriberFactory
@@ -284,18 +284,31 @@ public abstract class RegionManager {
         QueueCoordinator toQueue1 = blockQueue.getNewQueue(world1);
         QueueCoordinator toQueue2 = blockQueue.getNewQueue(world2);
 
-        copyFromTo(pos1, pos2, relX, relZ, world1, fromQueue1, toQueue2, true);
-        copyFromTo(pos1, pos2, relX, relZ, world1, fromQueue2, toQueue1, true);
-        fromQueue1.setCompleteTask(fromQueue2::enqueue);
+        setCopyFromToConsumer(pos1, pos2, relX, relZ, world1, fromQueue1, toQueue2, true);
+        setCopyFromToConsumer(pos1.add(relX, 0, relZ), pos2.add(relX, 0, relZ), -relX, -relZ, world1, fromQueue2, toQueue1,
+                true
+        );
+
+        toQueue2.setCompleteTask(whenDone::run);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            fromQueue1.addProgressSubscriber(subscriberFactory
-                    .createFull(
-                            actor,
-                            Settings.QUEUE.NOTIFY_INTERVAL,
-                            Settings.QUEUE.NOTIFY_WAIT,
-                            TranslatableCaption.of("swap.progress_region1_copy")
-                    ));
+            toQueue2.addProgressSubscriber(subscriberFactory.createFull(
+                    actor,
+                    Settings.QUEUE.NOTIFY_INTERVAL,
+                    Settings.QUEUE.NOTIFY_WAIT,
+                    TranslatableCaption.of("swap.progress_region2_paste")
+            ));
         }
+
+        toQueue1.setCompleteTask(toQueue2::enqueue);
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            toQueue1.addProgressSubscriber(subscriberFactory.createFull(
+                    actor,
+                    Settings.QUEUE.NOTIFY_INTERVAL,
+                    Settings.QUEUE.NOTIFY_WAIT,
+                    TranslatableCaption.of("swap.progress_region1_paste")
+            ));
+        }
+
         fromQueue2.setCompleteTask(toQueue1::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             fromQueue2.addProgressSubscriber(subscriberFactory
@@ -306,33 +319,28 @@ public abstract class RegionManager {
                             TranslatableCaption.of("swap.progress_region2_copy")
                     ));
         }
-        toQueue1.setCompleteTask(toQueue2::enqueue);
+
+        fromQueue1.setCompleteTask(fromQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            toQueue1.addProgressSubscriber(subscriberFactory.createFull(actor,
-                    Settings.QUEUE.NOTIFY_INTERVAL,
-                    Settings.QUEUE.NOTIFY_WAIT,
-                    TranslatableCaption.of("swap.progress_region1_paste")
-            ));
-        }
-        toQueue2.setCompleteTask(whenDone);
-        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-            toQueue2.addProgressSubscriber(subscriberFactory.createFull(actor,
-                    Settings.QUEUE.NOTIFY_INTERVAL,
-                    Settings.QUEUE.NOTIFY_WAIT,
-                    TranslatableCaption.of("swap.progress_region2_paste")
-            ));
+            fromQueue1.addProgressSubscriber(subscriberFactory
+                    .createFull(
+                            actor,
+                            Settings.QUEUE.NOTIFY_INTERVAL,
+                            Settings.QUEUE.NOTIFY_WAIT,
+                            TranslatableCaption.of("swap.progress_region1_copy")
+                    ));
         }
         fromQueue1.enqueue();
     }
 
-    private void copyFromTo(
-            Location pos1,
-            Location pos2,
+    private void setCopyFromToConsumer(
+            final Location pos1,
+            final Location pos2,
             int relX,
             int relZ,
-            World world1,
-            QueueCoordinator fromQueue,
-            QueueCoordinator toQueue,
+            final World world1,
+            final QueueCoordinator fromQueue,
+            final QueueCoordinator toQueue,
             boolean removeEntities
     ) {
         fromQueue.setChunkConsumer(chunk -> {
@@ -340,10 +348,10 @@ public abstract class RegionManager {
             int cz = chunk.getZ();
             int cbx = cx << 4;
             int cbz = cz << 4;
-            int bx = Math.max(pos1.getX() & 15, 0);
-            int bz = Math.max(pos1.getZ() & 15, 0);
-            int tx = Math.min(pos2.getX() & 15, 15);
-            int tz = Math.min(pos2.getZ() & 15, 15);
+            int bx = Math.max(pos1.getX(), cbx) & 15;
+            int bz = Math.max(pos1.getZ(), cbz) & 15;
+            int tx = Math.min(pos2.getX(), cbx + 15) & 15;
+            int tz = Math.min(pos2.getZ(), cbz + 15) & 15;
             for (int y = 0; y < 256; y++) {
                 for (int x = bx; x <= tx; x++) {
                     for (int z = bz; z <= tz; z++) {
