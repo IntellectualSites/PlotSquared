@@ -178,7 +178,12 @@ public final class PlaceholderRegistry {
         this.createPlaceholder("currentplot_x", (player, plot) -> Integer.toString(plot.getId().getX()));
         this.createPlaceholder("currentplot_y", (player, plot) -> Integer.toString(plot.getId().getY()));
         this.createPlaceholder("currentplot_xy", (player, plot) -> plot.getId().toString());
-        this.createPlaceholder("currentplot_rating", (player, plot) -> Double.toString(plot.getAverageRating()));
+        this.createPlaceholder("currentplot_rating", (player, plot) -> {
+            if (Double.isNaN(plot.getAverageRating())) {
+                return legacyComponent(TranslatableCaption.of("placeholder.nan"), player);
+            }
+            return Double.toString(plot.getAverageRating());
+        });
         this.createPlaceholder("currentplot_biome", (player, plot) -> plot.getBiomeSynchronous().toString());
     }
 
