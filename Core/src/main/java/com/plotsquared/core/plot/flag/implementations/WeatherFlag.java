@@ -37,7 +37,8 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
 
     public static final WeatherFlag PLOT_WEATHER_FLAG_RAIN = new WeatherFlag(PlotWeather.RAIN);
     public static final WeatherFlag PLOT_WEATHER_FLAG_CLEAR = new WeatherFlag(PlotWeather.CLEAR);
-    public static final WeatherFlag PLOT_WEATHER_FLAG_OFF = new WeatherFlag(PlotWeather.RESET);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_WORLD = new WeatherFlag(PlotWeather.WORLD);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_OFF = new WeatherFlag(PlotWeather.OFF);
 
     /**
      * Construct a new flag instance.
@@ -60,8 +61,11 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
             case "off":
             case "sun":
                 return flagOf(PlotWeather.CLEAR);
+            case "reset":
+            case "world":
+                return flagOf(PlotWeather.WORLD);
             default:
-                return flagOf(PlotWeather.RESET);
+                return flagOf(PlotWeather.OFF);
         }
     }
 
@@ -83,6 +87,8 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
                 return PLOT_WEATHER_FLAG_RAIN;
             case CLEAR:
                 return PLOT_WEATHER_FLAG_CLEAR;
+            case WORLD:
+                return PLOT_WEATHER_FLAG_WORLD;
             default:
                 return PLOT_WEATHER_FLAG_OFF;
         }
@@ -90,7 +96,7 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
 
     @Override public Collection<String> getTabCompletions() {
         return Arrays
-            .asList("rain", "storm", "on", "lightning", "thunder", "clear", "off", "sun", "reset");
+            .asList("rain", "storm", "on", "lightning", "thunder", "clear", "off", "sun", "reset", "world");
     }
 
 }

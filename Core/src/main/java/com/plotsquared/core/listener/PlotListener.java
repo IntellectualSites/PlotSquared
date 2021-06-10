@@ -362,13 +362,14 @@ public class PlotListener {
                 }
             }
 
+
             if (plot.getFlag(TimeFlag.class) != TimeFlag.TIME_DISABLED.getValue().longValue()) {
                 player.setTime(Long.MAX_VALUE);
             }
 
             final PlotWeather plotWeather = plot.getFlag(WeatherFlag.class);
-            if (plotWeather != PlotWeather.CLEAR) {
-                player.setWeather(PlotWeather.RESET);
+            if (plotWeather != PlotWeather.OFF) {
+                player.setWeather(PlotWeather.WORLD);
             }
 
             Location lastLoc = player.getMeta("music");

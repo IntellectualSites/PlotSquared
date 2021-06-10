@@ -276,9 +276,11 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             case RAIN:
                 this.player.setPlayerWeather(WeatherType.DOWNFALL);
                 break;
-            case RESET:
-            default:
+            case WORLD:
                 this.player.resetPlayerWeather();
+                break;
+            default:
+                //do nothing as this is PlotWeather.OFF
                 break;
         }
     }
