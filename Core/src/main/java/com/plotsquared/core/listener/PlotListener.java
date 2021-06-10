@@ -440,8 +440,8 @@ public class PlotListener {
                 }
 
                 final PlotWeather plotWeather = plot.getFlag(WeatherFlag.class);
-                if (plotWeather != PlotWeather.CLEAR) {
-                    player.setWeather(PlotWeather.RESET);
+                if (plotWeather != PlotWeather.OFF) {
+                    player.setWeather(PlotWeather.WORLD);
                 }
 
                 try (final MetaDataAccess<Location> musicAccess =

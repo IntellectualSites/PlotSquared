@@ -37,7 +37,8 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
 
     public static final WeatherFlag PLOT_WEATHER_FLAG_RAIN = new WeatherFlag(PlotWeather.RAIN);
     public static final WeatherFlag PLOT_WEATHER_FLAG_CLEAR = new WeatherFlag(PlotWeather.CLEAR);
-    public static final WeatherFlag PLOT_WEATHER_FLAG_OFF = new WeatherFlag(PlotWeather.RESET);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_WORLD = new WeatherFlag(PlotWeather.WORLD);
+    public static final WeatherFlag PLOT_WEATHER_FLAG_OFF = new WeatherFlag(PlotWeather.OFF);
 
     /**
      * Construct a new flag instance.
@@ -57,7 +58,8 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
         return switch (input.toLowerCase()) {
             case "rain" -> flagOf(PlotWeather.RAIN);
             case "clear" -> flagOf(PlotWeather.CLEAR);
-            default -> flagOf(PlotWeather.RESET);
+            case "reset" -> flagOf(PlotWeather.WORLD);
+            default -> flagOf(PlotWeather.OFF);
         };
     }
 
@@ -81,6 +83,7 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
         return switch (value) {
             case RAIN -> PLOT_WEATHER_FLAG_RAIN;
             case CLEAR -> PLOT_WEATHER_FLAG_CLEAR;
+            case WORLD -> PLOT_WEATHER_FLAG_WORLD;
             default -> PLOT_WEATHER_FLAG_OFF;
         };
     }
