@@ -33,6 +33,9 @@ import lombok.Setter;
 
 import javax.annotation.Nullable;
 
+/**
+ * PlayerAutoPlotEvent returns null for {@code PlotEvent.getPlot()} as the event is fired before the plot is chosen.
+ */
 public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEvent {
 
     private Result eventResult;
