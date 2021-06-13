@@ -13,7 +13,7 @@ adventure-platform-bukkit = "4.0.0-SNAPSHOT"
 guice = "5.0.1"
 findbugs = "3.0.1"
 
-worldedit = "7.2.5"
+worldedit = "7.2.6-SNAPSHOT"
 fawe = "p2v6-9"
 vault = "1.7"
 placeholderapi = "2.10.9"
