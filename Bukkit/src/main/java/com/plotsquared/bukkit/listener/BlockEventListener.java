@@ -313,7 +313,7 @@ public class BlockEventListener implements Listener {
                     );
                     event.setCancelled(true);
                     plot.debug(player.getName() + " could not place " + event.getBlock().getType()
-                            + " because of the place flag");
+                            + " because of the place = false");
                     return;
                 }
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
