@@ -52,6 +52,7 @@ import com.plotsquared.core.plot.flag.implementations.InstabreakFlag;
 import com.plotsquared.core.plot.flag.implementations.KelpGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.LeafDecayFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
+import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.MycelGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.RedstoneFlag;
@@ -96,6 +97,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
@@ -467,6 +469,11 @@ public class BlockEventListener implements Listener {
             case "KELP":
                 if (!plot.getFlag(KelpGrowFlag.class)) {
                     plot.debug("Kelp could not grow because kelp-grow = false");
+                    event.setCancelled(true);
+                }
+            case "BUDDING_AMETHYST":
+                if (!plot.getFlag(CropGrowFlag.class)) {
+                    plot.debug("Amethyst clusters could not grow because crop-grow = false");
                     event.setCancelled(true);
                 }
                 break;
@@ -1172,6 +1179,26 @@ public class BlockEventListener implements Listener {
         if (plot == null || !plot.getFlag(LeafDecayFlag.class)) {
             if (plot != null) {
                 plot.debug("Leaf decaying was cancelled because leaf-decay = false");
+            }
+            event.setCancelled(true);
+        }
+
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockReceiveGame(BlockReceiveGameEvent event) {
+        Block block = event.getBlock();
+        Location location = BukkitUtil.adapt(block.getLocation());
+
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+
+        Plot plot = location.getOwnedPlot();
+        if (plot == null || !plot.getFlag(MiscInteractFlag.class)) {
+            if (plot != null) {
+                plot.debug(event.getEntity() + " couldn't trigger sculk sensors because misc-interact = false");
             }
             event.setCancelled(true);
         }
