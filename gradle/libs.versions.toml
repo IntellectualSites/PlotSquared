@@ -1,12 +1,12 @@
 [versions]
 checker-qual = "3.14.0"
 
-guava = "21.0"
-gson = "2.8.0"
+guava = "21.0" # Version set by Minecraft
+gson = "2.8.0" # Version set by Minecraft
 
-snakeyaml = "1.27"
+snakeyaml = "1.28" # Version set by Bukkit
 
-adventure-api = "4.8.0"
+adventure-api = "4.8.1"
 adventure-text-minimessage = "4.1.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.0-SNAPSHOT"
 
@@ -21,7 +21,7 @@ luckperms = "5.3"
 essentialsx = "2.18.2"
 hyperverse = "0.6.0-SNAPSHOT"
 
-log4j-api = "2.8.1"
+log4j-api = "2.14.1" # Version set by Minecraft
 
 prtree = "1.7.0-SNAPSHOT"
 aopalliance = "1.0"
