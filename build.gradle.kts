@@ -7,7 +7,7 @@ plugins {
     `java-library`
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("org.cadixdev.licenser") version "0.6.0"
+    id("org.cadixdev.licenser") version "0.6.1"
     id("org.ajoberstar.grgit") version "4.1.0"
 
     eclipse
