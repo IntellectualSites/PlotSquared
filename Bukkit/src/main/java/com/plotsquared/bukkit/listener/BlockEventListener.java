@@ -1198,7 +1198,7 @@ public class BlockEventListener implements Listener {
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(MiscInteractFlag.class)) {
             if (plot != null) {
-                plot.debug(event.getEntity() + " couldn't trigger sculk sensors because misc-interact = false");
+                plot.debug("Couldn't trigger sculk sensors because misc-interact = false");
             }
             event.setCancelled(true);
         }

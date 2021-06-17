@@ -32,7 +32,7 @@ paster = "1.0.2-SNAPSHOT"
 
 bstats = "2.2.1"
 
-paper = "1.16.5-R0.1-SNAPSHOT"
+paper = "1.17-R0.1-SNAPSHOT"
 paperlib = "1.0.6"
 
 mvdwapi = "3.1.1"
@@ -91,5 +91,5 @@ paster = { group = "com.intellectualsites.paster", name = "Paster", version.ref 
 bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
 
 # Paper
-paper = { group = "com.destroystokyo.paper", name = "paper-api", version.ref = "paper" }
+paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }

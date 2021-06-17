@@ -316,8 +316,8 @@ public class EntityEventListener implements Listener {
             if (area != null) {
                 Plot plot = area.getOwnedPlot(location);
                 if (plot != null && !plot.getFlag(EntityChangeBlockFlag.class)) {
-                    event.setCancelled(true);
                     plot.debug(e.getType() + " could not change block because entity-change-block = false");
+                    event.setCancelled(true);
                 }
             }
         }
