@@ -339,6 +339,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
         PlotSquared.platform().playerManager().removePlayer(player.getUniqueId());
         final PlotPlayer<Player> pp = BukkitUtil.adapt(player);
 
+        // we're stripping the country code as we don't want to differ between countries
+        pp.setLocale(Locale.forLanguageTag(player.getLocale().substring(0, 2)));
+
         Location location = pp.getLocation();
         PlotArea area = location.getPlotArea();
         if (area != null) {
@@ -1677,6 +1680,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
 
     @EventHandler
     public void onLocaleChange(final PlayerLocaleChangeEvent event) {
+        // The event is fired before the player is deemed online upon login
+        if (!event.getPlayer().isOnline()) {
+            return;
+        }
         BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
         // we're stripping the country code as we don't want to differ between countries
         player.setLocale(Locale.forLanguageTag(event.getLocale().substring(0, 2)));
