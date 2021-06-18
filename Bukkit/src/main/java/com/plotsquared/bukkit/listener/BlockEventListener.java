@@ -78,6 +78,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -1189,6 +1190,7 @@ public class BlockEventListener implements Listener {
     public void onBlockReceiveGame(BlockReceiveGameEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
+        Entity entity = event.getEntity();
 
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -1197,12 +1199,28 @@ public class BlockEventListener implements Listener {
 
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(MiscInteractFlag.class)) {
-            if (plot != null) {
-                plot.debug("Couldn't trigger sculk sensors because misc-interact = false");
+            if (entity instanceof Player player) {
+                BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
+                if (plot != null) {
+                    if (!plot.isAdded(plotPlayer.getUUID())) {
+                        plot.debug(plotPlayer.getName() + " couldn't trigger sculk sensors because misc-interact = false");
+                        event.setCancelled(true);
+                    }
+                }
+                return;
             }
-            event.setCancelled(true);
+            if (entity instanceof Item item) {
+                UUID itemThrower = item.getThrower();
+                if (!plot.isAdded(itemThrower)) {
+                    if (plot != null) {
+                        if (!plot.isAdded(itemThrower)) {
+                            plot.debug("A thrown item couldn't trigger sculk sensors because misc-interact = false");
+                            event.setCancelled(true);
+                        }
+                    }
+                }
+            }
         }
-
     }
 
 }
