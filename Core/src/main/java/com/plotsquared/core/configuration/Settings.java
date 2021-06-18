@@ -445,15 +445,15 @@ public class Settings extends Config {
     public static class Arkitektonika {
 
         @Comment("The url of the backend server (Arkitektonika)")
-        public static String BACKEND_URL = "https://ark.jacobandersen.dev/";
+        public static String BACKEND_URL = "https://schematic.cloud/";
 
         @Comment({"The url used to generate a download link from.",
                 "{key} will be replaced with the generated key"})
-        public static String DOWNLOAD_URL = "https://sw.jacobandersen.dev/download/{key}";
+        public static String DOWNLOAD_URL = "https://api.schematic.cloud/download/{key}";
 
         @Comment({"The url used to generate a deletion link from.",
                 "{key} will be replaced with the generated key"})
-        public static String DELETE_URL = "https://sw.jacobandersen.dev/delete/{key}";
+        public static String DELETE_URL = "https://api.schematic.cloud/delete/{key}";
 
     }
 
