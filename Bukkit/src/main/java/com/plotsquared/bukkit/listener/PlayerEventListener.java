@@ -1073,6 +1073,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                     case WHEAT_SEEDS:
                     case BEETROOT_SEEDS:
                     case SWEET_BERRIES:
+                    case GLOW_BERRIES:
                         return;
                     default:
                         //eventType = PlayerBlockEventType.PLACE_BLOCK;

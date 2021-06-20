@@ -34,9 +34,9 @@ import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
+import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
-import com.plotsquared.core.plot.flag.implementations.MobPlaceFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -315,11 +315,10 @@ public class EntityEventListener implements Listener {
             PlotArea area = location.getPlotArea();
             if (area != null) {
                 Plot plot = area.getOwnedPlot(location);
-                if (plot != null && !plot.getFlag(MobPlaceFlag.class)) {
-                    plot.debug(e.getType() + " could not change block because mob-place = false");
-                    return;
+                if (plot != null && !plot.getFlag(EntityChangeBlockFlag.class)) {
+                    plot.debug(e.getType() + " could not change block because entity-change-block = false");
+                    event.setCancelled(true);
                 }
-                event.setCancelled(true);
             }
         }
     }

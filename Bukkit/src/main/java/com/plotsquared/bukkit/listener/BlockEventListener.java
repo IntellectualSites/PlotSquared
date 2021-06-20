@@ -52,6 +52,7 @@ import com.plotsquared.core.plot.flag.implementations.InstabreakFlag;
 import com.plotsquared.core.plot.flag.implementations.KelpGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.LeafDecayFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
+import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.MycelGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.RedstoneFlag;
@@ -77,6 +78,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -96,6 +98,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
@@ -457,6 +460,7 @@ public class BlockEventListener implements Listener {
                 break;
             case "WEEPING_VINES":
             case "TWISTING_VINES":
+            case "CAVE_VINES":
             case "VINE":
                 if (!plot.getFlag(VineGrowFlag.class)) {
                     plot.debug("Vine could not grow because vine-grow = false");
@@ -466,6 +470,11 @@ public class BlockEventListener implements Listener {
             case "KELP":
                 if (!plot.getFlag(KelpGrowFlag.class)) {
                     plot.debug("Kelp could not grow because kelp-grow = false");
+                    event.setCancelled(true);
+                }
+            case "BUDDING_AMETHYST":
+                if (!plot.getFlag(CropGrowFlag.class)) {
+                    plot.debug("Amethyst clusters could not grow because crop-grow = false");
                     event.setCancelled(true);
                 }
                 break;
@@ -948,7 +957,7 @@ public class BlockEventListener implements Listener {
     public void onBlockDispense(BlockDispenseEvent event) {
         Material type = event.getItem().getType();
         switch (type) {
-            case SHULKER_BOX, WHITE_SHULKER_BOX, ORANGE_SHULKER_BOX, MAGENTA_SHULKER_BOX, LIGHT_BLUE_SHULKER_BOX, YELLOW_SHULKER_BOX, LIME_SHULKER_BOX, PINK_SHULKER_BOX, GRAY_SHULKER_BOX, LIGHT_GRAY_SHULKER_BOX, CYAN_SHULKER_BOX, PURPLE_SHULKER_BOX, BLUE_SHULKER_BOX, BROWN_SHULKER_BOX, GREEN_SHULKER_BOX, RED_SHULKER_BOX, BLACK_SHULKER_BOX, CARVED_PUMPKIN, WITHER_SKELETON_SKULL, FLINT_AND_STEEL, BONE_MEAL, SHEARS, GLASS_BOTTLE, GLOWSTONE, COD_BUCKET, PUFFERFISH_BUCKET, SALMON_BUCKET, TROPICAL_FISH_BUCKET, BUCKET, WATER_BUCKET, LAVA_BUCKET -> {
+            case SHULKER_BOX, WHITE_SHULKER_BOX, ORANGE_SHULKER_BOX, MAGENTA_SHULKER_BOX, LIGHT_BLUE_SHULKER_BOX, YELLOW_SHULKER_BOX, LIME_SHULKER_BOX, PINK_SHULKER_BOX, GRAY_SHULKER_BOX, LIGHT_GRAY_SHULKER_BOX, CYAN_SHULKER_BOX, PURPLE_SHULKER_BOX, BLUE_SHULKER_BOX, BROWN_SHULKER_BOX, GREEN_SHULKER_BOX, RED_SHULKER_BOX, BLACK_SHULKER_BOX, CARVED_PUMPKIN, WITHER_SKELETON_SKULL, FLINT_AND_STEEL, BONE_MEAL, SHEARS, GLASS_BOTTLE, GLOWSTONE, COD_BUCKET, PUFFERFISH_BUCKET, SALMON_BUCKET, TROPICAL_FISH_BUCKET, AXOLOTL_BUCKET, BUCKET, WATER_BUCKET, LAVA_BUCKET -> {
                 if (event.getBlock().getType() == Material.DROPPER) {
                     return;
                 }
@@ -1175,6 +1184,43 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
         }
 
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockReceiveGame(BlockReceiveGameEvent event) {
+        Block block = event.getBlock();
+        Location location = BukkitUtil.adapt(block.getLocation());
+        Entity entity = event.getEntity();
+
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+
+        Plot plot = location.getOwnedPlot();
+        if (plot == null || !plot.getFlag(MiscInteractFlag.class)) {
+            if (entity instanceof Player player) {
+                BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
+                if (plot != null) {
+                    if (!plot.isAdded(plotPlayer.getUUID())) {
+                        plot.debug(plotPlayer.getName() + " couldn't trigger sculk sensors because misc-interact = false");
+                        event.setCancelled(true);
+                    }
+                }
+                return;
+            }
+            if (entity instanceof Item item) {
+                UUID itemThrower = item.getThrower();
+                if (!plot.isAdded(itemThrower)) {
+                    if (plot != null) {
+                        if (!plot.isAdded(itemThrower)) {
+                            plot.debug("A thrown item couldn't trigger sculk sensors because misc-interact = false");
+                            event.setCancelled(true);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

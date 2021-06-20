@@ -1,19 +1,19 @@
 [versions]
 checker-qual = "3.14.0"
 
-guava = "21.0"
-gson = "2.8.0"
+guava = "21.0" # Version set by Minecraft
+gson = "2.8.0" # Version set by Minecraft
 
-snakeyaml = "1.27"
+snakeyaml = "1.28" # Version set by Bukkit
 
-adventure-api = "4.8.0"
+adventure-api = "4.8.1"
 adventure-text-minimessage = "4.1.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.0-SNAPSHOT"
 
 guice = "5.0.1"
 findbugs = "3.0.1"
 
-worldedit = "7.2.5"
+worldedit = "7.2.6-SNAPSHOT"
 fawe = "p2v6-9"
 vault = "1.7"
 placeholderapi = "2.10.9"
@@ -21,7 +21,7 @@ luckperms = "5.3"
 essentialsx = "2.18.2"
 hyperverse = "0.6.0-SNAPSHOT"
 
-log4j-api = "2.8.1"
+log4j-api = "2.14.1" # Version set by Minecraft
 
 prtree = "1.7.0-SNAPSHOT"
 aopalliance = "1.0"
@@ -32,7 +32,7 @@ paster = "1.0.2-SNAPSHOT"
 
 bstats = "2.2.1"
 
-paper = "1.16.5-R0.1-SNAPSHOT"
+paper = "1.17-R0.1-SNAPSHOT"
 paperlib = "1.0.6"
 
 mvdwapi = "3.1.1"
@@ -91,5 +91,5 @@ paster = { group = "com.intellectualsites.paster", name = "Paster", version.ref 
 bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
 
 # Paper
-paper = { group = "com.destroystokyo.paper", name = "paper-api", version.ref = "paper" }
+paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
