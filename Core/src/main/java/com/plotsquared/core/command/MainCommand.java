@@ -162,10 +162,6 @@ public class MainCommand extends Command {
             // Referenced commands
             instance.toggle = injector.getInstance(Toggle.class);
             instance.help = new Help(instance);
-
-            if (!Settings.Enabled_Components.DISABLE_NASHORN_SCRIPT_ENGINE) {
-                new DebugExec();
-            }
         }
         return instance;
     }
