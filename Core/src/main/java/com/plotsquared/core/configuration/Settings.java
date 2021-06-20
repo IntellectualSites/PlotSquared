@@ -445,7 +445,7 @@ public class Settings extends Config {
     public static class Arkitektonika {
 
         @Comment("The url of the backend server (Arkitektonika)")
-        public static String BACKEND_URL = "https://schematic.cloud/";
+        public static String BACKEND_URL = "https://api.schematic.cloud/";
 
         @Comment({"The url used to generate a download link from.",
                 "{key} will be replaced with the generated key"})
