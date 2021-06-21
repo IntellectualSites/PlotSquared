@@ -134,8 +134,8 @@ public class PlotSquared {
     private final UUIDPipeline backgroundUUIDPipeline =
             new UUIDPipeline(Executors.newSingleThreadExecutor());
     // Localization
-    private final CaptionLoader captionLoader;
     private final Map<String, CaptionMap> captionMaps = new HashMap<>();
+    private CaptionLoader captionLoader;
     public HashMap<String, HashMap<PlotId, Plot>> plots_tmp;
     // WorldEdit instance
     private WorldEdit worldedit;
@@ -180,15 +180,20 @@ public class PlotSquared {
         //
         ConfigurationSerialization.registerClass(BlockBucket.class, "BlockBucket");
 
+        // load configs before reading from settings
+        if (!setupConfigs()) {
+            return;
+        }
+
         this.captionLoader = CaptionLoader.of(
                 Locale.ENGLISH,
                 CaptionLoader.patternExtractor(Pattern.compile("messages_(.*)\\.json")),
                 DefaultCaptionProvider.forClassLoaderFormatString(
                         this.getClass().getClassLoader(),
-                        "lang/messages_%s.json"
+                        "lang/messages_%s.json" // the path in our jar file
                 ),
                 TranslatableCaption.DEFAULT_NAMESPACE
-        ); // the path in our jar file
+        );
         // Load caption map
         try {
             this.loadCaptionMap();
@@ -215,10 +220,6 @@ public class PlotSquared {
                             "PlotSquared-" + platform + ".jar"
                     );
                 }
-            }
-
-            if (!setupConfigs()) {
-                return;
             }
 
             this.worldedit = WorldEdit.getInstance();
