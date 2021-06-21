@@ -1064,16 +1064,16 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 Material type = event.getMaterial();
 
                 // in the following, lb needs to have the material of the item in hand i.e. type
-                switch (type) {
-                    case REDSTONE:
-                    case STRING:
-                    case PUMPKIN_SEEDS:
-                    case MELON_SEEDS:
-                    case COCOA_BEANS:
-                    case WHEAT_SEEDS:
-                    case BEETROOT_SEEDS:
-                    case SWEET_BERRIES:
-                    case GLOW_BERRIES:
+                switch (type.toString()) {
+                    case "REDSTONE":
+                    case "STRING":
+                    case "PUMPKIN_SEEDS":
+                    case "MELON_SEEDS":
+                    case "COCOA_BEANS":
+                    case "WHEAT_SEEDS":
+                    case "BEETROOT_SEEDS":
+                    case "SWEET_BERRIES":
+                    case "GLOW_BERRIES":
                         return;
                     default:
                         //eventType = PlayerBlockEventType.PLACE_BLOCK;
