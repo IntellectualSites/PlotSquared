@@ -107,8 +107,10 @@ public class Delete extends SubCommand {
             }
             final long start = System.currentTimeMillis();
             if (Settings.Teleport.ON_DELETE) {
-                plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
-                });
+                plot.getPlayersInPlot().forEach(playerInPlot -> plot.teleportPlayer(playerInPlot, TeleportCause.COMMAND,
+                        result -> {
+                        }
+                ));
             }
             boolean result = plot.getPlotModificationManager().deletePlot(player, () -> {
                 plot.removeRunning();
