@@ -37,7 +37,7 @@ paperlib = "1.0.6"
 
 mvdwapi = "3.1.1"
 squirrelid = "1.0.0-SNAPSHOT"
-serverlib = "2.1.0"
+serverlib = "2.2.1"
 http4j = "1.1-SNAPSHOT"
 
 [libraries]

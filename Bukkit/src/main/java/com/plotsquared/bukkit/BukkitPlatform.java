@@ -559,8 +559,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         // Check if we are in a safe environment
         ServerLib.checkUnsafeForks();
-        // Check whether the server runs on 16 or greater
-        ServerLib.checkJavaLTS();
     }
 
     private void unload() {
