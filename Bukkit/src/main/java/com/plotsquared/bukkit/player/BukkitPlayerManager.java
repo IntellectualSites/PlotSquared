@@ -62,14 +62,13 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
     @NonNull
     @Override
     public BukkitPlayer getPlayer(final @NonNull Player object) {
+        if (object.getUniqueId().version() == 2) { // not a real player
+            return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object, false, this.permissionHandler);
+        }
         if (!object.isOnline()) {
             throw new NoSuchPlayerException(object.getUniqueId());
         }
-        try {
-            return getPlayer(object.getUniqueId());
-        } catch (final NoSuchPlayerException exception) {
-            return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object, false, this.permissionHandler);
-        }
+        return getPlayer(object.getUniqueId());
     }
 
     @Override
