@@ -195,7 +195,6 @@ public abstract class WorldUtil {
      */
     public abstract void getHighestBlock(@NonNull String world, int x, int z, @NonNull IntConsumer result);
 
-
     /**
      * Get the Y coordinate of the highest non-air block in the world, synchronously
      *

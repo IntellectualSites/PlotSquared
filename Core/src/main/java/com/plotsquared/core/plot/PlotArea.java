@@ -1181,15 +1181,6 @@ public abstract class PlotArea {
         return signMaterial;
     }
 
-    /**
-     * Get the legacy plot sign material before wall signs used a "wall" stance.
-     *
-     * @return the legacy sign material.
-     * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
-     * will be removed without replacement in favor of {@link #signMaterial()}
-     * once we remove the support for 1.13.
-     */
-    @Deprecated
     public String legacySignMaterial() {
         return legacySignMaterial;
     }
@@ -1316,7 +1307,15 @@ public abstract class PlotArea {
         return this.signMaterial;
     }
 
-    @Deprecated
+    /**
+     * Get the legacy plot sign material before wall signs used a "wall" stance.
+     *
+     * @return the legacy sign material.
+     * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
+     * will be removed without replacement in favor of {@link #signMaterial()}
+     * once we remove the support for 1.13.
+     */
+    @Deprecated(forRemoval = true)
     public String getLegacySignMaterial() {
         return this.legacySignMaterial;
     }

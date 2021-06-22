@@ -29,12 +29,17 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 
+/**
+ * @deprecated Deprecated in favor of "/plot toggle wea" and scheduled for removal within the next major release.
+ * <br>
+ * Other command aliases are "/plot toggle worldedit", "/plot toggle we".
+ */
+@Deprecated(forRemoval = true)
 @CommandDeclaration(command = "chat",
         usage = "/plot chat",
         permission = "plots.chat",
         category = CommandCategory.CHAT,
         requiredType = RequiredType.PLAYER)
-@Deprecated
 public class Chat extends SubCommand {
 
     @Override

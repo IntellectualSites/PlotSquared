@@ -426,7 +426,7 @@ public class Settings extends Config {
     }
 
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @Comment("Schematic interface related settings")
     public static class Web {
 
