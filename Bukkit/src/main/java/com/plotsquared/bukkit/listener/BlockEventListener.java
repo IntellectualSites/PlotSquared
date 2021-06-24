@@ -90,6 +90,7 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockGrowEvent;
@@ -1219,6 +1220,53 @@ public class BlockEventListener implements Listener {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockFertilize(BlockFertilizeEvent event) {
+        Block block = event.getBlock();
+        List<org.bukkit.block.BlockState> blocks = event.getBlocks();
+        Location location = BukkitUtil.adapt(blocks.get(0).getLocation());
+
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            for (int i = blocks.size() - 1; i >= 0; i--) {
+                location = BukkitUtil.adapt(blocks.get(i).getLocation());
+                if (location.isPlotArea()) {
+                    blocks.remove(i);
+                }
+            }
+            return;
+        } else {
+            Plot origin = area.getOwnedPlot(location);
+            if (origin == null) {
+                event.setCancelled(true);
+                return;
+            }
+            for (int i = blocks.size() - 1; i >= 0; i--) {
+                location = BukkitUtil.adapt(blocks.get(i).getLocation());
+                if (!area.contains(location.getX(), location.getZ())) {
+                    blocks.remove(i);
+                    continue;
+                }
+                Plot plot = area.getOwnedPlot(location);
+                if (!Objects.equals(plot, origin)) {
+                    event.getBlocks().remove(i);
+                }
+            }
+        }
+        Plot origin = area.getPlot(location);
+        if (origin == null) {
+            event.setCancelled(true);
+            return;
+        }
+        for (int i = blocks.size() - 1; i >= 0; i--) {
+            location = BukkitUtil.adapt(blocks.get(i).getLocation());
+            Plot plot = area.getOwnedPlot(location);
+            if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
+                event.getBlocks().remove(i);
             }
         }
     }
