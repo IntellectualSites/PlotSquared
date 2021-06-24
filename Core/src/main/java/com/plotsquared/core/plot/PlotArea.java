@@ -348,8 +348,8 @@ public abstract class PlotArea {
             this.prices = new HashMap<>();
             for (String key : priceSection.getKeys(false)) {
                 String raw = priceSection.getString(key);
-                if (raw.contains("{args}")) {
-                    raw = raw.replace("{args}", "plots");
+                if (raw.contains("{arg}")) {
+                    raw = raw.replace("{arg}", "plots");
                     priceSection.set(key, raw); // update if replaced
                 }
                 this.prices.put(key, PlotExpression.compile(raw, "plots"));
