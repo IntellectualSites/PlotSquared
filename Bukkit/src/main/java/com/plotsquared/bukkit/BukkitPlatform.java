@@ -263,7 +263,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             Plugin fawe = getServer().getPluginManager().getPlugin("FastAsyncWorldEdit");
             if (fawe != null) {
                 try {
-                    Class.forName("com.boydti.fawe.bukkit.regions.plotsquared.FaweQueueCoordinator");
+                    Class.forName("com.fastasyncworldedit.bukkit.regions.plotsquared.FaweQueueCoordinator");
                     faweHook = true;
                 } catch (Exception ignored) {
                     LOGGER.error("Incompatible version of FAWE to enable hook, please upgrade: https://ci.athion" +

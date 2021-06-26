@@ -25,7 +25,7 @@
  */
 package com.plotsquared.bukkit.util.fawe;
 
-import com.boydti.fawe.bukkit.regions.plotsquared.FaweDelegateSchematicHandler;
+import com.fastasyncworldedit.bukkit.regions.plotsquared.FaweDelegateSchematicHandler;
 import com.google.inject.Inject;
 import com.plotsquared.core.inject.factory.ProgressSubscriberFactory;
 import com.plotsquared.core.player.PlotPlayer;

@@ -25,7 +25,7 @@
  */
 package com.plotsquared.bukkit.util.fawe;
 
-import com.boydti.fawe.bukkit.regions.plotsquared.FaweDelegateRegionManager;
+import com.fastasyncworldedit.bukkit.regions.plotsquared.FaweDelegateRegionManager;
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitRegionManager;
 import com.plotsquared.core.configuration.Settings;
