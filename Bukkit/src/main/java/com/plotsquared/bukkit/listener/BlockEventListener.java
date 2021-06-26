@@ -52,7 +52,6 @@ import com.plotsquared.core.plot.flag.implementations.InstabreakFlag;
 import com.plotsquared.core.plot.flag.implementations.KelpGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.LeafDecayFlag;
 import com.plotsquared.core.plot.flag.implementations.LiquidFlowFlag;
-import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.MycelGrowFlag;
 import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.RedstoneFlag;
@@ -78,7 +77,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -90,7 +88,6 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockGrowEvent;
@@ -99,7 +96,6 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
@@ -1185,90 +1181,6 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
         }
 
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockReceiveGame(BlockReceiveGameEvent event) {
-        Block block = event.getBlock();
-        Location location = BukkitUtil.adapt(block.getLocation());
-        Entity entity = event.getEntity();
-
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            return;
-        }
-
-        Plot plot = location.getOwnedPlot();
-        if (plot == null || !plot.getFlag(MiscInteractFlag.class)) {
-            if (entity instanceof Player player) {
-                BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-                if (plot != null) {
-                    if (!plot.isAdded(plotPlayer.getUUID())) {
-                        plot.debug(plotPlayer.getName() + " couldn't trigger sculk sensors because misc-interact = false");
-                        event.setCancelled(true);
-                    }
-                }
-                return;
-            }
-            if (entity instanceof Item item) {
-                UUID itemThrower = item.getThrower();
-                if (!plot.isAdded(itemThrower)) {
-                    if (plot != null) {
-                        if (!plot.isAdded(itemThrower)) {
-                            plot.debug("A thrown item couldn't trigger sculk sensors because misc-interact = false");
-                            event.setCancelled(true);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onBlockFertilize(BlockFertilizeEvent event) {
-        Block block = event.getBlock();
-        List<org.bukkit.block.BlockState> blocks = event.getBlocks();
-        Location location = BukkitUtil.adapt(blocks.get(0).getLocation());
-
-        PlotArea area = location.getPlotArea();
-        if (area == null) {
-            for (int i = blocks.size() - 1; i >= 0; i--) {
-                location = BukkitUtil.adapt(blocks.get(i).getLocation());
-                if (location.isPlotArea()) {
-                    blocks.remove(i);
-                }
-            }
-            return;
-        } else {
-            Plot origin = area.getOwnedPlot(location);
-            if (origin == null) {
-                event.setCancelled(true);
-                return;
-            }
-            for (int i = blocks.size() - 1; i >= 0; i--) {
-                location = BukkitUtil.adapt(blocks.get(i).getLocation());
-                if (!area.contains(location.getX(), location.getZ())) {
-                    blocks.remove(i);
-                    continue;
-                }
-                Plot plot = area.getOwnedPlot(location);
-                if (!Objects.equals(plot, origin)) {
-                    event.getBlocks().remove(i);
-                }
-            }
-        }
-        Plot origin = area.getPlot(location);
-        if (origin == null) {
-            event.setCancelled(true);
-            return;
-        }
-        for (int i = blocks.size() - 1; i >= 0; i--) {
-            location = BukkitUtil.adapt(blocks.get(i).getLocation());
-            Plot plot = area.getOwnedPlot(location);
-            if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
-                event.getBlocks().remove(i);
-            }
-        }
     }
 
 }

@@ -38,6 +38,7 @@ import com.plotsquared.bukkit.inject.BukkitModule;
 import com.plotsquared.bukkit.inject.PermissionModule;
 import com.plotsquared.bukkit.inject.WorldManagerModule;
 import com.plotsquared.bukkit.listener.BlockEventListener;
+import com.plotsquared.bukkit.listener.BlockEventListener117;
 import com.plotsquared.bukkit.listener.ChunkListener;
 import com.plotsquared.bukkit.listener.EntityEventListener;
 import com.plotsquared.bukkit.listener.EntitySpawnListener;
@@ -343,6 +344,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         if (Settings.Enabled_Components.EVENTS) {
             getServer().getPluginManager().registerEvents(injector().getInstance(PlayerEventListener.class), this);
             getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener.class), this);
+            if (serverVersion()[1] >= 17) {
+                getServer().getPluginManager().registerEvents(injector().getInstance(BlockEventListener117.class), this);
+            }
             getServer().getPluginManager().registerEvents(injector().getInstance(EntityEventListener.class), this);
             getServer().getPluginManager().registerEvents(injector().getInstance(ProjectileEventListener.class), this);
             getServer().getPluginManager().registerEvents(injector().getInstance(ServerListener.class), this);
