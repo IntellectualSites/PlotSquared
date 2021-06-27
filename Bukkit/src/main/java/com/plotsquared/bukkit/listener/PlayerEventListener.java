@@ -364,7 +364,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 && PremiumVerification.isPremium() && UpdateUtility.hasUpdate) {
             Caption boundary = TranslatableCaption.of("update.update_boundary");
             Caption updateNotification = TranslatableCaption.of("update.update_notification");
-            Template internalVersion = Template.of("p2version", String.valueOf(UpdateUtility.internalVersion.versionString()));
+            Template internalVersion = Template.of("p2version", UpdateUtility.internalVersion.versionString());
             Template spigotVersion = Template.of("spigotversion", UpdateUtility.spigotVersion);
             Template downloadUrl = Template.of("downloadurl", "https://www.spigotmc.org/resources/77506/updates");
             pp.sendMessage(boundary);
