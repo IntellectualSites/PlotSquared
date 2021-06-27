@@ -2439,7 +2439,7 @@ public class Plot {
                 }
                 if (tmp) {
                     merge = true;
-                    bot = PlotId.of(bot.getX() - 1, bot.getX());
+                    bot = PlotId.of(bot.getX() - 1, bot.getY());
                 }
             }
             int minHeight = getArea().getMinBuildHeight();
