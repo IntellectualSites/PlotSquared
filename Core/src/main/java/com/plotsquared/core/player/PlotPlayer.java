@@ -76,6 +76,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -83,6 +85,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -126,14 +129,35 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     public static <T> PlotPlayer<T> from(final @NonNull T object) {
-        if (!converters.containsKey(object.getClass())) {
-            throw new IllegalArgumentException(String
-                    .format(
-                            "There is no registered PlotPlayer converter for type %s",
-                            object.getClass().getSimpleName()
-                    ));
+        // fast path
+        if (converters.containsKey(object.getClass())) {
+            return converters.get(object.getClass()).convert(object);
         }
-        return converters.get(object.getClass()).convert(object);
+        // slow path, meant to only run once per object#getClass instance
+        Queue<Class<?>> toVisit = new ArrayDeque<>();
+        toVisit.add(object.getClass());
+        Class<?> current;
+        while ((current = toVisit.poll()) != null) {
+            PlotPlayerConverter converter = converters.get(current);
+            if (converter != null) {
+                if (current != object.getClass()) {
+                    // register shortcut for this sub type to avoid further loops
+                    converters.put(object.getClass(), converter);
+                    LOGGER.info("Registered {} as with converter for {}", object.getClass(), current);
+                }
+                return converter.convert(object);
+            }
+            // no converter found yet
+            if (current.getSuperclass() != null) {
+                toVisit.add(current.getSuperclass()); // add super class if available
+            }
+            toVisit.addAll(Arrays.asList(current.getInterfaces())); // add interfaces
+        }
+        throw new IllegalArgumentException(String
+                .format(
+                        "There is no registered PlotPlayer converter for type %s",
+                        object.getClass().getSimpleName()
+                ));
     }
 
     public static <T> void registerConverter(
