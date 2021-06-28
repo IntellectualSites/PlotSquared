@@ -45,6 +45,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -182,7 +184,12 @@ public final class PlaceholderRegistry {
             if (Double.isNaN(plot.getAverageRating())) {
                 return legacyComponent(TranslatableCaption.of("placeholder.nan"), player);
             }
-            return Double.toString(plot.getAverageRating());
+            BigDecimal roundRating = BigDecimal.valueOf(plot.getAverageRating()).setScale(2, RoundingMode.HALF_UP);
+            if (!Settings.General.SCIENTIFIC) {
+                return String.valueOf(roundRating);
+            } else {
+                return Double.toString(plot.getAverageRating());
+            }
         });
         this.createPlaceholder("currentplot_biome", (player, plot) -> plot.getBiomeSynchronous().toString());
     }
