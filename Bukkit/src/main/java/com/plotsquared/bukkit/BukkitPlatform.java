@@ -268,7 +268,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     faweHook = true;
                 } catch (Exception ignored) {
                     LOGGER.error("Incompatible version of FAWE to enable hook, please upgrade: https://ci.athion" +
-                            ".net/job/FastAsyncWorldEdit-P2-V6/");
+                            ".net/job/FastAsyncWorldEdit-1.17/");
                 }
             }
         }
