@@ -254,11 +254,7 @@ public class ComponentPresetManager {
                     Template.of("prefix", TranslatableCaption.of("core.prefix").getComponent(player))
             )));
             lore.removeIf(String::isEmpty);
-            if (!lore.isEmpty()) {
-                lore.add("<gold>");
-            }
             lore.addAll(preset.getDescription());
-            lore.add("</gold>");
             plotInventory.setItem(
                     i,
                     new PlotItemStack(
