@@ -2,11 +2,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 repositories {
     maven {
-        name = "SpigotMC"
-        url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    }
-
-    maven {
         name = "PlaceholderAPI"
         url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
@@ -19,15 +14,6 @@ repositories {
     maven {
         name = "EssentialsX"
         url = uri("https://repo.essentialsx.net/releases/")
-    }
-
-    maven {
-        name = "IntellectualSites Releases"
-        url = uri("https://mvn.intellectualsites.com/content/repositories/releases")
-    }
-    maven {
-        name = "IntellectualSites 3rd Party"
-        url = uri("https://mvn.intellectualsites.com/content/repositories/thirdparty")
     }
 }
 
