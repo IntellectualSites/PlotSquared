@@ -27,26 +27,29 @@ is to provide a lag-free and smooth experience.
 
 * [Download](https://www.spigotmc.org/resources/77506/)
 * [Discord](https://discord.gg/intellectualsites)
-* [Wiki](https://github.com/IntellectualSites/PlotSquared/wiki)
+* [Wiki](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki)
 * [Issues](https://github.com/IntellectualSites/PlotSquared/issues)
 * [Translations](https://intellectualsites.crowdin.com/plotsquared/)
 
 ### Developer Resources
-* [API Documentation](https://github.com/IntellectualSites/PlotSquared/wiki/API-Documentation)
-* [Event API](https://github.com/IntellectualSites/PlotSquared/wiki/Events)
-* [Flag API](https://github.com/IntellectualSites/PlotSquared/wiki/API-Flag)
+* [API Documentation](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/API-Documentation)
+* [Event API](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Events)
+* [Flag API](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/API-Flag)
 
 # Building
 Gradle is the **recommended** way to build the project. Use `./gradlew build` in the main project directory to build the project. Gradle is required if you intend to build or develop the Sponge module.
 
 # Contributing
-See [here](https://github.com/IntellectualSites/PlotSquared/blob/v5/CONTRIBUTING.md)
+See [here](https://github.com/IntellectualSites/PlotSquared/blob/v6/CONTRIBUTING.md)
 
 ## Suggestions
 Suggestions are welcome! We have a separate issue tracker for suggestions, that can be found in [this](https://github.com/IntellectualSites/PlotSquaredSuggestions) repository.
 
 # Official Addons
 * [Plot2Dynmap](http://www.spigotmc.org/resources/plot2dynmap.1292/)
+* [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
+* [PlotHider](https://www.spigotmc.org/resources/plot-hider.20701/)
+### Unmaintained or integrated into PlotSquared  
 * [AdvPlots](http://www.spigotmc.org/resources/advplots-%CE%B2.1500/)
 * [PlotRankup](http://www.spigotmc.org/resources/plotrankup.1571/)
 * [PlotZSux](https://www.spigotmc.org/resources/plotzsux.9563/)
@@ -54,7 +57,6 @@ Suggestions are welcome! We have a separate issue tracker for suggestions, that 
 * [BiomeGenerator](https://www.spigotmc.org/resources/biomegenerator.1663/)
 * [PlotSquaredMG](https://www.spigotmc.org/resources/plotsquaredmg.8025/)
 * [BasicPlots](https://www.spigotmc.org/resources/basicplots.6901/)
-* [HoloPlots](https://www.spigotmc.org/resources/holoplots.4880/)
 
 # Sponsors
 Our official sponsor list can be found [here](https://intellectualsites.github.io/download/sponsors.html). <br>

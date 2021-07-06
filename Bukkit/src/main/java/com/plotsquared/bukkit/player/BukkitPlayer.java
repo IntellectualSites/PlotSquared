@@ -265,7 +265,10 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         switch (weather) {
             case CLEAR -> this.player.setPlayerWeather(WeatherType.CLEAR);
             case RAIN -> this.player.setPlayerWeather(WeatherType.DOWNFALL);
-            default -> this.player.resetPlayerWeather();
+            case WORLD -> this.player.resetPlayerWeather();
+            default -> {
+                //do nothing as this is PlotWeather.OFF
+            }
         }
     }
 

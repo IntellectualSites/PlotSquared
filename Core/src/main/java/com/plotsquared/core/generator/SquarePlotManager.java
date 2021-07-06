@@ -37,8 +37,8 @@ import com.plotsquared.core.util.RegionManager;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -48,7 +48,7 @@ import java.util.Set;
  */
 public abstract class SquarePlotManager extends GridPlotManager {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + SquarePlotManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquarePlotManager.class.getSimpleName());
 
     private final SquarePlotWorld squarePlotWorld;
     private final RegionManager regionManager;
@@ -244,7 +244,7 @@ public abstract class SquarePlotManager extends GridPlotManager {
                     return plot.isMerged(Direction.NORTHWEST) ? id : null;
             }
         } catch (Exception ignored) {
-            logger.error("Invalid plot / road width in settings.yml for world: {}", squarePlotWorld.getWorldName());
+            LOGGER.error("Invalid plot / road width in settings.yml for world: {}", squarePlotWorld.getWorldName());
         }
         return null;
     }

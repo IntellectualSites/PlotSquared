@@ -55,14 +55,14 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public final class ReplicatingEntityWrapper extends EntityWrapper {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + ReplicatingEntityWrapper.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ReplicatingEntityWrapper.class.getSimpleName());
 
     private final short depth;
     private final int hash;
@@ -393,7 +393,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
         try {
             entity.getInventory().setContents(this.inventory);
         } catch (IllegalArgumentException e) {
-            logger.error("Failed to restore inventory", e);
+            LOGGER.error("Failed to restore inventory", e);
         }
     }
 
@@ -746,7 +746,7 @@ public final class ReplicatingEntityWrapper extends EntityWrapper {
                 return entity;
             default:
                 if (Settings.DEBUG) {
-                    logger.info("Could not identify entity: {}", entity.getType());
+                    LOGGER.info("Could not identify entity: {}", entity.getType());
                 }
                 return entity;
             // END LIVING

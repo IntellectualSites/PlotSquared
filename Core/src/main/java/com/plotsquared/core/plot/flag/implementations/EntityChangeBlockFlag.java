@@ -23,34 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.bukkit.inject;
+package com.plotsquared.core.plot.flag.implementations;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.plotsquared.core.backup.BackupManager;
-import com.plotsquared.core.backup.BackupProfile;
-import com.plotsquared.core.backup.NullBackupManager;
-import com.plotsquared.core.backup.PlayerBackupProfile;
-import com.plotsquared.core.backup.SimpleBackupManager;
-import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class BackupModule extends AbstractModule {
+public class EntityChangeBlockFlag extends BooleanFlag<EntityChangeBlockFlag> {
 
-    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BackupModule.class.getSimpleName());
+    public static final EntityChangeBlockFlag ENTITY_CHANGE_BLOCK_TRUE = new EntityChangeBlockFlag(true);
+    public static final EntityChangeBlockFlag ENTITY_CHANGE_BLOCK_FALSE = new EntityChangeBlockFlag(false);
+
+    private EntityChangeBlockFlag(boolean value) {
+        super(value, TranslatableCaption.of("flags.flag_description_entity_change_block"));
+    }
 
     @Override
-    protected void configure() {
-        try {
-            install(new FactoryModuleBuilder()
-                    .implement(BackupProfile.class, PlayerBackupProfile.class).build(PlayerBackupProfileFactory.class));
-            bind(BackupManager.class).to(SimpleBackupManager.class);
-        } catch (final Exception e) {
-            LOGGER.error("Failed to initialize backup manager", e);
-            LOGGER.error("Backup features will be disabled");
-            bind(BackupManager.class).to(NullBackupManager.class);
-        }
+    protected EntityChangeBlockFlag flagOf(@NonNull Boolean value) {
+        return value ? ENTITY_CHANGE_BLOCK_TRUE : ENTITY_CHANGE_BLOCK_FALSE;
     }
 
 }

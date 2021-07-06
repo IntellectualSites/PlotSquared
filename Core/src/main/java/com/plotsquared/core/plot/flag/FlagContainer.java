@@ -29,8 +29,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +44,7 @@ import java.util.Objects;
  */
 public class FlagContainer {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + FlagContainer.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + FlagContainer.class.getSimpleName());
 
     private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
@@ -160,7 +160,7 @@ public class FlagContainer {
             this.updateSubscribers
                     .forEach(subscriber -> subscriber.handle(flag, plotFlagUpdateType));
         } catch (IllegalStateException e) {
-            logger.info("Flag {} (class '{}') could not be added to the container because the "
+            LOGGER.info("Flag {} (class '{}') could not be added to the container because the "
                     + "flag name exceeded the allowed limit of 64 characters. Please tell the developer "
                     + "of the flag to fix this.", flag.getName(), flag.getClass().getName());
             e.printStackTrace();

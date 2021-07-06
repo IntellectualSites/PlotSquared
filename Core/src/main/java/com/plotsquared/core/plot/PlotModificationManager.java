@@ -54,8 +54,8 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ import static com.plotsquared.core.plot.Plot.MAX_HEIGHT;
  */
 public final class PlotModificationManager {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotModificationManager.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotModificationManager.class.getSimpleName());
 
     private final Plot plot;
     private final ProgressSubscriberFactory subscriberFactory;
@@ -365,6 +365,9 @@ public final class PlotModificationManager {
         if (createRoad) {
             manager.finishPlotUnlink(ids, queue);
         }
+        if (queue != null) {
+            queue.enqueue();
+        }
         return true;
     }
 
@@ -504,7 +507,7 @@ public final class PlotModificationManager {
             });
             return true;
         }
-        logger.info(
+        LOGGER.info(
                 "Failed to add plot {} to plot area {}",
                 this.plot.getId().toCommaSeparatedString(),
                 this.plot.getArea().toString()
@@ -568,7 +571,7 @@ public final class PlotModificationManager {
             }
             visited.add(current);
             Set<Plot> plots;
-            if ((dir == Direction.ALL || dir == Direction.NORTH) && !this.plot.isMerged(Direction.NORTH)) {
+            if ((dir == Direction.ALL || dir == Direction.NORTH) && !current.isMerged(Direction.NORTH)) {
                 Plot other = current.getRelative(Direction.NORTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
@@ -602,7 +605,7 @@ public final class PlotModificationManager {
                     }
                 }
             }
-            if (max >= 0 && (dir == Direction.ALL || dir == Direction.SOUTH) && !this.plot.isMerged(Direction.SOUTH)) {
+            if (max >= 0 && (dir == Direction.ALL || dir == Direction.SOUTH) && !current.isMerged(Direction.SOUTH)) {
                 Plot other = current.getRelative(Direction.SOUTH);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
@@ -619,7 +622,7 @@ public final class PlotModificationManager {
                     }
                 }
             }
-            if (max >= 0 && (dir == Direction.ALL || dir == Direction.WEST) && !this.plot.isMerged(Direction.WEST)) {
+            if (max >= 0 && (dir == Direction.ALL || dir == Direction.WEST) && !current.isMerged(Direction.WEST)) {
                 Plot other = current.getRelative(Direction.WEST);
                 if (other != null && other.isOwner(uuid) && (other.getBasePlot(false).equals(current.getBasePlot(false))
                         || (plots = other.getConnectedPlots()).size() <= max && frontier.addAll(plots) && (max -= plots.size()) != -1)) {
@@ -636,12 +639,12 @@ public final class PlotModificationManager {
                     }
                 }
             }
-            if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
-                queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
-            }
-            if (queue.size() > 0) {
-                queue.enqueue();
-            }
+        }
+        if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
+            queue.addProgressSubscriber(subscriberFactory.createWithActor(actor));
+        }
+        if (queue.size() > 0) {
+            queue.enqueue();
         }
         return toReturn;
     }

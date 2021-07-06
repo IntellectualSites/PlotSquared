@@ -47,8 +47,8 @@ import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @CommandDeclaration(
         command = "claim",
@@ -58,8 +58,7 @@ import org.slf4j.LoggerFactory;
         usage = "/plot claim")
 public class Claim extends SubCommand {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger("P2/" + Claim.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Claim.class.getSimpleName());
 
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
@@ -195,7 +194,7 @@ public class Claim extends SubCommand {
             try {
                 TaskManager.getPlatformImplementation().sync(() -> {
                     if (!plot.claim(player, true, finalSchematic, false)) {
-                        logger.info("Failed to claim plot {}", plot.getId().toCommaSeparatedString());
+                        LOGGER.info("Failed to claim plot {}", plot.getId().toCommaSeparatedString());
                         player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
                         plot.setOwnerAbs(null);
                     } else if (area.isAutoMerge()) {
@@ -222,7 +221,7 @@ public class Claim extends SubCommand {
                 e.printStackTrace();
             }
         }, () -> {
-            logger.info("Failed to add plot to database: {}", plot.getId().toCommaSeparatedString());
+            LOGGER.info("Failed to add plot to database: {}", plot.getId().toCommaSeparatedString());
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             plot.setOwnerAbs(null);
         });

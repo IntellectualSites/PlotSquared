@@ -1,27 +1,27 @@
 [versions]
-checker-qual = "3.13.0"
+checker-qual = "3.14.0"
 
-guava = "21.0"
-gson = "2.8.0"
+guava = "21.0" # Version set by Minecraft
+gson = "2.8.0" # Version set by Minecraft
 
-snakeyaml = "1.27"
+snakeyaml = "1.28" # Version set by Bukkit
 
-adventure-api = "4.7.0"
+adventure-api = "4.8.1"
 adventure-text-minimessage = "4.1.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.0-SNAPSHOT"
 
 guice = "5.0.1"
 findbugs = "3.0.1"
 
-worldedit = "7.2.5"
+worldedit = "7.2.6-SNAPSHOT"
+fawe = "1.17-15"
 vault = "1.7"
 placeholderapi = "2.10.9"
 luckperms = "5.3"
 essentialsx = "2.18.2"
 hyperverse = "0.6.0-SNAPSHOT"
 
-slf4j-api = "1.7.30"
-log4j-slf4j-impl = "2.8.1"
+log4j-api = "2.14.1" # Version set by Minecraft
 
 prtree = "1.7.0-SNAPSHOT"
 aopalliance = "1.0"
@@ -32,12 +32,12 @@ paster = "1.0.2-SNAPSHOT"
 
 bstats = "2.2.1"
 
-paper = "1.16.5-R0.1-SNAPSHOT"
+paper = "1.17-R0.1-SNAPSHOT"
 paperlib = "1.0.6"
 
 mvdwapi = "3.1.1"
 squirrelid = "1.0.0-SNAPSHOT"
-serverlib = "2.1.0"
+serverlib = "2.2.1"
 http4j = "1.1-SNAPSHOT"
 
 [libraries]
@@ -64,6 +64,7 @@ findbugs = { group = "com.google.code.findbugs", name = "annotations", version.r
 # Plugins
 worldeditCore = { group = "com.sk89q.worldedit", name = "worldedit-core", version.ref = "worldedit" }
 worldeditBukkit = { group = "com.sk89q.worldedit", name = "worldedit-bukkit", version.ref = "worldedit" }
+fastasyncworldeditBukkit = { group = "com.fastasyncworldedit", name = "FAWE-Bukkit", version.ref = "fawe" }
 vault = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
 placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
 luckperms = { group = "net.luckperms", name = "api", version.ref = "luckperms" }
@@ -71,8 +72,7 @@ essentialsx = { group = "net.ess3", name = "EssentialsX", version.ref = "essenti
 hyperverse = { group = "se.hyperver.hyperverse", name = "Core", version.ref = "hyperverse" }
 
 # Logging
-slf4j = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j-api" }
-log4j = { group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version.ref = "log4j-slf4j-impl" }
+log4j = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j-api" }
 
 # Other libraries
 prtree = { group = "org.khelekore", name = "prtree", version.ref = "prtree" }
@@ -91,5 +91,5 @@ paster = { group = "com.intellectualsites.paster", name = "Paster", version.ref 
 bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
 
 # Paper
-paper = { group = "com.destroystokyo.paper", name = "paper-api", version.ref = "paper" }
+paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }

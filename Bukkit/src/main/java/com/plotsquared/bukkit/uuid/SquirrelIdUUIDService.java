@@ -33,8 +33,8 @@ import com.sk89q.squirrelid.Profile;
 import com.sk89q.squirrelid.resolver.HttpRepositoryService;
 import com.sk89q.squirrelid.resolver.ProfileService;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ import java.util.UUID;
 @SuppressWarnings("UnstableApiUsage")
 public class SquirrelIdUUIDService implements UUIDService {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + SquirrelIdUUIDService.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquirrelIdUUIDService.class.getSimpleName());
 
     private final ProfileService profileService;
     private final RateLimiter rateLimiter;
@@ -83,7 +83,7 @@ public class SquirrelIdUUIDService implements UUIDService {
                 //
                 if (uuids.size() >= 2) {
                     if (Settings.DEBUG) {
-                        logger.info("(UUID) Found invalid UUID in batch. Will try each UUID individually.");
+                        LOGGER.info("(UUID) Found invalid UUID in batch. Will try each UUID individually.");
                     }
                     for (final UUID uuid : uuids) {
                         final List<UUIDMapping> result = this.getNames(Collections.singletonList(uuid));
@@ -93,7 +93,7 @@ public class SquirrelIdUUIDService implements UUIDService {
                         results.add(result.get(0));
                     }
                 } else if (uuids.size() == 1 && Settings.DEBUG) {
-                    logger.info("(UUID) Found invalid UUID: {}", uuids.get(0));
+                    LOGGER.info("(UUID) Found invalid UUID: {}", uuids.get(0));
                 }
             }
         } catch (IOException | InterruptedException e) {

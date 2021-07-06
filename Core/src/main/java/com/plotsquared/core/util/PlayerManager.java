@@ -314,11 +314,6 @@ public abstract class PlayerManager<P extends PlotPlayer<? extends T>, T> {
             super(String.format("There is no online player with UUID '%s'", uuid.toString()));
         }
 
-        @Override
-        public synchronized Throwable fillInStackTrace() {
-            return this;
-        }
-
     }
 
 }

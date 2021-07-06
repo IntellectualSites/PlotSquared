@@ -59,8 +59,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -69,7 +69,7 @@ import java.util.Locale;
 
 public class HybridPlotWorld extends ClassicPlotWorld {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + HybridPlotWorld.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridPlotWorld.class.getSimpleName());
     private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
     public boolean PLOT_SCHEMATIC = false;
@@ -190,7 +190,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
 
         // Dump world settings
         if (Settings.DEBUG) {
-            logger.info("- Dumping settings for ClassicPlotWorld with name {}", this.getWorldName());
+            LOGGER.info("- Dumping settings for ClassicPlotWorld with name {}", this.getWorldName());
             final Field[] fields = this.getClass().getFields();
             for (final Field field : fields) {
                 final String name = field.getName().toLowerCase(Locale.ENGLISH);
@@ -206,7 +206,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 } catch (final IllegalAccessException e) {
                     value = String.format("Failed to parse: %s", e.getMessage());
                 }
-                logger.info("-- {} = {}", name, value);
+                LOGGER.info("-- {} = {}", name, value);
             }
         }
     }
@@ -323,12 +323,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
 
             if (Settings.DEBUG) {
-                logger.info(" - plot schematic: {}", schematic3File.getPath());
+                LOGGER.info("- plot schematic: {}", schematic3File.getPath());
             }
         }
         if (schematic1 == null || schematic2 == null || this.ROAD_WIDTH == 0) {
             if (Settings.DEBUG) {
-                logger.info(" - schematic: false");
+                LOGGER.info("- schematic: false");
             }
             return;
         }
@@ -411,7 +411,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         BaseBlock[] existing = this.G_SCH.computeIfAbsent(pair, k -> new BaseBlock[height]);
         if (y >= height) {
-            logger.error("Error adding overlay block. `y > height`");
+            LOGGER.error("Error adding overlay block. `y > height`");
             return;
         }
         existing[y] = id;

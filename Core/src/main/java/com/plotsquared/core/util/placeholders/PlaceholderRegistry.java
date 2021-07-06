@@ -45,6 +45,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -178,7 +180,17 @@ public final class PlaceholderRegistry {
         this.createPlaceholder("currentplot_x", (player, plot) -> Integer.toString(plot.getId().getX()));
         this.createPlaceholder("currentplot_y", (player, plot) -> Integer.toString(plot.getId().getY()));
         this.createPlaceholder("currentplot_xy", (player, plot) -> plot.getId().toString());
-        this.createPlaceholder("currentplot_rating", (player, plot) -> Double.toString(plot.getAverageRating()));
+        this.createPlaceholder("currentplot_rating", (player, plot) -> {
+            if (Double.isNaN(plot.getAverageRating())) {
+                return legacyComponent(TranslatableCaption.of("placeholder.nan"), player);
+            }
+            BigDecimal roundRating = BigDecimal.valueOf(plot.getAverageRating()).setScale(2, RoundingMode.HALF_UP);
+            if (!Settings.General.SCIENTIFIC) {
+                return String.valueOf(roundRating);
+            } else {
+                return Double.toString(plot.getAverageRating());
+            }
+        });
         this.createPlaceholder("currentplot_biome", (player, plot) -> plot.getBiomeSynchronous().toString());
     }
 

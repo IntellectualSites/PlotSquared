@@ -35,8 +35,8 @@ import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,7 +66,7 @@ import java.util.function.Function;
  */
 public class UUIDPipeline {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + UUIDPipeline.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + UUIDPipeline.class.getSimpleName());
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
     private final Executor executor;
@@ -176,7 +176,7 @@ public class UUIDPipeline {
         } catch (TimeoutException ignored) {
             // This is completely valid, we just don't care anymore
             if (Settings.DEBUG) {
-                logger.warn("(UUID) Request for {} timed out. Rate limit.", username);
+                LOGGER.warn("(UUID) Request for {} timed out. Rate limit.", username);
             }
         }
         return null;
@@ -201,7 +201,7 @@ public class UUIDPipeline {
         } catch (TimeoutException ignored) {
             // This is completely valid, we just don't care anymore
             if (Settings.DEBUG) {
-                logger.warn("(UUID) Request for {} timed out. Rate limit.", uuid);
+                LOGGER.warn("(UUID) Request for {} timed out. Rate limit.", uuid);
             }
         }
         return null;
@@ -345,7 +345,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.info("(UUID) Failed to find all usernames");
+                LOGGER.info("(UUID) Failed to find all usernames");
             }
 
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
@@ -414,7 +414,7 @@ public class UUIDPipeline {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
-                logger.info("(UUID) Failed to find all UUIDs");
+                LOGGER.info("(UUID) Failed to find all UUIDs");
             }
 
             throw new ServiceError("End of pipeline");

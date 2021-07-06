@@ -66,11 +66,7 @@ public class Copy extends SubCommand {
             return false;
         }
         if (plot1.equals(plot2)) {
-            player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
-            player.sendMessage(
-                    TranslatableCaption.of("commandconfig.command_syntax"),
-                    Template.of("value", "/plot copy <X;Z>")
-            );
+            player.sendMessage(TranslatableCaption.of("invalid.origin_cant_be_target"));
             return false;
         }
         if (!plot1.getArea().isCompatible(plot2.getArea())) {

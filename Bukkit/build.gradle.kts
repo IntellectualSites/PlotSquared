@@ -2,11 +2,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 repositories {
     maven {
-        name = "SpigotMC"
-        url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    }
-
-    maven {
         name = "PlaceholderAPI"
         url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     }
@@ -19,15 +14,6 @@ repositories {
     maven {
         name = "EssentialsX"
         url = uri("https://repo.essentialsx.net/releases/")
-    }
-
-    maven {
-        name = "IntellectualSites Releases"
-        url = uri("https://mvn.intellectualsites.com/content/repositories/releases")
-    }
-    maven {
-        name = "IntellectualSites 3rd Party"
-        url = uri("https://mvn.intellectualsites.com/content/repositories/thirdparty")
     }
 }
 
@@ -85,9 +71,6 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.bstats", "com.plotsquared.metrics")
     relocate("com.sk89q.squirrelid", "com.plotsquared.squirrelid")
     relocate("org.khelekore.prtree", "com.plotsquared.prtree")
-    relocate("org.apache.logging.log4j", "com.plotsquared.logging.apache.log4j")
-    relocate("org.apache.logging.slf4j", "com.plotsquared.logging.apache.slf4j")
-    relocate("org.slf4j", "com.plotsquared.logging.slf4j")
     relocate("com.google.inject", "com.plotsquared.google")
     relocate("org.aopalliance", "com.plotsquared.core.aopalliance")
     relocate("com.intellectualsites.services", "com.plotsquared.core.services")
@@ -100,4 +83,16 @@ tasks.named<ShadowJar>("shadowJar") {
     minimize()
 
     mergeServiceFiles()
+}
+
+tasks {
+    withType<Javadoc> {
+        val opt = options as StandardJavadocDocletOptions
+        opt.links("https://papermc.io/javadocs/paper/1.17/")
+        opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-core/7.2.6-SNAPSHOT/")
+        opt.links("https://docs.enginehub.org/javadoc/com.sk89q.worldedit/worldedit-bukkit/7.2.6-SNAPSHOT/")
+        opt.links("https://jd.adventure.kyori.net/api/4.8.1/")
+        opt.links("https://google.github.io/guice/api-docs/5.0.1/javadoc/")
+        opt.links("https://checkerframework.org/api/")
+    }
 }

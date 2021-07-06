@@ -43,8 +43,8 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -58,7 +58,7 @@ import java.util.concurrent.CompletableFuture;
         aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
 public class MainCommand extends Command {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + MainCommand.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + MainCommand.class.getSimpleName());
 
     private static MainCommand instance;
     public Help help;
@@ -78,7 +78,7 @@ public class MainCommand extends Command {
             commands.add(Caps.class);
             commands.add(Buy.class);
             if (Settings.Web.LEGACY_WEBINTERFACE) {
-                logger.warn("Legacy webinterface is used. Please note that it will be removed in future.");
+                LOGGER.warn("Legacy webinterface is used. Please note that it will be removed in future.");
                 commands.add(Save.class);
             }
             commands.add(Load.class);
@@ -154,7 +154,7 @@ public class MainCommand extends Command {
                 try {
                     injector.getInstance(command);
                 } catch (final Exception e) {
-                    logger.error("Failed to register command {}", command.getCanonicalName());
+                    LOGGER.error("Failed to register command {}", command.getCanonicalName());
                     e.printStackTrace();
                 }
             }

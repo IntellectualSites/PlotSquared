@@ -28,12 +28,12 @@ package com.plotsquared.core.queue;
 import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public abstract class QueueProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotSquared.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotSquared.class.getSimpleName());
 
     public static QueueProvider of(final @NonNull Class<? extends QueueCoordinator> primary) {
         return new QueueProvider() {
@@ -43,9 +43,9 @@ public abstract class QueueProvider {
                 try {
                     return (QueueCoordinator) primary.getConstructors()[0].newInstance(world);
                 } catch (Throwable e) {
-                    logger.error("Error creating Queue: {} - Does it have the correct constructor(s)?", primary.getName());
+                    LOGGER.error("Error creating Queue: {} - Does it have the correct constructor(s)?", primary.getName());
                     if (!primary.getName().contains("com.plotsquared")) {
-                        logger.error(
+                        LOGGER.error(
                                 "It looks like {} is a custom queue. Please look for a plugin in its classpath and report to them.",
                                 primary.getSimpleName()
                         );

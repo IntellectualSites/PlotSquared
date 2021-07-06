@@ -197,7 +197,7 @@ public class Settings extends Config {
         public List<String> WORLDS = new ArrayList<>(Collections.singletonList("*"));
 
 
-        @Comment("See: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-analysis for a description of each value.")
+        @Comment("See: https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Plot-analysis for a description of each value.")
         public static final class CALIBRATION {
 
             public int VARIETY = 0;
@@ -217,7 +217,7 @@ public class Settings extends Config {
 
 
     @Comment({"Chunk processor related settings",
-            "See https://github.com/IntellectualSites/PlotSquared/wiki/Chunk-processor for more information."})
+            "See https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Chunk-processor for more information."})
     public static class Chunk_Processor {
 
         @Comment("Auto trim will not save chunks which aren't claimed")
@@ -278,7 +278,7 @@ public class Settings extends Config {
         @Comment("Replace wall when merging")
         public static boolean MERGE_REPLACE_WALL = true;
         @Comment({"Blocks that may not be used in plot components",
-                "Checkout the wiki article regarding plot components before modifying: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-Components"})
+                "Checkout the wiki article regarding plot components before modifying: https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Plot-Components"})
         public static List<String>
                 INVALID_BLOCKS = Arrays.asList(
                 // Acacia Stuff
@@ -400,7 +400,7 @@ public class Settings extends Config {
 
 
     @Comment({"Schematic Settings",
-            "See https://github.com/IntellectualSites/PlotSquared/wiki/Schematic-on-Claim for more information."})
+            "See https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Schematic-on-Claim for more information."})
     public static final class Schematics {
 
         @Comment(
@@ -426,7 +426,7 @@ public class Settings extends Config {
     }
 
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @Comment("Schematic interface related settings")
     public static class Web {
 
@@ -445,15 +445,15 @@ public class Settings extends Config {
     public static class Arkitektonika {
 
         @Comment("The url of the backend server (Arkitektonika)")
-        public static String BACKEND_URL = "https://ark.jacobandersen.dev/";
+        public static String BACKEND_URL = "https://api.schematic.cloud/";
 
         @Comment({"The url used to generate a download link from.",
                 "{key} will be replaced with the generated key"})
-        public static String DOWNLOAD_URL = "https://sw.jacobandersen.dev/download/{key}";
+        public static String DOWNLOAD_URL = "https://api.schematic.cloud/download/{key}";
 
         @Comment({"The url used to generate a deletion link from.",
                 "{key} will be replaced with the generated key"})
-        public static String DELETE_URL = "https://sw.jacobandersen.dev/delete/{key}";
+        public static String DELETE_URL = "https://api.schematic.cloud/delete/{key}";
 
     }
 
@@ -516,7 +516,7 @@ public class Settings extends Config {
 
 
     @Comment({"Backup related settings",
-            "See https://github.com/IntellectualSites/PlotSquared/wiki/Backups for more information."})
+            "See https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Backups for more information."})
     public static final class Backup {
 
         @Comment("Automatically backup plots when destructive commands are performed, e.g. /plot clear")
@@ -608,6 +608,17 @@ public class Settings extends Config {
 
     }
 
+    @Comment("Enable or disable all of or parts of the FAWE-P2 hook")
+    public static final class FAWE_Components {
+
+        @Comment("Use FAWE for queue handling.")
+        public static boolean FAWE_HOOK = true;
+        public static boolean CUBOIDS = true;
+        public static boolean CLEAR = true;
+        public static boolean COPY_AND_SWAP = true;
+        public static boolean SET_BIOME = true;
+
+    }
 
     @Comment("Enable or disable parts of the plugin specific to using Paper")
     public static final class Paper_Components {
@@ -745,11 +756,14 @@ public class Settings extends Config {
         public static boolean
                 PERSISTENT_ROAD_REGEN = true;
         @Comment({"Enable the `/plot component` preset GUI",
-                "Read more about components here: https://github.com/IntellectualSites/PlotSquared/wiki/Plot-Components"})
+                "Read more about components here: https://github.com/IntellectualSites/PlotSquared-Documentation/wiki/Plot-Components"})
         public static boolean COMPONENT_PRESETS = true;
         @Comment("Enable per user locale")
         public static boolean PER_USER_LOCALE = false;
-        @Comment("The default locale")
+        @Comment({"The default locale. Before changing the language, make sure you downloaded the appropriate file and put it " +
+                "in the 'lang' folder.",
+                "You can find additional translations here: https://intellectualsites.crowdin.com/plotsquared"
+        })
         public static String DEFAULT_LOCALE = "en";
         @Comment("Use UUID cache to complete usernames")
         public static boolean EXTENDED_USERNAME_COMPLETION = true;
@@ -769,7 +783,6 @@ public class Settings extends Config {
         );
         @Comment("Whether PlotSquared should hook into MvDWPlaceholderAPI or not")
         public static boolean USE_MVDWAPI = true;
-
     }
 
 }

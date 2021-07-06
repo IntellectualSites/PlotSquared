@@ -339,6 +339,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
         PlotSquared.platform().playerManager().removePlayer(player.getUniqueId());
         final PlotPlayer<Player> pp = BukkitUtil.adapt(player);
 
+        // we're stripping the country code as we don't want to differ between countries
+        pp.setLocale(Locale.forLanguageTag(player.getLocale().substring(0, 2)));
+
         Location location = pp.getLocation();
         PlotArea area = location.getPlotArea();
         if (area != null) {
@@ -361,7 +364,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 && PremiumVerification.isPremium() && UpdateUtility.hasUpdate) {
             Caption boundary = TranslatableCaption.of("update.update_boundary");
             Caption updateNotification = TranslatableCaption.of("update.update_notification");
-            Template internalVersion = Template.of("p2version", String.valueOf(UpdateUtility.internalVersion.versionString()));
+            Template internalVersion = Template.of("p2version", UpdateUtility.internalVersion.versionString());
             Template spigotVersion = Template.of("spigotversion", UpdateUtility.spigotVersion);
             Template downloadUrl = Template.of("downloadurl", "https://www.spigotmc.org/resources/77506/updates");
             pp.sendMessage(boundary);
@@ -1061,15 +1064,16 @@ public class PlayerEventListener extends PlotListener implements Listener {
                 Material type = event.getMaterial();
 
                 // in the following, lb needs to have the material of the item in hand i.e. type
-                switch (type) {
-                    case REDSTONE:
-                    case STRING:
-                    case PUMPKIN_SEEDS:
-                    case MELON_SEEDS:
-                    case COCOA_BEANS:
-                    case WHEAT_SEEDS:
-                    case BEETROOT_SEEDS:
-                    case SWEET_BERRIES:
+                switch (type.toString()) {
+                    case "REDSTONE":
+                    case "STRING":
+                    case "PUMPKIN_SEEDS":
+                    case "MELON_SEEDS":
+                    case "COCOA_BEANS":
+                    case "WHEAT_SEEDS":
+                    case "BEETROOT_SEEDS":
+                    case "SWEET_BERRIES":
+                    case "GLOW_BERRIES":
                         return;
                     default:
                         //eventType = PlayerBlockEventType.PLACE_BLOCK;
@@ -1677,6 +1681,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
 
     @EventHandler
     public void onLocaleChange(final PlayerLocaleChangeEvent event) {
+        // The event is fired before the player is deemed online upon login
+        if (!event.getPlayer().isOnline()) {
+            return;
+        }
         BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
         // we're stripping the country code as we don't want to differ between countries
         player.setLocale(Locale.forLanguageTag(event.getLocale().substring(0, 2)));

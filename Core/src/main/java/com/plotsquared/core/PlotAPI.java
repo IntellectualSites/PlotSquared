@@ -57,7 +57,7 @@ import java.util.UUID;
  * <li>{@link PlotSquared}</li>
  * </ul>
  *
- * @version 5
+ * @version 6
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class PlotAPI {

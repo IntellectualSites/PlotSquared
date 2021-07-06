@@ -7,14 +7,14 @@ plugins {
     `java-library`
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("org.cadixdev.licenser") version "0.6.0"
+    id("org.cadixdev.licenser") version "0.6.1"
     id("org.ajoberstar.grgit") version "4.1.0"
 
     eclipse
     idea
 }
 
-var ver by extra("6.0.0")
+var ver by extra("6.0.6")
 var versuffix by extra("-SNAPSHOT")
 val versionsuffix: String? by project
 if (versionsuffix != null) {
@@ -40,12 +40,12 @@ allprojects {
         }
 
         maven {
-            name = "IntellectualSites Snapshots Repository"
-            url = uri("https://mvn.intellectualsites.com/content/repositories/snapshots")
+            name = "IntellectualSites"
+            url = uri("https://mvn.intellectualsites.com/content/groups/public/")
         }
 
         maven {
-            name = "EngineHub Repository"
+            name = "EngineHub"
             url = uri("https://maven.enginehub.org/repo/")
         }
     }
@@ -76,6 +76,7 @@ subprojects {
     }
 }
 
+val javadocDir = rootDir.resolve("docs").resolve("javadoc").resolve(project.name)
 allprojects {
     dependencies {
         // Tests
@@ -173,7 +174,6 @@ allprojects {
         }
     }
 
-    val javadocDir = rootDir.resolve("docs").resolve("javadoc").resolve(project.name)
     tasks {
         named<Delete>("clean") {
             doFirst {
@@ -215,5 +215,39 @@ allprojects {
         named("build") {
             dependsOn(named("shadowJar"))
         }
+    }
+}
+
+tasks {
+    val aggregatedJavadocs = create<Javadoc>("aggregatedJavadocs") {
+        title = "${project.name} ${project.version} API"
+        setDestinationDir(javadocDir)
+        options.destinationDirectory = javadocDir
+
+        doFirst {
+            javadocDir.deleteRecursively()
+        }
+    }.also {
+        it.group = "Documentation"
+        it.description = "Generate javadocs from all child projects as if it was a single project"
+    }
+
+    subprojects.forEach { subProject ->
+        subProject.afterEvaluate {
+            subProject.tasks.withType<Javadoc>().forEach { task ->
+                aggregatedJavadocs.source += task.source
+                aggregatedJavadocs.classpath += task.classpath
+                aggregatedJavadocs.excludes += task.excludes
+                aggregatedJavadocs.includes += task.includes
+
+                val rootOptions = aggregatedJavadocs.options as StandardJavadocDocletOptions
+                val subOptions = task.options as StandardJavadocDocletOptions
+                rootOptions.links(*subOptions.links.orEmpty().minus(rootOptions.links.orEmpty()).toTypedArray())
+            }
+        }
+    }
+
+    build {
+        dependsOn(aggregatedJavadocs)
     }
 }

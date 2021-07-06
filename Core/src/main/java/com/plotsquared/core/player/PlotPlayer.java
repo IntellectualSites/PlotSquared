@@ -68,14 +68,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.title.Title;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -83,6 +85,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -95,7 +98,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
 
     private static final String NON_EXISTENT_CAPTION = "<red>PlotSquared does not recognize the caption: ";
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotPlayer.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotPlayer.class.getSimpleName());
 
     // Used to track debug mode
     private static final Set<PlotPlayer<?>> debugModeEnabled =
@@ -126,14 +129,35 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
     }
 
     public static <T> PlotPlayer<T> from(final @NonNull T object) {
-        if (!converters.containsKey(object.getClass())) {
-            throw new IllegalArgumentException(String
-                    .format(
-                            "There is no registered PlotPlayer converter for type %s",
-                            object.getClass().getSimpleName()
-                    ));
+        // fast path
+        if (converters.containsKey(object.getClass())) {
+            return converters.get(object.getClass()).convert(object);
         }
-        return converters.get(object.getClass()).convert(object);
+        // slow path, meant to only run once per object#getClass instance
+        Queue<Class<?>> toVisit = new ArrayDeque<>();
+        toVisit.add(object.getClass());
+        Class<?> current;
+        while ((current = toVisit.poll()) != null) {
+            PlotPlayerConverter converter = converters.get(current);
+            if (converter != null) {
+                if (current != object.getClass()) {
+                    // register shortcut for this sub type to avoid further loops
+                    converters.put(object.getClass(), converter);
+                    LOGGER.info("Registered {} as with converter for {}", object.getClass(), current);
+                }
+                return converter.convert(object);
+            }
+            // no converter found yet
+            if (current.getSuperclass() != null) {
+                toVisit.add(current.getSuperclass()); // add super class if available
+            }
+            toVisit.addAll(Arrays.asList(current.getInterfaces())); // add interfaces
+        }
+        throw new IllegalArgumentException(String
+                .format(
+                        "There is no registered PlotPlayer converter for type %s",
+                        object.getClass().getSimpleName()
+                ));
     }
 
     public static <T> void registerConverter(
@@ -586,7 +610,7 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         if (Settings.Enabled_Components.BAN_DELETER && isBanned()) {
             for (Plot owned : getPlots()) {
                 owned.getPlotModificationManager().deletePlot(null, null);
-                logger.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
+                LOGGER.info("Plot {} was deleted + cleared due to {} getting banned", owned.getId(), getName());
             }
         }
         if (ExpireManager.IMP != null) {

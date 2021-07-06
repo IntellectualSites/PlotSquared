@@ -104,8 +104,10 @@ public class Clear extends Command {
                 .hasPermission(player, "plots.continue"), TranslatableCaption.of("done.done_already_done"));
         confirm.run(this, () -> {
             if (Settings.Teleport.ON_CLEAR) {
-                plot.teleportPlayer(player, TeleportCause.COMMAND, result -> {
-                });
+                plot.getPlayersInPlot().forEach(playerInPlot -> plot.teleportPlayer(playerInPlot, TeleportCause.COMMAND,
+                        result -> {
+                        }
+                ));
             }
             BackupManager.backup(player, plot, () -> {
                 final long start = System.currentTimeMillis();

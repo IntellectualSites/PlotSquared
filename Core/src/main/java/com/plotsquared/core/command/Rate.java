@@ -184,15 +184,33 @@ public class Rate extends SubCommand {
                             return true;
                         }
                     };
-                    inventory.setItem(0, new PlotItemStack(Settings.Ratings.BLOCK_0, 1, "0/8"));
-                    inventory.setItem(1, new PlotItemStack(Settings.Ratings.BLOCK_1, 1, "1/8"));
-                    inventory.setItem(2, new PlotItemStack(Settings.Ratings.BLOCK_2, 2, "2/8"));
-                    inventory.setItem(3, new PlotItemStack(Settings.Ratings.BLOCK_3, 3, "3/8"));
-                    inventory.setItem(4, new PlotItemStack(Settings.Ratings.BLOCK_4, 4, "4/8"));
-                    inventory.setItem(5, new PlotItemStack(Settings.Ratings.BLOCK_5, 5, "5/8"));
-                    inventory.setItem(6, new PlotItemStack(Settings.Ratings.BLOCK_6, 6, "6/8"));
-                    inventory.setItem(7, new PlotItemStack(Settings.Ratings.BLOCK_7, 7, "7/8"));
-                    inventory.setItem(8, new PlotItemStack(Settings.Ratings.BLOCK_8, 8, "8/8"));
+                    inventory.setItem(0, new PlotItemStack(Settings.Ratings.BLOCK_0, 1,
+                            TranslatableCaption.of("ratings.0-8").getComponent(player)
+                    ));
+                    inventory.setItem(1, new PlotItemStack(Settings.Ratings.BLOCK_1, 1,
+                            TranslatableCaption.of("ratings.1-8").getComponent(player)
+                    ));
+                    inventory.setItem(2, new PlotItemStack(Settings.Ratings.BLOCK_2, 2,
+                            TranslatableCaption.of("ratings.2-8").getComponent(player)
+                    ));
+                    inventory.setItem(3, new PlotItemStack(Settings.Ratings.BLOCK_3, 3,
+                            TranslatableCaption.of("ratings.3-8").getComponent(player)
+                    ));
+                    inventory.setItem(4, new PlotItemStack(Settings.Ratings.BLOCK_4, 4,
+                            TranslatableCaption.of("ratings.4-8").getComponent(player)
+                    ));
+                    inventory.setItem(5, new PlotItemStack(Settings.Ratings.BLOCK_5, 5,
+                            TranslatableCaption.of("ratings.5-8").getComponent(player)
+                    ));
+                    inventory.setItem(6, new PlotItemStack(Settings.Ratings.BLOCK_6, 6,
+                            TranslatableCaption.of("ratings.6-8").getComponent(player)
+                    ));
+                    inventory.setItem(7, new PlotItemStack(Settings.Ratings.BLOCK_7, 7,
+                            TranslatableCaption.of("ratings.7-8").getComponent(player)
+                    ));
+                    inventory.setItem(8, new PlotItemStack(Settings.Ratings.BLOCK_8, 8,
+                            TranslatableCaption.of("ratings.8-8").getComponent(player)
+                    ));
                     inventory.openInventory();
                 }
             };

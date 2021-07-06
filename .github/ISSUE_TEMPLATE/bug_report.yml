@@ -7,7 +7,8 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report for PlotSquared! Fill out the following form to your best ability to help us fix the problem.
-        Only use this if you're absolutely sure that you found a bug and can reproduce it. For anything else, use: [our Discord server](https://discord.gg/intellectualsites) or [the wiki](https://github.com/IntellectualSites/PlotSquared/wiki).
+        Only use this if you're absolutely sure that you found a bug and can reproduce it. For anything else, use: [our Discord server](https://discord.gg/intellectualsites) or [the wiki](https://github.com/IntellectualSites/PlotSquared-Documentation/wiki).
+        Do NOT use the public issue tracker to report security vulnerabilities! They are disclosed using [this](https://forms.gle/btgdRn9yhGtzEiGW8) form!
 
   - type: dropdown
     attributes:
@@ -28,6 +29,7 @@ body:
       description: Which server version version you using? If your server version is not listed, it is not supported. Update to a supported version first.
       multiple: false
       options:
+        - '1.17.1'
         - '1.16.5'
         - '1.15.2'
         - '1.14.4'

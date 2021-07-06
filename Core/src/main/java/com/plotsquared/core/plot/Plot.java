@@ -82,8 +82,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -124,7 +124,7 @@ public class Plot {
 
     public static final int MAX_HEIGHT = 256;
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + Plot.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Plot.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
 
@@ -328,7 +328,7 @@ public class Plot {
         if (arg == null) {
             if (player == null) {
                 if (message) {
-                    logger.info("No plot area string was supplied");
+                    LOGGER.info("No plot area string was supplied");
                 }
                 return null;
             }
@@ -1668,7 +1668,7 @@ public class Plot {
 
         if (updateDB) {
             if (!this.getPlotModificationManager().create(player.getUUID(), true)) {
-                logger.error("Player {} attempted to claim plot {}, but the database failed to update", player.getName(),
+                LOGGER.error("Player {} attempted to claim plot {}, but the database failed to update", player.getName(),
                         this.getId().toCommaSeparatedString()
                 );
                 return false;
@@ -2439,7 +2439,7 @@ public class Plot {
                 }
                 if (tmp) {
                     merge = true;
-                    bot = PlotId.of(bot.getX() - 1, bot.getX());
+                    bot = PlotId.of(bot.getX() - 1, bot.getY());
                 }
             }
             int minHeight = getArea().getMinBuildHeight();

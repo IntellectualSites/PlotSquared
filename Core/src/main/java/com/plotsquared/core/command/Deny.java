@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
@@ -92,14 +93,13 @@ public class Deny extends SubCommand {
             return true;
         }
 
-        if (!(player.hasPermission("plots.deny." + size) || Permissions.hasPermission(
-                player,
-                Permission.PERMISSION_ADMIN_COMMAND_DENY
-        ))) {
+        int maxDenySize = Permissions.hasPermissionRange(player, Permission.PERMISSION_DENY, Settings.Limit.MAX_PLOTS);
+        if (size > (maxDenySize - 1)) {
             player.sendMessage(
                     TranslatableCaption.of("members.plot_max_members_denied"),
                     Template.of("amount", String.valueOf(size))
             );
+            return false;
         }
 
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {

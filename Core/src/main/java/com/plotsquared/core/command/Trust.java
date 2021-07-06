@@ -136,11 +136,12 @@ public class Trust extends Command {
                     size += currentPlot.getMembers().contains(uuid) ? 0 : 1;
                 }
                 checkTrue(!uuids.isEmpty(), null);
+                int localTrustSize = currentPlot.getTrusted().size();
                 int maxTrustSize = Permissions.hasPermissionRange(player, Permission.PERMISSION_TRUST, Settings.Limit.MAX_PLOTS);
-                if (size > maxTrustSize) {
+                if (localTrustSize > maxTrustSize) {
                     player.sendMessage(
                             TranslatableCaption.of("members.plot_max_members_trusted"),
-                            Template.of("amount", String.valueOf(size - 1))
+                            Template.of("amount", String.valueOf(localTrustSize))
                     );
                     return;
                 }

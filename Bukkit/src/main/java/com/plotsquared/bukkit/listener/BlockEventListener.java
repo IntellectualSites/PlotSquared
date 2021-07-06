@@ -311,7 +311,7 @@ public class BlockEventListener implements Listener {
                     );
                     event.setCancelled(true);
                     plot.debug(player.getName() + " could not place " + event.getBlock().getType()
-                            + " because of the place flag");
+                            + " because of the place = false");
                     return;
                 }
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
@@ -457,6 +457,7 @@ public class BlockEventListener implements Listener {
                 break;
             case "WEEPING_VINES":
             case "TWISTING_VINES":
+            case "CAVE_VINES":
             case "VINE":
                 if (!plot.getFlag(VineGrowFlag.class)) {
                     plot.debug("Vine could not grow because vine-grow = false");
@@ -466,6 +467,11 @@ public class BlockEventListener implements Listener {
             case "KELP":
                 if (!plot.getFlag(KelpGrowFlag.class)) {
                     plot.debug("Kelp could not grow because kelp-grow = false");
+                    event.setCancelled(true);
+                }
+            case "BUDDING_AMETHYST":
+                if (!plot.getFlag(CropGrowFlag.class)) {
+                    plot.debug("Amethyst clusters could not grow because crop-grow = false");
                     event.setCancelled(true);
                 }
                 break;
@@ -947,8 +953,8 @@ public class BlockEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
         Material type = event.getItem().getType();
-        switch (type) {
-            case SHULKER_BOX, WHITE_SHULKER_BOX, ORANGE_SHULKER_BOX, MAGENTA_SHULKER_BOX, LIGHT_BLUE_SHULKER_BOX, YELLOW_SHULKER_BOX, LIME_SHULKER_BOX, PINK_SHULKER_BOX, GRAY_SHULKER_BOX, LIGHT_GRAY_SHULKER_BOX, CYAN_SHULKER_BOX, PURPLE_SHULKER_BOX, BLUE_SHULKER_BOX, BROWN_SHULKER_BOX, GREEN_SHULKER_BOX, RED_SHULKER_BOX, BLACK_SHULKER_BOX, CARVED_PUMPKIN, WITHER_SKELETON_SKULL, FLINT_AND_STEEL, BONE_MEAL, SHEARS, GLASS_BOTTLE, GLOWSTONE, COD_BUCKET, PUFFERFISH_BUCKET, SALMON_BUCKET, TROPICAL_FISH_BUCKET, BUCKET, WATER_BUCKET, LAVA_BUCKET -> {
+        switch (type.toString()) {
+            case "SHULKER_BOX", "WHITE_SHULKER_BOX", "ORANGE_SHULKER_BOX", "MAGENTA_SHULKER_BOX", "LIGHT_BLUE_SHULKER_BOX", "YELLOW_SHULKER_BOX", "LIME_SHULKER_BOX", "PINK_SHULKER_BOX", "GRAY_SHULKER_BOX", "LIGHT_GRAY_SHULKER_BOX", "CYAN_SHULKER_BOX", "PURPLE_SHULKER_BOX", "BLUE_SHULKER_BOX", "BROWN_SHULKER_BOX", "GREEN_SHULKER_BOX", "RED_SHULKER_BOX", "BLACK_SHULKER_BOX", "CARVED_PUMPKIN", "WITHER_SKELETON_SKULL", "FLINT_AND_STEEL", "BONE_MEAL", "SHEARS", "GLASS_BOTTLE", "GLOWSTONE", "COD_BUCKET", "PUFFERFISH_BUCKET", "SALMON_BUCKET", "TROPICAL_FISH_BUCKET", "AXOLOTL_BUCKET", "BUCKET", "WATER_BUCKET", "LAVA_BUCKET" -> {
                 if (event.getBlock().getType() == Material.DROPPER) {
                     return;
                 }

@@ -49,8 +49,8 @@ import java.util.Objects;
 public class Reload extends SubCommand {
 
     private final PlotAreaManager plotAreaManager;
-    private final YamlConfiguration worldConfiguration;
-    private final File worldFile;
+    private YamlConfiguration worldConfiguration;
+    private File worldFile;
 
     @Inject
     public Reload(
@@ -69,6 +69,8 @@ public class Reload extends SubCommand {
             // The following won't affect world generation, as that has to be
             // loaded during startup unfortunately.
             PlotSquared.get().setupConfigs();
+            this.worldConfiguration = PlotSquared.get().getWorldConfiguration();
+            this.worldFile = PlotSquared.get().getWorldsFile();
             PlotSquared.get().loadCaptionMap();
             this.plotAreaManager.forEachPlotArea(area -> {
                 ConfigurationSection worldSection = this.worldConfiguration

@@ -1,8 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Reporting Security Vulnerabilities
+    url: https://forms.gle/btgdRn9yhGtzEiGW8
+    about: Use this form to report security vulnerabilities. Do not use the public issue tracker.
   - name: IntellectualSites Discord
     url: https://discord.gg/intellectualsites
     about: Our support Discord, please ask questions and seek support here.
   - name: PlotSquared Wiki
-    url: https://github.com/IntellectualSites/PlotSquared/wiki
+    url: https://github.com/IntellectualSites/PlotSquared-Documentation/wiki
     about: Take a look at the wiki page for instructions how to setup PlotSquared and use its commands.

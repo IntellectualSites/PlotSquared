@@ -47,6 +47,7 @@ import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.DropProtectionFlag;
 import com.plotsquared.core.plot.flag.implementations.EntityCapFlag;
+import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.FarewellFlag;
 import com.plotsquared.core.plot.flag.implementations.FeedFlag;
@@ -191,6 +192,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(DenyPortalTravelFlag.DENY_PORTAL_TRAVEL_FALSE);
         this.addFlag(DenyPortalsFlag.DENY_PORTALS_FALSE);
         this.addFlag(LecternReadBookFlag.LECTERN_READ_BOOK_FALSE);
+        this.addFlag(EntityChangeBlockFlag.ENTITY_CHANGE_BLOCK_FALSE);
 
         // Enum Flags
         this.addFlag(WeatherFlag.PLOT_WEATHER_FLAG_OFF);

@@ -28,8 +28,8 @@ package com.plotsquared.core.configuration;
 import com.plotsquared.core.configuration.Settings.Enabled_Components;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.StringMan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -47,7 +47,7 @@ import java.util.Map;
 
 public class Config {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + Config.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Config.class.getSimpleName());
 
     /**
      * Get the value for a node<br>
@@ -98,12 +98,12 @@ public class Config {
                     field.set(instance, value);
                     return;
                 } catch (final Throwable e) {
-                    logger.error("Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
+                    LOGGER.error("Invalid configuration value '{}: {}' in {}", key, value, root.getSimpleName());
                     e.printStackTrace();
                 }
             }
         }
-        logger.error("Failed to set config option '{}: {}' | {}", key, value, instance);
+        LOGGER.error("Failed to set config option '{}: {}' | {}", key, value, instance);
     }
 
     public static boolean load(File file, Class<? extends Config> root) {
@@ -287,7 +287,7 @@ public class Config {
             setAccessible(field);
             return field;
         } catch (final Throwable e) {
-            logger.error("Invalid config field: {} for {}. It's likely you are in the process of updating from an older major " +
+            LOGGER.error("Invalid config field: {} for {}. It's likely you are in the process of updating from an older major " +
                             "release of PlotSquared. The entries named can be removed safely from the settings.yml. They are " +
                             "likely no longer in use, moved to a different location or have been merged with other " +
                             "configuration options. Check the changelog for more information.",

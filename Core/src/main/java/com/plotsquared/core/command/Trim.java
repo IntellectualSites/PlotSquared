@@ -47,8 +47,8 @@ import com.plotsquared.core.util.task.TaskTime;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,7 +62,7 @@ import java.util.Set;
         category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + Trim.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Trim.class.getSimpleName());
     private static volatile boolean TASK = false;
 
     private final PlotAreaManager plotAreaManager;
@@ -152,16 +152,16 @@ public class Trim extends SubCommand {
             public void run(Set<BlockVector2> viable, final Set<BlockVector2> nonViable) {
                 Runnable regenTask;
                 if (regen) {
-                    logger.info("Starting regen task");
-                    logger.info(" - This is a VERY slow command");
-                    logger.info(" - It will say 'Trim done!' when complete");
+                    LOGGER.info("Starting regen task");
+                    LOGGER.info(" - This is a VERY slow command");
+                    LOGGER.info(" - It will say 'Trim done!' when complete");
                     regenTask = new Runnable() {
                         @Override
                         public void run() {
                             if (nonViable.isEmpty()) {
                                 Trim.TASK = false;
                                 player.sendMessage(TranslatableCaption.of("trim.trim_done"));
-                                logger.info("Trim done!");
+                                LOGGER.info("Trim done!");
                                 return;
                             }
                             Iterator<BlockVector2> iterator = nonViable.iterator();
@@ -212,7 +212,7 @@ public class Trim extends SubCommand {
                     regenTask = () -> {
                         Trim.TASK = false;
                         player.sendMessage(TranslatableCaption.of("trim.trim_done"));
-                        logger.info("Trim done!");
+                        LOGGER.info("Trim done!");
                     };
                 }
                 regionManager.deleteRegionFiles(world, viable, regenTask);

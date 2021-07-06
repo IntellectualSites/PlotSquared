@@ -5,17 +5,11 @@ dependencies {
     compileOnlyApi(libs.checkerqual)
 
     // Minecraft expectations
-    compileOnlyApi(libs.guava) {
-        because("Minecraft uses 21.0")
-    }
-    compileOnlyApi(libs.gson) {
-        because("Minecraft uses 2.8.0")
-    }
+    compileOnlyApi(libs.guava)
+    compileOnlyApi(libs.gson)
 
     // Platform expectations
-    compileOnlyApi(libs.snakeyaml) {
-        because("Bukkit uses 1.27")
-    }
+    compileOnlyApi(libs.snakeyaml)
 
     // Adventure
     api(libs.adventure)
@@ -37,13 +31,11 @@ dependencies {
         exclude(group = "dummypermscompat")
     }
     testImplementation(libs.worldeditCore)
+    compileOnlyApi(libs.fastasyncworldeditBukkit)
+    testImplementation(libs.fastasyncworldeditBukkit)
 
     // Logging
-    api(libs.slf4j)
-    runtimeOnly(libs.log4j) {
-        exclude(group = "org.slf4j")
-        because("Minecraft uses 2.8.1")
-    }
+    compileOnlyApi(libs.log4j)
 
     // Other libraries
     api(libs.prtree)

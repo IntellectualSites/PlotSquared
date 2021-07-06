@@ -35,8 +35,8 @@ import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.NBTOutputStream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -52,7 +52,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public class PlotUploader {
 
-    private static final Logger logger = LoggerFactory.getLogger("P2/" + PlotUploader.class.getSimpleName());
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotUploader.class.getSimpleName());
     private static final Path TEMP_DIR = Paths.get(PlotSquared.platform().getDirectory().getPath());
     private final SchematicHandler schematicHandler;
     private final Arkitektonika arkitektonika;
@@ -104,13 +104,13 @@ public class PlotUploader {
             final CompletableFuture<SchematicKeys> upload = this.arkitektonika.upload(file.toFile());
             return upload.join();
         } catch (CompletionException e) {
-            logger.error("Failed to upload schematic", e);
+            LOGGER.error("Failed to upload schematic", e);
             return null;
         } finally {
             try {
                 Files.delete(file);
             } catch (IOException e) {
-                logger.error("Failed to delete temporary file {}", file, e);
+                LOGGER.error("Failed to delete temporary file {}", file, e);
             }
         }
     }
