@@ -575,6 +575,7 @@
   "flags.flag_description_redstone": "<gray>Set to `false` to disable redstone in the plot.</gray>",
   "flags.flag_description_server_plot": "<gray>Set to `true` to turn the plot into a server plot. This is equivalent to setting the server as the plot owner.</gray>",
   "flags.flag_description_snow_form": "<gray>Set to `true` to allow snow to form within the plot.</gray>",
+  "flags.flag_description_copper_oxide": "<gray>Set to `true` to allow copper to oxide within the plot.</gray>",
   "flags.flag_description_snow_melt": "<gray>Set to `true` to allow snow to melt within the plot.</gray>",
   "flags.flag_description_soil_dry": "<gray>Set to `true` to allow soil to dry within the plot.</gray>",
   "flags.flag_description_coral_dry": "<gray>Set to `true` to allow coral blocks to dry within the plot.</gray>",
