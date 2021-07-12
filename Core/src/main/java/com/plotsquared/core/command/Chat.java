@@ -30,9 +30,7 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 
 /**
- * @deprecated Deprecated in favor of "/plot toggle wea" and scheduled for removal within the next major release.
- * <br>
- * Other command aliases are "/plot toggle worldedit", "/plot toggle we".
+ * @deprecated Deprecated in favor of "/plot toggle chat" and scheduled for removal within the next major release.
  */
 @Deprecated(forRemoval = true)
 @CommandDeclaration(command = "chat",
