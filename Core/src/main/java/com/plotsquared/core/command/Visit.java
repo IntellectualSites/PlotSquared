@@ -245,7 +245,15 @@ public class Visit extends Command {
                     });
                     break;
                 }
-                page = Integer.parseInt(args[1]);
+                try {
+                    page = Integer.parseInt(args[1]);
+                } catch (NumberFormatException ignored) {
+                    player.sendMessage(
+                            TranslatableCaption.of("invalid.not_a_number"),
+                            Template.of("value", args[1])
+                    );
+                    return CompletableFuture.completedFuture(false);
+                }
                 // /p v <name> [page]
                 // /p v <uuid> [page]
                 // /p v <plot> [page]
