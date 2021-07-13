@@ -1300,6 +1300,7 @@ public class PlotSquared {
                 area.loadDefaultConfiguration(section);
             }
             this.clustersTmp = DBFunc.getClusters();
+            LOGGER.info("Connection to database established. Type: {}", Storage.MySQL.USE ? "MySQL" : "SQLite");
         } catch (ClassNotFoundException | SQLException e) {
             LOGGER.error(
                     "Failed to open database connection ({}). Disabling PlotSquared",
