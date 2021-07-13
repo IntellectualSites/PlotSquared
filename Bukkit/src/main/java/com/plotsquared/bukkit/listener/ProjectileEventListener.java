@@ -63,18 +63,6 @@ public class ProjectileEventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPotionSplash(LingeringPotionSplashEvent event) {
-        Projectile entity = event.getEntity();
-        Location location = BukkitUtil.adapt(entity.getLocation());
-        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
-            return;
-        }
-        if (!this.onProjectileHit(event)) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPotionSplash(PotionSplashEvent event) {
         ThrownPotion damager = event.getPotion();
         Location location = BukkitUtil.adapt(damager.getLocation());
@@ -88,7 +76,7 @@ public class ProjectileEventListener implements Listener {
                 count++;
             }
         }
-        if ((count > 0 && count == event.getAffectedEntities().size()) || !onProjectileHit(event)) {
+        if (count > 0 && count == event.getAffectedEntities().size()) {
             event.setCancelled(true);
         }
     }
@@ -115,17 +103,16 @@ public class ProjectileEventListener implements Listener {
         }
     }
 
-    @SuppressWarnings({"BooleanMethodIsAlwaysInverted", "cos it's not... dum IntelliJ"})
     @EventHandler
-    public boolean onProjectileHit(ProjectileHitEvent event) {
+    public void onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
         Location location = BukkitUtil.adapt(entity.getLocation());
         if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
-            return true;
+            return;
         }
         PlotArea area = location.getPlotArea();
         if (area == null) {
-            return true;
+            return;
         }
         Plot plot = area.getPlot(location);
         ProjectileSource shooter = entity.getShooter();
@@ -134,35 +121,38 @@ public class ProjectileEventListener implements Listener {
             if (plot == null) {
                 if (!Permissions.hasPermission(pp, Permission.PERMISSION_PROJECTILE_UNOWNED)) {
                     entity.remove();
-                    return false;
+                    event.setCancelled(true);
                 }
-                return true;
+                return;
             }
             if (plot.isAdded(pp.getUUID()) || Permissions
                     .hasPermission(pp, Permission.PERMISSION_PROJECTILE_OTHER)) {
-                return true;
+                return;
             }
             entity.remove();
-            return false;
+            event.setCancelled(true);
+            return;
         }
         if (!(shooter instanceof Entity) && shooter != null) {
             if (plot == null) {
                 entity.remove();
-                return false;
+                event.setCancelled(true);
+                return;
             }
             Location sLoc =
                     BukkitUtil.adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
             if (!area.contains(sLoc.getX(), sLoc.getZ())) {
                 entity.remove();
-                return false;
+                event.setCancelled(true);
+                return;
             }
             Plot sPlot = area.getOwnedPlotAbs(sLoc);
             if (sPlot == null || !PlotHandler.sameOwners(plot, sPlot)) {
                 entity.remove();
-                return false;
+                event.setCancelled(true);
+                return;
             }
         }
-        return true;
     }
 
 }
