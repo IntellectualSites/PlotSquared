@@ -31,6 +31,7 @@ import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.flag.implementations.CopperOxideFlag;
 import com.plotsquared.core.plot.flag.implementations.MiscInteractFlag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -40,6 +41,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFertilizeEvent;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockReceiveGameEvent;
 
 import java.util.List;
@@ -134,6 +136,46 @@ public class BlockEventListener117 implements Listener {
             if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
                 event.getBlocks().remove(i);
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockForm(BlockFormEvent event) {
+        Block block = event.getBlock();
+        Location location = BukkitUtil.adapt(block.getLocation());
+        if (location.isPlotRoad()) {
+            event.setCancelled(true);
+            return;
+        }
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        Plot plot = area.getOwnedPlot(location);
+        if (plot == null) {
+            return;
+        }
+        switch (event.getNewState().getType()) {
+            case COPPER_BLOCK:
+            case EXPOSED_COPPER:
+            case WEATHERED_COPPER:
+            case OXIDIZED_COPPER:
+            case CUT_COPPER:
+            case EXPOSED_CUT_COPPER:
+            case WEATHERED_CUT_COPPER:
+            case OXIDIZED_CUT_COPPER:
+            case CUT_COPPER_STAIRS:
+            case EXPOSED_CUT_COPPER_STAIRS:
+            case WEATHERED_CUT_COPPER_STAIRS:
+            case OXIDIZED_CUT_COPPER_STAIRS:
+            case CUT_COPPER_SLAB:
+            case EXPOSED_CUT_COPPER_SLAB:
+            case WEATHERED_CUT_COPPER_SLAB:
+            case OXIDIZED_CUT_COPPER_SLAB:
+                if (!plot.getFlag(CopperOxideFlag.class)) {
+                    plot.debug("Copper could not oxide because copper-oxide = false");
+                    event.setCancelled(true);
+                }
         }
     }
 

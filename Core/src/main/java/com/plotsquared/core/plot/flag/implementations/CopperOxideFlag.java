@@ -23,33 +23,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.command;
+package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.player.PlotPlayer;
-import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.flag.types.BooleanFlag;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-/**
- * @deprecated Deprecated in favor of "/plot toggle chat" and scheduled for removal within the next major release.
- */
-@Deprecated(forRemoval = true)
-@CommandDeclaration(command = "chat",
-        usage = "/plot chat",
-        permission = "plots.chat",
-        category = CommandCategory.CHAT,
-        requiredType = RequiredType.PLAYER)
-public class Chat extends SubCommand {
+public class CopperOxideFlag extends BooleanFlag<CopperOxideFlag> {
+
+    public static final CopperOxideFlag COPPER_OXIDE_TRUE = new CopperOxideFlag(true);
+    public static final CopperOxideFlag COPPER_OXIDE_FALSE = new CopperOxideFlag(false);
+
+    private CopperOxideFlag(boolean value) {
+        super(value, TranslatableCaption.of("flags.flag_description_copper_oxide"));
+    }
 
     @Override
-    public boolean onCommand(PlotPlayer<?> player, String[] args) {
-        PlotArea area = player.getPlotAreaAbs();
-        check(area, TranslatableCaption.of("errors.not_in_plot_world"));
-        if (player.getPlotAreaAbs().isForcingPlotChat()) {
-            player.sendMessage(TranslatableCaption.of("chat.plot_chat_forced"));
-            return true;
-        }
-        MainCommand.getInstance().toggle.chat(this, player, args, null, null);
-        return true;
+    protected CopperOxideFlag flagOf(@NonNull Boolean value) {
+        return value ? COPPER_OXIDE_TRUE : COPPER_OXIDE_FALSE;
     }
 
 }

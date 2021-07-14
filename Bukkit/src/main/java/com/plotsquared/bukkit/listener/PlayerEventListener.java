@@ -383,6 +383,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
+        //We need to account for bad plugins like NoCheatPlus that teleports player on/before login -_-
+        if (!player.isOnline()) {
+            return;
+        }
         BukkitPlayer pp = BukkitUtil.adapt(player);
         try (final MetaDataAccess<Plot> lastPlotAccess =
                      pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {

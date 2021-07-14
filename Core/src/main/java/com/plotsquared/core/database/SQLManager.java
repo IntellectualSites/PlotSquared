@@ -394,7 +394,7 @@ public class SQLManager implements AbstractDB {
             }
             int count = -1;
             if (!this.plotTasks.isEmpty()) {
-                count = 0;
+                count = Math.max(count, 0);
                 if (this.connection.getAutoCommit()) {
                     this.connection.setAutoCommit(false);
                 }
@@ -450,7 +450,7 @@ public class SQLManager implements AbstractDB {
                 }
             }
             if (!this.playerTasks.isEmpty()) {
-                count = 0;
+                count = Math.max(count, 0);
                 if (this.connection.getAutoCommit()) {
                     this.connection.setAutoCommit(false);
                 }
@@ -495,7 +495,7 @@ public class SQLManager implements AbstractDB {
                 }
             }
             if (!this.clusterTasks.isEmpty()) {
-                count = 0;
+                count = Math.max(count, 0);
                 if (this.connection.getAutoCommit()) {
                     this.connection.setAutoCommit(false);
                 }
