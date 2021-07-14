@@ -365,7 +365,7 @@ public abstract class SchematicHandler {
                 if (yy > 255 || yy < 0) {
                     continue;
                 }
-                for (int rz = 0; rz <= blockArrayClipboard.getDimensions().getZ(); rz++) {
+                for (int rz = 0; rz < blockArrayClipboard.getDimensions().getZ(); rz++) {
                     for (int rx = 0; rx < blockArrayClipboard.getDimensions().getX(); rx++) {
                         int xx = p1x + rx;
                         int zz = p1z + rz;
