@@ -64,6 +64,8 @@ public class ProjectileEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onLingeringPotionSplash(LingeringPotionSplashEvent event) {
+        // Cancelling projectile hit events still results in area effect clouds.
+        // We need to cancel the splash events to get rid of those.
         onProjectileHit(event);
     }
 
@@ -84,6 +86,9 @@ public class ProjectileEventListener implements Listener {
         if (count > 0 && count == event.getAffectedEntities().size()) {
             event.setCancelled(true);
         } else {
+            // Cancelling projectile hit events still results in potions
+            // splashing in the world. We need to cancel the splash events to
+            // avoid that.
             onProjectileHit(event);
         }
     }
