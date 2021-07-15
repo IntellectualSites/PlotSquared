@@ -26,25 +26,37 @@
 package com.plotsquared.bukkit.listener;
 
 import com.google.inject.Inject;
+import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.location.Location;
+import com.plotsquared.core.permissions.Permission;
+import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotHandler;
 import com.plotsquared.core.plot.flag.implementations.DisablePhysicsFlag;
 import com.plotsquared.core.plot.flag.implementations.EntityChangeBlockFlag;
 import com.plotsquared.core.plot.flag.implementations.ExplosionFlag;
 import com.plotsquared.core.plot.flag.implementations.InvincibleFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
+import com.plotsquared.core.util.EventDispatcher;
+import com.plotsquared.core.util.Permissions;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.world.block.BlockType;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
@@ -61,6 +73,8 @@ import org.bukkit.event.vehicle.VehicleCreateEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.projectiles.BlockProjectileSource;
+import org.bukkit.projectiles.ProjectileSource;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Iterator;
@@ -70,11 +84,16 @@ import java.util.List;
 public class EntityEventListener implements Listener {
 
     private final PlotAreaManager plotAreaManager;
+    private final EventDispatcher eventDispatcher;
     private float lastRadius;
 
     @Inject
-    public EntityEventListener(final @NonNull PlotAreaManager plotAreaManager) {
+    public EntityEventListener(
+            final @NonNull PlotAreaManager plotAreaManager,
+            final @NonNull EventDispatcher eventDispatcher
+    ) {
         this.plotAreaManager = plotAreaManager;
+        this.eventDispatcher = eventDispatcher;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -310,16 +329,92 @@ public class EntityEventListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPeskyMobsChangeTheWorldLikeWTFEvent(EntityChangeBlockEvent event) {
         Entity e = event.getEntity();
-        if (!(e instanceof FallingBlock)) {
-            Location location = BukkitUtil.adapt(event.getBlock().getLocation());
-            PlotArea area = location.getPlotArea();
-            if (area != null) {
-                Plot plot = area.getOwnedPlot(location);
-                if (plot != null && !plot.getFlag(EntityChangeBlockFlag.class)) {
-                    plot.debug(e.getType() + " could not change block because entity-change-block = false");
+        Material type = event.getBlock().getType();
+        Location location = BukkitUtil.adapt(event.getBlock().getLocation());
+        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
+            return;
+        }
+        PlotArea area = location.getPlotArea();
+        if (area == null) {
+            return;
+        }
+        if (e instanceof FallingBlock) {
+            // allow falling blocks converting to blocks and vice versa
+            return;
+        } else if (e instanceof Boat) {
+            // allow boats destroying lily pads
+            if (type == Material.LILY_PAD) {
+                return;
+            }
+        } else if (e instanceof Player player) {
+            BukkitPlayer pp = BukkitUtil.adapt(player);
+            if (type.toString().equals("POWDER_SNOW")) {
+                // Burning player evaporating powder snow. Use same checks as
+                // trampling farmland
+                BlockType blockType = BukkitAdapter.asBlockType(type);
+                if (!this.eventDispatcher.checkPlayerBlockEvent(pp,
+                        PlayerBlockEventType.TRIGGER_PHYSICAL, location, blockType, true)) {
                     event.setCancelled(true);
                 }
+                return;
+            } else {
+                // already handled by other flags (mainly the 'use' flag):
+                // - player tilting big dripleaf by standing on it
+                // - player picking glow berries from cave vine
+                // - player trampling farmland
+                // - player standing on or clicking redstone ore
+                return;
             }
+        } else if (e instanceof Projectile entity) {
+            // Exact same as the ProjectileHitEvent listener, except that we let
+            // the entity-change-block determine what to do with shooters that
+            // aren't players and aren't blocks
+            Plot plot = area.getPlot(location);
+            ProjectileSource shooter = entity.getShooter();
+            if (shooter instanceof Player) {
+                PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
+                if (plot == null) {
+                    if (!Permissions.hasPermission(pp, Permission.PERMISSION_PROJECTILE_UNOWNED)) {
+                        entity.remove();
+                        event.setCancelled(true);
+                    }
+                    return;
+                }
+                if (plot.isAdded(pp.getUUID()) || Permissions
+                        .hasPermission(pp, Permission.PERMISSION_PROJECTILE_OTHER)) {
+                    return;
+                }
+                entity.remove();
+                event.setCancelled(true);
+                return;
+            }
+            if (!(shooter instanceof Entity) && shooter != null) {
+                if (plot == null) {
+                    entity.remove();
+                    event.setCancelled(true);
+                    return;
+                }
+                Location sLoc =
+                        BukkitUtil.adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
+                if (!area.contains(sLoc.getX(), sLoc.getZ())) {
+                    entity.remove();
+                    event.setCancelled(true);
+                    return;
+                }
+                Plot sPlot = area.getOwnedPlotAbs(sLoc);
+                if (sPlot == null || !PlotHandler.sameOwners(plot, sPlot)) {
+                    entity.remove();
+                    event.setCancelled(true);
+                }
+                return;
+            }
+            // fall back to entity-change-block flag
+        }
+
+        Plot plot = area.getOwnedPlot(location);
+        if (plot != null && !plot.getFlag(EntityChangeBlockFlag.class)) {
+            plot.debug(e.getType() + " could not change block because entity-change-block = false");
+            event.setCancelled(true);
         }
     }
 
