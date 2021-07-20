@@ -331,9 +331,6 @@ public class EntityEventListener implements Listener {
         Entity e = event.getEntity();
         Material type = event.getBlock().getType();
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
-        if (!this.plotAreaManager.hasPlotArea(location.getWorldName())) {
-            return;
-        }
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
