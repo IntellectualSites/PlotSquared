@@ -80,23 +80,12 @@ public class Visit extends Command {
         // then we get it another time further on
         final List<Plot> unsorted = query.asList();
 
-        if (unsorted.isEmpty()) {
-            player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
-            return;
-        }
-
         if (unsorted.size() > 1) {
             query.whereBasePlot();
         }
 
         if (page == Integer.MIN_VALUE) {
             page = 1;
-        }
-
-        if (page < 1 || page > unsorted.size()) {
-            // TODO: Huh?
-            // MainUtil.sendMessage(player, String.format("(1, %d)", unsorted.size()));
-            return;
         }
 
         PlotArea relativeArea = sortByArea;
@@ -111,6 +100,18 @@ public class Visit extends Command {
         }
 
         final List<Plot> plots = query.asList();
+
+        if (plots.isEmpty()) {
+            player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
+            return;
+        } else if (plots.size() < page || page < 1) {
+            player.sendMessage(
+                    TranslatableCaption.of("invalid.number_not_in_range"),
+                    Template.of("min", "1"),
+                    Template.of("max", String.valueOf(plots.size()))
+            );
+            return;
+        }
 
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
