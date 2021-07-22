@@ -2785,6 +2785,9 @@ public class Plot {
                     String description = this.getFlag(DescriptionFlag.class);
                     if (description.isEmpty()) {
                         description = TranslatableCaption.of("info.plot_no_description").getComponent(player);
+                    } else if (Settings.Chat.REMOVE_USER_DEFINED_CLICK_EVENTS) {
+                        description = description.replaceAll(".([c-lC-L]{5}):([a-uA-U_]{11}):[^\\/]*[^>]*>", "").replace("</click>",
+                                "");
                     }
 
                     Component flags;

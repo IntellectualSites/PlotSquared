@@ -498,6 +498,11 @@ public class Settings extends Config {
                 "notify-enter, notify-leave, greeting or farewell flag."})
         public static boolean NOTIFICATION_AS_ACTIONBAR = false;
 
+        @Comment({"Whether to strip any possible <click_event> components from user-defined messages, e.g. plot greeting",
+                "This can allow players to use commands to give themselves ranks as commands ran in this fashion cannot be prevent by " +
+                        "permissions etc."})
+        public static boolean REMOVE_USER_DEFINED_CLICK_EVENTS = true;
+
     }
 
 
