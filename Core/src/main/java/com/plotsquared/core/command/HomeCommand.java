@@ -76,7 +76,7 @@ public class HomeCommand extends Command {
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
             return;
-        } else if (plots.size() < page) {
+        } else if (plots.size() < page || page < 1) {
             player.sendMessage(
                     TranslatableCaption.of("invalid.number_not_in_range"),
                     Template.of("min", "1"),
