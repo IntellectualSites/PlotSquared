@@ -182,6 +182,11 @@ public class Visit extends Command {
             final RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) throws CommandException {
+        if (args.length > 3) {
+            sendUsage(player);
+            return CompletableFuture.completedFuture(false);
+        }
+
         if (args.length == 1 && args[0].contains(":")) {
             args = args[0].split(":");
         }
