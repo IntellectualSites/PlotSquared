@@ -14,7 +14,7 @@ guice = "5.0.1"
 findbugs = "3.0.1"
 
 worldedit = "7.2.6-SNAPSHOT"
-fawe = "1.17-60"
+fawe = "1.17-74"
 vault = "1.7"
 placeholderapi = "2.10.9"
 luckperms = "5.3"
