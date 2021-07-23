@@ -14,7 +14,7 @@ guice = "5.0.1"
 findbugs = "3.0.1"
 
 worldedit = "7.2.6-SNAPSHOT"
-fawe = "1.17-15"
+fawe = "1.17-60"
 vault = "1.7"
 placeholderapi = "2.10.9"
 luckperms = "5.3"
@@ -65,6 +65,7 @@ findbugs = { group = "com.google.code.findbugs", name = "annotations", version.r
 worldeditCore = { group = "com.sk89q.worldedit", name = "worldedit-core", version.ref = "worldedit" }
 worldeditBukkit = { group = "com.sk89q.worldedit", name = "worldedit-bukkit", version.ref = "worldedit" }
 fastasyncworldeditBukkit = { group = "com.fastasyncworldedit", name = "FAWE-Bukkit", version.ref = "fawe" }
+fastasyncworldeditCore = { group = "com.fastasyncworldedit", name = "FAWE-Core", version.ref = "fawe" }
 vault = { group = "com.github.MilkBowl", name = "VaultAPI", version.ref = "vault" }
 placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
 luckperms = { group = "net.luckperms", name = "api", version.ref = "luckperms" }
