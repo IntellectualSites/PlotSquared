@@ -526,7 +526,7 @@ public abstract class SchematicHandler {
             TaskManager.runTask(whenDone);
             return;
         }
-        upload(uuid, file, "schem", new RunnableVal<OutputStream>() {
+        upload(uuid, file, "schem", new RunnableVal<>() {
             @Override
             public void run(OutputStream output) {
                 try (NBTOutputStream nos = new NBTOutputStream(new GZIPOutputStream(output, true))) {

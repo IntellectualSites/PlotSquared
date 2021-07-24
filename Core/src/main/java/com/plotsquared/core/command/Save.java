@@ -39,12 +39,18 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.SchematicHandler;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
+import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * @deprecated In favor of "/plot download" (Arkitektonika) and scheduled
+ *         for removal within the next major release.
+ */
+@Deprecated(forRemoval = true)
 @CommandDeclaration(command = "save",
         category = CommandCategory.SCHEMATIC,
         requiredType = RequiredType.NONE,
@@ -106,7 +112,7 @@ public class Save extends SubCommand {
                                 .replaceAll("[^A-Za-z0-9]", "");
                         final String file = time + '_' + world1 + '_' + id.getX() + '_' + id.getY() + '_' + size;
                         UUID uuid = player.getUUID();
-                        schematicHandler.upload(compoundTag, uuid, file, new RunnableVal<URL>() {
+                        schematicHandler.upload(compoundTag, uuid, file, new RunnableVal<>() {
                             @Override
                             public void run(URL url) {
                                 plot.removeRunning();
@@ -115,6 +121,10 @@ public class Save extends SubCommand {
                                     return;
                                 }
                                 player.sendMessage(TranslatableCaption.of("web.save_success"));
+                                player.sendMessage(
+                                        TranslatableCaption.of("errors.deprecated_commands"),
+                                        Template.of("replacement", "/plot download")
+                                );
                                 try (final MetaDataAccess<List<String>> schematicAccess =
                                              player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
                                     schematicAccess.get().ifPresent(schematics -> schematics.add(file + ".schem"));

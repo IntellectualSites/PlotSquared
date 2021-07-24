@@ -311,6 +311,7 @@
   "errors.not_implemented": "<prefix><red>Not implemented.</red>",
   "errors.stacktrace_begin": "<red>=== Begin of stacktrace ===</red>",
   "errors.stacktrace_end": "<red>=== End of stacktrace ===</red>",
+  "errors.deprecated_commands": "<prefix><red>You are using a deprecated command scheduled for removal within the next major release of PlotSquared. Consider using the proper alternative: <red><gold><replacement></gold>",
   "debugpaste.latest_log": "<red><file> is larger than <size>. Please reboot the server and submit a new paste.",
   "debugpaste.empty_file": "<red>Skipping <file> because it's empty.",
   "debugpaste.skip_multiverse": "<red>Skipping Multiverse <file> because it's not in use.",
