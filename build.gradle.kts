@@ -81,6 +81,7 @@ allprojects {
     dependencies {
         // Tests
         testImplementation("junit:junit:4.13.2")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.7.2")
     }
 
     plugins.withId("java") {
@@ -215,7 +216,11 @@ allprojects {
         named("build") {
             dependsOn(named("shadowJar"))
         }
+        test {
+            useJUnitPlatform()
+        }
     }
+
 }
 
 tasks {
