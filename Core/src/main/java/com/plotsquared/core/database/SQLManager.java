@@ -30,6 +30,7 @@ import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.Storage;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.listener.PlotListener;
@@ -2033,7 +2034,7 @@ public class SQLManager implements AbstractDB {
                     while (resultSet.next()) {
                         id = resultSet.getInt("plot_id");
                         final String flag = resultSet.getString("flag");
-                        final String value = resultSet.getString("value");
+                        String value = resultSet.getString("value");
                         final Plot plot = plots.get(id);
                         if (plot != null) {
                             final PlotFlag<?, ?> plotFlag =
@@ -2041,6 +2042,7 @@ public class SQLManager implements AbstractDB {
                             if (plotFlag == null) {
                                 plot.getFlagContainer().addUnknownFlag(flag, value);
                             } else {
+                                value = CaptionUtility.stripClickEvents(plotFlag, value);
                                 try {
                                     plot.getFlagContainer().addFlag(plotFlag.parse(value));
                                 } catch (final FlagParseException e) {

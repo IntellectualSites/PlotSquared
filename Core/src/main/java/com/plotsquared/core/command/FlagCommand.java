@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -335,10 +336,11 @@ public final class FlagCommand extends Command {
             return;
         }
         boolean force = event.getEventResult() == Result.FORCE;
-        final String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
+        String value = StringMan.join(Arrays.copyOfRange(args, 1, args.length), " ");
         if (!force && !checkPermValue(player, plotFlag, args[0], value)) {
             return;
         }
+        value = CaptionUtility.stripClickEvents(plotFlag, value);
         final PlotFlag<?, ?> parsed;
         try {
             parsed = plotFlag.parse(value);

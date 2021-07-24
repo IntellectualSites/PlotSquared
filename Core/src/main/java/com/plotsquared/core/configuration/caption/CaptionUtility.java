@@ -25,11 +25,41 @@
  */
 package com.plotsquared.core.configuration.caption;
 
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.player.PlotPlayer;
+import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
+import com.plotsquared.core.plot.flag.implementations.FarewellFlag;
+import com.plotsquared.core.plot.flag.implementations.GreetingFlag;
+import com.plotsquared.core.plot.flag.types.StringFlag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.Set;
+
+import static com.plotsquared.core.configuration.caption.ComponentTransform.nested;
+import static com.plotsquared.core.configuration.caption.ComponentTransform.stripClicks;
+
 public class CaptionUtility {
+
+    // flags which values are parsed by minimessage
+    private static final Set<Class<? extends StringFlag<?>>> MINI_MESSAGE_FLAGS = Set.of(
+            GreetingFlag.class,
+            FarewellFlag.class,
+            DescriptionFlag.class
+    );
+
+    private static final ComponentTransform CLICK_STRIP_TRANSFORM = nested(
+            stripClicks(
+                    Settings.Chat.CLICK_EVENT_ACTIONS_TO_REMOVE.stream()
+                            .map(ClickEvent.Action::valueOf)
+                            .toArray(ClickEvent.Action[]::new)
+            )
+    );
+
 
     /**
      * Format a chat message but keep the formatting keys
@@ -64,6 +94,23 @@ public class CaptionUtility {
             chatFormatter.format(chatContext);
         }
         return chatContext.getMessage();
+    }
+
+    public static String stripClickEvents(final @NonNull String miniMessageString) {
+        // parse, transform and serialize again
+        Component component = MiniMessage.get().parse(miniMessageString);
+        component = CLICK_STRIP_TRANSFORM.transform(component);
+        return MiniMessage.get().serialize(component);
+    }
+
+    public static String stripClickEvents(
+            final @NonNull PlotFlag<?, ?> flag,
+            final @NonNull String miniMessageString
+    ) {
+        if (MINI_MESSAGE_FLAGS.contains(flag.getClass())) {
+            return stripClickEvents(miniMessageString);
+        }
+        return miniMessageString;
     }
 
 }
