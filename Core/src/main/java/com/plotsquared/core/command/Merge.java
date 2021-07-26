@@ -277,7 +277,8 @@ public class Merge extends SubCommand {
                 CmdConfirm.addPending(accepter, MINI_MESSAGE.serialize(MINI_MESSAGE
                                 .parse(
                                         TranslatableCaption.of("merge.merge_request_confirm").getComponent(player),
-                                        Template.of("player", player.getName())
+                                        Template.of("player", player.getName()),
+                                        Template.of("location", plot.getWorldName() + ";" + plot.getId())
                                 )),
                         run
                 );
