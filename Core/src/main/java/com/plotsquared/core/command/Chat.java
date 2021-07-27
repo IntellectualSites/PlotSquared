@@ -28,9 +28,11 @@ package com.plotsquared.core.command;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
+import net.kyori.adventure.text.minimessage.Template;
 
 /**
- * @deprecated Deprecated in favor of "/plot toggle chat" and scheduled for removal within the next major release.
+ * @deprecated In favor of "/plot toggle chat" and
+ *         scheduled for removal within the next major release.
  */
 @Deprecated(forRemoval = true)
 @CommandDeclaration(command = "chat",
@@ -44,6 +46,10 @@ public class Chat extends SubCommand {
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         PlotArea area = player.getPlotAreaAbs();
         check(area, TranslatableCaption.of("errors.not_in_plot_world"));
+        player.sendMessage(
+                TranslatableCaption.of("errors.deprecated_commands"),
+                Template.of("replacement", "/plot toggle chat")
+        );
         if (player.getPlotAreaAbs().isForcingPlotChat()) {
             player.sendMessage(TranslatableCaption.of("chat.plot_chat_forced"));
             return true;

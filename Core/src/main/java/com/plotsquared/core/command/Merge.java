@@ -157,6 +157,15 @@ public class Merge extends SubCommand {
         final double price = priceExr == null ? 0d : priceExr.evaluate(size);
 
         UUID uuid = player.getUUID();
+
+        if (!force && !plot.isOwner(uuid)) {
+            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_MERGE)) {
+                player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
+                return false;
+            } else {
+                uuid = plot.getOwnerAbs();
+            }
+        }
         if (direction == Direction.ALL) {
             boolean terrain = true;
             if (args.length == 2) {
@@ -184,14 +193,6 @@ public class Merge extends SubCommand {
             }
             player.sendMessage(TranslatableCaption.of("merge.no_available_automerge"));
             return false;
-        }
-        if (!force && !plot.isOwner(uuid)) {
-            if (!Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_MERGE)) {
-                player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
-                return false;
-            } else {
-                uuid = plot.getOwnerAbs();
-            }
         }
         if (!force && this.econHandler.isEnabled(plotArea) && price > 0d
                 && this.econHandler.getMoney(player) < price) {
@@ -276,7 +277,8 @@ public class Merge extends SubCommand {
                 CmdConfirm.addPending(accepter, MINI_MESSAGE.serialize(MINI_MESSAGE
                                 .parse(
                                         TranslatableCaption.of("merge.merge_request_confirm").getComponent(player),
-                                        Template.of("player", player.getName())
+                                        Template.of("player", player.getName()),
+                                        Template.of("location", plot.getWorldName() + ";" + plot.getId())
                                 )),
                         run
                 );

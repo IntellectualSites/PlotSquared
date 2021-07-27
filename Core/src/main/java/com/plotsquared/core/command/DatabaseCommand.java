@@ -215,6 +215,7 @@ public class DatabaseCommand extends SubCommand {
                     if (args.length < 6) {
                         player.sendMessage(StaticCaption.of(
                                 "/plot database mysql [host] [port] [username] [password] [database] {prefix}"));
+                        return false;
                     }
                     String host = args[1];
                     String port = args[2];
@@ -229,6 +230,7 @@ public class DatabaseCommand extends SubCommand {
                 case "sqlite" -> {
                     if (args.length < 2) {
                         player.sendMessage(StaticCaption.of("/plot database sqlite [file]"));
+                        return false;
                     }
                     File sqliteFile =
                             FileUtils.getFile(PlotSquared.platform().getDirectory(), args[1] + ".db");

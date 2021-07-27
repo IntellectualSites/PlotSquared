@@ -32,6 +32,8 @@ dependencies {
         exclude(group = "org.bukkit")
         exclude(group = "org.spigotmc")
     }
+    compileOnlyApi(libs.fastasyncworldeditBukkit)
+    testImplementation(libs.fastasyncworldeditBukkit)
     compileOnly(libs.vault) {
         exclude(group = "org.bukkit")
     }

@@ -105,9 +105,9 @@ public class Music extends SubCommand {
                     }
                     plot.removeFlag(event.getFlag());
                     getPlayer().sendMessage(TranslatableCaption.of("flag.flag_removed"),
-                            Template.of("flag", String.valueOf(event.getFlag())),
-                            Template.of("value", String.valueOf(event.getFlag().getValue())
-                    ));
+                            Template.of("flag", "music"),
+                            Template.of("value", "music_disc")
+                    );
                 } else if (item.getName().toLowerCase(Locale.ENGLISH).contains("disc")) {
                     PlotFlag<?, ?> plotFlag = plot.getFlagContainer().getFlag(MusicFlag.class)
                             .createFlagInstance(item.getType());
@@ -120,9 +120,8 @@ public class Music extends SubCommand {
                         return true;
                     }
                     plot.setFlag(event.getFlag());
-                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag",
-                            String.valueOf(event.getFlag())
-                    ), Template.of("value", String.valueOf(event.getFlag().getValue())));
+                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", "music"),
+                            Template.of("value", String.valueOf(event.getFlag().getValue())));
                 } else {
                     getPlayer().sendMessage(TranslatableCaption.of("flag.flag_not_added"));
                 }
