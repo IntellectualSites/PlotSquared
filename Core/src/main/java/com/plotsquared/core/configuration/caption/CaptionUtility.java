@@ -96,6 +96,14 @@ public class CaptionUtility {
         return chatContext.getMessage();
     }
 
+    /**
+     * Strips configured click events from a MiniMessage string.
+     *
+     * @param miniMessageString the message from which the specified click events should be removed from.
+     * @return the string without the click events that are configured to be removed.
+     *
+     * @see Settings.Chat#CLICK_EVENT_ACTIONS_TO_REMOVE
+     */
     public static String stripClickEvents(final @NonNull String miniMessageString) {
         // parse, transform and serialize again
         Component component = MiniMessage.get().parse(miniMessageString);
@@ -103,6 +111,19 @@ public class CaptionUtility {
         return MiniMessage.get().serialize(component);
     }
 
+    /**
+     * Strips configured MiniMessage click events from a plot flag value.
+     * This is used before letting the string be parsed by the plot flag.
+     * This method works the same way as {@link #stripClickEvents(String)} but will only
+     * strip click events from messages that target flags that are meant to contain MiniMessage strings.
+     *
+     * @param flag the flag the message is targeted for.
+     * @param miniMessageString the message from which the specified click events should be removed from.
+     * @return the string without the click events that are configured to be removed.
+     *
+     * @see Settings.Chat#CLICK_EVENT_ACTIONS_TO_REMOVE
+     * @see #stripClickEvents(String)
+     */
     public static String stripClickEvents(
             final @NonNull PlotFlag<?, ?> flag,
             final @NonNull String miniMessageString
