@@ -27,6 +27,7 @@ package com.plotsquared.core.command;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.location.Location;
@@ -79,7 +80,7 @@ public class Kick extends SubCommand {
         }
         if ((!plot.hasOwner() || !plot.isOwner(player.getUUID())) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_KICK)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_permission"));
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
 
