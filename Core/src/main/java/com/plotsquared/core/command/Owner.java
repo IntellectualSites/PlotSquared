@@ -52,7 +52,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 @CommandDeclaration(command = "setowner",
-        permission = "plots.set.owner",
+        permission = "plots.admin.command.setowner",
         usage = "/plot setowner <player>",
         aliases = {"owner", "so", "seto"},
         category = CommandCategory.CLAIMING,
@@ -136,7 +136,7 @@ public class Owner extends SetCommand {
             if (plot.isOwner(uuid)) {
                 player.sendMessage(
                         TranslatableCaption.of("member.already_owner"),
-                        Template.of("player", PlayerManager.getName(uuid))
+                        Template.of("player", PlayerManager.getName(uuid, false))
                 );
                 return;
             }
@@ -144,7 +144,7 @@ public class Owner extends SetCommand {
                     .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_SET_OWNER)) {
                 if (other == null) {
                     player.sendMessage(
-                            TranslatableCaption.of("invalid_player_offline"),
+                            TranslatableCaption.of("errors.invalid_player_offline"),
                             Template.of("player", PlayerManager.getName(uuid))
                     );
                     return;
@@ -188,7 +188,7 @@ public class Owner extends SetCommand {
                     }
                 };
                 if (hasConfirmation(player)) {
-                    CmdConfirm.addPending(player, "/plot set owner " + value, run);
+                    CmdConfirm.addPending(player, "/plot setowner " + value, run);
                 } else {
                     TaskManager.runTask(run);
                 }

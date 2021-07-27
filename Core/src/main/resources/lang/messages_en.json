@@ -207,7 +207,7 @@
   "permission.cant_claim_more_clusters": "<prefix><red>You can't claim more than <gold><amount> </gold>clusters.</red>",
   "permission.cant_transfer_more_plots": "<prefix><red>You can't send more plots to that user.</red>",
   "permission.cant_claim_more_plots_num": "<prefix><red>You can't claim more than <gold><amount> </gold>plots at once.</red>",
-  "merge.merge_request_confirm": "<prefix><gray>Merge request from </gray><gold><player></gold><gray>.</gray>",
+  "merge.merge_request_confirm": "<gray>Merge request from </gray><gold><player></gold> <gray>for plot</gray><gold> <location></gold>",
   "merge.merge_not_valid": "<prefix><gray>This merge request is no longer valid.</gray>",
   "merge.merge_accepted": "<prefix><gray>The merge request has been accepted.</gray>",
   "merge.success_merge": "<prefix><dark_aqua>Plots have been merged!</dark_aqua>",
