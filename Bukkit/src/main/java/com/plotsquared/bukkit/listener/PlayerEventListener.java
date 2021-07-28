@@ -1439,6 +1439,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked().getType() == EntityType.UNKNOWN) {
+            return;
+        }
         Location location = BukkitUtil.adapt(event.getRightClicked().getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
