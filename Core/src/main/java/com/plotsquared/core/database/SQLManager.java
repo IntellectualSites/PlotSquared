@@ -3223,8 +3223,9 @@ public class SQLManager implements AbstractDB {
                 continue;
             }
             if (plot.getArea() == null) {
-                LOGGER.error("CRITICAL ERROR IN VALIDATION TASK!");
+                LOGGER.error("CRITICAL ERROR IN VALIDATION TASK: {}", plot);
                 LOGGER.error("PLOT AREA CANNOT BE NULL! SKIPPING PLOT!");
+                LOGGER.info("Delete this entry from your database or set `database-purger: true` in the settings.yml");
                 continue;
             }
             if (database == null) {
