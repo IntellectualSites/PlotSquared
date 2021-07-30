@@ -1170,7 +1170,8 @@ public class PlayerEventListener extends PlotListener implements Listener {
         final Block block;
         // if the block can be waterlogged, the event might waterlog the block
         // sometimes
-        if (event.getBlockClicked().getBlockData() instanceof Waterlogged) {
+        if (event.getBlockClicked().getBlockData() instanceof Waterlogged waterlogged
+                && !waterlogged.isWaterlogged() && event.getBucket() != Material.LAVA_BUCKET) {
             block = event.getBlockClicked();
         } else {
             block = event.getBlockClicked().getLocation()
