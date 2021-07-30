@@ -102,7 +102,6 @@ import com.plotsquared.core.plot.world.SinglePlotArea;
 import com.plotsquared.core.plot.world.SinglePlotAreaManager;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.plotsquared.core.setup.SettingsNodesWrapper;
-import com.plotsquared.core.util.EconHandler;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.util.PlatformWorldManager;
@@ -188,7 +187,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
     private boolean faweHook = false;
-    private EconHandler econ;
 
     private Injector injector;
 
@@ -374,14 +372,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         // Permissions
         this.permissionHandler().initialize();
-
-        // Economy
-        if (Settings.Enabled_Components.ECONOMY) {
-            TaskManager.runTaskAsync(() -> {
-                final EconHandler econHandler = injector().getInstance(EconHandler.class);
-                econHandler.init();
-            });
-        }
 
         if (Settings.Enabled_Components.COMPONENT_PRESETS) {
             try {

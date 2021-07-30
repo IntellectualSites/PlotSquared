@@ -72,12 +72,16 @@ import com.plotsquared.core.util.SetupUtils;
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.extension.platform.Actor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class BukkitModule extends AbstractModule {
+
+    private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitModule.class.getSimpleName());
 
     private final BukkitPlatform bukkitPlatform;
 
@@ -131,9 +135,17 @@ public class BukkitModule extends AbstractModule {
     @Provides
     @Singleton
     @NonNull EconHandler provideEconHandler() {
+        if (!Settings.Enabled_Components.ECONOMY) {
+            return EconHandler.nullEconHandler();
+        }
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             try {
-                return new BukkitEconHandler();
+                BukkitEconHandler econHandler = new BukkitEconHandler();
+                if (!econHandler.init()) {
+                    LOGGER.warn("Economy is enabled but no plugin is providing an economy service. Falling back...");
+                    return EconHandler.nullEconHandler();
+                }
+                return econHandler;
             } catch (final Exception ignored) {
             }
         }
