@@ -101,6 +101,7 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.block.SpongeAbsorbEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.material.Directional;
 import org.bukkit.projectiles.BlockProjectileSource;
@@ -1183,4 +1184,37 @@ public class BlockEventListener implements Listener {
 
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onSpongeAbsorb(SpongeAbsorbEvent event) {
+        Block sponge = event.getBlock();
+        Location location = BukkitUtil.adapt(sponge.getLocation());
+        PlotArea area = location.getPlotArea();
+        List<org.bukkit.block.BlockState> blocks = event.getBlocks();
+        if (area == null) {
+            for (int i = blocks.size() - 1; i >= 0; i--) {
+                location = BukkitUtil.adapt(blocks.get(i).getLocation());
+                if (location.isPlotArea()) {
+                    blocks.remove(i);
+                }
+            }
+        } else {
+            Plot origin = area.getOwnedPlot(location);
+            for (int i = blocks.size() - 1; i >= 0; i--) {
+                location = BukkitUtil.adapt(blocks.get(i).getLocation());
+                if (!area.contains(location.getX(), location.getZ())) {
+                    blocks.remove(i);
+                    continue;
+                }
+                Plot plot = area.getOwnedPlot(location);
+                if (!Objects.equals(plot, origin)) {
+                    blocks.remove(i);
+                }
+            }
+        }
+        if (blocks.isEmpty()) {
+            // Cancel event so the sponge block doesn't turn into a wet sponge
+            // if no water is being absorbed
+            event.setCancelled(true);
+        }
+    }
 }
