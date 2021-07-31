@@ -314,7 +314,7 @@ public class Auto extends SubCommand {
             cost = (size_x * size_z) * cost;
             if (cost > 0d) {
                 if (!this.econHandler.isSupported()) {
-                    player.sendMessage(TranslatableCaption.of("economy.vault_not_found"));
+                    player.sendMessage(TranslatableCaption.of("economy.vault_or_consumer_null"));
                     return false;
                 }
                 if (!force && this.econHandler.getMoney(player) < cost) {
