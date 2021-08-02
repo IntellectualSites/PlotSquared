@@ -1191,25 +1191,17 @@ public class BlockEventListener implements Listener {
         PlotArea area = location.getPlotArea();
         List<org.bukkit.block.BlockState> blocks = event.getBlocks();
         if (area == null) {
-            for (int i = blocks.size() - 1; i >= 0; i--) {
-                location = BukkitUtil.adapt(blocks.get(i).getLocation());
-                if (location.isPlotArea()) {
-                    blocks.remove(i);
-                }
-            }
+            blocks.removeIf(block -> BukkitUtil.adapt(block.getLocation()).isPlotArea());
         } else {
             Plot origin = area.getOwnedPlot(location);
-            for (int i = blocks.size() - 1; i >= 0; i--) {
-                location = BukkitUtil.adapt(blocks.get(i).getLocation());
-                if (!area.contains(location.getX(), location.getZ())) {
-                    blocks.remove(i);
-                    continue;
+            blocks.removeIf(block -> {
+                var blockLocation = BukkitUtil.adapt(block.getLocation());
+                if (!area.contains(blockLocation.getX(), blockLocation.getZ())) {
+                    return true;
                 }
-                Plot plot = area.getOwnedPlot(location);
-                if (!Objects.equals(plot, origin)) {
-                    blocks.remove(i);
-                }
-            }
+                Plot plot = area.getOwnedPlot(blockLocation);
+                return !Objects.equals(plot, origin);
+            });
         }
         if (blocks.isEmpty()) {
             // Cancel event so the sponge block doesn't turn into a wet sponge
