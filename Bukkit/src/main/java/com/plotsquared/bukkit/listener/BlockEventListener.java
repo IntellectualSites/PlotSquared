@@ -1195,7 +1195,7 @@ public class BlockEventListener implements Listener {
         } else {
             Plot origin = area.getOwnedPlot(location);
             blocks.removeIf(block -> {
-                var blockLocation = BukkitUtil.adapt(block.getLocation());
+                Location blockLocation = BukkitUtil.adapt(block.getLocation());
                 if (!area.contains(blockLocation.getX(), blockLocation.getZ())) {
                     return true;
                 }
