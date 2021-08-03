@@ -1167,6 +1167,10 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
         BlockFace bf = event.getBlockFace();
+        // Note: a month after Bukkit 1.14.4 released, they added the API method
+        // PlayerBucketEmptyEvent#getBlock(), which returns the block the
+        // bucket contents is going to be placed at. Currently we determine this
+        // block ourselves to retain compatibility with 1.13.
         final Block block;
         // if the block can be waterlogged, the event might waterlog the block
         // sometimes
