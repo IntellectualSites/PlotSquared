@@ -193,7 +193,6 @@ public class PaperListener implements Listener {
             case "PATROL":
             case "RAID":
             case "SHEARED":
-            case "SHOULDER_ENTITY":
             case "SILVERFISH_BLOCK":
             case "TRAP":
             case "VILLAGE_DEFENSE":
