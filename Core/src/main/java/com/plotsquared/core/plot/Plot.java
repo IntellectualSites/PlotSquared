@@ -85,6 +85,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.ref.Cleaner;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
@@ -127,6 +128,7 @@ public class Plot {
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Plot.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+    private static final Cleaner CLEANER = Cleaner.create();
 
     static Set<Plot> connected_cache;
     static Set<CuboidRegion> regions_cache;
@@ -256,6 +258,9 @@ public class Plot {
         this.temp = temp;
         this.flagContainer.setParentContainer(area.getFlagContainer());
         PlotSquared.platform().injector().injectMembers(this);
+        // This is needed, because otherwise the Plot, the FlagContainer and its
+        // `this::handleUnknown` PlotFlagUpdateHandler won't get cleaned up ever
+        CLEANER.register(this, this.flagContainer.createCleanupHook());
     }
 
     /**
