@@ -27,14 +27,15 @@ package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -49,8 +50,9 @@ public class FlagContainer {
     private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
     private final PlotFlagUpdateHandler plotFlagUpdateHandler;
-    private final Collection<PlotFlagUpdateHandler> updateSubscribers = new ArrayList<>();
+    private final Collection<PlotFlagUpdateHandler> updateSubscribers = new HashSet<>();
     private FlagContainer parentContainer;
+    private final PlotFlagUpdateHandler unknownsRef;
 
     /**
      * Construct a new flag container with an optional parent container and update handler.
@@ -71,7 +73,10 @@ public class FlagContainer {
         this.parentContainer = parentContainer;
         this.plotFlagUpdateHandler = plotFlagUpdateHandler;
         if (!(this instanceof GlobalFlagContainer)) {
-            GlobalFlagContainer.getInstance().subscribe(this::handleUnknowns);
+            this.unknownsRef = this::handleUnknowns;
+            GlobalFlagContainer.getInstance().subscribe(this.unknownsRef);
+        } else {
+            this.unknownsRef = null;
         }
     }
 
@@ -334,6 +339,23 @@ public class FlagContainer {
      */
     public void addUnknownFlag(final String flagName, final String value) {
         this.unknownFlags.put(flagName.toLowerCase(Locale.ENGLISH), value);
+    }
+
+    /**
+     * Creates a cleanup hook that is meant to run once this FlagContainer isn't needed anymore.
+     * This is to prevent memory leaks. This method is not part of the API.
+     *
+     * @return a new Runnable that cleans up once the FlagContainer isn't needed anymore.
+     */
+    @ApiStatus.Internal
+    public Runnable createCleanupHook() {
+        return () -> GlobalFlagContainer.getInstance().unsubscribe(unknownsRef);
+    }
+
+    void unsubscribe(final @Nullable PlotFlagUpdateHandler updateHandler) {
+        if (updateHandler != null) {
+            this.updateSubscribers.remove(updateHandler);
+        }
     }
 
     public boolean equals(final Object o) {
