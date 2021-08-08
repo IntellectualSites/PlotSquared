@@ -46,6 +46,21 @@ public interface PermissionHolder {
     }
 
     /**
+     * Check if the owner of the profile has a given (global) keyed permission. Checks both {@code permission.key}
+     * and {@code permission.*}
+     *
+     * @param permission Permission
+     * @param key        Permission "key"
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    default boolean hasKeyedPermission(
+            final @NonNull String permission,
+            final @NonNull String key
+    ) {
+        return hasKeyedPermission(null, permission, key);
+    }
+
+    /**
      * Check the highest permission a PlotPlayer has within a specified range.<br>
      * - Excessively high values will lag<br>
      * - The default range that is checked is {@link Settings.Limit#MAX_PLOTS}<br>
@@ -91,5 +106,19 @@ public interface PermissionHolder {
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
     boolean hasPermission(@Nullable String world, @NonNull String permission);
+
+    /**
+     * Check if the owner of the profile has a given keyed permission. Checks both {@code permission.key}
+     * and {@code permission.*}
+     *
+     * @param world      World name
+     * @param permission Permission
+     * @param key        Permission "key"
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    boolean hasKeyedPermission(
+            @Nullable String world, final @NonNull String permission,
+            final @NonNull String key
+    );
 
 }

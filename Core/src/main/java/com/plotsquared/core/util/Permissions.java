@@ -67,6 +67,22 @@ public class Permissions {
     }
 
     /**
+     * Check if the owner of the profile has a given (global) keyed permission. Checks both {@code permission.key}
+     * and {@code permission.*}
+     *
+     * @param caller     permission holder
+     * @param permission Permission
+     * @param key        Permission "key"
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    public static boolean hasKeyedPermission(
+            final @NonNull PermissionHolder caller, final @NonNull String permission,
+            final @NonNull String key
+    ) {
+        return caller.hasKeyedPermission(permission, key);
+    }
+
+    /**
      * Checks if a PlotPlayer has a permission, and optionally send the no permission message if applicable.
      *
      * @param player     permission holder
