@@ -28,6 +28,7 @@ package com.plotsquared.bukkit.queue;
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.schematic.StateWrapper;
 import com.plotsquared.bukkit.util.BukkitBlockUtil;
+import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorBuilderFactory;
 import com.plotsquared.core.inject.factory.ChunkCoordinatorFactory;
 import com.plotsquared.core.queue.BasicQueueCoordinator;
@@ -64,6 +65,8 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
 
     private final SideEffectSet noSideEffectSet;
     private final SideEffectSet lightingSideEffectSet;
+    private final SideEffectSet edgeSideEffectSet;
+    private final SideEffectSet edgeLightingSideEffectSet;
     private org.bukkit.World bukkitWorld;
     @Inject
     private ChunkCoordinatorBuilderFactory chunkCoordinatorBuilderFactory;
@@ -79,6 +82,10 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 SideEffect.State.OFF
         );
         lightingSideEffectSet = SideEffectSet.none().with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
+        edgeSideEffectSet = noSideEffectSet.with(SideEffect.UPDATE, SideEffect.State.ON).with(SideEffect.NEIGHBORS,
+                SideEffect.State.ON);
+        edgeLightingSideEffectSet = noSideEffectSet.with(SideEffect.UPDATE, SideEffect.State.ON).with(SideEffect.NEIGHBORS,
+                SideEffect.State.ON);
     }
 
     @Override
@@ -122,14 +129,20 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 boolean isRegenChunk =
                         regenClipboard != null && blockVector2.getBlockX() > getRegenStart()[0] && blockVector2.getBlockZ() > getRegenStart()[1]
                                 && blockVector2.getBlockX() < getRegenEnd()[0] && blockVector2.getBlockZ() < getRegenEnd()[1];
+                int sx = blockVector2.getX() << 4;
+                int sz = blockVector2.getZ() << 4;
                 if (isRegenChunk) {
                     for (int layer = 0; layer < 16; layer++) {
-                        for (int y = layer << 4; y < 16; y++) {
+                        for (int y = 0; y < 16; y++) {
                             for (int x = 0; x < 16; x++) {
                                 for (int z = 0; z < 16; z++) {
+                                    x += sx;
+                                    y += layer << 4;
+                                    z += sz;
                                     BaseBlock block = regenClipboard.getFullBlock(BlockVector3.at(x, y, z));
                                     if (block != null) {
-                                        setWorldBlock(x, y, z, block, blockVector2);
+                                        boolean edge = Settings.QUEUE.UPDATE_EDGES && isEdgeRegen(x & 15, z & 15, blockVector2);
+                                        setWorldBlock(x, y, z, block, blockVector2, edge);
                                     }
                                 }
                             }
@@ -140,8 +153,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 if (localChunk == null) {
                     return;
                 }
-                int sx = blockVector2.getX() << 4;
-                int sz = blockVector2.getZ() << 4;
                 for (int layer = 0; layer < localChunk.getBaseblocks().length; layer++) {
                     BaseBlock[] blocksLayer = localChunk.getBaseblocks()[layer];
                     if (blocksLayer == null) {
@@ -154,10 +165,14 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                         BaseBlock block = blocksLayer[j];
 
                         if (block != null) {
-                            int x = sx + ChunkUtil.getX(j);
+                            int lx = ChunkUtil.getX(j);
+                            int lz = ChunkUtil.getZ(j);
+                            int x = sx + lx;
                             int y = ChunkUtil.getY(layer, j);
-                            int z = sz + ChunkUtil.getZ(j);
-                            setWorldBlock(x, y, z, block, blockVector2);
+                            int z = sz + lz;
+                            boolean edge = Settings.QUEUE.UPDATE_EDGES && isEdge(y >> 4, lx, y & 15, lz, blockVector2,
+                                    localChunk);
+                            setWorldBlock(x, y, z, block, blockVector2, edge);
                         }
                     }
                 }
@@ -219,7 +234,7 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
     /**
      * Set a block to the world. First tries WNA but defaults to normal block setting methods if that fails
      */
-    private void setWorldBlock(int x, int y, int z, @NonNull BaseBlock block, @NonNull BlockVector2 blockVector2) {
+    private void setWorldBlock(int x, int y, int z, @NonNull BaseBlock block, @NonNull BlockVector2 blockVector2, boolean edge) {
         try {
             BlockVector3 loc = BlockVector3.at(x, y, z);
             boolean lighting = false;
@@ -237,7 +252,13 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                     // Can only be "all"
                     lighting = true;
             }
-            getWorld().setBlock(loc, block, lighting ? lightingSideEffectSet : noSideEffectSet);
+            SideEffectSet sideEffectSet;
+            if (lighting) {
+                sideEffectSet = edge ? edgeLightingSideEffectSet : lightingSideEffectSet;
+            } else {
+                sideEffectSet = edge ? edgeSideEffectSet : noSideEffectSet;
+            }
+            getWorld().setBlock(loc, block, sideEffectSet);
         } catch (WorldEditException ignored) {
             // Fallback to not so nice method
             BlockData blockData = BukkitAdapter.adapt(block);
@@ -269,6 +290,104 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             bukkitWorld = Bukkit.getWorld(getWorld().getName());
         }
         return bukkitWorld;
+    }
+
+    private boolean isEdge(int layer, int x, int y, int z, BlockVector2 blockVector2, LocalChunk localChunk) {
+        if (layer == 0 || layer == localChunk.getBaseblocks().length - 1) {
+            return false;
+        }
+        if (x == 0) {
+            LocalChunk localChunkX = getBlockChunks().get(blockVector2.withX(blockVector2.getX() - 1));
+            if (localChunkX == null || localChunkX.getBaseblocks()[layer] == null || localChunkX.getBaseblocks()[layer][ChunkUtil.getJ(
+                    15,
+                    y,
+                    z
+            )] != null) {
+                return true;
+            }
+        } else if (x == 15) {
+            LocalChunk localChunkX = getBlockChunks().get(blockVector2.withX(blockVector2.getX() + 1));
+            if (localChunkX == null || localChunkX.getBaseblocks()[layer] == null || localChunkX.getBaseblocks()[layer][ChunkUtil.getJ(
+                    0,
+                    y,
+                    z
+            )] != null) {
+                return true;
+            }
+        }
+        if (z == 0) {
+            LocalChunk localChunkZ = getBlockChunks().get(blockVector2.withZ(blockVector2.getZ() - 1));
+            if (localChunkZ == null || localChunkZ.getBaseblocks()[layer] == null || localChunkZ.getBaseblocks()[layer][ChunkUtil.getJ(
+                    x,
+                    y,
+                    15
+            )] != null) {
+                return true;
+            }
+        } else if (z == 15) {
+            LocalChunk localChunkZ = getBlockChunks().get(blockVector2.withZ(blockVector2.getZ() + 1));
+            if (localChunkZ == null || localChunkZ.getBaseblocks()[layer] == null || localChunkZ.getBaseblocks()[layer][ChunkUtil.getJ(
+                    x,
+                    y,
+                    0
+            )] != null) {
+                return true;
+            }
+        }
+        if (y == 0) {
+            if (localChunk.getBaseblocks()[layer - 1] == null || localChunk.getBaseblocks()[layer][ChunkUtil.getJ(
+                    x,
+                    15,
+                    z
+            )] != null) {
+                return true;
+            }
+        } else if (y == 15) {
+            if (localChunk.getBaseblocks()[layer + 1] == null || localChunk.getBaseblocks()[layer][ChunkUtil.getJ(
+                    x,
+                    0,
+                    z
+            )] != null) {
+                return true;
+            }
+        }
+        BaseBlock[] baseBlocks = localChunk.getBaseblocks()[layer];
+        if (x > 0 && baseBlocks[ChunkUtil.getJ(x - 1, y, z)] == null) {
+            return true;
+        }
+        if (x < 15 && baseBlocks[ChunkUtil.getJ(x + 1, y, z)] == null) {
+            return true;
+        }
+        if (y > 0 && baseBlocks[ChunkUtil.getJ(x, y - 1, z)] == null) {
+            return true;
+        }
+        if (y < 15 && baseBlocks[ChunkUtil.getJ(x, y + 1, z)] == null) {
+            return true;
+        }
+        if (z > 0 && baseBlocks[ChunkUtil.getJ(x, y, z - 1)] == null) {
+            return true;
+        }
+        return z < 15 && baseBlocks[ChunkUtil.getJ(x, y, z + 1)] == null;
+    }
+
+    private boolean isEdgeRegen(int x, int z, BlockVector2 blockVector2) {
+        if (x == 0) {
+            LocalChunk localChunkX = getBlockChunks().get(blockVector2.withX(blockVector2.getX() - 1));
+            if (localChunkX == null) {
+                return true;
+            }
+        } else if (x == 15) {
+            LocalChunk localChunkX = getBlockChunks().get(blockVector2.withX(blockVector2.getX() + 1));
+            if (localChunkX == null) {
+                return true;
+            }
+        }
+        if (z == 0) {
+            return getBlockChunks().get(blockVector2.withZ(blockVector2.getZ() - 1)) == null;
+        } else if (z == 15) {
+            return getBlockChunks().get(blockVector2.withZ(blockVector2.getZ() + 1)) == null;
+        }
+        return false;
     }
 
 }
