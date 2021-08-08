@@ -159,7 +159,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     }
 
     /**
-     * Get if the flag's permission should check for values. E.g. plot.flag.set.music.VALUE
+     * Get if the flag's permission should check for values. E.g. plots.flag.set.music.VALUE
      *
      * @return if valued permission
      */
