@@ -29,6 +29,10 @@ import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Plot flag representing a string value.
+ * This should be used where strings are not "keys" themselves, e.g. when setting enums
+ */
 public abstract class StringFlag<F extends StringFlag<F>> extends PlotFlag<String, F> {
 
     /**
@@ -44,6 +48,11 @@ public abstract class StringFlag<F extends StringFlag<F>> extends PlotFlag<Strin
             final @NonNull Caption flagDescription
     ) {
         super(value, flagCategory, flagDescription);
+    }
+
+    @Override
+    public boolean isValuedPermission() {
+        return false;
     }
 
 }
