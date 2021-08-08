@@ -47,7 +47,7 @@ public class TitleFlag extends PlotFlag<PlotTitle, TitleFlag> {
     @Override
     public TitleFlag parse(@NonNull String input) throws FlagParseException {
         if (!input.contains("\"")) {
-            throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_title"));
+            return new TitleFlag(new PlotTitle(input, ""));
         }
         input = input.substring(input.indexOf("\""));
         input = input.substring(0, input.lastIndexOf("\"") + 1);
