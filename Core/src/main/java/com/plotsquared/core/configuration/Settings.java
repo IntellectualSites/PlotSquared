@@ -26,12 +26,14 @@
 package com.plotsquared.core.configuration;
 
 import com.plotsquared.core.configuration.file.YamlConfiguration;
+import net.kyori.adventure.text.event.ClickEvent;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Settings extends Config {
 
@@ -498,10 +500,12 @@ public class Settings extends Config {
                 "notify-enter, notify-leave, greeting or farewell flag."})
         public static boolean NOTIFICATION_AS_ACTIONBAR = false;
 
-        @Comment({"Whether to strip any possible <click_event> components from user-defined messages, e.g. plot greeting",
-                "This can allow players to use commands to give themselves ranks as commands ran in this fashion cannot be prevent by " +
-                        "permissions etc."})
-        public static boolean REMOVE_USER_DEFINED_CLICK_EVENTS = true;
+        @Comment({"The click event actions that should be removed from user input in e.g. plot flags like 'greeting'.",
+                "Actions like 'RUN_COMMAND' may be used maliciously as players could trick staff into clicking on messages",
+                "triggering destructive commands."})
+        public static List<String> CLICK_EVENT_ACTIONS_TO_REMOVE = Arrays.stream(ClickEvent.Action.values())
+                .map(Enum::name)
+                .collect(Collectors.toList());
 
     }
 

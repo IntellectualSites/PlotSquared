@@ -23,47 +23,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot.flag.implementations;
+package com.plotsquared.core.configuration.caption;
 
-import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.plot.flag.types.StringFlag;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class GreetingFlag extends StringFlag<GreetingFlag> {
+import java.util.List;
+import java.util.stream.Collectors;
 
-    public static final GreetingFlag GREETING_FLAG_EMPTY = new GreetingFlag("");
+/**
+ * A transform that applies a nested transform on all child components and the component itself.
+ */
+final class NestedComponentTransform implements ComponentTransform {
+    private final ComponentTransform transform;
 
-    protected GreetingFlag(@NonNull String value) {
-        super(
-                value,
-                TranslatableCaption.of("flags.flag_category_string"),
-                TranslatableCaption.of("flags.flag_description_greeting")
-        );
+    public NestedComponentTransform(final ComponentTransform transform) {
+        this.transform = transform;
     }
 
     @Override
-    public GreetingFlag parse(@NonNull String input) {
-        return flagOf(input);
+    public @NonNull Component transform(final @NonNull Component original) {
+        return this.transform.transform(original.children(transformChildren(original.children())));
     }
 
-    @Override
-    public GreetingFlag merge(@NonNull String newValue) {
-        return flagOf(this.getValue() + " " + newValue);
+    private List<Component> transformChildren(List<Component> children) {
+        return children.stream().map(this::transform).collect(Collectors.toList());
     }
-
-    @Override
-    public String toString() {
-        return this.getValue();
-    }
-
-    @Override
-    public String getExample() {
-        return "&6Welcome to my plot!";
-    }
-
-    @Override
-    protected GreetingFlag flagOf(@NonNull String value) {
-        return new GreetingFlag(value);
-    }
-
 }

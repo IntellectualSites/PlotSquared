@@ -28,10 +28,10 @@ package com.plotsquared.core.plot.flag.implementations;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.InternalFlag;
-import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.types.StringFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class DoneFlag extends PlotFlag<String, DoneFlag> implements InternalFlag {
+public class DoneFlag extends StringFlag<DoneFlag> implements InternalFlag {
 
     /**
      * Construct a new flag instance.
