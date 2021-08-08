@@ -84,6 +84,11 @@ public class TitleFlag extends PlotFlag<String[], TitleFlag> {
     }
 
     @Override
+    public boolean isValuedPermission() {
+        return false;
+    }
+
+    @Override
     public String getExample() {
         return "\"A Title\" \"The subtitle\"";
     }
