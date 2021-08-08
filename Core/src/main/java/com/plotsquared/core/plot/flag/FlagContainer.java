@@ -27,7 +27,7 @@ package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.plotsquared.core.configuration.caption.CaptionUtility
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
