@@ -83,7 +83,7 @@ public class Grant extends Command {
                     );
                     return CompletableFuture.completedFuture(false);
                 }
-                if (args.length > 2) {
+                if (args.length != 2) {
                     break;
                 }
                 PlayerManager.getUUIDsFromString(args[1], (uuids, throwable) -> {
