@@ -212,8 +212,10 @@ public class HomeCommand extends Command {
     }
 
     private void sortBySettings(PlotQuery plotQuery, PlotPlayer<?> player) {
-        if (Settings.Teleport.PER_WORLD_VISIT) {
-            plotQuery.relativeToArea(player.getApplicablePlotArea())
+        // Player may not be in a plot world when attempting to get to a plot home
+        PlotArea area = player.getApplicablePlotArea();
+        if (Settings.Teleport.PER_WORLD_VISIT && area != null) {
+            plotQuery.relativeToArea(area)
                     .withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
         } else {
             plotQuery.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
