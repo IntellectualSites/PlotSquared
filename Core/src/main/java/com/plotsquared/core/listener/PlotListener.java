@@ -299,8 +299,6 @@ public class PlotListener {
                 if (titleFlag.length == 2) {
                     title = titleFlag[0];
                     subtitle = titleFlag[1];
-                    System.out.println(title);
-                    System.out.println(subtitle);
                     fromFlag = true;
                 } else {
                     title = TranslatableCaption.of("titles.title_entered_plot").getComponent(ConsolePlayer.getConsole());
