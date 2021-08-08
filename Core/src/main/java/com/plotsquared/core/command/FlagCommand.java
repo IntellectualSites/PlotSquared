@@ -146,7 +146,7 @@ public final class FlagCommand extends Command {
             } catch (final Exception e) {
                 return false;
             }
-            return true;//
+            return true;
         }
         boolean result;
         String basePerm = Permission.PERMISSION_SET_FLAG_KEY.format(key.toLowerCase());
