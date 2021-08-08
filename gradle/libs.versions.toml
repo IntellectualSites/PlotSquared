@@ -1,5 +1,5 @@
 [versions]
-checker-qual = "3.14.0"
+checker-qual = "3.16.0"
 
 guava = "21.0" # Version set by Minecraft
 gson = "2.8.0" # Version set by Minecraft
@@ -14,9 +14,9 @@ guice = "5.0.1"
 findbugs = "3.0.1"
 
 worldedit = "7.2.6-SNAPSHOT"
-fawe = "1.17-74"
+fawe = "1.17-93"
 vault = "1.7"
-placeholderapi = "2.10.9"
+placeholderapi = "2.10.10"
 luckperms = "5.3"
 essentialsx = "2.18.2"
 hyperverse = "0.6.0-SNAPSHOT"

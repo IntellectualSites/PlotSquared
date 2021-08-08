@@ -112,7 +112,7 @@
   "tutorial.rate_this": "<prefix><gray>Rate this plot!</gray>",
   "tutorial.comment_this": "<prefix><gray>Leave some feedback on this plot: <plot>.</gray>",
   "economy.econ_disabled": "<prefix><red>Economy is not enabled.</red>",
-  "economy.vault_not_found": "<prefix><red>Vault is not installed. No Vault-like economy service can be provided.</red>",
+  "economy.vault_or_consumer_null": "<prefix><red>Economy isn't initialized. Make sure Vault and an economy service plugin are installed.</red>",
   "economy.cannot_afford_plot": "<prefix><red>You cannot afford to buy this plot. It costs <gold><money></gold>. You have <gold><balance></gold>.</red>",
   "economy.not_for_sale": "<prefix><red>This plot is not for sale.</red>",
   "economy.cannot_buy_own": "<prefix><red>You cannot buy your own plot.</red>",

@@ -79,7 +79,7 @@ public class Kick extends SubCommand {
         }
         if ((!plot.hasOwner() || !plot.isOwner(player.getUUID())) && !Permissions
                 .hasPermission(player, Permission.PERMISSION_ADMIN_COMMAND_KICK)) {
-            player.sendMessage(TranslatableCaption.of("permission.no_permission"));
+            player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
 

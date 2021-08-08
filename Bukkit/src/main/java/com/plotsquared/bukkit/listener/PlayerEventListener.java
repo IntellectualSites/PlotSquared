@@ -1167,10 +1167,15 @@ public class PlayerEventListener extends PlotListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
         BlockFace bf = event.getBlockFace();
+        // Note: a month after Bukkit 1.14.4 released, they added the API method
+        // PlayerBucketEmptyEvent#getBlock(), which returns the block the
+        // bucket contents is going to be placed at. Currently we determine this
+        // block ourselves to retain compatibility with 1.13.
         final Block block;
         // if the block can be waterlogged, the event might waterlog the block
         // sometimes
-        if (event.getBlockClicked().getBlockData() instanceof Waterlogged) {
+        if (event.getBlockClicked().getBlockData() instanceof Waterlogged waterlogged
+                && !waterlogged.isWaterlogged() && event.getBucket() != Material.LAVA_BUCKET) {
             block = event.getBlockClicked();
         } else {
             block = event.getBlockClicked().getLocation()
@@ -1439,6 +1444,9 @@ public class PlayerEventListener extends PlotListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        if (event.getRightClicked().getType() == EntityType.UNKNOWN) {
+            return;
+        }
         Location location = BukkitUtil.adapt(event.getRightClicked().getLocation());
         PlotArea area = location.getPlotArea();
         if (area == null) {
