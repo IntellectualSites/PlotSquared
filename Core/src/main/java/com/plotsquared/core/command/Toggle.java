@@ -114,12 +114,12 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "ignoreExpireTask")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    TranslatableCaption.of("toggle.toggle_enabled"),
                     Template.of("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    TranslatableCaption.of("toggle.toggle_disabled"),
                     Template.of("setting", command.toString())
             );
         }
@@ -134,12 +134,12 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "disabletitles")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    TranslatableCaption.of("toggle.toggle_enabled"),
                     Template.of("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    TranslatableCaption.of("toggle.toggle_disabled"),
                     Template.of("setting", command.toString())
             );
         }
@@ -154,12 +154,12 @@ public class Toggle extends Command {
     ) {
         if (toggle(player, "disabletime")) {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_disabled"),
+                    TranslatableCaption.of("toggle.toggle_enabled"),
                     Template.of("setting", command.toString())
             );
         } else {
             player.sendMessage(
-                    TranslatableCaption.of("toggle.toggle_enabled"),
+                    TranslatableCaption.of("toggle.toggle_disabled"),
                     Template.of("setting", command.toString())
             );
         }
