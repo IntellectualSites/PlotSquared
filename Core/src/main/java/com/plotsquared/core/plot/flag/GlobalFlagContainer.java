@@ -102,6 +102,7 @@ import com.plotsquared.core.plot.flag.implementations.SoilDryFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedAttackFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.TimeFlag;
+import com.plotsquared.core.plot.flag.implementations.TitleFlag;
 import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
 import com.plotsquared.core.plot.flag.implementations.UseFlag;
@@ -137,9 +138,6 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(ExplosionFlag.EXPLOSION_FALSE);
         this.addFlag(UntrustedVisitFlag.UNTRUSTED_VISIT_FLAG_TRUE);
         this.addFlag(DenyExitFlag.DENY_EXIT_FLAG_FALSE);
-        this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
-        this.addFlag(GreetingFlag.GREETING_FLAG_EMPTY);
-        this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
         this.addFlag(AnimalAttackFlag.ANIMAL_ATTACK_FALSE);
         this.addFlag(AnimalInteractFlag.ANIMAL_INTERACT_FALSE);
         this.addFlag(BlockBurnFlag.BLOCK_BURN_FALSE);
@@ -230,6 +228,12 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(BlockedCmdsFlag.BLOCKED_CMDS_FLAG_NONE);
         this.addFlag(KeepFlag.KEEP_FLAG_FALSE);
         this.addFlag(MusicFlag.MUSIC_FLAG_NONE);
+
+        // String flags
+        this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
+        this.addFlag(GreetingFlag.GREETING_FLAG_EMPTY);
+        this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
+        this.addFlag(TitleFlag.TITLE_FLAG_EMPTY);
 
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));
