@@ -171,9 +171,6 @@ public class PlotListener {
 
             String greeting = plot.getFlag(GreetingFlag.class);
             if (!greeting.isEmpty()) {
-                if (Settings.Chat.REMOVE_USER_DEFINED_CLICK_EVENTS) {
-                    greeting = greeting.replaceAll(".([c-lC-L]{5}):([a-uA-U_]{11}):[^\\/]*[^>]*>>", "").replace("</click>", "");
-                }
                 if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                     plot.format(StaticCaption.of(greeting), player, false).thenAcceptAsync(player::sendMessage);
                 } else {
@@ -395,9 +392,6 @@ public class PlotListener {
 
                 String farewell = plot.getFlag(FarewellFlag.class);
                 if (!farewell.isEmpty()) {
-                    if (Settings.Chat.REMOVE_USER_DEFINED_CLICK_EVENTS) {
-                        farewell = farewell.replaceAll(".([c-lC-L]{5}):([a-uA-U_]{11}):[^\\/]*[^>]*>", "").replace("</click>", "");
-                    }
                     if (!Settings.Chat.NOTIFICATION_AS_ACTIONBAR) {
                         plot.format(StaticCaption.of(farewell), player, false).thenAcceptAsync(player::sendMessage);
                     } else {

@@ -26,10 +26,10 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.types.StringFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class FarewellFlag extends PlotFlag<String, FarewellFlag> {
+public class FarewellFlag extends StringFlag<FarewellFlag> {
 
     public static final FarewellFlag FAREWELL_FLAG_EMPTY = new FarewellFlag("");
 

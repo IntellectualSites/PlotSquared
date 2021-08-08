@@ -23,47 +23,28 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot.flag.implementations;
+package com.plotsquared.core.configuration.caption;
 
-import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.plot.flag.types.StringFlag;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
-public class GreetingFlag extends StringFlag<GreetingFlag> {
+import java.util.EnumSet;
+import java.util.Set;
 
-    public static final GreetingFlag GREETING_FLAG_EMPTY = new GreetingFlag("");
+final class ClickStripTransform implements ComponentTransform {
+    private final Set<ClickEvent.@NotNull Action> actionsToStrip;
 
-    protected GreetingFlag(@NonNull String value) {
-        super(
-                value,
-                TranslatableCaption.of("flags.flag_category_string"),
-                TranslatableCaption.of("flags.flag_description_greeting")
-        );
+    public ClickStripTransform(final Set<ClickEvent.@NotNull Action> actionsToStrip) {
+        this.actionsToStrip = EnumSet.copyOf(actionsToStrip);
     }
 
     @Override
-    public GreetingFlag parse(@NonNull String input) {
-        return flagOf(input);
-    }
-
-    @Override
-    public GreetingFlag merge(@NonNull String newValue) {
-        return flagOf(this.getValue() + " " + newValue);
-    }
-
-    @Override
-    public String toString() {
-        return this.getValue();
-    }
-
-    @Override
-    public String getExample() {
-        return "&6Welcome to my plot!";
-    }
-
-    @Override
-    protected GreetingFlag flagOf(@NonNull String value) {
-        return new GreetingFlag(value);
+    public @NonNull Component transform(@NonNull final Component original) {
+        var clickEvent = original.clickEvent();
+        if (clickEvent == null || !actionsToStrip.contains(clickEvent.action())) return original;
+        return original.clickEvent(null); // remove it
     }
 
 }

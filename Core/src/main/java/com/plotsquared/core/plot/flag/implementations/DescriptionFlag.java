@@ -26,10 +26,10 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.plot.flag.PlotFlag;
+import com.plotsquared.core.plot.flag.types.StringFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class DescriptionFlag extends PlotFlag<String, DescriptionFlag> {
+public class DescriptionFlag extends StringFlag<DescriptionFlag> {
 
     public static final DescriptionFlag DESCRIPTION_FLAG_EMPTY = new DescriptionFlag("");
 

@@ -23,47 +23,27 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot.flag.implementations;
+package com.plotsquared.core.plot.flag.types;
 
-import com.plotsquared.core.configuration.caption.TranslatableCaption;
-import com.plotsquared.core.plot.flag.types.StringFlag;
+import com.plotsquared.core.configuration.caption.Caption;
+import com.plotsquared.core.plot.flag.PlotFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class GreetingFlag extends StringFlag<GreetingFlag> {
+public abstract class StringFlag<F extends StringFlag<F>> extends PlotFlag<String, F> {
 
-    public static final GreetingFlag GREETING_FLAG_EMPTY = new GreetingFlag("");
-
-    protected GreetingFlag(@NonNull String value) {
-        super(
-                value,
-                TranslatableCaption.of("flags.flag_category_string"),
-                TranslatableCaption.of("flags.flag_description_greeting")
-        );
-    }
-
-    @Override
-    public GreetingFlag parse(@NonNull String input) {
-        return flagOf(input);
-    }
-
-    @Override
-    public GreetingFlag merge(@NonNull String newValue) {
-        return flagOf(this.getValue() + " " + newValue);
-    }
-
-    @Override
-    public String toString() {
-        return this.getValue();
-    }
-
-    @Override
-    public String getExample() {
-        return "&6Welcome to my plot!";
-    }
-
-    @Override
-    protected GreetingFlag flagOf(@NonNull String value) {
-        return new GreetingFlag(value);
+    /**
+     * Construct a new flag instance.
+     *
+     * @param value           Flag value
+     * @param flagCategory    The flag category
+     * @param flagDescription A caption describing the flag functionality
+     */
+    protected StringFlag(
+            final @NonNull String value,
+            final @NonNull Caption flagCategory,
+            final @NonNull Caption flagDescription
+    ) {
+        super(value, flagCategory, flagDescription);
     }
 
 }

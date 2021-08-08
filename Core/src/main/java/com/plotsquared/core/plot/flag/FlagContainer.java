@@ -27,6 +27,7 @@ package com.plotsquared.core.plot.flag;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.plotsquared.core.configuration.caption.CaptionUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -316,8 +317,9 @@ public class FlagContainer {
     ) {
         if (plotFlagUpdateType != PlotFlagUpdateType.FLAG_REMOVED && this.unknownFlags
                 .containsKey(flag.getName())) {
-            final String value = this.unknownFlags.remove(flag.getName());
+            String value = this.unknownFlags.remove(flag.getName());
             if (value != null) {
+                value = CaptionUtility.stripClickEvents(flag, value);
                 try {
                     this.addFlag(flag.parse(value));
                 } catch (final Exception ignored) {
