@@ -41,6 +41,7 @@ import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+import com.plotsquared.core.plot.PlotTitle;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.comment.CommentManager;
 import com.plotsquared.core.plot.expiration.ExpireManager;
@@ -294,11 +295,11 @@ public class PlotListener {
             if (titles && !player.getAttribute("disabletitles")) {
                 String title;
                 String subtitle;
-                String[] titleFlag = plot.getFlag(TitleFlag.class);
+                PlotTitle titleFlag = plot.getFlag(TitleFlag.class);
                 boolean fromFlag;
-                if (titleFlag.length == 2) {
-                    title = titleFlag[0];
-                    subtitle = titleFlag[1];
+                if (!titleFlag.title().isEmpty() && !titleFlag.subtitle().isEmpty()) {
+                    title = titleFlag.title();
+                    subtitle = titleFlag.subtitle();
                     fromFlag = true;
                 } else {
                     title = TranslatableCaption.of("titles.title_entered_plot").getComponent(ConsolePlayer.getConsole());

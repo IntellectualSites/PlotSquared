@@ -26,23 +26,21 @@
 package com.plotsquared.core.plot.flag.implementations;
 
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
+import com.plotsquared.core.plot.PlotTitle;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
-import com.plotsquared.core.util.ItemUtil;
-import com.sk89q.worldedit.world.item.ItemType;
-import com.sk89q.worldedit.world.item.ItemTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class TitleFlag extends PlotFlag<String[], TitleFlag> {
+public class TitleFlag extends PlotFlag<PlotTitle, TitleFlag> {
 
-    public static final TitleFlag TITLE_FLAG_EMPTY = new TitleFlag(new String[0]);
+    public static final TitleFlag TITLE_FLAG_EMPTY = new TitleFlag(new PlotTitle("", ""));
 
     /**
      * Construct a new flag instance.
      *
      * @param value Flag value
      */
-    protected TitleFlag(String[] value) {
+    protected TitleFlag(PlotTitle value) {
         super(value, TranslatableCaption.of("flags.flag_category_string"), TranslatableCaption.of("flags.flag_description_title"));
     }
 
@@ -54,11 +52,11 @@ public class TitleFlag extends PlotFlag<String[], TitleFlag> {
         input = input.substring(input.indexOf("\""));
         input = input.substring(0, input.lastIndexOf("\"") + 1);
         String[] inputs = input.split("\"");
-        String[] value;
+        PlotTitle value;
         if (inputs.length == 2) {
-            value = new String[]{inputs[1], ""};
+            value = new PlotTitle(inputs[1], "");
         } else if (inputs.length > 3) {
-            value = new String[]{inputs[1], inputs[3]};
+            value = new PlotTitle(inputs[1], inputs[3]);
         } else {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_title"));
         }
@@ -66,13 +64,13 @@ public class TitleFlag extends PlotFlag<String[], TitleFlag> {
     }
 
     @Override
-    public TitleFlag merge(@NonNull String[] newValue) {
-        if (getValue()[0].isEmpty() && getValue()[1].isEmpty()) {
+    public TitleFlag merge(@NonNull PlotTitle newValue) {
+        if (getValue().title().isEmpty() && getValue().subtitle().isEmpty()) {
             return new TitleFlag(newValue);
-        } else if (getValue()[1].isEmpty()) {
-            return new TitleFlag(new String[]{getValue()[0], newValue[1]});
-        } else if (getValue()[0].isEmpty()) {
-            return new TitleFlag(new String[]{newValue[0], getValue()[1]});
+        } else if (getValue().subtitle().isEmpty()) {
+            return new TitleFlag(new PlotTitle(getValue().title(), newValue.subtitle()));
+        } else if (getValue().title().isEmpty()) {
+            return new TitleFlag(new PlotTitle(newValue.title(), getValue().subtitle()));
         } else {
             return this;
         }
@@ -80,7 +78,7 @@ public class TitleFlag extends PlotFlag<String[], TitleFlag> {
 
     @Override
     public String toString() {
-        return getValue()[0] + getValue()[1];
+        return "\"" + getValue().title() + "\" \"" + getValue().subtitle() + "\"";
     }
 
     @Override
@@ -94,7 +92,7 @@ public class TitleFlag extends PlotFlag<String[], TitleFlag> {
     }
 
     @Override
-    protected TitleFlag flagOf(@NonNull String[] value) {
+    protected TitleFlag flagOf(@NonNull PlotTitle value) {
         return new TitleFlag(value);
     }
 
