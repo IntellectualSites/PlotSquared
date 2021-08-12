@@ -92,7 +92,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         chunkCoordinator.start();
     }
 
-    //TODO: implement cancellation
     @Override
     public void cancel() {
         chunkCoordinator.cancel();

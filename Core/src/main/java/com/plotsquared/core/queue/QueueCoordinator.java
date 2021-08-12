@@ -39,6 +39,9 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -51,6 +54,7 @@ public abstract class QueueCoordinator {
     private boolean forceSync = false;
     @Nullable
     private Object chunkObject;
+    private final AtomicBoolean enqueued = new AtomicBoolean();
 
     @Inject
     private GlobalBlockQueue blockQueue;
@@ -321,7 +325,12 @@ public abstract class QueueCoordinator {
      * @return success or not
      */
     public boolean enqueue() {
-        return blockQueue.enqueue(this);
+        boolean success = false;
+        if (enqueued.compareAndSet(false, true)) {
+            success = true;
+            start();
+        }
+        return success;
     }
 
     /**
@@ -330,7 +339,7 @@ public abstract class QueueCoordinator {
     public abstract void start();
 
     /**
-     * Cancel the queue. Not yet implemented.
+     * Cancel the queue
      */
     public abstract void cancel();
 

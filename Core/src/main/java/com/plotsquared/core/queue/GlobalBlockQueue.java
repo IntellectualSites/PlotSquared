@@ -29,18 +29,12 @@ import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
-
 public class GlobalBlockQueue {
 
-    private final ConcurrentLinkedDeque<QueueCoordinator> activeQueues;
     private QueueProvider provider;
 
     public GlobalBlockQueue(@NonNull QueueProvider provider) {
         this.provider = provider;
-        this.activeQueues = new ConcurrentLinkedDeque<>();
     }
 
     /**
@@ -62,35 +56,6 @@ public class GlobalBlockQueue {
 
     public void setQueueProvider(@NonNull QueueProvider provider) {
         this.provider = provider;
-    }
-
-    /**
-     * Place an instance of {@link QueueCoordinator} into a list incase access is needed
-     * and then start it.
-     *
-     * @param queue {@link QueueCoordinator} instance to start.
-     * @return true if added to queue, false otherwise
-     */
-    public boolean enqueue(@NonNull QueueCoordinator queue) {
-        boolean success = false;
-        if (queue.size() > 0 && !activeQueues.contains(queue)) {
-            success = activeQueues.add(queue);
-            queue.start();
-        }
-        return success;
-    }
-
-    public void dequeue(@NonNull QueueCoordinator queue) {
-        queue.cancel();
-        activeQueues.remove(queue);
-    }
-
-    public @NonNull List<QueueCoordinator> getActiveQueues() {
-        return new ArrayList<>(activeQueues);
-    }
-
-    public boolean isDone() {
-        return activeQueues.size() == 0;
     }
 
 }
