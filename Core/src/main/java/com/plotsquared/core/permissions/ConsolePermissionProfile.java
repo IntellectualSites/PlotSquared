@@ -39,4 +39,13 @@ public enum ConsolePermissionProfile implements PermissionProfile {
         return true;
     }
 
+    @Override
+    public boolean hasKeyedPermission(
+            final @Nullable String world,
+            final @NonNull String permission,
+            final @NonNull String key
+    ) {
+        return true;
+    }
+
 }

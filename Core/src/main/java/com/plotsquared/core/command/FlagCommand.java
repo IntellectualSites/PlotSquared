@@ -102,22 +102,23 @@ public final class FlagCommand extends Command {
             try {
                 int numeric = Integer.parseInt(value);
                 perm = perm.substring(0, perm.length() - value.length() - 1);
+                boolean result = false;
                 if (numeric > 0) {
                     int checkRange = PlotSquared.get().getPlatform().equalsIgnoreCase("bukkit") ?
                             numeric :
                             Settings.Limit.MAX_PLOTS;
-                    final boolean result = player.hasPermissionRange(perm, checkRange) >= numeric;
-                    if (!result) {
-                        player.sendMessage(
-                                TranslatableCaption.of("permission.no_permission"),
-                                Template.of(
-                                        "node",
-                                        Permission.PERMISSION_SET_FLAG_KEY_VALUE.format(key.toLowerCase(), value.toLowerCase())
-                                )
-                        );
-                    }
-                    return result;
+                    result = player.hasPermissionRange(perm, checkRange) >= numeric;
                 }
+                if (!result) {
+                    player.sendMessage(
+                            TranslatableCaption.of("permission.no_permission"),
+                            Template.of(
+                                    "node",
+                                    perm
+                            )
+                    );
+                }
+                return result;
             } catch (NumberFormatException ignore) {
             }
         } else if (flag instanceof final ListFlag<?, ?> listFlag) {
@@ -147,7 +148,14 @@ public final class FlagCommand extends Command {
             }
             return true;
         }
-        final boolean result = Permissions.hasPermission(player, perm);
+        boolean result;
+        String basePerm = Permission.PERMISSION_SET_FLAG_KEY.format(key.toLowerCase());
+        if (flag.isValuedPermission()) {
+            result = Permissions.hasKeyedPermission(player, basePerm, value);
+        } else {
+            result = Permissions.hasPermission(player, basePerm);
+            perm = basePerm;
+        }
         if (!result) {
             player.sendMessage(TranslatableCaption.of("permission.no_permission"), Template.of("node", perm));
         }

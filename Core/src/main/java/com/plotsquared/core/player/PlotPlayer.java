@@ -197,6 +197,15 @@ public abstract class PlotPlayer<P> implements CommandCaller, OfflinePlotPlayer,
         return this.permissionProfile.hasPermission(world, permission);
     }
 
+    @Override
+    public final boolean hasKeyedPermission(
+            final @Nullable String world,
+            final @NonNull String permission,
+            final @NonNull String key
+    ) {
+        return this.permissionProfile.hasKeyedPermission(world, permission, key);
+    }
+
     public abstract Actor toActor();
 
     public abstract P getPlatformPlayer();

@@ -72,4 +72,9 @@ public abstract class LongFlag<F extends NumberFlag<Long, F>> extends NumberFlag
         }
     }
 
+    @Override
+    public boolean isValuedPermission() {
+        return false;
+    }
+
 }

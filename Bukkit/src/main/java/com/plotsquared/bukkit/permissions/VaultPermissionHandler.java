@@ -117,6 +117,26 @@ public class VaultPermissionHandler implements PermissionHandler {
             return permissions.playerHas(world, offlinePlayer, permission);
         }
 
+        @Override
+        public boolean hasKeyedPermission(
+                final @Nullable String world,
+                final @NonNull String stub,
+                final @NonNull String key
+        ) {
+            if (permissions == null) {
+                return false;
+            }
+            if (world == null && offlinePlayer instanceof BukkitPlayer) {
+                return permissions.playerHas(
+                        ((BukkitPlayer) offlinePlayer).getPlatformPlayer(),
+                        stub + ".*"
+                ) || permissions.playerHas(((BukkitPlayer) offlinePlayer).getPlatformPlayer(), stub + "." + key);
+            }
+            return permissions.playerHas(world, offlinePlayer, stub + ".*") || permissions.playerHas(world, offlinePlayer,
+                    stub + "." + key
+            );
+        }
+
     }
 
 }
