@@ -68,4 +68,9 @@ public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends Number
         }
     }
 
+    @Override
+    public boolean isValuedPermission() {
+        return false;
+    }
+
 }

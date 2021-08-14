@@ -92,6 +92,16 @@ public class BukkitPermissionHandler implements PermissionHandler {
             return player != null && player.hasPermission(permission);
         }
 
+        @Override
+        public boolean hasKeyedPermission(
+                final @Nullable String world,
+                final @NonNull String stub,
+                final @NonNull String key
+        ) {
+            final Player player = this.playerReference.get();
+            return player != null && (player.hasPermission(stub + "." + key) || player.hasPermission(stub + ".*"));
+        }
+
     }
 
 }

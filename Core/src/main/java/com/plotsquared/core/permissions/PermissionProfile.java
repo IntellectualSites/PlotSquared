@@ -52,4 +52,33 @@ public interface PermissionProfile {
      */
     boolean hasPermission(final @Nullable String world, @NonNull String permission);
 
+    /**
+     * Check if the owner of the profile has a given (global) keyed permission. Checks both {@code permission.key}
+     * and {@code permission.*}
+     *
+     * @param permission Permission
+     * @param key        Permission "key"
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    default boolean hasKeyedPermission(
+            final @NonNull String permission,
+            final @NonNull String key
+    ) {
+        return hasKeyedPermission(null, permission, key);
+    }
+
+    /**
+     * Check if the owner of the profile has a given keyed permission. Checks both {@code permission.key}
+     * and {@code permission.*}
+     *
+     * @param world      World name
+     * @param permission Permission
+     * @param key        Permission "key"
+     * @return {@code true} if the owner has the given permission, else {@code false}
+     */
+    boolean hasKeyedPermission(
+            @Nullable String world, final @NonNull String permission,
+            final @NonNull String key
+    );
+
 }
