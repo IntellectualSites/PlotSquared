@@ -58,8 +58,8 @@ import com.plotsquared.core.plot.flag.implementations.HealFlag;
 import com.plotsquared.core.plot.flag.implementations.MusicFlag;
 import com.plotsquared.core.plot.flag.implementations.NotifyEnterFlag;
 import com.plotsquared.core.plot.flag.implementations.NotifyLeaveFlag;
+import com.plotsquared.core.plot.flag.implementations.PlotTitleFlag;
 import com.plotsquared.core.plot.flag.implementations.TimeFlag;
-import com.plotsquared.core.plot.flag.implementations.TitleFlag;
 import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.WeatherFlag;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
@@ -295,7 +295,7 @@ public class PlotListener {
             if (titles && !player.getAttribute("disabletitles")) {
                 String title;
                 String subtitle;
-                PlotTitle titleFlag = plot.getFlag(TitleFlag.class);
+                PlotTitle titleFlag = plot.getFlag(PlotTitleFlag.class);
                 boolean fromFlag;
                 if (!titleFlag.title().isEmpty() && !titleFlag.subtitle().isEmpty()) {
                     title = titleFlag.title();

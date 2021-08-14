@@ -31,23 +31,23 @@ import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class TitleFlag extends PlotFlag<PlotTitle, TitleFlag> {
+public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
 
-    public static final TitleFlag TITLE_FLAG_EMPTY = new TitleFlag(new PlotTitle("", ""));
+    public static final PlotTitleFlag TITLE_FLAG_EMPTY = new PlotTitleFlag(new PlotTitle("", ""));
 
     /**
      * Construct a new flag instance.
      *
      * @param value Flag value
      */
-    protected TitleFlag(PlotTitle value) {
+    protected PlotTitleFlag(PlotTitle value) {
         super(value, TranslatableCaption.of("flags.flag_category_string"), TranslatableCaption.of("flags.flag_description_title"));
     }
 
     @Override
-    public TitleFlag parse(@NonNull String input) throws FlagParseException {
+    public PlotTitleFlag parse(@NonNull String input) throws FlagParseException {
         if (!input.contains("\"")) {
-            return new TitleFlag(new PlotTitle(input, ""));
+            return new PlotTitleFlag(new PlotTitle(input, ""));
         }
         input = input.substring(input.indexOf("\""));
         input = input.substring(0, input.lastIndexOf("\"") + 1);
@@ -60,17 +60,17 @@ public class TitleFlag extends PlotFlag<PlotTitle, TitleFlag> {
         } else {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_title"));
         }
-        return new TitleFlag(value);
+        return new PlotTitleFlag(value);
     }
 
     @Override
-    public TitleFlag merge(@NonNull PlotTitle newValue) {
+    public PlotTitleFlag merge(@NonNull PlotTitle newValue) {
         if (getValue().title().isEmpty() && getValue().subtitle().isEmpty()) {
-            return new TitleFlag(newValue);
+            return new PlotTitleFlag(newValue);
         } else if (getValue().subtitle().isEmpty()) {
-            return new TitleFlag(new PlotTitle(getValue().title(), newValue.subtitle()));
+            return new PlotTitleFlag(new PlotTitle(getValue().title(), newValue.subtitle()));
         } else if (getValue().title().isEmpty()) {
-            return new TitleFlag(new PlotTitle(newValue.title(), getValue().subtitle()));
+            return new PlotTitleFlag(new PlotTitle(newValue.title(), getValue().subtitle()));
         } else {
             return this;
         }
@@ -92,8 +92,8 @@ public class TitleFlag extends PlotFlag<PlotTitle, TitleFlag> {
     }
 
     @Override
-    protected TitleFlag flagOf(@NonNull PlotTitle value) {
-        return new TitleFlag(value);
+    protected PlotTitleFlag flagOf(@NonNull PlotTitle value) {
+        return new PlotTitleFlag(value);
     }
 
 }

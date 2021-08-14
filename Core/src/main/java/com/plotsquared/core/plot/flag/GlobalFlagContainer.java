@@ -90,6 +90,7 @@ import com.plotsquared.core.plot.flag.implementations.NotifyEnterFlag;
 import com.plotsquared.core.plot.flag.implementations.NotifyLeaveFlag;
 import com.plotsquared.core.plot.flag.implementations.PlaceFlag;
 import com.plotsquared.core.plot.flag.implementations.PlayerInteractFlag;
+import com.plotsquared.core.plot.flag.implementations.PlotTitleFlag;
 import com.plotsquared.core.plot.flag.implementations.PreventCreativeCopyFlag;
 import com.plotsquared.core.plot.flag.implementations.PriceFlag;
 import com.plotsquared.core.plot.flag.implementations.PveFlag;
@@ -102,7 +103,6 @@ import com.plotsquared.core.plot.flag.implementations.SoilDryFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedAttackFlag;
 import com.plotsquared.core.plot.flag.implementations.TamedInteractFlag;
 import com.plotsquared.core.plot.flag.implementations.TimeFlag;
-import com.plotsquared.core.plot.flag.implementations.TitleFlag;
 import com.plotsquared.core.plot.flag.implementations.TitlesFlag;
 import com.plotsquared.core.plot.flag.implementations.UntrustedVisitFlag;
 import com.plotsquared.core.plot.flag.implementations.UseFlag;
@@ -233,7 +233,7 @@ public final class GlobalFlagContainer extends FlagContainer {
         this.addFlag(DescriptionFlag.DESCRIPTION_FLAG_EMPTY);
         this.addFlag(GreetingFlag.GREETING_FLAG_EMPTY);
         this.addFlag(FarewellFlag.FAREWELL_FLAG_EMPTY);
-        this.addFlag(TitleFlag.TITLE_FLAG_EMPTY);
+        this.addFlag(PlotTitleFlag.TITLE_FLAG_EMPTY);
 
         // Internal flags
         this.addFlag(new AnalysisFlag(Collections.emptyList()));
