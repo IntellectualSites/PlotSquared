@@ -82,10 +82,14 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 SideEffect.State.OFF
         );
         lightingSideEffectSet = SideEffectSet.none().with(SideEffect.NEIGHBORS, SideEffect.State.OFF);
-        edgeSideEffectSet = noSideEffectSet.with(SideEffect.UPDATE, SideEffect.State.ON).with(SideEffect.NEIGHBORS,
-                SideEffect.State.ON);
-        edgeLightingSideEffectSet = noSideEffectSet.with(SideEffect.UPDATE, SideEffect.State.ON).with(SideEffect.NEIGHBORS,
-                SideEffect.State.ON);
+        edgeSideEffectSet = noSideEffectSet.with(SideEffect.UPDATE, SideEffect.State.ON).with(
+                SideEffect.NEIGHBORS,
+                SideEffect.State.ON
+        );
+        edgeLightingSideEffectSet = noSideEffectSet.with(SideEffect.UPDATE, SideEffect.State.ON).with(
+                SideEffect.NEIGHBORS,
+                SideEffect.State.ON
+        );
     }
 
     @Override
@@ -171,7 +175,8 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             int y = ChunkUtil.getY(layer, j);
                             int z = sz + lz;
                             boolean edge = Settings.QUEUE.UPDATE_EDGES && isEdge(y >> 4, lx, y & 15, lz, blockVector2,
-                                    localChunk);
+                                    localChunk
+                            );
                             setWorldBlock(x, y, z, block, blockVector2, edge);
                         }
                     }
@@ -298,56 +303,38 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         }
         if (x == 0) {
             LocalChunk localChunkX = getBlockChunks().get(blockVector2.withX(blockVector2.getX() - 1));
-            if (localChunkX == null || localChunkX.getBaseblocks()[layer] == null || localChunkX.getBaseblocks()[layer][ChunkUtil.getJ(
-                    15,
-                    y,
-                    z
-            )] != null) {
+            if (localChunkX == null || localChunkX.getBaseblocks()[layer] == null ||
+                    localChunkX.getBaseblocks()[layer][ChunkUtil.getJ(15, y, z)] != null) {
                 return true;
             }
         } else if (x == 15) {
             LocalChunk localChunkX = getBlockChunks().get(blockVector2.withX(blockVector2.getX() + 1));
-            if (localChunkX == null || localChunkX.getBaseblocks()[layer] == null || localChunkX.getBaseblocks()[layer][ChunkUtil.getJ(
-                    0,
-                    y,
-                    z
-            )] != null) {
+            if (localChunkX == null || localChunkX.getBaseblocks()[layer] == null ||
+                    localChunkX.getBaseblocks()[layer][ChunkUtil.getJ(0, y, z)] != null) {
                 return true;
             }
         }
         if (z == 0) {
             LocalChunk localChunkZ = getBlockChunks().get(blockVector2.withZ(blockVector2.getZ() - 1));
-            if (localChunkZ == null || localChunkZ.getBaseblocks()[layer] == null || localChunkZ.getBaseblocks()[layer][ChunkUtil.getJ(
-                    x,
-                    y,
-                    15
-            )] != null) {
+            if (localChunkZ == null || localChunkZ.getBaseblocks()[layer] == null ||
+                    localChunkZ.getBaseblocks()[layer][ChunkUtil.getJ(x, y, 15)] != null) {
                 return true;
             }
         } else if (z == 15) {
             LocalChunk localChunkZ = getBlockChunks().get(blockVector2.withZ(blockVector2.getZ() + 1));
-            if (localChunkZ == null || localChunkZ.getBaseblocks()[layer] == null || localChunkZ.getBaseblocks()[layer][ChunkUtil.getJ(
-                    x,
-                    y,
-                    0
-            )] != null) {
+            if (localChunkZ == null || localChunkZ.getBaseblocks()[layer] == null ||
+                    localChunkZ.getBaseblocks()[layer][ChunkUtil.getJ(x, y, 0)] != null) {
                 return true;
             }
         }
         if (y == 0) {
-            if (localChunk.getBaseblocks()[layer - 1] == null || localChunk.getBaseblocks()[layer][ChunkUtil.getJ(
-                    x,
-                    15,
-                    z
-            )] != null) {
+            if (localChunk.getBaseblocks()[layer - 1] == null ||
+                    localChunk.getBaseblocks()[layer][ChunkUtil.getJ(x, 15, z)] != null) {
                 return true;
             }
         } else if (y == 15) {
-            if (localChunk.getBaseblocks()[layer + 1] == null || localChunk.getBaseblocks()[layer][ChunkUtil.getJ(
-                    x,
-                    0,
-                    z
-            )] != null) {
+            if (localChunk.getBaseblocks()[layer + 1] == null ||
+                    localChunk.getBaseblocks()[layer][ChunkUtil.getJ(x, 0, z)] != null) {
                 return true;
             }
         }
