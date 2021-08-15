@@ -26,6 +26,7 @@
 package com.plotsquared.bukkit.listener;
 
 import com.google.inject.Inject;
+import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.Plot;
@@ -37,6 +38,8 @@ import com.plotsquared.core.util.task.PlotSquaredTask;
 import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import io.papermc.lib.PaperLib;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -55,8 +58,6 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -72,25 +73,41 @@ public class ChunkListener implements Listener {
     private final PlotAreaManager plotAreaManager;
 
     private RefMethod methodGetHandleChunk;
+    private RefMethod methodGetHandleWorld;
     private RefField mustSave;
     private Chunk lastChunk;
     private boolean ignoreUnload = false;
+    private boolean isTrueForNotSave = true;
 
     @Inject
     public ChunkListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
-        if (Settings.Chunk_Processor.AUTO_TRIM) {
-            try {
-                RefClass classChunk = getRefClass("{nms}.Chunk");
-                RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
-                this.mustSave = classChunk.getField("mustSave");
-                this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
-            } catch (Throwable ignored) {
-                Settings.Chunk_Processor.AUTO_TRIM = false;
-            }
-        }
         if (!Settings.Chunk_Processor.AUTO_TRIM) {
             return;
+        }
+        try {
+            this.methodGetHandleWorld = getRefClass("{cb}.CraftWorld").getMethod("getHandle");
+            RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
+            this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle");
+            try {
+                if (PlotSquared.platform().serverVersion()[1] < 17) {
+                    RefClass classChunk = getRefClass("{nms}.Chunk");
+                    RefClass worldServer = getRefClass("{nms}.WorldServer");
+                    if (PlotSquared.platform().serverVersion()[1] == 13) {
+                        this.mustSave = classChunk.getField("mustSave");
+                        this.isTrueForNotSave = false;
+                    } else {
+                        this.mustSave = classChunk.getField("mustNotSave");
+                    }
+                } else {
+                    RefClass classChunk = getRefClass("net.minecraft.world.level.chunk");
+                    this.mustSave = classChunk.getField("mustNotSave");
+                }
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        } catch (Throwable ignored) {
+            Settings.Chunk_Processor.AUTO_TRIM = false;
         }
         for (World world : Bukkit.getWorlds()) {
             world.setAutoSave(false);
@@ -103,13 +120,17 @@ public class ChunkListener implements Listener {
                     if (!this.plotAreaManager.hasPlotArea(worldName)) {
                         continue;
                     }
-                    Object w = world.getClass().getDeclaredMethod("getHandle").invoke(world);
-                    Object chunkMap = w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
-                    Method methodIsChunkInUse =
-                            chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
+                    Method methodIsChunkInUse = null;
+                    Object chunkMap = null;
+                    if (PlotSquared.platform().serverVersion()[1] == 13) {
+                        Object w = methodGetHandleWorld.of(world).call();
+                        chunkMap = w.getClass().getDeclaredMethod("getPlayerChunkMap").invoke(w);
+                        methodIsChunkInUse =
+                                chunkMap.getClass().getDeclaredMethod("isChunkInUse", int.class, int.class);
+                    }
                     Chunk[] chunks = world.getLoadedChunks();
                     for (Chunk chunk : chunks) {
-                        if ((boolean) methodIsChunkInUse
+                        if (methodIsChunkInUse != null && (boolean) methodIsChunkInUse
                                 .invoke(chunkMap, chunk.getX(), chunk.getZ())) {
                             continue;
                         }
@@ -145,7 +166,7 @@ public class ChunkListener implements Listener {
         Object c = this.methodGetHandleChunk.of(chunk).call();
         RefField.RefExecutor field = this.mustSave.of(c);
         if ((Boolean) field.get()) {
-            field.set(false);
+            field.set(isTrueForNotSave);
             if (chunk.isLoaded()) {
                 ignoreUnload = true;
                 chunk.unload(false);
