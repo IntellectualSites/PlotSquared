@@ -200,7 +200,7 @@ public abstract class QueueCoordinator {
      * @param biome biome
      * @return success or not
      *
-     * @deprecated Biomes now take XYZ, see {@code setBiome int x, int y, int z}
+     * @deprecated Biomes now take XYZ, see {@link #setBiome(int, int, int, BiomeType)}
      * <br>
      * Scheduled for removal once we drop the support for versions not supporting 3D biomes.
      */
