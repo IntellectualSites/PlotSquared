@@ -392,6 +392,7 @@ permissions:
       plots.set.flag.price: true
       plots.set.flag.no-worldedit: true
       plots.set.flag.no-worldedit.*: true
+      plots.set.flag.titleflag.*: true
   plots.permpack.basicinbox:
     default: false
     children:
