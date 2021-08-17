@@ -320,7 +320,7 @@ public abstract class QueueCoordinator {
     }
 
     /**
-     * Enqueue the queue with the {@link GlobalBlockQueue}
+     * Enqueue the queue to start it
      *
      * @return success or not
      */
