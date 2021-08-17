@@ -6,9 +6,10 @@ plugins {
     java
     `java-library`
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("org.cadixdev.licenser") version "0.6.1"
-    id("org.ajoberstar.grgit") version "4.1.0"
+
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.licenser)
+    alias(libs.plugins.grgit)
 
     eclipse
     idea
