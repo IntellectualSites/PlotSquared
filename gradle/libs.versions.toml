@@ -1,65 +1,68 @@
 [versions]
-checker-qual = "3.16.0"
-
+# Minecraft expectations
 guava = "21.0" # Version set by Minecraft
 gson = "2.8.0" # Version set by Minecraft
+log4j-api = "2.14.1" # Version set by Minecraft
 
+# Platform expectations
+paper = "1.17.1-R0.1-SNAPSHOT"
+checker-qual = "3.16.0"
+guice = "5.0.1"
+findbugs = "3.0.1"
 snakeyaml = "1.28" # Version set by Bukkit
 
+# Adventure & MiniMessage
 adventure-api = "4.8.1"
 adventure-text-minimessage = "4.1.0-SNAPSHOT"
 adventure-platform-bukkit = "4.0.0-SNAPSHOT"
 
-guice = "5.0.1"
-findbugs = "3.0.1"
-
+# Plugins
 worldedit = "7.2.6-SNAPSHOT"
-fawe = "1.17-93"
+fawe = "1.17-138"
 vault = "1.7"
 placeholderapi = "2.10.10"
 luckperms = "5.3"
 essentialsx = "2.18.2"
 hyperverse = "0.6.0-SNAPSHOT"
+mvdwapi = "3.1.1"
 
-log4j-api = "2.14.1" # Version set by Minecraft
-
+# Third party
 prtree = "1.7.0-SNAPSHOT"
 aopalliance = "1.0"
 pipeline = "1.4.0-SNAPSHOT"
-
 arkitektonika = "2.0-SNAPSHOT"
 paster = "1.0.2-SNAPSHOT"
-
 bstats = "2.2.1"
-
-paper = "1.17-R0.1-SNAPSHOT"
 paperlib = "1.0.6"
-
-mvdwapi = "3.1.1"
 squirrelid = "1.0.0-SNAPSHOT"
 serverlib = "2.2.1"
 http4j = "1.1-SNAPSHOT"
 
+# Gradle plugins
+shadow = "7.0.0"
+grgit = "4.1.0"
+licenser = "0.6.1"
+
 [libraries]
-# Expected everywhere.
+# Platform expectations
+paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 checkerqual = { group = "org.checkerframework", name = "checker-qual", version.ref = "checker-qual" }
 
 # Minecraft expectations
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+log4j = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j-api" }
 
 # Platform expectations
 snakeyaml = { group = "org.yaml", name = "snakeyaml", version.ref = "snakeyaml" }
-
-# Adventure
-adventure = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-api" }
-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure-text-minimessage" }
-platform = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform-bukkit" }
-
-# Guice
 guice = { group = "com.google.inject", name = "guice", version.ref = "guice" }
 guiceassistedinject = { group = "com.google.inject.extensions", name = "guice-assistedinject", version.ref = "guice" }
 findbugs = { group = "com.google.code.findbugs", name = "annotations", version.ref = "findbugs" }
+
+# Adventure & MiniMessage
+adventure = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-api" }
+minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure-text-minimessage" }
+adventurePlatformBukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform-bukkit" }
 
 # Plugins
 worldeditCore = { group = "com.sk89q.worldedit", name = "worldedit-core", version.ref = "worldedit" }
@@ -72,25 +75,20 @@ luckperms = { group = "net.luckperms", name = "api", version.ref = "luckperms" }
 essentialsx = { group = "net.ess3", name = "EssentialsX", version.ref = "essentialsx" }
 hyperverse = { group = "se.hyperver.hyperverse", name = "Core", version.ref = "hyperverse" }
 
-# Logging
-log4j = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j-api" }
-
-# Other libraries
+# Third party
 prtree = { group = "org.khelekore", name = "prtree", version.ref = "prtree" }
 aopalliance = { group = "aopalliance", name = "aopalliance", version.ref = "aopalliance" }
 pipeline = { group = "com.intellectualsites", name = "Pipeline", version.ref = "pipeline" }
 mvdwapi = { group = "be.maximvdw", name = "MVdWPlaceholderAPI", version.ref = "mvdwapi" }
 squirrelid = { group = "com.sk89q", name = "squirrelid", version.ref = "squirrelid" }
 serverlib = { group = "org.incendo.serverlib", name = "ServerLib", version.ref = "serverlib" }
-
-# Our libraries
+bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
+paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
 arkitektonika = { group = "com.intellectualsites.arkitektonika", name = "Arkitektonika-Client", version.ref = "arkitektonika" }
 http4j = { group = "com.intellectualsites.http", name = "HTTP4J", version.ref = "http4j" }
 paster = { group = "com.intellectualsites.paster", name = "Paster", version.ref = "paster" }
 
-# Metrics
-bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
-
-# Paper
-paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
-paperlib = { group = "io.papermc", name = "paperlib", version.ref = "paperlib" }
+[plugins]
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
+licenser = { id = "org.cadixdev.licenser", version.ref = "licenser" }

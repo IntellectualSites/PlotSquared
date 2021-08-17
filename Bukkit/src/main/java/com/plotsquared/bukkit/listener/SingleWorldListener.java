@@ -50,14 +50,19 @@ public class SingleWorldListener implements Listener {
     private boolean isTrueForNotSave = true;
 
     public SingleWorldListener() throws Exception {
-        ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         this.methodGetHandleChunk = classCraftChunk.getMethod("getHandle").getRealMethod();
         try {
-            if (PlotSquared.platform().serverVersion()[1] == 13) {
-                this.mustSave = classChunk.getField("mustSave").getRealField();
-                this.isTrueForNotSave = false;
+            if (PlotSquared.platform().serverVersion()[1] < 17) {
+                ReflectionUtils.RefClass classChunk = getRefClass("{nms}.Chunk");
+                if (PlotSquared.platform().serverVersion()[1] == 13) {
+                    this.mustSave = classChunk.getField("mustSave").getRealField();
+                    this.isTrueForNotSave = false;
+                } else {
+                    this.mustSave = classChunk.getField("mustNotSave").getRealField();
+                }
             } else {
+                ReflectionUtils.RefClass classChunk = getRefClass("net.minecraft.world.level.chunk.Chunk");
                 this.mustSave = classChunk.getField("mustNotSave").getRealField();
             }
         } catch (NoSuchFieldException e) {

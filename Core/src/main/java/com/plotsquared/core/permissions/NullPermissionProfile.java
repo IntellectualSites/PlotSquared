@@ -39,4 +39,13 @@ public enum NullPermissionProfile implements PermissionProfile {
         return false;
     }
 
+    @Override
+    public boolean hasKeyedPermission(
+            final @Nullable String world,
+            final @NonNull String permission,
+            final @NonNull String key
+    ) {
+        return false;
+    }
+
 }

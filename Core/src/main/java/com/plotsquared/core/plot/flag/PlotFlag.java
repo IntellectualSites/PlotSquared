@@ -159,6 +159,15 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     }
 
     /**
+     * Get if the flag's permission should check for values. E.g. plots.flag.set.music.VALUE
+     *
+     * @return if valued permission
+     */
+    public boolean isValuedPermission() {
+        return true;
+    }
+
+    /**
      * An example of a string that would parse into a valid
      * flag value.
      *

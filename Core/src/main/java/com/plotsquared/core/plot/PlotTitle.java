@@ -23,36 +23,27 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.plotsquared.core.plot.flag.types;
+package com.plotsquared.core.plot;
 
-import com.plotsquared.core.configuration.caption.Caption;
-import com.plotsquared.core.plot.flag.PlotFlag;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import java.util.Objects;
 
-/**
- * Plot flag representing a string value.
- * This should be used where strings are not "keys" themselves, e.g. when setting enums
- */
-public abstract class StringFlag<F extends StringFlag<F>> extends PlotFlag<String, F> {
+public class PlotTitle {
 
-    /**
-     * Construct a new flag instance.
-     *
-     * @param value           Flag value
-     * @param flagCategory    The flag category
-     * @param flagDescription A caption describing the flag functionality
-     */
-    protected StringFlag(
-            final @NonNull String value,
-            final @NonNull Caption flagCategory,
-            final @NonNull Caption flagDescription
-    ) {
-        super(value, flagCategory, flagDescription);
+    private final String title;
+    private final String subtitle;
+
+    public PlotTitle(String title, String subtitle) {
+        Objects.requireNonNull(title);
+        Objects.requireNonNull(subtitle);
+        this.title = title;
+        this.subtitle = subtitle;
     }
 
-    @Override
-    public boolean isValuedPermission() {
-        return false;
+    public String title() {
+        return title;
     }
 
+    public String subtitle() {
+        return subtitle;
+    }
 }
