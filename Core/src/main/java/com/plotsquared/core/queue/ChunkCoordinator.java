@@ -25,7 +25,7 @@
  */
 package com.plotsquared.core.queue;
 
-public abstract class ChunkCoordinator {
+public abstract class ChunkCoordinator implements Runnable {
 
     /**
      * Starts the chunk coordinator. This will usually (implementation-specific-permitting) mark chunks to be loaded in batches,

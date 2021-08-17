@@ -60,7 +60,7 @@ import java.util.function.Consumer;
  * has fully consumed the chunk
  * </p>
  **/
-public final class BukkitChunkCoordinator extends ChunkCoordinator implements Runnable {
+public final class BukkitChunkCoordinator extends ChunkCoordinator {
 
     private final List<ProgressSubscriber> progressSubscribers = new LinkedList<>();
 
