@@ -52,8 +52,8 @@ public class FlagContainer {
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
     private final PlotFlagUpdateHandler plotFlagUpdateHandler;
     private final Collection<PlotFlagUpdateHandler> updateSubscribers = new HashSet<>();
-    private FlagContainer parentContainer;
     private final PlotFlagUpdateHandler unknownsRef;
+    private FlagContainer parentContainer;
 
     /**
      * Construct a new flag container with an optional parent container and update handler.

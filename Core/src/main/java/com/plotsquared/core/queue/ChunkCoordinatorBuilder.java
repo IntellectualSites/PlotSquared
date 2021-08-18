@@ -218,7 +218,8 @@ public class ChunkCoordinatorBuilder {
         Preconditions.checkNotNull(this.whenDone, "No final action was supplied");
         Preconditions.checkNotNull(this.throwableConsumer, "No throwable consumer was supplied");
         return chunkCoordinatorFactory
-                .create(this.maxIterationTime,
+                .create(
+                        this.maxIterationTime,
                         this.initialBatchSize,
                         this.chunkConsumer,
                         this.world,

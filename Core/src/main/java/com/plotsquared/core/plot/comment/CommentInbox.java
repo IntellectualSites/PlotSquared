@@ -44,9 +44,9 @@ public abstract class CommentInbox {
      * @return the inbox, otherwise {@code false} false
      */
     public boolean canRead(Plot plot, PlotPlayer<?> player) {
-        if (Permissions.hasPermission(player, "plots.inbox.read." + toString(), true)) {
+        if (Permissions.hasPermission(player, "plots.inbox.read." + this, true)) {
             return plot.isOwner(player.getUUID()) || Permissions
-                    .hasPermission(player, "plots.inbox.read." + toString() + ".other", true);
+                    .hasPermission(player, "plots.inbox.read." + this + ".other", true);
         }
         return false;
     }

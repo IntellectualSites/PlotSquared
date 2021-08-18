@@ -88,7 +88,7 @@ public class Condense extends SubCommand {
                 if (args.length == 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot condense" + area.toString() + " start <radius>")
+                            Template.of("value", "/plot condense" + area + " start <radius>")
                     );
                     return false;
                 }
@@ -229,7 +229,7 @@ public class Condense extends SubCommand {
                 if (args.length == 2) {
                     player.sendMessage(
                             TranslatableCaption.of("commandconfig.command_syntax"),
-                            Template.of("value", "/plot condense " + area.toString() + " info <radius>")
+                            Template.of("value", "/plot condense " + area + " info <radius>")
                     );
                     return false;
                 }

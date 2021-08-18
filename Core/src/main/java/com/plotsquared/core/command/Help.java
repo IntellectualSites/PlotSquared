@@ -120,14 +120,16 @@ public class Help extends Command {
                 builder.append(MINI_MESSAGE.parse(TranslatableCaption.of("help.help_header").getComponent(player)));
                 for (CommandCategory c : CommandCategory.values()) {
                     builder.append(Component.newline()).append(MINI_MESSAGE
-                            .parse(TranslatableCaption.of("help.help_info_item").getComponent(player),
+                            .parse(
+                                    TranslatableCaption.of("help.help_info_item").getComponent(player),
                                     Template.of("command", "/plot help"),
                                     Template.of("category", c.name().toLowerCase()),
                                     Template.of("category_desc", c.getComponent(player))
                             ));
                 }
                 builder.append(Component.newline()).append(MINI_MESSAGE
-                        .parse(TranslatableCaption.of("help.help_info_item").getComponent(player),
+                        .parse(
+                                TranslatableCaption.of("help.help_info_item").getComponent(player),
                                 Template.of("command", "/plot help"),
                                 Template.of("category", "all"),
                                 Template.of("category_desc", "Display all commands")
@@ -139,10 +141,10 @@ public class Help extends Command {
                 return true;
             }
             new HelpMenu(player).setCategory(catEnum).getCommands().generateMaxPages().generatePage(
-                    page - 1,
-                    getParent().toString(),
-                    player
-            )
+                            page - 1,
+                            getParent().toString(),
+                            player
+                    )
                     .render();
             return true;
         });
@@ -151,7 +153,8 @@ public class Help extends Command {
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         return Stream.of("claiming", "teleport", "settings", "chat", "schematic", "appearance", "info", "debug",
-                "administration", "all")
+                        "administration", "all"
+                )
                 .filter(value -> value.startsWith(args[0].toLowerCase(Locale.ENGLISH)))
                 .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());

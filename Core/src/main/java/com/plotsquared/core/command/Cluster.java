@@ -67,8 +67,12 @@ public class Cluster extends SubCommand {
         // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
         if (args.length == 0) {
             // return arguments
-            player.sendMessage(TranslatableCaption.of("cluster.cluster_available_args"),
-                    Template.of("list", "<dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>")
+            player.sendMessage(
+                    TranslatableCaption.of("cluster.cluster_available_args"),
+                    Template.of(
+                            "list",
+                            "<dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>"
+                    )
             );
             return false;
         }
@@ -102,7 +106,7 @@ public class Cluster extends SubCommand {
                 );
                 for (PlotCluster cluster : clusters) {
                     // Ignore unmanaged clusters
-                    String name = "'" + cluster.getName() + "' : " + cluster.toString();
+                    String name = "'" + cluster.getName() + "' : " + cluster;
                     if (player.getUUID().equals(cluster.owner)) {
                         player.sendMessage(
                                 TranslatableCaption.of("cluster.cluster_list_element_owner"),
@@ -852,8 +856,12 @@ public class Cluster extends SubCommand {
                 return true;
             }
         }
-        player.sendMessage(TranslatableCaption.of("cluster.cluster_available_args"),
-                Template.of("list", "<dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>")
+        player.sendMessage(
+                TranslatableCaption.of("cluster.cluster_available_args"),
+                Template.of(
+                        "list",
+                        "<dark_aqua>list</dark_aqua><gray>, </gray><dark_aqua>create</dark_aqua><gray>, </gray><dark_aqua>delete</dark_aqua><gray>, </gray><dark_aqua>resize</dark_aqua><gray>, </gray><dark_aqua>invite</dark_aqua><gray>, </gray><dark_aqua>kick</dark_aqua><gray>, </gray><dark_aqua>leave</dark_aqua><gray>, </gray><dark_aqua>members</dark_aqua><gray>, </gray><dark_aqua>info</dark_aqua><gray>, </gray><dark_aqua>tp</dark_aqua><gray>, </gray><dark_aqua>sethome</dark_aqua>"
+                )
         );
         return false;
     }
@@ -896,8 +904,8 @@ public class Cluster extends SubCommand {
                 completions.add("sethome");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
-                    .toLowerCase()
-                    .startsWith(args[0].toLowerCase()))
+                            .toLowerCase()
+                            .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(
                             null,
                             true,

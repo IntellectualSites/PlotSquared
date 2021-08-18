@@ -47,10 +47,10 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -123,7 +123,8 @@ public class ComponentPresetManager {
                     .collect(Collectors.toList());
         } else {
             final List<ComponentPreset> defaultPreset = Collections.singletonList(
-                    new ComponentPreset(ClassicPlotManagerComponent.FLOOR,
+                    new ComponentPreset(
+                            ClassicPlotManagerComponent.FLOOR,
                             "##wool",
                             0,
                             "",
@@ -160,7 +161,10 @@ public class ComponentPresetManager {
         } else if (!plot.hasOwner()) {
             player.sendMessage(TranslatableCaption.of("info.plot_unowned"));
             return null;
-        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID()) && !Permissions.hasPermission(player, Permission.PERMISSION_ADMIN_COMPONENTS_OTHER)) {
+        } else if (!plot.isOwner(player.getUUID()) && !plot.getTrusted().contains(player.getUUID()) && !Permissions.hasPermission(
+                player,
+                Permission.PERMISSION_ADMIN_COMPONENTS_OTHER
+        )) {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return null;
         } else if (plot.getVolume() > Integer.MAX_VALUE) {

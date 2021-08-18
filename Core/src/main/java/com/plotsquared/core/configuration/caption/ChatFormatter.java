@@ -49,7 +49,6 @@ public interface ChatFormatter {
 
         private final PlotPlayer<?> recipient;
         private final boolean rawOutput;
-        ;
         private String message;
 
         /**

@@ -100,7 +100,7 @@ public class ChunkListener implements Listener {
                         this.mustSave = classChunk.getField("mustNotSave");
                     }
                 } else {
-                    RefClass classChunk = getRefClass("net.minecraft.world.level.chunk");
+                    RefClass classChunk = getRefClass("net.minecraft.world.level.chunk.Chunk");
                     this.mustSave = classChunk.getField("mustNotSave");
                 }
             } catch (NoSuchFieldException e) {

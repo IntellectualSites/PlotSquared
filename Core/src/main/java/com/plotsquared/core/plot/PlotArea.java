@@ -70,10 +70,10 @@ import com.sk89q.worldedit.world.gamemode.GameModes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -147,7 +147,7 @@ public abstract class PlotArea {
     private GameMode gameMode = GameModes.CREATIVE;
     private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
-    private boolean roadFlags = false;
+    private final boolean roadFlags = false;
     private boolean worldBorder = false;
     private boolean useEconomy = false;
     private int hash;
@@ -1312,8 +1312,8 @@ public abstract class PlotArea {
      *
      * @return the legacy sign material.
      * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
-     * will be removed without replacement in favor of {@link #signMaterial()}
-     * once we remove the support for 1.13.
+     *         will be removed without replacement in favor of {@link #signMaterial()}
+     *         once we remove the support for 1.13.
      */
     @Deprecated(forRemoval = true)
     public String getLegacySignMaterial() {

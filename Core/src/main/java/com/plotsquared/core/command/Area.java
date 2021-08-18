@@ -261,8 +261,8 @@ public class Area extends SubCommand {
 
                 // Now the schematic is saved, which is wonderful!
                 PlotAreaBuilder singleBuilder = PlotAreaBuilder.ofPlotArea(hybridPlotWorld).plotManager(PlotSquared
-                        .platform()
-                        .pluginName())
+                                .platform()
+                                .pluginName())
                         .generatorName(PlotSquared.platform().pluginName()).maximumId(plotId).minimumId(plotId);
                 Runnable singleRun = () -> {
                     final String path =
@@ -310,9 +310,9 @@ public class Area extends SubCommand {
                         switch (args[1].toLowerCase()) {
                             case "pos1" -> { // Set position 1
                                 HybridPlotWorld area = (HybridPlotWorld) metaData.computeIfAbsent(
-                                        player.getUUID(),
-                                        missingUUID -> new HashMap<>()
-                                )
+                                                player.getUUID(),
+                                                missingUUID -> new HashMap<>()
+                                        )
                                         .get("area_create_area");
                                 if (area == null) {
                                     player.sendMessage(
@@ -340,9 +340,9 @@ public class Area extends SubCommand {
                             case "pos2" -> {  // Set position 2 and finish creation for type=2 (partial)
                                 final HybridPlotWorld area =
                                         (HybridPlotWorld) metaData.computeIfAbsent(
-                                                player.getUUID(),
-                                                missingUUID -> new HashMap<>()
-                                        )
+                                                        player.getUUID(),
+                                                        missingUUID -> new HashMap<>()
+                                                )
                                                 .get("area_create_area");
                                 if (area == null) {
                                     player.sendMessage(
@@ -378,8 +378,8 @@ public class Area extends SubCommand {
                                     return false;
                                 }
                                 PlotAreaBuilder builder = PlotAreaBuilder.ofPlotArea(area).plotManager(PlotSquared
-                                        .platform()
-                                        .pluginName())
+                                                .platform()
+                                                .pluginName())
                                         .generatorName(PlotSquared.platform().pluginName()).minimumId(PlotId.of(1, 1))
                                         .maximumId(PlotId.of(numX, numZ));
                                 final String path =
@@ -718,8 +718,8 @@ public class Area extends SubCommand {
                                         generatorTemplate
                                 ));
                         Template tooltipTemplate = Template.of("hover_info", tooltip);
-                        Template visitcmdTemplate = Template.of("command_tp", "/plot area tp " + area.toString());
-                        Template infocmdTemplate = Template.of("command_info", "/plot area info " + area.toString());
+                        Template visitcmdTemplate = Template.of("command_tp", "/plot area tp " + area);
+                        Template infocmdTemplate = Template.of("command_info", "/plot area info " + area);
                         Template numberTemplate = Template.of("number", String.valueOf(i));
                         Template nameTemplate = Template.of("area_name", name);
                         Template typeTemplate = Template.of("area_type", area.getType().name());
@@ -844,8 +844,8 @@ public class Area extends SubCommand {
                 completions.add("tp");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
-                    .toLowerCase()
-                    .startsWith(args[0].toLowerCase()))
+                            .toLowerCase()
+                            .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(
                             null,
                             true,

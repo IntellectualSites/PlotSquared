@@ -41,7 +41,6 @@ import net.kyori.adventure.text.minimessage.Template;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nullable;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**

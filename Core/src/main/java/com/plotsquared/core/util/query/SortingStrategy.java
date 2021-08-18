@@ -52,5 +52,5 @@ public enum SortingStrategy {
     /**
      * Sort using a comparator
      */
-    COMPARATOR;
+    COMPARATOR
 }

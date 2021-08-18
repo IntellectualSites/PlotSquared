@@ -52,10 +52,10 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import net.kyori.adventure.text.minimessage.Template;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -175,7 +175,7 @@ public final class PlotModificationManager {
                     return;
                 }
                 CuboidRegion region = regions.poll();
-                Location[] corners = plot.getCorners(plot.getWorldName(), region);
+                Location[] corners = Plot.getCorners(plot.getWorldName(), region);
                 Location pos1 = corners[0];
                 Location pos2 = corners[1];
                 Location newPos = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
@@ -239,7 +239,7 @@ public final class PlotModificationManager {
                 if (queue.isEmpty()) {
                     Runnable run = () -> {
                         for (CuboidRegion region : regions) {
-                            Location[] corners = plot.getCorners(plot.getWorldName(), region);
+                            Location[] corners = Plot.getCorners(plot.getWorldName(), region);
                             PlotSquared.platform().regionManager().clearAllEntities(corners[0], corners[1]);
                         }
                         TaskManager.runTask(whenDone);
@@ -731,7 +731,7 @@ public final class PlotModificationManager {
                             TaskManager.runTask(whenDone);
                         } else {
                             CuboidRegion region = regions.poll();
-                            Location[] corners = plot.getCorners(plot.getWorldName(), region);
+                            Location[] corners = Plot.getCorners(plot.getWorldName(), region);
                             Location pos1 = corners[0];
                             Location pos2 = corners[1];
                             Location pos3 = pos1.add(offsetX, 0, offsetZ).withWorld(destination.getWorldName());
@@ -770,7 +770,7 @@ public final class PlotModificationManager {
                         }
                         final Runnable task = this;
                         CuboidRegion region = regions.poll();
-                        Location[] corners = PlotModificationManager.this.plot.getCorners(
+                        Location[] corners = Plot.getCorners(
                                 PlotModificationManager.this.plot.getWorldName(),
                                 region
                         );

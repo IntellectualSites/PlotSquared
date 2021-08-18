@@ -80,7 +80,8 @@ public class DebugExec extends SubCommand {
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         List<String> allowedParams = Arrays
-                .asList("analyze",
+                .asList(
+                        "analyze",
                         "calibrate-analysis",
                         "start-expire",
                         "stop-expire",

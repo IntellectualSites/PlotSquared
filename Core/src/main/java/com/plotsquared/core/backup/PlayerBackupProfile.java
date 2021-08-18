@@ -66,6 +66,7 @@ public class PlayerBackupProfile implements BackupProfile {
     private final SchematicHandler schematicHandler;
     private final Object backupLock = new Object();
     private volatile List<Backup> backupCache;
+
     @Inject
     public PlayerBackupProfile(
             @Assisted final @NonNull UUID owner, @Assisted final @NonNull Plot plot,

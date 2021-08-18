@@ -32,9 +32,9 @@ import com.plotsquared.core.uuid.UUIDService;
 import com.sk89q.squirrelid.Profile;
 import com.sk89q.squirrelid.resolver.HttpRepositoryService;
 import com.sk89q.squirrelid.resolver.ProfileService;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 import java.util.ArrayList;

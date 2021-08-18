@@ -52,8 +52,8 @@ public final class BlockBucket implements ConfigurationSerializable {
 
     private static final java.util.regex.Pattern regex = java.util.regex.Pattern.compile(
             "((?<namespace>[A-Za-z_]+):)?(?<block>([A-Za-z_]+(\\[?[\\S\\s]+\\])?))(:(?<chance>[0-9]{1,3}))?");
-    private boolean compiled;
     private final StringBuilder input;
+    private boolean compiled;
     private BlockState single;
     private Pattern pattern;
 
@@ -105,7 +105,7 @@ public final class BlockBucket implements ConfigurationSerializable {
             chance = 1;
         }
         String prefix = input.length() == 0 ? "" : ",";
-        input.append(prefix).append(block.toString()).append(":").append(chance);
+        input.append(prefix).append(block).append(":").append(chance);
         this.compiled = false;
     }
 

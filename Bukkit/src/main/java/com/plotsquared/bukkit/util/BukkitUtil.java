@@ -55,6 +55,8 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -98,8 +100,6 @@ import org.bukkit.entity.WaterMob;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -140,7 +140,8 @@ public class BukkitUtil extends WorldUtil {
      */
     public static @NonNull Location adapt(final org.bukkit.@NonNull Location location) {
         return Location
-                .at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
+                .at(
+                        com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
                         MathMan.roundInt(location.getX()),
                         MathMan.roundInt(location.getY()),
                         MathMan.roundInt(location.getZ())
@@ -156,7 +157,8 @@ public class BukkitUtil extends WorldUtil {
      */
     public static @NonNull Location adaptComplete(final org.bukkit.@NonNull Location location) {
         return Location
-                .at(com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
+                .at(
+                        com.plotsquared.bukkit.util.BukkitWorld.of(location.getWorld()),
                         MathMan.roundInt(location.getX()),
                         MathMan.roundInt(location.getY()),
                         MathMan.roundInt(location.getZ()),
@@ -516,45 +518,46 @@ public class BukkitUtil extends WorldUtil {
             tileEntityTypes.addAll(BlockCategories.FLOWER_POTS.getAll());
             // Individual Types
             // Add these from strings
-            Stream.of("barrel",
-                    "beacon",
-                    "beehive",
-                    "bee_nest",
-                    "bell",
-                    "blast_furnace",
-                    "brewing_stand",
-                    "campfire",
-                    "chest",
-                    "ender_chest",
-                    "trapped_chest",
-                    "command_block",
-                    "end_gateway",
-                    "hopper",
-                    "jigsaw",
-                    "jubekox",
-                    "lectern",
-                    "note_block",
-                    "black_shulker_box",
-                    "blue_shulker_box",
-                    "brown_shulker_box",
-                    "cyan_shulker_box",
-                    "gray_shulker_box",
-                    "green_shulker_box",
-                    "light_blue_shulker_box",
-                    "light_gray_shulker_box",
-                    "lime_shulker_box",
-                    "magenta_shulker_box",
-                    "orange_shulker_box",
-                    "pink_shulker_box",
-                    "purple_shulker_box",
-                    "red_shulker_box",
-                    "shulker_box",
-                    "white_shulker_box",
-                    "yellow_shulker_box",
-                    "smoker",
-                    "structure_block",
-                    "structure_void"
-            )
+            Stream.of(
+                            "barrel",
+                            "beacon",
+                            "beehive",
+                            "bee_nest",
+                            "bell",
+                            "blast_furnace",
+                            "brewing_stand",
+                            "campfire",
+                            "chest",
+                            "ender_chest",
+                            "trapped_chest",
+                            "command_block",
+                            "end_gateway",
+                            "hopper",
+                            "jigsaw",
+                            "jubekox",
+                            "lectern",
+                            "note_block",
+                            "black_shulker_box",
+                            "blue_shulker_box",
+                            "brown_shulker_box",
+                            "cyan_shulker_box",
+                            "gray_shulker_box",
+                            "green_shulker_box",
+                            "light_blue_shulker_box",
+                            "light_gray_shulker_box",
+                            "lime_shulker_box",
+                            "magenta_shulker_box",
+                            "orange_shulker_box",
+                            "pink_shulker_box",
+                            "purple_shulker_box",
+                            "red_shulker_box",
+                            "shulker_box",
+                            "white_shulker_box",
+                            "yellow_shulker_box",
+                            "smoker",
+                            "structure_block",
+                            "structure_void"
+                    )
                     .map(BlockTypes::get).filter(Objects::nonNull).forEach(tileEntityTypes::add);
         }
         return this.tileEntityTypes;

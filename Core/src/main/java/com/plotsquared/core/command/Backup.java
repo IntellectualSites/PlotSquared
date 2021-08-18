@@ -316,8 +316,10 @@ public final class Backup extends Command {
                         if (number < 1 || number > backups.size()) {
                             player.sendMessage(
                                     TranslatableCaption.of("backups.backup_impossible"),
-                                    Template.of("plot",
-                                            TranslatableCaption.of("generic.generic_invalid_choice").getComponent(player))
+                                    Template.of(
+                                            "plot",
+                                            TranslatableCaption.of("generic.generic_invalid_choice").getComponent(player)
+                                    )
                             );
                         } else {
                             final com.plotsquared.core.backup.Backup backup =
@@ -326,7 +328,10 @@ public final class Backup extends Command {
                                     .exists(backup.getFile())) {
                                 player.sendMessage(
                                         TranslatableCaption.of("backups.backup_impossible"),
-                                        Template.of("plot", TranslatableCaption.of("generic.generic_invalid_choice").getComponent(player))
+                                        Template.of(
+                                                "plot",
+                                                TranslatableCaption.of("generic.generic_invalid_choice").getComponent(player)
+                                        )
                                 );
                             } else {
                                 CmdConfirm.addPending(player, "/plot backup load " + number,

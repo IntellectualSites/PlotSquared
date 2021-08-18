@@ -31,7 +31,6 @@ import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DescriptionFlag;
 import com.plotsquared.core.plot.flag.implementations.FarewellFlag;
 import com.plotsquared.core.plot.flag.implementations.GreetingFlag;
-import com.plotsquared.core.plot.flag.types.StringFlag;
 import com.plotsquared.core.plot.flag.implementations.PlotTitleFlag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -103,7 +102,6 @@ public class CaptionUtility {
      *
      * @param miniMessageString the message from which the specified click events should be removed from.
      * @return the string without the click events that are configured to be removed.
-     *
      * @see Settings.Chat#CLICK_EVENT_ACTIONS_TO_REMOVE
      */
     public static String stripClickEvents(final @NonNull String miniMessageString) {
@@ -119,10 +117,9 @@ public class CaptionUtility {
      * This method works the same way as {@link #stripClickEvents(String)} but will only
      * strip click events from messages that target flags that are meant to contain MiniMessage strings.
      *
-     * @param flag the flag the message is targeted for.
+     * @param flag              the flag the message is targeted for.
      * @param miniMessageString the message from which the specified click events should be removed from.
      * @return the string without the click events that are configured to be removed.
-     *
      * @see Settings.Chat#CLICK_EVENT_ACTIONS_TO_REMOVE
      * @see #stripClickEvents(String)
      */

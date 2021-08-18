@@ -305,8 +305,8 @@ public class SchematicCmd extends SubCommand {
                 completions.add("paste");
             }
             final List<Command> commands = completions.stream().filter(completion -> completion
-                    .toLowerCase()
-                    .startsWith(args[0].toLowerCase()))
+                            .toLowerCase()
+                            .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(
                             null,
                             true,

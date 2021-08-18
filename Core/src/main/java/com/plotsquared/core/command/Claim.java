@@ -46,9 +46,9 @@ import com.plotsquared.core.util.Permissions;
 import com.plotsquared.core.util.PlotExpression;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.Template;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 @CommandDeclaration(
         command = "claim",
