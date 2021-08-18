@@ -71,7 +71,8 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
      *
      * @return Old value, or {@code null}
      */
-    public @Nullable abstract T remove();
+    public @Nullable
+    abstract T remove();
 
     /**
      * Set the meta data value
@@ -85,7 +86,8 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
      *
      * @return Stored value, or {@link Optional#empty()}
      */
-    public @NonNull abstract Optional<T> get();
+    public @NonNull
+    abstract Optional<T> get();
 
     @Override
     public final void close() {

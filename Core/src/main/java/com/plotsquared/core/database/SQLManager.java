@@ -51,9 +51,9 @@ import com.plotsquared.core.util.HashUtil;
 import com.plotsquared.core.util.StringMan;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -3390,22 +3390,19 @@ public class SQLManager implements AbstractDB {
                                 .toString() + "' WHERE `owner` = '" + old.toString() + '\'');
                 stmt.executeUpdate(
                         "UPDATE `" + SQLManager.this.prefix + "cluster_helpers` SET `user_uuid` = '"
-                                + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                                + now + "' WHERE `user_uuid` = '" + old + '\'');
                 stmt.executeUpdate(
                         "UPDATE `" + SQLManager.this.prefix + "cluster_invited` SET `user_uuid` = '"
-                                + now.toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                                + now + "' WHERE `user_uuid` = '" + old + '\'');
                 stmt.executeUpdate(
-                        "UPDATE `" + SQLManager.this.prefix + "plot` SET `owner` = '" + now.toString()
-                                + "' WHERE `owner` = '" + old.toString() + '\'');
+                        "UPDATE `" + SQLManager.this.prefix + "plot` SET `owner` = '" + now
+                                + "' WHERE `owner` = '" + old + '\'');
                 stmt.executeUpdate(
-                        "UPDATE `" + SQLManager.this.prefix + "plot_denied` SET `user_uuid` = '" + now
-                                .toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                        "UPDATE `" + SQLManager.this.prefix + "plot_denied` SET `user_uuid` = '" + now + "' WHERE `user_uuid` = '" + old + '\'');
                 stmt.executeUpdate(
-                        "UPDATE `" + SQLManager.this.prefix + "plot_helpers` SET `user_uuid` = '" + now
-                                .toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                        "UPDATE `" + SQLManager.this.prefix + "plot_helpers` SET `user_uuid` = '" + now + "' WHERE `user_uuid` = '" + old + '\'');
                 stmt.executeUpdate(
-                        "UPDATE `" + SQLManager.this.prefix + "plot_trusted` SET `user_uuid` = '" + now
-                                .toString() + "' WHERE `user_uuid` = '" + old.toString() + '\'');
+                        "UPDATE `" + SQLManager.this.prefix + "plot_trusted` SET `user_uuid` = '" + now + "' WHERE `user_uuid` = '" + old + '\'');
             } catch (SQLException e) {
                 e.printStackTrace();
             }

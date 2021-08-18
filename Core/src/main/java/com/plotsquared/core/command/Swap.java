@@ -86,7 +86,8 @@ public class Swap extends SubCommand {
         }, true).thenApply(result -> {
             if (result) {
                 player.sendMessage(TranslatableCaption.of("swap.swap_success"), Template.of("origin", String.valueOf(plot1)),
-                        Template.of("target", String.valueOf(plot2)));
+                        Template.of("target", String.valueOf(plot2))
+                );
                 return true;
             } else {
                 player.sendMessage(TranslatableCaption.of("swap.swap_overlap"));

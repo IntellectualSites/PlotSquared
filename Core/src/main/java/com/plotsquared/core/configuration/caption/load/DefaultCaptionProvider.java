@@ -63,7 +63,7 @@ public interface DefaultCaptionProvider {
             final @NonNull ClassLoader classLoader,
             final @NonNull String toFormat
     ) {
-        return forClassLoader(classLoader, locale -> String.format(toFormat, locale.toString()));
+        return forClassLoader(classLoader, locale -> String.format(toFormat, locale));
     }
 
     /**

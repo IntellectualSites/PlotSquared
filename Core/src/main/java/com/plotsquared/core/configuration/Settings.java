@@ -792,6 +792,7 @@ public class Settings extends Config {
         );
         @Comment("Whether PlotSquared should hook into MvDWPlaceholderAPI or not")
         public static boolean USE_MVDWAPI = true;
+
     }
 
 }

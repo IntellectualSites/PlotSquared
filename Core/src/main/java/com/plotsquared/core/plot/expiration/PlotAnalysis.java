@@ -236,8 +236,10 @@ public class PlotAnalysis {
                 int optimalIndex = (int) Math.round((1 - threshold) * (n - 1));
 
                 LOGGER.info("- Calculating rank correlation: ");
-                LOGGER.info("- The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
-                LOGGER.info("- The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
+                LOGGER.info(
+                        "- The analyzed plots which were processed and put into bulk data will be compared and correlated to the plot ranking");
+                LOGGER.info(
+                        "- The calculated correlation constant will then be used to calibrate the threshold for auto plot clearing");
 
                 Settings.Auto_Clear settings = new Settings.Auto_Clear();
 
@@ -381,8 +383,8 @@ public class PlotAnalysis {
                     logln(getCC(n, sum(square(getSD(rankComplexity, rankRatings)))));
                     if (optimalComplexity == Integer.MAX_VALUE) {
                         LOGGER.info("Insufficient data to determine correlation! {} | {}",
-                                    optimalIndex, n
-                            );
+                                optimalIndex, n
+                        );
                         running = false;
                         for (Plot plot : plots) {
                             plot.removeRunning();

@@ -35,10 +35,10 @@ import java.util.function.Function;
  */
 public class StringComparison<T> {
 
+    private final Function<T, String> toString;
     private T bestMatch;
     private double match = Integer.MAX_VALUE;
     private T bestMatchObject;
-    private final Function<T, String> toString;
 
     /**
      * Constructor

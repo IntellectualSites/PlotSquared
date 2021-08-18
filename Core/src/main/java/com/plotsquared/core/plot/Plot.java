@@ -80,10 +80,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.ref.Cleaner;
 import java.text.DecimalFormat;
@@ -1301,7 +1301,8 @@ public class Plot {
         Location[] corners = getCorners();
         Location top = corners[0];
         Location bot = corners[1];
-        Location location = Location.at(this.getWorldName(),
+        Location location = Location.at(
+                this.getWorldName(),
                 MathMan.average(bot.getX(), top.getX()),
                 MathMan.average(bot.getY(), top.getY()),
                 MathMan.average(bot.getZ(), top.getZ())
@@ -1332,7 +1333,8 @@ public class Plot {
                     0
             );
         }
-        Location location = Location.at(this.getWorldName(),
+        Location location = Location.at(
+                this.getWorldName(),
                 MathMan.average(bot.getX(), top.getX()),
                 MathMan.average(bot.getY(), top.getY()),
                 MathMan.average(bot.getZ(), top.getZ())
@@ -1407,7 +1409,8 @@ public class Plot {
                 );
             }
             Location location = Location
-                    .at(bottom.getWorldName(),
+                    .at(
+                            bottom.getWorldName(),
                             bottom.getX() + home.getX(),
                             bottom.getY() + home.getY(),
                             bottom.getZ() + home.getZ(),
@@ -1447,7 +1450,8 @@ public class Plot {
             }
             Location bottom = this.getBottomAbs();
             Location location = Location
-                    .at(bottom.getWorldName(),
+                    .at(
+                            bottom.getWorldName(),
                             bottom.getX() + home.getX(),
                             bottom.getY() + home.getY(),
                             bottom.getZ() + home.getZ(),
@@ -1898,7 +1902,7 @@ public class Plot {
         if (this.settings != null && this.settings.getAlias().length() > 1) {
             return this.settings.getAlias();
         }
-        return this.area + ";" + this.id.toString();
+        return this.area + ";" + this.id;
     }
 
     /**
@@ -2806,9 +2810,10 @@ public class Plot {
                             } else {
                                 value = flag.toString();
                             }
-                            Component snip = MINI_MESSAGE.parse(prefix + CaptionUtility.format(
-                                    player,
-                                    TranslatableCaption.of("info.plot_flag_list").getComponent(player)
+                            Component snip = MINI_MESSAGE.parse(
+                                    prefix + CaptionUtility.format(
+                                            player,
+                                            TranslatableCaption.of("info.plot_flag_list").getComponent(player)
                                     ),
                                     Template.of("flag", flag.getName()),
                                     Template.of("value", CaptionUtility.formatRaw(player, value.toString()))
@@ -2905,7 +2910,8 @@ public class Plot {
                                 }
                             }
                             future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                                    .parse(iInfo.getComponent(player),
+                                    .parse(
+                                            iInfo.getComponent(player),
                                             headerTemplate,
                                             areaTemplate,
                                             idTemplate,
@@ -2930,7 +2936,8 @@ public class Plot {
                         return;
                     }
                     future.complete(StaticCaption.of(MINI_MESSAGE.serialize(MINI_MESSAGE
-                            .parse(iInfo.getComponent(player),
+                            .parse(
+                                    iInfo.getComponent(player),
                                     headerTemplate,
                                     areaTemplate,
                                     idTemplate,

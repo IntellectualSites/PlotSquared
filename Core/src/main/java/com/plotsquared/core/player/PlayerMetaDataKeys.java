@@ -38,20 +38,39 @@ import java.util.List;
 public final class PlayerMetaDataKeys {
 
     //@formatter:off
-    public static final MetaDataKey<Boolean> PERSISTENT_FLIGHT = MetaDataKey.of("flight", new TypeLiteral<>() {});
-    public static final MetaDataKey<Integer> PERSISTENT_GRANTED_PLOTS = MetaDataKey.of("grantedPlots", new TypeLiteral<>() {});
+    public static final MetaDataKey<Boolean> PERSISTENT_FLIGHT = MetaDataKey.of("flight", new TypeLiteral<>() {
+    });
+    public static final MetaDataKey<Integer> PERSISTENT_GRANTED_PLOTS = MetaDataKey.of("grantedPlots", new TypeLiteral<>() {
+    });
 
-    public static final MetaDataKey<Plot> TEMPORARY_LAST_PLOT = MetaDataKey.of("lastplot", new TypeLiteral<>() {});
-    public static final MetaDataKey<Location> TEMPORARY_MUSIC = MetaDataKey.of("music", new TypeLiteral<>() {});
-    public static final MetaDataKey<Boolean> TEMPORARY_KICK = MetaDataKey.of("kick", new TypeLiteral<>() {});
-    public static final MetaDataKey<SetupProcess> TEMPORARY_SETUP = MetaDataKey.of("setup", new TypeLiteral<>() {});
-    public static final MetaDataKey<PlotInventory> TEMPORARY_INVENTORY = MetaDataKey.of("inventory", new TypeLiteral<>() {});
-    public static final MetaDataKey<Boolean> TEMPORARY_IGNORE_EXPIRE_TASK = MetaDataKey.of("ignoreExpireTask", new TypeLiteral<>() {});
-    public static final MetaDataKey<Plot> TEMPORARY_WORLD_EDIT_REGION_PLOT = MetaDataKey.of("WorldEditRegionPlot", new TypeLiteral<>() {});
-    public static final MetaDataKey<Boolean> TEMPORARY_AUTO = MetaDataKey.of(Auto.class.getName(), new TypeLiteral<>() {});
-    public static final MetaDataKey<List<String>> TEMPORARY_SCHEMATICS = MetaDataKey.of("plot_schematics", new TypeLiteral<>() {});
-    public static final MetaDataKey<Location> TEMPORARY_LOCATION = MetaDataKey.of("location", new TypeLiteral<>() {});
-    public static final MetaDataKey<CmdInstance> TEMPORARY_CONFIRM = MetaDataKey.of("cmdConfirm", new TypeLiteral<>() {});
+    public static final MetaDataKey<Plot> TEMPORARY_LAST_PLOT = MetaDataKey.of("lastplot", new TypeLiteral<>() {
+    });
+    public static final MetaDataKey<Location> TEMPORARY_MUSIC = MetaDataKey.of("music", new TypeLiteral<>() {
+    });
+    public static final MetaDataKey<Boolean> TEMPORARY_KICK = MetaDataKey.of("kick", new TypeLiteral<>() {
+    });
+    public static final MetaDataKey<SetupProcess> TEMPORARY_SETUP = MetaDataKey.of("setup", new TypeLiteral<>() {
+    });
+    public static final MetaDataKey<PlotInventory> TEMPORARY_INVENTORY = MetaDataKey.of("inventory", new TypeLiteral<>() {
+    });
+    public static final MetaDataKey<Boolean> TEMPORARY_IGNORE_EXPIRE_TASK = MetaDataKey.of(
+            "ignoreExpireTask",
+            new TypeLiteral<>() {
+            }
+    );
+    public static final MetaDataKey<Plot> TEMPORARY_WORLD_EDIT_REGION_PLOT = MetaDataKey.of(
+            "WorldEditRegionPlot",
+            new TypeLiteral<>() {
+            }
+    );
+    public static final MetaDataKey<Boolean> TEMPORARY_AUTO = MetaDataKey.of(Auto.class.getName(), new TypeLiteral<>() {
+    });
+    public static final MetaDataKey<List<String>> TEMPORARY_SCHEMATICS = MetaDataKey.of("plot_schematics", new TypeLiteral<>() {
+    });
+    public static final MetaDataKey<Location> TEMPORARY_LOCATION = MetaDataKey.of("location", new TypeLiteral<>() {
+    });
+    public static final MetaDataKey<CmdInstance> TEMPORARY_CONFIRM = MetaDataKey.of("cmdConfirm", new TypeLiteral<>() {
+    });
     //@formatter:on
 
     private PlayerMetaDataKeys() {

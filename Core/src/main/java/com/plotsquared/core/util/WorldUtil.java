@@ -100,7 +100,8 @@ public abstract class WorldUtil {
      * @deprecated May result in synchronous chunk loading
      */
     @Deprecated
-    public @NonNull abstract String[] getSignSynchronous(@NonNull Location location);
+    public @NonNull
+    abstract String[] getSignSynchronous(@NonNull Location location);
 
     /**
      * Get the world spawn location
@@ -108,7 +109,8 @@ public abstract class WorldUtil {
      * @param world World name
      * @return World spawn location
      */
-    public @NonNull abstract Location getSpawn(@NonNull String world);
+    public @NonNull
+    abstract Location getSpawn(@NonNull String world);
 
     /**
      * Set the world spawn location
@@ -130,7 +132,8 @@ public abstract class WorldUtil {
      * @param name Block name
      * @return Comparison result containing the closets matching block
      */
-    public @NonNull abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(@NonNull String name);
+    public @NonNull
+    abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(@NonNull String name);
 
     /**
      * Set the block at the specified location to a sign, with given text
@@ -165,7 +168,8 @@ public abstract class WorldUtil {
      * @deprecated Use {@link #getBiome(String, int, int, Consumer)}
      */
     @Deprecated
-    public @NonNull abstract BiomeType getBiomeSynchronous(@NonNull String world, int x, int z);
+    public @NonNull
+    abstract BiomeType getBiomeSynchronous(@NonNull String world, int x, int z);
 
     /**
      * Get the block at a given location (asynchronously)
@@ -183,7 +187,8 @@ public abstract class WorldUtil {
      * @deprecated Use {@link #getBlock(Location, Consumer)}
      */
     @Deprecated
-    public @NonNull abstract BlockState getBlockSynchronous(@NonNull Location location);
+    public @NonNull
+    abstract BlockState getBlockSynchronous(@NonNull Location location);
 
     /**
      * Get the Y coordinate of the highest non-air block in the world, asynchronously
@@ -398,14 +403,16 @@ public abstract class WorldUtil {
      * @param category Entity category
      * @return Set containing all entities belonging to the given category
      */
-    public @NonNull abstract Set<EntityType> getTypesInCategory(@NonNull String category);
+    public @NonNull
+    abstract Set<EntityType> getTypesInCategory(@NonNull String category);
 
     /**
      * Get all recognized tile entity types
      *
      * @return Collection containing all known tile entity types
      */
-    public @NonNull abstract Collection<BlockType> getTileEntityTypes();
+    public @NonNull
+    abstract Collection<BlockType> getTileEntityTypes();
 
     /**
      * Get the tile entity count in a chunk

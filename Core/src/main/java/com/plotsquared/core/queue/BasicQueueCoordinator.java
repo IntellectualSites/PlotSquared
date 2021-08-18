@@ -271,7 +271,8 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     }
 
     @Override
-    public @Nullable final Consumer<BlockVector2> getChunkConsumer() {
+    public @Nullable
+    final Consumer<BlockVector2> getChunkConsumer() {
         return this.consumer;
     }
 
@@ -293,7 +294,8 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     }
 
     @Override
-    public @NonNull final LightingMode getLightingMode() {
+    public @NonNull
+    final LightingMode getLightingMode() {
         if (lightingMode == null) {
             return LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
         }

@@ -48,8 +48,8 @@ class ClickStripTransformTest {
         var transform = new ClickStripTransform(EnumSet.of(commonAction));
         var component = Component.text("Hello")
                 .clickEvent(ClickEvent.clickEvent(
-                        commonAction,
-                        "World"
+                                commonAction,
+                                "World"
                         )
                 );
         var transformedComponent = transform.transform(component);

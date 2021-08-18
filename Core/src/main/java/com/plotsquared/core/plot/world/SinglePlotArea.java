@@ -182,7 +182,12 @@ public class SinglePlotArea extends GridPlotWorld {
     @Override
     public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[]{
-                new ConfigurationNode("void", this.VOID, TranslatableCaption.of("setup.singleplotarea_void_world"), ConfigurationUtil.BOOLEAN)};
+                new ConfigurationNode(
+                        "void",
+                        this.VOID,
+                        TranslatableCaption.of("setup.singleplotarea_void_world"),
+                        ConfigurationUtil.BOOLEAN
+                )};
     }
 
     @Nullable

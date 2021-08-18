@@ -41,7 +41,11 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
      * @param value Flag value
      */
     protected PlotTitleFlag(PlotTitle value) {
-        super(value, TranslatableCaption.of("flags.flag_category_string"), TranslatableCaption.of("flags.flag_description_title"));
+        super(
+                value,
+                TranslatableCaption.of("flags.flag_category_string"),
+                TranslatableCaption.of("flags.flag_description_title")
+        );
     }
 
     @Override

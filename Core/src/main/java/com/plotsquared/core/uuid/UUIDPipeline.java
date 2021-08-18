@@ -33,10 +33,10 @@ import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.util.ThreadUtils;
 import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -215,9 +215,9 @@ public class UUIDPipeline {
      */
     public void getSingle(final @NonNull String username, final @NonNull BiConsumer<@Nullable UUID, @Nullable Throwable> uuid) {
         this.getUUIDs(Collections.singletonList(username)).applyToEither(
-                timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT),
-                Function.identity()
-        )
+                        timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT),
+                        Function.identity()
+                )
                 .whenComplete((uuids, throwable) -> {
                     if (throwable != null) {
                         uuid.accept(null, throwable);
@@ -239,9 +239,9 @@ public class UUIDPipeline {
      */
     public void getSingle(final @NonNull UUID uuid, final @NonNull BiConsumer<@Nullable String, @Nullable Throwable> username) {
         this.getNames(Collections.singletonList(uuid)).applyToEither(
-                timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT),
-                Function.identity()
-        )
+                        timeoutAfter(Settings.UUID.NON_BLOCKING_TIMEOUT),
+                        Function.identity()
+                )
                 .whenComplete((uuids, throwable) -> {
                     if (throwable != null) {
                         username.accept(null, throwable);
@@ -427,7 +427,8 @@ public class UUIDPipeline {
      *
      * @return All mappings that could be provided immediately
      */
-    public @NonNull final Collection<@NonNull UUIDMapping> getAllImmediately() {
+    public @NonNull
+    final Collection<@NonNull UUIDMapping> getAllImmediately() {
         final Set<UUIDMapping> mappings = new LinkedHashSet<>();
         for (final UUIDService service : this.getServiceListInstance()) {
             mappings.addAll(service.getImmediately());
@@ -441,7 +442,8 @@ public class UUIDPipeline {
      * @param object Username ({@link String}) or {@link UUID}
      * @return Mapping, if it could be found immediately
      */
-    public @Nullable final UUIDMapping getImmediately(final @NonNull Object object) {
+    public @Nullable
+    final UUIDMapping getImmediately(final @NonNull Object object) {
         for (final UUIDService uuidService : this.getServiceListInstance()) {
             final UUIDMapping mapping = uuidService.getImmediately(object);
             if (mapping != null) {

@@ -88,8 +88,10 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
             final @NonNull String stub,
             final @NonNull String key
     ) {
-        return this.permissionProfile.hasPermission(world, stub + "." + key) || this.permissionProfile.hasPermission(world,
-                stub + ".*");
+        return this.permissionProfile.hasPermission(world, stub + "." + key) || this.permissionProfile.hasPermission(
+                world,
+                stub + ".*"
+        );
     }
 
 }

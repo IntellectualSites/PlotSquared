@@ -91,13 +91,13 @@ public final class BlockUtil {
             return FuzzyBlockState.builder().type(BlockTypes.AIR).build();
         }
         String mutableId = id;
-        mutableId  = id.toLowerCase();
-        BlockType type = BlockTypes.get(mutableId );
+        mutableId = id.toLowerCase();
+        BlockType type = BlockTypes.get(mutableId);
         if (type != null) {
             return type.getDefaultState();
         }
-        if (Character.isDigit(mutableId .charAt(0))) {
-            String[] split = mutableId .split(":");
+        if (Character.isDigit(mutableId.charAt(0))) {
+            String[] split = mutableId.split(":");
             if (MathMan.isInteger(split[0])) {
                 if (split.length == 2) {
                     if (MathMan.isInteger(split[1])) {

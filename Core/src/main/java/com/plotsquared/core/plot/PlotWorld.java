@@ -56,14 +56,16 @@ public abstract class PlotWorld {
      * @param location Location
      * @return Containing plot area, or null
      */
-    public @Nullable abstract PlotArea getArea(final @NonNull Location location);
+    public @Nullable
+    abstract PlotArea getArea(final @NonNull Location location);
 
     /**
      * Get all plot areas in the world
      *
      * @return All plot areas in the world
      */
-    public @NonNull abstract Collection<PlotArea> getAreas();
+    public @NonNull
+    abstract Collection<PlotArea> getAreas();
 
     /**
      * Get all plot areas in a specified region
@@ -71,7 +73,8 @@ public abstract class PlotWorld {
      * @param region Region
      * @return All areas in the region
      */
-    public @NonNull abstract Collection<PlotArea> getAreasInRegion(
+    public @NonNull
+    abstract Collection<PlotArea> getAreasInRegion(
             final @NonNull CuboidRegion region
     );
 

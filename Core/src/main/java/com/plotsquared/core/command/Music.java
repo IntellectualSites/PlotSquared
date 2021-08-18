@@ -44,7 +44,6 @@ import com.sk89q.worldedit.world.item.ItemTypes;
 import net.kyori.adventure.text.minimessage.Template;
 
 import javax.annotation.Nullable;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
@@ -85,7 +84,12 @@ public class Music extends SubCommand {
             );
             return true;
         }
-        PlotInventory inv = new PlotInventory(this.inventoryUtil, player, 2, TranslatableCaption.of("plotjukebox.jukebox_header").getComponent(player)) {
+        PlotInventory inv = new PlotInventory(
+                this.inventoryUtil,
+                player,
+                2,
+                TranslatableCaption.of("plotjukebox.jukebox_header").getComponent(player)
+        ) {
             @Override
             public boolean onClick(int index) {
                 PlotItemStack item = getItem(index);
@@ -104,7 +108,8 @@ public class Music extends SubCommand {
                         return true;
                     }
                     plot.removeFlag(event.getFlag());
-                    getPlayer().sendMessage(TranslatableCaption.of("flag.flag_removed"),
+                    getPlayer().sendMessage(
+                            TranslatableCaption.of("flag.flag_removed"),
                             Template.of("flag", "music"),
                             Template.of("value", "music_disc")
                     );
@@ -121,7 +126,8 @@ public class Music extends SubCommand {
                     }
                     plot.setFlag(event.getFlag());
                     getPlayer().sendMessage(TranslatableCaption.of("flag.flag_added"), Template.of("flag", "music"),
-                            Template.of("value", String.valueOf(event.getFlag().getValue())));
+                            Template.of("value", String.valueOf(event.getFlag().getValue()))
+                    );
                 } else {
                     getPlayer().sendMessage(TranslatableCaption.of("flag.flag_not_added"));
                 }

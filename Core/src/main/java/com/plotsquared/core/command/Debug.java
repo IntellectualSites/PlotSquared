@@ -125,7 +125,7 @@ public class Debug extends SubCommand {
                 for (final EntityType entityType : category.getAll()) {
                     builder.append(entityType.getId()).append(" ");
                 }
-                player.sendMessage(StaticCaption.of("<prefix>" + builder.toString()));
+                player.sendMessage(StaticCaption.of("<prefix>" + builder));
             });
             EntityType.REGISTRY.values().stream().sorted(Comparator.comparing(EntityType::getId))
                     .forEach(entityType -> {
